@@ -13,9 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.data.test.modules;
+package fi.vm.sade.tarjonta.data.ws;
 
-import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -24,11 +23,12 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
-import static fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator.UPDATED_BY_USER;
+import static fi.vm.sade.tarjonta.data.ws.AbstractGenerator.UPDATED_BY_USER;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.types.AjankohtaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
  */
 @Component
 @Configurable(preConstruction = false)
-public class HakukohdeGenerator extends AbstractGenerator {
+public class AmmHakukohdeGenerator extends AbstractGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HakukohdeGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AmmHakukohdeGenerator.class);
     private static final Date DATE = new DateTime(2020, 1, 1, 1, 1).toDate();
     private static final Date EXAM_START_DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
     private static final Date EXAM_END_DATE = new DateTime(2022, 1, 1, 1, 1).toDate();
@@ -58,11 +58,11 @@ public class HakukohdeGenerator extends AbstractGenerator {
     private static final String OID_TYPE = "AO_";
     private TarjontaAdminService tarjontaAdminService;
 
-    public HakukohdeGenerator() {
+    public AmmHakukohdeGenerator() {
         super(OID_TYPE);
     }
 
-    public HakukohdeGenerator(TarjontaAdminService tarjontaAdminServce) {
+    public AmmHakukohdeGenerator(TarjontaAdminService tarjontaAdminServce) {
         super(OID_TYPE);
         this.tarjontaAdminService = tarjontaAdminServce;
     }
@@ -90,7 +90,7 @@ public class HakukohdeGenerator extends AbstractGenerator {
         tyyppi.getHakukohteenKoulutusOidit().addAll(komotoOids);
         tyyppi.setHakukohteenHakuOid(hakuOid);
         tyyppi.setHakukohteenKoulutusaste(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        tyyppi.setHakukohdeNimi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, koodiarvo.toString()));
+        tyyppi.setHakukohdeNimi(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_HAKUKOHDE_URI, koodiarvo.toString()));
         tyyppi.setOid(generateOid());
 
         tyyppi.setLiitteidenToimitusOsoite(createPostiosoite());
@@ -105,8 +105,8 @@ public class HakukohdeGenerator extends AbstractGenerator {
         tyyppi.setHakukohteenHaunNimi(createMonikielinenTekstiTyyppi(hakuOid));
         tyyppi.setSahkoinenToimitusOsoite(createUri(hakuOid));
 
-        tyyppi.setValintaperustekuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, "4"));
-        tyyppi.setSoraKuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUKOHDE_URI, "1"));
+        tyyppi.setValintaperustekuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_HAKUKOHDE_URI, "4"));
+        tyyppi.setSoraKuvausKoodiUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_HAKUKOHDE_URI, "1"));
         tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
         //tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
 
@@ -120,7 +120,7 @@ public class HakukohdeGenerator extends AbstractGenerator {
             HakukohdeLiiteTyyppi tyyppi = new HakukohdeLiiteTyyppi();
             tyyppi.setLiitteenKuvaus(createKoodiUriLorem());
             tyyppi.setLiitteenToimitusOsoite(createPostiosoite());
-            tyyppi.setLiitteenTyyppi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_LIITTEEN_TYYPPI_URI, "1"));
+            tyyppi.setLiitteenTyyppi(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_LIITTEEN_TYYPPI_URI, "1"));
             tyyppi.setSahkoinenToimitusOsoite(createUri(hakuOid));
             tyyppi.setLiitteenTyyppiKoodistoNimi("???");
             tyyppi.setToimitettavaMennessa(DATE);

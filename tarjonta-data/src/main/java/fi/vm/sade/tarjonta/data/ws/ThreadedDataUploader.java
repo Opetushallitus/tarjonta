@@ -13,11 +13,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.data.test;
+package fi.vm.sade.tarjonta.data.ws;
 
-import fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator;
-import fi.vm.sade.tarjonta.data.test.modules.HakukohdeGenerator;
-import fi.vm.sade.tarjonta.data.test.modules.KomotoGenerator;
+import fi.vm.sade.tarjonta.data.ws.AbstractGenerator;
+import fi.vm.sade.tarjonta.data.ws.AmmHakukohdeGenerator;
+import fi.vm.sade.tarjonta.data.ws.AmmKomotoGenerator;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import java.util.ArrayList;
@@ -35,8 +35,8 @@ public class ThreadedDataUploader extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(ThreadedDataUploader.class);
     private String organisationOid;
     private String hakuOid;
-    private KomotoGenerator komoto;
-    private HakukohdeGenerator hakukohde;
+    private AmmKomotoGenerator komoto;
+    private AmmHakukohdeGenerator hakukohde;
     private int maxKomotosPerOrganisation;
     private List<String> komotoOids;
 
@@ -51,8 +51,8 @@ public class ThreadedDataUploader extends Thread {
         this.maxKomotosPerOrganisation = loiItemCountPerOrganisation;
         this.komotoOids = new ArrayList<String>();
 
-        komoto = new KomotoGenerator(threadName, tarjontaAdminService, tarjontaPublicService);
-        hakukohde = new HakukohdeGenerator(tarjontaAdminService);
+        komoto = new AmmKomotoGenerator(threadName, tarjontaAdminService, tarjontaPublicService);
+        hakukohde = new AmmHakukohdeGenerator(tarjontaAdminService);
     }
 
     @Override
@@ -65,9 +65,9 @@ public class ThreadedDataUploader extends Thread {
             komotoOids.add(komoto.create(getOrganisationOid()));
         }
 
-        final int maxHakukohdes = AbstractGenerator.randomIntByRange(2, HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO.length - 1);
+        final int maxHakukohdes = AbstractGenerator.randomIntByRange(2, AmmHakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO.length - 1);
         for (int i = 0; i < maxHakukohdes; i++) {
-            hakukohde.create(hakuOid, HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO[i], komotoOids);
+            hakukohde.create(hakuOid, AmmHakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO[i], komotoOids);
         }
 
         long timePassed = System.currentTimeMillis() - startTime;

@@ -17,10 +17,10 @@ app.directive('laajuus', ['$log', function($log) {
                     var length = Object.keys(valNew).length;
                     $scope.ctrl.isMulti = (length > 1);
 
-                    if (!$scope.ctrl.isMulti) {
+                    if (length === 1) {
                         var key = Object.keys(valNew)[0];
                         $scope.arvoModel.uri = key;
-                        $scope.arvoModel.versio = $scope.arvoUiModel.uris[key];
+                        $scope.arvoModel.versio = valNew[key].versio;
                     }
                 }
             });

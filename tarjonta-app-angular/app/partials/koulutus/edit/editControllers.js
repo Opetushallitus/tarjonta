@@ -12,7 +12,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
-              
+
 
                 $scope.formControls = {};
 
@@ -30,7 +30,7 @@ app.controller('BaseEditController',
                     var uiModel = {};
                     var model = {};
 
-                    uiModel.selectedKieliUri ="" //tab language
+                    uiModel.selectedKieliUri = "" //tab language
                     uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
@@ -129,7 +129,7 @@ app.controller('BaseEditController',
                         angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
                             uiModel[key].meta = restRelationData[key].meta;
 
-                            if (!angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
+                            if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
                                 uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
                             }
                         });
@@ -170,7 +170,7 @@ app.controller('BaseEditController',
                             $scope.uiModel.showError = true;
                             return;
                         }
-                        
+
                         var KoulutusRes = tarjontaService.koulutus();
                         var apiModelReadyForSave = $scope.saveModelConverter(tila);
 
@@ -184,11 +184,11 @@ app.controller('BaseEditController',
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
                                 $scope.koulutusForm.$dirty = false;
                                 $scope.koulutusForm.$invalid = false;
-                                
+
                                 $scope.$broadcast("onImageUpload", ""); //save images
                             } else {
                                 $scope.uiModel.showValidationErrors = true;
-                               
+
                                 if (!angular.isUndefined(saveResponse.errors)) {
                                     for (var i = 0; i < saveResponse.errors.length; i++) {
                                         $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
@@ -232,16 +232,18 @@ app.controller('BaseEditController',
                     });
 
                     angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
-                        apiModel[key] = {'uris': {}};
-                        //search version information for list of uris;
-                        var map = {};
-                        var meta = $scope.uiModel[key].meta;
-                        for (var i in meta) {
-                            map[meta[i].uri] = meta[i].versio;
+                        if (angular.isUndefined(value.skipApiModel)) {
+                            apiModel[key] = {'uris': {}};
+                            //search version information for list of uris;
+                            var map = {};
+                            var meta = $scope.uiModel[key].meta;
+                            for (var i in meta) {
+                                map[meta[i].uri] = meta[i].versio;
+                            }
+                            angular.forEach(uiModel[key].uris, function(uri) {
+                                apiModel[key].uris[uri] = map[uri];
+                            });
                         }
-                        angular.forEach(uiModel[key].uris, function(uri) {
-                            apiModel[key].uris[uri] = map[uri];
-                        });
                     });
 
                     //multi-select models, add version to the koodi 
@@ -326,7 +328,7 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                   $scope.uiModel.selectedKieliUri = kieliUri;
+                    $scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {

@@ -10,8 +10,6 @@
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-
-
     <context:property-placeholder
             location="classpath:tarjonta-data-test.properties, file:///${user.home:''}/oph-configuration/common.properties"
             ignore-resource-not-found="true"/>
