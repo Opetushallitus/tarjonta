@@ -253,7 +253,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
-    public List<String> findOIDsBy(fi.vm.sade.tarjonta.service.types.TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
+    public List<String> findOIDsBy(fi.vm.sade.tarjonta.service.types.TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince, boolean showKK) {
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
         BooleanExpression whereExpr = null;
@@ -267,6 +267,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         }
         if (lastModifiedSince != null) {
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.after(lastModifiedSince));
+        }
+
+        if (!showKK) {
+            whereExpr = QuerydslUtils.and(whereExpr,hakukohde.hakukohdeNimi.isNotNull());
         }
 
         // Result selection
