@@ -18,7 +18,6 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -42,14 +41,15 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
  * Supported operations.
  *
  * <pre>
- * GET    /             ?count=100 & startIndex=0    -- list of oids
- * GET    oid                                        -- json of haku
- * GET    oid/hakukohde ?count=100 & startIndex=0    -- list of oids
- * GET    oid/state                                  -- state
- * PUT    oid/state                                  -- update state
- * POST   /                                          -- create haku
- * POST   /oid                                       -- update haku
- * DELETE oid                                        -- remove haku
+ * GET    /v1/haku/              ?count=100 & startIndex=0      -- list of oids
+ * GET    /v1/haku/multi              ?oid=oid1&oid=oid2&oid=oidN... -- json of hakus  
+ * GET    /v1/haku/oid                                          -- json of haku
+ * GET    /v1/haku/oid/hakukohde ?count=100 & startIndex=0      -- list of oids
+ * GET    /v1/haku/oid/state                                    -- state
+ * PUT    /v1/haku/oid/state                                    -- update state
+ * POST   /v1/haku                                              -- create haku
+ * POST   /v1/haku/oid                                          -- update haku
+ * DELETE /v1/haku/oid                                          -- remove haku
  * </pre>
  *
  * @author mlyly
@@ -61,7 +61,13 @@ public interface HakuV1Resource {
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t", notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
-    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c")List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
+    public ResultV1RDTO<List<String>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c")List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Path("/multi")
+    @ApiOperation(value = "Palauttaa haut annetuilla oideilla", notes = "palauttaa haut", response = OidV1RDTO.class)
+    public ResultV1RDTO<List<HakuV1RDTO>> multiGet(@QueryParam("oid") List<String> oids);
 
     @GET
     @Path("/{oid}")

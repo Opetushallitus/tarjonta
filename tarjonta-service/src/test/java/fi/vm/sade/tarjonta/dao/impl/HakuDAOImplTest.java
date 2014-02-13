@@ -24,8 +24,6 @@ import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +35,13 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
+
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -104,6 +103,42 @@ public class HakuDAOImplTest extends TestData {
         findHakukohdeHakus = dao.findHakukohdeHakus(haku2);
         assertEquals(0, findHakukohdeHakus.size());
         cleanUp();
+    }
+
+    
+    @Test
+    public void testMultiGet(){
+        super.clean();
+        final String OID1="1.2.3";
+        final String OID2="2.2.3";
+        
+        Haku h1 = new Haku();
+        h1.setOid(OID1);
+        h1.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
+        h1.setKoulutuksenAlkamiskausiUri("k");
+        h1.setKoulutuksenAlkamisVuosi(2014);
+        h1.setTila(TarjontaTila.VALMIS);
+        h1.setHakutyyppiUri("hakutyyppi1");
+        h1.setHakukausiUri("k");
+        h1.setHakutapaUri("hakutapa1");
+        h1.setKohdejoukkoUri("kohdejoukko1");
+        h1.setHakukausiVuosi(2014);
+        dao.insert(h1);
+        
+        Haku h2 = new Haku();
+        h2.setNimi(new MonikielinenTeksti("fi", "nimi2_fi"));
+        h2.setOid(OID2);
+        h2.setKoulutuksenAlkamiskausiUri("s");
+        h2.setKoulutuksenAlkamisVuosi(2015);
+        h2.setTila(TarjontaTila.KOPIOITU);
+        h2.setHakutyyppiUri("hakutyyppi2");
+        h2.setHakukausiUri("s");
+        h2.setHakutapaUri("hakutapa2");
+        h2.setKohdejoukkoUri("kohdejoukko2");
+        h2.setHakukausiVuosi(2015);
+        dao.insert(h2);
+
+        Assert.assertEquals(2,dao.findByOids(Lists.newArrayList(OID1,OID2)).size());
     }
     
     @Test

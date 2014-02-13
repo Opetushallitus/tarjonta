@@ -76,6 +76,15 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     }
 
     @Override
+    public List<Haku> findByOids(List<String> oids) {
+        QHaku qHaku = QHaku.haku;
+
+        return from(qHaku).join(qHaku.nimi, QMonikielinenTeksti.monikielinenTeksti).fetch()
+                .join(QMonikielinenTeksti.monikielinenTeksti.tekstis, QTekstiKaannos.tekstiKaannos).fetch().where(qHaku.oid.in(oids)).distinct()
+                .list(qHaku);
+    }
+
+    @Override
     public List<Haku> findBySearchString(String searchString, String kieliKoodi) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
