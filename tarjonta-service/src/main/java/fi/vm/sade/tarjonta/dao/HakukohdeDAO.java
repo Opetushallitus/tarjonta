@@ -85,7 +85,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @param lastModifiedSince
      * @return list of oids.
      */
-    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
+    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince, boolean showKK);
 
     /**
      * Hae hakukohteet jotka liittyvät komotoon
