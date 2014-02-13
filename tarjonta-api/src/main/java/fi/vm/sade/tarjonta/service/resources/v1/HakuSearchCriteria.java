@@ -22,6 +22,11 @@ public class HakuSearchCriteria {
             criteria.add(new HakuSearchCriteria(field, value, Match.LIKE));
             return this;
         }
+        
+        public Builder add(Field field, Object value, Match match){
+            criteria.add(new HakuSearchCriteria(field, value, match));
+            return this;
+        }
     }
 
     public static enum Field {
@@ -30,6 +35,12 @@ public class HakuSearchCriteria {
 
     public static enum Match {
         MUST_MATCH, MUST_NOT, LIKE;
+    }
+
+    @Override
+    public String toString() {
+        return "HakuSearchCriteria [match=" + match + ", field=" + field
+                + ", value=" + value + "]";
     }
 
     private Match match;

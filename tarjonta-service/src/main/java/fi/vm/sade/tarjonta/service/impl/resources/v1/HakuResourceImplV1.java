@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
@@ -68,27 +69,28 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
-        LOG.info("search({})", params);
+        LOG.debug("search({})", params);
 
         MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
 
         for (String key : values.keySet()) {
-            LOG.info("processing parameter:" + key);
+//            LOG.info("processing parameter:" + key);
 
             if (!key.toUpperCase().equals(key)) {
-                continue;  //our fields are upper cased!
+                continue;  //our fields are upper cased, see HakuSearchCriteria.Field.
             }
+            
+            Field field;
             try {
-                Field field = Field.valueOf(key);
+                field = Field.valueOf(key);
             } catch (Throwable t) {
                 LOG.info("Ignoring unknown parameter:" + key);
                 continue;
             }
 
             for (String sValue : values.get(key)) {
-                Field field = Field.valueOf(key);
                 Object value = null;
-                boolean like = false;
+                Match match = Match.MUST_MATCH;  //default match type
                 switch (field) {
                     case HAKUVUOSI:
                     case KOULUTUKSEN_ALKAMISVUOSI:
@@ -98,7 +100,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         value = TarjontaTila.valueOf(sValue);
                         break;
                     case HAKUSANA:
-                        like = true; // %foo% haku
+                        match = Match.LIKE; // %foo% haku
                         value = "%" + sValue + "%";
                         break;
                     case HAKUKAUSI:
@@ -111,14 +113,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
                     default:
                         throw new RuntimeException("unhandled parameter:" + key + "=" + sValue);
-
                 }
-                if (like) {
-                    criteriaList.addAll(new HakuSearchCriteria.Builder().like(field, value).build());
-                } else {
-                    criteriaList.addAll(new HakuSearchCriteria.Builder().mustMatch(field, value).build());
-                }
-
+                criteriaList.addAll(new HakuSearchCriteria.Builder().add(field, value, match).build());
             }
         }
 
@@ -130,7 +126,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>(tmp);
         result.setParams(params);
 
-        // TODO use getModifiedAfter / getModifedBefore?
         List<String> oidList = hakuDAO.findOIDByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
 
         for (String oid : oidList) {
@@ -139,7 +134,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             tmp.add(dto);
         }
 
-        LOG.info(" --> result = {}", result);
+        LOG.debug(" --> result = {}", result);
 
         return result;
     }
