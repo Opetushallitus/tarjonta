@@ -70,7 +70,7 @@ public class DataUploader {
         for (String oppilaitostyyppi : ACCEPTED_OPPILAITOSTYYPPIS) {
             OrganisaatioSearchCriteriaDTO search = new OrganisaatioSearchCriteriaDTO();
             search.setOppilaitosTyyppi(oppilaitostyyppi);
-            filtteredOrgs.addAll(organisaatioService.searchBasicOrganisaatios(search));
+            //FIXME filtteredOrgs.addAll(organisaatioService.searchBasicOrganisaatios(search));
         }
         LOG.info("Loaded unique organisations : {}", filtteredOrgs.size());
         LOG.info("Organisations filtered to the given limit : {}", maxOrganisations);
