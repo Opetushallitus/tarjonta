@@ -13,16 +13,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.data.test.modules;
+package fi.vm.sade.tarjonta.data.ws;
 
-import static fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator.UPDATED_BY_USER;
-import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
+import static fi.vm.sade.tarjonta.data.ws.AbstractGenerator.UPDATED_BY_USER;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaunNimi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 
 import java.util.Date;
 import org.joda.time.DateTime;
@@ -37,20 +37,20 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Configurable(preConstruction = false)
-public class HakuGenerator extends AbstractGenerator {
+public class AmmHakuGenerator extends AbstractGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HakuGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AmmHakuGenerator.class);
 
     private static final String OID_TYPE = "AS_";
     private static final Date DATE_HAKUAIKA_BEGIN = new DateTime(2013, 1, 1, 1, 1).toDate();
     private static final Date DATE_HAKUAIKA_END = new DateTime(2020, 1, 1, 1, 1).toDate();
     private TarjontaAdminService tarjontaAdminService;
 
-    public HakuGenerator() {
+    public AmmHakuGenerator() {
         super(OID_TYPE);
     }
 
-    public HakuGenerator(TarjontaAdminService tarjontaAdminServce) {
+    public AmmHakuGenerator(TarjontaAdminService tarjontaAdminServce) {
         super(OID_TYPE);
         this.tarjontaAdminService = tarjontaAdminServce;
     }
@@ -67,11 +67,11 @@ public class HakuGenerator extends AbstractGenerator {
         tyyppi.setOid(generateOid());
         tyyppi.setHaunTila(TarjontaTila.JULKAISTU);
         tyyppi.setHakuVuosi(2013);
-        tyyppi.setHakukausiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, "k"));
-        tyyppi.setKoulutuksenAlkamisKausiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_ALKAMISKAUSI_URI, "k"));
-        tyyppi.setHakutapaUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, "01"));
-        tyyppi.setHakutyyppiUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAUN_KOHDEJOUKKO_URI, "03"));
-        tyyppi.setKohdejoukkoUri(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_HAKUTAPA_URI, "11"));
+        tyyppi.setHakukausiUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, "k"));
+        tyyppi.setKoulutuksenAlkamisKausiUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, "k"));
+        tyyppi.setHakutapaUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_HAKUTAPA_URI, "01"));
+        tyyppi.setHakutyyppiUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_HAUN_KOHDEJOUKKO_URI, "03"));
+        tyyppi.setKohdejoukkoUri(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_HAKUTAPA_URI, "11"));
         tyyppi.setHaunTunniste(tyyppi.getOid());
         tyyppi.setHaunAlkamisPvm(DATE_HAKUAIKA_BEGIN);
         tyyppi.setHaunAlkamisPvm(DATE_HAKUAIKA_END);

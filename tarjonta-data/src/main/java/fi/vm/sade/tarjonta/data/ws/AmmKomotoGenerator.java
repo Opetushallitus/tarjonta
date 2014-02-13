@@ -13,11 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.data.test.modules;
+package fi.vm.sade.tarjonta.data.ws;
 
 import com.google.common.base.Preconditions;
-import static fi.vm.sade.tarjonta.data.test.modules.AbstractGenerator.UPDATED_BY_USER;
-import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
+import static fi.vm.sade.tarjonta.data.ws.AbstractGenerator.UPDATED_BY_USER;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
@@ -29,8 +28,8 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 
@@ -49,9 +48,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Configurable(preConstruction = false)
-public class KomotoGenerator extends AbstractGenerator {
+public class AmmKomotoGenerator extends AbstractGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KomotoGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AmmKomotoGenerator.class);
     private static final String KOULUTUSASTE_AMMATTILLINEN_KOULUTUS = "32";
     private static final String OID_TYPE = "LOI_";
     private static final Date DATE = new DateTime(2013, 1, 1, 1, 1).toDate();
@@ -61,11 +60,11 @@ public class KomotoGenerator extends AbstractGenerator {
     private int komoIndex = 0;
     private String threadName;
 
-    public KomotoGenerator() {
+    public AmmKomotoGenerator() {
         super(OID_TYPE);
     }
 
-    public KomotoGenerator(String threadName, TarjontaAdminService tarjontaAdminService, TarjontaPublicService tarjontaPublicService) {
+    public AmmKomotoGenerator(String threadName, TarjontaAdminService tarjontaAdminService, TarjontaPublicService tarjontaPublicService) {
         super(OID_TYPE);
         this.tarjontaAdminService = tarjontaAdminService;
         this.threadName = threadName;
@@ -111,18 +110,18 @@ public class KomotoGenerator extends AbstractGenerator {
         LOG.debug("Insert komoto with OID {}, komoto pair {}", tyyppi.getOid(), komoPair);
 
         tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        tyyppi.setKoulutusaste(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KOULUTUSASTE_URI, KOULUTUSASTE_AMMATTILLINEN_KOULUTUS));
+        tyyppi.setKoulutusaste(KoodistoUtil.toKoodistoTyyppi(KoodistoURI.KOODISTO_KOULUTUSASTE_URI, KOULUTUSASTE_AMMATTILLINEN_KOULUTUS));
         tyyppi.setKoulutuksenAlkamisPaiva(DATE);
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo("999");
-        koulutuksenKestoTyyppi.setYksikko(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, "02"));
+       // koulutuksenKestoTyyppi.setYksikko(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, "02"));
         //FIXME tyyppi.setPainotus(new MonikielinenTekstiTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
-        tyyppi.setPohjakoulutusvaatimus(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, "er"));
+        tyyppi.setPohjakoulutusvaatimus(KoodistoUtil.toKoodistoTyyppi(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, "er"));
 
-        tyyppi.getOpetusmuoto().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_OPETUSMUOTO_URI, "im"));
-        tyyppi.getOpetuskieli().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KIELI_URI, LANGUAGE_FI));
-        tyyppi.getKoulutuslaji().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, "n"));
+        tyyppi.getOpetusmuoto().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURI.KOODISTO_OPETUSMUOTO_URI, "im"));
+        tyyppi.getOpetuskieli().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURI.KOODISTO_KIELI_URI, LANGUAGE_FI));
+        tyyppi.getKoulutuslaji().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURI.KOODISTO_KOULUTUSLAJI_URI, "n"));
 
         /*
         FIXME
@@ -137,7 +136,7 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
         // tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);
 
-        KoodistoUtil.addToKoodiToKoodistoTyyppi(KoodistoURIHelper.KOODISTO_AMMATTINIMIKKEET_URI, new String[]{"1", "2", "3", "4", "5", "6"}, tyyppi.getAmmattinimikkeet());
+        KoodistoUtil.addToKoodiToKoodistoTyyppi(KoodistoURI.KOODISTO_AMMATTINIMIKKEET_URI, new String[]{"1", "2", "3", "4", "5", "6"}, tyyppi.getAmmattinimikkeet());
 
         return tyyppi;
     }

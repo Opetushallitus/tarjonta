@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.tarjonta.data.test;
 
+import fi.vm.sade.tarjonta.data.rest.KorkeakoulutusDataUploader;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,16 +29,23 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class GenerateTestData {
 
     /* Will create a small data for script testing. */
-    private static final int MAX_ORGANISATIONS = 200;
+    private static final int MAX_ORGANISATIONS = 2;
     /* set how many LOI items you want for organisation */
     private static final int MAX_KOMOTOS_PER_ORGANISATION = 10;
+
+    private static final int MAX_KOULUTUS_PER_ORGANISATION = 4;
 
     public GenerateTestData() {
     }
 
-    public static void main(final String[] args) throws InterruptedException {
+    public static void main(final String[] args) throws InterruptedException, MalformedURLException, IOException {
         final ApplicationContext context = new ClassPathXmlApplicationContext("spring/context.xml");
-        final DataUploader uploader = context.getBean(DataUploader.class);
-        uploader.upload(MAX_ORGANISATIONS, MAX_KOMOTOS_PER_ORGANISATION);
+
+        //https://itest-virkailija.oph.ware.fi/cas/login?service=http%3A%2F%2Flocalhost%3A8585%2Ftarjonta-service%2Fj_spring_cas_security_check
+        //final DataUploader uploader = context.getBean(DataUploader.class);
+        //uploader.upload(MAX_ORGANISATIONS, MAX_KOMOTOS_PER_ORGANISATION);
+        final KoodistoURI uris = context.getBean(KoodistoURI.class);
+        final KorkeakoulutusDataUploader uploader = context.getBean(KorkeakoulutusDataUploader.class);
+        uploader.upload(MAX_ORGANISATIONS, MAX_KOULUTUS_PER_ORGANISATION);
     }
 }
