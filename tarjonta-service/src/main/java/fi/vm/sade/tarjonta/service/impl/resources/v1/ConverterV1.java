@@ -145,12 +145,12 @@ public class ConverterV1 {
             }
         }
 
-        // Koodistos as pre-resolved
-        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getKohdejoukkoUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
+        // Koodistos as (not) pre-resolved, who needs this?
+//        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getKohdejoukkoUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
 
         return t;
     }
