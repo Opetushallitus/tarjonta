@@ -116,7 +116,7 @@ public class KomotoGenerator extends AbstractGenerator {
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo("999");
         koulutuksenKestoTyyppi.setYksikko(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_SUUNNITELTU_KESTO_URI, "02"));
-        tyyppi.setPainotus(new MonikielinenTekstiTyyppi());
+        //FIXME tyyppi.setPainotus(new MonikielinenTekstiTyyppi());
         tyyppi.setKesto(koulutuksenKestoTyyppi);
         tyyppi.setPohjakoulutusvaatimus(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI, "er"));
 
@@ -124,12 +124,15 @@ public class KomotoGenerator extends AbstractGenerator {
         tyyppi.getOpetuskieli().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KIELI_URI, LANGUAGE_FI));
         tyyppi.getKoulutuslaji().add(KoodistoUtil.toKoodistoTyyppi(KoodistoURIHelper.KOODISTO_KOULUTUSLAJI_URI, "n"));
 
+        /*
+        FIXME
         tyyppi.setKansainvalistyminen(createKoodiUriLorem());
         tyyppi.setKoulutusohjelmanValinta(createKoodiUriLorem());
         tyyppi.setKuvailevatTiedot(createKoodiUriLorem());
         tyyppi.setSijoittuminenTyoelamaan(createKoodiUriLorem());
         tyyppi.setYhteistyoMuidenToimijoidenKanssa(createKoodiUriLorem());
         tyyppi.setSisalto(createKoodiUriLorem());
+        */
 
         tyyppi.setViimeisinPaivittajaOid(UPDATED_BY_USER);
         // tyyppi.setViimeisinPaivitysPvm(UPDATED_DATE);

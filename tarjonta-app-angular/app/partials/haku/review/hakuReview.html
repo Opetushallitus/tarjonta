@@ -11,23 +11,16 @@
         <tbody ng-show="!model.collapse.haunTiedot">
 
             <tr>
-                <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
-                <td colspan="2">
-                    {{ model.hakux.result.oid }}
-                </td>
-            </tr>
-
-            <tr>
                 <th ttt="haku.review.haunTiedot.hakutyyppi">Hakutyyppi</th>
                 <td colspan="2">
-                    <span xxx koodisto="'hakutyyppi'" koodi="model.hakux.result.hakutyyppiUri" version='12345' locale="FI" />
+                    <div koodi uri="model.hakux.result.hakutyyppiUri">resolved</div>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakukausi">Hakukausi ja vuosi</th>
                 <td colspan="2">
-                    <span xxxx koodisto=""  koodi-uri="model.hakux.result.hakukausiUri" />
+                    <div data-koodi data-uri="model.hakux.result.hakukausiUri">resolved</div>
                     {{ model.hakux.result.hakukausiVuosi }}
                 </td>
             </tr>
@@ -35,7 +28,7 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.alkamiskausi">Koulutuksen alkamiskausi</th>
                 <td colspan="2">
-                    <span xxxx koodi-uri="model.hakux.result.koulutuksenAlkamiskausiUri" />
+                    <div data-koodi data-uri="model.hakux.result.koulutuksenAlkamiskausiUri">resolved</div>
                     {{ model.hakux.result.koulutuksenAlkamisVuosi }}
                 </td>
             </tr>
@@ -43,14 +36,14 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.kohdejoukko">Haun kohdejoukko</th>
                 <td colspan="2">
-                    <span xxxx koodi-uri="model.hakux.result.kohdejoukkoUri" />
+                    <div data-koodi data-uri="model.hakux.result.kohdejoukkoUri">resolved</div>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakutapa">Hakutapa</th>
                 <td colspan="2">
-                    <span xxxx koodi-uri="model.hakux.result.hakutapaUri" />
+                    <div data-koodi data-uri="model.hakux.result.hakutapaUri">resolved</div>
                 </td>
             </tr>
 
@@ -64,11 +57,11 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
                 <td colspan="2">
-                    TODO
                     <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
-                        {{ hakuaika.hakuaikaId }}
-                        {{ hakuaika.alkuPvm }}
-                        {{ hakuaika.loppuPvm }}
+                        <div t-show-date value="hakuaika.alkuPvm" timestamp>alkuPvm</div> -
+                        <div t-show-date value="hakuaika.loppuPvm" timestamp>loppuPvm</div>
+                        {{ hakuaika.nimi }}
+                        {{$last ? '': ', '}}
                     </div>
                 </td>
             </tr>
@@ -100,7 +93,7 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Tarjonnan julkaisun takaraja</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                	<t-show-date value="parametrit.PH_TJT" timestamp/>
                 </td>
             </tr>
 
@@ -120,14 +113,14 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Koekutsujen muodostaminen</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                	<t-show-date value="parametrit.PH_KKM_S" timestamp/> --- <t-show-date value="parametrit.PH_KKM_E" timestamp/> 
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Tarjontatiedon muokkauksen takaraja</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+	                <t-show-date value="parametrit.PH_HKMT" timestamp/>
                 </td>
             </tr>
 
@@ -140,21 +133,21 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Harkinnan varaisen valinnan päätösten tallennus päättyy</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+	                <t-show-date value="parametrit.PH_HVVPTP" timestamp/>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Valintalaskennan suorittaminen</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+                	<t-show-date value="parametrit.PH_VLS_S" timestamp/> --- <t-show-date value="parametrit.PH_VLS_E" timestamp/> 
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Sijoittelun suorittaminen</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+	                <t-show-date value="parametrit.PH_SS_S" timestamp/>
                 </td>
             </tr>
 
@@ -174,14 +167,14 @@
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+	                <t-show-date value="parametrit.PH_JKLIP" timestamp/>
                 </td>
             </tr>
 
             <tr>
                 <th ttt="haku.review.haunTiedot.hakulomake">Hakukierros päättyy</th>
                 <td colspan="2">
-                    {{ model.hakux.result.oid}}
+	                <t-show-date value="parametrit.PH_HKP" timestamp/>
                 </td>
             </tr>
 

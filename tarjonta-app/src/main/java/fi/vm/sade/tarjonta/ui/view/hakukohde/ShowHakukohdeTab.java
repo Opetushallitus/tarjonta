@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -58,6 +60,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.ShowHakukohdeValintakoeRow;
 import fi.vm.sade.vaadin.Oph;
 import fi.vm.sade.vaadin.constants.UiMarginEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author : Tuomas Katva Date: 4/3/13
@@ -79,11 +82,58 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private Window addlKoulutusDialogWindow;
     private boolean showPisterajaTable = true;
 
+    @Value("${koodisto-uris.pohjakoulutusvaatimus_er}")
+    private String pohjakoulutusVaatimusEr;
+
     public ShowHakukohdeTab(String language) {
         Preconditions.checkNotNull(language, "Language cannot be null");
         this.language = language;
         this.setMargin(true);
         buildPage(this);
+    }
+
+
+    private boolean isPersvako() {
+
+        HakukohdeViewModel vm = presenter.getModel().getHakukohde();
+
+        List<KoulutusasteTyyppi> persvaos = new ArrayList<KoulutusasteTyyppi>();
+        persvaos.add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+        //persvaos.add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+        KoulutusasteTyyppi koulutusasteTyyppi = vm.getKoulutusasteTyyppi();
+
+
+        if (persvaos.contains(koulutusasteTyyppi)) {
+            return true;
+        } else if (koulutusasteTyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            return  checkErKomotos(loadHakukohdeKomotos(vm.getKomotoOids()));
+
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    private boolean checkErKomotos(List<LueKoulutusVastausTyyppi> koulutukses) {
+
+        for(LueKoulutusVastausTyyppi koulutus: koulutukses) {
+            if (koulutus.getPohjakoulutusvaatimus().getUri().trim().equalsIgnoreCase(pohjakoulutusVaatimusEr)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private List<LueKoulutusVastausTyyppi> loadHakukohdeKomotos(List<String> komotoOids) {
+        List<LueKoulutusVastausTyyppi> koulutukses = new ArrayList<LueKoulutusVastausTyyppi>();
+        for (String komotoOid : komotoOids) {
+          LueKoulutusVastausTyyppi koulutusVastausTyyppi =  presenter.getKoulutusByOid(komotoOid);
+          koulutukses.add(koulutusVastausTyyppi);
+
+        }
+        return koulutukses;
     }
 
     private OrganisaatioContext getContext() {
@@ -642,7 +692,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
         //addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid, "lisatietojaHakemisesta", getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
-        if (!isHakukohdeNivelvaihe()) {
+        if (!isHakukohdeNivelvaihe() && !isPersvako()) {
             SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
             addItemToGrid(grid, "liitteetToimMennessa", presenter.getModel().getHakukohde().getLiitteidenToimitusPvm() == null ? null
                     : sdf.format(presenter.getModel().getHakukohde().getLiitteidenToimitusPvm()));

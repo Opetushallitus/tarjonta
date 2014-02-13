@@ -121,6 +121,11 @@ public class ResultV1RDTO<T> implements Serializable {
      */
     private List<ErrorV1RDTO> _errors;
 
+    /**
+     * Used search params saved here.
+     */
+    private GenericSearchParamsV1RDTO _params = null;
+
     public ResultStatus getStatus() {
         return _status;
     }
@@ -134,6 +139,11 @@ public class ResultV1RDTO<T> implements Serializable {
 
     public ResultV1RDTO(T result) {
         setResult(result);
+    }
+
+    public ResultV1RDTO(T result, ResultStatus status) {
+        setResult(result);
+        setStatus(status);
     }
 
     public T getResult() {
@@ -150,14 +160,26 @@ public class ResultV1RDTO<T> implements Serializable {
 
     public void setErrors(List<ErrorV1RDTO> _errors) {
         this._errors = _errors;
+
+        if (hasErrors()) {
+            setStatus(ResultStatus.ERROR);
+        }
     }
 
+    /**
+     * Adds an error, marks this result state to be ERROR.
+     *
+     * @param error
+     */
     public void addError(ErrorV1RDTO error) {
         if (error != null) {
             if (getErrors() == null) {
                 setErrors(new ArrayList<ErrorV1RDTO>());
             }
             getErrors().add(error);
+
+            // Well, now we have an error...
+            setStatus(ResultStatus.ERROR);
         }
     }
 
@@ -184,5 +206,12 @@ public class ResultV1RDTO<T> implements Serializable {
         return result;
     }
 
+    public GenericSearchParamsV1RDTO getParams() {
+        return _params;
+    }
+
+    public void setParams(GenericSearchParamsV1RDTO _params) {
+        this._params = _params;
+    }
 
 }

@@ -223,7 +223,6 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 var metadata = metadatas[j];
                 nimi[metadata.kieli]=metadata.nimi;
               }
-              console.log("nimi:", nimi);
               ret.resolve(nimi[locale.toUpperCase()]||nimi.FI||nimi.EN||nimi.SV); //fallback
               
             }

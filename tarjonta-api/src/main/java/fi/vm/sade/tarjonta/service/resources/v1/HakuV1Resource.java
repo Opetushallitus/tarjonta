@@ -14,16 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -33,20 +25,31 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
 /**
  * Supported operations.
  *
  * <pre>
- * GET    /             ?count=100 & startIndex=0    -- list of oids
- * GET    oid                                        -- json of haku
- * GET    oid/hakukohde ?count=100 & startIndex=0    -- list of oids
- * GET    oid/state                                  -- state
- * PUT    oid/state                                  -- update state
- * POST   /                                          -- create haku
- * PUT    /oid                                       -- update hakue
- * DELETE oid                                        -- remove haku
+ * GET    /v1/haku/              ?count=100 & startIndex=0      -- list of oids
+ * GET    /v1/haku/multi              ?oid=oid1&oid=oid2&oid=oidN... -- json of hakus  
+ * GET    /v1/haku/oid                                          -- json of haku
+ * GET    /v1/haku/oid/hakukohde ?count=100 & startIndex=0      -- list of oids
+ * GET    /v1/haku/oid/state                                    -- state
+ * PUT    /v1/haku/oid/state                                    -- update state
+ * POST   /v1/haku                                              -- create haku
+ * POST   /v1/haku/oid                                          -- update haku
+ * DELETE /v1/haku/oid                                          -- remove haku
  * </pre>
  *
  * @author mlyly
@@ -55,64 +58,16 @@ import javax.ws.rs.core.MediaType;
 @Api(value = "/v1/haku", description = "Haun REST-rajapinnan versio 1 operaatiot")
 public interface HakuV1Resource {
 
-    //HAUN HAKUEHTO
-    public static class HakuSearchCriteria {
-        
-        public static class Builder{
-            List<HakuSearchCriteria> criteria = new ArrayList<HakuV1Resource.HakuSearchCriteria>();
-
-            public Builder mustMatch(HakuSearchCriteria.Field field, Object value){
-                criteria.add(new HakuSearchCriteria(field, value, Match.MUST));
-                return this;
-            }
-
-            public Builder lessThan(HakuSearchCriteria.Field field, Object value){
-                criteria.add(new HakuSearchCriteria(field, value, Match.LESS_THAN));
-                return this;
-            }
-
-            public Builder moreThan(HakuSearchCriteria.Field field, Object value){
-                criteria.add(new HakuSearchCriteria(field, value, Match.MORE_THAN));
-                return this;
-            }
-
-            public List<HakuSearchCriteria> build() {
-                return criteria;
-            }
-        }
-
-        public static enum Match {
-            MUST,LESS_THAN,MORE_THAN,MUST_NOT;
-        }
-        public static enum Field {
-            TILA, HAKUKAUSI, HAKUVUOSI, KOULUTUKSEN_ALKAMISKAUSI, KOULUTUKSEN_ALKAMISVUOSI, HAKUTAPA, HAKUTYYPPI, KOHDEJOUKKO;
-        }
-
-        HakuSearchCriteria(Field field, Object value,Match match) {
-            this.match = match;
-            this.field = field;
-            this.value = value;
-        }
-        
-        public Match getMatch() {
-            return match;
-        }
-        public Field getField() {
-            return field;
-        }
-        public Object getValue() {
-            return value;
-        }
-
-        private final Match match;
-        private final Field field;
-        private final Object value;
-    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t", notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
+    public ResultV1RDTO<List<String>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c")List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Palauttaa kaikki hakujen oid:t", notes = "Listaa kaikki hakujen oidit", response = OidV1RDTO.class)
-    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> hakuSearchCriteria);
+    @Path("/multi")
+    @ApiOperation(value = "Palauttaa haut annetuilla oideilla", notes = "palauttaa haut", response = OidV1RDTO.class)
+    public ResultV1RDTO<List<HakuV1RDTO>> multiGet(@QueryParam("oid") List<String> oids);
 
     @GET
     @Path("/{oid}")
@@ -126,7 +81,7 @@ public interface HakuV1Resource {
     @ApiOperation(value = "Luo haun", notes = "Luo haun", response = HakuV1RDTO.class)
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku);
 
-    @PUT
+    @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun", notes = "Päivittää haun", response = HakuV1RDTO.class)

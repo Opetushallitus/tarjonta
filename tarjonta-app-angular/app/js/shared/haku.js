@@ -21,6 +21,7 @@ var app = angular.module('Haku', ['ngResource', 'config']);
 app.factory('HakuService', function($http, $q, Config) {
 
 
+
             var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
             return {
@@ -67,10 +68,6 @@ app.factory('HakuService', function($http, $q, Config) {
 
                 }
 
-
-
-
-
             };
 
         });
@@ -82,11 +79,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
         return $resource(serviceUrl, {oid: '@oid'}, {
-            update: {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            },
-            insert: {
+            save: {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
@@ -100,6 +93,11 @@ app.factory('HakuV1', function($resource, $log, Config) {
                 isArray: false,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
+            mget:{
+              url:Config.env.tarjontaRestUrlPrefix + 'haku/multi',
+              method: 'GET',
+              isArray: false,
+            },
             search: {
               method: 'GET',
               isArray: false,
@@ -112,3 +110,69 @@ app.factory('HakuV1', function($resource, $log, Config) {
         });
 
     });
+
+/**
+ * Haku Service
+ */
+app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
+
+  var userKieliUri = LocalisationService.getKieliUri();
+  
+  /**
+   * Palauttaa haun nimen käyttäjän kielellä, tai fallback fi,sv,en tai "[Ei nimeä]"
+   */
+  var resolveNimi = function(haku) {
+    return haku.nimi[userKieliUri]||haku.nimi["kieli_fi"]||haku.nimi["kieli_sv"]||haku.nimi["kieli_en"]||"[Ei nimeä]";
+  };
+  
+  /**
+   * palauttaa promisen hakutulokseen, resolvaa nimen valmiiksi
+   */
+  var mget = function(oids){
+    console.log("multiget:", oids);
+      var defer = $q.defer();
+      HakuV1.mget({oid:oids}).$promise.then(function(haut){
+        console.log("haut:", haut.result);
+        angular.forEach(haut.result, function(haku, key){
+          haku.nimi=resolveNimi(haku);
+        });
+        console.log("resolving haut");
+        defer.resolve(haut.result);
+      });
+      
+      return defer.promise;
+   };
+
+
+  return {
+    /**
+     * Hae hakuja määritellyillä hakuehdoilla
+     */
+    search:function(parameters){
+      console.log("Searching with: ", parameters);
+
+      
+      var defer = $q.defer();
+
+      return HakuV1.search(parameters).$promise.then(function(data){
+//        var haut=[];
+        return mget(data.result);
+//        for(var i=0;i<data.result.length;i++) {
+//          promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
+//            var haku=hakuresult.result;
+//            haut.push(haku);
+//            haku.nimi= resolveNimi(haku);
+//          }));
+//        }
+//        $q.all(promises).then(function(){
+//          defer.resolve(haut);
+//        });
+      });
+//
+//      return defer.promise;
+    }
+    
+  
+  };
+
+});

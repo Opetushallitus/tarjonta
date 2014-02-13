@@ -144,12 +144,12 @@ public class ConverterV1 {
             }
         }
 
-        // Koodistos as pre-resolved
-        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getKohdejoukkoUri()));
-        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
+        // Koodistos as (not) pre-resolved, who needs this?
+//        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getKohdejoukkoUri()));
+//        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
 
         return t;
     }
@@ -180,34 +180,44 @@ public class ConverterV1 {
         haku.setNimi(convertMapToMonikielinenTeksti(hakuV1RDTO.getNimi()));
         haku.setMaxHakukohdes(hakuV1RDTO.getMaxHakukohdes());
 
-        // TODO hakuaika prosessing is kind of brute force Luke
-        for (Hakuaika hakuaika : haku.getHakuaikas()) {
+        // Temporary list of hakuaikas to process
+        ArrayList<Hakuaika> tmpHakuaikas = new ArrayList<Hakuaika>();
+        tmpHakuaikas.addAll(haku.getHakuaikas());
+
+        // Process UI hakuaikas.
+        for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
+            LOG.info("hakuaika: ", hakuaikaDTO);
+
+            Hakuaika ha = haku.getHakuaikaById(hakuaikaDTO.getHakuaikaId());
+            if (ha == null) {
+                LOG.info(" == new hakuaika");
+
+                // NEW hakuaika
+                ha = new Hakuaika();
+                ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
+                ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
+                ha.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
+
+                haku.addHakuaika(ha);
+            } else {
+                LOG.info(" == old hakuaika TODO");
+
+                ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
+                ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
+                ha.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
+
+                // Remove update form the list to find out deleted hakuaikas
+                tmpHakuaikas.remove(ha);
+            }
+        }
+
+        // Remove hakuaikas that are deleted.
+        for (Hakuaika hakuaika : tmpHakuaikas) {
+            LOG.info("DELETED hakuaika: ", hakuaika);
             haku.removeHakuaika(hakuaika);
         }
 
-        for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
-            Hakuaika hakuaika = new Hakuaika();
-            hakuaika.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
-            hakuaika.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
-            hakuaika.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
-
-            haku.addHakuaika(hakuaika);
-        }
-
         return haku;
-    }
-
-
-    private Hakuaika convertHakuaikaV1RDTOToHakuaika(HakuaikaV1RDTO hakuaikaV1RDTO) {
-
-        Hakuaika hakuaika = new Hakuaika();
-
-        hakuaika.setSisaisenHakuajanNimi(hakuaikaV1RDTO.getNimi());
-        hakuaika.setAlkamisPvm(hakuaikaV1RDTO.getAlkuPvm());
-        hakuaika.setPaattymisPvm(hakuaikaV1RDTO.getLoppuPvm());
-
-        return hakuaika;
-
     }
 
 

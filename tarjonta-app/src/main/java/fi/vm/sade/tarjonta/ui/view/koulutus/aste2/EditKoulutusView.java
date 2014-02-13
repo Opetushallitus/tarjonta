@@ -23,9 +23,12 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -34,6 +37,10 @@ import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -62,6 +69,16 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         this.activeTab = activeTab;
     }
 
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
+
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
+
+    private EditKoulutusPerustiedotToinenAsteView perustiedotView;
+
+    private EditKoulutusLisatiedotToinenAsteView lisatiedotView;
+
     @Override
     protected void buildLayout() {
 
@@ -87,10 +104,10 @@ public class EditKoulutusView extends AbstractVerticalLayout {
         addComponent(hlLabelWrapper);
 
         final TabSheet tabs = UiBuilder.tabSheet(this);
-        final EditKoulutusPerustiedotToinenAsteView perustiedotView = new EditKoulutusPerustiedotToinenAsteView(koulutusOid);
+        perustiedotView = new EditKoulutusPerustiedotToinenAsteView(koulutusOid);
         tabs.addTab(perustiedotView, T("perustiedot"));
 
-        final EditKoulutusLisatiedotToinenAsteView lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
+        lisatiedotView = new EditKoulutusLisatiedotToinenAsteView(koulutusOid);
 
         liitteetTab = tabs.addTab(lisatiedotView, T("lisatiedot"));
         liitteetTab.setEnabled(presenter.getModel().getKoulutusPerustiedotModel().isLoaded());
@@ -123,8 +140,72 @@ public class EditKoulutusView extends AbstractVerticalLayout {
             }
             
         });
+
+        enableOrDisableButtons();
     }
-    
+
+    private void enableOrDisableButtons() {
+
+        if (presenter.getModel().getKoulutusPerustiedotModel() != null && presenter.getModel().getKoulutusPerustiedotModel().getOid() != null
+                && presenter.getModel().getKoulutusPerustiedotModel().getOid() != "-1") {
+
+            KoulutusPerustiedotViewModel perustiedotViewModel = presenter.getModel().getKoulutusPerustiedotModel();
+
+            HakukohteetVastaus hakukohteetVastaus = presenter.getHakukohteetForKoulutus(perustiedotViewModel.getOid());
+
+            if(checkHakukohteetForStartedHaku(hakukohteetVastaus)) {
+
+                if (perustiedotView != null) {
+                    perustiedotView.disableOrEnableSaveButtons(false);
+                    lisatiedotView.disableOrEnableSaveButtons(false);
+                }
+
+            }
+
+
+        }
+
+
+    }
+
+    private Boolean checkHakukohteetForStartedHaku(HakukohteetVastaus hakukohteetVastaus) {
+        if (hakukohteetVastaus != null && hakukohteetVastaus.getHitCount() > 0) {
+
+            boolean hakuStarted = false;
+            for (HakukohdePerustieto hakukohdePerustieto : hakukohteetVastaus.getHakukohteet()) {
+                hakuStarted = checkHakuStarted(hakukohdePerustieto.getHakuAlkamisPvm(),hakukohdePerustieto.getHakutyyppiUri());
+            }
+
+
+            return hakuStarted;
+        } else {
+            return false;
+        }
+    }
+
+    private Boolean checkHakuStarted(Date hakuAlkamisPvm, String hakutyyppi) {
+
+        Date minAlkamisPvm = getMinHakuAlkamisDate(hakuAlkamisPvm);
+
+        if (this.hakutyyppiLisahakuUrl.equals(hakutyyppi) || this.hakutapaErillishaku.equals(hakutyyppi)) {
+            return false;
+        } else if (new Date().after(minAlkamisPvm)) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(hakualkamisPvm);
+        cal.add(Calendar.DATE, -3);
+        return cal.getTime();
+    }
+
     @SuppressWarnings("rawtypes")
     private boolean isTabChangeable(AbstractEditLayoutView tabView) {
         if (!tabView.isSaved()) {

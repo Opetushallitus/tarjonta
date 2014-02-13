@@ -301,6 +301,8 @@ public class HakukohdeViewModelToDTOConverter {
         if (hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()
                 != null) {
             hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(new DecimalFormat(NUMBER_FORMAT).format(hakukohdeTyyppi.getAlinHyvaksyttavaKeskiarvo()));
+        } else {
+            hakukohdeVM.setAlinHyvaksyttavaKeskiarvo(null);
         }
         return hakukohdeVM;
     }

@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import javax.persistence.*;
@@ -294,6 +293,23 @@ public class Haku extends TarjontaBaseEntity {
         }
     }
 
+    public Hakuaika getHakuaikaById(String hakuaikaId) {
+        try {
+            return getHakuaikaById(Long.parseLong(hakuaikaId));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    public Hakuaika getHakuaikaById(Long hakuaikaId) {
+        for (Hakuaika hakuaika : getHakuaikas()) {
+            if (hakuaika.getId().equals(hakuaikaId)) {
+                return hakuaika;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns current state. Value is a Koodisto uri.
      *
@@ -377,5 +393,6 @@ public class Haku extends TarjontaBaseEntity {
     public void setMaxHakukohdes(int maxHakukohdes) {
         this.maxHakukohdes = maxHakukohdes;
     }
+
 }
 

@@ -203,7 +203,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                   $scope.onchangecallback(koodi);
 
               } else {
-                  $log.info('No onchangecallback defined');
+                  //$log.info('No onchangecallback defined');
               }
           };
 

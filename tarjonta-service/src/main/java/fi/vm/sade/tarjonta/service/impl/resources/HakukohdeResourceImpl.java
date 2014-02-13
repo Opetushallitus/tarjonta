@@ -76,8 +76,8 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
             LOG.debug("  count not specified, autolimit search to {} entries!", count);
         }
 
-        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.debug("  result={}", result);
+        List<OidRDTO> result = HakuResourceImpl.convertOidList(hakukohdeDAO.findOIDsBy(tarjontaTila != null ? tarjontaTila.asDto() : null, count, startIndex, lastModifiedBefore, lastModifiedSince,false));
+        LOG.debug("  result count ={}", result.size());
         return result;
     }
 
@@ -317,6 +317,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
                     lt.getValintakoePisterajas().addAll(addToBothVKs);
 
                     result.add(lt);
+                }
+
+                // Jos valintakokeella ei ole pisterajoja
+                if(lt == null && vk == null) {
+                    result.add(tmp);
                 }
             } else {
                 // Normal and the default case. NOT REACHED at the moment

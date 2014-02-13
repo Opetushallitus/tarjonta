@@ -15,9 +15,11 @@
 
 var app = angular.module('app.haku.review.ctrl', []);
 
-app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log', '$routeParams', 'LocalisationService', '$modal', '$q', '$timeout',
-    function HakuReviewController($scope, $location, $route, $log, $routeParams, LocalisationService, $modal, $q, $timeout) {
+app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log', '$routeParams', 'LocalisationService', '$q', '$timeout', 'ParameterService',
+    function HakuReviewController($scope, $location, $route, $log, $routeParams, LocalisationService, $q, $timeout, ParameterService) {
         $log.info("HakuReviewController()", $scope, $route, $routeParams);
+
+        var hakuOid = $route.current.params.id;
 
         // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve
 
@@ -61,6 +63,9 @@ app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log',
         };
 
         $scope.init();
+        
+        $scope.parametrit={};
+        ParameterService.haeHaunParametrit(hakuOid, $scope.parametrit);
 
     }]);
 
