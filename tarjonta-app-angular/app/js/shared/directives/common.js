@@ -64,38 +64,51 @@ app.directive('kuvaus', function() {
 
 
 /**
- * tulostaa päivämäärän:
- * <t-show-date value="haku.alkoitusPvm" timestamp/>
- * <t-show-date value="haku.alkoitusPvm" timestamp/>
- * <div t-show-date value="haku.alkoitusPvm" timestamp>replaced</div>
- * <div t-show-date value="haku.alkoitusPvm" timestamp/>
+ * tulostaa päivämäärän: <t-show-date value="haku.alkoitusPvm" timestamp/>
+ * <t-show-date value="haku.alkoitusPvm" timestamp/> <div t-show-date
+ * value="haku.alkoitusPvm" timestamp>replaced</div> <div t-show-date
+ * value="haku.alkoitusPvm" timestamp/>
+ * 
+ * mikäli arvo ei ole määritelty asettaa watchin ja hoitaa tulostuksen heti kun
+ * mahdollista, eli ts dataa ei tarvitse ladata routessa valmiiksi
  */
-.directive('tShowDate',function($filter) {
+.directive('tShowDate', function($filter) {
 
-    return {
-        restrict: 'EA',
-        link: function(scope, element, attrs) {
-            var value = scope.$eval(attrs.value);
-            // console.log("tShowDate, value: ", attrs.value, value);
+  return {
+    restrict : 'EA',
+    link : function(scope, element, attrs) {
 
-             if (value) {
-                 var isLong = (typeof value == "number");
-                 var date = isLong?new Date(value):value;
-                 var format = "d.M.yyyy";
+      var value = scope.$eval(attrs.value);
+      if (!value) {
+        var unregister = scope.$watch(attrs.value, function(nv, ov) {
+          if(nv) processValue(nv);
+        });
+      }
 
-                 if (angular.isDefined(attrs.timestamp)) {
-                     format += " HH:mm";
-                 }
+      var processValue = function(value) {
+        // console.log("tShowDate, value: ", attrs.value, value);
 
-                var result = $filter('date')(date, format);
-                console.log("DATE == " + result, format);
-                element.replaceWith(result);
-            } else {
-                element.replaceWith("-");
-            }
+        var isLong = (typeof value == "number");
+        var date = isLong ? new Date(value) : value;
+        var format = "d.M.yyyy";
+
+        if (angular.isDefined(attrs.timestamp)) {
+          format += " HH:mm";
         }
 
-    };
+        var result = $filter('date')(date, format);
+        console.log("DATE == " + result, format);
+        element.replaceWith(result);
+        if (unregister) {
+          unregister();
+        }
+      }
+      
+      if(value) {
+        processValue(value);
+      }
+
+    }
+
+  };
 });
-
-
