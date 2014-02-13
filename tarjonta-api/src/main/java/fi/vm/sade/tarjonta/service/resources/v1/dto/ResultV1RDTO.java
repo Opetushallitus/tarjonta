@@ -141,6 +141,11 @@ public class ResultV1RDTO<T> implements Serializable {
         setResult(result);
     }
 
+    public ResultV1RDTO(T result, ResultStatus status) {
+        setResult(result);
+        setStatus(status);
+    }
+
     public T getResult() {
         return _result;
     }
