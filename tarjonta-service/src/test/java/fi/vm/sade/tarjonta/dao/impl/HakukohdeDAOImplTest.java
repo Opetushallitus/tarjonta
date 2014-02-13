@@ -104,36 +104,36 @@ public class HakukohdeDAOImplTest extends TestData {
     public void testFindOidsBy() {
         {
             // TILA
-            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, null);
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, null,true);
             assertEquals(result.size(), 3);
         }
         {
             // TILA
-            List<String> result = instance.findOIDsBy(TarjontaTila.LUONNOS, 100, 0, null, null);
+            List<String> result = instance.findOIDsBy(TarjontaTila.LUONNOS, 100, 0, null, null,true);
             assertEquals(result.size(), 0);
         }
 
 
         {
             // TILA
-            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 2, 0, null, null);
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 2, 0, null, null,true);
             assertEquals(result.size(), 2);
         }
         {
             // TILA
-            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 1, null, null);
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 1, null, null,true);
             assertEquals(result.size(), 2);
         }
 
         Date d = new Date();
         {
             // TILA + date before
-            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, d, null);
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, d, null,true);
             assertEquals(result.size(), 3);
         }
         {
             // TILA + date after
-            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, d);
+            List<String> result = instance.findOIDsBy(TarjontaTila.VALMIS, 100, 0, null, d,true);
             assertEquals(result.size(), 0);
         }
 
