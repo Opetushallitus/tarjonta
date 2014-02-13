@@ -1,5 +1,125 @@
 <div>
 
+    <tabset>
+        <tab ng-repeat="kieli in kokeetModel.opetusKielet" heading="{{kieli.koodiNimi}}" active="kokeetModel.selectedTab[kieli.koodiUri]">
+	        <p class="float-right">
+		        <button class="btn btn-primary" ng-click="addValintakoe(kieli.koodiUri)"><span tt="tarjonta.hakukohde.valintakoe.listaus.uusi.valintakoe"></span> <span class="icon-plus-sign"></span></button>
+		    </p>
+		    <hr class="clear-both"/>
+
+            <table class="tarjontaForm">
+   		    <tbody ng-repeat="valintakoe in getValintakokeetByKieli(kieli.koodiUri)">
+                <tr class="required">
+                    <th tt="tarjonta.hakukohde.valintakoe.modal.valintakoenimi"></th>
+                    <td><input type="text" ng-model="valintakoe.valintakoeNimi"/></td>
+                    <td style="vertical-align:top">
+                        <div class="float-right">
+                            <button class="btn"
+                                ng-click="deleteValintakoe(valintakoe)" tt="tarjonta.toiminnot.poista">(Poista)</button>
+                        </div>
+                    </td>
+                </tr>
+                            
+                <tr class="required">
+                    <th tt="tarjonta.hakukohde.valintakoe.modal.kuvaus"></th>
+                    <td colspan="2">
+                        <rich-textarea mode="false" model="valintakoe.valintakokeenKuvaus.teksti"></rich-textarea>
+                    </td>
+                </tr>
+
+                <tr class="header">
+                    <th></th>
+                    <td tt="tarjonta.hakukohde.valintakoe.modal.ajankohta"></td>
+                    <td>
+                        <p class="float-right">
+                            <button class="btn createUpdate"
+                                ng-show="!valintakoe.selectedAjankohta.selected"
+                                ng-click="saveAjankohta(valintakoe)"
+                                ng-disabled="!canSaveAjankohta(valintakoe)"
+                                tt="tarjonta.toiminnot.lisää">(lisää)</button>
+
+                            <button class="btn createUpdate"
+                                ng-show="valintakoe.selectedAjankohta.selected"
+                                ng-click="saveAjankohta(valintakoe)"
+                                ng-disabled="!canSaveAjankohta(valintakoe)"
+                                tt="tarjonta.toiminnot.päivitä">(päivitä)</button>
+                            
+                            <button class="btn"
+                                ng-click="resetAjankohta(valintakoe)" tt="tarjonta.toiminnot.peruuta">(Peruuta)</button>
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- ajankohta -->
+                <tr class="required">
+                    <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.aika"></th>
+                    <td>
+                        <t-date-time timestamp="true" type="long" ng-model="valintakoe.selectedAjankohta.alkaa" max="valintakoe.selectedAjankohta.loppuu"></t-date-time>
+                        -
+                        <t-date-time timestamp="true" type="long" ng-model="valintakoe.selectedAjankohta.loppuu" min="valintakoe.selectedAjankohta.alkaa"></t-date-time>
+                    </td>
+                    <td></td>
+                </tr>
+
+                <!-- katuosoite -->                            
+                <tr class="required">
+                    <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.sijainti"></th>
+                    <td><osoite-field model="valintakoe.selectedAjankohta.osoite"></osoite-field></td>
+                    <td></td>
+                </tr>
+                
+                <!--  lisätietoa -->                            
+                <tr>
+                    <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.lisatieto"></th>
+                    <td><input type="text" class="wide" ng-model="valintakoe.selectedAjankohta.lisatiedot"/></td>
+                    <td></td>
+                </tr>
+                
+                <!--  ajankohta-taulukko -->                            
+                <tr>
+                    <th></th>
+                    <td colspan="2">
+                        
+                        <table class="table table-hover selection">
+                            <tr>
+	                            <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.table.aika"></th>
+	                            <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.table.sijaint"></th>
+	                            <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.table.lisatietoja" colspan="2"></th>
+                            </tr>
+                            <tr ng-repeat="ajankohta in valintakoe.valintakoeAjankohtas" class="{{ajankohta.selected ? 'selected' : ''}}">
+                                <td><a href ng-click="selectAjankohta(valintakoe, ajankohta)">{{ajankohta.alkaa | date:'d.M.yyyy H:mm'}} - {{ajankohta.loppuu | date:'d.M.yyyy H:mm'}}</a></td>
+                                <td>{{ajankohta.osoite | osoite}}</td>
+                                <td>{{ajankohta.lisatiedot}}</td>
+                                <td><div class="align-right"><button ng-click="deleteAjankohta(valintakoe, ajankohta)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button></div></td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+                		        
+		        <!-- väli -->
+		        <tr class="padding" ng-show="!$last"><td colspan="3"><hr/></td></tr>
+		    </tbody>
+		    
+		    </table>
+        
+        </tab>
+        <tab class="addLangTab">
+            <tab-heading><span class="icon-plus"></span></tab-heading>
+            <multi-select
+                on-change="onLangSelection()"
+                x-order-with="userLangs"
+                model="kokeetModel.langs"
+                selection="kokeetModel.selectedLangs"
+                display="dualpane"></multi-select>
+        </tab>
+    </tabset>
+    <!-- 
+    <pre>{{kokeetModel | json}}</pre>
+    <pre>{{model | json}}</pre>
+     -->
+     
+<!-- 
     <p class="float-right">
         <button class="btn btn-primary" ng-click="model.newValintakoe()">{{t('tarjonta.hakukohde.valintakoe.listaus.uusi.valintakoe')}} <span class="icon-plus-sign"></span></button>
     </p>
@@ -10,9 +130,9 @@
                 <tr>
                     <th tt="tarjonta.hakukohde.valintakoe.listaus.valintakokeen.kuvaus"></th>
                     <th tt="tarjonta.hakukohde.valintakoe.listaus.valintakokeen.aika"></th>
-                    <!-- 
+                    <!- - 
                     <th tt="tarjonta.hakukohde.valintakoe.listaus.valintakokeen.lisatiedot"></th>
-                     -->
+                     - ->
                     <th></th>
                 </tr>
                 <tr data-ng-repeat="valintakoe in model.valintakokees | filter:{kieliNimi:kieli}">
@@ -33,5 +153,5 @@
             </table>
         </tab>
     </tabset>
-
+ -->
 </div>

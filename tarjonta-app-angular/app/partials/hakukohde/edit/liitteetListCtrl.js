@@ -2,17 +2,19 @@ var app =  angular.module('app.kk.edit.hakukohde.ctrl');
 
 app.controller('LiitteetListController',function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Liite, dialogService , HakuService, $modal ,Config,$location, TarjontaService) {
 
-    $scope.model.liitteet = [];
-    $scope.model.opetusKielet = [];
+	$scope.liitteetModel = {};
+	
+    $scope.liitteetModel.liitteet = [];
+    $scope.liitteetModel.opetusKielet = [];
     
-    $scope.model.selectedLiite = {};
+    $scope.liitteetModel.selectedLiite = {};
 
-    $scope.model.selectedTab = {};
-    
-    $scope.langs = [];
-    $scope.selectedLangs = [];
-    
     var initialTabSelected = false;
+    $scope.liitteetModel.selectedTab = {};
+    
+    $scope.liitteetModel.langs = [];
+    $scope.liitteetModel.selectedLangs = [];
+    
     
     function getDefaultOsoite() {
     	return {
@@ -24,9 +26,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     
     function newLiite(lc) {
     	var tmennessa = 0;
-    	for (var hn in $scope.model.hakus) {
-    		for (var an in $scope.model.hakus[hn].hakuaikas) {
-    			var ha = $scope.model.hakus[hn].hakuaikas[an];
+    	for (var hn in $scope.liitteetModel.hakus) {
+    		for (var an in $scope.liitteetModel.hakus[hn].hakuaikas) {
+    			var ha = $scope.liitteetModel.hakus[hn].hakuaikas[an];
     			if (ha.hakuaikaId == $scope.model.hakukohde.hakuaikaId) {
     				tmennessa = ha.loppuPvm;
     				break;
@@ -51,32 +53,46 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
         liitteetPromise.then(function(liitteet){
             //console.log('LIITTEET GOT: ',liitteet);
-            $scope.model.liitteet = liitteet.result;
+            $scope.liitteetModel.liitteet = liitteet.result;
             for (var i in liitteet.result) {
             	var li = liitteet.result[i];
-            	if ($scope.selectedLangs.indexOf(li.kieliUri)==-1) {
-            		$scope.selectedLangs.push(li.kieliUri);
+            	if ($scope.liitteetModel.selectedLangs.indexOf(li.kieliUri)==-1) {
+            		$scope.liitteetModel.selectedLangs.push(li.kieliUri);
             	}
             }
         });
+    }
+    
+    function containsOpetuskieli(lc) {
+    	for (var i in $scope.liitteetModel.opetusKielet) {
+    		if ($scope.liitteetModel.opetusKielet[i].koodiUri==lc) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     var kielet = Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale());
     kielet.then(function(ret){
     	
     	//console.log("KIELET = ", ret);
-    	$scope.langs = ret;
+       	
+       	$scope.liitteetModel.langs = ret;
     	for (var i in ret) {
     		var lc = ret[i].koodiUri;
     		var p = $scope.model.hakukohde.opetusKielet.indexOf(lc);
     		if (p!=-1) {
-    			$scope.model.opetusKielet.push(ret[i]);
-    			$scope.model.selectedLiite[lc] = newLiite(lc);
-    			$scope.model.selectedTab[lc] = !initialTabSelected;
+
+    			$scope.liitteetModel.selectedLiite[lc] = newLiite(lc);
+    			$scope.liitteetModel.selectedTab[lc] = !initialTabSelected;
    				initialTabSelected = true;
-   				
-   				if ($scope.selectedLangs.indexOf(lc)==-1) {
-   					$scope.selectedLangs.push(lc);
+
+    			if (!containsOpetuskieli(lc)) {
+        			$scope.liitteetModel.opetusKielet.push(ret[i]);
+    			}
+    			
+   				if ($scope.liitteetModel.selectedLangs.indexOf(lc)==-1) {
+   					$scope.liitteetModel.selectedLangs.push(lc);
    				}
     		}
     	}
@@ -84,43 +100,57 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     });
     
     $scope.onLangSelection = function() {
-    	for (var i in $scope.model.liitteet) {
-        	var li = $scope.model.liitteet[i];
-        	if ($scope.selectedLangs.indexOf(li.kieliUri)==-1) {
-        		$scope.selectedLangs.push(li.kieliUri);
+    	for (var i in $scope.liitteetModel.liitteet) {
+        	var li = $scope.liitteetModel.liitteet[i];
+        	if ($scope.liitteetModel.selectedLangs.indexOf(li.kieliUri)==-1) {
+        		$scope.liitteetModel.selectedLangs.push(li.kieliUri);
         	}
         }
     	
-    	for (var i in $scope.model.opetusKielet) {
-    		var k = $scope.model.opetusKielet[i];
-    		var si = $scope.selectedLangs.indexOf(k.koodiUri);
+    	for (var i in $scope.liitteetModel.opetusKielet) {
+    		var k = $scope.liitteetModel.opetusKielet[i];
+    		var si = $scope.liitteetModel.selectedLangs.indexOf(k.koodiUri);
     		if (si==-1) {
-    			$scope.model.opetusKielet.splice(i,1);
-    			$scope.model.selectedLiite[k.koodiUri] = undefined;
+    			$scope.liitteetModel.opetusKielet.splice(i,1);
+    			$scope.liitteetModel.selectedLiite[k.koodiUri] = undefined;
 			}
     	}
     	
-    	for (var i in $scope.selectedLangs) {
-    		var lc = $scope.selectedLangs[i];
-    		if (!$scope.model.selectedLiite[lc]) {
-        		$scope.model.selectedLiite[lc] = newLiite(lc);
+    	//console.log("OKS WAS ", $scope.liitteetModel.opetusKielet);
+    	
+    	for (var i in $scope.liitteetModel.selectedLangs) {
+    		var lc = $scope.liitteetModel.selectedLangs[i];
+    		if (!$scope.liitteetModel.selectedLiite[lc]) {
+        		$scope.liitteetModel.selectedLiite[lc] = newLiite(lc);
         		
-        		for (var j in $scope.langs) {
-        			if ($scope.langs[j].koodiUri == lc) {
-        				$scope.model.opetusKielet.push($scope.langs[j]);
+        		for (var j in $scope.liitteetModel.langs) {
+            		
+        			var kieliSelected = false;
+            		/*for (var k in $scope.liitteetModel.opetusKielet) {
+                		var ok = $scope.liitteetModel.opetusKielet[k];
+                		if (ok.kieliUri == lc) {
+                			kieliSelected = true;
+                			break;
+                		}
+                	}*/
+            		
+        			if ($scope.liitteetModel.langs[j].koodiUri == lc && !containsOpetuskieli(lc)) {
+        				$scope.liitteetModel.opetusKielet.push($scope.liitteetModel.langs[j]);
         				break;
         			}
         		}
     		}
     	}
-    	
+
+    	//console.log("OKS IS ", $scope.liitteetModel.opetusKielet);
+
     }
     
     $scope.getLiitteetByKieli = function(lc) {
     	var ret = [];
     	
-    	for (var i in $scope.model.liitteet) {
-    		var li = $scope.model.liitteet[i];
+    	for (var i in $scope.liitteetModel.liitteet) {
+    		var li = $scope.liitteetModel.liitteet[i];
     		if (li.kieliUri == lc) {
     			ret.push(li);
     		}
@@ -133,9 +163,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     $scope.selectLiite = function(liite) {
     	//console.log("select liite",liite);
     	
-    	for (var i in $scope.model.liitteet) {
-    		if ($scope.model.liitteet[i].kieliUri == liite.kieliUri) {
-    			$scope.model.liitteet[i].selected = false;
+    	for (var i in $scope.liitteetModel.liitteet) {
+    		if ($scope.liitteetModel.liitteet[i].kieliUri == liite.kieliUri) {
+    			$scope.liitteetModel.liitteet[i].selected = false;
     		}
     	}
     	
@@ -143,84 +173,85 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 		liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite != null;
 		
 		liite.selected = true;
-		/*if ($scope.model.selectedLiite[liite.kieliUri]) {
-			$scope.model.selectedLiite[liite.kieliUri].selected = false;
+		/*if ($scope.liitteetModel.selectedLiite[liite.kieliUri]) {
+			$scope.liitteetModel.selectedLiite[liite.kieliUri].selected = false;
 		}*/
 		
-    	$scope.model.selectedLiite[liite.kieliUri] = angular.copy(liite);
+    	$scope.liitteetModel.selectedLiite[liite.kieliUri] = angular.copy(liite);
     }
  
     // palauttaa oletusarvot
     $scope.resetLiite = function(kieliUri) {
-    	if ($scope.model.selectedLiite[kieliUri].oid) {
+    	/*if ($scope.liitteetModel.selectedLiite[kieliUri].oid) {
     		// olemassaoleva
-    		for (var i in $scope.model.liitteet) {
-    			var cl = $scope.model.liitteet[i];
-    			if (cl.oid==$scope.model.selectedLiite[kieliUri].oid) {
+    		for (var i in $scope.liitteetModel.liitteet) {
+    			var cl = $scope.liitteetModel.liitteet[i];
+    			if (cl.oid==$scope.liitteetModel.selectedLiite[kieliUri].oid) {
     	        	$scope.selectLiite(cl);
     	        	return;
     			}
     		}
-    	} else {
+    	} else {*/
     		// uusi
-        	$scope.selectLiite(newLiite(kieliUri));
-    	}
+    	$scope.selectLiite(newLiite(kieliUri));
+    	$scope.liitteetModel.selectedLiite[kieliUri].selected = false;
+    	//}
     }
     
     $scope.deleteLiite = function(liite) {
         liite.hakukohdeOid = $scope.model.hakukohde.oid;
-        var liiteResource = new Liite(liite);
+        /*var liiteResource = new Liite(liite);
         liiteResource.$delete().then(function(){
-            var index = $scope.model.liitteet.indexOf(liite);
+            var index = $scope.liitteetModel.liitteet.indexOf(liite);
             if (index==-1) {
             	return;
-            }
-            $scope.model.liitteet.splice(index,1);
-        });
+            }*/
+        $scope.liitteetModel.liitteet.splice(index,1);
+        //});
     };
 
     // tallentaa liitteen
     $scope.saveLiite = function(kieliUri) {
     	var ci = -1;
-		for (var i in $scope.model.liitteet) {
-			var cl = $scope.model.liitteet[i];
+		for (var i in $scope.liitteetModel.liitteet) {
+			var cl = $scope.liitteetModel.liitteet[i];
 			if (cl.selected) {
 				ci = i;
 				break;			
 			}
 		}
     	
-    	var liite = angular.copy($scope.model.selectedLiite[kieliUri]);
+    	var liite = angular.copy($scope.liitteetModel.selectedLiite[kieliUri]);
     	liite.selected = true;
     	if (ci!=-1) {
-    		$scope.model.liitteet[ci] = liite;
+    		$scope.liitteetModel.liitteet[ci] = liite;
     	} else {
-    		ci = $scope.model.liitteet.length;
-        	$scope.model.liitteet.push(liite);
+    		ci = $scope.liitteetModel.liitteet.length;
+        	$scope.liitteetModel.liitteet.push(liite);
     	}
     	
     	liite.hakukohdeOid = $scope.model.hakukohde.oid;
     	
-    	var res  = new Liite(liite);
-    	(liite.oid ? res.$update() : res.$save()).then(function(resp){
-    		$scope.model.liitteet[ci] = resp;
-    		$scope.selectLiite(resp);
-    	});
+    	//var res  = new Liite(liite);
+    	//(liite.oid ? res.$update() : res.$save()).then(function(resp){
+    	//	$scope.liitteetModel.liitteet[ci] = resp;
+    		//$scope.selectLiite(resp);
+		$scope.createLiite(kieliUri);
+    	//});
     }
     
 
     // tosi, jos formi on valiidi
     $scope.canSaveLiite = function(kieliUri) {
         // validointi manuaalisesti; angularin formi ei toimi tässä tapauksessa
-       	var liite = $scope.model.selectedLiite[kieliUri];
-    	return notEmpty(liite.liitteenNimi)
+       	var liite = $scope.liitteetModel.selectedLiite[kieliUri];
+    	return liite && notEmpty(liite.liitteenNimi)
     		&& notEmpty(liite.liitteenKuvaus.teksti)
     		&& liite.toimitettavaMennessa!=null
     		&& (!liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite))
     		&& (!liite.muuOsoiteEnabled || (liite.liitteenToimitusOsoite
-    				&& notEmpty(liite.liitteenToimitusOsoite.osoiterivi1,
-    						liite.liitteenToimitusOsoite.postinumero,
-    						liite.liitteenToimitusOsoite.postitoimipaikka)));
+    				&& notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
+    						liite.liitteenToimitusOsoite.postinumero])));
     }
 
     // avaa uuden liitteen editoitavaksi
@@ -230,8 +261,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     
     $scope.isUnsaved = function(liite) {
     	var cl;
-		for (var i in $scope.model.liitteet) {
-			cl = $scope.model.liitteet[i];
+		for (var i in $scope.liitteetModel.liitteet) {
+			cl = $scope.liitteetModel.liitteet[i];
 			if (cl.selected) {
 				break;
 			} else {

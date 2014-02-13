@@ -1,23 +1,35 @@
 <div class="localizedTabs">
 
     <tabset>
-        <tab ng-repeat="kieli in model.opetusKielet" heading="{{kieli.koodiNimi}}" active="model.selectedTab[kieli.koodiUri]">
+        <tab ng-repeat="kieli in liitteetModel.opetusKielet" heading="{{kieli.koodiNimi}}" active="liitteetModel.selectedTab[kieli.koodiUri]">
+        
+            <p class="float-right">
+                <button class="btn btn-primary"
+                    ng-click="createLiite(kieli.koodiUri)"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus-sign"></span></button>
+            </p>
+        
+            <hr class="clear-both"/>
+        
             <table class="tarjontaForm">
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.liite.modal.nimi"></th>
-                    <td><input type="text" ng-model="model.selectedLiite[kieli.koodiUri].liitteenNimi"/></td>
+                    <td><input type="text" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].liitteenNimi"/></td>
                     <td style="vertical-align:top">
                         <div class="float-right">
-                            <button class="btn {{isUnsaved(model.selectedLiite[kieli.koodiUri]) ? 'btn-primary' : ''}}"
+                            <button class="btn createUpdate"
+                                ng-show="!liitteetModel.selectedLiite[kieli.koodiUri].selected"
                                 ng-click="saveLiite(kieli.koodiUri)"
-                                ng-disabled="!canSaveLiite(kieli.koodiUri)" tt="tarjonta.toiminnot.tallenna">(Tallenna)</button>
+                                ng-disabled="!canSaveLiite(kieli.koodiUri)"
+                                tt="tarjonta.toiminnot.lisää">(Lisää)</button>
+                            
+                            <button class="btn createUpdate"
+                                ng-show="liitteetModel.selectedLiite[kieli.koodiUri].selected"
+                                ng-click="saveLiite(kieli.koodiUri)"
+                                ng-disabled="!canSaveLiite(kieli.koodiUri)"
+                                tt="tarjonta.toiminnot.päivitä">(Päivitä)</button>
+                            
                             <button class="btn"
                                 ng-click="resetLiite(kieli.koodiUri)" tt="tarjonta.toiminnot.peruuta">(Peruuta)</button>
-                            
-                            <span>&nbsp;</span>
-                            
-	                        <button class="btn"
-	                            ng-click="createLiite(kieli.koodiUri)"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus"></span></button>
                         </div>
                     </td>
                 </tr>    
@@ -25,14 +37,14 @@
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.liite.modal.kuvaus"></th>
                     <td colspan="2">
-                        <rich-textarea mode="false" model="model.selectedLiite[kieli.koodiUri].liitteenKuvaus.teksti"></rich-textarea>
+                        <rich-textarea mode="false" model="liitteetModel.selectedLiite[kieli.koodiUri].liitteenKuvaus.teksti"></rich-textarea>
                     </td>
                 </tr>
             
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.liite.modal.toimitettavaMennessa"></th>
                     <td>
-                        <t-date-time timestamp="true" type="long" ng-model="model.selectedLiite[kieli.koodiUri].toimitettavaMennessa"></t-date-time>
+                        <t-date-time timestamp="true" type="long" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].toimitettavaMennessa"></t-date-time>
                     </td>
                     <td></td>
                 </tr>
@@ -40,18 +52,18 @@
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.liite.modal.toimitusosoite"></th>
                     <td>
-                        <input type="radio" name="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="false" /> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span><br/>
-                        <input type="radio" name="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="true"/> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
+                        <input type="radio" name="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="false" /> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span><br/>
+                        <input type="radio" name="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="true"/> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
                         
                         <div class="inset">
-                            <osoite-field model="model.selectedLiite[kieli.koodiUri].liitteenToimitusOsoite" ng-disabled="!model.selectedLiite[kieli.koodiUri].muuOsoiteEnabled"></osoite-field>
+                            <osoite-field model="liitteetModel.selectedLiite[kieli.koodiUri].liitteenToimitusOsoite" ng-disabled="!liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled"></osoite-field>
                         </div>
                         
-                        <input type="checkbox" ng-model="model.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/> <span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span><br/>
+                        <input type="checkbox" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/> <span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span><br/>
                         
                         
                         <div class="inset">
-                            <input type="text" ng-model="model.selectedLiite[kieli.koodiUri].sahkoinenToimitusOsoite" ng-disabled="!model.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/>
+                            <input type="text" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].sahkoinenToimitusOsoite" ng-disabled="!liitteetModel.selectedLiite[kieli.koodiUri].sahkoinenOsoiteEnabled"/>
                         </div>
                     </td>
                     <td></td>
@@ -77,7 +89,7 @@
             </table>
             
             <!-- 
-            <pre>{{ model.selectedLiite[kieli.koodiUri] | json }}</pre>
+            <pre>{{ liitteetModel.selectedLiite[kieli.koodiUri] | json }}</pre>
              -->
             
         </tab>
@@ -88,15 +100,15 @@
             <multi-select
                 on-change="onLangSelection()"
                 x-order-with="userLangs"
-                model="langs"
-                selection="selectedLangs"
+                model="liitteetModel.langs"
+                selection="liitteetModel.selectedLangs"
                 display="dualpane"></multi-select>
         </tab>
         
     </tabset>
 
-    <!-- 
-    <pre>{{ model | json }}</pre>
-     -->
-
+<!-- 
+    <pre>{{ liitteetModel | json}}</pre>
+ -->
+ 
 </div>

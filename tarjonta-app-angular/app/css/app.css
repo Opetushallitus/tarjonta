@@ -43,6 +43,10 @@
     text-align:right;
 }
 
+.clear-both {
+	clear:both;
+}
+
 .align-top {
 	vertical-align: top;
 }
