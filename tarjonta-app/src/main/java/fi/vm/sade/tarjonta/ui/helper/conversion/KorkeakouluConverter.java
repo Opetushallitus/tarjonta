@@ -295,8 +295,6 @@ public class KorkeakouluConverter extends KoulutusConveter {
         perustiedotModel.setKoulutusmoduuliOid(vastaus.getKoulutusmoduuli().getOid());
         perustiedotModel.setOpintojenMaksullisuus(vastaus.isMaksullisuus());
         perustiedotModel.setTunniste(vastaus.getKoulutusmoduuli().getUlkoinenTunniste()); //TODO: fix ulkoinen tunniste
-        perustiedotModel.setOpintojenLaajuus(vastaus.getKoulutusmoduuli().getLaajuusarvoUri());
-
         /*
          * Combobox data;
          * 
@@ -442,59 +440,21 @@ public class KorkeakouluConverter extends KoulutusConveter {
             if (km.getOpintojenLaajuusyksikko() != null) {
                 kooste.setLaajuusyksikkoUri(km.getOpintojenLaajuusyksikko().getKoodistoUriVersio());
             }
+            
+             if (km.getOpintojenLaajuus() != null) {
+                kooste.setLaajuusyksikkoUri(km.getOpintojenLaajuus().getKoodistoUriVersio());
+            }
 
             if (km.getKoulutusaste() != null) {
                 kooste.setKoulutusasteUri(km.getKoulutusaste().getKoodistoUriVersio());
             }
         }
-//        Preconditions.checkNotNull(kooste.getNimi(), "Tutkinto-ohjelma MonikielinenTekstiTyyppi object cannot be null!");
-//        Preconditions.checkNotNull(kooste.getNimi().getTeksti(), "Tutkinto-ohjelma name list cannot be null!");
-//        Preconditions.checkArgument(!kooste.getNimi().getTeksti().isEmpty(), "No Tutkinto-ohjelma names, at least one needed!");
 
         //we use ulkoinen tunniste field for the 'numeric' code value.
         kooste.setOid(model.getKoulutusmoduuliOid());
         kooste.setUlkoinenTunniste(model.getTunniste());
 
-        kooste.setLaajuusarvoUri(model.getOpintojenLaajuus());
-
         return kooste;
     }
-    /**
-     * Update the name of tutkinto-ohjelma in tutkintoohjelma model instance.
-     *
-     * @param model
-     * @return updated tyyppi object
-     */
-//    public MonikielinenTekstiTyyppi updateTutkintoohjelmaModelTextData(KorkeakouluPerustiedotViewModel model) {
-//        Preconditions.checkNotNull(model.getTutkintoohjelmaNimi(), "Tutkinto-ohjelman name cannot be null.");
-//        Preconditions.checkArgument(!model.getTutkintoohjelmaNimi().isEmpty(), "Tutkinto-ohjelman name cannot be empty.");
-//
-//        TutkintoohjelmaModel oldTutkintoohjelma = model.getTutkintoohjelma();
-//        Set<KielikaannosViewModel> kielikaannos = oldTutkintoohjelma.getKielikaannos();
-//        final String koodiUriFromUserLang = getUserLangUri(model);
-//
-//        boolean langUdated = false;
-//        for (KielikaannosViewModel kvm : kielikaannos) {
-//            //only update name
-//            if (kvm.getKielikoodi().equals(koodiUriFromUserLang)) {
-//                LOG.debug("Update name from '{}' to '{}'", kvm.getNimi(), model.getTutkintoohjelmaNimi());
-//                kvm.setNimi(model.getTutkintoohjelmaNimi());
-//                langUdated = true;
-//            }
-//        }
-//
-//        if (!langUdated) {
-//            //add missing language and name
-//            kielikaannos.add(new KielikaannosViewModel(koodiUriFromUserLang, model.getTutkintoohjelmaNimi()));
-//        }
-//
-//        //Update tutkinto-ohjelma UI model.
-//        MonikielinenTekstiTyyppi monikielinenTeksti = mapToMonikielinenTekstiTyyppi(kielikaannos);
-//        UiModelBuilder<TutkintoohjelmaModel> builder = new UiModelBuilder<TutkintoohjelmaModel>(TutkintoohjelmaModel.class, helper);
-//        TutkintoohjelmaModel newTutkintoohjelmaModel = builder.build(monikielinenTeksti, koodiUriFromUserLang);
-//        newTutkintoohjelmaModel.setKomoOid(oldTutkintoohjelma.getKomoOid());
-//        newTutkintoohjelmaModel.setKomoParentOid(oldTutkintoohjelma.getKomoParentOid());
-//        model.setTutkintoohjelma(newTutkintoohjelmaModel);
-//        return monikielinenTeksti;
-//    }
+ 
 }

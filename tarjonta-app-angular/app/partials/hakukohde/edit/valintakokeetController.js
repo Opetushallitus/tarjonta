@@ -14,11 +14,13 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
    $scope.model.validationmsgs = [];
 
-   var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohde.oid });
+   if ($scope.model.hakukohde.oid !== undefined) {
+
+       var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohde.oid });
 
 
-    var valintaKokeetPromise  = valintaKokeetResource.$promise;
-   valintaKokeetPromise.then(function(valintakokees){
+       var valintaKokeetPromise  = valintaKokeetResource.$promise;
+       valintaKokeetPromise.then(function(valintakokees){
 
            angular.forEach(valintakokees.result,function(valintakoe){
                console.log('GOT VALINTAKOE: ' , valintakoe);
@@ -28,7 +30,11 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 
 
 
-   });
+       });
+
+   }
+
+
 
   var addValintakoeToList = function(valintakoe) {
       if (valintakoe !== undefined) {

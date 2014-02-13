@@ -19,8 +19,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.support.Expressions;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.path.DateTimePath;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -35,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import org.hibernate.ejb.criteria.path.MapKeyHelpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +70,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus, String koulutusluokitus, String koulutusohjelma,
             List<String> opetuskielis, List<String> koulutuslajis) {
         if (opetuskielis != null && opetuskielis.size() > 0 && koulutuslajis != null && koulutuslajis.size() > 0) {
-            String query = "SELECT komoto FROM KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k WHERE komoto.koulutusmoduuli = komo AND "
-                    + "komoto.pohjakoulutusvaatimus = :pkv AND komoto.tarjoaja = :tarjoaja AND komo.koulutusKoodi = :koulutuskoodi AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi AND o.koodiUri IN (:opetuskielis) AND k.koodiUri IN (:koulutuslajis)";
+            String query = "SELECT komoto FROM "
+                    + "KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k "
+                    + "WHERE komoto.koulutusmoduuli = komo "
+                    + "AND komoto.pohjakoulutusvaatimus = :pkv "
+                    + "AND komoto.tarjoaja = :tarjoaja "
+                    + "AND komo.koulutusKoodi = :koulutuskoodi "
+                    + "AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi "
+                    + "AND o.koodiUri IN (:opetuskielis) "
+                    + "AND k.koodiUri IN (:koulutuslajis)";
 
             return getEntityManager()
                     .createQuery(query)
@@ -127,7 +137,6 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 .join(komoto.koulutusmoduuli, komo)
                 .orderBy(komo.koulutusKoodi.asc())
                 .list(komoto);
-
     }
 
     @Override
@@ -167,11 +176,11 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         }
 
         if (koulutusAlkuVuosi > 0) {
-            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().isNotNull()).and(komoto.koulutuksenAlkamisPvm.year().eq(koulutusAlkuVuosi));
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvms.isNotEmpty()).and(komoto.koulutuksenAlkamisPvms.any().year().isNotNull()).and(komoto.koulutuksenAlkamisPvms.any().year().eq(koulutusAlkuVuosi));
         }
 
         if (!koulutusAlkuKuukaudet.isEmpty()) {
-            criteria = and(criteria, komoto.koulutuksenAlkamisPvm.isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().isNotNull()).and(komoto.koulutuksenAlkamisPvm.month().in(koulutusAlkuKuukaudet));
+            criteria = and(criteria, komoto.koulutuksenAlkamisPvms.isNotEmpty()).and(komoto.koulutuksenAlkamisPvms.any().month().isNotNull()).and(komoto.koulutuksenAlkamisPvms.any().month().in(koulutusAlkuKuukaudet));
         }
 
         List<KoulutusmoduuliToteutus> komotos;
@@ -296,10 +305,10 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QBinaryData qBinaryData = QBinaryData.binaryData;
+ 
         return from(qKomoto).
                 join(qKomoto.kuvat, qBinaryData).
-                where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.containsKey(kieliUri))).
-                singleResult(qBinaryData);
+                where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.get(kieliUri).eq(qBinaryData))).singleResult(qBinaryData);
     }
     
     /**

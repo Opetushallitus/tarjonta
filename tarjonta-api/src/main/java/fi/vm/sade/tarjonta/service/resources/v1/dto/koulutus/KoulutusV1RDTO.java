@@ -29,22 +29,22 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
  *
- * @author mlyly
+ * @author jwilen
  */
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
-public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
+public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
     @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
     private String komoOid;
-    @ApiModelProperty(value = "Koulutusmoduulin totetuksen yksilöivä tunniste")
-    private String komotoOid;
-    @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduuliin")
-    private String parentKomoOid;
-    @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduulin toteutukseen")
-    private String parentKomotoOid;
 
     @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO organisaatio;
+
+    @ApiModelProperty(value = "Tutkinto-ohjelman nimi monella kielella, ainakin yksi kieli pitää olla täytetty", required = true)
+    private NimiV1RDTO koulutusohjelma;
+
+    @ApiModelProperty(value = "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle", required = true)
+    private String tunniste;
 
     //OTHER DATA
     @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true) // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
@@ -73,30 +73,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
 
     public void setKomoOid(String _komoOid) {
         this.komoOid = _komoOid;
-    }
-
-    public String getKomotoOid() {
-        return komotoOid;
-    }
-
-    public void setKomotoOid(String _komotoOid) {
-        this.komotoOid = _komotoOid;
-    }
-
-    public String getParentKomoOid() {
-        return parentKomoOid;
-    }
-
-    public void setParentKomoOid(String _parentKomoOid) {
-        this.parentKomoOid = _parentKomoOid;
-    }
-
-    public String getParentKomotoOid() {
-        return parentKomotoOid;
-    }
-
-    public void setParentKomotoOid(String _parentKomotoOid) {
-        this.parentKomotoOid = _parentKomotoOid;
     }
 
     /*
@@ -249,4 +225,35 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliRelationV1RDTO {
         this.suunniteltuKestoTyyppi = suunniteltuKestoTyyppi;
     }
 
+    /**
+     * @return the koulutusohjelma
+     */
+    public NimiV1RDTO getKoulutusohjelma() {
+        if (koulutusohjelma == null) {
+            koulutusohjelma = new NimiV1RDTO();
+        }
+
+        return koulutusohjelma;
+    }
+
+    /**
+     * @param koulutusohjelma the koulutusohjelma to set
+     */
+    public void setKoulutusohjelma(NimiV1RDTO koulutusohjelma) {
+        this.koulutusohjelma = koulutusohjelma;
+    }
+
+    /**
+     * @return the tunniste
+     */
+    public String getTunniste() {
+        return tunniste;
+    }
+
+    /**
+     * @param tunniste the tunniste to set
+     */
+    public void setTunniste(String tunniste) {
+        this.tunniste = tunniste;
+    }
 }

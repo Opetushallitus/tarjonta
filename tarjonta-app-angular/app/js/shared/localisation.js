@@ -75,7 +75,7 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
                 var t = LocalisationService.t(tAttrs["tt"]);
-                tElement.text(t);
+                tElement.html(t);
 
                 return function postLink(scope, iElement, iAttrs, controller) {
                     // $timeout(scope.$destroy.bind(scope), 0);
@@ -118,6 +118,15 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         return this.locale;
     };
 
+    var kieliUri = "kieli_" + this.getLocale();
+    
+    /**
+     * returns language uri that matches the current language
+     */
+    this.getKieliUri = function(){
+      return kieliUri;
+    };
+    
     this.setLocale = function(value) {
         this.locale = value;
     };

@@ -68,6 +68,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import org.joda.time.DateTime;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -120,6 +121,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Before
     @Override
     public void before() {
+        KoodistoURI.KOODISTO_KIELI_URI = "kieli";
         try {
             clearIndex(solrServerFactory.getOrganisaatioSolrServer());
             clearIndex(solrServerFactory.getSolrServer("hakukohteet"));
@@ -162,6 +164,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "koulutus-uri", "FI");
         stubKoodi(koodiService, "tutkinto-uri", "FI");
         stubKoodi(koodiService, "laajuus-uri", "FI");
+        stubKoodi(koodiService, "laajuusyksikko-uri", "FI");
         stubKoodi(koodiService, "koulutusaste-uri", "FI");
         stubKoodi(koodiService, "koulutusala-uri", "FI");
         stubKoodi(koodiService, "opintoala-uri", "FI");
@@ -374,11 +377,12 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
         kk.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4.555", null, null));
         kk.setTutkinto(new KoodiV1RDTO("tutkinto-uri", 1, null));
-        kk.setOpintojenLaajuus(new KoodiV1RDTO("laajuus-uri", 1, null));
+        kk.setOpintojenLaajuusarvo(new KoodiV1RDTO("laajuus-uri", 1, null));
+        kk.setOpintojenLaajuusyksikko(new KoodiV1RDTO("laajuusyksikko-uri", 1, null));
         kk.setKoulutusaste(new KoodiV1RDTO("koulutusaste-uri", 1, null));
         kk.setKoulutusala(new KoodiV1RDTO("koulutusala-uri", 1, null));
         kk.setOpintoala(new KoodiV1RDTO("opintoala-uri", 1, null));
-        kk.setTutkintonimike(new KoodiV1RDTO("tutkintonimike-uri", 1, null));
+        //kk.setTutkintonimike(new KoodiV1RDTO("tutkintonimike-uri", 1, null));
         kk.setEqf(new KoodiV1RDTO("EQF-uri", 1, null));
         kk.setKoulutuskoodi(new KoodiV1RDTO("koulutus-uri", 1, null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);

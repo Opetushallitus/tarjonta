@@ -20,10 +20,26 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -136,6 +152,22 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name="hakuaikaLoppuPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date hakuaikaLoppuPvm;
+
+    @Column(name = "valintaPerusteKuvausTunniste")
+    private Long valintaPerusteKuvausTunniste;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_valintaperuste_kielet", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<String> valintaPerusteKuvausKielet = new HashSet<String>();
+
+    @Column(name = "soraKuvausTunniste")
+    private Long soraKuvausTunniste;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns =
+    @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<String> soraKuvausKielet = new HashSet<String>();
 
     public Hakuaika getHakuaika() {
 		return hakuaika;
@@ -558,5 +590,42 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setHakukelpoisuusVaatimusKuvaus(MonikielinenTeksti hakukelpoisuusVaatimusKuvaus) {
         this.hakukelpoisuusVaatimusKuvaus = hakukelpoisuusVaatimusKuvaus;
+    }
+
+
+    public Long getValintaPerusteKuvausTunniste() {
+        return valintaPerusteKuvausTunniste;
+    }
+
+    public void setValintaPerusteKuvausTunniste(Long valintaPerusteKuvausTunniste) {
+        this.valintaPerusteKuvausTunniste = valintaPerusteKuvausTunniste;
+    }
+
+    public Long getSoraKuvausTunniste() {
+        return soraKuvausTunniste;
+    }
+
+    public void setSoraKuvausTunniste(Long soraKuvausTunniste) {
+        this.soraKuvausTunniste = soraKuvausTunniste;
+    }
+
+    @Deprecated
+    public Set<String> getValintaPerusteKuvausKielet() {
+        return valintaPerusteKuvausKielet;
+    }
+
+    @Deprecated
+    public void setValintaPerusteKuvausKielet(Set<String> valintaPerusteKuvausKielet) {
+        this.valintaPerusteKuvausKielet = valintaPerusteKuvausKielet;
+    }
+
+    @Deprecated
+    public Set<String> getSoraKuvausKielet() {
+        return soraKuvausKielet;
+    }
+
+    @Deprecated
+    public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
+        this.soraKuvausKielet = soraKuvausKielet;
     }
 }

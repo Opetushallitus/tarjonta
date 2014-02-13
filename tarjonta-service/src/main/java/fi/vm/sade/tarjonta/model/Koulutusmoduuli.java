@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.google.common.base.Preconditions;
+import static fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus.TABLE_NAME;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import java.util.Calendar;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  * <p>
@@ -68,7 +75,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public static final String TABLE_NAME = "koulutusmoduuli";
     private static final long serialVersionUID = -3359195324699691606L;
     @SuppressWarnings("unused")
-	private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
+    private static Logger log = LoggerFactory.getLogger(Koulutusmoduuli.class);
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "ylamoduuli")
     private Set<KoulutusSisaltyvyys> sisaltyvyysList = new HashSet<KoulutusSisaltyvyys>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "koulutusmoduuli")
@@ -108,8 +115,11 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     private String laajuusArvo;
     @Column(name = "laajuusyksikko")
     private String laajuusYksikko;
-    @Column(name = "tutkintonimike")
-    private String tutkintonimike;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
     @Column(name = "opintoala")
@@ -125,13 +135,13 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nimi")
     private MonikielinenTeksti nimi;
-    
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinTable(name=TABLE_NAME+"_tekstit", inverseJoinColumns=@JoinColumn(name="monikielinen_teksti_id"))
+    @JoinTable(name = TABLE_NAME + "_tekstit", inverseJoinColumns = @JoinColumn(name = "monikielinen_teksti_id"))
     @MapKeyEnumerated(EnumType.STRING)
-    @MapKeyColumn(name="teksti", nullable=false)
+    @MapKeyColumn(name = "teksti", nullable = false)
     private Map<KomoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomoTeksti, MonikielinenTeksti>();
-    
+
     /**
      * JPA konstruktori
      */
@@ -143,14 +153,14 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         super();
         moduuliTyyppi = tyyppi;
     }
-    
+
     public Map<KomoTeksti, MonikielinenTeksti> getTekstit() {
-		return tekstit;
-	}
-    
+        return tekstit;
+    }
+
     public void setTekstit(Map<KomoTeksti, MonikielinenTeksti> tekstit) {
-		this.tekstit = tekstit;
-	}
+        this.tekstit = tekstit;
+    }
 
     /**
      * @return the organisaatioOid
@@ -275,8 +285,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     /**
      * Returns true if given child is a direct or non-direct child of this
-     * Koulutus, depth begin limited to
-     * <code>depth</code>.
+     * Koulutus, depth begin limited to <code>depth</code>.
      *
      * @param child child to match
      * @param depth maximum depth to use while searching
@@ -469,17 +478,38 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      * @return
      */
     public String getTutkintonimike() {
-        return tutkintonimike;
+        if (this.tutkintonimikes.size() > 1) {
+            throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
+        } else if (tutkintonimikes.isEmpty()) {
+            //at least parent komo's tutkintonimike can be null. 
+            return null;
+        }
+
+        return tutkintonimikes.iterator().next().getKoodiUri();
+    }
+
+    public void setTutkintonimike(String tutkintonimike) {
+        if (tutkintonimike == null) {
+            this.tutkintonimikes.clear();
+        } else {
+            final KoodistoUri koodistoUri = new KoodistoUri(tutkintonimike);
+            EntityUtils.keepSelectedKoodistoUri(this.tutkintonimikes, koodistoUri);
+            tutkintonimikes.add(koodistoUri);
+        }
+    }
+
+    public Set<KoodistoUri> getTutkintonimikes() {
+        return tutkintonimikes;
     }
 
     /**
      * Tutkintonimike Koodisto uri:na.
      *
      * @see #getTutkintonimike()
-     * @param koodistoUri
+     * @param koodistoUris
      */
-    public void setTutkintonimike(String koodistoUri) {
-        this.tutkintonimike = koodistoUri;
+    public void setTutkintonimikes(Set<KoodistoUri> koodistoUris) {
+        this.tutkintonimikes = koodistoUris;
     }
 
     /**
@@ -513,7 +543,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setKoulutuksenRakenne(MonikielinenTeksti koulutuksenRakenne) {
-    	MonikielinenTeksti.merge(tekstit, KomoTeksti.KOULUTUKSEN_RAKENNE, koulutuksenRakenne);
+        MonikielinenTeksti.merge(tekstit, KomoTeksti.KOULUTUKSEN_RAKENNE, koulutuksenRakenne);
     }
 
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
@@ -523,7 +553,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setJatkoOpintoMahdollisuudet(MonikielinenTeksti jatkoOpintoMahdollisuudet) {
-    	MonikielinenTeksti.merge(tekstit, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, jatkoOpintoMahdollisuudet);
+        MonikielinenTeksti.merge(tekstit, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, jatkoOpintoMahdollisuudet);
     }
 
     /**
@@ -557,7 +587,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setTavoitteet(MonikielinenTeksti tavoitteet) {
-    	MonikielinenTeksti.merge(tekstit, KomoTeksti.TAVOITTEET, tavoitteet);
+        MonikielinenTeksti.merge(tekstit, KomoTeksti.TAVOITTEET, tavoitteet);
     }
 
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
@@ -567,7 +597,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     @Deprecated // TODO näitä kenttiä olisi parempi käsitellä suoraan mappina
     public void setPatevyys(MonikielinenTeksti tavoitteet) {
-    	MonikielinenTeksti.merge(tekstit, KomoTeksti.PATEVYYS, tavoitteet);
+        MonikielinenTeksti.merge(tekstit, KomoTeksti.PATEVYYS, tavoitteet);
     }
 
     /**

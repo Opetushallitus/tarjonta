@@ -1,29 +1,32 @@
 <div id="luo-koulutus-dialogi">
 	<div class="modal-header">
 		<h3><span  tt="luoKoulutusDialogi.otsikko"/></h3>
-		<div tt="luoKoulutusDialogi.kuvaus"></div>
-		
-		<h4><span tt="luoKoulutsDialogi.koulutus"/></h4>
-		<select ng-hide="piilotaKoulutustyyppi" ng-model="model.koulutustyyppi"
-					ng-options="k.koodiNimi for k in sallitutKoulutustyypit">
-						<option value="">-- valitse --</option>
-		</select>
-		<h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka"/></h4>
 	</div>
 
 	<div class="modal-body">
-		<table width="100%" id="luo-koulutus-dialogi">
+        <div tt="luoKoulutusDialogi.kuvaus"></div>
+        
+        <h4><span tt="luoKoulutsDialogi.koulutus"/></h4>
+        <select ng-hide="piilotaKoulutustyyppi" ng-model="model.koulutustyyppi"
+                    ng-options="k.koodiNimi for k in sallitutKoulutustyypit">
+                        <option value="">-- valitse --</option>
+        </select>
+        <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka"/></h4>
+
+		<table width="100%">
 			<tr>
-				<td><div id="orgSearchResults" class="treeview"
+				<td width="50%"><div class="treeview"
 						data-angular-treeview="true" data-tree-id="lkorganisaatio"
 						data-org-tree-model="lkorganisaatiot" data-node-id="oid"
-						data-node-label="nimi" data-node-children="children"></div></td>
-				<td ng-hide="organisaatioValittu()"><span tt="luoKoulutusDialogi.organisaatiotaEiValittu"/></td>
-				<td ng-show="organisaatioValittu()"><span tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin"/><br>
-					<br>
-					<div ng-repeat="organisaatio in model.organisaatiot">
-						[ <a ng-click="poistaValittu(organisaatio)">X</a> ] {{organisaatio.nimi}}<br> 					
-					</div>
+						data-node-label="nimi" data-node-children="children" autoselect="luoKoulutusDialogOrg"></div></td>
+				<td width="50%" ng-hide="organisaatioValittu()" tt="luoKoulutusDialogi.organisaatiotaEiValittu"/>
+				<td width="50%" ng-show="organisaatioValittu()">
+				    <p tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin"/>
+				    <ul>
+                    <li ng-repeat="organisaatio in model.organisaatiot">
+                        <a ng-click="poistaValittu(organisaatio)">[X]</a> {{organisaatio.nimi}}
+                    </li>
+				    </ul>
 				</td>
 			</tr>
 		</table>

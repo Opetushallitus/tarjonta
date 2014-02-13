@@ -275,7 +275,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         console.log("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri", {koulutuskoodiUri: '@koulutuskoodiUri'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/Korkeakoulutus?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
         return koulutus.get(arg, func);
     };
 
@@ -310,7 +310,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         if (angular.isUndefined(image) || image === null) {
-            throw new Error('Image object cannot be undefined or null.');
+           return;
         }
 
         var formData = new FormData();
@@ -324,7 +324,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         formData.append('image', image.file, name);
 
         $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
-            headers: {'Content-Type': 'multipart/form-data'},
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data'},
             transformRequest: angular.identity
         }).success(fnSuccess).error(fnError);
     };
@@ -345,6 +347,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             },
             'delete': {
                 method: 'DELETE',
+                withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
@@ -447,6 +450,34 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid: koulutusoid}).$promise);
     };
 
+    /**
+     * POST: Insert new KOMO. API object must be valid.
+     *
+     * @param json data in JSON format.
+     * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
+     * @returns {undefined}
+     */
+    dataFactory.komo = function() {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "komo/:oid", {}, {
+            update: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            save: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            get: {
+                method: 'GET'
+            },
+            search: {
+                method: 'GET',
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi",
+            },
+        });
+    };
 
     return dataFactory;
 });

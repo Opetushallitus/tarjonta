@@ -1,0 +1,7 @@
+<div>
+    <tabset>
+        <tab ng-repeat="l in selectedLangs" heading="{{langs[l]}}">
+            <span data-ng-bind-html="model[l]"/>
+        </tab>
+    </tabset>
+</div>

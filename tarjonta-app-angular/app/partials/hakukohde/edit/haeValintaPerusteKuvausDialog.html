@@ -1,0 +1,39 @@
+<div id="soraVapeChooserDialog">
+    <div class="modal-header">
+        <h3>{{ dialog.titles.title }}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="ValintakoeModalForm">
+            <p>{{ dialog.titles.toimintoTitle }}</p>
+            
+            <dl>
+                <dt><input type="radio" data-ng-model="dialog.copySelection" value="link"/> {{ dialog.titles.linkkausTitle }}</dt>
+                <!-- 
+                <dd>{{dialog.titles.kopioiHelp}}</dd>
+                 -->
+                <dt><input type="radio" data-ng-model="dialog.copySelection" value="copy"> {{ dialog.titles.kopioTitle }}</dt>
+                <!-- 
+                <dd>{{dialog.titles.linkkausHelp}}</dd>
+                 -->
+           </dl>
+       
+       
+           <div ng-grid="kuvausGrid" class="kuvausGridStyle"></div>
+           
+            <p>{{dialog.titles.tuoMyosMuutkieletTitle}}</p>
+            
+	        <multi-select
+	            model="dialog.kuvauksenKielet"
+	            selection="dialog.valitutKuvauksenKielet"
+	            display="dualpane"
+	            key="uri"
+	            value="nimi"
+	            />
+
+        </form>
+   </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-ng-click="onCancel()">{{dialog.titles.cancelBtn}}</button>
+        <button class="btn btn-primary" data-ng-click="onOk()" ng-disabled="!isOk()">{{dialog.titles.okBtn}}</button>
+    </div>
+</div>

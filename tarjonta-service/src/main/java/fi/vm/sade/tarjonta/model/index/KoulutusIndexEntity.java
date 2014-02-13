@@ -18,12 +18,13 @@ public class KoulutusIndexEntity {
     private String koulutusohjelmaKoodi;
     private String lukiolinja;
     private String koulutusKoodi;
-    private String tutkintonimike;
     private Date koulutuksenAlkamisPvm;
     private TarjontaTila tila;
     private String koulutusmoduuliOid;
     private String pohjakoulutusVaatimus;
     private String koulutuslaji;
+    private String kausi;
+    private Integer vuosi;
 
     @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri, String koulutusTyyppi) {
@@ -37,26 +38,26 @@ public class KoulutusIndexEntity {
     @QueryProjection
     public KoulutusIndexEntity(Long id, String oid, Date koulutuksenAlkamisPvm,
             TarjontaTila tila, String koulutusTyyppi,
-            String koulutusmoduuliOid, String koulutusKoodi,
-            String tutkintoNimike, String koulutustyyppi, String lukiolinja,
-            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus) {
+            String koulutusmoduuliOid, String koulutusKoodi, String lukiolinja,
+            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi) {
         this.koulutusId = id;
         this.oid = oid;
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
         this.koulutusKoodi = koulutusKoodi;
-        this.tutkintonimike = tutkintoNimike;
         this.koulutusTyyppi = koulutusTyyppi;
         this.lukiolinja = lukiolinja;
         this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
         this.tarjoaja = tarjoaja;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
+        this.kausi = kausi;
+        this.vuosi = vuosi;
     }
 
     /**
      * Return koulutusmoduulitoteutus.id
-     * 
+     *
      * @return
      */
     public Long getKoulutusId() {
@@ -65,7 +66,7 @@ public class KoulutusIndexEntity {
 
     /**
      * Return koulutus oid.
-     * 
+     *
      * @return
      */
     public String getOid() {
@@ -74,7 +75,7 @@ public class KoulutusIndexEntity {
 
     /**
      * Return tarjoaja oid.
-     * 
+     *
      * @return
      */
     public String getTarjoaja() {
@@ -95,10 +96,6 @@ public class KoulutusIndexEntity {
 
     public String getKoulutusKoodi() {
         return koulutusKoodi;
-    }
-
-    public String getTutkintonimike() {
-        return tutkintonimike;
     }
 
     public Date getKoulutuksenAlkamisPvm() {
@@ -127,14 +124,41 @@ public class KoulutusIndexEntity {
                 + ", tarjoaja=" + tarjoaja + ", koulutusTyyppi="
                 + koulutusTyyppi + ", koulutusohjelmaKoodi="
                 + koulutusohjelmaKoodi + ", lukiolinja=" + lukiolinja
-                + ", koulutusKoodi=" + koulutusKoodi + ", tutkintonimike="
-                + tutkintonimike + ", koulutuksenAlkamisPvm="
+                + ", koulutusKoodi=" + koulutusKoodi + ", koulutuksenAlkamisPvm="
                 + koulutuksenAlkamisPvm + ", tila=" + tila
                 + ", koulutusmoduuliOid=" + koulutusmoduuliOid
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
+                + ", kausi=" + kausi
+                + ", vuosi=" + vuosi
                 + ", koulutuslaji=" + koulutuslaji + "]";
     }
-    
-    
-    
+
+    /**
+     * @return the kausi
+     */
+    public String getKausi() {
+        return kausi;
+    }
+
+    /**
+     * @param kausi the kausi to set
+     */
+    public void setKausi(String kausi) {
+        this.kausi = kausi;
+    }
+
+    /**
+     * @return the vuosi
+     */
+    public Integer getVuosi() {
+        return vuosi;
+    }
+
+    /**
+     * @param vuosi the vuosi to set
+     */
+    public void setVuosi(Integer vuosi) {
+        this.vuosi = vuosi;
+    }
+
 }

@@ -29,10 +29,13 @@ app.directive('koodistocombo',function(Koodisto,$log){
         return foundKoodi;
     };
 
+
+
     return {
 
-        restrict:'E',
-        replace:true,
+        restrict:'EA',
+        require: '^form',
+        replace: true,
         templateUrl : "js/shared/directives/koodistoNimiCombo.html",
         scope: {
             koodistouri : "=",
@@ -40,14 +43,37 @@ app.directive('koodistocombo',function(Koodisto,$log){
             locale : "=",
             isdependent : "=",
             filterwithkoodistouri : "=",
+            version : "=",
+            isrequired : "=",
             usearvocombo : "=",
             parentkoodiuri : "=",
+            filteruris : "=",
             prompt : "=",
             isalakoodi : "=",
             onchangecallback : "="
 
         },
         controller :  function($scope,Koodisto) {
+
+
+            var addVersionToKoodis = function(koodis) {
+
+                if ($scope.version !== undefined && $scope.version) {
+                    angular.forEach(koodis,function(koodi){
+                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                    });
+                }
+
+            }
+
+            if ($scope.isrequired !== undefined && $scope.isrequired === "true" || $scope.isrequired) {
+
+                $scope.valuerequired = true;
+            }  else {
+                $scope.valuerequired = false;
+
+            }
+
 
             if ($scope.usearvocombo !== undefined) {
                 $scope.combotype = {
@@ -74,11 +100,19 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                        koodisPromise.then(function(koodisParam){
+
+                           addVersionToKoodis(koodisParam);
+
                            $scope.koodis = koodisParam;
                        });
                    } else {
                    var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                    koodisPromise.then(function(koodisParam){
+                       if ($scope.version !== undefined && $scope.version) {
+                           angular.forEach(koodisParam,function(koodi){
+                               koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                           });
+                       }
                        $scope.koodis = koodisParam;
                    });
                    }
@@ -88,9 +122,31 @@ app.directive('koodistocombo',function(Koodisto,$log){
            } else {
                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                koodisPromise.then(function(koodisParam){
+
+                   addVersionToKoodis(koodisParam);
+
                    $scope.koodis = koodisParam;
                });
            }
+
+            //If filter uris is changed then query only those and show those koodis
+            $scope.$watch('filteruris',function(){
+                var filteredKoodis = [];
+
+                if ($scope.filteruris !== undefined && $scope.filteruris.length > 0) {
+                    angular.forEach($scope.koodis,function(koodi){
+
+                        angular.forEach($scope.filteruris,function(filterUri){
+                            if (koodi.koodiUri === filterUri) {
+                                filteredKoodis.push(koodi);
+                            };
+                        });
+
+                    });
+                }
+
+                $scope.koodis = filteredKoodis;
+            });
 
             $scope.$watch('parentkoodiuri',function(){
                 $log.info('Parent koodi uri changed');
@@ -105,10 +161,13 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                         koodisPromise.then(function(koodisParam){
                             if ($scope.filterwithkoodistouri !== undefined) {
-
+                                if ($scope.version !== undefined && $scope.version) {
+                                    addVersionToKoodis(koodisParam);
+                                }
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
 
                             } else {
+                                addVersionToKoodis(koodisParam);
                                 $scope.koodis = koodisParam;
                             }
 
@@ -118,8 +177,10 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         koodisPromise.then(function(koodisParam){
 
                             if ($scope.filterwithkoodistouri !== undefined){
+                                addVersionToKoodis(koodisParam);
                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
                             } else {
+                                addVersionToKoodis(koodisParam);
                                 $scope.koodis = koodisParam;
                             }
 
@@ -142,7 +203,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                   $scope.onchangecallback(koodi);
 
               } else {
-                  $log.info('No onchangecallback defined');
+                  //$log.info('No onchangecallback defined');
               }
           };
 

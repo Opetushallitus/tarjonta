@@ -15,9 +15,12 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +59,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, Long> implements KoulutusmoduuliDAO {
 
     @SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
+
     @Autowired
     private OIDService oidService;
 
@@ -100,7 +103,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
     }
 
-     @Override
+    @Override
     public List<Koulutusmoduuli> search(SearchCriteria criteria) {
 
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
@@ -110,7 +113,6 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         // todo: are we searching for LOI or LOS - that group by e.g. per organisaatio is
         // take from different attribute
         //Expression groupBy = groupBy(criteria);
-
         if (criteria.getNimiQuery() != null) {
             // todo: FIX THIS
             //whereExpr = and(whereExpr, moduuli.nimi.tekstis.like("%" + criteria.getNimiQuery() + "%"));
@@ -118,6 +120,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
         if (criteria.getKoulutusKoodi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+        }
+
+        if (criteria.getLikeKoulutusKoodiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
@@ -185,15 +191,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     @Override
     public List<Koulutusmoduuli> findAllKomos() {
         /*QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
-        QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
-        QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
-        QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
-        return from(moduuli).
-                leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
-                leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
-                leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
-                list(moduuli);*/
-    	return findAll();
+         QMonikielinenTeksti kr = new QMonikielinenTeksti("koulutuksenrakenne");
+         QMonikielinenTeksti jatko = new QMonikielinenTeksti("jatkoopintomahdollisuudet");
+         QMonikielinenTeksti t = new QMonikielinenTeksti("tavoitteet");
+         return from(moduuli).
+         leftJoin(moduuli.koulutuksenRakenne, kr).fetch().leftJoin(kr.tekstis).fetch().
+         leftJoin(moduuli.jatkoOpintoMahdollisuudet, jatko).fetch().leftJoin(jatko.tekstis).fetch().
+         leftJoin(moduuli.tavoitteet, t).fetch().leftJoin(t.tekstis).fetch().
+         list(moduuli);*/
+        return findAll();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {
@@ -258,6 +264,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
+        List<String> kkKoulutusAstes = new ArrayList<String>();
+
+        kkKoulutusAstes.add(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
+        kkKoulutusAstes.add(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value());
+        kkKoulutusAstes.add(KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value());
+
+       whereExpr = QuerydslUtils.and(whereExpr,komo.koulutustyyppi.notIn(kkKoulutusAstes));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {

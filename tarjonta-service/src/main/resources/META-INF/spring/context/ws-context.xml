@@ -35,7 +35,6 @@
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
 
-    <bean id="tarjontaPublicationRESTService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationRESTService"/>
     <bean id="tarjontaExceptionMapper" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicationExceptionMapper"/>
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
@@ -44,7 +43,6 @@
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
 
     <!-- API V1 -->
-    <bean id="yhteyshenkiloResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.YhteyshenkiloResourceImplV1" />
     <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1" />
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1" />
     <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
@@ -52,7 +50,8 @@
     <bean id="linkingResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LinkingResourceImplV1" />
     <bean id="permissionResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.PermissionResourceImplV1" />
     <bean id="kuvausResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KuvausResourceImplV1"/>
-
+    <bean id="komoResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1" />
+   
     <!--
       Needed to convert wsdl generated dtos to json. (no @XmlRootElement annotation)
     -->
@@ -92,7 +91,6 @@
     <jaxrs:server id="tarjontaPublicationREST" address="/rest">
         <jaxrs:serviceBeans>
             <!-- API V0 -->
-            <ref bean="tarjontaPublicationRESTService" />
             <ref bean="tarjontaHakuResource" />
             <ref bean="tarjontaHakukohdeResource" />
             <ref bean="tarjontaKomoResource"/>
@@ -104,11 +102,10 @@
             <ref bean="tarjontaHakuResourceV1"/>
             <ref bean="tarjontaHakukohdeResourceV1"/>
             <ref bean="tarjontaKoulutusResourceV1"/>
-            <ref bean="yhteyshenkiloResourceV1"/>
             <ref bean="linkingResourceV1"/>
             <ref bean="permissionResourceV1"/>
             <ref bean="kuvausResourceV1"/>
-
+            <ref bean="komoResourceV1"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <!--             <ref bean="cors-filter" /> -->

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2012-2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import javax.persistence.*;
@@ -118,6 +117,12 @@ public class Haku extends TarjontaBaseEntity {
     private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+
+    /**
+     * KoulutusInformation service uses this to "know" how many hakukohdes can be added to "muistilista" (application list?)
+     */
+    @Column(name = "max_hakukohdes")
+    private int maxHakukohdes = 0;
 
     public String getOid() {
         return oid;
@@ -270,7 +275,11 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     public Set<Hakuaika> getHakuaikas() {
-        return Collections.unmodifiableSet(hakuaikas);
+        if (hakuaikas == null) {
+            hakuaikas = new HashSet<Hakuaika>();
+        }
+        return hakuaikas;
+        // return Collections.unmodifiableSet(hakuaikas);
     }
 
     public void addHakuaika(Hakuaika hakuaika) {
@@ -282,6 +291,23 @@ public class Haku extends TarjontaBaseEntity {
         if (hakuaikas.remove(hakuaika)) {
             hakuaika.setHaku(null);
         }
+    }
+
+    public Hakuaika getHakuaikaById(String hakuaikaId) {
+        try {
+            return getHakuaikaById(Long.parseLong(hakuaikaId));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    public Hakuaika getHakuaikaById(Long hakuaikaId) {
+        for (Hakuaika hakuaika : getHakuaikas()) {
+            if (hakuaika.getId().equals(hakuaikaId)) {
+                return hakuaika;
+            }
+        }
+        return null;
     }
 
     /**
@@ -359,5 +385,14 @@ public class Haku extends TarjontaBaseEntity {
     public void setLastUpdatedByOid(String lastUpdatedByOid) {
         this.lastUpdatedByOid = lastUpdatedByOid;
     }
+
+    public int getMaxHakukohdes() {
+        return maxHakukohdes;
+    }
+
+    public void setMaxHakukohdes(int maxHakukohdes) {
+        this.maxHakukohdes = maxHakukohdes;
+    }
+
 }
 

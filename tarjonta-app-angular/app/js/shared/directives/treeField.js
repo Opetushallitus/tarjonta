@@ -73,11 +73,10 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
             var resource = TarjontaService.resourceLink.get({oid: komoOid});
             return resource.$promise.then(function(res) {
                 angular.forEach(res.result, function(resultOid) {
-                    if (angular.isUndefined(factoryScope.tree.map[resultOid])) {
+                    if (angular.isUndefined(factoryScope.tree.map[komoOid])) {
                         factoryScope.tree.map[komoOid] = {childs: {}};
                     }
                     factoryScope.tree.map[komoOid].childs[resultOid] = {selected: factoryScope.isPreSelected(resultOid)};
-
                     deferred.resolve();
                 });
             });

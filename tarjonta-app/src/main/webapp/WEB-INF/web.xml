@@ -72,6 +72,11 @@
         <url-pattern>/adminaapp/*</url-pattern>
     </filter-mapping>
 
+    <servlet>
+        <servlet-name>healthcheck</servlet-name>
+        <servlet-class>fi.vm.sade.tarjonta.ui.HealthCheck</servlet-class>
+    </servlet>
+
     <!-- Tarjonta standalone -->
     <servlet>
         <servlet-name>tarjontaapp</servlet-name>
@@ -96,7 +101,7 @@
         -->
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </servlet>
 
@@ -115,7 +120,7 @@
         </init-param>
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </servlet>
 
@@ -134,7 +139,7 @@
         </init-param>
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </servlet>
 
@@ -153,7 +158,7 @@
         </init-param>
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </servlet>
 
@@ -200,7 +205,10 @@
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
 
-
+    <servlet-mapping>
+        <servlet-name>healthcheck</servlet-name>
+        <url-pattern>/healthcheck</url-pattern>
+    </servlet-mapping>
 
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>

@@ -12,6 +12,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
+              
 
                 $scope.formControls = {};
 
@@ -23,15 +24,17 @@ app.controller('BaseEditController',
                 };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                $scope.lisatiedot = [];
 
                 $scope.init = function() {
                     var uiModel = {};
                     var model = {};
 
+                    uiModel.selectedKieliUri ="" //tab language
                     uiModel.showValidationErrors = false;
                     uiModel.showError = false;
                     uiModel.showSuccess = false;
+                    uiModel.validationmsgs = [];
 
                     converter.createUiModels(uiModel);
 
@@ -40,7 +43,14 @@ app.controller('BaseEditController',
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         //DATA WAS LOADED BY KOMOTO OID
+                        $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
+
+                        if (angular.isUndefined(model)) {
+                            $location.path("/error");
+                            return;
+                        }
+
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
                                 uiModel.contactPerson = converter.converPersonObjectForUi(value);
@@ -50,6 +60,8 @@ app.controller('BaseEditController',
                                 converter.throwError('Undefined henkilotyyppi : ', value);
                             }
                         });
+
+                        $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri);
 
                         /*
                          * remove version data from the list 
@@ -62,7 +74,7 @@ app.controller('BaseEditController',
                     } else if (!angular.isUndefined($routeParams.org)) {
                         //CREATE NEW KOULUTUS
                         converter.createAPIModel(model, cfg.app.userLanguages);
-                        $scope.loadRelationKoodistoData();
+                        $scope.loadRelationKoodistoData(model, uiModel, $routeParams.koulutuskoodi);
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
                             converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
@@ -76,8 +88,9 @@ app.controller('BaseEditController',
                      */
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
                         var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
+                        uiModel[key].promise = koodisPromise;
                         koodisPromise.then(function(result) {
-                            uiModel[key] = result;
+                            uiModel[key].koodis = result;
                         });
                     });
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
@@ -106,11 +119,19 @@ app.controller('BaseEditController',
                     $scope.uiModel = uiModel;
                     $scope.model = model;
                 };
-                $scope.loadRelationKoodistoData = function() {
-                    tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: $routeParams.koulutuskoodi}, function(data) {
-                        var koodistoData = data.result;
+                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
+                    tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
+                        var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
-                            $scope.model[key] = koodistoData[key];
+                            apiModel[key] = restRelationData[key];
+                        });
+
+                        angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                            uiModel[key].meta = restRelationData[key].meta;
+
+                            if (!angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
+                                uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
+                            }
                         });
                     });
                 };
@@ -125,6 +146,12 @@ app.controller('BaseEditController',
                     $scope.saveByStatus('VALMIS');
                 };
                 $scope.saveByStatus = function(tila) {
+                    if ($scope.uiModel.validationmsgs.length > 0) {
+                        $scope.uiModel.validationmsgs.splice(0, $scope.uiModel.validationmsgs.length);
+                    }
+                    $scope.formControls.notifs.errorDetail = [];
+                    $scope.uiModel.showError = false;
+
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
                     }
@@ -143,7 +170,7 @@ app.controller('BaseEditController',
                             $scope.uiModel.showError = true;
                             return;
                         }
-
+                        
                         var KoulutusRes = tarjontaService.koulutus();
                         var apiModelReadyForSave = $scope.saveModelConverter(tila);
 
@@ -154,12 +181,23 @@ app.controller('BaseEditController',
                                 $scope.model = model;
                                 showSuccess();
                                 $scope.uiModel.tabs.lisatiedot = false;
+                                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                                $scope.koulutusForm.$dirty = false;
+                                $scope.koulutusForm.$invalid = false;
+                                
+                                $scope.$broadcast("onImageUpload", ""); //save images
                             } else {
+                                $scope.uiModel.showValidationErrors = true;
+                               
+                                if (!angular.isUndefined(saveResponse.errors)) {
+                                    for (var i = 0; i < saveResponse.errors.length; i++) {
+                                        $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
+                                    }
+                                }
                                 //save failed
                                 $scope.uiModel.showError = true;
                             }
                         });
-
                     });
                 };
 
@@ -181,7 +219,7 @@ app.controller('BaseEditController',
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
                         //search version information for list of uris;
 
-                        var koodis = $scope.uiModel[key];
+                        var koodis = $scope.uiModel[key].koodis;
                         for (var i in koodis) {
                             if (koodis[i].koodiUri === apiModel[key].uri) {
                                 apiModel[key] = {
@@ -191,7 +229,19 @@ app.controller('BaseEditController',
                                 break;
                             }
                         }
+                    });
 
+                    angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                        apiModel[key] = {'uris': {}};
+                        //search version information for list of uris;
+                        var map = {};
+                        var meta = $scope.uiModel[key].meta;
+                        for (var i in meta) {
+                            map[meta[i].uri] = meta[i].versio;
+                        }
+                        angular.forEach(uiModel[key].uris, function(uri) {
+                            apiModel[key].uris[uri] = map[uri];
+                        });
                     });
 
                     //multi-select models, add version to the koodi 
@@ -251,7 +301,17 @@ app.controller('BaseEditController',
                     $log.info("goBack()...");
                     $location.path("/");
                 };
-                $scope.goToReview = function(event) {
+                $scope.goToReview = function(event, boolInvalid, validationmsgs) {
+                    if (!angular.isUndefined(boolInvalid) && boolInvalid) {
+                        //ui errors
+                        return;
+                    }
+
+                    if (!angular.isUndefined(validationmsgs) && validationmsgs > 0) {
+                        //server errors
+                        return;
+                    }
+
                     $log.info("goBack()...");
                     $route.current.locals.koulutusModel.result = $scope.model;
                     $location.path("/koulutus/" + $scope.model.oid);
@@ -266,7 +326,7 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                    $scope.selectedKieliUri = kieliUri;
+                   $scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
@@ -283,7 +343,9 @@ app.controller('BaseEditController',
 
                     if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
                         kuvaus[textEnum] = {tekstis: {}};
-                        kuvaus[textEnum].tekstis[kieliUri] = '';
+                        if (!angular.isUndefined(kieliUri)) {
+                            kuvaus[textEnum].tekstis[kieliUri] = '';
+                        }
                     }
 
                     return kuvaus[textEnum].tekstis;

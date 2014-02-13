@@ -15,8 +15,14 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
+ * Used to specify generic search parameters for common "GET" search methods.
+ *
+ * <pre>
+ *   ...?count=666&startIndex=555&modifiedAfter=1380894708513
+ * </pre>
  *
  * @author mlyly
  */
@@ -24,6 +30,8 @@ public class GenericSearchParamsV1RDTO implements Serializable {
 
     private int _startIndex = 0;
     private int _count = 100;
+    private long _modifiedBefore = 0;
+    private long _modifiedAfter = 0;
 
     @Override
     public String toString() {
@@ -34,8 +42,8 @@ public class GenericSearchParamsV1RDTO implements Serializable {
         return _startIndex;
     }
 
-    public void setStartIndex(int _startIndex) {
-        this._startIndex = _startIndex;
+    public void setStartIndex(int startIndex) {
+        this._startIndex = startIndex;
     }
 
     public int getCount() {
@@ -44,6 +52,44 @@ public class GenericSearchParamsV1RDTO implements Serializable {
 
     public void setCount(int _count) {
         this._count = _count;
+    }
+
+    public long getModifiedAfter() {
+        return _modifiedAfter;
+    }
+
+    /**
+     * @return Null if "0", else Date.
+     */
+    public Date getModifiedAfterAsDate() {
+        if (getModifiedAfter() > 0) {
+            return new Date(getModifiedAfter());
+        } else {
+            return null;
+        }
+    }
+
+    public void setModifiedAfter(long modifiedAfter) {
+        this._modifiedAfter = modifiedAfter;
+    }
+
+    public long getModifiedBefore() {
+        return _modifiedBefore;
+    }
+
+    /**
+     * @return Null if "0", else Date.
+     */
+    public Date getModifiedBeforeAsDate() {
+        if (getModifiedBefore() > 0) {
+            return new Date(getModifiedBefore());
+        } else {
+            return null;
+        }
+    }
+
+    public void setModifiedBefore(long modifiedBefore) {
+        this._modifiedBefore = modifiedBefore;
     }
 
 

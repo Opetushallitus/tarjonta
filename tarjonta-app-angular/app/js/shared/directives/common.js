@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-var app = angular.module('CommonDirectives', ['ngResource']);
+var app = angular.module('CommonDirectives', ['ngResource', 'Koodisto']);
 
 app.directive('kuvaus', function() {
     return {
@@ -34,4 +34,68 @@ app.directive('kuvaus', function() {
             // scope.getKuvausApiModelLanguageUri($parse(atts.ngModel), lang);
         }
     };
+})
+
+
+/**
+ *
+ * tulostaa koodin nimen
+ *
+ * <koodi uri="jokukoodi_22" lang="fi">
+ *
+ */
+.directive('koodi',function(Koodisto) {
+
+    return {
+        restrict: 'EA',
+        link: function(scope, element, attrs) {
+          var uri = scope.$eval(attrs.uri);
+          var lang = scope.$eval(attrs.lang);
+          Koodisto.searchKoodi(uri, lang).then(
+              function(data){
+                //console.log(element);
+                element.replaceWith(data);
+                }
+              );
+          }
+
+    };
+})
+
+
+/**
+ * tulostaa päivämäärän:
+ * <t-show-date value="haku.alkoitusPvm" timestamp/>
+ * <t-show-date value="haku.alkoitusPvm" timestamp/>
+ * <div t-show-date value="haku.alkoitusPvm" timestamp>replaced</div>
+ * <div t-show-date value="haku.alkoitusPvm" timestamp/>
+ */
+.directive('tShowDate',function($filter) {
+
+    return {
+        restrict: 'EA',
+        link: function(scope, element, attrs) {
+            var value = scope.$eval(attrs.value);
+            // console.log("tShowDate, value: ", attrs.value, value);
+
+             if (value) {
+                 var isLong = (typeof value == "number");
+                 var date = isLong?new Date(value):value;
+                 var format = "d.M.yyyy";
+
+                 if (angular.isDefined(attrs.timestamp)) {
+                     format += " HH:mm";
+                 }
+
+                var result = $filter('date')(date, format);
+                console.log("DATE == " + result, format);
+                element.replaceWith(result);
+            } else {
+                element.replaceWith("-");
+            }
+        }
+
+    };
 });
+
+

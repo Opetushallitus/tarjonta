@@ -1,16 +1,239 @@
-<div id="reviewHaku" ng-controller="BaseHakuReviewController" >
+<div>
 
-    HAKU REVIEW
+    <table class="tarjontaForm">
+        <tr><th></th><td></td><td></td></tr>
 
-    <hr>
-    <div ng-click="model.collapse.model = !model.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
-    </div>
+        <tr class="collapse" ng-class="model.collapse.haunTiedot ? '' : 'open'">
+            <th colspan="2" ttt="haku.review.haunTiedot.otsikko" ng-click="model.collapse.haunTiedot = !model.collapse.haunTiedot">Haun tiedot</th>
+            <td><a class="btn" href data-ng-click="doEdit($event, 'haunTiedot')"><span ttt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+        </tr>
 
-    <div collapse="model.collapse.model">
-        <pre>
-            {{ model | json }}
-        </pre>
-    </div>
+        <tbody ng-show="!model.collapse.haunTiedot">
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakutyyppi">Hakutyyppi</th>
+                <td colspan="2">
+                    <div koodi uri="model.hakux.result.hakutyyppiUri">resolved</div>
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakukausi">Hakukausi ja vuosi</th>
+                <td colspan="2">
+                    <div data-koodi data-uri="model.hakux.result.hakukausiUri">resolved</div>
+                    {{ model.hakux.result.hakukausiVuosi }}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.alkamiskausi">Koulutuksen alkamiskausi</th>
+                <td colspan="2">
+                    <div data-koodi data-uri="model.hakux.result.koulutuksenAlkamiskausiUri">resolved</div>
+                    {{ model.hakux.result.koulutuksenAlkamisVuosi }}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.kohdejoukko">Haun kohdejoukko</th>
+                <td colspan="2">
+                    <div data-koodi data-uri="model.hakux.result.kohdejoukkoUri">resolved</div>
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakutapa">Hakutapa</th>
+                <td colspan="2">
+                    <div data-koodi data-uri="model.hakux.result.hakutapaUri">resolved</div>
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.haunTunniste">Haun tunniste</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
+                <td colspan="2">
+                    <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
+                        <div t-show-date value="hakuaika.alkuPvm" timestamp>alkuPvm</div> -
+                        <div t-show-date value="hakuaika.loppuPvm" timestamp>loppuPvm</div>
+                        {{ hakuaika.nimi }}
+                        {{$last ? '': ', '}}
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Hakulomake</th>
+                <td colspan="2">
+                    TODO
+                </td>
+            </tr>
+
+        </tbody>
+
+
+        <tr class="collapse" ng-class="model.collapse.haunAikataulut ? '' : 'open'">
+            <th colspan="2" ttt="haku.review.haunAikataulut.otsikko" ng-click="model.collapse.haunAikataulut = !model.collapse.haunAikataulut">Haun aikataulut</th>
+            <td><a class="btn" href data-ng-click="doEdit($event, 'haunAikataulut')"><span ttt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+        </tr>
+
+        <tbody ng-show="!model.collapse.haunAikataulut">
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Tarjonnan julkaisun takaraja</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Hakuaika</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr class="spacerRow">
+                <th></th>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Koekutsujen muodostaminen</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Tarjontatiedon muokkauksen takaraja</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr class="spacerRow">
+                <th></th>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Harkinnan varaisen valinnan päätösten tallennus päättyy</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Valintalaskennan suorittaminen</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Sijoittelun suorittaminen</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Sijoittelun suorittamisen tiheys</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr class="spacerRow">
+                <th></th>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.hakulomake">Hakukierros päättyy</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+        </tbody>
+
+
+        <tr class="collapse" ng-class="model.collapse.haunMuistutusviestit ? '' : 'open'">
+            <th colspan="2" ttt="haku.review.haunMuistutusviestit.otsikko" ng-click="model.collapse.haunMuistutusviestit = !model.collapse.haunMuistutusviestit">Muistutusviestien aikataulut</th>
+            <td><a class="btn" href data-ng-click="doEdit($event, 'haunMuistutusviestit')"><span ttt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+        </tr>
+
+        <tbody ng-show="!model.collapse.haunMuistutusviestit">
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+        </tbody>
+
+
+        <tr class="collapse" ng-class="model.collapse.haunSisaisetHaut ? '' : 'open'">
+            <th colspan="2" ttt="haku.review.haunSisaisetHaut.otsikko" ng-click="model.collapse.haunSisaisetHaut = !model.collapse.haunSisaisetHaut">Haun sisäiset haut</th>
+            <td><a class="btn" href data-ng-click="doEdit($event, 'haunSisaisetHaut')"><span ttt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+        </tr>
+
+        <tbody ng-show="!model.collapse.haunSisaisetHaut">
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
+                <td colspan="2">
+                    {{ model.hakux.result.oid}}
+                </td>
+            </tr>
+
+        </tbody>
+
+        <tr class="collapse" ng-class="model.collapse.haunHakukohteet ? '' : 'open'">
+            <th colspan="2" ttt="haku.review.haunHakukohteet.otsikko" ng-click="model.collapse.haunHakukohteet = !model.collapse.haunHakukohteet">Hakukohteet</th>
+            <td>
+                <a class="btn" href data-ng-click="doCreateNewHakukohde($event)">
+                    <span ttt="haku.review.luoUusiHakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span>
+                </a>
+            </td>
+        </tr>
+
+        <tbody ng-show="!model.collapse.haunHakukohteet">
+
+            <tr>
+                <th ttt="haku.review.haunTiedot.oid">Haun OID</th>
+                <td colspan="2">
+                    TODO
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
 
 </div>

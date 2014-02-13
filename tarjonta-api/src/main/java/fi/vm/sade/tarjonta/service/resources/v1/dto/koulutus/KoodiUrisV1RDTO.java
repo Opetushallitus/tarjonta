@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +24,7 @@ import java.util.Map;
  * @author Jani Wilén
  */
 @ApiModel(value = "Monen koodisto koodi uri:n syötämiseen ja näyttämiseen käytettävä rajapintaolio")
-public class KoodiUrisV1RDTO extends MetaV1RDTO {
+public class KoodiUrisV1RDTO extends KoodiV1RDTO {
 
     @Override
     public String toString() {
@@ -43,16 +42,13 @@ public class KoodiUrisV1RDTO extends MetaV1RDTO {
      * @return the uris
      */
     public Map<String, Integer> getUris() {
-        if (uris == null) {
-            uris = new HashMap<String, Integer>();
-        }
         return uris;
     }
 
     /**
      * @param uris the uris to set
      */
-    public void seUris(Map<String, Integer> uris) {
+    public void setUris(Map<String, Integer> uris) {
         this.uris = uris;
     }
 }

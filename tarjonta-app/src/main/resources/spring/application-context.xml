@@ -23,7 +23,7 @@
       Load configuration settings
     -->
     <context:property-placeholder
-        location="classpath:tarjonta-rest.properties, classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
+        location="classpath:tarjonta-rest.properties, classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties, file:///${user.home:''}/oph-configuration/override.properties"
         ignore-resource-not-found="true" properties-ref="defaultProps" />
 
     <!--
@@ -32,6 +32,7 @@
     <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <util:properties local-override="true">
+                <prop key="cas_callback_url">${cas.callback.tarjonta-app}</prop>
                 <prop key="cas_mode">front</prop>
                 <prop key="cas_key">tarjonta-app</prop>
                 <prop key="cas_service">${cas.service.tarjonta-app}</prop>

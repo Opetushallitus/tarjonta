@@ -1,10 +1,52 @@
 var app = angular.module('Kuvaus', ['ngResource','config']);
 
-app.factory('Kuvaus',function($http,Config,$q){
+app.factory('Kuvaus',function($http,Config,$q,$log){
 
     var kuvausUriPrefix = "kuvaus/";
 
     return {
+
+        removeKuvausWithId : function(kuvausTunniste) {
+
+            var promise = $q.defer();
+
+            if (kuvausTunniste !== undefined) {
+
+                var kuvausGetUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+kuvausTunniste;
+                $http.delete(kuvausGetUri)
+                    .success(function(data){
+                        promise.resolve(data);
+                    })
+                    .error(function(data){
+                        promise.resolve(data);
+                    });
+
+            } else {
+                promise.resolve();
+            }
+
+
+            return promise.promise;
+
+        },
+
+        findWithVuosiOppilaitostyyppiTyyppiVuosi : function(oppilaitosTyyppi,tyyppi,vuosi) {
+
+            var promise = $q.defer();
+
+            var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix +tyyppi+"/"+oppilaitosTyyppi+"/"+vuosi+"/"+"kuvaustenTiedot";
+
+            $http.get(queryUri)
+                .success(function(data){
+                    promise.resolve(data);
+                })
+                .error(function(data){
+                    promise.resolve(data);
+                });
+
+            return promise.promise;
+
+        },
 
         findKuvausWithId : function(kuvausTunniste) {
 
@@ -38,7 +80,13 @@ app.factory('Kuvaus',function($http,Config,$q){
             if (kuvaus !== undefined && tyyppi !== undefined) {
 
                 var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
-                $http.post(kuvausPostUri,kuvaus)
+
+
+                $http.post(kuvausPostUri,kuvaus,{
+                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                })
+
                     .success(function(data){
                        promise.resolve(data);
                     })
@@ -62,7 +110,10 @@ app.factory('Kuvaus',function($http,Config,$q){
             if (kuvaus !== undefined && tyyppi !== undefined) {
 
                 var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
-                $http.put(kuvausPostUri,kuvaus)
+                $http.put(kuvausPostUri,kuvaus,{
+                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                })
                     .success(function(data){
                         promise.resolve(data);
                     })
@@ -106,7 +157,60 @@ app.factory('Kuvaus',function($http,Config,$q){
 
         },
 
-        findAllNimesWithTyyppi : function(tyyppi) {
+        findKuvausBasicInformation : function(tyyppi,oppilaitosTyyppi) {
+
+            var promise = $q.defer();
+
+            if (tyyppi !== undefined && oppilaitosTyyppi !== undefined) {
+
+                var queryUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi+"/"+oppilaitosTyyppi+"/kuvaustenTiedot";
+
+                $http.get(queryUri)
+                    .success(function(data){
+                      promise.resolve(data);
+                    })
+                    .error(function(data){
+                      promise.resolve();
+                    });
+
+            }  else {
+                promise.resolve();
+            }
+
+
+            return promise.promise;
+
+        },
+
+        findKuvauksesWithSearchSpec : function(searchSpec, tyyppi) {
+
+            var promise = $q.defer();
+
+            if (searchSpec !== undefined && tyyppi !== undefined) {
+
+                var queryUri = Config.env.tarjontaRestUrlPrefix +kuvausUriPrefix +tyyppi+"/search";
+
+                $log.info('KUVAUS SEARCH SPEC URI : ', queryUri);
+
+                 $http.post(queryUri,searchSpec,{
+                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                 })
+                     .success(function(data){
+                          promise.resolve(data);
+                     }).error(function(errorData) {
+                         promise.resolve(errorData);
+                     });
+
+            }  else {
+                promise.resolve(null);
+            }
+
+            return promise.promise;
+
+        },
+
+        findAllNimesWithType : function(tyyppi) {
 
             var promise = $q.defer();
 

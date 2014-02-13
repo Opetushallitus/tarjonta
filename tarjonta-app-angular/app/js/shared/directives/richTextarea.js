@@ -1,8 +1,8 @@
 'use strict';
 
-var app = angular.module('RichTextArea', ['Koodisto', 'localisation', 'pasvaz.bindonce', 'ui.tinymce']);
+var app = angular.module('RichTextArea', ['Koodisto', 'localisation', 'pasvaz.bindonce', 'ui.tinymce', 'ngSanitize']);
 
-app.directive('richTextarea',function(LocalisationService, $log) {
+app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 	
 	function RichTextareaController($scope) {
 		
@@ -13,7 +13,7 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 			resize:false,
 			schema:"html5",
 			language:LocalisationService.getLocale(),
-			plugins:"link image table media",
+			plugins:"link table",
 			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
 				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
 			tools:"inserttable"
@@ -34,6 +34,14 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		$scope.showMax = $scope.max != undefined && $scope.max!=null && $scope.max>0;
 		$scope.edit = $scope.mode()===false;
 		
+		$scope.isEdit = function() {
+			return $scope.edit && $scope.mode()!==true;
+		}
+		
+		$scope.html = function() {
+			return $sce.trustAsHtml($scope.model);
+		}
+		
 		$scope.isEmpty = function() {
 			return !$scope.model || $scope.model.trim().length==0;
 		}
@@ -43,6 +51,9 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		}
 		
 		$scope.startEdit = function($event) {
+			if ($scope.mode()===true) {
+				return;
+			}
 			if ($event) {
 				$event.stopPropagation();
 			}
@@ -53,7 +64,7 @@ app.directive('richTextarea',function(LocalisationService, $log) {
 		}
 		
 		$scope.stopEdit = function() {
-			if ($scope.mode()==null || $scope.mode()==undefined) {
+			if ($scope.mode()!==false) {
 				$scope.edit = false;
 			}
 		}
@@ -69,7 +80,7 @@ app.directive('richTextarea',function(LocalisationService, $log) {
         scope: {
         	model: "=",  // teksti
         	mode: "&",   // boolean, jonka mukaan editorikäyttöliittymä näytetään
-        				 // - jos null tai undefined, editorin näytetään kun hiirikursori on kentän päällä
+        				 // - jos null tai undefined, editorin näytetään klikattaessa
         				 // - jos false, editori näytetään (aina)
         				 // - jos true, editoria ei näytetä
         	max: "@"	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä

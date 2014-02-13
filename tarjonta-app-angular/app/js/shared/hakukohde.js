@@ -27,6 +27,11 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
+
+        remove : {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
         save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
@@ -49,7 +54,7 @@ app.factory('Liite',function($resource, Config) {
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
-        insert: {
+        save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
@@ -75,7 +80,7 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
             method: 'PUT',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
-        insert: {
+        save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
@@ -104,7 +109,10 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
                 var hakukohdeKoulutusUri =  Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
 
-                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                $http.post(hakukohdeKoulutusUri,koulutusOids,{
+                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                }).success(function(data){
                     return true;
                 }).error(function(data){
                         return false;
@@ -123,7 +131,10 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
 
                 var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
-                $http.post(hakukohdeKoulutusUri,koulutusOids).success(function(data){
+                $http.post(hakukohdeKoulutusUri,koulutusOids,{
+                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+
+                }).success(function(data){
                     promise.resolve(true);
                 }).error(function(data){
                     promise.resolve(false);
@@ -156,6 +167,31 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
 
             return promise.promise;
+
+        } ,
+
+        getHakukohdeKoulutukses : function(hakukohdeOid) {
+
+            if (hakukohdeOid !== undefined) {
+
+                var promise = $q.defer();
+
+                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
+
+                $http.get(getHakukohdeKoulutuksesUri)
+                    .success(function(data){
+                       promise.resolve(data);
+                    })
+                    .error(function(data){
+                      promise.resolve(data);
+                    });
+
+
+                return promise.promise;
+
+            } else {
+                return undefined;
+            }
 
         }
 

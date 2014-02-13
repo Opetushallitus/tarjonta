@@ -14,15 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -30,7 +26,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
 /**
  * Supported operations.
@@ -42,7 +48,7 @@ import javax.ws.rs.core.MediaType;
  * GET    oid/state                                  -- state
  * PUT    oid/state                                  -- update state
  * POST   /                                          -- create haku
- * PUT    /                                          -- update hakue
+ * POST   /oid                                       -- update haku
  * DELETE oid                                        -- remove haku
  * </pre>
  *
@@ -54,8 +60,8 @@ public interface HakuV1Resource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Palauttaa kaikki hakujen oid:t", notes = "Listaa kaikki hakujen oidit", response = OidV1RDTO.class)
-    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params);
+    @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t", notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
+    public ResultV1RDTO<List<OidV1RDTO>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c")List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
 
     @GET
     @Path("/{oid}")
@@ -69,10 +75,11 @@ public interface HakuV1Resource {
     @ApiOperation(value = "Luo haun", notes = "Luo haun", response = HakuV1RDTO.class)
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku);
 
-    @PUT
+    @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun", notes = "Päivittää haun", response = HakuV1RDTO.class)
+    @Path("/{oid}")
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku);
 
     @GET

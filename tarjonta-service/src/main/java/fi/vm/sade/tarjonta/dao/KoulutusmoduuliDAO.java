@@ -118,6 +118,7 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String kieliUri;
         private String nimiQuery;
         private String koulutusKoodiUri;
+        private String likeKoulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
         private String lukiolinjaKoodiUri;
         private List<String> tarjoajaOids;
@@ -237,6 +238,20 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
          */
         public void setKieliUri(String kieliUri) {
             this.kieliUri = kieliUri;
+        }
+
+        /**
+         * @return the likeKoulutusKoodiUri
+         */
+        public String getLikeKoulutusKoodiUri() {
+            return likeKoulutusKoodiUri;
+        }
+
+        /**
+         * @param likeKoulutusKoodiUri the likeKoulutusKoodiUri to set
+         */
+        public void setLikeKoulutusKoodiUri(String likeKoulutusKoodiUri) {
+            this.likeKoulutusKoodiUri = likeKoulutusKoodiUri;
         }
 
         public enum GroupBy {

@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h3>{{dialog.title}}</h3>
+</div>
+<div class="modal-body">
+    <table>
+        <tr>
+            <td><div ng-bind-html="dialog.description"></div> </td>
+        </tr>
+        <tr>
+            <td>{{dialog.koodistocombotitle}}</td>
+            <td><koodistocombo koodistouri="'oppilaitostyyppi'" filteruris="dialog.userOrgTypes" koodiuri="dialog.selectedType" locale="'fi'"/></td>
+        </tr>
+    </table>
+
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="onCancel()">{{dialog.cancel}}</button>
+    <button class="btn btn-primary" data-ng-click="onOk()">{{dialog.ok}}</button>
+</div>

@@ -592,20 +592,30 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         List<String> returnVal = new ArrayList<String>();
         List<String> koulutusKoodis = new ArrayList<String>();
         List<String> pohjakoulutukses = new ArrayList<String>();
+        Set<String> tarjoajaOids = new HashSet<String>();
 
         Set<String> koulutusAlkamiskaudes = new HashSet<String>();
         Set<Integer> koulutusAlkamisVuodes = new HashSet<Integer>();
-        for (KoulutusPerustieto koulutusModel : koulutukses) {
-            koulutusAlkamiskaudes.add(koulutusModel.getKoulutuksenAlkamiskausi().getUri());
-            koulutusAlkamisVuodes.add(koulutusModel.getKoulutuksenAlkamisVuosi());
-            koulutusKoodis.add(koulutusModel.getKoulutuskoodi().getUri());
-            pohjakoulutukses.add(koulutusModel.getPohjakoulutusvaatimus().getUri());
+        for (KoulutusPerustieto koulutus : koulutukses) {
+            koulutusAlkamiskaudes.add(koulutus.getKoulutuksenAlkamiskausi().getUri());
+            koulutusAlkamisVuodes.add(koulutus.getKoulutuksenAlkamisVuosi());
+            koulutusKoodis.add(koulutus.getKoulutuskoodi().getUri());
+            pohjakoulutukses.add(koulutus.getPohjakoulutusvaatimus().getUri());
+            tarjoajaOids.add(koulutus.getTarjoaja().getOid());
         }
         if (!doesEqual(koulutusKoodis.toArray(new String[koulutusKoodis.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongKoulutuskoodi"));
         }
         if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+
+        if (!doesEqual(pohjakoulutukses.toArray(new String[pohjakoulutukses.size()]))) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
+        }
+
+        if (tarjoajaOids.size()>1) {
+            returnVal.add(I18N.getMessage("HakukohdeCreationDialog.tarjoajaDoesNotMatch"));
         }
 
         if (koulutusAlkamiskaudes.size() > 1 || koulutusAlkamisVuodes.size() > 1) {
@@ -631,7 +641,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         LueKoulutusKyselyTyyppi lueK = new LueKoulutusKyselyTyyppi();
         lueK.setOid(getModel().getHakukohde().getKomotoOids().get(0));
         LueKoulutusVastausTyyppi koulutus = this.tarjontaPublicService.lueKoulutus(lueK);
-        List<KoulutusPerustieto> validKoulutukses = getValidKoulutuksesForHakukohde(vastaus, koulutus.getKoulutusKoodi(), koulutus.getPohjakoulutusvaatimus());
+        List<KoulutusPerustieto> validKoulutukses = getValidKoulutuksesForHakukohde(vastaus, koulutus.getKoulutusKoodi(), koulutus.getPohjakoulutusvaatimus(), koulutus.getTarjoaja());
         List<KoulutusOidNameViewModel> filtedredKoulutukses = removeSelectedKoulutukses(convertKoulutusToNameOidViewModel(validKoulutukses));
         CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(filtedredKoulutukses, KoulutusOidNameViewModel.class, "ShowHakukohdeViewImpl.liitaUusiKoulutusDialogSecondaryTitle", "HakukohdeCreationDialog.valitutKoulutuksetOptionGroup", false);
         return dialog;
@@ -639,7 +649,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     private List<KoulutusPerustieto> getValidKoulutuksesForHakukohde(
-            KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi) {
+            KoulutuksetVastaus vastaus, KoodistoKoodiTyyppi koulutuskoodi, KoodistoKoodiTyyppi pohjakoulutuskoodi, String tarjoajaOid) {
         ListaaHakuTyyppi kysely = new ListaaHakuTyyppi();
         kysely.setHakuOid(getModel().getHakukohde().getHakuViewModel().getHakuOid());
         ListHakuVastausTyyppi hakuVastaus = this.tarjontaPublicService.listHaku(kysely);
@@ -649,7 +659,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
-            if (curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
+            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid)  &&  curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
@@ -1408,7 +1418,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         if (model.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
             return model.getEditedHakukohdeNimi();
         }
-        return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        //return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        return uiHelper.getHakukohdeHakukentta(model.getKomotoOids().get(0),I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
     }
 
     public ListHakukohdeView getHakukohdeListView() {
@@ -1664,7 +1675,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
         //OVT-6477 valmentava ja kuntouttava saa olla useita
-        if (Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
+        //OVT-6676 vapaan sivistystyön koulutuksia saa olla useita
+        if (Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
@@ -2583,6 +2595,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
     }
 
+    /**
+     * Should be called "isKoulutusMutable" or something similar
+     * @param komotoOid
+     * @return
+     */
     public boolean isHakuStartedForKoulutus(String komotoOid) {
         boolean hakuStarted = false;
         HakukohteetVastaus hakukVastaus =  getHakukohteetForKoulutus(komotoOid);
@@ -2592,7 +2609,17 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             if (today.after(hakuAlku)) {
                 hakuStarted = true;
             }
+            
+            //jos hakutyyppi tai erillishaku 
+            if (KoodistoURI.KOODI_LISAHAKU_URI.equals(curHakuk
+                    .getHakutyyppiUri())
+                    || KoodistoURI.KOODI_ERILLISHAKU_URI.equals(curHakuk
+                            .getHakutapaKoodi().getUri())) {
+                hakuStarted = false;
+            }
+            
         }
+                        
         return hakuStarted;
     }
     

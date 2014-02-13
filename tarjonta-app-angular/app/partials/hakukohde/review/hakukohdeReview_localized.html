@@ -6,7 +6,7 @@
 
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "PERUSTIEDOT")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
 
     <tbody ng-show="!model.collapse.perusTiedot">
@@ -26,6 +26,13 @@
     </tr>
 
     <tr>
+        <th tt="hakukohde.review.perustiedot.kaytetaanJarjestelmanValintaPalvelua"></th>
+        <td colspan="2">
+            {{ model.hakukohde.kaytetaanJarjestelmanValintaPalveluaArvo }}
+        </td>
+    </tr>
+
+    <tr>
         <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
         <td colspan="2">
             <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
@@ -33,6 +40,7 @@
             </span>
         </td>
     </tr>
+
 
     <tr>
         <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
@@ -52,7 +60,7 @@
 
     <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAKOKEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
     <tr ng-show="!model.collapse.valintakokeet">
         <th></th>
@@ -87,7 +95,7 @@
 
     <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "LIITTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
     <tr ng-show="!model.collapse.liitteet">
         <th></th>
@@ -111,7 +119,7 @@
 
     <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "VALINTAPERUSTEET")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'VALINTAPERUSTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
 
     <tr ng-show="!model.collapse.valintaperusteet">
@@ -121,7 +129,7 @@
 
     <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
-        <td><input class="btn" type="button" ng-click='doEdit($event, "SORA")' value="{{t('koulutus.review.muokkaa')}}"/></td>
+        <td><a class="btn" href ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
     </tr>
 
     <tr ng-show="!model.collapse.sorakuvaukset">
@@ -131,7 +139,7 @@
 
     <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
         <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
-        <td><input class="btn" type="button" data-ng-click="openLiitaKoulutusModal()" value="{{t('hakukohde.review.liita.koulutus')}}"/></td>
+        <td><a class="btn" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a>
     </tr>
     
     <tr ng-show="!model.collapse.koulutukset">
@@ -144,8 +152,8 @@
                     </td>
                     <td>
                         <div class="align-right">
-	                        <input class="btn" type="button" data-ng-click="showKoulutusHakukohtees(koulutus)" value="{{t('hakukohde.review.koulutus.nayta.hakukohteet')}}"/>
-	                        <input class="btn" type="button" data-ng-click="removeKoulutusFromHakukohde(koulutus)" value="{{t('hakukohde.review.koulutus.poista')}}"/>
+                            <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
+                            <a class="btn" href ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
                         </div>
                     </td>
                 </tr>

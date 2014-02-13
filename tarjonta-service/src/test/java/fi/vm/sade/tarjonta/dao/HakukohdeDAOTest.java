@@ -128,6 +128,50 @@ public class HakukohdeDAOTest {
     }
 
     @Test
+    public void testHakukohdeSearchByNameTermAndYear() {
+
+        Hakukohde hakukohde = fixtures.createHakukohde();
+
+        final String hakukohdeName = hakukohde.getHakukohdeNimi();
+
+        hakukohde.setHaku(fixtures.createPersistedHaku());
+
+        hakukohdeDAO.insert(hakukohde);
+
+        assertEquals(0, hakukohde.getKoulutusmoduuliToteutuses().size());
+
+        KoulutusmoduuliToteutus komoto =  koulutusmoduuliToteutuses.iterator().next();
+
+        final String term = "kausi_k";
+
+        final Integer year = 2014;
+
+        final String providerOid = komoto.getTarjoaja();
+
+        komoto.setAlkamiskausi(term);
+
+        komoto.setAlkamisVuosi(year);
+
+        hakukohde.addKoulutusmoduuliToteutus(komoto);
+
+        komoto.addHakukohde(hakukohde);
+
+        hakukohdeDAO.update(hakukohde);
+
+
+        System.out.println("-------------------------------> Ratkaiseva kysely  ------------------>");
+
+        List<Hakukohde> hakukohdes = hakukohdeDAO.findByNameTermAndYear(hakukohdeName,term,year,providerOid);
+
+
+
+
+
+        assertTrue(hakukohdes.size() > 0);
+
+    }
+
+    @Test
     public void testValintakoeCascadeInsert() {
 
         final Hakukohde hk = fixtures.hakukohdeWithValintakoe;

@@ -15,12 +15,16 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
+ * DTO representing Haku.
  *
  * @author mlyly
  */
@@ -48,7 +52,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     private boolean sijoittelu;
 
-    private List<TekstiRDTO> nimi;
+//    private List<TekstiRDTO> nimi;
 
     private List<HakuaikaV1RDTO> hakuaikas;
 
@@ -60,6 +64,30 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     private Date lastUpdatedDate;
 
+    private Map<String, String> nimi = new HashMap<String, String>();
+
+    private Map<String, KoodiV1RDTO> koodiMeta;
+
+    private int maxHakukohdes;
+
+    public void addKoodiMeta(KoodiV1RDTO koodi) {
+        if (koodi == null) {
+            return;
+        }
+
+        if (getKoodiMeta() == null) {
+            setKoodiMeta(new HashMap<String, KoodiV1RDTO>());
+        }
+        getKoodiMeta().put(koodi.getUri(), koodi);
+    }
+
+    public Map<String, KoodiV1RDTO> getKoodiMeta() {
+        return koodiMeta;
+    }
+
+    public void setKoodiMeta(Map<String, KoodiV1RDTO> koodiMeta) {
+        this.koodiMeta = koodiMeta;
+    }
 
     public String getHakukausiUri() {
         return hakukausiUri;
@@ -141,17 +169,6 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.sijoittelu = sijoittelu;
     }
 
-    public List<TekstiRDTO> getNimi() {
-        if (nimi == null) {
-            nimi = new ArrayList<TekstiRDTO>();
-        }
-        return nimi;
-    }
-
-    public void setNimi(List<TekstiRDTO> nimi) {
-        this.nimi = nimi;
-    }
-
     public List<HakuaikaV1RDTO> getHakuaikas() {
         if (hakuaikas == null) {
             hakuaikas = new ArrayList<HakuaikaV1RDTO>();
@@ -205,6 +222,22 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setHakukausiVuosi(int hakukausiVuosi) {
         this.hakukausiVuosi = hakukausiVuosi;
+    }
+
+    public void setNimi(Map<String, String> nimi) {
+        this.nimi = nimi;
+    }
+
+    public Map<String, String> getNimi() {
+        return nimi;
+    }
+
+    public int getMaxHakukohdes() {
+        return maxHakukohdes;
+    }
+
+    public void setMaxHakukohdes(int maxHakukohdes) {
+        this.maxHakukohdes = maxHakukohdes;
     }
 
 }

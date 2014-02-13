@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 
@@ -22,7 +23,7 @@ public interface KuvausV1Resource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa listan kaikkien kuvausten tunnisteista.",
-            notes = "Palauttaa listan kaikkien kuvausten tunnisteista annetulla")
+            notes = "Palauttaa listan kaikkien kuvausten tunnisteista")
     ResultV1RDTO<List<String>> findAllKuvauksesByTyyppi();
 
     @GET
@@ -36,6 +37,31 @@ public interface KuvausV1Resource {
 
 
     @GET
+    @Path("/{tyyppi}/{organisaatioTyyppi}/kuvaustenTiedot")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation( value = "Palauttaa listan kuvausten tiedosta. Tiedot sisältävät kaiken muun paitsi itse kuvaukset", notes = "Palauttaa listan kuvausten tiedosta. Tiedot sisältävät kaiken muun paitsi itse kuvaukset")
+    ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedot(
+            @ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA")
+            @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
+            @PathParam("organisaatioTyyppi")String orgType
+    );
+
+    @GET
+    @Path("/{tyyppi}/{organisaatioTyyppi}/{vuosi}/kuvaustenTiedot")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation( value = "Palauttaa listan kuvausten tiedosta. Tiedot sisältävät kaiken muun paitsi itse kuvaukset", notes = "Palauttaa listan kuvausten tiedosta. Tiedot sisältävät kaiken muun paitsi itse kuvaukset")
+    ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(
+            @ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA")
+            @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value = "kuvauksen vuosi", required = true)
+            @PathParam("vuosi") int vuosi,
+            @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
+            @PathParam("organisaatioTyyppi")String orgType
+    );
+
+
+    @GET
     @Path("/{tyyppi}/{organisaatioTyyppi}/nimet")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa listan kaikkien kuvausten nimistä eri kielillä.",
@@ -46,11 +72,33 @@ public interface KuvausV1Resource {
             @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
             @PathParam("organisaatioTyyppi")String orgType);
 
+
+    @GET
+    @Path("/{tyyppi}/{organisaatioTyyppi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa listan kaikista tietyn organisaatiotyypin kuvauksista.",
+            notes = "Palauttaa listan kaikista tietyn organisaatiotyypin kuvauksista")
+    ResultV1RDTO<List<KuvausV1RDTO>> getKuvauksesWithOrganizationType(
+            @ApiParam(value = "kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA")
+            @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value = "organisaation tyyppi johon kuvaus on sidottu", required = true)
+            @PathParam("organisaatioTyyppi")String orgType
+    );
+
     @GET
     @Path("/{tunniste}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa kuvauksen annetulla tunnisteella", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> findById(
+            @ApiParam(value ="kuvauksen tunniste", required =  true)
+            @PathParam("tunniste") String tunniste);
+
+
+    @DELETE
+    @Path("/{tunniste}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Poistaa kuvauksen annetulla tunnisteella", response = KuvausV1RDTO.class)
+    ResultV1RDTO<KuvausV1RDTO> removeById(
             @ApiParam(value ="kuvauksen tunniste", required =  true)
             @PathParam("tunniste") String tunniste);
 
@@ -74,6 +122,16 @@ public interface KuvausV1Resource {
     @ApiOperation(value = "Luo uuden annetulle tyyppille uuden kuvauksen", response = KuvausV1RDTO.class)
     ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(@ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
             @ApiParam(value = "Luotava kuvaus", required = true) KuvausV1RDTO kuvausRDTO);
+
+    @POST
+    @Path("/{tyyppi}/search")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    ResultV1RDTO<List<KuvausV1RDTO>> searchKuvaukses(
+            @ApiParam(value="Kuvauksen tyyppi", required = true, allowableValues = "valintaperustekuvaus,SORA") @PathParam("tyyppi") String tyyppi,
+            @ApiParam(value="Haun parametrit" , required = true)
+            KuvausSearchV1RDTO searchParam
+    );
 
 
     @PUT

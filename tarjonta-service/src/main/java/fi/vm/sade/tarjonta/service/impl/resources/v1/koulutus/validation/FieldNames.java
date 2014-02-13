@@ -22,7 +22,8 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 public enum FieldNames {
 
     TUTKINTO,
-    LAAJUUS,
+    OPINTOJEN_LAAJUUSARVO,
+    OPINTOJEN_LAAJUUSYKSIKKO,
     KOULUTUSASTE,
     KOULUTUSALA,
     OPINTOALA,
@@ -41,5 +42,5 @@ public enum FieldNames {
     POHJALKOULUTUSVAATIMUKSET,
     SUUNNITELTUKESTO, //type & value
     SUUNNITELTUKESTON_TYYPPI,
-    OPINTOJEN_LAAJUUS_ARVO
+    OPPILAITOSTYYPPI
 }

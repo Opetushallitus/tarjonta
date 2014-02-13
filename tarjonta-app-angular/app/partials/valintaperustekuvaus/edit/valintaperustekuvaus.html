@@ -1,55 +1,85 @@
-<div id="editValintaperusteKuvaus" ng-controller="ValintaperusteKuvausEditController">
+<div id="editValintaperusteKuvaus" ng-controller="ValintaperusteEditController">
 
     <controls-model
             model="formControls"
             tt-create="valintaperustekuvaus.edit.header.title"
-             title="model.koulutusohjelma.tekstis"
-            dto="model.hakukohde">
+            title="model.tekstis"
+            dto="model.valintaperustekuvaus">
 
         <controls-button tt="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
-        <controls-button tt="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveHakukohde()"></controls-button>
-        <controls-button tt="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveHakukohde()"></controls-button>
 
-        <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin? 
-        <controls-button tt="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
-         -->
-        <!-- TODO uutta luotaessa vaihtoehtoinen teksti "olet luomassa... " tjsp. -->
-        <controls-notify type="message" tt="getKoulutustenNimetKey()" tp="[ getKoulutustenNimet() ]"></controls-notify>
+        <controls-button tt="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
+
+        <controls-notify type="message" tt="getNimetKey()" tp="[ getNimet() ]"></controls-notify>
 
         <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
 
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
-    <tabset>
-        <tab heading="type.title" ng-repeat="type in model.types"></tab>
-    </tabset>
 
-   <!--
-    <tabset>
-        <tab heading="{{t('kk.hakukohde.perustiedot')}}">
-            <form name="editHakukohdeForm">
-                <div data-ng-include="'partials/hakukohde/edit/editPerustiedot.html'"></div>
+    <hr/>
+
+            <form name="valintaPerusteForm">
+
+                <table class="tarjontaForm">
+
+                    <tr>
+
+                        <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help"/>
+                        <td></td>
+                    </tr>
+                    <!-- väli -->
+                    <!--<tr class="padding"><td><br/></td></tr> -->
+
+                    <!-- -->
+                    <tr class="required">
+
+                        <td>
+                            <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet"></mk-textfield>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi"></p>
+                        </td>
+                    </tr>
+                    <!-- väli -->
+                    <tr class="padding"><td><br/></td></tr>
+                    <tr >
+
+                        <td>
+                            <span tt="kk.valintaperustekuvaus.kausi.title"></span>
+                            <koodistocombo name="kausicombo" koodistouri="'kausi'" isrequired="true" koodiuri="model.valintaperustekuvaus.kausi" locale="model.userLang"/>
+                            <span tt="kk.valintaperustekuvaus.vuosi.title"></span>
+                            <select name="vuosiselect" data-ng-model="model.valintaperustekuvaus.vuosi" required data-ng-options="year for year in model.years"></select>
+                        </td>
+
+
+                        <td>
+                            <div>
+                                <p class="error" ng-show="model.showError && valintaPerusteForm.kausicombo.$invalid" tt="valintaperuste.edit.valintaPerusteForm.kausicombo"></p>
+                             <!-- <show-errors form="valintaPerusteForm" field="kausicombo" tt-prefix="valintaperuste.edit"></show-errors> -->
+                            </div>
+
+
+                        </td>
+                    </tr>
+
+
+                    <!-- väli -->
+                    <tr class="padding"><td><br/></td></tr>
+                </table>
+
+                <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>
+
             </form>
-        </tab>
-        <tab disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">
-            <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
-        </tab>
-        <tab disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
-            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
-        </tab>
-        <tab disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintaperustekuvaus')}}">
-            <div data-ng-include="'partials/hakukohde/edit/valintaperusteKuvaukset.html'" data-ng-controller="HakukohdeEditController"></div>
-        </tab>
 
-    </tabset>
-     -->
+
     <display-controls model="formControls" display="footer"></display-controls>
 
-    <!-- 
+    <!--
   <div ng-click="model.collapse.model= !model.collapse.model">
         <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
     </div>

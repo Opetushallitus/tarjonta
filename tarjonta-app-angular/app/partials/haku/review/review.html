@@ -1,0 +1,37 @@
+<div data-ng-controller="HakuReviewController">
+
+    <div ng-if="model.hakux.status != 'OK'">I'm sorry Dave, I'm afraid I can't do that.</div>
+    <div ng-if="model.hakux.status == 'OK'">
+
+        <controls-model
+            model="model.formControls"
+            dto="model.hakux.result">
+
+            <controls-button icon="arrow-left" tt="haku.review.takaisin" action="goBack($event)">Takaisin</controls-button>
+            <controls-button tt="haku.review.poista" action="doDelete($event)">Poista</controls-button>
+
+            <controls-notify type="message" tt="'haku.review.murupolku'" tp="[getHakuNimi()]"></controls-notify>
+
+        </controls-model>
+
+        <display-controls model="model.formControls" display="header"></display-controls>
+
+        <div data-ng-include="'partials/haku/review/hakuReview.html'"></div>
+
+        <display-controls model="model.formControls" display="footer"></display-controls>
+
+    </div>
+
+
+    <hr/>
+    <div ng-click="model.collapse.model = !model.collapse.model">
+        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
+    </div>
+    <div collapse="model.collapse.model">
+        <pre>{{ model | json }}</pre>
+    </div>
+</div>
+
+
+
+

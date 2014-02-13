@@ -4,19 +4,16 @@
         model="formControls"
         dto="model.koulutus">
 
-        <div class="btn" data-ng-click='goBack($event)'><div tt='koulutus.review.takaisin'></div></div>
-        <div class="btn" data-ng-click='doDelete($event)'><div tt='koulutus.review.poista'></div></div>
-        <div class="btn" data-ng-click='doCopy($event)'><div tt='koulutus.review.kopioi'></div></div>
-        <div class="btn" data-ng-click='doMoveToBeSubPart($event)'><div tt='koulutus.review.siirra.osaksi'></div></div>
-        <div class="btn" data-ng-click='doAddParallel($event)'><div tt='koulutus.review.lisaa.rinnakkainen'></div></div>
-        <div class="btn" data-ng-click='doPreview($event)'><div tt='koulutus.review.esikatsele'></div></div>
-
-        <controls-button tt="koulutus.review.takaisin" action="goBack($event)"></controls-button>
-        <controls-button tt="koulutus.review.poista" action="doDelete($event)"></controls-button>
+        <controls-button icon="arrow-left" tt="koulutus.review.takaisin" action="goBack($event)"></controls-button>
+        <controls-button icon="remove" tt="koulutus.review.poista" action="doDelete($event)"></controls-button>
         <controls-button tt="koulutus.review.kopioi" action="doCopy($event)"></controls-button>
+        <!-- 
         <controls-button tt="koulutus.review.siirra.osaksi" action="doMoveToBeSubPart($event)"></controls-button>
         <controls-button tt="koulutus.review.lisaa.rinnakkainen" action="doAddParallel($event)"></controls-button>
-        <controls-button tt="koulutus.review.esikatsele" action="doPreview($event)"></controls-button>
+         -->
+        <controls-button icon="eye-open" tt="koulutus.review.esikatsele" action="doPreview($event)"></controls-button>
+
+       <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
         
         <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
         <controls-notify type="message" tt="'koulutus.review.murupolku'" tp="[model.koulutus.koulutuskoodi.kaannos, model.koulutus.organisaatio.nimi ]"></controls-notify>

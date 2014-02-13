@@ -31,12 +31,14 @@ import javax.jws.WebParam;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.service.business.exception.*;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
@@ -68,10 +70,6 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
-import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
-import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
-import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 
 /**
@@ -343,6 +341,50 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         return true;
     }
 
+
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
+    private boolean checkHakukohdeExists(String hakukohdeNimi, String term, Integer year, String providerOid) {
+
+
+
+           List<Hakukohde> hakukohdes =  hakukohdeDAO.findByNameTermAndYear(hakukohdeNimi,term,
+                   year,providerOid);
+
+           if (hakukohdes != null && hakukohdes.size() > 0)  {
+               return true;
+           }
+           else {
+               return false;
+           }
+
+
+
+    }
+    @Transactional(rollbackFor = Throwable.class, readOnly = true, propagation = Propagation.NOT_SUPPORTED)
+    private boolean doesHakukohdeExistAllready(final String hakukohdeName, String koulutusOid)  {
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
+        if (komoto != null )  {
+
+        final String term = komoto.getAlkamiskausi();
+        final Integer year = komoto.getAlkamisVuosi();
+        final String providerOid = komoto.getTarjoaja();
+
+        log.debug("HAKUKOHDE KOULUTUS TERM : " + term);
+        log.debug("HAKUKOHDE KOULUTUS YEAR : " + year);
+        log.debug("HAKUKOHDE KOULUTUS PROVIDER : " + providerOid);
+
+        boolean doesExist =  checkHakukohdeExists(hakukohdeName,term,year,providerOid);
+
+        log.debug("DOES EXIST HAKUKOHDE : "+ doesExist);
+
+        return doesExist;
+        } else {
+            return  false;
+        }
+
+    }
+
+
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
@@ -353,6 +395,18 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
         Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
+
+        if(hakukohde.getHakukohteenKoulutusOidit() != null && hakukohde.getHakukohteenKoulutusOidit().size() > 0 ) {
+
+            if (doesHakukohdeExistAllready(hakukohde.getHakukohdeNimi(),hakukohde.getHakukohteenKoulutusOidit().get(0))) {
+                log.debug("HAKUKOHDE ALLREADY EXISTS, THROWING EXCEPTION !! ");
+                throw  new HakukohdeExistsException();
+            }
+        }
+
+
+
+
         Haku haku = hakuDAO.findByOid(hakuOid);
         if (!checkHakuAndHakukohdekoulutusKaudet(hakukohde, haku)) {
             throw new RuntimeException("hakukohde.koulutukses.alkamisaika.do.not.match.haku");
@@ -361,8 +415,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         hakuk.setHaku(haku);
         hakuk.setHakuaika(findHakuaika(haku, hakukohde.getSisaisetHakuajat()));
+
+
         hakuk = hakukohdeDAO.insert(hakuk);
-        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(), hakuk));
+        hakuk.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohde.getHakukohteenKoulutusOidit(),hakuk));
         hakuk.setViimIndeksointiPvm(hakuk.getLastUpdateDate());
         hakukohdeDAO.update(hakuk);
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakuk.getId()));
@@ -377,7 +433,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         //return fresh copy (that has fresh versions so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi();
         kysely.setOid(hakuk.getOid());
-        return publicService.lueHakukohde(kysely).getHakukohde();
+        LueHakukohdeVastausTyyppi vastaus =  publicService.lueHakukohde(kysely);
+        return vastaus.getHakukohde();
     }
 
     private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids, Hakukohde hakukohde) {

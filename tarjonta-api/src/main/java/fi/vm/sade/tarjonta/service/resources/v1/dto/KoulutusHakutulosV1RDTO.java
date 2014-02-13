@@ -12,6 +12,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private String oid;
     private Map<String, String> nimi;
     private Map<String, String> kausi;
+    private String kausiUri;
     private Integer vuosi;
     private Map<String, String> koulutusLaji;
     private TarjontaTila tila;
@@ -105,5 +106,13 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
      */
     public void setKoulutuskoodi(String koulutuskoodi) {
         this.koulutuskoodi = koulutuskoodi;
+    }
+
+    public String getKausiUri() {
+        return kausiUri;
+    }
+
+    public void setKausiUri(String kausiUri) {
+        this.kausiUri = kausiUri;
     }
 }

@@ -50,6 +50,9 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	    		$scope.koulutusActions.canCreateKoulutus=data;
 	    	});
 	    	//$scope.koulutusActions.canCreateKoulutus = PermissionService.koulutus.canCreate($scope.organisaatio.currentNode.oid);
+	    	
+	    	$scope.search();
+	    	
 	    }
 	}, false);
 
@@ -100,7 +103,6 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     // Selected org from route path
     $scope.selectedOrgOid = $scope.routeParams.oid ? $scope.routeParams.oid : OPH_ORG_OID;
     
-    $scope.searchedOrgOid = OPH_ORG_OID;
 	$scope.hakukohdeResults = {};
 	$scope.koulutusResults = {};
     
@@ -297,10 +299,8 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
             terms: $scope.spec.terms,
             state: $scope.spec.state == "*" ? null : $scope.spec.state,
             year: $scope.spec.year == "*" ? null : $scope.spec.year,
-            season: $scope.spec.season == "*" ? null : $scope.spec.season
+            season: $scope.spec.season == "*" ? null : $scope.spec.season + '#1'
         };
-    	
-    	$scope.searchedOrgOid = $scope.selectedOrgOid;
     	
         console.log("search", spec);
         updateLocation();
@@ -324,8 +324,11 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
         return disabled;
     };
     
+    $scope.luoHakukohdeEnabled=function(){
+      return ($scope.selection.koulutukset!==undefined && $scope.selection.koulutukset.length>0) && $scope.koulutusActions.canCreateHakukohde; 
+    };
 
-    if ($scope.spec.terms!="") {
+    if ($scope.spec.terms!="" || $scope.selectedOrgOid != OPH_ORG_OID) {
     	if ($scope.spec.terms=="*") {
         	$scope.spec.terms="";
         }
@@ -429,7 +432,7 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
     $scope.luoUusiHakukohde = function() {
 
         SharedStateService.addToState('SelectedKoulutukses',$scope.selection.koulutukset);
-        SharedStateService.addToState('SelectedOrgOid',$scope.searchedOrgOid);
+        SharedStateService.addToState('SelectedOrgOid',$scope.selectedOrgOid);
         $location.path('/hakukohde/new/edit');
     };
     

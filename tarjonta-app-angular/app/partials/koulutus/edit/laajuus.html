@@ -1,0 +1,5 @@
+<div><select ng-if="ctrl.isMulti" required 
+              name="opintojenLaajuusarvo" 
+              ng-model="arvoModel.uri" 
+              ng-options="key as val.arvo for (key, val) in arvoUiModel.meta">
+ </select><span ng-if="!ctrl.isMulti" ng-repeat="(key, val) in arvoUiModel.meta">{{val.arvo}}</span> {{yksikko.nimi}}</div>

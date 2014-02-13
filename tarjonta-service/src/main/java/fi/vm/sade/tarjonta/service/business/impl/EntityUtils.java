@@ -58,6 +58,9 @@ import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import java.util.Calendar;
+import java.util.Date;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *
@@ -188,7 +191,7 @@ public final class EntityUtils {
         }
         to.setYhteyshenkilos(yhteyshenkilos);
         to.setLastUpdatedByOid(from.getViimeisinPaivittajaOid());
-        
+
         copyNimi(from.getNimi(), to);
         copyLisatiedotFields(from, to);
     }
@@ -198,7 +201,7 @@ public final class EntityUtils {
         if (nimi != null
                 && nimi.getTeksti().size() > 0) {
             final Teksti teksti = nimi.getTeksti().get(0);
-            to.setNimi( new MonikielinenTeksti(teksti.getKieliKoodi(), teksti.getValue()));
+            to.setNimi(new MonikielinenTeksti(teksti.getKieliKoodi(), teksti.getValue()));
         }
     }
 
@@ -244,7 +247,6 @@ public final class EntityUtils {
             toKoulutus.addYhteyshenkilo(henkiloTo);
         }
 
-
         Set<WebLinkki> toLinkkis = new HashSet<WebLinkki>();
         if (fromKoulutus.getLinkki() != null) {
             for (WebLinkkiTyyppi fromLinkki : fromKoulutus.getLinkki()) {
@@ -255,8 +257,7 @@ public final class EntityUtils {
         toKoulutus.setLinkkis(toLinkkis);
 
         toKoulutus.setLastUpdatedByOid(fromKoulutus.getViimeisinPaivittajaOid());
-        
-        
+
         copyNimi(fromKoulutus.getNimi(), toKoulutus);
 
     }
@@ -407,12 +408,10 @@ public final class EntityUtils {
         /*
          * Descriptions
          */
-
         copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, KomoTeksti.KOULUTUKSEN_RAKENNE);
 
         //tyyppi.setJatkoOpintoMahdollisuudet(copyFields(komo.getJatkoOpintoMahdollisuudet()));
         //tyyppi.setKoulutuksenRakenne(copyFields(komo.getKoulutuksenRakenne()));
-
         switch (komo.getModuuliTyyppi()) {
             case TUTKINTO:
                 //parent KOMO: tutkinnon-tavoitteet
@@ -461,7 +460,7 @@ public final class EntityUtils {
         /*
          * Optional data
          */
-        tyyppi.setLaajuusarvoUri(parentKomo.getLaajuusArvo());
+        tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo() != null && !komo.getLaajuusArvo().isEmpty() ? komo.getLaajuusArvo() : parentKomo.getLaajuusArvo());
         tyyppi.setLaajuusyksikkoUri(parentKomo.getLaajuusYksikko());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
@@ -483,7 +482,6 @@ public final class EntityUtils {
         //tyyppi.setKoulutuksenRakenne(copyFields(parentKomo.getKoulutuksenRakenne()));
         //tyyppi.setTavoitteet(copyFields(komo.getTavoitteet())); //child KOMO: ammatilliset-tavoitteet
         //tyyppi.setJatkoOpintoMahdollisuudet(copyFields(parentKomo.getJatkoOpintoMahdollisuudet())); //parent KOMO: jatko-opintomahdollisuudet
-
         return tyyppi;
     }
 
@@ -759,5 +757,54 @@ public final class EntityUtils {
 
     public static KoulutusasteTyyppi KoulutusTyyppiStrToKoulutusAsteTyyppi(String koulutustyyppi) {
         return KoulutusasteTyyppi.fromValue(koulutustyyppi);
+    }
+
+     public static void keepSelectedKoodistoUri(Set<KoodistoUri> allDates, KoodistoUri keepDates) {
+        keepSelectedKoodistoUris(allDates, Sets.<KoodistoUri>newHashSet(keepDates));
+    }
+    
+    /**
+     * Remove all orphaned koodisto uri objects from a set of koodisto uri objects.
+     *
+     * @param allUris
+     * @param keepUris
+     */
+    public static void keepSelectedKoodistoUris(Set<KoodistoUri> allUris, Set<KoodistoUri> keepUris) {
+        Set<KoodistoUri> removableDates = Sets.<KoodistoUri>newHashSet(allUris);
+
+        for (KoodistoUri uri : keepUris) {
+            if (removableDates.contains(uri)) {
+                removableDates.remove(uri);
+            }
+        }
+
+        for (KoodistoUri uri : removableDates) {
+            allUris.remove(uri);
+        }
+    }
+
+    public static void keepSelectedDates(Set<Date> allDates, Date keepDates) {
+        keepSelectedDates(allDates, Sets.<Date>newHashSet(keepDates));
+    }
+
+    /**
+     * Remove all orphaned date objects from a set of date objects.
+     *
+     * @param allDates
+     * @param keepDates
+     */
+    public static void keepSelectedDates(Set<Date> allDates, Set<Date> keepDates) {
+        Set<Date> removableDates = Sets.<Date>newHashSet(allDates);
+
+        for (Date dtoDate : keepDates) {
+            Date dateWithoutMinutes = DateUtils.truncate(dtoDate, Calendar.DATE);
+            if (removableDates.contains(dateWithoutMinutes)) {
+                removableDates.remove(dateWithoutMinutes);
+            }
+        }
+
+        for (Date date : removableDates) {
+            allDates.remove(date);
+        }
     }
 }

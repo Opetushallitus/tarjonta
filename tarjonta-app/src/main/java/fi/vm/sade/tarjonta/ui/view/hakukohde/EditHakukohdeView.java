@@ -16,10 +16,12 @@
 package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,7 @@ import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenKuvauksetTabImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.HakukohteenLiitteetTabImpl;
 import fi.vm.sade.tarjonta.ui.view.hakukohde.tabs.PerustiedotViewImpl;
 import fi.vm.sade.vaadin.Oph;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -87,6 +90,15 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private PerustiedotViewImpl perustiedot;
     private HakukohteenKuvauksetTabImpl kuvaukset;
     private HakukohdeActiveTab activeTab = HakukohdeActiveTab.PERUSTIEDOT;
+
+    @Value("${koodisto-uris.yhteishaku}")
+    private String hakutapaYhteishakuUrl;
+
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
+
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
     
     
     private VerticalLayout hl;
@@ -97,6 +109,55 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         addTopInfoMessage(oid);
         setMargin(true);
         setHeight(-1, UNITS_PIXELS);
+
+    }
+
+    private void enableDeEnableSaveButtonsForHaku() {
+
+
+      HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
+      if (hakuViewModel != null) {
+          boolean isHakuStarted =  checkHakuStarted(hakuViewModel);
+          if (isHakuStarted) {
+              enableButtonByListener(clickListenerSaveAsDraft,!isHakuStarted);
+              enableButtonByListener(clickListenerSaveAsReady,!isHakuStarted);
+          }
+      }
+
+
+
+    }
+
+    private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
+
+            Date hakualkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
+
+            if (isErillishakuOrLisahaku(hakuViewModel)) {
+                return false;
+            } else if (new Date().after(hakualkamisPvm)) {
+                return true;
+            } else {
+                return false;
+            }
+            //What if user is OPH ? should he or she have the right to edit haku ?
+            /*else if (presenter.getPermission().userIsOphCrud()) {
+
+            }*/
+
+
+    }
+
+    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
+        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
+    }
+
+
+    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(hakualkamisPvm);
+        cal.add(Calendar.DATE, -3);
+        return cal.getTime();
     }
     /*
      *  Prints out the hakukohde name and last update date and updater
@@ -434,6 +495,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         layout.setMargin(false, false, true, false);
         final VerticalLayout wrapperVl = new VerticalLayout();
         perustiedot = new PerustiedotViewImpl(presenter, uiBuilder);
+
         buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
         liitteet = new HakukohteenLiitteetTabImpl();
@@ -475,6 +537,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             
         });
         makeFormDataUnmodified();
+        enableDeEnableSaveButtonsForHaku();
     }
 
     /*

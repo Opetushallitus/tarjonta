@@ -43,11 +43,13 @@
     text-align:right;
 }
 
-.valintakoe-modal {
-    width:900px;
-    margin-left:-450px
+.align-top {
+	vertical-align: top;
 }
 
+.align-bottom {
+	vertical-align: bottom;
+}
 .display-block {
 	display:block;
 }
@@ -58,11 +60,80 @@ label {
 
 /* latauspylpyrä (kokosivu) */
 
+div#ajax-loader.pre-init .post-init {
+    display:none;
+}
+
+div#ajax-loader .dialog {
+    position:absolute;
+    left:50%;
+    top:50%;
+    margin-left:-200px;
+    margin-top:-150px;
+    width:400px;
+    height:300px;
+    background:#ffffff;
+    border: 1px solid #cccccc;
+    border-radius:4px;    
+    z-index:10001;
+}
+
+div#ajax-loader div.fail, div#ajax-loader.fail div.frame {
+	display:none;
+}
+
+div#ajax-loader.fail div.fail {
+    display:block;
+    position:absolute;
+    left:50%;
+    margin-left:-300px;
+    width:600px;
+}
+
+div#ajax-loader.fail h1 {
+    margin:50px 0 0 0;    
+}
+
+div#ajax-loader.fail p {
+    margin: 30px 0 0 0;
+}
+
+div#ajax-loader.fail a {
+	margin-top:20px;
+	float:right;
+}
+
+div#ajax-loader.fail hr {
+	margin: 30px 0 0 0;	
+} 
+
 div#ajax-loader {
 	font-size:24px;
 	background-color:#ffffff;
 	opacity:0.75;
 	z-index:10000;
+}
+
+div#ajax-loader.lowered {
+    z-index:999;
+}
+
+div#ajax-loader .timeout {
+	position:absolute;
+	top:55%;
+    left:0;
+    width:350px;
+    margin-left:-175px;
+    margin-top:40px;
+    font-size:14px;
+}
+
+div#ajax-loader .timeout p {
+
+}
+
+div#ajax-loader.min .timeout {
+    display:none;	
 }
 
 div#ajax-loader.max {
@@ -73,21 +144,21 @@ div#ajax-loader.max {
 	bottom:0;
 }
 
-div#ajax-loader.max div {
+div#ajax-loader.max div.frame {
 	position: absolute;
 	margin-left:50%;
 	width:50%;
 	height:100%;
 }
 
-div#ajax-loader.max img {
+div#ajax-loader.max div.frame img.spinner {
 	position:absolute;
 	left:-16px;
 	bottom:55%;
 	display:block;
 }
 
-div#ajax-loader.max span {
+div#ajax-loader.max span.spinner-msg {
 	position:absolute;
 	width:200px;
 	left:-100px;
@@ -107,16 +178,16 @@ div#ajax-loader.min {
 	padding-bottom:8px;
 }
 
-div#ajax-loader.min div {
+div#ajax-loader.min div.frame {
 	width:100%;
 }
 
-div#ajax-loader.min img {
+div#ajax-loader.min div.frame img.spinner {
 	display:inline;
 	position:relative;
 }
 
-div#ajax-loader.min span {
+div#ajax-loader.min span.spinner-msg {
 	display:inline;
 	position:relative;
 }
@@ -164,8 +235,12 @@ div#orgSearch {
 	margin-bottom:20px;
 }
 
-div#orgSearchResults > ul > li {
-	padding-left:0;
+div#orgSearchResults span {
+	margin-left:20px;
+	margin-bottom:-20px;
+    display:block;
+    position:relative;
+    top:-20px;
 }
 
 /* tarjonnan hakunäkymä */
@@ -232,6 +307,10 @@ div#searchResults input.selectAll + label {
 	position:relative;
 	top:0.25em;
 	margin-left:0.25em;
+}
+
+div#searchResults div.tools {
+	float:right;	
 }
 
 div#searchResults table {
@@ -375,9 +454,17 @@ div#luo-koulutus-dialogi select {
 }
 
 div#luo-koulutus-dialogi div.modal-body {
-	height:180px;
+	height:340px;
 }
 
+div#luo-koulutus-dialogi td {
+	vertical-align:top;
+}
+
+div#luo-koulutus-dialogi ul {
+    list-style: none;
+    margin:0;
+}
 
 /* koulutuksen muokkaus/luonti */
 
@@ -388,6 +475,11 @@ div#tarjonta-body {
 /* firefox-bootstrap-glow-korjaus */
 input:invalid,textarea:invalid,select:invalid {
 	box-shadow: 0 0 6px rgba(0,0,0,0.075);
+}
+
+/* boostrap-korjaus */
+a.btn span {
+	text-decoration: none;
 }
 
 /* tarjontaControlsLayout / ilmoitusviestit */
@@ -508,3 +600,117 @@ div#select-koulutus div.koulutus-tree > ul > li {
 	padding-left:2px;
 }
 
+/* valintakoe-dialogi */
+
+.valintakoe-modal {
+    width:900px;
+    margin-left:-450px
+}
+
+/* tekstikentän hakuikoni */
+
+input[type=text].typeahead {
+
+    background-image: url('../img/icon20-search.png');
+	background-repeat: no-repeat;
+	background-position: center right;
+	padding-right:22px;
+}
+
+/* virkailija-teeman checkbox-korjaus */
+input[type=checkbox], input[type=radio] {
+	box-shadow:none;
+}
+
+/* koulutuksen alkamispvm */
+
+div#koulutuksenAlkamisPvm ul {
+	list-style:none;	
+    margin:15px 0 0 0;
+}
+
+div#koulutuksenAlkamisPvm ul li {
+	display: inline-block;
+	margin-right:15px;
+}
+
+div#koulutuksenAlkamisPvm div.indent {
+    margin:10px 0 20px 30px;
+}
+
+div#koulutuksenAlkamisPvm span.disabled {
+    color:#a0a0a0;
+}
+
+div#soraVapeChooserDialog dl dt input[type=radio] {
+	margin-top:-0.25em;
+}
+
+div#soraVapeChooserDialog dl dt {
+	font-weight:normal;
+}
+
+div#soraVapeChooserDialog dl dd {
+	margin:0 0 15px 0;
+    font-size:90%;
+    color:#606060;
+    font-style:italic;
+}
+
+div#soraVapeChooserDialog table tr.selected td {
+    background-color:rgb(146, 204, 224);
+}
+
+div#soraVapeChooserDialog div.kuvausGridStyle {
+	border-radius:4px;
+    border: 1px solid #cccccc;
+    
+    width:100%;
+    height:95px;
+    margin-bottom:15px;
+}
+
+div#soraVapeChooserDialog .multiselect .dualpane ul, div#soraVapeChooserDialog .multiselect .dualpane select {
+	width:410px;
+}
+
+/* date-time */
+
+div.tarjontaDateTime {
+    display:inline-block;	
+}
+
+div.tarjontaDateTime input.date {
+    width:6.66em;
+}
+
+div.tarjontaDateTime input.time {
+    width:3.33em;
+}
+
+div.tarjontaDateTime button {
+    position: relative;
+    top:-5px;
+}
+
+/* bootstrap-taulukko */
+
+table.table.selection tr.selected td {
+    background-color:rgb(146, 204, 224);
+}
+
+/* osoitefield */
+
+div.tarjontaOsoiteField .osoite {
+    width:320px;
+}
+
+div.tarjontaOsoiteField .postinumero {
+    width:102px;
+}
+
+div.tarjontaOsoiteField .postitoimipaikka {
+    width:200px;
+    border-color:#eeeeee;
+    box-shadow:none;
+}

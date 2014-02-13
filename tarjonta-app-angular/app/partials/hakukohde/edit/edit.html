@@ -9,6 +9,7 @@
         <controls-button tt="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveHakukohde()"></controls-button>
         <controls-button tt="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveHakukohde()"></controls-button>
+        <controls-button icon="arrow-right" tt="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="!model.continueToReviewEnabled"></controls-button>
         
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin? 
         <controls-button tt="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
@@ -19,7 +20,7 @@
         <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
          
     </controls-model>
 

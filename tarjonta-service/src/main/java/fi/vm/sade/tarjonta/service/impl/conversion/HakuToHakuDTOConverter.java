@@ -52,6 +52,7 @@ public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
         t.setModifiedBy(s.getLastUpdatedByOid());
         t.setNimi(convertMonikielinenTekstiToMap(s.getNimi()));
         t.setTila(s.getTila() != null ? s.getTila().name() : null);
+        t.setMaxHakukohdes(s.getMaxHakukohdes());
 
         t.setSijoittelu(s.isSijoittelu());
 

@@ -1,18 +1,23 @@
 <div class="mkRichTextarea">
+
+    <!-- 
+    <a href ng-click="updateLangs()">päivitä</a>
+     -->
 	<tabset>
 
         <tab ng-repeat="l in selectedLangs" heading="{{langs[l]}}" active="selectedTab[l]">
-            <rich-textarea model="model[l]" mode="false" max="{{max}}"></rich-textarea>
+            <rich-textarea model="model[l]" mode="isDisabled()" max="{{max}}"></rich-textarea>
         </tab>
         
-        <tab heading="+" class="addLangTab">
+        <tab disabled="isDisabled()">
+            <tab-heading><span class="icon-plus"></span></tab-heading>
             <multi-select
+                disabled="isDisabled()"
                 order-with="userLangs"
                 model="langs"
                 selection="selectedLangs"
                 promise="langsPromise"
                 display="dualpane"></multi-select>
-
         </tab>
 
 	</tabset>

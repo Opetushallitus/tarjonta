@@ -102,14 +102,6 @@ public class KoulutusPerustieto implements Serializable
         this.tutkintonimike = value;
     }
 
-    public String getAjankohta() {
-        return ajankohta;
-    }
-
-    public void setAjankohta(String value) {
-        this.ajankohta = value;
-    }
-
     public String getKomotoOid() {
         return komotoOid;
     }

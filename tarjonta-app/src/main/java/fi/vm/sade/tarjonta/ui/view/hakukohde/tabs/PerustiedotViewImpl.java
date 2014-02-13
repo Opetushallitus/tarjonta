@@ -108,6 +108,13 @@ import fi.vm.sade.vaadin.util.UiUtil;
 public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotView {
 
     private static final long serialVersionUID = 1L;
+
+    private final String HAKUKELPOISUUSVAATIMUS_KOODISTO_URI = "hakukelpoisuusvaatimusta";
+
+    private final String PERUSKOULUPOHJAINEN_ARVO = "1";
+
+
+
     @Autowired
     private TarjontaUIHelper tarjontaUIHelper;
     private static final Logger LOG = LoggerFactory.getLogger(PerustiedotViewImpl.class);
@@ -165,6 +172,8 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     @PropertyId("kaksoisTutkinto")
     private CheckBox kaksoistutkintoCheckbox;
 
+    private Label kaksoisTutkintoLabel;
+
     @PropertyId("customHakuaikaEnabled")
     private CheckBox customHakuaika;
 
@@ -210,6 +219,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     private String pkVaatimus;
     private KoulutusasteTyyppi koulutusastetyyppi;
+    
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
 
     /*
      *
@@ -251,6 +263,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 public void valueChange(ValueChangeEvent event) {
                     if (event.getProperty().getValue() instanceof HakukohdeNameUriModel) {
                         HakukohdeNameUriModel selectedHakukohde = (HakukohdeNameUriModel) event.getProperty().getValue();
+                        setKaksoistutkintoEnabledOrDisabled(selectedHakukohde.getHakukohdeUri());
                         setTunnisteKoodi(selectedHakukohde.getHakukohdeArvo());
                     } else {
                         LOG.warn("hakukohteenNimiCombo / value change listener - value was not a String! class = {}",
@@ -313,7 +326,55 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                 || presenter.isKoulutusNivelvaihe();
     }
 
+    private boolean checkPeruskouluPohjaisuus(KoodiType koodiType) {
+        if (koodiType.getKoodiArvo().trim().equals(PERUSKOULUPOHJAINEN_ARVO)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    private void setKaksoistutkintoEnabledOrDisabled(String hakukohdeNimiUri) {
+        if(this.isHakukohdeAnErkkaOrValmentava()) {
+            //kaksoistutkinto is only applicable to reqular ammmatillinen koulutus 
+            return;
+        }
+        if (isPeruskoulupohjainen(hakukohdeNimiUri))  {
+            kaksoistutkintoCheckbox.setVisible(true);
+            kaksoisTutkintoLabel.setVisible(true);
+        } else {
+            kaksoistutkintoCheckbox.setVisible(false);
+            kaksoisTutkintoLabel.setVisible(false);
+        }
+
+    }
+
+    private boolean isPeruskoulupohjainen(String hakukohdeNimiUriParam) {
+       String hakukohdeNimiUri = null;
+       if (hakukohdeNimiUriParam != null) {
+           hakukohdeNimiUri = hakukohdeNimiUriParam;
+       } else if (presenter.getModel().getHakukohde() != null && presenter.getModel().getHakukohde().getSelectedHakukohdeNimi() != null) {
+           hakukohdeNimiUri =  presenter.getModel().getHakukohde().getSelectedHakukohdeNimi().getHakukohdeUri();
+       }
+
+
+       if (hakukohdeNimiUri != null) {
+
+           Collection<KoodiType> koodiTypes = tarjontaUIHelper.getKoodistoRelations(hakukohdeNimiUri,HAKUKELPOISUUSVAATIMUS_KOODISTO_URI,
+                   false,SuhteenTyyppiType.SISALTYY);
+
+           for (KoodiType koodi: koodiTypes) {
+               if (checkPeruskouluPohjaisuus(koodi)) {
+                   return true;
+               }
+           }
+
+           return false;
+       } else {
+           return false;
+       }
+
+    }
 
     private GridLayout buildGrid() {
         Preconditions.checkNotNull(koulutusasteTyyppi, "KoulutusasteTyyppi enum cannot be null.");
@@ -347,9 +408,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             addItemToGrid("", buildSahkoinenToimitusOsoiteCheckBox());
             addItemToGrid("", buildSahkoinenToimitusOsoiteTextField());
             addItemToGrid("PerustiedotView.toimitettavaMennessa", buildToimitusPvmField());
-            if (koulutusasteTyyppi != KoulutusasteTyyppi.LUKIOKOULUTUS) {
-            addItemToGrid("", buildKaksoistutkintoField("PerustiedotView.kaksoistutkinto"));
-            }
+
+
+            addItemToGrid("", buildKaksoistutkintoField("PerustiedotView.kaksoistutkinto",(koulutusasteTyyppi != KoulutusasteTyyppi.LUKIOKOULUTUS && isPeruskoulupohjainen(null))));
+
             checkCheckboxes();
 
             if (muuOsoite) {
@@ -367,17 +429,19 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return itemContainer;
     }
 
-    private AbstractComponent buildKaksoistutkintoField(String captionKey) {
+    private AbstractComponent buildKaksoistutkintoField(String captionKey, boolean isVisible) {
 
         HorizontalLayout verticalLayout = new HorizontalLayout();
 
-        Label label = UiUtil.label(null, T(captionKey));
+        kaksoisTutkintoLabel = UiUtil.label(null, T(captionKey));
 
         kaksoistutkintoCheckbox = new CheckBox();
 
         verticalLayout.addComponent(kaksoistutkintoCheckbox);
-        verticalLayout.addComponent(label);
+        verticalLayout.addComponent(kaksoisTutkintoLabel);
 
+        kaksoistutkintoCheckbox.setVisible(isVisible);
+        kaksoisTutkintoLabel.setVisible(isVisible);
 
         return verticalLayout;
 
@@ -810,17 +874,18 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     /*
      * Checks if the hakuaika is acceptable for hakukohde
      */
-    private boolean accepts(HakuaikaViewModel ham, boolean isLisahaku) {
+    private boolean accepts(HakuaikaViewModel ham, boolean isLisahakuOrErillishaku) {
         //Oph user has her own rules
         if (presenter.getPermission().userIsOphCrud()) {
             return acceptsForOph(ham);
         }
         //If it is lisahaku it is acceptable if hakuaika has not ended yet.
-        if (isLisahaku) {
+        if (isLisahakuOrErillishaku) {
             return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
         }
+        
         //Hakuaika is ok if it has not started yet.
-    	return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
+        return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
     }
 
     /*
@@ -841,7 +906,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         }
         //If at least 1 hakuaika is acceptabe, then the haku is acceptable.
         for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-                if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
+                if (accepts(ham, isErillishakuOrLisahaku(hm))) {
                         return true;
                 }
         }
@@ -858,9 +923,10 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             return acceptsForOph(hm);
         }
 
-        //If it is lisahaku it is ok for hakukohde if the haku has not ended
-        if (this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi())
-                && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
+        final boolean isErillishakuOrLisahaku = isErillishakuOrLisahaku(hm);
+        
+        //If it is lisahaku or erillishauku  it is ok for hakukohde if the haku has not ended
+        if (isErillishakuOrLisahaku && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
             return true;
         }
         //If haku has not started it is ok for hakukohde
@@ -870,11 +936,15 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
     	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
     	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-    		if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()))) {
-    			return true;
-    		}
+    	    if (accepts(ham, isErillishakuOrLisahaku)) {
+    	        return true;
+    	    }
     	}
     	return false;
+    }
+
+    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
+        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
     }
 
 
@@ -889,6 +959,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         List<HakuViewModel> fhaut = new ArrayList<HakuViewModel>();
         for (HakuViewModel hvm : haut) {
+                
         	if (accepts(hvm)) {
         		fhaut.add(hvm);
         	}
@@ -928,13 +999,13 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         	boolean hamSelected = false;
             for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
-            	if (accepts(ham, this.hakutyyppiLisahakuUrl.equals(hk.getHakutyyppi()))) {
+            	if (accepts(ham, isErillishakuOrLisahaku(hk))) {
 
-            		hvms.add(ham);
-            		if (!hamSelected) {
-            		    model.setHakuaika(ham);
-            		    hamSelected = true;
-            		}
+            	    hvms.add(ham);
+            	    if (!hamSelected) {
+            	        model.setHakuaika(ham);
+            	        hamSelected = true;
+            	    }
             	}
             }
 
