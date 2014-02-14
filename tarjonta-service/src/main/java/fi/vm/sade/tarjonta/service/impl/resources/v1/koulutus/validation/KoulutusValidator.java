@@ -69,7 +69,9 @@ public class KoulutusValidator {
         validateKoodi(validationMessages, dto.getKoulutusaste(), KoulutusValidationMessages.KOULUTUS_KOULUTUSASTE_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSASTE_INVALID);
         validateKoodi(validationMessages, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(validationMessages, dto.getOpintoala(), KoulutusValidationMessages.KOULUTUS_OPINTOALA_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOALA_INVALID);
-        validateKoodi(validationMessages, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_INVALID);
+        validateKoodi(validationMessages, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
+        validateKoodi(validationMessages, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
+        
         validateKoodi(validationMessages, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTO_INVALID);
         validateKoodiUris(validationMessages, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID);
     }

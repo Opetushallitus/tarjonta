@@ -159,8 +159,6 @@ public class KoulutusGenerator extends AbstractGenerator {
         KoulutusmoduuliKorkeakouluRelationV1RDTO relation = map.get(type);
         Preconditions.checkNotNull(relation, "Relation data object cannot be null.");
 
-        createKoulutusohjelmaNames(dto, type, relation.getKoulutuskoodi().getArvo());
-
         dto.setKoulutusaste(relation.getKoulutusaste());
         dto.setKoulutusala(relation.getKoulutusala());
         dto.setOpintoala(relation.getOpintoala());
@@ -193,13 +191,6 @@ public class KoulutusGenerator extends AbstractGenerator {
                 "1-5");
 
         dto.getYhteyshenkilos(); //TODO!!!
-        Set<Map.Entry<String, Integer>> entrySet = relation.getOpintojenLaajuusarvos().getUris().entrySet();
-
-        String opintojenLaajuusyksikkoUri = "opintojenlaajuusyksikko_2";
-        for (Entry<String, Integer> e : entrySet) {
-            opintojenLaajuusyksikkoUri = e.getKey();
-            break;
-        }
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
         for (KomoTeksti k : KomoTeksti.values()) {
             NimiV1RDTO nimi = new NimiV1RDTO();
@@ -217,8 +208,25 @@ public class KoulutusGenerator extends AbstractGenerator {
         }
         dto.setKuvausKomoto(komotoKuvaus);
 
-        dto.setOpintojenLaajuusarvo(KoodistoUtil.toKoodiUri(opintojenLaajuusyksikkoUri));
-        dto.setOpintojenLaajuusyksikko(relation.getOpintojenLaajuusyksikko());
+        String opintojenLaajuusarvoUri = null;
+        Set<Map.Entry<String, Integer>> entrySet = relation.getOpintojenLaajuusarvos().getUris().entrySet();
+        for (Entry<String, Integer> e : entrySet) {
+            opintojenLaajuusarvoUri = e.getKey();
+            break;
+        }
+        if (opintojenLaajuusarvoUri == null) {
+            opintojenLaajuusarvoUri = "opintojenlaajuus_2";
+        }
+
+        dto.setOpintojenLaajuusarvo(KoodistoUtil.toKoodiUri(opintojenLaajuusarvoUri));
+
+        if (relation.getOpintojenLaajuusyksikko() != null && relation.getOpintojenLaajuusyksikko().getArvo() == null) {
+            dto.setOpintojenLaajuusyksikko(relation.getOpintojenLaajuusyksikko());
+        } else {
+            dto.setOpintojenLaajuusyksikko(KoodistoUtil.toKoodiUri("opintojenlaajuus_120"));
+        }
+
+        createKoulutusohjelmaNames(dto, type, relation.getKoulutuskoodi().getArvo());
 
         ObjectMapper mapper = new ObjectMapper();
         String writeValueAsString = mapper.writeValueAsString(dto);
@@ -286,9 +294,8 @@ public class KoulutusGenerator extends AbstractGenerator {
         return get.getResult();
     }
 
-    private void createKoulutusohjelmaNames(KoulutusKorkeakouluV1RDTO dto, KTYPE text, final String koulutuskoodi) {
+    private void createKoulutusohjelmaNames(KoulutusKorkeakouluV1RDTO dto, KTYPE text, final String koulutuskoodi) {        
         dto.getKoulutusohjelma().getTekstis().put(LANGUAGE_URI_FI, KoodistoUtil.toNimiValue(id + " " + text + " " + koulutuskoodi, LANGUAGE_URI_FI));
         dto.getKoulutusohjelma().getTekstis().put(LANGUAGE_URI_SV, KoodistoUtil.toNimiValue(id + " " + text + " " + koulutuskoodi, LANGUAGE_URI_SV));
-
     }
 }
