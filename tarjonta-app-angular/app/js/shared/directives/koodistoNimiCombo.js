@@ -60,7 +60,11 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                 if ($scope.version !== undefined && $scope.version) {
                     angular.forEach(koodis,function(koodi){
-                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                        if (koodi.koodiUri.indexOf("#") < 0) {
+                            koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                        } else {
+                            $log.warn("addVersionToKoodis - tried to add version to already versioned URI!", koodi);
+                        }
                     });
                 }
 
