@@ -59,8 +59,8 @@ public class KoodistoUtil {
 
     }
 
-    public static KoodiV1RDTO toKoodiUri(final String type) {
-        return new KoodiV1RDTO(type, 1, null);
+    public static KoodiV1RDTO toKoodiUri(final String uri) {
+        return new KoodiV1RDTO(uri, 1, null);
     }
 
     public static KoodiV1RDTO toMetaValue(final String value, String lang) {
