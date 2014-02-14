@@ -26,7 +26,7 @@ var app = angular.module('ShowErrors', ['localisation']);
  *
  * Will generate in case of errors:
  *
- *   <p class="error" ttt="haku.edit.hakuForm.error">Tarkista kentän arvo!</p>
+ *   <p class="error" tt="haku.edit.hakuForm.error">Tarkista kentän arvo!</p>
  *
  * IFF all of this applies:
  *

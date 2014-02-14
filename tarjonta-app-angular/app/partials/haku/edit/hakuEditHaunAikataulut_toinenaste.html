@@ -1,10 +1,10 @@
 <!-- 2. aste + other parameters -->
 <div>
-    <h3 ttt='haku.edit.aikataulu.valinnatJaSijoittelu'>Valinnat ja sijoittelu</h3>
+    <h3 tt='haku.edit.aikataulu.valinnatJaSijoittelu'>Valinnat ja sijoittelu</h3>
 
     <table class="tarjontaForm">
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
+            <th tt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S" required></t-date-time>
                 --
@@ -19,7 +19,7 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_HVVPTP'>Harkinnanvaraisen valinnan päätösten tallennus päättyy</th>
+            <th tt='haku.edit.aikataulu.PH_HVVPTP'>Harkinnanvaraisen valinnan päätösten tallennus päättyy</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP" required></t-date-time>
             </td>
@@ -31,7 +31,7 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_KTT'>Koetulosten tallentaminen</th>
+            <th tt='haku.edit.aikataulu.PH_KTT'>Koetulosten tallentaminen</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S" required></t-date-time>
                 --
@@ -46,7 +46,7 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_OLVVPKE'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
+            <th tt='haku.edit.aikataulu.PH_OLVVPKE'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S" required></t-date-time>
                 --
@@ -61,7 +61,7 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_VLS'>Valintalaskennan suorittaminen</th>
+            <th tt='haku.edit.aikataulu.PH_VLS'>Valintalaskennan suorittaminen</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_VLS_S" ng-model="model.parameter.PH_VLS_S"></t-date-time>
                 --
@@ -76,7 +76,7 @@
         </tr>
 
         <tr class="required">
-            <th ttt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
+            <th tt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_SS_S" ng-model="model.parameter.PH_SS_S"></t-date-time>
                 --
@@ -91,7 +91,7 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_SSAVTM'>Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
+            <th tt='haku.edit.aikataulu.PH_SSAVTM'>Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
             <td>
                 <input type="checkbox" ng-model="model.parameter.PH_SSAVTM" name="PH_SSAVTM"> Sijoittelu aina valintatietojen muuttuessa
             </td>
@@ -103,10 +103,10 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_SST'>Sijoittelun suorittamistiheys</th>
+            <th tt='haku.edit.aikataulu.PH_SST'>Sijoittelun suorittamistiheys</th>
             <td>
-                <input type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span ttt="haku.tuntia">tuntia</span>
-                <p class="help-block" ttt='haku.edit.aikataulu.PH_SST.help'>
+                <input type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span tt="haku.tuntia">tuntia</span>
+                <p class="help-block" tt='haku.edit.aikataulu.PH_SST.help'>
                     Tiheys määritetään kokonaistunteina välillä 1 - 336 (14 vuorokautta)
                 </p>
             </td>
@@ -119,11 +119,11 @@
 
 <!--
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_SSKA'>Sijoittelun suorittaminen päivittäin kello</th>
+            <th tt='haku.edit.aikataulu.PH_SSKA'>Sijoittelun suorittaminen päivittäin kello</th>
             <td>
-                <span ttt="haku.klo">klo</span>
+                <span tt="haku.klo">klo</span>
                 <input type="text" ng-model="model.parameter.PH_SSKA" name="PH_SSKA" placeholder="23:59" ng-pattern="/[012][0-9]:[0-5][0-9]/">
-                <p class="help-block" ttt='haku.edit.aikataulu.PH_SSKA.help'>
+                <p class="help-block" tt='haku.edit.aikataulu.PH_SSKA.help'>
                     Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen.
                 </p>
             </td>
@@ -137,11 +137,11 @@
 
     </table>
 
-    <h3 ttt='haku.edit.aikataulu.tuloksetJaPaikanVastaanotto'>Tulokset ja paikan vastaanotto</h3>
+    <h3 tt='haku.edit.aikataulu.tuloksetJaPaikanVastaanotto'>Tulokset ja paikan vastaanotto</h3>
 
     <table class="tarjontaForm">
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
+            <th tt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP"></t-date-time>
             </td>
@@ -153,7 +153,7 @@
         </tr>
 
         <tr>
-            <th ttt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
+            <th tt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_PH_HKP" ng-model="model.parameter.PH_HKP"></t-date-time>
             </td>
