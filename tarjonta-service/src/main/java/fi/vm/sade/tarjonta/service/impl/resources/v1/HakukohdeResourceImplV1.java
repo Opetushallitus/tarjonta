@@ -346,6 +346,45 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
+    private String removeUriVersion(String uri) {
+
+        if (uri.contains("#")) {
+
+            StringTokenizer st = new StringTokenizer(uri,"#");
+
+            return st.nextToken();
+
+        } else {
+            return uri;
+        }
+
+    }
+
+    private boolean doesHakukohdeExist(HakukohdeV1RDTO hakukohdeV1RDTO, Haku haku) {
+
+        List<Hakukohde> hakukohdes = hakukohdeDao.findByTermYearAndProvider(haku.getHakukausiUri(),haku.getHakukausiVuosi(),hakukohdeV1RDTO.getTarjoajaOids().iterator().next());
+
+        if (hakukohdes != null) {
+            boolean wasFound = false;
+            for (Hakukohde hakukohde : hakukohdes) {
+
+               for (TekstiKaannos tekstiKaannos : hakukohde.getHakukohdeMonikielinenNimi().getKaannoksetAsList()) {
+                    String hakukohdeNimi = hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi()));
+                   LOG.debug("CHECKING HAKUKOHDE NIMI : {}",hakukohdeNimi );
+                    if (hakukohdeNimi.trim().equals(tekstiKaannos.getArvo())) {
+                        LOG.debug("HAKUKOHDE NAME MATCHES : {} TO {}",hakukohdeNimi,tekstiKaannos.getArvo());
+                        wasFound = true;
+                    }
+               }
+
+            }
+            return wasFound;
+        } else {
+            return false;
+        }
+
+    }
+
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
@@ -367,6 +406,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
         Haku haku = hakuDao.findByOid(hakuOid);
+
+        if (doesHakukohdeExist(hakukohdeRDTO,haku)) {
+            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+            result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+            result.addError(ErrorV1RDTO.createValidationError(null, "hakukohde.exists", null));
+            return result;
+        }
+
         hakukohde.setHaku(haku);
 
         if (hakukohdeRDTO.getHakuaikaId() != null) {

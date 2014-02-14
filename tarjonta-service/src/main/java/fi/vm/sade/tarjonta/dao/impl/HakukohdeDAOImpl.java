@@ -199,6 +199,19 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public List<Hakukohde> findByTermYearAndProvider(String term, int year, String providerOid) {
+
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(qHakukohde)
+                .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);
+
+
+    }
+
+    @Override
     public void removeValintakoe(Valintakoe valintakoe) {
         if (valintakoe != null && valintakoe.getId() != null) {
             getEntityManager().remove(getEntityManager().find(Valintakoe.class, valintakoe.getId()));

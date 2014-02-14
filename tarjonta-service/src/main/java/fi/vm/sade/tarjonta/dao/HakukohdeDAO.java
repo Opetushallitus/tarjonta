@@ -71,6 +71,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     List<Hakukohde> findByNameTermAndYear(String name,String term, int year, String providerOid);
 
+    List<Hakukohde> findByTermYearAndProvider(String term,int year,String providerOid);
+
     List<KoulutusmoduuliToteutus> komotoTest(String term, int year, String providerOid);
 
     // String getAlkamiskausiUri();
