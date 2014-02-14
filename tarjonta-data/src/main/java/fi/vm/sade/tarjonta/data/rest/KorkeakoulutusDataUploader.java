@@ -23,10 +23,10 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchCriteriaDTO;
+import fi.vm.sade.tarjonta.data.test.GenerateTestData;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.slf4j.Logger;
@@ -40,18 +40,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class KorkeakoulutusDataUploader {
-
-    public static final String ENV = "http://localhost:8585";
-
-    public static final String ENV_CAS = "https://itest-virkailija.oph.ware.fi";
-
-    public static final String SERVICE = "/tarjonta-service";
-
-    public static final String SERVICE_REST = "/tarjonta-service/rest/v1";
-
-    public static final String TARJONTA_SERVICE = ENV + SERVICE;
-
-    public static final String TARJONTA_SERVICE_REST = ENV + SERVICE_REST;
 
     private static final String[] ACCEPTED_OPPILAITOSTYYPPIS = new String[]{
         "oppilaitostyyppi_42#1",
@@ -79,11 +67,11 @@ public class KorkeakoulutusDataUploader {
         Client clientWithJacksonSerializer = Client.create(cc);
         clientWithJacksonSerializer.setFollowRedirects(Boolean.TRUE);
 
-        this.koulutusResource = clientWithJacksonSerializer.resource(TARJONTA_SERVICE_REST + "/koulutus");
-        this.permissionResource = clientWithJacksonSerializer.resource(TARJONTA_SERVICE_REST + "/permission");
-        this.linkResource = clientWithJacksonSerializer.resource(TARJONTA_SERVICE_REST + "/link");
-        this.hakukohdeResource = clientWithJacksonSerializer.resource(TARJONTA_SERVICE_REST + "/hakukohde");
-        this.hakuResource = clientWithJacksonSerializer.resource(TARJONTA_SERVICE_REST + "/haku");
+        this.koulutusResource = clientWithJacksonSerializer.resource(GenerateTestData.TARJONTA_SERVICE_REST + "/koulutus");
+        this.permissionResource = clientWithJacksonSerializer.resource(GenerateTestData.TARJONTA_SERVICE_REST + "/permission");
+        this.linkResource = clientWithJacksonSerializer.resource(GenerateTestData.TARJONTA_SERVICE_REST + "/link");
+        this.hakukohdeResource = clientWithJacksonSerializer.resource(GenerateTestData.TARJONTA_SERVICE_REST + "/hakukohde");
+        this.hakuResource = clientWithJacksonSerializer.resource(GenerateTestData.TARJONTA_SERVICE_REST + "/haku");
     }
 
     public void upload(final int maxOrganisations, final int maxKoulutus) throws InterruptedException, IOException {
