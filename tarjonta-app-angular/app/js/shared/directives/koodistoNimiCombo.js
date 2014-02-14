@@ -126,10 +126,13 @@ app.directive('koodistocombo',function(Koodisto,$log){
            } else {
                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                koodisPromise.then(function(koodisParam){
+                   console.log("************************** getAllKoodisWithKoodiUri : ", koodisParam);
 
-                   addVersionToKoodis(koodisParam);
+                   $scope.koodis = angular.copy(koodisParam);
+                   addVersionToKoodis($scope.koodis);
 
-                   $scope.koodis = koodisParam;
+                   console.log("************************** getAllKoodisWithKoodiUri 2222 : ", $scope.koodis);
+
                });
            }
 
