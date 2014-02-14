@@ -61,6 +61,12 @@ public class KoulutusCommonV1RDTO {
         NimiV1RDTO data = new NimiV1RDTO();
         for (TekstiKaannos tk : mt.getTekstis()) {
             final KoodiType koodiType = tarjontaKoodistoHelper.convertKielikoodiToKoodiType(tk.getKieliKoodi());
+            
+            if (koodiType == null) {
+                LOG.error("No koodisto koodi URI found for kielikoodi : '{}'", tk.getKieliKoodi());
+                continue;
+            }
+            
             final String koodiUri = koodiType.getKoodiUri();
             
             data.getTekstis().put(koodiUri, tk.getArvo());
