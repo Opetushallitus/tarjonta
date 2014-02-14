@@ -35,6 +35,18 @@ public class GenerateTestData {
 
     private static final int MAX_KOULUTUS_PER_ORGANISATION = 4;
 
+    public static final String ENV = "https://itest-virkailija.oph.ware.fi";//"http://localhost:8585";
+
+    public static final String ENV_CAS = "https://itest-virkailija.oph.ware.fi";
+
+    public static final String SERVICE = "/tarjonta-service";
+
+    public static final String SERVICE_REST = "/tarjonta-service/rest/v1";
+
+    public static final String TARJONTA_SERVICE = ENV + SERVICE;
+
+    public static final String TARJONTA_SERVICE_REST = ENV + SERVICE_REST;
+
     public GenerateTestData() {
     }
 
