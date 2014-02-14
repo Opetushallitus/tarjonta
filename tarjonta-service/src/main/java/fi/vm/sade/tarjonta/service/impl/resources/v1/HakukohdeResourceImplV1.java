@@ -14,18 +14,43 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiParam;
+
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
@@ -47,19 +72,8 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
-import java.util.*;
-import org.apache.commons.collections.CollectionUtils;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Nullable;
-import javax.ws.rs.PathParam;
 
 /**
  *
@@ -428,12 +442,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         //TODO: Fix it
         //permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
 
-        //These are updated in a separate resource
-        hakukohde.getValintakoes().clear();
+        //These are updated in a separate resource -> ei enää
+        /*hakukohde.getValintakoes().clear();
         hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
 
         hakukohde.getLiites().clear();
         hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+        */
 
         hakukohde.setId(hakukohdeTemp.getId());
         hakukohde.setVersion(hakukohdeTemp.getVersion());
@@ -457,7 +472,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
 
         hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
-        //TODO: valintakoes and liites
 
         hakukohdeDao.update(hakukohde);
         solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));

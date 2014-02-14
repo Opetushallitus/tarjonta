@@ -61,7 +61,7 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 				expires: key.expires
 		}
 
-		console.log("Cache insert",key.key);
+		console.log("Cache insert ",key);
 	}
 	
 	/**
@@ -116,6 +116,8 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 	cacheService.lookup = function(key, getter) {
         var ret = $q.defer();
 		
+        key = prepare(key);
+        
         var res = cacheService.find(key);
         
 		if (res!=undefined) {
@@ -132,6 +134,7 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 			var query = $q.defer();
 			
 			query.promise.then(function(res){
+				//console.log("Cache RESOLVED "+key.key,res);
 				cacheService.insert(key, res);
 				cacheRequests[key.key] = undefined;
 				ret.resolve(res);

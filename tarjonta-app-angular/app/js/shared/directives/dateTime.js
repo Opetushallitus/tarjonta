@@ -10,6 +10,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	
     	$scope.errors = {};
     	
+    	$scope.prompts = {
+    			date: LocalisationService.t("tarjonta.kalenteri.prompt.pvm"),
+    			time: LocalisationService.t("tarjonta.kalenteri.prompt.aika"),
+    	}
+    	
     	var omitUpdate = false;
     	
     	// model <-> ngModel muunnos olion ja aikaleiman välillä

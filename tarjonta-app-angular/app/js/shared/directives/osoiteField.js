@@ -14,6 +14,10 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
     	
     	$scope.postinumeroArvo = "";
     	$scope.postinumerot = [];
+    	
+    	if (!$scope.model) {
+    		$scope.model = {osoiterivi1:"", postinumero:"", postitoimipaikka:""};
+    	}
 
         function findPostinumeroWithUri(koodi)  {
         	for (var i in $scope.postinumerot) {

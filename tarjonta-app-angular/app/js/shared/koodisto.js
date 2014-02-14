@@ -14,9 +14,9 @@
  */
 
 
-var app = angular.module('Koodisto', ['ngResource', 'config']);
+var app = angular.module('Koodisto', ['ngResource', 'config', 'TarjontaCache']);
 
-app.factory('Koodisto', function($resource, $log, $q, Config) {
+app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
     var host = Config.env["tarjontaKoodistoRestUrlPrefix"];
 
@@ -142,30 +142,22 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
         getAllKoodisWithKoodiUri: function(koodistoUriParam, locale) {
 
-
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
 
-            var returnKoodisPromise = $q.defer();
+        	return CacheService.lookup("koodisto/"+koodistoUriParam+"/"+locale, function(returnKoodisPromise){
 
-            var returnKoodis = [];
+                var returnKoodis = [];
+                var koodiUri = host + ':koodistoUri/koodi';
 
-            var koodiUri = host + ':koodistoUri/koodi';
-
-
-            $resource(koodiUri, {koodistoUri: '@koodistoUri'},{cache:true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
-
-
-
-                angular.forEach(koodis, function(koodi) {
-
-
-
-                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                $resource(koodiUri, {koodistoUri: '@koodistoUri'},{cache:true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
+                    angular.forEach(koodis, function(koodi) {
+                    	returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                    });
+                    returnKoodisPromise.resolve(returnKoodis);
                 });
-                returnKoodisPromise.resolve(returnKoodis);
-            });
 
-            return returnKoodisPromise.promise;
+        	});
+        	
         },
         /*
          @param {string} koodistouri from which koodis should be retrieved
