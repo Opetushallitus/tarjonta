@@ -93,7 +93,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
             //template: '<div tt="this.is.key" locale="fi">Default saved for the given key</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
-                $log.info("tt compile", tElement, tAttrs, transclude);
+                // $log.info("tt compile", tElement, tAttrs, transclude);
 
                 var key = tAttrs["tt"];
                 var locale = angular.isDefined(tAttrs["locale"]) ? tAttrs["locale"] : LocalisationService.getLocale();
@@ -117,7 +117,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
                     translation = "*CREATED* " + originalText;
                 }
 
-                $log.info("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
+                // $log.info("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
 
                 // Put translated text to DOM
                 if (localName === "input") {
@@ -235,7 +235,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             // Update in memory storage for local translations
             this.getTranslations().push(newEntry);
 
-//            // Then create missing translation to the server side
+            // Then create missing translation to the server side
             Localisations.save(newEntry,
                     function(data) {
                         $log.info("  created new translation to server side! data = ", data);
@@ -269,8 +269,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         // Get translations by key
         var v = v0 ? v0[key] : undefined;
         var result = angular.isDefined(v);
-
-        $log.info("hasTranslation()", key, locale, result);
+        // $log.info("hasTranslation()", key, locale, result);
         return result;
     };
 

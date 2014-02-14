@@ -68,7 +68,7 @@ app.directive('kuvaus', function() {
  * <t-show-date value="haku.alkoitusPvm" timestamp/> <div t-show-date
  * value="haku.alkoitusPvm" timestamp>replaced</div> <div t-show-date
  * value="haku.alkoitusPvm" timestamp/>
- * 
+ *
  * mikäli arvo ei ole määritelty asettaa watchin ja hoitaa tulostuksen heti kun
  * mahdollista, eli ts dataa ei tarvitse ladata routessa valmiiksi
  */
@@ -97,13 +97,13 @@ app.directive('kuvaus', function() {
         }
 
         var result = $filter('date')(date, format);
-        console.log("DATE == " + result, format);
+        // console.log("DATE == " + result, format);
         element.replaceWith(result);
         if (unregister) {
           unregister();
         }
       }
-      
+
       if(value) {
         processValue(value);
       }
