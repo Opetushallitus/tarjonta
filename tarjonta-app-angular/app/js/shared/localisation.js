@@ -58,7 +58,8 @@ app.factory('Localisations', function($log, $resource, Config) {
  *
  * usage:
  * <pre>
- *   &lt;div tt="this.is.translation.key">foo</div&gt;
+ *   &lt;div tt="this.is.translation.key"><b>Oletusarvo käännösavaimelle!</b></div&gt;
+ *   &lt;div tt="this.is.translation.key2" locale="ab">Abhasi oletusarvo</div&gt;
  *
  *   {{ t("this.is.another.key" }}
  *   {{ t("this.is.another.key", ["param", "param too"]) }}
@@ -67,7 +68,7 @@ app.factory('Localisations', function($log, $resource, Config) {
  *   {{ tl("this.is.anotker.key", "sv", ["param", "param too"]) }}
  * </pre>
  */
-app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationService) {
+app.directive('tt_OLD', ['LocalisationService', '$timeout', function(LocalisationService) {
         return {
             restrict: 'EA',
             replace: true,
@@ -83,6 +84,56 @@ app.directive('tt', ['LocalisationService', '$timeout', function(LocalisationSer
             }
         };
     }]);
+
+
+app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationService) {
+        return {
+            restrict: 'A',
+            replace: true,
+            //template: '<div tt="this.is.key" locale="fi">Default saved for the given key</div>',
+            scope: false,
+            compile: function(tElement, tAttrs, transclude) {
+                // $log.info("tt compile", tElement, tAttrs, transclude);
+
+                var key = tAttrs["tt"];
+                var locale = angular.isDefined(tAttrs["locale"]) ? tAttrs["locale"] : LocalisationService.getLocale();
+                var translation = "";
+
+                if (LocalisationService.hasTranslation(key, locale)) {
+                    translation = LocalisationService.tl(key, locale);
+                } else {
+                    // Grab the original / placeholder text in the template
+                    var originalText = "";
+
+                    var localName = tElement[0].localName;
+                    if (localName === "input") {
+                        originalText = tAttrs["value"];
+                    } else {
+                        originalText = tElement.html();
+                    }
+
+                    LocalisationService.createMissingTranslations(key, locale, originalText);
+
+                    translation = "*CREATED* " + originalText;
+                }
+
+                // $log.info("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
+
+                // Put translated text to DOM
+                if (localName === "input") {
+                    tElement.attr("value", translation);
+                } else {
+                    tElement.html(translation);
+                }
+
+                return function postLink(scope, iElement, iAttrs, controller) {
+                    // $timeout(scope.$destroy.bind(scope), 0);
+                };
+            }
+        };
+    }]);
+
+
 
 /**
  * Singleton service for localisations.
@@ -119,14 +170,14 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
     };
 
     var kieliUri = "kieli_" + this.getLocale();
-    
+
     /**
      * returns language uri that matches the current language
      */
     this.getKieliUri = function(){
       return kieliUri;
     };
-    
+
     this.setLocale = function(value) {
         this.locale = value;
     };
@@ -184,7 +235,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             // Update in memory storage for local translations
             this.getTranslations().push(newEntry);
 
-//            // Then create missing translation to the server side
+            // Then create missing translation to the server side
             Localisations.save(newEntry,
                     function(data) {
                         $log.info("  created new translation to server side! data = ", data);
@@ -208,6 +259,58 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
     };
 
     /**
+     * @param {type} key
+     * @param {type} locale
+     * @returns {boolean} True if there is translaton map for given locale AND an exisiting translation for given key
+     */
+    this.hasTranslation = function(key, locale) {
+        // Get translations map by locale
+        var v0 = this.localisationMapByLocaleAndKey[locale];
+        // Get translations by key
+        var v = v0 ? v0[key] : undefined;
+        var result = angular.isDefined(v);
+        // $log.info("hasTranslation()", key, locale, result);
+        return result;
+    };
+
+    this.createMissingTranslations = function(key, locale, originalText) {
+        $log.info("createMissingTranslations()", key, locale, originalText);
+
+        // Default locales that translations should be created for
+        var locales = ["fi", "en", "sv"];
+
+        if (locales.indexOf(locale) < 0) {
+            locales.push(locale);
+        }
+
+        // Create translations to serverside AND update in memory map for transations
+        var thisLocalisationService = this;
+
+        angular.forEach(locales, function(l) {
+            // Save this to server
+            var newEntry = {category: "tarjonta", key: key, locale: l, value: originalText};
+
+            $log.info("TODO save to server: ", newEntry);
+
+            Localisations.save(newEntry,
+                    function(data) {
+                        $log.info("  created new translation to server side! data = ", data);
+                    },
+                    function(data, status, headers, config) {
+                        $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
+                    });
+
+            // Create temporary placeholder for next requests
+            this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
+            this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
+            this.localisationMapByLocaleAndKey[locale][key] = newEntry;
+
+            // Update in memory storage for local translations
+            thisLocalisationService.getTranslations().push(newEntry);
+        });
+    };
+
+    /**
      * Get list of currently loaded translations.
      *
      * @returns global APP_LOCALISATION_DATA, array of {key, locale, value} objects.
@@ -227,6 +330,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
     this.updateLookupMap = function() {
         $log.info("updateLookupMap()");
 
+        // Create temporary map
         var tmp = {};
 
         for (var localisationIndex in Config.env["tarjonta.localisations"]) {
@@ -239,6 +343,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             mapByLocale[localisation.key] = localisation;
         }
 
+        // Use the new map
         this.localisationMapByLocaleAndKey = tmp;
 
         $log.info("===> result ", this.localisationMapByLocaleAndKey);
