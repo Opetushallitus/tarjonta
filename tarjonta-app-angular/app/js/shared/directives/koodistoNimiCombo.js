@@ -60,7 +60,11 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                 if ($scope.version !== undefined && $scope.version) {
                     angular.forEach(koodis,function(koodi){
-                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                        if (koodi.koodiUri.indexOf("#") < 0) {
+                            koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                        } else {
+                            $log.warn("addVersionToKoodis - tried to add version to already versioned URI!", koodi);
+                        }
                     });
                 }
 
@@ -122,10 +126,13 @@ app.directive('koodistocombo',function(Koodisto,$log){
            } else {
                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                koodisPromise.then(function(koodisParam){
+                   console.log("************************** getAllKoodisWithKoodiUri : ", koodisParam);
 
-                   addVersionToKoodis(koodisParam);
+                   $scope.koodis = angular.copy(koodisParam);
+                   addVersionToKoodis($scope.koodis);
 
-                   $scope.koodis = koodisParam;
+                   console.log("************************** getAllKoodisWithKoodiUri 2222 : ", $scope.koodis);
+
                });
            }
 
