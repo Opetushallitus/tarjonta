@@ -36,10 +36,13 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		}
     	}
     	
+    	var kv = {};
+    	kv[lc] = "";
+    	
     	return {
     		kieliUri: lc,
     		liitteenNimi: "",
-    		liitteenKuvaus: {teksti: ""},
+    		liitteenKuvaukset:kv,
     		toimitettavaMennessa: null, //tmennessa,
     		liitteenToimitusOsoite: getDefaultOsoite(),
     		muuOsoiteEnabled: false,
@@ -246,7 +249,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         // validointi manuaalisesti; angularin formi ei toimi tässä tapauksessa
        	var liite = $scope.liitteetModel.selectedLiite[kieliUri];
     	return liite && notEmpty(liite.liitteenNimi)
-    		&& notEmpty(liite.liitteenKuvaus.teksti)
+    		&& notEmpty(liite.liitteenKuvaukset[kieliUri])
     		&& liite.toimitettavaMennessa!=null
     		&& (!liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite))
     		&& (!liite.muuOsoiteEnabled || (liite.liitteenToimitusOsoite
