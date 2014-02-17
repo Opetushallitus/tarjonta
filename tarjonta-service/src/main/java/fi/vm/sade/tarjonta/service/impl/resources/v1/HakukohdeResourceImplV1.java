@@ -384,9 +384,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             for (Hakukohde hakukohde : hakukohdes) {
 
                for (TekstiKaannos tekstiKaannos : hakukohde.getHakukohdeMonikielinenNimi().getKaannoksetAsList()) {
+                   LOG.debug("TRYING TO GET HAKUKOHDE NIMI WITH : {} ", hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi())) );
                     String hakukohdeNimi = hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi()));
                    LOG.debug("CHECKING HAKUKOHDE NIMI : {}",hakukohdeNimi );
-                    if (hakukohdeNimi.trim().equals(tekstiKaannos.getArvo())) {
+                    if (hakukohdeNimi != null && hakukohdeNimi.trim().equals(tekstiKaannos.getArvo())) {
                         LOG.debug("HAKUKOHDE NAME MATCHES : {} TO {}",hakukohdeNimi,tekstiKaannos.getArvo());
                         wasFound = true;
                     }
@@ -422,12 +423,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         Haku haku = hakuDao.findByOid(hakuOid);
 
-        if (doesHakukohdeExist(hakukohdeRDTO,haku)) {
+        //NOT NEEDED YET
+       /* if (doesHakukohdeExist(hakukohdeRDTO,haku)) {
             ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.addError(ErrorV1RDTO.createValidationError(null, "hakukohde.exists", null));
             return result;
-        }
+        } */
 
         hakukohde.setHaku(haku);
 
