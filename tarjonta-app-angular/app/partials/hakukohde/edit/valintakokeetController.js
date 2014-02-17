@@ -5,7 +5,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
 	$scope.kokeetModel = {};
 
 	$scope.kokeetModel.opetusKielet = [];
-	$scope.kokeetModel.valintakokeet = [];
+	//$scope.model.hakukohde.valintakokeet = [];
 	   
 	$scope.kokeetModel.langs = [];
 	$scope.kokeetModel.selectedLangs = [];
@@ -63,7 +63,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
     });
     
 
-    if ($scope.model.hakukohde.oid !== undefined) {
+    /*if ($scope.model.hakukohde.oid !== undefined) {
 
         var valintaKokeetResource = Valintakoe.getAll({ hakukohdeOid : $scope.model.hakukohde.oid });
         
@@ -73,20 +73,24 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
         	for (var i in valintakokeet.result) {
         		var vk = valintakokeet.result[i];
         		vk.selectedAjankohta = newAjankohta();
-        		$scope.kokeetModel.valintakokeet.push(vk);
+        		$scope.model.hakukohde.valintakokeet.push(vk);
         		if ($scope.kokeetModel.selectedLangs.indexOf(vk.kieliUri)==-1) {
    					$scope.kokeetModel.selectedLangs.push(vk.kieliUri);
    				}
         	}
-        	
-            /*angular.forEach(valintakokees.result,function(valintakoe){
-                addValintakoeToList(valintakoe);
-            });*/
             
         });
         
-    }
-    
+    }*/
+
+	for (var i in $scope.model.hakukohde.valintakokeet) {
+		var vk = $scope.model.hakukohde.valintakokeet[i];
+		vk.selectedAjankohta = newAjankohta();
+		if ($scope.kokeetModel.selectedLangs.indexOf(vk.kieliUri)==-1) {
+				$scope.kokeetModel.selectedLangs.push(vk.kieliUri);
+			}
+	}
+	
     $scope.saveAjankohta = function(valintakoe) {
     	var ajankohta = valintakoe.selectedAjankohta;
     	ajankohta.selected = undefined;
@@ -137,12 +141,12 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
     }
 
     $scope.addValintakoe = function(lc) {
-    	for (var i in $scope.kokeetModel.valintakokeet) {
-    		if ($scope.kokeetModel.valintakokeet[i].kieliUri==lc && !$scope.kokeetModel.valintakokeet[i].oid) {
+    	for (var i in $scope.model.hakukohde.valintakokeet) {
+    		if ($scope.model.hakukohde.valintakokeet[i].kieliUri==lc && !$scope.model.hakukohde.valintakokeet[i].oid) {
     			return;
     		}
     	}
-    	$scope.kokeetModel.valintakokeet.push({
+    	$scope.model.hakukohde.valintakokeet.push({
     		kieliUri:lc,
     		valintakoeNimi:"",
     		valintakokeenKuvaus: {uri: lc, teksti: ""},
@@ -153,8 +157,8 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
     $scope.getValintakokeetByKieli = function(lc) {
     	var ret = [];
     	
-    	for (var i in $scope.kokeetModel.valintakokeet) {
-    		var li = $scope.kokeetModel.valintakokeet[i];
+    	for (var i in $scope.model.hakukohde.valintakokeet) {
+    		var li = $scope.model.hakukohde.valintakokeet[i];
     		if (li.kieliUri == lc) {
     			ret.push(li);
     		}

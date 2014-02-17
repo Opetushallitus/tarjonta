@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
@@ -74,7 +75,6 @@ import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.StringTokenizer;
 
 /**
  *
@@ -473,70 +473,78 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
-        String hakuOid = hakukohdeRDTO.getHakuOid();
+        try {
+        	LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
+			String hakuOid = hakukohdeRDTO.getHakuOid();
 
-        List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
-        if (validationMessagesList.size() > 0 ) {
-            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-            for (HakukohdeValidationMessages message: validationMessagesList) {
-                errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
-            }
-            errorResult.setResult(hakukohdeRDTO);
-            return errorResult;
-        }
+			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+			if (validationMessagesList.size() > 0 ) {
+			    ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+			    errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+			    for (HakukohdeValidationMessages message: validationMessagesList) {
+			        errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
+			    }
+			    errorResult.setResult(hakukohdeRDTO);
+			    return errorResult;
+			}
 
-        Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-        hakukohde.setLastUpdateDate(new Date());
-        Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
-        //TODO: Fix it
-        //permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
+			Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
+			hakukohde.setLastUpdateDate(new Date());
+			Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
+			//TODO: Fix it
+			//permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
 
-        //These are updated in a separate resource -> ei enää
-        /*hakukohde.getValintakoes().clear();
-        hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
+			//These are updated in a separate resource -> ei enää
+			/*hakukohde.getValintakoes().clear();
+			hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
 
-        hakukohde.getLiites().clear();
-        hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
-        */
+			hakukohde.getLiites().clear();
+			hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+			*/
 
-        hakukohde.setId(hakukohdeTemp.getId());
-        hakukohde.setVersion(hakukohdeTemp.getVersion());
+			hakukohde.setId(hakukohdeTemp.getId());
+			hakukohde.setVersion(hakukohdeTemp.getVersion());
 
-        //Just in case remove kuvaukses if tunniste is defined
-        if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
-            hakukohde.setValintaperusteKuvaus(null);
-        }
+			//Just in case remove kuvaukses if tunniste is defined
+			if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+			    hakukohde.setValintaperusteKuvaus(null);
+			}
 
-        if (hakukohde.getSoraKuvausTunniste() != null) {
-            hakukohde.setSoraKuvaus(null);
-        }
+			if (hakukohde.getSoraKuvausTunniste() != null) {
+			    hakukohde.setSoraKuvaus(null);
+			}
 
-        Haku haku = hakuDao.findByOid(hakuOid);
+			Haku haku = hakuDao.findByOid(hakuOid);
 
-        hakukohde.setHaku(haku);
+			hakukohde.setHaku(haku);
 
-        if (hakukohdeRDTO.getHakuaikaId() != null) {
-            hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
-        }
+			if (hakukohdeRDTO.getHakuaikaId() != null) {
+			    hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
+			}
 
 
-        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+			hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
 
-        hakukohdeDao.update(hakukohde);
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                return arg0.getId();
-            }
-        })));
-        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+			hakukohdeDao.update(hakukohde);
+			solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+			solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+			    public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+			        return arg0.getId();
+			    }
+			})));
+			publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
 
-        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
-        result.setStatus(ResultV1RDTO.ResultStatus.OK);
-        result.setResult(hakukohdeRDTO);
+			ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+			result.setStatus(ResultV1RDTO.ResultStatus.OK);
+			result.setResult(hakukohdeRDTO);
 
-        return result;
+        	LOG.info("AFTER UPDATE HAKUKOHDE {}", hakukohdeOid);
+			return result;
+		} catch (RuntimeException e) {
+			// väliaikainen virheidenkäsittely
+        	LOG.warn("FAIL UPDATE HAKUKOHDE "+hakukohdeOid, e);
+			throw e;
+		}
     }
 
     @Override
