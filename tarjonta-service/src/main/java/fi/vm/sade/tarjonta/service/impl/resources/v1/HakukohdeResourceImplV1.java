@@ -540,6 +540,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			return result;
 		} catch (RuntimeException e) {
 			// väliaikainen virheidenkäsittely
+			System.out.println("WTF ERR miksei tämä näy lokissa?");
+			e.printStackTrace();
+			System.err.println("WTF ERR miksei tämä näy lokissa?");
 			e.printStackTrace(System.err);
 			//LOG.warn("FAIL UPDATE HAKUKOHDE "+hakukohdeOid, e);
 			throw e;
