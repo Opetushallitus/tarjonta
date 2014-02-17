@@ -1,11 +1,6 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -19,83 +14,49 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String hakukohteenNimi;
-
     private String hakukohteenNimiUri;
-
-    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=true)
+    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=false)
     private HashMap<String,String> hakukohteenNimet;
-
-
+    private Map<String,String> tarjoajaNimet;
     private Set<String> tarjoajaOids;
-
     @ApiModelProperty(value = "Hakukohde's haku's oid",required = true)
     private String hakuOid;
-
     @ApiModelProperty(value = "Hakukohde's haku's inner application period",required = false)
     private String hakuaikaId;
-
     private List<String> hakukelpoisuusvaatimusUris;
-
     @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
     private List<String> hakukohdeKoulutusOids;
-
     private Date hakuaikaAlkuPvm;
-
     private Date hakuaikaLoppuPvm;
-
     private double alinHyvaksyttavaKeskiarvo;
-
     private int alinValintaPistemaara;
-
+    private int ylinValintapistemaara;
     @ApiModelProperty(value = "Hakukohde's aloituspaikat amount", required = true)
     private int aloituspaikatLkm;
-
     private int edellisenVuodenHakijatLkm;
-
     private int valintojenAloituspaikatLkm;
-
-    private int ylinValintapistemaara;
-
     private String sahkoinenToimitusOsoite;
-
     private String soraKuvausKoodiUri;
-
     @ApiModelProperty(value = "Hakukohde's state",required = true,allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
     private String tila;
-
     private String valintaperustekuvausKoodiUri;
-
     private Date liitteidenToimitusPvm;
-
     private HashMap<String,String> lisatiedot;
-
     private HashMap<String,String> valintaperusteKuvaukset;
-
     private HashMap<String,String> soraKuvaukset;
-
     private HashMap<String,String> hakukelpoisuusVaatimusKuvaukset;
-
     private boolean kaytetaanJarjestelmanValintaPalvelua;
-
     private boolean kaytetaanHaunPaattymisenAikaa;
-
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
-
     private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
-
     private OsoiteRDTO liitteidenToimitusOsoite;
-
     private List<ValintakoeV1RDTO> valintakokeet;
-
     private Long valintaPerusteKuvausTunniste;
-
+    private Boolean kaksoisTutkinto;
     private Long soraKuvausTunniste;
-
     private Set<String> opetusKielet;
-
     @Deprecated // sama kuin opetuskielet
     private Set<String> valintaPerusteKuvausKielet;
-
     @Deprecated // sama kuin opetuskielet
     private Set<String> soraKuvausKielet;
 
@@ -420,5 +381,20 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public Set<String> getOpetusKielet() {
 		return opetusKielet;
 	}
-    
+
+    public Map<String, String> getTarjoajaNimet() {
+        return tarjoajaNimet;
+    }
+
+    public void setTarjoajaNimet(Map<String, String> tarjoajaNimet) {
+        this.tarjoajaNimet = tarjoajaNimet;
+    }
+
+    public Boolean getKaksoisTutkinto() {
+        return kaksoisTutkinto;
+    }
+
+    public void setKaksoisTutkinto(Boolean kaksoisTutkinto) {
+        this.kaksoisTutkinto = kaksoisTutkinto;
+    }
 }

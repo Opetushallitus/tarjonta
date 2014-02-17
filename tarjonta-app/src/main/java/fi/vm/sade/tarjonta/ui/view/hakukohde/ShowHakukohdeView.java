@@ -144,7 +144,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(hakualkamisPvm);
-        cal.add(Calendar.DATE, -3);
+        cal.add(Calendar.DATE, -4);
         return cal.getTime();
     }
 
