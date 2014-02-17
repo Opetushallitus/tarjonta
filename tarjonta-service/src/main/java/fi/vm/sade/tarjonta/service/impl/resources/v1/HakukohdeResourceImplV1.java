@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
@@ -74,7 +75,6 @@ import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.StringTokenizer;
 
 /**
  *
@@ -474,6 +474,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
         try {
+        	LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
 			String hakuOid = hakukohdeRDTO.getHakuOid();
 
 			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
@@ -537,10 +538,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			result.setStatus(ResultV1RDTO.ResultStatus.OK);
 			result.setResult(hakukohdeRDTO);
 
+        	LOG.info("AFTER UPDATE HAKUKOHDE {}", hakukohdeOid);
 			return result;
 		} catch (RuntimeException e) {
 			// väliaikainen virheidenkäsittely
-			LOG.warn("HAKUKOHDE FAIL",e);
+        	LOG.warn("FAIL UPDATE HAKUKOHDE "+hakukohdeOid, e);
 			throw e;
 		}
     }
