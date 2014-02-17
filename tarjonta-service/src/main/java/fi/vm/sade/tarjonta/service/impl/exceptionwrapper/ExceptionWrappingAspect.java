@@ -38,19 +38,23 @@ public class ExceptionWrappingAspect extends AbstractFaultWrapper<GenericFault> 
      */
     @Around("serviceMethod()")
     public Object wrapException(ProceedingJoinPoint pjp) throws GenericFault {
-        
-        return super.wrapException(pjp);
+        try {
+			return super.wrapException(pjp);
+		} catch (GenericFault e) {
+			throw e;
+		} catch (RuntimeException e) {
+	    	log.warn("Unwrapped runtime exception occured", e);
+			throw e;
+		}
     }
 
     @Override
-    protected GenericFault createFaultInstance(Throwable ex) {
-        String key = "";
-        
-        if (ex instanceof SadeBusinessException) {
-            key = ((SadeBusinessException) ex).getErrorKey();
-        } else {
-            key = ex.getClass().getName();
-        }
+    protected GenericFault createFaultInstance(Throwable ex) { 	
+    	log.warn("Service exception occured", ex);
+    	
+        String key = (ex instanceof SadeBusinessException)
+        		? ((SadeBusinessException) ex).getErrorKey()
+				: ex.getClass().getName();
 
         GenericFaultInfo info = new GenericFaultInfo();
         info.setErrorCode(key);
