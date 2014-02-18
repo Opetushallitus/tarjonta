@@ -68,6 +68,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOCo
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
@@ -83,7 +84,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -235,7 +235,6 @@ public class KoulutusResourceImplV1Test {
         dto.setHinta(1.11);
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
         koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, MAP_TUTKINTONIMIKE);
@@ -319,7 +318,7 @@ public class KoulutusResourceImplV1Test {
         /*
          * INSERT KORKEAKOULU TO DB
          */
-        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> v = instance.postKorkeakouluKoulutus(dto);
+        ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(dto);
         assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
 
         /*

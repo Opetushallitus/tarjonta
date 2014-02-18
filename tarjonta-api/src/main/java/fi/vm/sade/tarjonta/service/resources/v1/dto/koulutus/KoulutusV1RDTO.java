@@ -14,8 +14,13 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeId;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
@@ -32,8 +37,13 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author jwilen
  */
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "koulutusasteTyyppi")
+@JsonSubTypes({ 
+    @Type(value = KoulutusKorkeakouluV1RDTO.class, name = "KORKEAKOULUTUS"),
+    @Type(value = KoulutusLukioV1RDTO.class, name = "LUKIOKOULUTUS"), 
+})
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
-
+    
     @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
     private String komoOid;
 
@@ -52,7 +62,8 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
     @ApiModelProperty(value = "Koulutuksen koulutusastetyyppi", required = true)
-    private KoulutusasteTyyppi koulutusasteTyyppi;
+    @JsonTypeId
+    private final KoulutusasteTyyppi koulutusasteTyyppi;
 
     @ApiModelProperty(value = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
     private KuvausV1RDTO<KomoTeksti> kuvausKomo;
@@ -64,7 +75,8 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Koulutuksen suunntellun keston tyyppi (koodisto koodi uri)", required = true)
     private KoodiV1RDTO suunniteltuKestoTyyppi;
 
-    public KoulutusV1RDTO() {
+    public KoulutusV1RDTO(KoulutusasteTyyppi tyyppi) {
+        this.koulutusasteTyyppi=tyyppi;
     }
 
     public String getKomoOid() {
@@ -153,13 +165,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      */
     public KoulutusasteTyyppi getKoulutusasteTyyppi() {
         return koulutusasteTyyppi;
-    }
-
-    /**
-     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
-     */
-    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
-        this.koulutusasteTyyppi = koulutusasteTyyppi;
     }
 
     /**

@@ -36,6 +36,7 @@ public class KomoV1RDTO extends KoulutusV1RDTO {
     private KoodiV1RDTO opintojenLaajuusarvo;
 
     public KomoV1RDTO() {
+        super(null); //todo???
     }
 
     /**

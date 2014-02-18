@@ -22,8 +22,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+//import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
@@ -75,14 +74,14 @@ public interface KoulutusV1Resource {
     public Response deleteByOid(@PathParam("oid") String oid);
 
     @POST
-    @Path("/KORKEAKOULUTUS")
+    @Path("/KORKEAKOULUTUS") //TODO any koulutus really
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Luo uuden korkeakoulu koulutuksen",
-            notes = "Operaatio luo uuden korkeakoulu koulutuksen",
-            response = KoulutusKorkeakouluV1RDTO.class)
-    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO koulutus);
+            value = "Luo uuden koulutuksen",
+            notes = "Operaatio luo uuden koulutuksen",
+            response = KoulutusV1RDTO.class)
+    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO koulutus);
 
     @GET
     @Path("/{oid}/tekstis")

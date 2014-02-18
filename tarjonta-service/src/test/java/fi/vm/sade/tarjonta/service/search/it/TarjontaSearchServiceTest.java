@@ -63,7 +63,6 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.OrganisaatioHakukohdeGroup;
 import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
@@ -330,7 +329,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
-                koulutusResource.postKorkeakouluKoulutus(kkKoulutus);
+                koulutusResource.postKoulutus(kkKoulutus);
                 // HakukohdeRDTO hakukohde = getHakukohde();
                 // hakukohdeResource.insertHakukohde(hakukohde);
             }
@@ -372,7 +371,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
         kk.getKoulutusohjelma().getTekstis().put("kieli_fi", "Otsikko suomeksi");
 
-        kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
+//        kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
         kk.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4.555", null, null));
