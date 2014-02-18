@@ -39,6 +39,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	kv[lc] = "";
     	
     	return {
+    		hakukohdeOid:$scope.model.hakukohde.oid,
     		kieliUri: lc,
     		liitteenNimi: "",
     		liitteenKuvaukset:kv,

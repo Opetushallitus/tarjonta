@@ -147,6 +147,7 @@ app.controller('ValintakokeetController', function($scope,$q, LocalisationServic
     		}
     	}
     	$scope.model.hakukohde.valintakokeet.push({
+    		hakukohdeOid:$scope.model.hakukohde.oid,
     		kieliUri:lc,
     		valintakoeNimi:"",
     		valintakokeenKuvaus: {uri: lc, teksti: ""},
