@@ -52,6 +52,8 @@ app.controller('HakuEditController',
 
                 $scope.goBack = function(event) {
                     $log.info("goBack()");
+                    // TODO old query parameters?
+                    $location.path("/haku");
                 };
 
                 $scope.saveLuonnos = function(event) {
@@ -59,15 +61,30 @@ app.controller('HakuEditController',
                     $log.info("scope hakuform:", $scope);
 
                     var haku = $scope.model.hakux.result;
-                    haku.tila = "LUONNOS";
+                    $scope.doSaveHakuAndParameters(haku, "LUONNOS", true);
+                };
 
-                    $log.info("saveLuonnos()", haku);
+                $scope.saveValmis = function(event) {
+                    $log.info("saveValmis()");
+                    $log.info("  event:", event);
+                    $log.info("  scope hakuform:", $scope);
 
+                    var haku = $scope.model.hakux.result;
+                    $scope.doSaveHakuAndParameters(haku, "VALMIS", true);
+                };
+
+                $scope.doSaveHakuAndParameters = function(haku, tila, reload) {
+                    $log.info("doSave()", tila, haku);
+
+                    // Update haku's tila (state)
+                    haku.tila = tila;
+
+                    // Save it
                     HakuV1.save(haku, function(result) {
-                        $log.info("saveLuonnos() - OK", result);
-                        $log.info("saveLuonnos() - OK status = ", result.status);
+                        $log.info("doSave() - OK", result);
+                        $log.info("doSave() - OK status = ", result.status);
 
-                        // Clear messages
+                        // Clear validation messages
                         if ($scope.model.validationmsgs) {
                             $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
                         }
@@ -81,45 +98,23 @@ app.controller('HakuEditController',
                             $log.info("saveparameters->");
 
                             // Move broweser to "edit" mode.
-                            $location.path("/haku/" + result.result.oid + "/edit");
+                            if (reload) {
+                                $location.path("/haku/" + result.result.oid + "/edit");
+                            }
                         } else {
+                            // Failed to save Haku... show errors
                             $scope.model.showError = true;
                             $scope.model.showSuccess = false;
                             $scope.model.validationmsgs = result.errors;
                         }
 
                     }, function (error) {
+                        // Mainly 50x errors
                         $log.info("saveLuonnos() - FAILED", error);
                         $scope.model.showError = true;
                     });
                 };
 
-                $scope.saveValmis = function(event) {
-                    $log.info("saveValmis()");
-                    $log.info("  event:", event);
-                    $log.info("  scope hakuform:", $scope);
-
-                    var haku = $scope.model.hakux.result;
-                    haku.tila = "VALMIS";
-
-                    $log.info("saveValmis()", haku);
-
-                    HakuV1.save(haku, function(result) {
-                        $log.info("saveValmis() - OK", result);
-
-                        $scope.model.showError = false;
-                        $scope.model.showSuccess = true;
-                        $scope.model.validationmsgs = result.errors;
-
-                        $log.info("->saveparameters");
-                        $scope.saveParameters();
-                        $log.info("saveparameters->");
-
-                    }, function (error) {
-                        $log.info("saveValmis() - FAILED", error);
-                        $scope.model.showError = true;
-                    });
-                };
 
                 $scope.goToReview = function(event) {
                     $log.info("goToReview()");
@@ -158,6 +153,33 @@ app.controller('HakuEditController',
 
                     if (numKeys == 0) {
                         result = true;
+                    }
+
+                    return result;
+                };
+
+                /**
+                 * Try to get name of the Haku.
+                 *
+                 * @returns {String}
+                 */
+                $scope.getHaunNimi = function() {
+                    var nimi = $scope.model.hakux.result.nimi;
+                    var kieliUri = LocalisationService.getKieliUri();
+
+                    var kielet = [LocalisationService.getKieliUri(), "kieli_fi", "kieli_sv", "kieli_en"];
+
+                    var result;
+
+                    // Take first matching name
+                    angular.forEach(kielet, function(kieli) {
+                        if (!angular.isDefined(result) && angular.isDefined(nimi[kieli])) {
+                            result = nimi[kieli];
+                        }
+                    });
+
+                    if (!angular.isDefined(result)) {
+                        result = "EI TIEDOSSA";
                     }
 
                     return result;
