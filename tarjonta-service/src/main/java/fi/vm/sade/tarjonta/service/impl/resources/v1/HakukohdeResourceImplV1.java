@@ -474,7 +474,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
         try {
-        	//LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
+        	LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
 			String hakuOid = hakukohdeRDTO.getHakuOid();
 
 			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
@@ -540,11 +540,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			return result;
 		} catch (RuntimeException e) {
 			// väliaikainen virheidenkäsittely
-			System.out.println("WTF ERR miksei tämä näy lokissa?");
-			e.printStackTrace();
-			System.err.println("WTF ERR miksei tämä näy lokissa?");
-			e.printStackTrace(System.err);
-			//LOG.warn("FAIL UPDATE HAKUKOHDE "+hakukohdeOid, e);
+			LOG.warn("FAIL UPDATE HAKUKOHDE "+hakukohdeOid, e);
 			throw e;
 		}
     }
