@@ -8,11 +8,14 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
          * DEFAULT VARIABLES:
          */
         $scope.ctrl = {
+            imagesLoaded: {},
             images: {},
-            base64: {},
-            mime: {},
-            filename: "",
-            isSaveButtonVisible: true
+            attached: false,
+            isSaveButtonVisible: true,
+            image: null,
+            html: {},
+            filename: null,
+            editable: false
         };
 
         if (angular.isUndefined($scope.btnNameRemove)) {
@@ -23,8 +26,8 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
             $scope.ctrl.isSaveButtonVisible = false;
         }
 
-        if (angular.isUndefined($scope.editable)) {
-            $scope.editable = true;
+        if (!angular.isUndefined($scope.editable)) {
+            $scope.ctrl.editable = ($scope.editable === "true");
         }
 
         /*
@@ -47,18 +50,21 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
 
             ret.promise.then(function(response) {
                 if (response.status === 'OK') {
-                    $scope.ctrl.base64 = response.result.base64data;
-                    $scope.ctrl.mime = response.result.mimeType;
-                    $scope.ctrl.filename = response.result.filename;
+                    var base64 = response.result.base64data;
+                    var mime = response.result.mimeType;
+                    var filename = response.result.filename;
+                    var kieliUri = response.result.kieliUri;
+                    $scope.ctrl.imagesLoaded[uri] = response.result;
 
-                    var input = '<div><img width="300" height="300" src="data:' + $scope.ctrl.mime + ';base64,' + $scope.ctrl.base64 + '"></div>';
-                    $element.find('div').replaceWith($compile(input)($scope));
-                    $scope.clearImage(); //clear pre-uploaded image. 
+                    var html = '<div id="show"><img width="300" height="300" src="data:' + mime + ';base64,' + base64 + '"/>';
+                    if ($scope.ctrl.editable) {
+                        html += '<div>' + filename + '</div><a href="" class="btn" type="submit" ng-click="deleteImage($event, \'' + kieliUri + '\')">{{btnNameRemove}}</a>';
+                    }
+                    html += '</div>';
+                    $element.find('#show').replaceWith($compile(html)($scope));
                 } else if (response.status === 'NOT_FOUND') {
-                    $scope.ctrl.base64 = {};
-                    var input = '<div><!-- no image --></div>';
-                    $element.find('div').replaceWith($compile(input)($scope));
-                    $scope.clearImage();
+                    var input = '<div id="show"><!-- no image --></div>';
+                    $element.find('#show').replaceWith($compile(input)($scope));
                     console.info("Image not found.");
                 } else {
                     console.error("Image upload failed.", response);
@@ -93,19 +99,41 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
         };
 
 
-        $scope.deleteImage = function() {
-            var ResourceImage = TarjontaService.resourceImage($scope.oid, $scope.uri);
-            var ret = $q.defer();
-            ResourceImage.delete({}, function(response) {
-                ret.resolve(response);
-            });
+        $scope.deleteImage = function(event, uri) {
+            if (!angular.isUndefined(uri)) {
+                var ResourceImage = TarjontaService.resourceImage($scope.oid, uri);
+          
+                ResourceImage.delete({}, function(response) {
+                    var input = '<div id="show"><!-- image removed --></div>';
+                    $element.find('#show').replaceWith($compile(input)($scope));
+                    $scope.removeUnsavedImage(event, uri);
+                });
+      
+            } else {
+                throw new Error("Language uri cannot be undefined!");
+            }
+        };
 
-            ret.promise.then(function(response) {
-                var input = '<div><!-- image removed --></div>';
-                $element.find('div').replaceWith($compile(input)($scope));
-                $scope.clearImage();
-                $scope.ctrl.filename = null;
-            });
+        $scope.isNewImageAttached = function(event, kieliUri) {
+            return !angular.isUndefined(kieliUri) && !angular.isUndefined($scope.ctrl.images[kieliUri]);
+        };
+
+        $scope.removeUnsavedImage = function(event, uri) {
+            if (!angular.isUndefined(uri)) {
+                $element.find('#input_' + uri).remove();
+                $element.find('#img_' + uri).remove();
+
+                if (!angular.isUndefined($scope.ctrl.images[uri])) {
+                    delete $scope.ctrl.images[uri];
+                }
+                if (!angular.isUndefined($scope.ctrl.imagesLoaded[uri])) {
+                    delete $scope.ctrl.imagesLoaded[uri];
+                }
+
+                $scope.addElemInputFile(uri);
+                $scope.addElemImg(uri);
+
+            }
         };
 
         /*
@@ -120,18 +148,34 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                     uri.length > 0) {
                 //when page loaded, try to load img
                 $scope.loadImage($scope.oid, uri);
+
+                if (angular.isUndefined($scope.ctrl.html[uri])) {
+                    $scope.ctrl.html[uri] = {img: null, input: null};
+                    $scope.ctrl.images[uri] = {};
+                    $scope.addElemInputFile(uri);
+                    $scope.addElemImg(uri);
+                }
             }
         });
 
+        $scope.addElemInputFile = function(uri) {
+            var html = $scope.ctrl.html[uri];
+            html.input = '<input id="input_' + uri + '" ng-show="\'' + uri + '\' === uri" type="file"  accept="image/*" image="ctrl.images.' + uri + '" resize-max-height="300" resize-max-width="250"resize-quality="0.9" />';
+            $element.find('#edit').append($compile(html.input)($scope));
+        };
 
-        $scope.$watch('image', function(image, oldObj) {
-            if (!angular.isUndefined(image) && !angular.isUndefined($scope.uri)) {
-                $scope.ctrl.images[$scope.uri] = image;
-            }
-        });
+        $scope.addElemImg = function(uri) {
+            var html = $scope.ctrl.html[uri];
+            html.img = '<img id="img_' + uri + '" ng-show="\'' + uri + '\' === uri"  ng-src="{{ctrl.images.' + uri + '.resized.dataURL}}"/>';
+            $element.find('#preview').append($compile(html.img)($scope));
+        };
 
+        /*
+         * Listener for top layout save buttons.
+         * Upload all images to tarjonta service in ctrl.image map<uri, image>.
+         */
         $scope.$on('onImageUpload', function(res) {
-            $scope.foo();
+            $scope.saveAllImages();
         });
 
         $scope.getNextMapKey = function(map) {
@@ -139,12 +183,9 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                 return key;
             }
             return null;
+        };
 
-
-            return key;
-        }
-
-        $scope.foo = function() {
+        $scope.saveAllImages = function() {
             var key = $scope.getNextMapKey($scope.ctrl.images);
 
             if (key !== null && !angular.isUndefined(key) && !angular.isUndefined($scope.ctrl.images[key])) {
@@ -152,13 +193,9 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                 delete $scope.ctrl.images[key];
 
                 deferred.promise.then(function(res) {
-                    $scope.foo();
+                    $scope.saveAllImages();
                 });
             }
-        };
-
-        $scope.clearImage = function() {
-            $scope.image = null; //clear pre-uploaded image. 
         };
     }
 
