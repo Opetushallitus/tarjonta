@@ -310,24 +310,22 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         if (angular.isUndefined(image) || image === null) {
-           return;
+            return;
         }
 
-        var formData = new FormData();
-        var name = "";
-        if (!angular.isUndefined(image.file.name)) {
-            name = image.file.name;
-        } else {
-            console.warn("No image filename.");
-        }
+        var img = {};
+        //img.kieliuri = kieliuri;
+        img.filename = image.file.name;
+        img.mimeType = image.file.type;
+        img.base64data = image.dataURL;
 
-        formData.append('image', image.file, name);
+        //TODO: remove data:image/xxx stuff from the raw image data.
+        //curently data cleaning is done in service
+        //var b = window.atob(img.base64data);
 
-        $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
+        $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, img, {
             withCredentials: true,
-            headers: {
-                'Content-Type': 'multipart/form-data'},
-            transformRequest: angular.identity
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }).success(fnSuccess).error(fnError);
     };
 

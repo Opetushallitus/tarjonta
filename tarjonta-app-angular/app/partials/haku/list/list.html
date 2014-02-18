@@ -49,14 +49,14 @@
     </table>
 
     <tabset>
-        <tab heading="{{t('haku.list.hakuvastaus.lkm', model.hakus.length)}}">
+        <tab heading="{{t('haku.list.hakuvastaus.lkm', [model.hakus.length])}}">
 
             <div class="container-fluid">
 
                 <div class="row-fluid">
                     <div class="span4">
-                        <div class="btn" ng-click="doCreateNew()"><span tt="haku.list.luoUusiHaku"/></div>
-                        <div class="btn" ng-click="doDelete()"><span tt="haku.list.poista"/></div>
+                        <div class="btn" ng-click="doCreateNew()"><span tt="haku.list.luoUusiHaku">Luo uusi haku</span></div>
+                        <div class="btn" ng-click="doDelete()"><span tt="haku.list.poista">Poista</span></div>
                     </div>
                 </div>
 
@@ -64,13 +64,13 @@
                     <div class="span12">
                         <table ng-hide="model.hakus==0">
                             <tr>
-                                <th><span tt="haku.list.nimi""/></th>
-                                <th><span tt="haku.list.hakutyyppi"/></th>
-                                <th><span tt="haku.list.hakukausi"/></th>
-                                <th><span tt="haku.list.koulutuksenAlkamiskausi"></span/></th>
-                                <th><span tt="haku.list.haunKohdejoukko"/></th>
-                                <th><span tt="haku.list.muokkaa"/></th>
-                                <th><span tt="haku.list.tarkastele"/></th>
+                                <th><span tt="haku.list.nimi">Nimi</span></th>
+                                <th><span tt="haku.list.hakutyyppi">Hakutyyppi</span></th>
+                                <th><span tt="haku.list.hakukausi">Hakukausi</span></th>
+                                <th><span tt="haku.list.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi</span></th>
+                                <th><span tt="haku.list.haunKohdejoukko">Haun kohdejoukkoX</span></th>
+                                <th><span tt="haku.list.muokkaa">Muokkaa</span></th>
+                                <th><span tt="haku.list.tarkastele">Tarkastele</span></th>
                             </tr>
 
                             <tr ng-repeat="haku in model.hakus">
