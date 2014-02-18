@@ -150,10 +150,6 @@ public class ResultV1RDTO<T> implements Serializable {
         return _result;
     }
 
-    public <TT>TT getResult2() {
-        return (TT)_result;
-    }
-
     public void setResult(T result) {
         _result = result;
     }
