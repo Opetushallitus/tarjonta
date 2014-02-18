@@ -1007,21 +1007,14 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
     $scope.dialog.titles = {};
 
-
-
     $scope.dialog.titles.toimintoTitle =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.title');
-
-
-
     $scope.dialog.titles.tableValintaRyhma = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.valintaryhma.title');
-
     $scope.dialog.titles.tableKuvauskielet = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.kuvauskielet.title');
-
     $scope.dialog.titles.tuoMyosMuutkieletTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.muutkielet.title');
-
     $scope.dialog.titles.okBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.ok');
-
     $scope.dialog.titles.cancelBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.cancel');
+    $scope.dialog.titles.kopioiHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.help');
+    $scope.dialog.titles.linkkausHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.help');
 
 
 
