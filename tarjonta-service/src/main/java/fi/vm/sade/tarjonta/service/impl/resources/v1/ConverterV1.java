@@ -425,10 +425,15 @@ public class ConverterV1 {
 
         }
 
+        if(hakukohde.getHakukohdeKoodistoNimi() != null ) {
+            hakukohdeRDTO.setHakukohteenNimi(hakukohde.getHakukohdeKoodistoNimi());
+        }
+
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
         }
 
+        hakukohdeRDTO.setKaksoisTutkinto(hakukohde.isKaksoisTutkinto());
 
         Set<String> opetusKielet = new TreeSet<String>();
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
@@ -591,6 +596,12 @@ public class ConverterV1 {
         if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
             hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
         }
+
+        if (hakukohdeRDTO.getKaksoisTutkinto() != null) {
+            hakukohde.setKaksoisTutkinto(hakukohdeRDTO.getKaksoisTutkinto());
+        }
+
+
         if (hakukohdeRDTO.getHakukohteenNimiUri() != null) {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
         }

@@ -16,6 +16,9 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -98,6 +101,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     public KoulutusKorkeakouluV1RDTO() {
+        super(KoulutusasteTyyppi.KORKEAKOULUTUS);
     }
 
     /**
