@@ -81,7 +81,7 @@ public interface KoulutusV1Resource {
             value = "Luo uuden koulutuksen",
             notes = "Operaatio luo uuden koulutuksen",
             response = KoulutusV1RDTO.class)
-    public ResultV1RDTO<? extends KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO koulutus);
+    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO koulutus);
 
     @GET
     @Path("/{oid}/tekstis")
