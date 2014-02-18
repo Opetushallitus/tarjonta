@@ -408,7 +408,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
         var d = dialogService.showDialog(texts);
         d.result.then(function(data){
-            if ("ACTION" === data) {
+            if (data) {
 
                 var hakukohdeResource = new Hakukohde($scope.model.hakukohde);
                 var resultPromise =  hakukohdeResource.$delete();
@@ -569,7 +569,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
             var d = dialogService.showDialog(texts);
             d.result.then(function(data){
-                if ("ACTION" === data) {
+                if (data) {
                     reallyRemoveKoulutusFromHakukohde(koulutus);
                 }
             });

@@ -71,7 +71,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
                     var d = dialogService.showDialog(texts);
                     d.result.then(function(data){
-                        if ("ACTION" === data) {
+                        if (data) {
                             reallyRemoveHakukohdeFromKoulutus(hakukohde);
 
                         }
@@ -199,7 +199,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
                     var d = dialogService.showDialog(texts);
                     d.result.then(function(data){
-                        if ("ACTION" === data) {
+                        if (data) {
                             reallyRemoveHakukohdeFromKoulutus(hakukohde);
 
                         }
@@ -228,7 +228,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             var d = dialogService.showDialog(texts);
             d.result.then(function(data) {
                 $log.info("GOT: ", data);
-                if ("ACTION" === data) {
+                if (data) {
                     // TODO actual delete!
                     $log.info("ACTUALLY DELETE IT NOW!");
                     dialogService.showNotImplementedDialog();
