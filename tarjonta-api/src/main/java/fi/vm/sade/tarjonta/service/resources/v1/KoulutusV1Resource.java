@@ -43,6 +43,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -161,11 +162,11 @@ public interface KoulutusV1Resource {
 
     @POST
     @Path("/{oid}/kuva/{kieliUri}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
             notes = "Operaatio lisää kuvatiedoton koulutusmoduulin toteutukseen (yhdellä koulutuksella kuvia voi olla vain yksi per koodi uri)")
-    public Response saveKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, @Multipart("file") MultipartBody body);
+    public ResultV1RDTO<KuvaV1RDTO> saveKuvas(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, KuvaV1RDTO kuva);
 
     @DELETE
     @Path("/{oid}/kuva/{kieliUri}")
