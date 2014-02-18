@@ -130,7 +130,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta, String lang) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
 
-        ResultV1RDTO resultRDTO = new ResultV1RDTO();
+        ResultV1RDTO<KoulutusV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
 
         lang = checkArgsLangCode(lang);
@@ -152,7 +152,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
+    public ResultV1RDTO<? extends KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
         
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
@@ -164,12 +164,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
+    private ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         
         validateRestObjectKorkeakouluDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
-        ResultV1RDTO resultRDTO = new ResultV1RDTO();
+        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> resultRDTO = new ResultV1RDTO<KoulutusKorkeakouluV1RDTO>();
         if (validateKoulutus.isEmpty()) {
 
             if (dto.getOid() != null && dto.getOid().length() > 0) {
