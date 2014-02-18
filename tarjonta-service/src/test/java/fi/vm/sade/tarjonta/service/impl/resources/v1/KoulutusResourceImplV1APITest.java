@@ -262,7 +262,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         ResultV1RDTO<KoulutusV1RDTO> v = koulutusResource
                 .postKoulutus(dto);
 
-        KoulutusKorkeakouluV1RDTO result = v.getResult2();
+        KoulutusKorkeakouluV1RDTO result = (KoulutusKorkeakouluV1RDTO) v.getResult();
         String oid = result.getKomotoOid();
 
         
