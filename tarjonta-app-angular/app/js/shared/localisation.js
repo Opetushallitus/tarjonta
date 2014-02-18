@@ -100,8 +100,10 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
                 var translation = "";
 
                 if (LocalisationService.hasTranslation(key, locale)) {
+                    // Existing translations, just return it
                     translation = LocalisationService.tl(key, locale);
                 } else {
+                    // Missing / new translation
                     // Grab the original / placeholder text in the template
                     var originalText = "";
 
@@ -169,6 +171,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         return this.locale;
     };
 
+    // Note - the "koodisto" kieli... Brilliant!
     var kieliUri = "kieli_" + this.getLocale();
 
     /**
@@ -203,51 +206,78 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
             locale = this.getLocale();
         }
 
-        // Get translations by locale
-        var v0 = this.localisationMapByLocaleAndKey[locale];
+        var result = this.getRawTranslation(key, locale);
 
-        // Get translations by key
-        var v = v0 ? v0[key] : undefined;
-        var result;
-
-        if (v) {
-            // Found translation, replace possible parameters
-            result = v.value;
-
-            // Expand parameters
+        if (!result) {
+            // Should not happen, missing translations created elsewhere...
+            result = "SHEISSE: " + key + " - " + locale;
+        } else {
+            // Expand possible parameters
             if (params != undefined) {
                 result = result.replace(/{(\d+)}/g, function(match, number) {
                     return typeof params[number] != 'undefined' ? params[number] : match;
                 });
             }
-        } else {
-            // Unknown translation, maybe create placeholder for it?
-            $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
-
-            // Save this to server
-            var newEntry = {category: "tarjonta", key: key, locale: locale, value: "[" + key + "-" + locale + "]"};
-
-            // Create temporary placeholder for next requests
-            this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
-            this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
-            this.localisationMapByLocaleAndKey[locale][key] = newEntry;
-
-            // Update in memory storage for local translations
-            this.getTranslations().push(newEntry);
-
-            // Then create missing translation to the server side
-            Localisations.save(newEntry,
-                    function(data) {
-                        $log.info("  created new translation to server side! data = ", data);
-                    },
-                    function(data, status, headers, config) {
-                        $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
-                    });
-
-            result = newEntry.value;
         }
 
+        $log.info("getTranslation(key, locale, params), key=" + key + ", l=" +  locale + ",params=" + params + " --> " + result);
         return result;
+
+//        // Just in case the translation is not available
+//        if (!this.hasTranslation(key, locale)) {
+//            $log.warn("TRANSLATION: " + key + " in locale " + locale + " IS MISSING.");
+//            return "[" + key + "-" + locale + "]";
+//        }
+//
+//        // Get translations by locale
+//        var v0 = this.localisationMapByLocaleAndKey[locale];
+//
+//        // Get translations by key
+//        var v = v0 ? v0[key] : undefined;
+//        var result;
+//
+//        if (v) {
+//            // Found translation, replace possible parameters
+//            result = v.value;
+//
+//            // Expand parameters
+//            if (params != undefined) {
+//                result = result.replace(/{(\d+)}/g, function(match, number) {
+//                    return typeof params[number] != 'undefined' ? params[number] : match;
+//                });
+//            }
+//        } else {
+//            // Unknown translation, maybe create placeholder for it?
+//            $log.warn("UNKNOWN TRANSLATION: key='" + key + "'");
+//
+//            var originalText = "[" + key + "-" + locale + "]";
+//            this.createMissingTranslations(key, "fi", originalText);
+//            result = originalText;
+//
+////            // Save this to server
+////            var newEntry = {category: "tarjonta", key: key, locale: locale, value: "[" + key + "-" + locale + "]"};
+////
+////            // Create temporary placeholder for next requests
+////            this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
+////            this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
+////            this.localisationMapByLocaleAndKey[locale][key] = newEntry;
+////
+////            // Update in memory storage for local translations
+////            this.getTranslations().push(newEntry);
+////
+////            // Then create missing translation to the server side
+////            Localisations.save(newEntry,
+////                    function(data) {
+////                        $log.info("  created new translation to server side! data = ", data);
+////                    },
+////                    function(data, status, headers, config) {
+////                        $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
+////                    });
+////
+////            result = newEntry.value;
+//        }
+//
+//        return result;
     };
 
     this.isEmpty = function(str) {
@@ -264,15 +294,57 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
      * @returns {boolean} True if there is translaton map for given locale AND an exisiting translation for given key
      */
     this.hasTranslation = function(key, locale) {
-        // Get translations map by locale
+        return angular.isDefined(this.getRawTranslation(key, locale));
+    };
+
+    /**
+     * Get the "raw" translations, no parameters filled.
+     *
+     * @param {type} key
+     * @param {type} locale
+     * @returns {v.value}
+     */
+    this.getRawTranslation = function(key, locale) {
+        // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[locale];
-        // Get translations by key
+        // Get translation by key
         var v = v0 ? v0[key] : undefined;
-        var result = angular.isDefined(v);
-        // $log.info("hasTranslation()", key, locale, result);
+        // Get value if any
+        var result = v ? v.value : undefined;
         return result;
     };
 
+    /**
+     * Saves cache entry to MAP[locale][key] = newValue;
+     *
+     * @see method getRawTranslation(key, locale) - it gets it from this map.
+     *
+     * @param {type} key
+     * @param {type} locale
+     * @param {type} newEntry
+     * @returns {undefined}
+     */
+    this.putCachedLocalisation = function(key, locale, newEntry) {
+        // Create map entries
+        this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
+        this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
+        this.localisationMapByLocaleAndKey[locale][key] = newEntry;
+
+        // Update in memory storage for local translations (loaded from server)
+        this.getTranslations().push(newEntry);
+    };
+
+
+
+    /**
+     * Creates missing translations AND stores temp values to local "cache".
+     * Default translations created are "fi", "en" and "sv" for any given key.
+     *
+     * @param {type} key
+     * @param {type} locale
+     * @param {type} originalText
+     * @returns {undefined}
+     */
     this.createMissingTranslations = function(key, locale, originalText) {
         $log.info("createMissingTranslations()", key, locale, originalText);
 
@@ -284,31 +356,32 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         }
 
         // Create translations to serverside AND update in memory map for transations
-        var thisLocalisationService = this;
+        var self = this;
 
         angular.forEach(locales, function(l) {
-            // Save this to server
-            var newEntry = {category: "tarjonta", key: key, locale: l, value: originalText};
+            // Is the translation really missing?
+            if (!self.hasTranslation(key, l)) {
+                // Ok, really missing translation then
 
-            $log.info("TODO save to server: ", newEntry);
+                // Save this to server
+                var newEntry = {category: "tarjonta", key: key, locale: l, value: originalText};
 
-            Localisations.save(newEntry,
-                    function(data) {
-                        $log.info("  created new translation to server side! data = ", data);
-                    },
-                    function(data, status, headers, config) {
-                        $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
-                    });
+                $log.info("SAVING to server: ", newEntry);
 
-            // Create temporary placeholder for next requests
-            this.localisationMapByLocaleAndKey = this.localisationMapByLocaleAndKey || {};
-            this.localisationMapByLocaleAndKey[locale] = this.localisationMapByLocaleAndKey[locale] || {};
-            this.localisationMapByLocaleAndKey[locale][key] = newEntry;
+                Localisations.save(newEntry,
+                        function(data) {
+                            $log.info("  created new translation to server side! data = ", data);
+                        },
+                        function(data, status, headers, config) {
+                            $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
+                        });
 
-            // Update in memory storage for local translations
-            thisLocalisationService.getTranslations().push(newEntry);
+                // Create temporary placeholder for next requests
+                self.putCachedLocalisation(key, l, newEntry);
+            }
         });
     };
+
 
     /**
      * Get list of currently loaded translations.
@@ -352,19 +425,19 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
 
     /**
      * Get translation value. Assumes use of current UI locale (LocalisationService.getLocale())
-     *
-     * If translation with current locale and key is not found then new translation entry will be created.
+     * If translation with current locale and key is not found then new translation entry / entries will be created.
      *
      * @param {String} key
      * @param {Array} params
      * @returns {String} value for translation
      */
     this.t = function(key, params) {
-        return this.getTranslation(key, this.getLocale(), params);
+        return this.tl(key, this.getLocale(), params);
     };
 
     /**
      * Get translation in given locale.
+     * If translation with current locale and key is not found then new translation entry / entries will be created.
      *
      * @param {type} key
      * @param {type} locale
@@ -373,7 +446,12 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
      * @returns Resolved translation
      */
     this.tl = function(key, locale, params) {
-        return this.getTranslation(key, locale, params);
+        if (this.hasTranslation(key, locale)) {
+            return this.getTranslation(key, locale, params);
+        } else {
+            // Missing translation, create it, returns placeholder value given in
+            return this.createMissingTranslations(key, locale, "[" + key + "-" + locale + "]");
+        }
     };
 
     $log.info("LocalisationService - initialising...");
