@@ -50,9 +50,9 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
 //                    $scope.resolvePath(actionType, koulutus);
 //                })
 //            } else {
-                //create new koulutus
-                $scope.resolvePath(actionType, $scope.koulutusModel);
-           // }
+            //create new koulutus
+            $scope.resolvePath(actionType, $scope.koulutusModel);
+            // }
         };
     }
 ]);

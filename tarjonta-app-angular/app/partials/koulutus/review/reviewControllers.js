@@ -269,7 +269,7 @@ app.controller('BaseReviewController', ['$scope', '$window', '$location', '$rout
 
         $scope.doPreview = function(event) {
             $log.info("doPreview()...");
-            $window.location.href = window.CONFIG.env['host.haku'] + "/app/preview.html#!/korkeakoulu/"  + $scope.model.koulutus.oid;
+            $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid;
             //example : https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640
         };
 

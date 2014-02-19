@@ -15,16 +15,16 @@
 
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
+        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify>
 
-
-        <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showError && koulutusForm.$invalid"></controls-notify>
-        <controls-notify ng-repeat="e in uiModel.validationmsgs" type="error-detail" tt-expr="e" show="uiModel.showError"></controls-notify>
+        <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
+        <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
 
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
 
-    <form name="koulutusForm">
+    <form name="koulutusForm" >
         <div class="body" ng-include="resultPageUri"></div>
     </form>
 

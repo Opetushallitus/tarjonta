@@ -12,16 +12,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
-
-
                 $scope.formControls = {};
-
-                var showSuccess = function() {
-                    $scope.uiModel.showValidationErrors = false;
-                    $scope.uiModel.showSuccess = true;
-                    $scope.uiModel.showError = false;
-                    $scope.uiModel.hakukohdeTabsDisabled = false;
-                };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
                 $scope.lisatiedot = [];
@@ -29,14 +20,10 @@ app.controller('BaseEditController',
                 $scope.init = function() {
                     var uiModel = {};
                     var model = {};
-
+                    $scope.controlFormMessages(uiModel, "INIT");
                     uiModel.selectedKieliUri = "" //tab language
-                    uiModel.showValidationErrors = false;
-                    uiModel.showError = false;
-                    uiModel.showSuccess = false;
-                    uiModel.validationmsgs = [];
-
                     converter.createUiModels(uiModel);
+
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -148,19 +135,15 @@ app.controller('BaseEditController',
                     $scope.saveByStatus('VALMIS');
                 };
                 $scope.saveByStatus = function(tila) {
-                    if ($scope.uiModel.validationmsgs.length > 0) {
-                        $scope.uiModel.validationmsgs.splice(0, $scope.uiModel.validationmsgs.length);
-                    }
-                    $scope.formControls.notifs.errorDetail = [];
-                    $scope.uiModel.showError = false;
+                    $scope.controlFormMessages($scope.uiModel, "CLEAR");
 
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
                     }
 
-                    if ($scope.koulutusForm.$invalid) {
+                    if ($scope.koulutusForm.$invalid || $scope.koulutusForm.$pristine) {
                         //invalid form data
-                        $scope.uiModel.showError = true;
+                        $scope.controlFormMessages($scope.uiModel, "ERROR", "UI_ERRORS");
                         return;
                     }
 
@@ -169,7 +152,7 @@ app.controller('BaseEditController',
 
                         if (authResponse.status !== 'OK') {
                             //not authenticated
-                            $scope.uiModel.showError = true;
+                            $scope.controlFormMessages($scope.uiModel, "ERROR", "AUTH");
                             return;
                         }
 
@@ -181,23 +164,12 @@ app.controller('BaseEditController',
 
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
-                                showSuccess();
+                                $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
-                                $scope.koulutusForm.$dirty = false;
-                                $scope.koulutusForm.$invalid = false;
-
                                 $scope.$broadcast("onImageUpload", ""); //save images
                             } else {
-                                $scope.uiModel.showValidationErrors = true;
-
-                                if (!angular.isUndefined(saveResponse.errors)) {
-                                    for (var i = 0; i < saveResponse.errors.length; i++) {
-                                        $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
-                                    }
-                                }
-                                //save failed
-                                $scope.uiModel.showError = true;
+                                $scope.controlFormMessages($scope.uiModel, "ERROR", null, saveResponse.errors);
                             }
                         });
                     });
@@ -359,6 +331,57 @@ app.controller('BaseEditController',
                 // TODO omaksi direktiivikseen tjsp..
                 $scope.kieliFromKoodi = function(koodi) {
                     return $scope.langs[koodi];
+                };
+
+                /**
+                 * Control page messages.
+                 * 
+                 * @param {type} uiModel
+                 * @param {type} action
+                 * @param {type} errorDetailType
+                 * @returns {undefined}
+                 */
+                $scope.controlFormMessages = function(uiModel, action, errorDetailType, apiErrors) {
+                    switch (action) {
+                        case 'INIT':
+                            uiModel.showErrorCheckField  = false;
+                            uiModel.showValidationErrors = false;
+                            uiModel.showError = false;
+                            uiModel.showSuccess = false;
+                            uiModel.validationmsgs = [];
+                            break;
+                        case 'CLEAR':
+                            $scope.formControls.notifs.errorDetail = [];
+                            $scope.koulutusForm.$dirty = true;
+                            $scope.koulutusForm.$invalid = false;
+                            uiModel.showValidationErrors = false;
+                            uiModel.showError = false;
+                            uiModel.showSuccess = false;
+                            break;
+                        case 'SAVED':
+                            uiModel.showValidationErrors = false;
+                            uiModel.showSuccess = true;
+                            uiModel.showError = false;
+                            uiModel.hakukohdeTabsDisabled = false;
+                            uiModel.validationmsgs = [];
+                            //Form
+                            $scope.koulutusForm.$dirty = false;
+                            $scope.koulutusForm.$invalid = false;
+                            break;
+                        case 'ERROR':
+                        default:
+                            uiModel.showErrorCheckField = errorDetailType === 'UI_ERRORS'
+                            uiModel.showValidationErrors = errorDetailType === 'UI_ERRORS';
+                            uiModel.showError = true;
+                            uiModel.showSuccess = false;
+
+                            if (!angular.isUndefined(apiErrors)) {
+                                for (var i = 0; i < apiErrors.length; i++) {
+                                    uiModel.validationmsgs.push(apiErrors[i].errorMessageKey);
+                                }
+                            }
+                            break;
+                    }
                 };
 
                 /*
