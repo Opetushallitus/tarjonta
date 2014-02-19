@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController($scope, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService,AuthService) {
+app.controller('BaseReviewController', ['$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
+    function BaseReviewController($scope, $window, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService,AuthService) {
         $log.info("BaseReviewController()");
 
        if(angular.isUndefined( $scope.koulutusModel.result)){
@@ -71,7 +71,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
                     var d = dialogService.showDialog(texts);
                     d.result.then(function(data){
-                        if ("ACTION" === data) {
+                        if (data) {
                             reallyRemoveHakukohdeFromKoulutus(hakukohde);
 
                         }
@@ -199,7 +199,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
                     var d = dialogService.showDialog(texts);
                     d.result.then(function(data){
-                        if ("ACTION" === data) {
+                        if (data) {
                             reallyRemoveHakukohdeFromKoulutus(hakukohde);
 
                         }
@@ -228,7 +228,7 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
             var d = dialogService.showDialog(texts);
             d.result.then(function(data) {
                 $log.info("GOT: ", data);
-                if ("ACTION" === data) {
+                if (data) {
                     // TODO actual delete!
                     $log.info("ACTUALLY DELETE IT NOW!");
                     dialogService.showNotImplementedDialog();
@@ -269,7 +269,8 @@ app.controller('BaseReviewController', ['$scope', '$location', '$route', '$log',
 
         $scope.doPreview = function(event) {
             $log.info("doPreview()...");
-            dialogService.showNotImplementedDialog();
+            $window.location.href = window.CONFIG.env['host.haku'] + "/app/preview.html#!/korkeakoulu/"  + $scope.model.koulutus.oid;
+            //example : https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640
         };
 
         $scope.searchKoodi = function(obj, koodistouri, uri, locale) {

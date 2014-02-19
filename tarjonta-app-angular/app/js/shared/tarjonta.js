@@ -313,20 +313,26 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             return;
         }
 
-        var img = {};
-        //img.kieliuri = kieliuri;
-        img.filename = image.file.name;
-        img.mimeType = image.file.type;
-        img.base64data = image.dataURL;
+        if (!angular.isUndefined(image.file) &&
+                !angular.isUndefined(image.file.type) &&
+                !angular.isUndefined(image.dataURL)) {
+            var apiImg = {};
+            //img.kieliuri = kieliuri;
+            if (!angular.isUndefined(image.file.name)) {
+                apiImg.filename = image.file.name;
+            }
 
-        //TODO: remove data:image/xxx stuff from the raw image data.
-        //curently data cleaning is done in service
-        //var b = window.atob(img.base64data);
+            apiImg.mimeType = image.file.type;
+            apiImg.base64data = image.dataURL;
+            //TODO: remove data:image/xxx stuff from the raw image data.
+            //curently data cleaning is done in service
+            //var b = window.atob(img.base64data);
 
-        $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, img, {
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        }).success(fnSuccess).error(fnError);
+            $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, apiImg, {
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }).success(fnSuccess).error(fnError);
+        }
     };
 
     dataFactory.resourceImage = function(komotoOid, kieliuri) {

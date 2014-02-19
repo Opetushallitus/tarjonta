@@ -8,16 +8,11 @@
             
             <dl>
                 <dt><input type="radio" data-ng-model="dialog.copySelection" value="link"/> {{ dialog.titles.linkkausTitle }}</dt>
-                <!-- 
-                <dd>{{dialog.titles.kopioiHelp}}</dd>
-                 -->
-                <dt><input type="radio" data-ng-model="dialog.copySelection" value="copy"> {{ dialog.titles.kopioTitle }}</dt>
-                <!-- 
                 <dd>{{dialog.titles.linkkausHelp}}</dd>
-                 -->
+                <dt><input type="radio" data-ng-model="dialog.copySelection" value="copy"> {{ dialog.titles.kopioTitle }}</dt>
+                <dd>{{dialog.titles.kopioiHelp}}</dd>
            </dl>
-       
-       
+           
            <div ng-grid="kuvausGrid" class="kuvausGridStyle"></div>
            
             <p>{{dialog.titles.tuoMyosMuutkieletTitle}}</p>

@@ -14,7 +14,7 @@
             </td>
             <td>
                 <div>
-                    <show-errors form="hakuForm" field="PH_TJT" tt-prefix="haku.edit.aikataulu"></show-errors>
+                    <div show-errors form="hakuForm" field="PH_TJT" tt-prefix="haku.edit.aikataulu"></div>
                 </div>
             </td>
         </tr>
@@ -22,7 +22,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKLPT'>Hakukohteen lisäämisen ja perumisen takaraja</th>
             <td>
-            <t-date-time type="long" name="PH_HKLPT" timestamp="true" ng-model="model.parameter.PH_HKLPT" required></t-date-time>
+            <t-date-time type="long" name="PH_HKLPT" timestamp="true" ng-model="model.parameter.PH_HKLPT"></t-date-time>
                 <p class="help-block" tt='haku.edit.aikataulu.PH_HKLPT.help'>
                     Annetun ajan jälkeen hakukohteita ei voi lisätä tai perua.
                 </p>
@@ -37,7 +37,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKMT'>Hakukohteen muokkauksen takaraja</th>
             <td>
-            <t-date-time type="long" name="PH_HKMT" timestamp="true" ng-model="model.parameter.PH_HKMT" required></t-date-time>
+            <t-date-time type="long" name="PH_HKMT" timestamp="true" ng-model="model.parameter.PH_HKMT"></t-date-time>
                 <p class="help-block" tt='haku.edit.aikataulu.PH_HKMT.help'>
                     Annetun ajan jälkeen hakukohteita ei voi muokata.
                 </p>
@@ -51,7 +51,7 @@
 
         <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th tt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2"><t-showdate value="hakuaika.alkuPvm"></t-showdate> --- <t-showdate value="hakuaika.loppuPvm"></t-showdate></td>
+            <td colspan="2"><t-show-date value="hakuaika.alkuPvm"></t-show-date> --- <t-show-date value="hakuaika.loppuPvm"></t-show-date></td>
         </tr>
 
     </table>
@@ -61,7 +61,7 @@
 <div data-ng-switch on="model.haku.haunkohdejoukkoUri">
 
     <!-- Korkeakoulu -->
-    <div data-ng-switch-when="haunkohdejoukko_12">
+     <div data-ng-switch-when="haunkohdejoukko_12">
         <div ng-include="'partials/haku/edit/hakuEditHaunAikataulut_korkeakoulu.html'">Korkeakoulu</div>
     </div>
 
@@ -69,6 +69,7 @@
     <div data-ng-switch-default>
         <div ng-include="'partials/haku/edit/hakuEditHaunAikataulut_toinenaste.html'">2. aste + muut</div>
     </div>
+
 </div>
 
 <!-- Lisähaku -->
@@ -79,7 +80,7 @@
     <table class="tarjontaForm">
         <tr>
             <th tt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2"><t-showdate value="hakuaika.loppuPvm"></t-showdate> --- <t-showdate value="hakuaika.loppuPvm"></t-showdate></td>
+            <td colspan="2"><t-show-date value="hakuaika.loppuPvm"></t-showdate> --- <t-show-date value="hakuaika.loppuPvm"></t-showdate></td>
         </tr>
 
         <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">

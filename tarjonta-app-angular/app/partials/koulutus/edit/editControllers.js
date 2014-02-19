@@ -87,11 +87,13 @@ app.controller('BaseEditController',
                      * LOAD ALL KOODISTO KOODIS
                      */
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
-                        var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
-                        uiModel[key].promise = koodisPromise;
-                        koodisPromise.then(function(result) {
-                            uiModel[key].koodis = result;
-                        });
+                        if (angular.isUndefined(value.skipUiModel)) {
+                            var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
+                            uiModel[key].promise = koodisPromise;
+                            koodisPromise.then(function(result) {
+                                uiModel[key].koodis = result;
+                            });
+                        }
                     });
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                         if (angular.isUndefined(cfg.env[value.koodisto])) {
@@ -258,6 +260,7 @@ app.controller('BaseEditController',
                         angular.forEach(uiModel[key].uris, function(uri) {
                             apiModel[key].uris[uri] = map[uri];
                         });
+
                     });
 
                     console.log(JSON.stringify(apiModel));

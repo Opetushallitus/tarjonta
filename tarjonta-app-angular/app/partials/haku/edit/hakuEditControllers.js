@@ -28,6 +28,46 @@ app.controller('HakuEditController',
             function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService) {
                 $log.info("HakuEditController()", $scope);
 
+                
+                var clearErrors = function(){
+                  $scope.model.validationmsgs=[];
+                  //XXX data model for formControl seems to accumulate errors, clear it here even if the doc says no
+                  $scope.model.formControls.notifs.errorDetail=[];
+                };
+
+                /**
+                 * Display form validation errors on screen
+                 */
+                var reportFormValidationErrors=function(form){
+                    console.log("form:::::", form);
+
+//                    angular.forEach(form, function(value,name){
+//                      if(value.$invalid===true) {
+//                        var key = "error.validation." + name + "." + name;
+//                        console.log("k:" + key);
+//                        $scope.model.validationmsgs.push({errorMessageKey:key});
+//                      }
+//
+//                    });
+
+                    console.log("form", form);
+                    angular.forEach(form.$error, function(v,k){
+                      for(var i=0;i<v.length;i++) {
+                        if(v[i].$name) {
+                          var key = "error.validation." + v[i].$name + "." + k;
+                          console.log("k:" + key);
+                          $scope.model.validationmsgs.push({errorMessageKey:key});
+                        } else {
+                          console.log("error found for field:" , v[i], "key=", k)
+                        }
+                      }
+                    });
+
+                    $scope.model.showError = true;
+                    $scope.model.showSuccess = false;
+                }
+
+                
                 var hakuOid = $route.current.params.id;
 
                 // TODO preloaded / resolved haku is where?
@@ -74,8 +114,18 @@ app.controller('HakuEditController',
                 };
 
                 $scope.doSaveHakuAndParameters = function(haku, tila, reload) {
-                    $log.info("doSave()", tila, haku);
 
+                  clearErrors();
+                  var form = $scope.hakuForm;
+                  if(form.$invalid) {
+                    $log.info("form not valid, not saving!");
+                    reportFormValidationErrors(form);
+                    return;
+                  }
+
+                  
+                  
+                    $log.info("doSave()", tila, haku);
                     // Update haku's tila (state)
                     haku.tila = tila;
 
@@ -85,9 +135,12 @@ app.controller('HakuEditController',
                         $log.info("doSave() - OK status = ", result.status);
 
                         // Clear validation messages
-                        if ($scope.model.validationmsgs) {
+                        console.log("validation messages:", $scope.model.validationmsgs);
+                        console.log("fc:", $scope.formControl)
+                        if ($scope.model.validationmsgs && $scope.model.validationmsgs.length>0) {
                             $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
                         }
+                        console.log("validation messages after splice:", $scope.model.validationmsgs);
 
                         if (result.status == "OK") {
                             $scope.model.showError = false;

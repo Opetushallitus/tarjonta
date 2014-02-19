@@ -177,41 +177,29 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 		liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite != null;
 		
 		liite.selected = true;
-		/*if ($scope.liitteetModel.selectedLiite[liite.kieliUri]) {
-			$scope.liitteetModel.selectedLiite[liite.kieliUri].selected = false;
-		}*/
-		
     	$scope.liitteetModel.selectedLiite[liite.kieliUri] = angular.copy(liite);
     }
  
     // palauttaa oletusarvot
     $scope.resetLiite = function(kieliUri) {
-    	/*if ($scope.liitteetModel.selectedLiite[kieliUri].oid) {
-    		// olemassaoleva
-    		for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-    			var cl = $scope.model.hakukohde.hakukohteenLiitteet[i];
-    			if (cl.oid==$scope.liitteetModel.selectedLiite[kieliUri].oid) {
-    	        	$scope.selectLiite(cl);
-    	        	return;
-    			}
-    		}
-    	} else {*/
-    		// uusi
     	$scope.selectLiite(newLiite(kieliUri));
     	$scope.liitteetModel.selectedLiite[kieliUri].selected = false;
-    	//}
     }
     
-    $scope.deleteLiite = function(liite) {
-        liite.hakukohdeOid = $scope.model.hakukohde.oid;
-        /*var liiteResource = new Liite(liite);
-        liiteResource.$delete().then(function(){
-            var index = $scope.model.hakukohde.hakukohteenLiitteet.indexOf(liite);
-            if (index==-1) {
-            	return;
-            }*/
-        $scope.model.hakukohde.hakukohteenLiitteet.splice(index,1);
-        //});
+    $scope.deleteLiite = function(liite, confirm) {
+    	if (confirm) {
+            liite.hakukohdeOid = $scope.model.hakukohde.oid;
+            $scope.model.hakukohde.hakukohteenLiitteet.splice(index,1);
+    	} else {
+    		dialogService.showDialog({
+    			title: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.liite.title"),
+    			description: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.liite", [liite.liitteenNimi])
+    		}).result.then(function(ret){
+    			if (ret) {
+    				$scope.deleteLiite(liite, true);
+    			}
+    		});
+     	}
     };
 
     // tallentaa liitteen
@@ -235,13 +223,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	}
     	
     	liite.hakukohdeOid = $scope.model.hakukohde.oid;
-    	
-    	//var res  = new Liite(liite);
-    	//(liite.oid ? res.$update() : res.$save()).then(function(resp){
-    	//	$scope.model.hakukohde.hakukohteenLiitteet[ci] = resp;
-    		//$scope.selectLiite(resp);
 		$scope.createLiite(kieliUri);
-    	//});
     }
     
 
