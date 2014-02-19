@@ -1,27 +1,27 @@
-<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">    
+<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
     <controls-model
         model="formControls"
         tt-create="koulutus.edit.header.title"
         title="model.koulutusohjelma.tekstis"
         dto="model">
-        
-        <controls-button icon="arrow-left" tt="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
-        <controls-button tt="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
-        <controls-button tt="koulutus.edit.tallenna.valmis" action="saveValmis($event)" primary="true"></controls-button>
-        <controls-button icon="arrow-right" tt="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
-        
-        <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
-        <controls-notify type="message" tt="'koulutus.edit.header.'+model.koulutusasteTyyppi" tp="[ model.organisaatio.nimi ]"></controls-notify>
-        
-        <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
-        <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
 
-        
-        <controls-notify type="error-detail" tt="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showError && koulutusForm.$invalid"></controls-notify>
-        <controls-notify ng-repeat="e in uiModel.validationmsgs" type="error-detail" tt="e" show="uiModel.showError"></controls-notify>
+        <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)" primary="true"></controls-button>
+        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
+
+        <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
+        <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.koulutusasteTyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
+
+        <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
+        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
+
+
+        <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showError && koulutusForm.$invalid"></controls-notify>
+        <controls-notify ng-repeat="e in uiModel.validationmsgs" type="error-detail" tt-expr="e" show="uiModel.showError"></controls-notify>
 
     </controls-model>
-    
+
     <display-controls model="formControls" display="header"></display-controls>
 
     <form name="koulutusForm">

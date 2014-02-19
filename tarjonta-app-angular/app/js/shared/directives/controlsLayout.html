@@ -3,34 +3,33 @@
 
 <div ng-switch="display">
 	<div class="msgInfo" ng-show="showMessage()" ng-switch-when="header">
-	    <p ng-repeat="m in model.notifs.message" data-ng-bind-html="t(m.tt(), m.tp())"  ng-show="showMessage(m)"></p>
+	    <p ng-repeat="m in model.notifs.message" data-ng-bind-html="t(m.ttExpr(), m.ttParams())"  ng-show="showMessage(m)"></p>
 	</div>
 	<hr ng-switch-when="footer"></hr>
-
 </div>
 
 <span ng-repeat="b in model.buttons">
 	<a href
 	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
 	    data-ng-click="b.disabled() ? function() : b.action()"
-	    ng-disabled="b.disabled()">{{t(b.tt)}}<span ng-show="b.icon"> <span ng-class="'icon-'+b.icon"/></span></a>
-    
+	    ng-disabled="b.disabled()">{{t(b.ttKey)}}<span ng-show="b.icon"> <span ng-class="'icon-'+b.icon"/></span></a>
+
 </span>
 
 <div class="msgOk" ng-show="showSuccess()">
-    <p ng-repeat="m in model.notifs.success" data-ng-bind-html="t(m.tt(), m.tp())" ng-show="showSuccess(m)"></p>
+    <p ng-repeat="m in model.notifs.success" data-ng-bind-html="t(m.ttExpr(), m.ttParams())" ng-show="showSuccess(m)"></p>
 </div>
 
 <div class="msgError" ng-show="showError()">
-    <p ng-repeat="m in model.notifs.error" data-ng-bind-html="t(m.tt(), m.tp())" ng-show="showError(m)"></p>
+    <p ng-repeat="m in model.notifs.error" data-ng-bind-html="t(m.ttExpr(), m.ttParams())" ng-show="showError(m)"></p>
     <ul ng-show="showErrorDetail()">
-        <li ng-repeat="e in model.notifs.errorDetail" ng-show="showErrorDetail(m)" data-ng-bind-html="t(e.tt(), e.tp())" ></li>
+        <li ng-repeat="e in model.notifs.errorDetail" ng-show="showErrorDetail(m)" data-ng-bind-html="t(e.ttExpr(), e.ttParams())" ></li>
     </ul>
 </div>
 
 <div ng-show="display=='header'">
 	<h3>{{getTitle()}}</h3>
-	
+
 	<p ng-show="!isNew()" class="float-right">
 	    <span ng-repeat="v in metadata"><span ng-show="!$first">, </span>{{v}}</span>
 	</p>
