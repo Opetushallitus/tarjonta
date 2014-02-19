@@ -105,8 +105,8 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
            			return showMessage($scope.model.notifs.error) || showMessage($scope.model.notifs.errorDetail);
        			}
        			return showMessage($scope.model.notifs.error, msg);
-       		};
-
+       		};  
+       		
        		$scope.showSuccess = function(msg) {
        			return showMessage($scope.model.notifs.success, msg) && (msg!=null || !$scope.showError());
        		};
