@@ -61,11 +61,12 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			if ($scope.container) {
 				$scope.container.stopExcept($scope);
 			}
-			setTimeout(function(){
+			// autofocus avattaessa
+			/*setTimeout(function(){
 				var em = $("iframe", $scope.rootElement)[0].contentDocument.body;
 				$(em).focus();
 				//console.log("FOCUS ",em);
-			});
+			});*/
 		}
 		
 		$scope.stopEdit = function() {
