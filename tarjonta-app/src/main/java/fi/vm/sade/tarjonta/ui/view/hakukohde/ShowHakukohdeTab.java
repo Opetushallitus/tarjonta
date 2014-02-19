@@ -99,11 +99,12 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
         presenter.loadHakukohdeHakuPvm();
         Date haunAlkamisPvm = presenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
-        
+        //Tuomas Katva - KJOH-738 tarjonta kiinni 4 paivaa ennen
+        Date hakuAlkamisPvm = ShowHakukohdeView.getMinHakuAlkamisDate(haunAlkamisPvm);
         
         //Haku is started if the start date is in the past and the haku is not a lisahaku
         Date tanaan = new Date();
-        if (tanaan.after(haunAlkamisPvm) && !KoodistoURI.KOODI_LISAHAKU_URI.equals(presenter.getModel().getHakukohde().getHakuViewModel().getHakutyyppi())) {
+        if (tanaan.after(hakuAlkamisPvm) && !KoodistoURI.KOODI_LISAHAKU_URI.equals(presenter.getModel().getHakukohde().getHakuViewModel().getHakutyyppi())) {
             return false;
         } else {
             return true;

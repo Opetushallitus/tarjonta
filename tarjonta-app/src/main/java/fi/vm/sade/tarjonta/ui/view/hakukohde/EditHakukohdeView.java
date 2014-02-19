@@ -156,7 +156,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     }
 
 
-    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
+    public static Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(hakualkamisPvm);
