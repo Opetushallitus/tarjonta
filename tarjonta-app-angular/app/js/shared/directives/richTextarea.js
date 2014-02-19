@@ -61,6 +61,12 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			if ($scope.container) {
 				$scope.container.stopExcept($scope);
 			}
+			// autofocus avattaessa
+			/*setTimeout(function(){
+				var em = $("iframe", $scope.rootElement)[0].contentDocument.body;
+				$(em).focus();
+				//console.log("FOCUS ",em);
+			});*/
 		}
 		
 		$scope.stopEdit = function() {
@@ -90,6 +96,7 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 				scope.container = richTextareaContainer;
 				richTextareaContainer.areas.push(scope);
 			}
+			scope.rootElement = element;
 			scope.element = $(".previewBody", element);
 		}
     }

@@ -10,7 +10,7 @@
             tt-create="koulutus.edit.header.title"
             title="model.koulutusohjelma.tekstis"
             dto="model.hakux.result">
-
+            
             <controls-button icon="arrow-left" tt="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
             <controls-button tt="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" xxxdisabled="hakuForm.$invalid" primary="true"></controls-button>
             <controls-button tt="koulutus.edit.tallenna.valmis" action="saveValmis($event)" xxxdisabled="hakuForm.$invalid" primary="true"></controls-button>
@@ -37,9 +37,10 @@
                 <tab heading="Haun aikataulut">
                     <div ng-include="'partials/haku/edit/hakuEditHaunAikataulut.html'"></div>
                 </tab>
-                <tab heading="Hakukauden aikataulut">
+<!--                <tab heading="Hakukauden aikataulut">
                     <div ng-include="'partials/haku/edit/hakuEditHakukaudenAikataulut.html'"></div>
                 </tab>
+-->
             </tabset>
         </div>
 

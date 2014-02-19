@@ -6,9 +6,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S"></t-date-time>
                 --
-                <t-date-time type="long" timestamp="true" name="PH_KKM_E" ng-model="model.parameter.PH_KKM_E" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KKM_E" ng-model="model.parameter.PH_KKM_E"></t-date-time>
             </td>
             <td>
                 <div>
@@ -21,7 +21,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HVVPTP'>Harkinnanvaraisen valinnan päätösten tallennus päättyy</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP"></t-date-time>
             </td>
             <td>
                 <div>
@@ -33,9 +33,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_KTT'>Koetulosten tallentaminen</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S"></t-date-time>
                 --
-                <t-date-time type="long" timestamp="true" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E"></t-date-time>
             </td>
             <td>
                 <div>
@@ -48,7 +48,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_OLVVPKE'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S" required></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S"></t-date-time>
                 --
                 <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE_E"></t-date-time>
             </td>
@@ -75,7 +75,7 @@
             </td>
         </tr>
 
-        <tr class="required">
+        <tr>
             <th tt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
             <td>
                 <t-date-time type="long" timestamp="true" name="PH_SS_S" ng-model="model.parameter.PH_SS_S"></t-date-time>
@@ -105,7 +105,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_SST'>Sijoittelun suorittamistiheys</th>
             <td>
-                <input type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span tt="haku.tuntia">tuntia</span>
+                <input ng-required="false" type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span tt="haku.tuntia">tuntia</span>
                 <p class="help-block" tt='haku.edit.aikataulu.PH_SST.help'>
                     Tiheys määritetään kokonaistunteina välillä 1 - 336 (14 vuorokautta)
                 </p>
@@ -155,7 +155,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_PH_HKP" ng-model="model.parameter.PH_HKP"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_HKP" ng-model="model.parameter.PH_HKP"></t-date-time>
             </td>
             <td>
                 <div>
