@@ -79,7 +79,7 @@ window.CONFIG = {
         "root.organisaatio.oid":"1.2.246.562.10.00000000001",
         "ui.timeout.short": 10000,
         "ui.timeout.long": 60000,
-        "host.haku" : "https://itest-oppija.oph.ware.fi/",
+        "web.url.oppija.preview" : "https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/",
         
         //käsin lisätyt:
 

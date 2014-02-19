@@ -20,7 +20,7 @@ app.directive('laajuus', ['$log', function($log) {
                     if (length === 1) {
                         var key = Object.keys(valNew)[0];
                         $scope.arvoModel.uri = key;
-                        $scope.arvoModel.versio = (valNew[key]).versio;
+                        $scope.arvoModel.versio = valNew[key].versio;
                     }
                 }
             });

@@ -1,27 +1,27 @@
 'use strict';
 
 /* Layout-komponentti/direktiivistö formien toimintonappeja, ilmoitustekstejä ja muita yleisiä asioita varten.
- * 
+ *
  * 1. Direktiivit kommunikoivat scopessa määritellyn olion välityksellä joka controllerin on alustettava tyhjäksi
  *    olioksi:
- * 
+ *
  * 	 $scope.formControls = {};
- * 
+ *
  *   - Tämän olion sisältö ei ole osa direktiivistön julkista apia eli siihen ei pidä missään tapauksessa viitata
  *     suoraan.
- * 
+ *
  * 2. Toiminnot ja ilmoitukset määritellään controls-model-tagilla (tämä ei vielä lisää mitään sisältöä sivulle vaan
  *    kokoaa tiedot modeliin):
- * 
+ *
  *   <controls-model model="formControls" tt-create="..." tt-edit="..." title="..." dto="...">
- *   
+ *
  *   	<controls-button primary="true|false" tt="..." action="f()", disabled="f()"/>
  *   	...
  *   	<controls-message type="message|success|error|error-detail" type="" tt="..." tp="..." show="f()"/>
  *   	...
- *   
+ *
  *   </controls-model>
- *   
+ *
  *   - Parametrien tarkempi dokumentaatio on alempana, direktiivimääritysten yhteydessä
  *   - Otsikkona näytetään tt-create- (kun luodaan uutta) tai tt-edit (kun muokataan olemassaolevaa) -atribuuteillä
  *     määritelty kielistysavain jolle annetaan parametriksi title -atribuutilla annettu yksi- tai monikielinenteksti
@@ -29,35 +29,35 @@
  *     määritelty
  *   - Se, luodaanko uutta vai muokataanko, päätellään dto-parametrin mukaan (olemassaolevasta oletetaan löytyvän created-
  *     ja createdBy -arvot); em. oliosta tarkastetaan myös arvo 'tila', joka näytetään muiden metatietojen kanssa
- *   
+ *
  *   Ilmoitustyypit:
- *   
+ *
  *   message		Normaali ilmoitusviestityyli, näytetään vain headerissa. Esim. "Olet muokkaamassa..."
  *   success		Ilmoitus onnistumisesta; tätä ei näytetä, jos yksikin error- tai error-detail -viesti on näkyvissä.
  *   error			Päätason virheviesti, esim. "Tallennus epäonnistui"
  *   error-detail   Virheviestin tarkennus, validointia ja muuta varten, esim. "Kenttä X on pakollinen"
- *   
+ *
  * 3. Määritelly napit ja ilmoitukset näytetään sivulla display-controls -tagilla:
- * 
+ *
  *   <display-controls model="formControls" display="header|footer"/>
- *  
+ *
  *   - Display-parametri määrittää kumpi variaatio näytetään; headerin ja footerin ero on käytännössä se, että footerissa
  *     ei näytetä message-tyypin ilmoitustekstiä vaan vaakaviiva (riippumatta siitä onko kyseisentyyppistä viestiä
  *     määritelty.
- * 
+ *
  * TODO
- * 
+ *
  *   - Sivun otsikon ja muokkaustietojen (kuka ja milloin) näyttäminen headerissa.
  *   - X-nappi jolla virheviestin saa piilotettua
  *   - Virheviestien tarkennusten piilotus niiden määrän ollessa suuri (esim. näytä lisää -linkki)
- * 
- * 
+ *
+ *
  */
 
 var app = angular.module('ControlsLayout', ['localisation']);
 
 app.directive('displayControls',function($log, LocalisationService, $filter) {
-	
+
     return {
         restrict: 'E',
         templateUrl: "js/shared/directives/controlsLayout.html",
@@ -75,11 +75,11 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
     		default:
     			throw new Error("Invalid display type: "+$scope.display);
         	}
-        	
+
         	$scope.t = function(k, a) {
         		return LocalisationService.t(k, a);
         	}
-        	
+
        		function showMessage(msgs, msg) {
        			if (msg==undefined) {
        				for (var i in msgs) {
@@ -105,18 +105,18 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
            			return showMessage($scope.model.notifs.error) || showMessage($scope.model.notifs.errorDetail);
        			}
        			return showMessage($scope.model.notifs.error, msg);
-       		};
+       		};  
        		
        		$scope.showSuccess = function(msg) {
        			return showMessage($scope.model.notifs.success, msg) && (msg!=null || !$scope.showError());
        		};
-       		
+
        		$scope.showMessage = function(msg) {
        			return showMessage($scope.model.notifs.message, msg);
        		};
-       		
+
        		$scope.dto = $scope.model.dto();
-       		
+
        		function appendMetadata(md, key, user, timestamp) {
        			if (!user && !timestamp) {
        				return;
@@ -127,15 +127,15 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
        			md.push(LocalisationService.t(key,
        					[ $filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user ]));
        		}
-       		
+
        		$scope.metadata = [];
        		if ($scope.dto.tila) {
        			$scope.metadata.push(LocalisationService.t("tarjonta.tila."+$scope.dto.tila));
        		}
-       		
+
        		appendMetadata($scope.metadata, "tarjonta.metadata.modified", $scope.dto.modifiedBy, $scope.dto.modified)
        		appendMetadata($scope.metadata, "tarjonta.metadata.created", $scope.dto.createdBy, $scope.dto.created)
-       		
+
        		$scope.isNew = function() {
        			return $scope.metadata.length==1;
        		}
@@ -163,22 +163,22 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
        			}
        			return title;
        		}
-       		
+
        		$scope.getTitle = function() {
        			var ttext = titleText();
        			var tkey = $scope.isNew() ? $scope.model.ttCreate : $scope.model.ttEdit;
-       			
+
        			return tkey==null ? ttext : LocalisationService.t(tkey, [ ttext ]);
        		}
-       		
+
        		return $scope;
         }
     }
-    
+
 });
 
 app.directive('controlsModel',function($log) {
-	
+
     return {
         restrict: 'E',
         template: "<div style=\"display:none;\" ng-transclude></div>",
@@ -199,7 +199,7 @@ app.directive('controlsModel',function($log) {
    				errorDetail: []
        		}
         	$scope.model.buttons = [];
-        	
+
         	$scope.model.ttCreate = $scope.ttCreate;
         	$scope.model.ttEdit = $scope.ttEdit;
         	$scope.model.title = $scope.title;
@@ -208,42 +208,42 @@ app.directive('controlsModel',function($log) {
        		return $scope;
         }
     }
-    
+
 });
 
 app.directive('controlsButton',function($log) {
-		
+
     return {
         restrict: 'E',
         //replace: true,
         require: "^controlsModel",
         link: function (scope, element, attrs, controlsLayout) {
         	controlsLayout.model.buttons.push({
-        		tt: scope.tt,
+        		ttKey: scope.ttKey,
         		primary: scope.primary,
         		action: scope.action,
         		disabled: scope.disabled,
         		icon: scope.icon });
         },
         scope: {
-        	tt: "@",	   // otsikko (lokalisaatioavain)
+        	ttKey: "@",	   // otsikko (lokalisaatioavain)
         	primary:"@",   // boolean; jos tosi, nappi on ensisijainen (vaikuttaa vain ulkoasuun)
         	action: "&",   // funktio jota klikatessa kutsutaan
         	disabled: "&", // funktio jonka perusteella nappi disabloidaan palauttaessa true
         	icon: "@"	   // napin ikoni (viittaus bootstrapin icon-x -luokkaan)
-        		
+
         }
-    }    
+    }
 });
 
 app.directive('controlsNotify',function($log) {
-		
+
     return {
         restrict: 'E',
         ///replace: true,
         require: "^controlsModel",
         link: function (scope, element, attrs, controlsLayout) {
-        	
+
         	var notifs;
         	switch (scope.type) {
         	case "message":
@@ -257,19 +257,22 @@ app.directive('controlsNotify',function($log) {
     		default:
     			throw new Error("Invalid notification type: "+scope.type);
         	}
-        	
+
         	notifs.push({
-        		tt: scope.tt,
-        		tp: scope.tp,
+        		ttExpr: scope.ttExpr,
+        		ttParams: scope.ttParams,
         		type: scope.type,
         		show: scope.show });
+
+            $log.info("controlsNotify - notifs = ", notifs);
+
         },
         scope: {
-        	tt: "&",	   // viesti (lokalisaatioavain); huom.: ei string vaan expr
-        	tp: "&",	   // lokalisaatioavaimen parametrit
+        	ttExpr: "&",	   // viesti (lokalisaatioavain); huom.: ei string vaan expr
+        	ttParams: "&",	   // lokalisaatioavaimen parametrit
         	type: "@",     // ilmoituksen tyyli: message|success|error|error-detail
         	show: "&"      // funktio jonka perusteella viesti näytetään
         }
-    }    
+    }
 });
 
