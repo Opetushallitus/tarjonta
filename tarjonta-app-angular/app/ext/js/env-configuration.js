@@ -79,6 +79,7 @@ window.CONFIG = {
         "root.organisaatio.oid":"1.2.246.562.10.00000000001",
         "ui.timeout.short": 10000,
         "ui.timeout.long": 60000,
+        "host.haku" : "https://itest-oppija.oph.ware.fi/",
         
         //käsin lisätyt:
 
@@ -90,12 +91,12 @@ window.CONFIG = {
         // module-install-parent/config/common/tarjonta/oph-configuration/tarjonta-app.properties
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
+        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/v1/",
 
-        //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-         "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",

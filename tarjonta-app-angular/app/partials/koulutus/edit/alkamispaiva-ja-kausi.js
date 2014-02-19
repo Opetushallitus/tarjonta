@@ -24,8 +24,6 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
             
-            
-
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = -1
             }

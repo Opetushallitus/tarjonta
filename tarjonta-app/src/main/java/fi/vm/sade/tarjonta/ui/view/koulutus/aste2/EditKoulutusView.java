@@ -169,6 +169,12 @@ public class EditKoulutusView extends AbstractVerticalLayout {
     }
 
     private Boolean checkHakukohteetForStartedHaku(HakukohteetVastaus hakukohteetVastaus) {
+
+        if (presenter.getPermission().userIsOphCrud()) {
+            return false;
+        }
+
+
         if (hakukohteetVastaus != null && hakukohteetVastaus.getHitCount() > 0) {
 
             boolean hakuStarted = false;
