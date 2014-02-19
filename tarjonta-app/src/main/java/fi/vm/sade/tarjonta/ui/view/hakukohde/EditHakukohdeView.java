@@ -132,6 +132,10 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
             Date hakualkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
 
+            if (presenter.getPermission().userIsOphCrud()) {
+                return false;
+            }
+
             if (isErillishakuOrLisahaku(hakuViewModel)) {
                 return false;
             } else if (new Date().after(hakualkamisPvm)) {
