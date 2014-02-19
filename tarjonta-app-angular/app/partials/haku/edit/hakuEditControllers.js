@@ -28,7 +28,7 @@ app.controller('HakuEditController',
             function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService) {
                 $log.info("HakuEditController()", $scope);
 
-                
+
                 var clearErrors = function(){
                   $scope.model.validationmsgs=[];
                   //XXX data model for formControl seems to accumulate errors, clear it here even if the doc says no
@@ -39,7 +39,7 @@ app.controller('HakuEditController',
                  * Display form validation errors on screen
                  */
                 var reportFormValidationErrors=function(form){
-                    console.log("form:::::", form);
+                    console.log("reportFormValidationErrors - form:::::", form);
 
 //                    angular.forEach(form, function(value,name){
 //                      if(value.$invalid===true) {
@@ -67,16 +67,16 @@ app.controller('HakuEditController',
                     $scope.model.showSuccess = false;
                 }
 
-                
+
                 var hakuOid = $route.current.params.id;
 
                 // TODO preloaded / resolved haku is where?
                 // $route.local.xxx
                 $scope.model = null;
 
-                $scope.getLocale = function() {
-                    return 'FI';
-                };
+//                $scope.getLocale = function() {
+//                    return 'FI';
+//                };
 
                 $scope.doRemoveHakuaika = function(hakuaika, index) {
                     $log.info("doRemoveHakuaika()", hakuaika, index);
@@ -123,8 +123,8 @@ app.controller('HakuEditController',
                     return;
                   }
 
-                  
-                  
+
+
                     $log.info("doSave()", tila, haku);
                     // Update haku's tila (state)
                     haku.tila = tila;
@@ -147,7 +147,7 @@ app.controller('HakuEditController',
                             $scope.model.showSuccess = true;
 
                             $log.info("->saveparameters");
-                            $scope.saveParameters();
+                            $scope.saveParameters(result.result);
                             $log.info("saveparameters->");
 
                             // Move broweser to "edit" mode.
@@ -239,8 +239,9 @@ app.controller('HakuEditController',
                 };
 
 
-                $scope.saveParameters= function() {
-                	ParameterService.tallenna(hakuOid, $scope.model.parameter);
+                $scope.saveParameters= function(haku) {
+                    $log.info("saveParameters()");
+                	ParameterService.tallenna(haku.oid, $scope.model.parameter);
                 };
 
                 $scope.init = function() {
