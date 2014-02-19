@@ -27,9 +27,14 @@ import javax.ws.rs.core.MediaType;
 /**
  * List changes in the tarjonta data.
  *
+ * For exampe, see the modified stuff in "luokka" environment since week ago:
+ *
+ * https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/lastmodified?lastModified=-604800000
+ *
  * For example:
  * <pre>
  * {
+ *   "lastModifiedTs" : [ "1392206820523", "12.02.2014 14:07:00" ],
  *   "koulutusmoduuli" : ["oid1", "oid2", "oid3", ...],
  *   "koulutusmoduuliToteutus" : ["oid1", "oid2", "oid3", ...],
  *   "haku" : ["oid1", "oid2", "oid3", ...],
@@ -43,6 +48,14 @@ import javax.ws.rs.core.MediaType;
 @Api(value = "/v1/lastmodified", description = "Muutosten listaaminen tarjonnan tiedoista.")
 public interface LastModifiedV1Resource {
 
+    /**
+     * If lastModifiedTs &lt; 0 then the current time minux given ms is used. (ie. -600000 eguals 5 minutes back).
+     * If lastModifiedTs equals 0 then default 5 minutes is used.
+     * Otherwise value is used as is.
+     *
+     * @param lastModifiedTs
+     * @return
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa hakuehtojen puitteissa muutosten oid:t ryhmiteltynä.", notes = "Listaa muutosten oidit", response = Map.class)
