@@ -144,6 +144,9 @@ public class ShowHakukohdeTab extends VerticalLayout {
     }
 
     private boolean checkHaunAlkaminen() {
+        if (presenter.getPermission().userIsOphCrud()) {
+            return false;
+        }
         presenter.loadHakukohdeHakuPvm();
         Date haunAlkamisPvm = presenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
         
