@@ -118,6 +118,10 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
     private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
 
+        if (tarjontaPresenterPresenter.getPermission().userIsOphCrud()) {
+            return false;
+        }
+
         Date minHakuAlkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
 
         if (isErillishakuOrLisahaku(hakuViewModel)) {
@@ -140,7 +144,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
     }
 
 
-    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
+    public static Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(hakualkamisPvm);

@@ -42,6 +42,7 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -229,6 +230,30 @@ public class HakukohdeResultRow extends HorizontalLayout {
         }
     }
 
+    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(hakualkamisPvm);
+        cal.add(Calendar.DATE, -4);
+        return cal.getTime();
+    }
+
+    private boolean checkHakuStarted(Date haunAlkamisPvm) {
+
+        Date hakuAlkamisPvm = getMinHakuAlkamisDate(haunAlkamisPvm);
+
+        if (tarjontaPresenter.getPermission().userIsOphCrud()) {
+            return false;
+        }
+
+        if (new Date().after(hakuAlkamisPvm)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     /**
      * Creation of the row component's layout.
      *
@@ -251,6 +276,10 @@ public class HakukohdeResultRow extends HorizontalLayout {
             System.out.println("" + hakukohde.getHakutyyppiUri());
             System.out.println("" + hakukohde.getHakutapaKoodi().getUri());
             
+        }
+
+        if (hakukohde.getHakuAlkamisPvm() != null) {
+            hakuStarted = checkHakuStarted(hakukohde.getHakuAlkamisPvm());
         }
         
         isSelected = UiUtil.checkbox(null, null);
