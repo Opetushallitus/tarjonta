@@ -85,7 +85,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public void insertLiittees(List<HakukohdeLiite> liites, String hakukohdeOid) {
         Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
 
-        //hakukohde.getLiites().clear();
+        hakukohde.getLiites().clear();
         for (HakukohdeLiite liite : liites) {
             liite.setHakukohde(hakukohde);
         }
