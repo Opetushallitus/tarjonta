@@ -13,13 +13,13 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             };
             
             $scope.ctrl = {
-            	kausi: $scope.isKausiVuosiRadioButtonActive(),
-            	multi:false,
+            	kausi:$scope.isKausiVuosiRadioButtonActive(),
+            	multi:$scope.pvms.length>0,
                 koodis: []
             };
             
             $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
-
+            
             $scope.$watch("kausiUri", function(valNew, valOld) {
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
@@ -51,6 +51,23 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
         					$scope.cancel = function() {
         						modalInstance.dismiss();
         					}        					
+        					return $scope;
+        				}
+        			});
+            	}
+            }
+            
+            $scope.onToggleManyDates = function($event) {
+            	if ($scope.pvms.length>1) {
+            		$event.preventDefault();
+            		$event.stopImmediatePropagation();
+            		var modalInstance = $modal.open({
+        				scope: $scope,
+        				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog-na.html',
+        				controller: function($scope) {
+        					$scope.ok = function() {
+        						modalInstance.dismiss();
+        					}
         					return $scope;
         				}
         			});

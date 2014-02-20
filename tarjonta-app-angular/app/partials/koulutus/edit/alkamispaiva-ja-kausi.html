@@ -11,7 +11,7 @@
 	        multi="multi">
 	    </alkamispaivat>
 	
-	    <input type="checkbox" name="pvmMulti" ng-model="ctrl.multi" ng-disabled="ctrl.kausi"/>
+	    <input type="checkbox" name="pvmMulti" ng-model="ctrl.multi" ng-disabled="ctrl.kausi" ng-click="onToggleManyDates($event)"/>
 	    <span ng-class="ctrl.kausi ? 'disabled' : ''" tt="koulutus.alkamispvm.multiPvm"></span>
 	    <a class="addDate" href ng-show="!ctrl.kausi && ctrl.multi"
 	            ng-click="onAddDate()" tt="tarjonta.toiminnot.lisää"></a>
