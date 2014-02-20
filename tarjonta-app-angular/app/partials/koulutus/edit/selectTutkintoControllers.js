@@ -36,7 +36,10 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope','$modalInstance', 'K
 	//Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin) 
 	//Kutsutaan haun yhteydessa jos kk tutkintoja ei viela haettu
 	$scope.getKkTutkinnot = function() {
-		var koulutusasteet = config.app["tarjonta.koulutusaste.korkeakoulu-uris"];
+//		var koulutusasteet = config.app["tarjonta.koulutusaste.korkeakoulu-uris"];
+		
+		var koulutusasteet = $scope.model.koulutuasteet; // nää laitettu scopeen luo-koulutus-dialogissa
+		
 		//Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
 		var promises = [];
 		angular.forEach(koulutusasteet, function(value, key) {
