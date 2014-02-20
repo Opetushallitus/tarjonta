@@ -40,10 +40,11 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         $scope.data = [];
 
         $scope.errors = {
-        		required:false,
-        		pristine:true,
-        		dirty:false,
-        		$name:$scope.name
+            required: false,
+            pristine: true,
+            dirty: false,
+            invalid: false,
+            $name: $scope.name
         }
 
         $scope.updateModel = function() {
@@ -52,19 +53,32 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             } else {
                 $scope.model = defaultLangMapConverter($scope.data);
             }
-
             $scope.errors.dirty = true;
+            $scope.errors.invalid = false;
             $scope.errors.pristine = false;
 
             if ($scope.isrequired) {
-            	$scope.errors.required = true;
-            	for (var i in $scope.model) {
+
+                $scope.errors.required = true;
+                var length = Object.keys($scope.model).length;
+                if (length === 0) {
+                    $scope.errors.dirty = true;
+                    $scope.errors.invalid = true;
+                    $scope.errors.required = true;
+                    return;
+                }
+
+                for (var i in $scope.model) {
                     $log.info("updateModel() - i = " + i);
-            		if ($scope.model[i] && $scope.model[i] != null && $scope.model[i].trim().length>0) {
-                    	$scope.errors.required = false;
-            			break;
-            		}
-            	}
+                    if ($scope.model[i] && $scope.model[i] != null && $scope.model[i].trim().length > 0) {
+                        $scope.errors.required = false;
+                    } else {
+                        //invalid data
+                        $scope.errors.required = true;
+                        $scope.errors.invalid = true;
+                        return;
+                    }
+                }
             }
         };
 
@@ -119,33 +133,33 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
                 }
             }
 
-            ns.codes.sort(function(a,b){
-            	return a.nimi.localeCompare(b.nimi);
+            ns.codes.sort(function(a, b) {
+                return a.nimi.localeCompare(b.nimi);
             });
 
             $modal.open({
                 controller: function($scope, $modalInstance) {
-                	$scope.ok = function() {
-                		$scope.select($scope.preselection);
-                	};
+                    $scope.ok = function() {
+                        $scope.select($scope.preselection);
+                    };
                     $scope.cancel = function() {
                         $modalInstance.dismiss();
                     };
                     $scope.select = function(lang) {
-                    	if ($scope.preselection==lang) {
+                        if ($scope.preselection == lang) {
                             $modalInstance.close();
                             $scope.data.push({uri: lang, value: "", removable: true});
                             $scope.updateModel();
-                    	} else {
-                    		$scope.preselection = lang;
-                    	}
+                        } else {
+                            $scope.preselection = lang;
+                        }
                     };
                 },
                 templateUrl: "js/shared/directives/mkTextfield-addlang.html",
                 scope: ns
             });
+        };
 
-        }
     }
 
     return {
@@ -155,12 +169,16 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         templateUrl: "js/shared/directives/mkTextfield.html",
         controller: controller,
         link: function(scope, element, attrs, controller) {
+            if (scope.name) {
+                scope.isrequired = (attrs.required !== undefined);
 
-        	if (scope.name) {
-            	scope.isrequired = (attrs.required !== undefined);
-            	scope.errors.required = scope.isrequired;
-            	controller.$addControl({"$name": scope.name, "$error": scope.errors});
-        	}
+                controller.$addControl({'$name': scope.name, '$error': scope.errors});
+
+                scope.$watch("errors.invalid", function(newVal, oldVal) {
+                    scope.errors.required = newVal;
+                    controller.$valid = !newVal;
+                });
+            }
         },
         scope: {
             type: "@", //Modelin suora convertointi tiettyyn objektiin. Jata tyhjaksi jos et tarvitse erikoiskasittelya.
@@ -171,6 +189,6 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             name: "@", // nimi formissa
             required: "@" // jos tosi, vähintään yksi arvo vaaditaan
         }
-    }
+    };
 
 });
