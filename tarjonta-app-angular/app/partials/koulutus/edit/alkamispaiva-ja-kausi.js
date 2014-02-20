@@ -17,7 +17,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             	multi:$scope.pvms.length>0,
                 koodis: []
             };
-            
+                        
             $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
             
             $scope.$watch("kausiUri", function(valNew, valOld) {
@@ -112,6 +112,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 index: 0,
                 ignoreDateListChanges: false
             };
+            
+            $scope.thisYear = new Date(new Date().getFullYear(), 0, 1, 0,0,0,0);
             
             $scope.onDateAdded = function() {
             	for (var i in $scope.ctrl.addedDates) {
