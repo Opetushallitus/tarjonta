@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.model;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 import java.math.BigDecimal;
@@ -32,6 +31,10 @@ import javax.persistence.*;
 @EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends TarjontaBaseEntity {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @FilterXss
     private String oppiaine;
     private BigDecimal painokerroin;

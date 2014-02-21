@@ -8,16 +8,16 @@
 
         <div class="ymcontrols">
             <div class="float-left">
-	            <a href class="btn" ng-click="incYear(-1)"><span class="icon-fast-backward"></span></a>
-	            <a href class="btn" ng-click="incMonth(-1)"><span class="icon-step-backward"></span></a>
+	            <button class="btn" ng-click="incYear(-1)" ng-disabled="!canIncYear(-1)"><span class="icon-fast-backward"></span></button>
+	            <button class="btn" ng-click="incMonth(-1)" ng-disabled="!canIncMonth(-1)"><span class="icon-step-backward"></span></button>
             </div>
             
-            <select class="month" ng-model="select.m" ng-options="monthNames[v] for v in months" ng-change="onComboSelect()"></select>
+            <select class="month" ng-model="select.m" ng-options="m.month as m.name for m in getMonths()" ng-change="onComboSelect()"></select>
             <select class="year" ng-model="select.y" ng-options="v for v in years" ng-change="onComboSelect()"></select>
 
             <div class="float-right">
-	            <a href class="btn" ng-click="incMonth(1)"><span class="icon-step-forward"></span></a>
-	            <a href class="btn" ng-click="incYear(1)"><span class="icon-fast-forward"></span></a>
+	            <button class="btn" ng-click="incMonth(1)" ng-disabled="!canIncMonth(1)"><span class="icon-step-forward"></span></button>
+	            <button class="btn" ng-click="incYear(1)" ng-disabled="!canIncYear(1)"><span class="icon-fast-forward"></span></button>
             </div>
         </div>
 
@@ -35,7 +35,7 @@
 
             <tr ng-repeat="e in calendar">
                 <td class="week">{{e.week}}</td>
-                <td ng-repeat="d in e.days" ng-click="onSelect(d)" ng-class="(d.other ? ' other' : '') + (d.vkl ? ' vkl' : '') + (d.selected ? ' selected' : '')">{{d.day}}</td> 
+                <td ng-repeat="d in e.days" ng-click="onSelect(d)" ng-class="(d.other ? ' other' : '') + (d.vkl ? ' vkl' : '') + (d.selected ? ' selected' : '') + (d.disabled ? ' disabled' : '')">{{d.day}}</td> 
             </tr>        
     
         </table>

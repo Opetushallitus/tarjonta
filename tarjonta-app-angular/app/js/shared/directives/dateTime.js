@@ -49,7 +49,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		} else {
             	  $scope.date = $scope.model.getDate()+"."+($scope.model.getMonth()+1)+"."+$scope.model.getFullYear();
             	  $scope.time = $scope.model.getHours()+":"+zpad($scope.model.getMinutes());
-        	  $scope.ngModel = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
+            	  $scope.ngModel = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
     		}
     	}
     	
@@ -70,7 +70,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		}
     		var max = $scope.max();
     		if (max && max.getTime) {
-    			max = min.getTime();
+    			max = max.getTime();
     		}
     		
     		if (min && d.getTime() < min) {
@@ -82,12 +82,43 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		return d;
     	}
 
+    	function violatesConstraints(d) {
+    		var min = $scope.min();
+    		if (min && min.getTime) {
+    			//console.log("min = ",min);
+    			min = min.getTime();
+    		}
+    		var max = $scope.max();
+    		if (max && max.getTime) {
+    			//console.log("max = ",max);
+    			max = max.getTime();
+    		}
+    		var ret = (min!==undefined && d.getTime() < min) || (max!==undefined && d.getTime() > max);
+    		//console.log("violates = "+ret, d);
+    		return ret;
+    	}
+
     	updateModels();
+    	
     	$scope.$watch("model", function(nv, ov){
     		updateModels();
     		$scope.errors.required = $scope.isRequired && $scope.isRequired() ? $scope.model!=null : undefined;
     	});
-    	
+
+    	$scope.$watch("min", function(nv, ov){
+    		if ($scope.model) {
+    			$scope.model = applyConstraints($scope.model);
+    		}
+    		updateModels();
+    	});
+
+    	$scope.$watch("max", function(nv, ov){
+    		if ($scope.model) {
+    			$scope.model = applyConstraints($scope.model);
+    		}
+    		updateModels();
+    	});
+
     	var thisyear = new Date().getFullYear();
 
     	$scope.onFocusOut = function(){
@@ -157,27 +188,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 				templateUrl: 'js/shared/directives/dateTime-chooser.html',
 				controller: function($scope) {
 					
-					// kuukaudet on seuraavasti koska angulaarin bugi (ei toimi dokumentaation mukaisesti)
 					$scope.months = [];
-					$scope.monthNames = [];
 					for (var i=0; i<12; i++) {
-						$scope.months.push(i);
-						$scope.monthNames.push(LocalisationService.t("tarjonta.kalenteri.kk."+(i+1)));
+						$scope.months.push({month:i, name:LocalisationService.t("tarjonta.kalenteri.kk."+(i+1))});
 					}
-					/*
-						["Tammikuu",
-						 "Helmikuu",
-						 "Maaliskuu",
-						 "Huhtikuu",
-						 "Toukokuu",
-						 "Kesäkuu",
-						 "Heinäkuu",
-						 "Elokuu",
-						 "Syyskuu",
-						 "Lokakuu",
-						 "Marraskuu",
-						 "Joulukuu"];
-						 */
 					
 					$scope.years = [];
 
@@ -200,7 +214,6 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 							if (nd.getFullYear() != d.getFullYear()) {
 								return 1;
 							}
-							//console.log("nd = "+ret+" -> ",nd);
 						}
 						return ret;
 					}
@@ -242,6 +255,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 									year: d.getFullYear(),
 									other: (d.getMonth() != $scope.model.getMonth()),
 									vkl: (j>=5),
+									disabled: violatesConstraints(d),
 									selected: (d.getDate()==$scope.model.getDate())
 										&& (d.getMonth()==$scope.model.getMonth())
 										&& (d.getFullYear()==$scope.model.getFullYear())
@@ -259,13 +273,20 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 						$scope.years = [];
 						var y = $scope.model.getFullYear();
 						for (var i = y-2; i<=y+2; i++) {
-							$scope.years.push(i);
+							var nd = new Date($scope.model.getTime());
+							nd.setFullYear(i);
+							if (!violatesConstraints(nd)) {
+								$scope.years.push(i);
+							}
 						}
 						
 						return ret;
 					}
 
 					$scope.onSelect = function(d) {
+						if (d.disabled) {
+							return;
+						}
 						$scope.model.setDate(d.day);
 						$scope.model.setMonth(d.month);
 						$scope.model.setFullYear(d.year);
@@ -280,6 +301,30 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					$scope.incMonth = function(v) {
 						$scope.model.setMonth($scope.model.getMonth()+v);
 						updateCalendar();
+					}
+					
+					$scope.canIncYear = function(v) {
+						var nd = new Date($scope.model.getTime());
+						nd.setFullYear($scope.model.getFullYear()+v);
+						return !violatesConstraints(nd);
+					}
+					
+					$scope.canIncMonth = function(v) {
+						var nd = new Date($scope.model.getTime());
+						nd.setMonth($scope.model.getMonth()+v);
+						return !violatesConstraints(nd);
+					}
+					
+					$scope.getMonths = function() {
+						var ret = [];
+						for (var i in $scope.months) {
+							var nd = new Date($scope.model.getTime());
+							nd.setMonth($scope.months[i].month);
+							if (!violatesConstraints(nd)) {
+								ret.push($scope.months[i]);
+							}
+						}
+						return ret;						
 					}
 					
 					$scope.onComboSelect = function() {
