@@ -543,6 +543,8 @@ public class ConverterV1 {
         return hakukohdeRDTO;
     }
 
+
+
     /**
      * Convert MonikielinenTeksti to Map<S, S>. If assumeKieliKoodiIsKoodistoUri is true the kielikoodi is assumend to be "koodi_" prefixed - if not then added.
      *
