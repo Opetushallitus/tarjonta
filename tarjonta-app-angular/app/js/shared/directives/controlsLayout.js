@@ -166,6 +166,11 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
 
        		$scope.getTitle = function() {
        			var ttext = titleText();
+                        if(!angular.isString(ttext)){
+                            //ttext is an objects, but we need text title
+                            return "";
+                        }
+                        
        			var tkey = $scope.isNew() ? $scope.model.ttCreate : $scope.model.ttEdit;
 
        			return tkey==null ? ttext : LocalisationService.t(tkey, [ ttext ]);
