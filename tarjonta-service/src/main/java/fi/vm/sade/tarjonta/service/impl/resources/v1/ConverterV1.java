@@ -23,6 +23,11 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +39,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.oid.service.types.NodeClassCode;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -99,7 +100,11 @@ public class ConverterV1 {
     @Autowired
     KoulutusmoduuliToteutusDAO komotoDao;
     @Autowired
+    private MonikielinenMetadataDAO monikielinenMetadataDAO;
+    @Autowired
     HakukohdeDAO hakukohdeDao;
+    @Autowired
+    private OrganisaatioService organisaatioService;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
@@ -488,6 +493,22 @@ public class ConverterV1 {
 
         if (hakukohde.getHakukelpoisuusVaatimusKuvaus() != null) {
             hakukohdeRDTO.setHakukelpoisuusVaatimusKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getHakukelpoisuusVaatimusKuvaus(), false));
+        } else {
+            if (hakukohde.getHakukelpoisuusVaatimukset() != null) {
+                HashMap<String,String> hakukelpoisuusVaatimusKuvaukset = new HashMap<String, String>();
+                for(String hakukelpoisuusVaatimusUri : hakukohde.getHakukelpoisuusVaatimukset()) {
+                   hakukelpoisuusVaatimusKuvaukset.putAll(tarjontaKoodistoHelper.getKoodiMetadataKuvaus(hakukelpoisuusVaatimusUri));
+
+                }
+               if (hakukelpoisuusVaatimusKuvaukset.size() <1) {
+                    String hakukelpoisuusryhmaUri = tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(hakukohde.getHakukohdeNimi());
+                    if (hakukelpoisuusryhmaUri != null) {
+                        hakukohdeRDTO.getHakukelpoisuusvaatimusUris().add(hakukelpoisuusryhmaUri);
+                        hakukelpoisuusVaatimusKuvaukset.putAll(tarjontaKoodistoHelper.getKoodiMetadataKuvaus(hakukelpoisuusryhmaUri));
+                    }
+                }
+                hakukohdeRDTO.setHakukelpoisuusVaatimusKuvaukset(hakukelpoisuusVaatimusKuvaukset);
+            }
         }
 
         if (hakukohde.getValintojenAloituspaikatLkm() != null) {
@@ -511,12 +532,36 @@ public class ConverterV1 {
         hakukohdeRDTO.setValintaperustekuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getValintaperustekuvausKoodiUri()));
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
         hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToMap(hakukohde.getLisatiedot(), false));
+
         if (hakukohde.getValintaperusteKuvaus() != null) {
             hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getValintaperusteKuvaus(), false));
+        } else {
+            String uri = tarjontaKoodistoHelper.getValintaperustekuvausryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
+            if (uri != null) {
+                hakukohdeRDTO.setValintaperustekuvausKoodiUri(uri);
+
+                hakukohdeRDTO.setValintaperusteKuvaukset(
+                        convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri, MetaCategory.VALINTAPERUSTEKUVAUS.name()))
+                );
+
+            }
         }
+
         if (hakukohde.getSoraKuvaus() != null) {
             hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getSoraKuvaus(), false));
+        } else {
+
+           String uri = tarjontaKoodistoHelper.getSORAKysymysryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
+           if (uri != null) {
+
+              hakukohdeRDTO.setSoraKuvausKoodiUri(uri);
+              hakukohdeRDTO.setSoraKuvaukset(
+                      convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri,MetaCategory.SORA_KUVAUS.name()))
+              );
+           }
+
         }
+
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
@@ -540,10 +585,43 @@ public class ConverterV1 {
             hakukohdeRDTO.setHakukohteenLiitteet(liites);
         }
 
+        if (hakukohdeRDTO.getTarjoajaOids() != null && hakukohdeRDTO.getTarjoajaOids().size() > 0) {
+
+            for(String tarjoajaOid:hakukohdeRDTO.getTarjoajaOids()) {
+              OrganisaatioDTO org = organisaatioService.findByOid(tarjoajaOid);
+
+              for (fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti text : org.getNimi().getTeksti()) {
+                  //TODO: Maybe should return kieli uri instead :)
+                  hakukohdeRDTO.getTarjoajaNimet().put(text.getKieliKoodi(),text.getValue());
+
+              }
+
+            }
+
+        }
+
         return hakukohdeRDTO;
     }
 
 
+
+    private HashMap<String,String> convertMonikielinenMetadata(List<MonikielinenMetadata> metadatas) {
+
+        if (metadatas != null) {
+
+            HashMap<String,String> metamap = new HashMap<String, String>();
+
+            for (MonikielinenMetadata metadata:metadatas) {
+                metamap.put(metadata.getKieli(),metadata.getArvo());
+            }
+
+            return metamap;
+
+        } else {
+            return null;
+        }
+
+    }
 
     /**
      * Convert MonikielinenTeksti to Map<S, S>. If assumeKieliKoodiIsKoodistoUri is true the kielikoodi is assumend to be "koodi_" prefixed - if not then added.

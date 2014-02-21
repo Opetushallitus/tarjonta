@@ -383,6 +383,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 	}
 
     public Map<String, String> getTarjoajaNimet() {
+
+        if (tarjoajaNimet == null) {
+            tarjoajaNimet = new HashMap<String, String>();
+        }
+
         return tarjoajaNimet;
     }
 
