@@ -26,6 +26,10 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 @Entity
 public class BinaryData extends BaseEntity {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String filename;
     private String mimeType;
 

@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import com.google.common.base.Preconditions;
-import static fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus.TABLE_NAME;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,10 +42,8 @@ import org.slf4j.LoggerFactory;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import java.util.Calendar;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
-import org.apache.commons.lang.time.DateUtils;
 
 /**
  * <p>

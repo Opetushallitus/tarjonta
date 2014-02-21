@@ -26,7 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -40,7 +39,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -48,7 +46,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
  */
 @Entity
 @Table(name = Hakukohde.TABLE_NAME)
-@EntityListeners(XssFilterListener.class)
 public class Hakukohde extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakukohde";

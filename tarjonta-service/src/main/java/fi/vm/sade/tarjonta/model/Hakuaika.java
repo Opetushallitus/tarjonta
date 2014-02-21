@@ -15,14 +15,10 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.security.xssfilter.FilterXss;
-import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -33,7 +29,6 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = Hakuaika.TABLE_NAME)
-@EntityListeners(XssFilterListener.class)
 public class Hakuaika extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakuaika";
@@ -41,7 +36,6 @@ public class Hakuaika extends TarjontaBaseEntity {
     private static final long serialVersionUID = 1492826641481066295L;
 
     @Column(name = "sisaisenhakuajannimi")
-    @FilterXss
     private String sisaisenHakuajanNimi;
 
     @Temporal(TemporalType.TIMESTAMP)

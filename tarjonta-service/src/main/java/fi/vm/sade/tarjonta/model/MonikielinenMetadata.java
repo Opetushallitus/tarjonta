@@ -1,6 +1,5 @@
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.security.xssfilter.FilterXss;
 import fi.vm.sade.security.xssfilter.XssFilterListener;
 
@@ -22,6 +21,10 @@ import java.util.Date;
 @EntityListeners(XssFilterListener.class)
 public class MonikielinenMetadata extends TarjontaBaseEntity {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     // Make translated texts behave more like "metadata".
     // For example: "uri: Sosiaali- ja Terveysala"
     private String avain = null;
