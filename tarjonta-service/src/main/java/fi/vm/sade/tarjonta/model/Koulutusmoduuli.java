@@ -34,7 +34,10 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -638,5 +641,17 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setOppilaitostyyppi(String oppilaitostyyppi) {
         this.oppilaitostyyppi = oppilaitostyyppi;
+    }
+    
+    
+    /**
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields(){
+        for(MonikielinenTeksti teksti:tekstit.values()){
+            filter(teksti);
+        }
     }
 }

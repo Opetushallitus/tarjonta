@@ -34,12 +34,16 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+
 
 /**
  *
@@ -625,4 +629,15 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
         this.soraKuvausKielet = soraKuvausKielet;
     }
+    
+    /**
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields(){
+        filter(getHakukelpoisuusVaatimusKuvaus());
+        filter(getValintaperusteKuvaus());
+    }
+
 }

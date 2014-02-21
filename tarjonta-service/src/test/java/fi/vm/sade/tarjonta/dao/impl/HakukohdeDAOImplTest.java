@@ -16,13 +16,19 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import static fi.vm.sade.tarjonta.dao.impl.TestData.HAKU_OID1;
-import static fi.vm.sade.tarjonta.dao.impl.TestData.HAKUKOHDE_OID1;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
+
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,19 +89,19 @@ public class HakukohdeDAOImplTest extends TestData {
 
     @Test
     public void testFindValintakoeByHakukohdeOid1() {
-        final List result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID1);
+        final List<Valintakoe> result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID1);
         assertEquals(VALINTAKOE_COUNT_FOR_OID1, result.size());
     }
 
     @Test
     public void testFindValintakoeByHakukohdeOid2() {
-        final List result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID2);
+        final List<Valintakoe> result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID2);
         assertEquals(1, result.size());
     }
 
     @Test
     public void testFindValintakoeByHakukohdeOid3() {
-        final List result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID3);
+        final List<Valintakoe> result = instance.findValintakoeByHakukohdeOid(HAKUKOHDE_OID3);
         assertEquals(0, result.size());
     }
 
@@ -140,8 +146,6 @@ public class HakukohdeDAOImplTest extends TestData {
 
     }
 
-
-
     @Test
     public void testFindByHakuOid() {
         {
@@ -154,15 +158,24 @@ public class HakukohdeDAOImplTest extends TestData {
         }
     }
 
+    
+    @Test
+    public void testXSSFiltering(){
+        //TODO test more fields...
+        
+        Hakukohde hk = fixtures.createHakukohde();
+        Haku haku = fixtures.createPersistedHaku();
+        hk.setHaku(haku);
+        hk.setOid("xss-1");
+        MonikielinenTeksti teksti = new MonikielinenTeksti("fi","pure teksti", "en", "joku & merkki");
+        
+        hk.setHakukelpoisuusVaatimusKuvaus(teksti);
+        instance.insert(hk);
+        
+        hk = instance.findBy("oid", "xss-1").get(0);
+        Map<String, String> values = hk.getHakukelpoisuusVaatimusKuvaus().asMap();
+        Assert.assertEquals("pure teksti", values.get("fi"));
+        Assert.assertEquals("joku &amp; merkki", values.get("en"));
+    }
 
-//    @Test
-//    public void testHaeHakukohteetJaKoulutukset() {
-//        HaeHakukohteetKyselyTyyppi tyyppi = new HaeHakukohteetKyselyTyyppi();
-//        //tyyppi.setNimiKoodiUri(KOODISTO_URI_1);
-//
-//        tyyppi.setNimi(HUMAN_READABLE_NAME_1);
-//
-//        final List result = instance.haeHakukohteetJaKoulutukset(tyyppi);
-//        assertEquals(1, result.size());
-//    }
 }

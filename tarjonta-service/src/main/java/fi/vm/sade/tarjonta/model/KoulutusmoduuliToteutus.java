@@ -42,6 +42,8 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -53,6 +55,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -958,4 +961,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         
         return this.koulutuksenAlkamisPvms.iterator().next();
     }
+    
+    /**
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields(){
+        for(MonikielinenTeksti teksti:tekstit.values()){
+            filter(teksti);
+        }
+    }
+
 }
