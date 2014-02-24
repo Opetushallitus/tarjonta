@@ -21,5 +21,5 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
         collapse : {
           model : true
         }
-      }
+      };
     } ]);

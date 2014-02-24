@@ -12,6 +12,7 @@ module.exports = function(config){
       'js/**/*.js',
       'js/shared/directives/*.html',
       'js/shared/directives/org-puu.js',
+      'partials/tarjontaApp.js',
       'partials/**/*.js',
       '../test/unit/**/*.js',
       '../test/lib/jasmine.async.node.js',
