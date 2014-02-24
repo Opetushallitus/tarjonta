@@ -85,16 +85,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	function violatesConstraints(d) {
     		var min = $scope.min();
     		if (min && min.getTime) {
-    			//console.log("min = ",min);
     			min = min.getTime();
     		}
     		var max = $scope.max();
     		if (max && max.getTime) {
-    			//console.log("max = ",max);
     			max = max.getTime();
     		}
-    		var ret = (min!==undefined && d.getTime() < min) || (max!==undefined && d.getTime() > max);
-    		//console.log("violates = "+ret, d);
+    		var ret = (min && d.getTime() < min) || (max && d.getTime() > max);
+    		//console.log("-> violates = "+ret, d);
     		return ret;
     	}
 
@@ -195,7 +193,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					
 					$scope.years = [];
 
-					$scope.model = ctrl.model;
+					$scope.model = ctrl.model ? ctrl.model : new Date();
 					
 					var isValidDate=Object.prototype.toString.call($scope.model) == "[object Date]" && !isNaN($scope.model.getTime());
 					  
