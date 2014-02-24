@@ -65,6 +65,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public Hakukohde findHakukohdeByUlkoinenTunniste(String ulkoinenTunniste, String tarjoajaOid) {
+
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+
+        return from(qHakukohde)
+                .join(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
+                .where(qHakukohde.ulkoinenTunniste.eq(ulkoinenTunniste).and(qKomoto.tarjoaja.eq(tarjoajaOid)))
+                .singleResult(qHakukohde);
+
+
+    }
+
+    @Override
     public void updateValintakoe(List<Valintakoe> valintakoes, String hakukohdeOid) {
         Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
         for (Valintakoe koe : hakukohde.getValintakoes()) {
