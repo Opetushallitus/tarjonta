@@ -17,9 +17,17 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.BinaryData;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+
 import java.util.Map;
 import javax.persistence.EntityManager;
+
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -57,6 +65,8 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
+    @Autowired(required = true)
+    private KoulutusmoduuliToteutusDAOImpl komotoDao;
 
     @Before
     public void setUp() {
@@ -115,4 +125,23 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
         assertEquals(filename, binData.getFilename());
         assertEquals(mime, binData.getMimeType());
     }
+    
+    @Test
+    public void testXSSFiltering(){
+        //TODO test more fields...
+        KoulutusmoduuliToteutus persistedKomoto = getPersistedKomoto1();
+        KoulutusmoduuliToteutus komoto1 = fixtures.createTutkintoOhjelmaToteutus("7777771");
+        komoto1.setOid("xss-1");
+        komoto1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
+        komoto1.getTekstit().put(KomotoTeksti.ARVIOINTIKRITEERIT, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
+        komoto1.setKoulutusmoduuli(persistedKomoto.getKoulutusmoduuli());
+        persistedKomoto.setKuvaByUri(URI_EN, fixtures.createBinaryData());
+        persist(komoto1);
+        
+        komoto1 = komotoDao.findBy("oid", "xss-1").get(0);
+        Assert.assertEquals("ei saa muuttaa & merkkiä!", komoto1.getNimi().asMap().get("fi"));
+        Assert.assertEquals("<table>foo</table>", komoto1.getTekstit().get(KomotoTeksti.ARVIOINTIKRITEERIT).getTekstiForKieliKoodi("fi"));
+
+    }
+
 }

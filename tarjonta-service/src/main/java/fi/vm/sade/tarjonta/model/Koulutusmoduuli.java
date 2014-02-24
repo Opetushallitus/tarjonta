@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import com.google.common.base.Preconditions;
-import static fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus.TABLE_NAME;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +34,10 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +45,8 @@ import org.slf4j.LoggerFactory;
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import java.util.Calendar;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
-import org.apache.commons.lang.time.DateUtils;
 
 /**
  * <p>
@@ -642,5 +641,17 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setOppilaitostyyppi(String oppilaitostyyppi) {
         this.oppilaitostyyppi = oppilaitostyyppi;
+    }
+    
+    
+    /**
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields(){
+        for(MonikielinenTeksti teksti:tekstit.values()){
+            filter(teksti);
+        }
     }
 }

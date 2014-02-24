@@ -26,7 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -35,20 +34,22 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+
 
 /**
  *
  */
 @Entity
 @Table(name = Hakukohde.TABLE_NAME)
-@EntityListeners(XssFilterListener.class)
 public class Hakukohde extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakukohde";
@@ -126,6 +127,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "sorakuvaus_teksti_id")
     private MonikielinenTeksti soraKuvaus;
+
+
     @Column(name = "valintaperustekuvaus_koodi_uri")
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
@@ -137,6 +140,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+
+    @Column(name ="ulkoinentunniste")
+    private String ulkoinenTunniste;
 
     @Column(name="viimIndeksointiPvm")
     @Temporal(TemporalType.TIMESTAMP)
@@ -627,5 +633,23 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Deprecated
     public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
         this.soraKuvausKielet = soraKuvausKielet;
+    }
+    
+    /**
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields(){
+        filter(getHakukelpoisuusVaatimusKuvaus());
+        filter(getValintaperusteKuvaus());
+    }
+
+    public String getUlkoinenTunniste() {
+        return ulkoinenTunniste;
+    }
+
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this.ulkoinenTunniste = ulkoinenTunniste;
     }
 }

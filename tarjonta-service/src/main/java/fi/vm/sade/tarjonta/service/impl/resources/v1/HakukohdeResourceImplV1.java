@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
+import com.wordnik.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +177,25 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(String tarjoajaOid, String ulkoinenTunniste) {
+
+
+       Hakukohde hakukohde =  hakukohdeDao.findHakukohdeByUlkoinenTunniste(ulkoinenTunniste,tarjoajaOid);
+
+       ResultV1RDTO<HakukohdeV1RDTO> resultV1RDTO = new ResultV1RDTO<HakukohdeV1RDTO>();
+       if (hakukohde != null) {
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+           resultV1RDTO.setResult(converter.toHakukohdeRDTO(hakukohde));
+       }else {
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+       }
+
+        return resultV1RDTO;
+
+    }
+
+    @Override
     @Transactional
     public ResultV1RDTO<HashMap<String,String>> insertHakukohdeValintaPerusteet(String hakukohdeOid, HashMap<String,String> valintaPerusteet) {
         try {
@@ -253,6 +273,33 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             exceptionResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             return exceptionResult;
         }
+    }
+
+    private boolean checkForExistingUlkoinenTunniste(String tunniste,String tarjoajaOid,String hakukohdeOid) {
+
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByUlkoinenTunniste(tunniste,tarjoajaOid);
+
+        if (hakukohde != null) {
+
+            if (hakukohdeOid != null) {
+                //If tunniste exists for another hakukohde then user cannot update this hakukohde to user the same
+                //"ulkoinen tunniste".
+                if (hakukohde.getOid().trim().equals(hakukohdeOid)) {
+
+                  return false;
+
+                } else {
+                    return true;
+                }
+
+            } else {
+                return true;
+            }
+
+        } else {
+            return false;
+        }
+
     }
 
 
@@ -406,6 +453,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
         List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+
+        if(hakukohdeRDTO.getUlkoinenTunniste() != null && hakukohdeRDTO.getUlkoinenTunniste().length() > 0) {
+
+            for(String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
+
+                if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,null)) {
+                    validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
+                }
+
+            }
+
+        }
+
+
         if (validationMessageses.size() > 0) {
             ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
             errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
@@ -419,7 +480,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
         hakukohde.setLastUpdateDate(new Date());
 
-        LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
         Haku haku = hakuDao.findByOid(hakuOid);
 
@@ -478,6 +538,21 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			String hakuOid = hakukohdeRDTO.getHakuOid();
 
 			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+
+            if(hakukohdeRDTO.getUlkoinenTunniste() != null) {
+
+                for (String tarjoajaOid: hakukohdeRDTO.getTarjoajaOids()) {
+
+                    if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,hakukohdeRDTO.getOid())) {
+                        validationMessagesList.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
+                    }
+
+                }
+
+            }
+
+
+
 			if (validationMessagesList.size() > 0 ) {
 			    ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
 			    errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
