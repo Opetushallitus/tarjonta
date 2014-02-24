@@ -1,0 +1,30 @@
+<h4 tt="ohjaustparametrit.hakukausi.title">Ohjausparametrit</h4>
+
+<div id="editHaku" ng-controller="HakukausiController" ng-form="hakukausiForm">
+
+    <div>
+
+<button ng-click="tallenna()" tt="hakukausi.tallenna"></button>
+
+
+        <div class="container-fluid">
+            <tabset>
+                <tab heading="Hakukauden tiedot">
+                    <div ng-include="'partials/hakukausi/edit-hakukausi-parametrit.html'"></div>
+                </tab>
+                <tab heading="Tiedonsiirto">
+                    <div ng-include="'partials/hakukausi/edit-hakukausi-tiedonsiirto-parametrit.html'"></div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+
+    <hr>
+    <div ng-click="model.collapse.model = !model.collapse.model">
+        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
+    </div>
+    <div collapse="model.collapse.model">
+        <pre>{{ model | json }}</pre>
+    </div>
+
+</div>
