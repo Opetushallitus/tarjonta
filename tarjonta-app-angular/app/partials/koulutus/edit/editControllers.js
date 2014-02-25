@@ -2,9 +2,9 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService',
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService',
             function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
-                    $window, converter, koodisto, $modal, PermissionService) {
+                    $window, converter, koodisto, $modal, PermissionService, dialogService) {
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -23,7 +23,7 @@ app.controller('BaseEditController',
 
                     uiModel.selectedKieliUri = "" //tab language
                     converter.createUiModels(uiModel);
-
+                    
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -107,13 +107,64 @@ app.controller('BaseEditController',
                             }
                         });
                     });
+                    
+                    // lisätietokielivalinnat
+                    uiModel.lisatietoKielet = angular.copy(uiModel.opetuskielis.uris);
+                    for (var ki in model.kuvausKomo) {
+                    	for (var lc in model.kuvausKomo[ki].tekstis) {
+                    		if (uiModel.lisatietoKielet.indexOf(lc)==-1) {
+                    			uiModel.lisatietoKielet.push(lc);
+                    		}
+                    	}
+                    }
 
+                    uiModel.lisatietoKielet.sort();
+                    
                     /*
                      * INIT SCOPES FOR RENDERER
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
                 };
+                
+                function deleteLisatiedot(lc) {
+                	var lcp = $scope.uiModel.lisatietoKielet.indexOf(lc);
+                	if (lcp==-1) {
+                		return;
+                	}
+                	$scope.uiModel.lisatietoKielet.splice(lcp, 1);
+
+                	for (var ki in $scope.model.kuvausKomo) {
+                    	for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
+                    		$scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
+                    	}
+                	}
+                }
+                
+                $scope.onLisatietoLangSelection = function() {
+                	for (var ki in $scope.model.kuvausKomo) {
+                    	for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
+                    		if ($scope.uiModel.lisatietoKielet.indexOf(lc)==-1
+                				&& $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length>0) {
+                    			// palautetaan listaan jottei angular digestoi ennen dialogia
+                				$scope.uiModel.lisatietoKielet.push(lc);
+                				$scope.uiModel.lisatietoKielet.sort();
+                				
+                				if ($scope.uiModel.opetuskielis.uris.indexOf(lc)==-1) {
+                					// ei opetuskieli -> varmista poisto dialogilla
+                        			dialogService.showDialog({
+                        	            ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
+                            			title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
+                            			description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[lc]])
+                            		}).result.then(function(ret){
+                            			deleteLisatiedot(lc);
+                            		});
+                    			}
+                    		}
+                    	}
+                    }
+                }
+                
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
@@ -401,7 +452,7 @@ app.controller('BaseEditController',
                 $scope.isLoaded = function() {
                     return  !angular.isUndefined($scope.model.oid) && $scope.model.oid !== null && $scope.model.oid.length > 0;
                 };
-
+                
                 /*
                  * WATCHES
                  */
