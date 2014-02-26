@@ -308,7 +308,7 @@ public class ConverterV1 {
         if (kuvaus.getTekstis() != null && convertTeksti) {
             HashMap<String,String> tekstis = new HashMap<String, String>();
             for(MonikielinenMetadata monikielinenMetadata:kuvaus.getTekstis()) {
-                tekstis.put(monikielinenMetadata.getKieli(),monikielinenMetadata.getArvo());
+                tekstis.put(monikielinenMetadata.getKieli(), monikielinenMetadata.getArvo());
             }
             kuvausV1RDTO.setKuvaukset(tekstis);
         }
@@ -454,6 +454,8 @@ public class ConverterV1 {
         if(hakukohde.getValintaPerusteKuvausKielet() != null) {
             hakukohdeRDTO.setValintaPerusteKuvausKielet(hakukohde.getValintaPerusteKuvausKielet());
         }
+
+        hakukohdeRDTO.setVersion(hakukohde.getVersion());
 
         if (hakukohde.getSoraKuvausKielet() != null) {
             hakukohdeRDTO.setSoraKuvausKielet(hakukohde.getSoraKuvausKielet());
@@ -700,6 +702,9 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getUlkoinenTunniste() != null) {
             hakukohde.setUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste());
+        } 
+        if (hakukohdeRDTO.getVersion() != null) {
+            hakukohde.setVersion(hakukohdeRDTO.getVersion());
         }
 
         if (hakukohdeRDTO.getModified() != null) {

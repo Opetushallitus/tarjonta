@@ -22,7 +22,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-//import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
@@ -161,12 +160,20 @@ public interface KoulutusV1Resource {
     public ResultV1RDTO<KuvaV1RDTO> getKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     @POST
-    @Path("/{oid}/kuva/{kieliUri}")
+    @Path("/{oid}/kuva")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
             notes = "Operaatio lisää kuvatiedoton koulutusmoduulin toteutukseen (yhdellä koulutuksella kuvia voi olla vain yksi per koodi uri)")
-    public ResultV1RDTO<KuvaV1RDTO> saveKuvas(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, KuvaV1RDTO kuva);
+    public ResultV1RDTO<KuvaV1RDTO> saveHtml5Kuva(@PathParam("oid") String oid, KuvaV1RDTO kuva);
+
+    @POST
+    @Path("/{oid}/kuva/{kieliUri}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @ApiOperation(
+            value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
+            notes = "Operaatio lisää kuvatiedoton koulutusmoduulin toteutukseen (yhdellä koulutuksella kuvia voi olla vain yksi per koodi uri)")
+    public Response saveHtml4Kuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, @Multipart("files") MultipartBody body);
 
     @DELETE
     @Path("/{oid}/kuva/{kieliUri}")
