@@ -91,10 +91,10 @@ window.CONFIG = {
         // module-install-parent/config/common/tarjonta/oph-configuration/tarjonta-app.properties
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
-        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi:443/tarjonta-service/rest/v1/",
 
         //"tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
-        //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 

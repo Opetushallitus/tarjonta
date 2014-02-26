@@ -76,8 +76,11 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                     return;
                 }
 
-                TarjontaService.saveImage($scope.oid, kieliUri, image, function() {
-                    console.log(image);
+                TarjontaService.saveImage($scope.oid, kieliUri, image, function(result) {
+                    if (result.status !== 'OK') {
+                        console.error("Image upload failed.", result);
+                        return;
+                    }
                     $scope.loadImage($scope.oid, kieliUri); // load uploaded image to page     
 
                     deferred.resolve();

@@ -265,7 +265,7 @@ public class KoulutusValidator {
             LOG.debug("Not valid base64 - try to clean received raw data. Data : '{}'", rawbase64);
             modifiedBase64 = rawbase64.replaceFirst("^data:image/[^;]*;base64,?", "");
 
-            if (!Base64.isBase64(modifiedBase64)) {
+            if (Base64.isBase64(modifiedBase64)) {
                 return modifiedBase64;
             }
         } else {
