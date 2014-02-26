@@ -35,6 +35,7 @@ import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
@@ -77,9 +78,14 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -150,19 +156,19 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
-        
+
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
         }
-        
-        ResultV1RDTO result = new ResultV1RDTO(null,  ResultStatus.ERROR);
+
+        ResultV1RDTO result = new ResultV1RDTO(null, ResultStatus.ERROR);
         result.addError(ErrorV1RDTO.createSystemError(new IllegalArgumentException(), "type_unknown", dto.getClass() + " not handled"));
-        
+
         return result;
     }
 
     private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
-        
+
         validateRestObjectKorkeakouluDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
@@ -516,45 +522,88 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return "FI";
     }
 
+    /**
+     * Legacy HTML4 image upload for IE9.
+     *
+     * @param oid
+     * @param kieliUri
+     * @param body
+     * @return
+     */
     @Override
-    public ResultV1RDTO<KuvaV1RDTO> saveKuvas(String oid, String kieliUri, KuvaV1RDTO kuva) {
+    public Response saveHtml4Kuva(String oid, String kieliUri, MultipartBody body) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
-        Preconditions.checkNotNull(kuva, "KuvaV1RDTO cannot be null.");
-        LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, kuva.getFilename());
+        Preconditions.checkNotNull(body, "MultipartBody cannot be null.");
+        LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
 
+        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+        Preconditions.checkNotNull(komoto, "Image save failed, no KOMOTO found by OID '%s'", oid);
+        permissionChecker.checkAddKoulutusKuva(komoto.getTarjoaja());
+        Attachment att = body.getRootAttachment();
         ResultV1RDTO<KuvaV1RDTO> result = new ResultV1RDTO<KuvaV1RDTO>();
-        String raw = kuva.getBase64data();
-
-        /*
-         * Data validation check
-         */
-        boolean isBase64 = Base64.isBase64(raw);
-        if (!isBase64) {
-            LOG.debug("Not valid base64 - try to clean received raw data. Data : '{}'", raw);
-            raw = kuva.getBase64data().replaceFirst("^data:image/[^;]*;base64,?", "");
-
-            if (!Base64.isBase64(raw)) {
-                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-                ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
-                errorV1RDTO.setErrorMessageKey("error_invalid_base64_data");
-                result.addError(errorV1RDTO);
-                return result;
-            }
+        KoulutusValidator.validateKieliUri(kieliUri, "kieliUri", result);
+        validateMimeType(att.getDataHandler().getContentType(), "contentType", result);
+        if (result.hasErrors()) {
+            return Response.serverError().build();
         }
 
-        if (kuva.getMimeType() == null || kuva.getMimeType().isEmpty()) {
-            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
-            errorV1RDTO.setErrorMessageKey("error_missing_mime_type");
-            result.addError(errorV1RDTO);
-            return result;
-        } else if (ImageMimeValidator.validate(kuva.getMimeType())) {
-            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
-            errorV1RDTO.setErrorMessageKey("error_unrecognized_mime_type");
-            result.addError(errorV1RDTO);
-            return result;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+        InputStream in = null;
+
+        try {
+            in = att.getDataHandler().getInputStream();
+
+            try {
+                IOUtils.copy(in, baos);
+                final String filename = att.getContentDisposition() != null ? att.getContentDisposition().getParameter("filename") : "";
+                final String contentType = att.getDataHandler().getContentType();
+
+                BinaryData bin = null;
+                if (komoto.isKuva(kieliUri)) {
+                    bin = komoto.getKuvat().get(kieliUri);
+                } else {
+                    bin = new BinaryData();
+                }
+
+                bin.setData(baos.toByteArray());
+                bin.setFilename(filename);
+                bin.setMimeType(contentType);
+
+                komoto.setKuvaByUri(kieliUri, bin);
+                this.koulutusmoduuliToteutusDAO.update(komoto);
+                result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            } catch (IOException ex) {
+                LOG.error("BinaryData save failed for komoto OID {}.", oid, ex);
+                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            } finally {
+                IOUtils.closeQuietly(in);
+                IOUtils.closeQuietly(baos);
+            }
+        } catch (IOException ex) {
+            LOG.error("Image upload failed for komoto OID {}.", oid, ex);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+
+        return Response.ok().build();
+    }
+
+    /**
+     * HTML5 image upload.
+     *
+     * @param oid
+     * @param image
+     * @return ResultV1DTO with status and error information.
+     */
+    @Override
+    public ResultV1RDTO<KuvaV1RDTO> saveHtml5Kuva(String oid, KuvaV1RDTO kuva) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        Preconditions.checkNotNull(kuva, "KuvaV1RDTO cannot be null.");
+        LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kuva.getKieliUri(), kuva.getFilename());
+        ResultV1RDTO<KuvaV1RDTO> validateKoulutusKuva = KoulutusValidator.validateKoulutusKuva(kuva);
+        if (validateKoulutusKuva.hasErrors()) {
+            return validateKoulutusKuva;
         }
 
         /*
@@ -568,17 +617,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
          * Update or insert uploaded binary data
          */
         BinaryData bin = null;
-        if (komoto.isKuva(kieliUri)) {
-            bin = komoto.getKuvat().get(kieliUri);
+        if (komoto.isKuva(kuva.getKieliUri())) {
+            bin = komoto.getKuvat().get(kuva.getKieliUri());
         } else {
             bin = new BinaryData();
         }
 
-        byte[] decoded = Base64.decodeBase64(raw);
+        final byte[] decoded = Base64.decodeBase64(KoulutusValidator.getValidBase64Image(kuva.getBase64data()));
         bin.setData(decoded);
         bin.setFilename(kuva.getFilename());
         bin.setMimeType(kuva.getMimeType());
-        komoto.setKuvaByUri(kieliUri, bin);
+        komoto.setKuvaByUri(kuva.getKieliUri(), bin);
         this.koulutusmoduuliToteutusDAO.update(komoto);
 
         return new ResultV1RDTO<KuvaV1RDTO>(kuva);
