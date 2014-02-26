@@ -316,10 +316,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         if (!angular.isUndefined(image.file) &&
                 !angular.isUndefined(image.file.type) &&
                 !angular.isUndefined(image.dataURL)) {
-            var apiImg = {};
-            //img.kieliuri = kieliuri;
+
+            var apiImg = {kieliUri: kieliuri};
+
             if (!angular.isUndefined(image.file.name)) {
                 apiImg.filename = image.file.name;
+            } else {
+                apiImg.filename = "";
             }
 
             apiImg.mimeType = image.file.type;
@@ -328,7 +331,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             //curently data cleaning is done in service
             //var b = window.atob(img.base64data);
 
-            $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, apiImg, {
+            $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva', apiImg, {
                 withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }).success(fnSuccess).error(fnError);
