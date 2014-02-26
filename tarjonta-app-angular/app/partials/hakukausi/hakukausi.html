@@ -48,8 +48,11 @@
 		t-use-default-tt="Korkeakouluasteen valintojen siirto" t-always/>
 	<tr t-param-edit-number name="PHK_KELAVTST"
 		t-use-default-tt="Valintojen tiedonsiirron tiheys" />
+    <tr t-use-tt-key="hakukausi.help.PHK_KELAVTST" t-help t-use-default-tt="Tiheys määritellään kokonaisina vuorokausina"/>
 	<tr t-param-edit-string name="PHK_KELAVTSAK"
 		t-use-default-tt="Valintojen siirto vuorokaudessa klo" />
+	<tr t-use-tt-key="hakukausi.help.PHK_KELAVTSAK" t-help t-use-default-tt="Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen"/>
+		
 
 	<tr t-sub-title t-use-default-tt="Tiedonsiirto TEM:ään"
 		t-use-tt-key="hakukausi.edit.tiedonsiirtoTEM"/>
@@ -60,8 +63,17 @@
 		t-use-default-tt="Korkeakouluasteen valintojen siirto" t-always/>
 	<tr t-param-edit-number name="PHK_TEMVTST"
 		t-use-default-tt="Valintojen tiedonsiirron tiheys" />
-	<tr t-param-edit-string name="PHK_TEMVTSAK"
-		t-use-default-tt="Valintojen siirto vuorokaudessa klo" /></form>
+	<tr t-use-tt-key="hakukausi.help.PHK_TEMVTST" t-help t-use-default-tt="Tiheys määritellään kokonaisina vuorokausina"/>
+	<tr>
+	  <th tt="hakukausi.edit.PHK_TEMVTSAK">Valintojen siirto vuorokaudessa klo</th>
+	  <td><input ng-pattern name="PHK_TEMVTSAK" ng-model="model.parameter.PHK_TEMVTSAK"></td>
+      <td>
+		<show-errors form="hakukausiForm" field="PHK_TEMVTSAK"
+			tt-prefix="hakukausi.edit.parametrit"></show-errors>
+      </td>
+	</tr>
+	<tr t-use-tt-key="hakukausi.help.PHK_TEMVTSAK" t-help t-use-default-tt="Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen"/>
+		
 </table>
 
 

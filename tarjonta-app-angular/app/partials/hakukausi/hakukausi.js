@@ -136,6 +136,19 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
 })
 
 /**
+ * Helppi rivi
+ */
+.directive('tHelp', function() {
+  return {
+    restrict: 'A',
+    scope:true,
+    templateUrl: 'partials/hakukausi/help.html',
+      link:function(scope, element, attrs){
+      }
+  }
+})
+
+/**
  * Lokalisoinnin oletusarvo
  */
 .directive('tUseDefaultTt', function(){
