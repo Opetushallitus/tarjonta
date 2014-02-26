@@ -85,16 +85,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	function violatesConstraints(d) {
     		var min = $scope.min();
     		if (min && min.getTime) {
-    			//console.log("min = ",min);
     			min = min.getTime();
     		}
     		var max = $scope.max();
     		if (max && max.getTime) {
-    			//console.log("max = ",max);
     			max = max.getTime();
     		}
-    		var ret = (min!==undefined && d.getTime() < min) || (max!==undefined && d.getTime() > max);
-    		//console.log("violates = "+ret, d);
+    		var ret = (min && d.getTime() < min) || (max && d.getTime() > max);
+    		//console.log("-> violates = "+ret, d);
     		return ret;
     	}
 
@@ -195,7 +193,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					
 					$scope.years = [];
 
-					$scope.model = ctrl.model;
+					$scope.model = ctrl.model ? ctrl.model : new Date();
 					
 					var isValidDate=Object.prototype.toString.call($scope.model) == "[object Date]" && !isNaN($scope.model.getTime());
 					  
@@ -206,16 +204,31 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
 					$scope.calendar=[];
 					
-					function getWeekFromDate(d) {
-						var a = new Date(d.getFullYear(), 0, 1);
-						var ret = Math.ceil( (((d-a) / 86400000) + a.getDay()+1)/7);
-						if (ret>52) {
-							var nd = new Date(d.getFullYear(), 0, 1+ 7*(ret) );
-							if (nd.getFullYear() != d.getFullYear()) {
-								return 1;
-							}
-						}
-						return ret;
+					function getWeekFromDate(d, dowOffset) {
+						// https://gist.github.com/dblock/1081513
+						
+						// Create a copy of this date object
+						var target = new Date(d.valueOf());
+						// ISO week date weeks start on monday
+						// so correct the day number
+						var dayNr = (d.getDay() + 6) % 7;
+						 
+						// Set the target to the thursday of this week so the
+						// target date is in the right year
+						target.setDate(target.getDate() - dayNr + 3);
+						 
+						// ISO 8601 states that week 1 is the week
+						// with january 4th in it
+						var jan4 = new Date(target.getFullYear(), 0, 4);
+						 
+						// Number of days between target date and january 4th
+						var dayDiff = (target - jan4) / 86400000;
+						 
+						// Calculate week number: Week 1 (january 4th) plus the
+						// number of weeks between target date and january 4th
+						var weekNr = 1 + Math.ceil(dayDiff / 7);
+						 
+						return weekNr;
 					}
 					
 					$scope.ok = function() {						
@@ -226,6 +239,18 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 					
 					$scope.cancel = function() {
 						modalInstance.dismiss();
+					}
+					
+					function getMonday(d) {
+						if (d.getDay()==1) { // maanantai
+							return d;
+						}
+						var ret = new Date(d.getTime());
+
+						ret.setDate(d.getDay()==0
+								? ret.getDate()-6
+								: ret.getDate()-d.getDay()+1);
+						return ret;
 					}
 
 					function updateCalendar(){
@@ -241,9 +266,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 						//console.log("D: "+s+" -> "+e,$scope.model);
 						var ret = [];
 						//for (var i=s; i!=e; nextWeek(i)) {
-						while (sd.getTime()<ed.getTime()) {
+						while (getMonday(sd).getTime()<ed.getTime()) {
 							var i = getWeekFromDate(sd);
-							
 							var wd = {week:i, days:[]};
 							var d = new Date($scope.model.getFullYear(), 0, 1+ 7*(i-1) );
 							d.setDate(d.getDate() - d.getDay());
@@ -258,14 +282,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 									disabled: violatesConstraints(d),
 									selected: (d.getDate()==$scope.model.getDate())
 										&& (d.getMonth()==$scope.model.getMonth())
-										&& (d.getFullYear()==$scope.model.getFullYear())
-									
-									});
-								
-							}
-							
-							ret.push(wd);
-							
+										&& (d.getFullYear()==$scope.model.getFullYear())									
+									});								
+							}							
+							ret.push(wd);							
 							sd.setTime(sd.getTime() + 604800000);
 						}
 						$scope.calendar = ret;

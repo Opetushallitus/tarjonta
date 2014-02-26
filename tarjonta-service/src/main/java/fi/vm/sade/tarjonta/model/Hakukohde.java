@@ -127,6 +127,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "sorakuvaus_teksti_id")
     private MonikielinenTeksti soraKuvaus;
+
+
     @Column(name = "valintaperustekuvaus_koodi_uri")
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
@@ -138,6 +140,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Date lastUpdateDate = new Date();
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+
+    @Column(name ="ulkoinentunniste")
+    private String ulkoinenTunniste;
 
     @Column(name="viimIndeksointiPvm")
     @Temporal(TemporalType.TIMESTAMP)
@@ -640,4 +645,11 @@ public class Hakukohde extends TarjontaBaseEntity {
         filter(getValintaperusteKuvaus());
     }
 
+    public String getUlkoinenTunniste() {
+        return ulkoinenTunniste;
+    }
+
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this.ulkoinenTunniste = ulkoinenTunniste;
+    }
 }

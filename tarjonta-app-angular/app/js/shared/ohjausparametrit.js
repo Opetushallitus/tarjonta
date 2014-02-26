@@ -104,6 +104,18 @@ angular
              */
             haeTemplatet : haeTemplatet,
 
+            tallennaHakukaudenParametrit : function(hakuOid, parametrit) {
+              console.log("saving to hakukausi + '" +hakuOid + "' the following parameters:", parametrit);
+              for ( var key in parametrit) {
+                tallennaParametri({
+                  name : hakuOid,
+                  path : key,
+                  value : parametrit[key]
+                });
+                console.log("p:", key, parametrit[key]);
+              }
+            },
+
             /**
              * 
              * @param hakuOid
@@ -113,13 +125,13 @@ angular
              */
             tallenna : function(hakuOid, parametrit) {
 
-              console.log("tallemnnetaan parametreja:", parametrit);
+              console.log("tallennetaan parametreja:", parametrit);
               // console.log("target:", hakuOid);
 
               // query all parameters
               var currentParams = {};
               var promises = [];
-              // haetaan nykyiset parametrit
+              // haetaan nykyiset parametrit, miks?
 
               for ( var i = 0; i < prefixes.length; i++) {
                 (function(prefix) {
@@ -136,6 +148,7 @@ angular
                   promises.push(p);
                 })(prefixes[i]);
               }
+              
               console.log("current parameters retrieved");
               $q.all(promises).then(function() {
                 console.log("saving parameters from form:", parametrit);
@@ -195,6 +208,50 @@ angular
                   });
                 })(prefixes[i]);
               }
-            }
+            },
+            
+            /**
+            * Hakee haun parametrit
+            * @param kausivusi jonka paremetreja haetaan, <kausi><vuosi>, esim "kevat2010"
+            * @param target kohde olio johon parametrit asetetaan key-value pareina.
+            * @returns nothing
+            */
+           haeHakukaudenParametrit:function(kausivuosi, target){
+             console.log("haetaan parametreja kausivuosi:" + kausivuosi);
+             var paramTemplates={};
+             var prefixes = ["PHK_"]; 
+             for ( var i = 0; i < prefixes.length; i++) {
+
+               (function(prefix) {
+                 var p = haeTemplatet({
+                   path : prefix
+                 }).then(function(params) {
+                   for ( var i = 0; i < params.length; i++) {
+                     paramTemplates[params[i].path] = params[i];
+                   }
+                   ;
+                 });
+
+                 p.then(function() {
+                   haeParametrit({
+                     path : prefix,
+                     name : kausivuosi
+                   }).then(function(params) {
+                     for ( var i = 0; i < params.length; i++) {
+                       var path = params[i].path;
+                       var type = paramTemplates[path].type;
+                       var value = params[i].value;
+                       console.log("path, type, value", path, type, value);
+                       // if("DATE"===type) {
+                       // value=new Date(value);
+                       // }
+
+                       target[path] = value;
+                     }
+                   });
+                 });
+               })(prefixes[i]);
+             }
+           },
           };
         });

@@ -132,7 +132,7 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
             console.log(uri);
             if (!angular.isUndefined($scope.oid) &&
                     $scope.oid.length > 0 &&
-                    !angular.isUndefined(uri) &&
+                    uri &&
                     uri.length > 0) {
                 //when page loaded, try to load img
                 $scope.loadImage($scope.oid, uri);

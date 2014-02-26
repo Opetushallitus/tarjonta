@@ -475,6 +475,10 @@ public class ConverterV1 {
             hakukohdeRDTO.setModifiedBy(hakukohde.getLastUpdatedByOid());
         }
 
+        if (hakukohde.getUlkoinenTunniste() != null) {
+            hakukohdeRDTO.setUlkoinenTunniste(hakukohde.getUlkoinenTunniste());
+        }
+
         if (hakukohde.getHakuaika() != null) {
             hakukohdeRDTO.setHakuaikaId(hakukohde.getHakuaika().getId().toString());
         }
@@ -692,6 +696,10 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getSoraKuvausTunniste() != null ) {
             hakukohde.setSoraKuvausTunniste(hakukohdeRDTO.getSoraKuvausTunniste());
+        }
+
+        if (hakukohdeRDTO.getUlkoinenTunniste() != null) {
+            hakukohde.setUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste());
         }
 
         if (hakukohdeRDTO.getModified() != null) {

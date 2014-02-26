@@ -69,6 +69,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     void updateLiite(HakukohdeLiite hakukohdeLiite, String hakukohdeOid);
 
+    Hakukohde findHakukohdeByUlkoinenTunniste(String ulkoinenTunniste, String tarjoajaOid);
+
     List<Hakukohde> findByNameTermAndYear(String name,String term, int year, String providerOid);
 
     List<Hakukohde> findByTermYearAndProvider(String term,int year,String providerOid);
