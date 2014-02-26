@@ -42,7 +42,7 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
       
       
       var saveParameters=function(){
-        console.log("saving!!!", $scope);
+        console.log("saving!!!, form:", $scope.hakukausiForm);
         var kausivuosi = getKausiVuosiIdentifier();
         Parameter.tallennaHakukaudenParametrit(kausivuosi, $scope.model.parameter);
       }

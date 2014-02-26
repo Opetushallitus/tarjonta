@@ -5,10 +5,9 @@
 
 <h4 tt="ohjaustparametrit.hakukausi.title">Ohjausparametrit</h4>
 
-<button class="btn" ng-click="saveParameters()">
-        Tallenna
-    </button>
+<button class="btn" ng-click="saveParameters()" tt="hakukausi.edit.tallenna">Tallenna</button>
 
+<form name="hakukausiForm">
 
  <table class="tarjontaForm">
 	<tr t-sub-title t-use-default-tt="Hakukauden valinta"
@@ -22,7 +21,6 @@
 		</select></td>
 		<td></td>
 	</tr>
-<form name="hakukausiForm">
 	<tr t-param-edit-date-range name="PHK_HKAR"
 		t-use-default-tt="Hakukauden aikarajat" />
 
@@ -53,7 +51,7 @@
 	  <th tt="hakukausi.edit.PHK_KELAVTSAK">Valintojen siirto vuorokaudessa klo</th>
 	  <td><input ng-pattern="timePattern" name="PHK_KELAVTSAK" ng-model="model.parameter.PHK_KELAVTSAK"></td>
       <td>
-		<show-errors form="hakukausiForm" field="PHK_PHK_KELAVTSAK"
+		<show-errors form="hakukausiForm" field="PHK_KELAVTSAK"
 			tt-prefix="hakukausi.edit.parametrit"></show-errors>
       </td>
 	</tr>
@@ -79,8 +77,8 @@
       </td>
 	</tr>
 	<tr t-use-tt-key="hakukausi.help.PHK_TEMVTSAK" t-help t-use-default-tt="Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen"/>
-		
 </table>
 
+</form>		
 
 </div>
