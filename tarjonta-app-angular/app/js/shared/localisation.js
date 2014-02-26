@@ -280,7 +280,7 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         // Update access info
         if (v0) {
             // Bookkeeping for accessed updating, only the keys are used.
-            this.updateAccessedById[v.id] = "";
+            this.updateAccessedById[v0.id] = "";
         }
 
         // Get value if any
@@ -325,7 +325,7 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         // Default locales that translations should be created for
         var locales = ["fi", "en", "sv"];
 
-        if (anglar.isDefined(locale) && locales.indexOf(locale) < 0) {
+        if (angular.isDefined(locale) && locales.indexOf(locale) < 0) {
             locales.push(locale);
         }
 
