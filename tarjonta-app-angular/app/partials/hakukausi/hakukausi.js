@@ -25,18 +25,21 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
         $scope.vuodet.push({vuosi:v,label:v});
       }
 
+      var isVuosiKausiValid=function(){
+        return $scope.kausivuosi.vuosi && $scope.kausivuosi.kausi;
+      }
+      
+      $scope.isVuosiKausiValid=isVuosiKausiValid;
+      
       var getKausiVuosiIdentifier=function(){
         return $scope.kausivuosi.kausi + $scope.kausivuosi.vuosi.vuosi
       }
       
       var  isKausiVuosiSelected=function() {
-        console.log("checking to see if vuosi kausi proper");
-        if($scope.kausivuosi.vuosi && $scope.kausivuosi.kausi){
+        if(isVuosiKausiValid()){
           var kausivuosi = getKausiVuosiIdentifier();
           console.log("loading data", kausivuosi);
           Parameter.haeHakukaudenParametrit(kausivuosi, $scope.model.parameter);
-        } else {
-          console.log("it was not!");
         }
       };
       
