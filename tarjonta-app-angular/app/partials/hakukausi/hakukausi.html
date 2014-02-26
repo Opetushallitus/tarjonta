@@ -26,11 +26,11 @@
 
 	<tr t-sub-title t-use-default-tt="Perustietojen ja arvosanojen siirto"
 		t-use-tt-key="hakukausi.edit.perustietojenJaArvosanojenSiirto"/>
-	<tr class="required" t-param-edit-date-range name="PHK_PLPS"
+	<tr class="required" t-is-required t-param-edit-date-range name="PHK_PLPS"
 		t-use-default-tt="Päättöluokkalaisten perustietojen siirto" />
-	<tr class="required" t-param-edit-date-range name="PHK_PLAS"
+	<tr class="required" t-is-required t-param-edit-date-range name="PHK_PLAS"
 		t-use-default-tt="Päättöluokkalaisten arvosanojen siirto" />
-	<tr class="required" t-param-edit-date-range name="PHK_LPAS"
+	<tr class="required" t-is-required t-param-edit-date-range name="PHK_LPAS"
 		t-use-default-tt="Lukion päättöarvosanojen siirto" />
 
 	<tr t-sub-title t-use-default-tt="Tiedonsiirto Kelaan"
@@ -42,12 +42,16 @@
 		t-use-default-tt="Toisen asteen valintojen siirto" t-always/>
 	<tr t-param-edit-date-range name="PHK_KELAKAVS"
 		t-use-default-tt="Korkeakouluasteen valintojen siirto" t-always/>
-	<tr t-param-edit-number name="PHK_KELAVTST"
-		t-use-default-tt="Valintojen tiedonsiirron tiheys" />
+	<tr>
+	  <th tt="hakukausi.edit.PHK_KELAVTST">Valintojen tiedonsiirron tiheys</th>
+	  <td><input name="PHK_KELAVTST" ng-model="model.parameter.PHK_KELAVTST"> <span tt="hakukausi.vuorokautta">vuorokautta</span></td>
+      <td>
+		<show-errors form="hakukausiForm" field="PHK_KELAVTST"
+			tt-prefix="hakukausi.edit.parametrit"></show-errors>
+      </td>
+	</tr>
     <tr t-use-tt-key="hakukausi.help.PHK_KELAVTST" t-help t-use-default-tt="Tiheys määritellään kokonaisina vuorokausina"/>
-    
-    
-    	<tr>
+    <tr>
 	  <th tt="hakukausi.edit.PHK_KELAVTSAK">Valintojen siirto vuorokaudessa klo</th>
 	  <td><input ng-pattern="timePattern" name="PHK_KELAVTSAK" ng-model="model.parameter.PHK_KELAVTSAK"></td>
       <td>
@@ -65,8 +69,15 @@
 		t-use-default-tt="Toisen asteen valintojen siirto" t-always/>
 	<tr t-param-edit-date name="PHK_TEMKAVS"
 		t-use-default-tt="Korkeakouluasteen valintojen siirto" t-always/>
-	<tr t-param-edit-number name="PHK_TEMVTST"
-		t-use-default-tt="Valintojen tiedonsiirron tiheys" />
+	<tr>
+	  <th tt="hakukausi.edit.PHK_TEMVTST">Valintojen tiedonsiirron tiheys</th>
+	  <td><input name="PHK_TEMVTST" ng-model="model.parameter.PHK_TEMVTST"> <span tt="hakukausi.vuorokautta">vuorokautta</span></td>
+      <td>
+		<show-errors form="hakukausiForm" field="PHK_TEMVTST"
+			tt-prefix="hakukausi.edit.parametrit"></show-errors>
+      </td>
+	</tr>		
+		
 	<tr t-use-tt-key="hakukausi.help.PHK_TEMVTST" t-help t-use-default-tt="Tiheys määritellään kokonaisina vuorokausina"/>
 	<tr>
 	  <th tt="hakukausi.edit.PHK_TEMVTSAK">Valintojen siirto vuorokaudessa klo</th>

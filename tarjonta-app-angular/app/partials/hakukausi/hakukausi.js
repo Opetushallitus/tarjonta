@@ -8,11 +8,43 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
   });
 } ])
 
+
+//form & model directive patching (https://github.com/angular/angular.js/issues/1404)
+
+.config(function($provide) {
+    $provide.decorator('ngModelDirective', function($delegate) {
+      var ngModel = $delegate[0], controller = ngModel.controller;
+      ngModel.controller = ['$scope', '$element', '$attrs', '$injector', function(scope, element, attrs, $injector) {
+        var $interpolate = $injector.get('$interpolate');
+        attrs.$set('name', $interpolate(attrs.name || '')(scope));
+        $injector.invoke(controller, this, {
+          '$scope': scope,
+          '$element': element,
+          '$attrs': attrs
+        });
+      }];
+      return $delegate;
+    });
+    $provide.decorator('formDirective', function($delegate) {
+      var form = $delegate[0], controller = form.controller;
+      form.controller = ['$scope', '$element', '$attrs', '$injector', function(scope, element, attrs, $injector) {
+        var $interpolate = $injector.get('$interpolate');
+        attrs.$set('name', $interpolate(attrs.name || attrs.ngForm || '')(scope));
+        $injector.invoke(controller, this, {
+          '$scope': scope,
+          '$element': element,
+          '$attrs': attrs
+        });
+      }];
+      return $delegate;
+    });
+  })
+
 // controller
 .controller("HakukausiController",
     [ "Koodisto", "$scope", "ParameterService", function HakukausiController(Koodisto, $scope, Parameter) {
 
-      //validation
+      //validation pattern, used from form
       $scope.timePattern=/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
       
       var vuosi = new Date().getFullYear();
@@ -39,16 +71,24 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
         if(isVuosiKausiValid()){
           var kausivuosi = getKausiVuosiIdentifier();
           console.log("loading data", kausivuosi);
+          $scope.saved=false;
+          $scope.model.parameter={};
           Parameter.haeHakukaudenParametrit(kausivuosi, $scope.model.parameter);
         }
       };
       
       
       var saveParameters=function(){
+        $scope.saved=true;
+
         console.log("saving!!!, form:", $scope.hakukausiForm);
+        if(!$scope.hakukausiForm.$valid) {
+          console.log("invalid data, exiting");
+          return;
+        }
         var kausivuosi = getKausiVuosiIdentifier();
         Parameter.tallennaHakukaudenParametrit(kausivuosi, $scope.model.parameter);
-      }
+      };
       
       $scope.saveParameters=saveParameters;
 
@@ -80,34 +120,6 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
     link:function(scope, element, attrs){
       scope.name = attrs.name;
       scope.nameb = attrs.name + "AM";  //"aina valintojen..."
-    }
-      
-  };
-})
-/**
- * Numeron editointi rivi
- */
-.directive('tParamEditNumber', function() {
-  return {
-    restrict: 'A',
-    scope:true,
-    templateUrl: 'partials/hakukausi/edit-number.html',
-    link:function(scope, element, attrs){
-      scope.name = attrs.name;
-    }
-      
-  };
-})
-/**
- * Stringin editointi
- */
-.directive('tParamEditString', function() {
-  return {
-    restrict: 'A',
-    scope:true,
-    templateUrl: 'partials/hakukausi/edit-number.html',
-    link:function(scope, element, attrs){
-      scope.name = attrs.name;
     }
       
   };
@@ -164,6 +176,19 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
     link: function(scope, element, attrs){
       scope.tUseDefaultTt = attrs.tUseDefaultTt;
       scope.tUseTtKey = attrs.tUseTtKey;
+    }
+  }
+})
+
+/**
+ * Required
+ */
+.directive('tIsRequired', function(){
+  return {
+    restrict: 'A',
+    scope:true,
+    link: function(scope, element, attrs){
+      scope.tIsRequired = "true"===attrs.tIsRequired;
     }
   }
 })
