@@ -6,10 +6,9 @@
     </tr>
     <tr ng-show="ctrl.editable && ctrl.imagesLoaded[uri] === undefined">
         <td>
-            <div id="edit"></div>
-            <div id="preview"></div>
-
-            <a href="" class="btn" type="submit" ng-show="isNewImageAttached($event, uri)" ng-click="removeUnsavedImage($event, uri)">{{btnNameRemove}}</a>
+            <div id="edit"><!-- empty container for file upload button and stuff --></div>
+            <div id="preview"><!-- empty container for the image tag --></div>
+            <div id="remove-unsaved"><!-- empty container holder for the remove button --></div> 
         </td>
     </tr>
 </table>
