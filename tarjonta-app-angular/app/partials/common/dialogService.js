@@ -54,8 +54,8 @@ app.service('dialogService', ['$modal', '$log', '$rootScope', 'LocalisationServi
         var dialogTextDefaults = {
             title: "Really?",
             description: "<i>Really</i> do <b>that</b>?",
-            ok: "YEAS please!",
-            cancel: "Naaaah..."
+            ok: LocalisationService.t("ok"),
+            cancel: LocalisationService.t("cancel")
         };
 
         /**
@@ -129,12 +129,12 @@ app.controller('DialogServiceController', ['$scope', '$log', '$modalInstance',
 
         $scope.onAction = function() {
             $log.info("onAction()", $modalInstance);
-            $modalInstance.close("ACTION");
+            $modalInstance.close(true);
         };
 
         $scope.onClose = function() {
             $log.info("onClose()", $modalInstance);
-            $modalInstance.close("CANCEL");
+            $modalInstance.close(false);
         };
 
     }]);

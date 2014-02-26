@@ -35,6 +35,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @MappedSuperclass
 public class TarjontaBaseEntity extends BaseEntity {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaBaseEntity.class);
 
     private String getTekija() {

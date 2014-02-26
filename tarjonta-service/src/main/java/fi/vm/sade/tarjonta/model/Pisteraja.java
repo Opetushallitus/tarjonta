@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.model;
  */
 import java.math.BigDecimal;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import javax.persistence.*;
 /**
  *

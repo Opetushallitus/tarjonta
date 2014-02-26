@@ -1,7 +1,7 @@
 <table class="tarjontaForm">
 
     <tr class="required">
-        <th ttt='haku.edit.hakutapa'>Hakutapa</th>
+        <th tt='haku.edit.hakutapa'>Hakutapa</th>
         <td>
             <div koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.hakux.result.hakutapaUri" version="true" isrequired="true" name="hakutapa"></div>
         </td>
@@ -11,7 +11,7 @@
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.hakutyyppi'>Hakutyyppi</th>
+        <th tt='haku.edit.hakutyyppi'>Hakutyyppi</th>
         <td>
             <div koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.hakux.result.hakutyyppiUri" version="true" isrequired="true" name="hakuTyyppi"></div>
         </td>
@@ -21,7 +21,7 @@
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.hakukausi'>Hakukausi ja vuosi</th>
+        <th tt='haku.edit.hakukausi'>Hakukausi ja vuosi</th>
         <td>
             <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.hakukausiUri" version="true" isrequired="true" name="hakuKausi"></div>
             <input type="number" placeholder="vuosi" ng-model="model.hakux.result.hakukausiVuosi" required name="hakuVuosi">
@@ -35,7 +35,7 @@
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.koulutuksenAlkamiskausi'>Koulutuksen alkamiskausi</th>
+        <th tt='haku.edit.koulutuksenAlkamiskausi'>Koulutuksen alkamiskausi</th>
         <td>
             <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.hakux.result.koulutuksenAlkamiskausiUri" version="true" isrequired="true" name="alkamisKausi"></div>
             <input type="number" placeholder="vuosi" ng-model="model.hakux.result.koulutuksenAlkamisVuosi" required name="alkamisVuosi">
@@ -49,7 +49,7 @@
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
+        <th tt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
         <td>
             <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
         </td>
@@ -59,10 +59,10 @@
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.haunNimi'>Haun nimi</th>
+        <th tt='haku.edit.haunNimi'>Haun nimi</th>
         <td>
             <div mk-textfield model="model.hakux.result.nimi" required="true" name="haunNimi"></div>
-            <p class="help-block" ttt="haku.edit.haunNimi.help">help</p>
+            <p class="help-block" tt="haku.edit.haunNimi.help">help</p>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" field-check="false" custom-check="checkHaunNimiValidity()"></div>
@@ -70,7 +70,7 @@
     </tr>
 
     <tr>
-        <th ttt='haku.edit.haunTunniste'>Haun tunniste</th>
+        <th tt='haku.edit.haunTunniste'>Haun tunniste</th>
         <td>
             <strong>{{ model.hakux.result.oid}}</strong>
         </td>
@@ -79,9 +79,9 @@
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.hakuaika'>Hakuaika</th>
+        <th tt='haku.edit.hakuaika'>Hakuaika</th>
         <td colspan="2">
-            <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
+            <div ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
                 <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
                 <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>
                 <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>
@@ -90,34 +90,35 @@
             </div>
             <div class="btn" ng-click="doAddNewHakuaika()"><i class="icon-plus"></i> Lisää uusi hakuaika </div>
 
-            <p class="help-block" ttt="haku.edit.hakuaika.help">help</p>
+            <p class="help-block" tt="haku.edit.hakuaika.help">help</p>
         </td>
         <!-- TODO check for errors here! -->
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.sijoittelu'>Sijoittelu</th>
+        <th tt='haku.edit.sijoittelu'>Sijoittelu</th>
         <td>
-            <input type="checkbox" ng-model="model.hakux.result.sijoittelu"> <span ttt="haku.edit.kaytetaanSijoittelua">Haussa käytetään sijoittelua</span>
+            <input type="checkbox" ng-model="model.hakux.result.sijoittelu"> <span tt="haku.edit.kaytetaanSijoittelua">Haussa käytetään sijoittelua</span>
         </td>
         <td>
         </td>
     </tr>
 
     <tr class="required">
-        <th ttt='haku.edit.hakulomake'>Hakulomake</th>
+        <th tt='haku.edit.hakulomake'>Hakulomake</th>
         <td>
             <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
-            <span ttt="haku.edit.hakulomake.kaytaJarjestelmanOmaa">Käytetään järjestelmän omaa hakulomaketta</span>
+            <span tt="haku.edit.hakulomake.kaytaJarjestelmanOmaa">Käytetään järjestelmän omaa hakulomaketta</span>
 
             <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
-                <span ttt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta, mitä:</span>
+                <span tt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta, mitä:</span>
                 <input type="url" ng-model="model.hakux.result.hakulomakeUri"
                        placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl" ng-required="!model.haku.hakulomakeKaytaJarjestemlmanOmaa">
             </p>
             <p ng-show="model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
-                <span ttt="haku.edit.maxHakukohdes.label">Hakukohteiden enimmäismäärä:</span>
-                <input type="number" ng-model="model.hakux.result.maxHakukohdes" name="maxHakukohdes" ng-required="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                <span tt="haku.edit.maxHakukohdes.label">Hakukohteiden enimmäismäärä:</span>
+                <input type="number" ng-model="model.hakux.result.maxHakukohdes"
+                       name="maxHakukohdes" ng-required="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
             </p>
 
         </td>

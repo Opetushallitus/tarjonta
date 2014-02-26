@@ -79,7 +79,8 @@ window.CONFIG = {
         "root.organisaatio.oid":"1.2.246.562.10.00000000001",
         "ui.timeout.short": 10000,
         "ui.timeout.long": 60000,
-        
+        "web.url.oppija.preview" : "https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/",
+
         //käsin lisätyt:
 
         //
@@ -92,7 +93,8 @@ window.CONFIG = {
         //
 
         "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
+
+        // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
@@ -115,7 +117,7 @@ window.CONFIG = {
         //ohjausparametrit"
         "tarjontaOhjausparametritResutUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
         "place": "holder"
-          
+
 
     }
 };

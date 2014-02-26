@@ -55,12 +55,18 @@ app.directive('koodistocombo',function(Koodisto,$log){
         },
         controller :  function($scope,Koodisto) {
 
+        	
+        	$scope.baseKoodis = [];
 
             var addVersionToKoodis = function(koodis) {
 
                 if ($scope.version !== undefined && $scope.version) {
                     angular.forEach(koodis,function(koodi){
-                        koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                        if (koodi.koodiUri.indexOf("#") < 0) {
+                            koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
+                        } else {
+                            $log.warn("addVersionToKoodis - tried to add version to already versioned URI!", koodi);
+                        }
                     });
                 }
 
@@ -104,6 +110,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                            addVersionToKoodis(koodisParam);
 
                            $scope.koodis = koodisParam;
+                           $scope.baseKoodis = $scope.koodis;
                        });
                    } else {
                    var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
@@ -114,6 +121,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                            });
                        }
                        $scope.koodis = koodisParam;
+                       $scope.baseKoodis = $scope.koodis;
                    });
                    }
                }
@@ -122,19 +130,18 @@ app.directive('koodistocombo',function(Koodisto,$log){
            } else {
                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri,$scope.locale);
                koodisPromise.then(function(koodisParam){
-
-                   addVersionToKoodis(koodisParam);
-
-                   $scope.koodis = koodisParam;
+            	   var cs = angular.copy(koodisParam);
+                   addVersionToKoodis(cs);
+                   $scope.koodis = cs;
+                   $scope.baseKoodis = $scope.koodis;
                });
            }
 
             //If filter uris is changed then query only those and show those koodis
             $scope.$watch('filteruris',function(){
-                var filteredKoodis = [];
-
                 if ($scope.filteruris !== undefined && $scope.filteruris.length > 0) {
-                    angular.forEach($scope.koodis,function(koodi){
+                    var filteredKoodis = [];
+                    angular.forEach($scope.baseKoodis,function(koodi){
 
                         angular.forEach($scope.filteruris,function(filterUri){
                             if (koodi.koodiUri === filterUri) {
@@ -143,9 +150,8 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         });
 
                     });
+                    $scope.koodis = filteredKoodis;
                 }
-
-                $scope.koodis = filteredKoodis;
             });
 
             $scope.$watch('parentkoodiuri',function(){
@@ -203,7 +209,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                   $scope.onchangecallback(koodi);
 
               } else {
-                  $log.info('No onchangecallback defined');
+                  //$log.info('No onchangecallback defined');
               }
           };
 

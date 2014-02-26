@@ -41,6 +41,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String tila;
     private String valintaperustekuvausKoodiUri;
     private Date liitteidenToimitusPvm;
+    private String ulkoinenTunniste;
     private HashMap<String,String> lisatiedot;
     private HashMap<String,String> valintaperusteKuvaukset;
     private HashMap<String,String> soraKuvaukset;
@@ -383,6 +384,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 	}
 
     public Map<String, String> getTarjoajaNimet() {
+
+        if (tarjoajaNimet == null) {
+            tarjoajaNimet = new HashMap<String, String>();
+        }
+
         return tarjoajaNimet;
     }
 
@@ -396,5 +402,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setKaksoisTutkinto(Boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
+    }
+
+    public String getUlkoinenTunniste() {
+        return ulkoinenTunniste;
+    }
+
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this.ulkoinenTunniste = ulkoinenTunniste;
     }
 }

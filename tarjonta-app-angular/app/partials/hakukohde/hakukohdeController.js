@@ -25,6 +25,15 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
         $log.info("CAN EDIT : ", $route.current.locals.canEdit);
         $log.info("CAN CREATE : ", $route.current.locals.canCreate);
 
+
+        $log.info("IS COPY : " , $route.current.locals.isCopy);
+        if ($route.current.locals.isCopy !== undefined) {
+
+            $scope.isCopy = $route.current.locals.isCopy;
+        } else {
+            $scope.isCopy = false;
+        }
+
         $scope.canCreate = $route.current.locals.canCreate;
         $scope.canEdit =  $route.current.locals.canEdit;
 

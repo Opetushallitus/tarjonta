@@ -14,9 +14,9 @@
  */
 
 
-var app = angular.module('Koodisto', ['ngResource', 'config']);
+var app = angular.module('Koodisto', ['ngResource', 'config', 'TarjontaCache']);
 
-app.factory('Koodisto', function($resource, $log, $q, Config) {
+app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
     var host = Config.env["tarjontaKoodistoRestUrlPrefix"];
 
@@ -134,6 +134,85 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
             return  returnYlapuoliKoodis.promise;
 
         },
+
+        /**
+         * koodiUriList palauttaa alapuoliset koodiurit jotka ovat tiettyä tyyppiä (tai kaikki jos ei määritelty)
+         */
+        getAlapuolisetKoodiUrit: function(koodiUriList, tyyppi) {
+
+//          $log.info('getAlapuolisetKoodiUrit called with : ' , koodiUriList, tyyppi);
+
+          var deferred = $q.defer();
+          var returnKoodis = [];
+          var promises = [];
+
+          var uri = host + 'relaatio/sisaltyy-alakoodit/';
+
+          for(var i=0;i<koodiUriList.length;i++) {
+            
+            var koodiUri = koodiUriList[i];
+            if(koodiUri.indexOf("#")!=-1) {
+              koodiUri = koodiUri.substring(0,koodiUri.indexOf("#"));
+            }
+            
+            var promise = $resource(uri + koodiUri, {}, {get:{method:"GET", isArray:true},cache:true}).get().$promise.then(function(koodis) {
+//              console.log("alapuoliset:", koodis);
+                angular.forEach(koodis, function(koodi) {
+                  if(!tyyppi || koodi.koodisto.koodistoUri==tyyppi) {
+                    returnKoodis.push(koodi.koodiUri);
+                  }
+                });
+              });
+              promises.push(promise);
+            }
+          
+            $q.all(promises).then(function(){
+              deferred.resolve(returnKoodis);
+            });
+
+          return  deferred.promise;
+
+      },
+
+      /**
+       * koodiUriList palauttaa alapuoliset koodiurit jotka ovat tiettyä tyyppiä (tai kaikki jos ei määritelty)
+       */
+      getYlapuolisetKoodiUrit: function(koodiUriList, tyyppi) {
+
+//        $log.info('getYlapuolisetKoodiUrit called with : ' , koodiUriList, tyyppi);
+
+        var deferred = $q.defer();
+        var returnKoodis = [];
+        var promises = [];
+
+        var uri = host + 'relaatio/sisaltyy-ylakoodit/';
+
+        for(var i=0;i<koodiUriList.length;i++) {
+          
+          var koodiUri = koodiUriList[i];
+          if(koodiUri.indexOf("#")!=-1) {
+            koodiUri = koodiUri.substring(0,koodiUri.indexOf("#"));
+          }
+          
+          var promise = $resource(uri + koodiUri, {}, {get:{method:"GET", isArray:true},cache:true}).get().$promise.then(function(koodis) {
+//            console.log("ylapuoliset:", koodis);
+              angular.forEach(koodis, function(koodi) {
+                if(!tyyppi || koodi.koodisto.koodistoUri==tyyppi) {
+                  returnKoodis.push(koodi.koodiUri);
+                }
+              });
+            });
+            promises.push(promise);
+          }
+        
+          $q.all(promises).then(function(){
+            deferred.resolve(returnKoodis);
+          });
+
+        return  deferred.promise;
+
+    },
+
         /*
          @param {string} koodistouri from which koodis should be retrieved
          @param {string} locale in which koodi name should be shown
@@ -142,30 +221,22 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
 
         getAllKoodisWithKoodiUri: function(koodistoUriParam, locale) {
 
-
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
 
-            var returnKoodisPromise = $q.defer();
+        	return CacheService.lookup("koodisto/"+koodistoUriParam+"/"+locale, function(returnKoodisPromise){
 
-            var returnKoodis = [];
+                var returnKoodis = [];
+                var koodiUri = host + ':koodistoUri/koodi';
 
-            var koodiUri = host + ':koodistoUri/koodi';
-
-
-            $resource(koodiUri, {koodistoUri: '@koodistoUri'},{cache:true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
-
-
-
-                angular.forEach(koodis, function(koodi) {
-
-
-
-                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                $resource(koodiUri, {koodistoUri: '@koodistoUri'},{cache:true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
+                    angular.forEach(koodis, function(koodi) {
+                    	returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                    });
+                    returnKoodisPromise.resolve(returnKoodis);
                 });
-                returnKoodisPromise.resolve(returnKoodis);
-            });
 
-            return returnKoodisPromise.promise;
+        	});
+        	
         },
         /*
          @param {string} koodistouri from which koodis should be retrieved
@@ -231,7 +302,6 @@ app.factory('Koodisto', function($resource, $log, $q, Config) {
                 var metadata = metadatas[j];
                 nimi[metadata.kieli]=metadata.nimi;
               }
-              console.log("nimi:", nimi);
               ret.resolve(nimi[locale.toUpperCase()]||nimi.FI||nimi.EN||nimi.SV); //fallback
               
             }

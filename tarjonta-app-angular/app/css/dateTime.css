@@ -40,6 +40,12 @@ div#dateTimeChooser table td.selected {
     cursor:default;
 }
 
+div#dateTimeChooser table td.disabled {
+	background-color:#ffffff;
+    color:#eeeeee;
+    cursor:default;
+}
+
 div#dateTimeChooser div.ymcontrols {
     text-align:center;
     margin-bottom:10px;

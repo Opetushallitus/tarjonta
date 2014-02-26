@@ -16,6 +16,9 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -73,10 +76,33 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi")
     private Double hinta;
 
-    public KoulutusKorkeakouluV1RDTO() {
+    @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
+    private KoodiUrisV1RDTO tutkintonimikes;
+
+    @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
+    private KoodiV1RDTO opintojenLaajuusarvo;
+
+    /**
+     * @return the tutkintonimike
+     */
+    public KoodiUrisV1RDTO getTutkintonimikes() {
+        if (this.tutkintonimikes == null) {
+            this.tutkintonimikes = new KoodiUrisV1RDTO();
+        }
+
+        return tutkintonimikes;
     }
 
-  
+    /**
+     * @param tutkintonimikes the tutkintonimikes to set
+     */
+    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
+    }
+
+    public KoulutusKorkeakouluV1RDTO() {
+        super(KoulutusasteTyyppi.KORKEAKOULUTUS);
+    }
 
     /**
      * @return the opetuskielis
@@ -179,11 +205,11 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     public KoodiUrisV1RDTO getOpetusAikas() {
-        
-        if(opetusAikas == null){
+
+        if (opetusAikas == null) {
             opetusAikas = new KoodiUrisV1RDTO();
         }
-        
+
         return opetusAikas;
     }
 
@@ -192,10 +218,10 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     public KoodiUrisV1RDTO getOpetusPaikkas() {
-        if(opetusPaikkas == null){
+        if (opetusPaikkas == null) {
             opetusPaikkas = new KoodiUrisV1RDTO();
         }
-        
+
         return opetusPaikkas;
     }
 
@@ -283,5 +309,19 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     public void setParentKomotoOid(String _parentKomotoOid) {
         this.parentKomotoOid = _parentKomotoOid;
+    }
+
+    /**
+     * @return the opintojenLaajuusarvo
+     */
+    public KoodiV1RDTO getOpintojenLaajuusarvo() {
+        return opintojenLaajuusarvo;
+    }
+
+    /**
+     * @param opintojenLaajuusarvo the opintojenLaajuusarvo to set
+     */
+    public void setOpintojenLaajuusarvo(KoodiV1RDTO opintojenLaajuusarvo) {
+        this.opintojenLaajuusarvo = opintojenLaajuusarvo;
     }
 }

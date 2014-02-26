@@ -65,6 +65,21 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public Hakukohde findHakukohdeByUlkoinenTunniste(String ulkoinenTunniste, String tarjoajaOid) {
+
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+
+        return from(qHakukohde)
+                .join(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
+                .where(qHakukohde.ulkoinenTunniste.eq(ulkoinenTunniste).and(qKomoto.tarjoaja.eq(tarjoajaOid)))
+                .singleResult(qHakukohde);
+
+
+    }
+
+    @Override
     public void updateValintakoe(List<Valintakoe> valintakoes, String hakukohdeOid) {
         Hakukohde hakukohde = findHakukohdeByOid(hakukohdeOid);
         for (Valintakoe koe : hakukohde.getValintakoes()) {
@@ -196,6 +211,19 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .where(qHakukohde.hakukohdeNimi.eq(name)
                 .and(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
     
+    }
+
+    @Override
+    public List<Hakukohde> findByTermYearAndProvider(String term, int year, String providerOid) {
+
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        return from(qHakukohde)
+                .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);
+
+
     }
 
     @Override

@@ -88,16 +88,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
         {type: "KANSAINVALISTYMINEN", isKomo: false},
         {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-        {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false},
-        {type: "ARVIOINTIKRITEERIT", isKomo: false},
-        {type: "PAINOTUS", isKomo: false},
-        {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false},
-        {type: "KUVAILEVAT_TIEDOT", isKomo: false}
+        {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false}
     ];
 
     factory.STRUCTURE = {
         MLANG: {
-            koulutusohjelma: {'defaultLangs': true, default: {tekstis: []}}
+            koulutusohjelma: {'defaultLangs': true, "default": {tekstis: []}}
         },
         RELATION: {
             koulutuskoodi: {},
@@ -106,15 +102,16 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             opintoala: {},
             eqf: {},
             tutkinto: {},
+            opintojenLaajuusyksikko: {}
         },
         RELATIONS: {
-            tutkintonimikes: {}
+            tutkintonimikes: {},
+            opintojenLaajuusarvos: {skipApiModel: true}
         }, COMBO: {
             //in correct place
             suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
-            opintojenLaajuus: {koodisto: 'koodisto-uris.opintojenLaajuusarvo'},
             koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
-           
+            opintojenLaajuusarvo: {skipUiModel: true}
             //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
             opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
@@ -122,26 +119,26 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {koodisto: 'koodisto-uris.kieli'},
             aihees: {koodisto: 'koodisto-uris.aiheet'},
-            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
+            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'},
         }, STR: {
-            koulutuksenAlkamisvuosi: {default : ''},
-            koulutusmoduuliTyyppi: {default: 'TUTKINTO'},
-            koulutusasteTyyppi: {default: 'KORKEAKOULUTUS'},
+            koulutuksenAlkamisvuosi: {"default": ''},
+            koulutusmoduuliTyyppi: {"default": 'TUTKINTO'},
+            koulutusasteTyyppi: {"default": 'KORKEAKOULUTUS'},
             tila: {'default': 'LUONNOS'},
-            tunniste: {default: ''},
-            suunniteltuKestoArvo: {nullable: true, default: ''}
+            tunniste: {"default": ''},
+            suunniteltuKestoArvo: {nullable: true, "default": ''}
         }, DATES: {
-            koulutuksenAlkamisPvms: {default: new Date()}
+            koulutuksenAlkamisPvms: {"default": new Date()}
         }, BOOL: {
-            opintojenMaksullisuus: {default: false}
+            opintojenMaksullisuus: {"default": false}
         }, DESC: {
-            kuvausKomo: {'nullable': false, default: factory.createBaseDescUiField([
+            kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
                     'KOULUTUKSEN_RAKENNE',
                     'JATKOOPINTO_MAHDOLLISUUDET',
                     'TAVOITTEET',
                     'PATEVYYS'
                 ])},
-            kuvausKomoto: {'nullable': false, default: factory.createBaseDescUiField([
+            kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
                     'MAKSULLISUUS',
                     'ARVIOINTIKRITEERIT',
                     'LOPPUKOEVAATIMUKSET',
@@ -292,10 +289,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
     factory.createUiKoodistoMultiModel = function() {
         return {'uris': [], koodis: []};
     };
-     factory.createUiMetaMultiModel = function() {
+    factory.createUiMetaMultiModel = function() {
         return {'uris': [], meta: []};
     };
-    
+
     factory.throwError = function(msg) {
         throw new Error('Tarjonta application error - ' + msg);
     };
@@ -351,7 +348,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.RELATIONS, function(value, key) {
-            apiModel[key] = {'uris': {}};
+            if (angular.isUndefined(value.skipApiModel) && !value.skipApiModel) {
+                apiModel[key] = {'uris': {}};
+            }
         });
 
         angular.forEach(factory.STRUCTURE.COMBO, function(value, key) {

@@ -1,5 +1,4 @@
-
-    <table class="tarjontaForm">
+   <table class="tarjontaForm">
         <!-- koulutuskoodi -->
         <tr class="info">
             <th tt="koulutus.edit.koulutuskoodi"/>
@@ -80,11 +79,12 @@
         <!-- opintojen laajuus -->
         <tr class="required">
             <th tt="koulutus.edit.opintojen-laajuus"/> 
+            <td><laajuus 
+                     arvo-model="model.opintojenLaajuusarvo" 
+                     arvo-ui-model="uiModel.opintojenLaajuusarvos"
+                     yksikko="model.opintojenLaajuusyksikko"></laajuus></td>
             <td>
-                <select required name="opintojenLaajuus" ng-model="model.opintojenLaajuus.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuus.koodis | orderByNum:'koodiNimi'"></select> {{model.opintojenLaajuusyksikko.nimi}}
-            </td>
-            <td>
-                <p class="error" ng-show="uiModel.showError && koulutusForm.opintojenLaajuus.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
+                <p class="error" ng-show="uiModel.showError && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
             </td>
         </tr>
         <tr>
@@ -134,8 +134,8 @@
 
         <multi-select
             order-with="userLanguages"
-            model="uiModel.tmp"
             selection="uiModel.opetuskielis.uris"
+            model="uiModel.tmp"
             promise="uiModel.opetuskielis.promise"
             display="combobox"
             name="opetuskielis" required/>

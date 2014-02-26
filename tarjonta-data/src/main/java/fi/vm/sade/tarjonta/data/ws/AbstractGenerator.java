@@ -13,13 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.data.test.modules;
+package fi.vm.sade.tarjonta.data.ws;
 
 import fi.vm.sade.tarjonta.data.test.IdFactory;
-import fi.vm.sade.tarjonta.data.util.KoodistoURIHelper;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -83,7 +83,7 @@ public abstract class AbstractGenerator {
 
         for (String lang : LANGUAGES) {
             MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
-            teksti.setKieliKoodi(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_KIELI_URI, lang));
+            teksti.setKieliKoodi(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_KIELI_URI, lang));
             teksti.setValue(text);
             mktt.getTeksti().add(teksti);
         }
@@ -93,19 +93,18 @@ public abstract class AbstractGenerator {
 
     protected OsoiteTyyppi createPostiosoite() {
         OsoiteTyyppi osoite = new OsoiteTyyppi();
-        osoite.setPostinumero(KoodistoUtil.toKoodiUri(KoodistoURIHelper.KOODISTO_POSTINUMERO_URI, "02070"));
+        osoite.setPostinumero(KoodistoUtil.toKoodiUri(KoodistoURI.KOODISTO_POSTINUMERO_URI, "02070"));
         osoite.setPostitoimipaikka("ESPOON KAUPUNKI");
         osoite.setOsoiteRivi("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet odio eget metus porttitor rhoncus vitae at nisi.");
         return osoite;
     }
 
     public static int randomIntByRange(int lower, int higher) {
-        return nextInt(new Random(System.currentTimeMillis()), lower, higher);
+        return nextInt(lower, higher);
+
     }
-    
-    private static int nextInt(Random r, int lower, int higher) {
-        int ran = r.nextInt();
-        double x = (double) ran / Integer.MAX_VALUE * higher;
-        return (int) x + lower;
+
+    private static int nextInt(int lower, int higher) {
+        return (int) (lower + (Math.random() * (higher - lower)));
     }
 }

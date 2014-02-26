@@ -80,6 +80,13 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakukohdeV1RDTO> findByOid(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String oid);
 
+    @GET
+    @Path("/{tarjoajaOid}/{ulkoinenTunniste}")
+    @ApiOperation(value = "Palauttaa hakukohteen ulkoisella tunnisteella")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(@ApiParam(value = "Tarjoajan oid", required = true) @PathParam("tarjoajaOid") String tarjoajaOid,
+                                                                @ApiParam(value = "Ulkoinen tunniste", required = true) @PathParam("ulkoinenTunniste") String ulkoinenTunniste);
+
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")

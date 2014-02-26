@@ -153,15 +153,15 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	
 
 	var lisaaOrganisaatio = function(organisaatio) {
-    	$scope.model.organisaatiot.push(organisaatio);
-    	console.log("lisaaOrganisaatio:", organisaatio);
-    	var oppilaitostyypit = haeOppilaitostyypit(organisaatio);
+    	  $scope.model.organisaatiot.push(organisaatio);
+    	  console.log("lisaaOrganisaatio:", organisaatio);
+    	  var oppilaitostyypit = haeOppilaitostyypit(organisaatio);
     	
-    	oppilaitostyypit.then(function(data){
+    	  oppilaitostyypit.then(function(data){
     		paivitaKoulutustyypit(data);
-    	});
-    	//console.log("oppilaitostyypit:", oppilaitostyypit);
-		//console.log("kaikki koulutustyypit:", SharedStateService.state.luoKoulutusaDialogi.koulutustyypit);
+    	  });
+    	  //console.log("oppilaitostyypit:", oppilaitostyypit);
+		//    console.log("kaikki koulutustyypit:", SharedStateService.state.luoKoulutusaDialogi.koulutustyypit);
 	};
 	
 	var paivitaKoulutustyypit = function(oppilaitostyypit) {
@@ -259,61 +259,74 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	 * Jatka nappulaa klikattu, avaa seuraava dialogi TODO jos ei kk pitäisi mennä suoraan lomakkeelle?
 	 */
 	$scope.jatka = function() {
-		$scope.tutkintoDialogModel={};
+	  $scope.tutkintoDialogModel={};
 		
-		//XXX nyt vain kk kovakoodattuna!!
-		if($scope.model.koulutustyyppi.koodiUri==="koulutustyyppi_3"){
-			
-		
-		var modalInstance = $modal.open({
-			scope: $scope,
-			templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-			controller: 'SelectTutkintoOhjelmaController'
-		});
-		
-		modalInstance.result.then(function(selectedItem) {
-			$scope.luoKoulutusDialog.close();
-//			console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-//			console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
-			if (selectedItem.koodiUri != null) {
-				console.log("org:", $scope.model.organisaatiot[0]);
-				$location.path('/koulutus/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
-			} 
-		}, function() {
-			$scope.tutkintoDialogModel.selected = null;
-//			console.log('Cancel, dialog closed');
-			$scope.luoKoulutusDialog.close();
-		});
-		} else {
-			
-			//ei toteutettu hässäkkä, positetaan kun muutkin tyypit on tuettu:
-			$scope.dialog={
-                title: "ei toteutettu",
-                description: "",
-                ok: "ok",
-                cancel: "cancel"
-            };
-			
-			$scope.eitoteutettu = $modal.open({
-				scope: $scope,
-				templateUrl: 'partials/common/dialog.html',
-				controller: function(){
-					$scope.onClose=function(){
-						console.log("close!");
-						$scope.eitoteutettu.close();
-					};
-					$scope.onAction=function(){
-						console.log("close!");
-						$scope.eitoteutettu.close();
-					};
-				}});
-						
-					
-			//muussa tapauksessa sulje dialogi
-			//$scope.luoKoulutusDialog.close();
-		}
+	  //XXX nyt vain kk kovakoodattuna!!
+	  if($scope.model.koulutustyyppi.koodiUri==="koulutustyyppi_3"){
+	    var olt=haeOppilaitostyypit($scope.model.organisaatiot[0]);
+	    olt.then(function(oppilaitostyypit){
+	      Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, "koulutusasteoph2002").then(
+	          function(koulutusasteKoodit){
+	              //valitun organisaation organisaatiotyyppiin liittyvät koulutusastekoodit on nyt resolvattu?
+	              console.log("koulutusastekoodit:", koulutusasteKoodit);
+	              $scope.model.koulutuasteet=koulutusasteKoodit; //used by selectTutkintohjelma dialog!!
+	              
+	              var modalInstance = $modal.open({
+	                scope: $scope,
+	                templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+	                controller: 'SelectTutkintoOhjelmaController'
+	              });
+	              
+	              modalInstance.result.then(function(selectedItem) {
+	                $scope.luoKoulutusDialog.close();
+	                if (selectedItem.koodiUri != null) {
+	                  console.log("org:", $scope.model.organisaatiot[0]);
+	                  $location.path('/koulutus/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+	                } 
+	              }, function() {
+	                $scope.tutkintoDialogModel.selected = null;
+	                $scope.luoKoulutusDialog.close();
+	              });
+	            })})
+	            	    
+	    
+	    
+	    
+	    
+	  } else {
+	    eiToteutettu();
+          }
 
 	};
+
+	/**
+	 * "Ei toteutettu" dialogi
+	 */
+	var eiToteutettu = function() {
+	//ei toteutettu hässäkkä, positetaan kun muutkin tyypit on tuettu:
+          $scope.dialog={
+            title: "ei toteutettu",
+            description: "",
+            ok: "ok",
+            cancel: "cancel"
+          };
+
+          $scope.eitoteutettu = $modal.open({
+            scope : $scope,
+            templateUrl : 'partials/common/dialog.html',
+            controller : function() {
+              $scope.onClose = function() {
+                console.log("close!");
+                $scope.eitoteutettu.close();
+              };
+              $scope.onAction = function() {
+                console.log("close!");
+                $scope.eitoteutettu.close();
+              };
+            }
+          });
+	};
+	
 
 	/**
 	 * Jatka nappula enabloitu:

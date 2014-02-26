@@ -18,13 +18,14 @@
  * Tests for Localisation.
  */
 describe('localisation', function() {
+    var THE_OFFICIAL_TEST_KEY = "this.is.a.test.too_XXX";
     var THE_OFFICIAL_TEST_VALUE_FI = "83989859385938593857ksdjfhskjfhskjhf_fi";
 
     var CONFIG_ENV_MOCK = {
         "env": {
             "key-env-1": "mock-value-env-1",
             "key-env-2": "mock-value-env-2",
-            "tarjonta.localisations": [{ key: "this.is.a.test.too_XXX", value: THE_OFFICIAL_TEST_VALUE_FI, locale: "fi"}],
+            "tarjonta.localisations": [{ key: THE_OFFICIAL_TEST_KEY, value: THE_OFFICIAL_TEST_VALUE_FI, locale: "fi"}],
             "casUrl" : "cas_myroles_tiimi2",
             cas:{userinfo:{lang:"fi"}}
         }, "app": {

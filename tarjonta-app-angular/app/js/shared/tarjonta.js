@@ -275,7 +275,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         console.log("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/Korkeakoulutus?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
         return koulutus.get(arg, func);
     };
 
@@ -310,25 +310,32 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         if (angular.isUndefined(image) || image === null) {
-           return;
+            return;
         }
 
-        var formData = new FormData();
-        var name = "";
-        if (!angular.isUndefined(image.file.name)) {
-            name = image.file.name;
-        } else {
-            console.warn("No image filename.");
+        if (!angular.isUndefined(image.file) &&
+                !angular.isUndefined(image.file.type) &&
+                !angular.isUndefined(image.dataURL)) {
+
+            var apiImg = {kieliUri: kieliuri};
+
+            if (!angular.isUndefined(image.file.name)) {
+                apiImg.filename = image.file.name;
+            } else {
+                apiImg.filename = "";
+            }
+
+            apiImg.mimeType = image.file.type;
+            apiImg.base64data = image.dataURL;
+            //TODO: remove data:image/xxx stuff from the raw image data.
+            //curently data cleaning is done in service
+            //var b = window.atob(img.base64data);
+
+            $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva', apiImg, {
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }).success(fnSuccess).error(fnError);
         }
-
-        formData.append('image', image.file, name);
-
-        $http.post(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + komotoOid + '/kuva/' + kieliuri, formData, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'multipart/form-data'},
-            transformRequest: angular.identity
-        }).success(fnSuccess).error(fnError);
     };
 
     dataFactory.resourceImage = function(komotoOid, kieliuri) {

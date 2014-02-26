@@ -318,6 +318,11 @@ public class HakukohdeResourceImpl implements HakukohdeResource {
 
                     result.add(lt);
                 }
+
+                // Jos valintakokeella ei ole pisterajoja
+                if(lt == null && vk == null) {
+                    result.add(tmp);
+                }
             } else {
                 // Normal and the default case. NOT REACHED at the moment
                 LOG.debug("  Normal case, vk has a type {}", tmp.getTyyppiUri());

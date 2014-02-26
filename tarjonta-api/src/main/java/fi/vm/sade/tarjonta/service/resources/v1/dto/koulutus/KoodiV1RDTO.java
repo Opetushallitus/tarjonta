@@ -194,4 +194,16 @@ public class KoodiV1RDTO implements Serializable {
         return meta;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " "
+                + this.kieliUri + ","
+                + this.kieliVersio + ","
+                + this.kieliArvo + ","
+                + this.kieliKaannos + ","
+                + this.uri + ","
+                + this.versio + ","
+                + this.arvo + ","
+                + this.nimi;
+    }
 }

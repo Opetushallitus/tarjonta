@@ -17,30 +17,22 @@ package fi.vm.sade.tarjonta.model;
 
 import java.io.Serializable;
 import javax.persistence.Embeddable;
-import javax.persistence.EntityListeners;
 
-import fi.vm.sade.security.xssfilter.FilterXss;
-import fi.vm.sade.security.xssfilter.XssFilterListener;
 
 /**
  *
  */
 @Embeddable
-@EntityListeners(XssFilterListener.class)
 public class Osoite implements Serializable {
 
     private static final long serialVersionUID = 93680488375596614L;
 
-    @FilterXss
     private String osoiterivi1;
 
-    @FilterXss
     private String osoiterivi2;
 
-    @FilterXss
     private String postinumero;
 
-    @FilterXss
     private String postitoimipaikka;
 
     public String getOsoiterivi1() {

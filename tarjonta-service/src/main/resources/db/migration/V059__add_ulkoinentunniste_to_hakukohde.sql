@@ -1,0 +1,1 @@
+ALTER TABLE hakukohde ADD COLUMN ulkoinentunniste varchar(255);

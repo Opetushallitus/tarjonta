@@ -16,6 +16,8 @@ import java.util.List;
 @Table( name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME)
 public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 
+    private static final long serialVersionUID = 1L;
+
     public  static final  String VALINTAPERUSTEKUVAUSORA_TABLE_NAME = "valintaperuste_sora_kuvaus";
 
     public static enum Tyyppi { VALINTAPERUSTEKUVAUS, SORA };
