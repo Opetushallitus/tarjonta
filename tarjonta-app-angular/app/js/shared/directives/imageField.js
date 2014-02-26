@@ -111,8 +111,11 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
         };
         $scope.removeUnsavedImage = function(event, uri) {
             if (!angular.isUndefined(uri)) {
-                $element.find('#input_' + uri).remove();
-                $element.find('#img_' + uri).remove();
+                if (!$scope.isInternetExplorer9()) {
+                    $element.find('#input_' + uri).remove();
+                    $element.find('#img_' + uri).remove();
+                }
+
                 if (!angular.isUndefined($scope.ctrl.images[uri])) {
                     delete $scope.ctrl.images[uri];
                 }
@@ -120,10 +123,13 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                     delete $scope.ctrl.imagesLoaded[uri];
                 }
 
-                if (angular.isUndefined($scope.ctrl.html[uri])) {
+                if (!angular.isUndefined(uri) && angular.isUndefined($scope.ctrl.html[uri])) {
                     $scope.addElemInputFile(uri);
                     $scope.addElemImg(uri);
                     $scope.addElemRemoveUnsavedImage(uri);
+                } else if (!$scope.isInternetExplorer9() && !angular.isUndefined(uri)) {
+                    $scope.addElemInputFile(uri);
+                    $scope.addElemImg(uri);
                 }
             }
         };
