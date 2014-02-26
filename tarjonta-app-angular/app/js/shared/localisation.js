@@ -48,6 +48,10 @@ app.factory('Localisations', function($log, $resource, Config) {
         save: {
             method: 'POST',
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        },
+        updateAccessed: {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
     });
 
@@ -149,7 +153,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
  * LocalisationService.tl("this.is.the.key2", "fi", ["array", "of", "values"])  == localized value in given locale
  * </pre>
  */
-app.service('LocalisationService', function($log, $q, Localisations, Config, AuthService) {
+app.service('LocalisationService', function($log, $q, $http, $interval, Localisations, Config, AuthService) {
     $log.log("LocalisationService()");
 
     // Singleton state, default current locale for the user
@@ -185,6 +189,25 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         this.locale = value;
     };
 
+    /**
+     * Collect updates to "accessed" information here, flushed every 5 minutes
+     */
+    this.updateAccessedById = {};
+
+    this.updateAccessInformation = function() {
+        var uri = Config.env.tarjontaLocalisationRestUrl + "/access";
+
+        var ids = Object.keys(this.updateAccessedById);
+        this.updateAccessedById = {};
+
+        $log.info("updateAccessInformation, ids=", ids);
+        Localisations.updateAccessed({ id: "access" }, ids, function () {
+            $log.info("success!");
+        }, function () {
+            $log.info("failed!");
+        });
+    }
+
     // Localisations: MAP[locale][key] = {key, locale, value};
     // This map is used for quick access to the localisation (which are in list)
     // see this.updateLookupMap() how it is filled
@@ -209,10 +232,10 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         var result = this.getRawTranslation(key, locale);
 
         if (!result) {
-            // Should not happen, missing translations created elsewhere...
+            // Should not happen, missing translations created automatically elsewhere...
             result = "!!SHEISSE!! key=" + key + " - locale=" + locale;
         } else {
-            // Expand possible parameters
+            // Expand parameters
             if (params != undefined) {
                 result = result.replace(/{(\d+)}/g, function(match, number) {
                     return angular.isDefined(params[number]) ? params[number] : match;
@@ -253,6 +276,13 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         var v0 = this.localisationMapByLocaleAndKey[locale];
         // Get translation by key
         var v = v0 ? v0[key] : undefined;
+
+        // Update access info
+        if (v0) {
+            // Bookkeeping for accessed updating, only the keys are used.
+            this.updateAccessedById[v0.id] = "";
+        }
+
         // Get value if any
         var result = v ? v.value : undefined;
         return result;
@@ -295,7 +325,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
         // Default locales that translations should be created for
         var locales = ["fi", "en", "sv"];
 
-        if (locales.indexOf(locale) < 0) {
+        if (angular.isDefined(locale) && locales.indexOf(locale) < 0) {
             locales.push(locale);
         }
 
@@ -422,7 +452,7 @@ app.service('LocalisationService', function($log, $q, Localisations, Config, Aut
  * LocalisationCtrl - a localisation controller.
  * An easy way to bind "t" function to global scope. (now attached in "body")
  */
-app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, Config) {
+app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $interval, Config) {
     $log.info("LocalisationCtrl()");
 
     $scope.CONFIG = Config;
@@ -436,5 +466,23 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, C
     $scope.tl = function(key, locale, params) {
         return LocalisationService.tl(key, locale, params);
     };
+
+    /**
+     * Updates used translations.
+     *
+     * @type @call;$interval
+     */
+    var timer = $interval(function () {
+        LocalisationService.updateAccessInformation();
+    }, 5 * 60 * 1000);
+
+    $scope.$on("$destroy", function() {
+        $log.info("LocalisationCtrl() -  $destroy");
+        if (timer) {
+            $interval.cancel(timer);
+            timer = null;
+        }
+        LocalisationService.updateAccessInformation();
+    });
 
 });

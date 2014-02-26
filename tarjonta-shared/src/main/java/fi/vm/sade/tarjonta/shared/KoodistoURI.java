@@ -400,11 +400,19 @@ public class KoodistoURI {
         KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI = uri;
     }
 
-    public void validateKieliUri(String kieliUri) {
-        Preconditions.checkNotNull(kieliUri, "Language uri cannot be null.");
-        Preconditions.checkArgument(Pattern.matches(
-                String.format(PATTERN_KIELI_URI, KOODISTO_KIELI_URI), kieliUri), 
-                "An invalid URI error - URI '%s' do not match to pattern '%s'.", 
+    public static void validateKieliUri(String kieliUri) {
+        Preconditions.checkArgument(isValidKieliUri(kieliUri),
+                "An invalid URI error - URI '%s' do not match to pattern '%s'.",
                 kieliUri, String.format(PATTERN_KIELI_URI, KOODISTO_KIELI_URI));
+    }
+
+    public static boolean isValidKieliUri(String kieliUri) {
+        if (kieliUri == null || kieliUri.isEmpty()) {
+            return false;
+        }
+        return Pattern.matches(String.format(
+                PATTERN_KIELI_URI,
+                KOODISTO_KIELI_URI),
+                kieliUri);
     }
 }
