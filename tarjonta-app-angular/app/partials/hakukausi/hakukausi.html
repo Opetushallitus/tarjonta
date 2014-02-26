@@ -22,9 +22,7 @@
 		</select></td>
 		<td></td>
 	</tr>
-
 <form name="hakukausiForm">
-
 	<tr t-param-edit-date-range name="PHK_HKAR"
 		t-use-default-tt="Hakukauden aikarajat" />
 
@@ -49,24 +47,32 @@
 	<tr t-param-edit-number name="PHK_KELAVTST"
 		t-use-default-tt="Valintojen tiedonsiirron tiheys" />
     <tr t-use-tt-key="hakukausi.help.PHK_KELAVTST" t-help t-use-default-tt="Tiheys määritellään kokonaisina vuorokausina"/>
-	<tr t-param-edit-string name="PHK_KELAVTSAK"
-		t-use-default-tt="Valintojen siirto vuorokaudessa klo" />
+    
+    
+    	<tr>
+	  <th tt="hakukausi.edit.PHK_KELAVTSAK">Valintojen siirto vuorokaudessa klo</th>
+	  <td><input ng-pattern="timePattern" name="PHK_KELAVTSAK" ng-model="model.parameter.PHK_KELAVTSAK"></td>
+      <td>
+		<show-errors form="hakukausiForm" field="PHK_PHK_KELAVTSAK"
+			tt-prefix="hakukausi.edit.parametrit"></show-errors>
+      </td>
+	</tr>
+    
 	<tr t-use-tt-key="hakukausi.help.PHK_KELAVTSAK" t-help t-use-default-tt="Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen"/>
-		
 
 	<tr t-sub-title t-use-default-tt="Tiedonsiirto TEM:ään"
 		t-use-tt-key="hakukausi.edit.tiedonsiirtoTEM"/>
 
-	<tr t-param-edit-date-range name="PHK_TEMTAVS"
+	<tr t-param-edit-date name="PHK_TEMTAVS"
 		t-use-default-tt="Toisen asteen valintojen siirto" t-always/>
-	<tr t-param-edit-date-range name="PHK_TEMKAVS"
+	<tr t-param-edit-date name="PHK_TEMKAVS"
 		t-use-default-tt="Korkeakouluasteen valintojen siirto" t-always/>
 	<tr t-param-edit-number name="PHK_TEMVTST"
 		t-use-default-tt="Valintojen tiedonsiirron tiheys" />
 	<tr t-use-tt-key="hakukausi.help.PHK_TEMVTST" t-help t-use-default-tt="Tiheys määritellään kokonaisina vuorokausina"/>
 	<tr>
 	  <th tt="hakukausi.edit.PHK_TEMVTSAK">Valintojen siirto vuorokaudessa klo</th>
-	  <td><input ng-pattern name="PHK_TEMVTSAK" ng-model="model.parameter.PHK_TEMVTSAK"></td>
+	  <td><input ng-pattern="timePattern" name="PHK_TEMVTSAK" ng-model="model.parameter.PHK_TEMVTSAK"></td>
       <td>
 		<show-errors form="hakukausiForm" field="PHK_TEMVTSAK"
 			tt-prefix="hakukausi.edit.parametrit"></show-errors>

@@ -12,6 +12,9 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
 .controller("HakukausiController",
     [ "Koodisto", "$scope", "ParameterService", function HakukausiController(Koodisto, $scope, Parameter) {
 
+      //validation
+      $scope.timePattern=/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+      
       var vuosi = new Date().getFullYear();
       $scope.model={parameter:{}};
       
