@@ -3,6 +3,8 @@
 var app = angular.module('MonikielinenTextField', ['Koodisto', 'localisation', 'pasvaz.bindonce']);
 
 app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $modal) {
+	
+	var userLangs = window.CONFIG.app.userLanguages;
 
     function defaultLangMapConverter(data) {
         var m = {};
@@ -14,20 +16,6 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         return m;
     }
 
-    function defaultToDirectiveObjConverter(model, init, kieliUri) {
-        return {uri: kieliUri, value: model[kieliUri], removable: init.indexOf(kieliUri) === -1};
-    }
-
-    function directiveModelTokoulutusApiModelConverter(data, model, codes) {
-        for (var i in data) {
-            model[data[i].uri] = {'koodi': {'arvo': data[i].value, 'uri': data[i].uri, 'versio': codes[ data[i].uri].versio}};
-        }
-    }
-
-    function koulutusApiModelToDirectiveObjConverter(model, init, kieliUri) {
-        return {uri: kieliUri, value: model[kieliUri].koodi.arvo, removable: init.indexOf(kieliUri) === -1};
-    }
-
     function controller($scope) {
 
         $scope.codes = {};
@@ -36,7 +24,6 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             $scope.model = {};
         }
 
-        $scope.init = window.CONFIG.app.userLanguages;
         $scope.data = [];
 
         $scope.errors = {
@@ -48,11 +35,13 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         }
 
         $scope.updateModel = function() {
-            if ($scope.type === 'koulutus') {
-                directiveModelTokoulutusApiModelConverter($scope.data, $scope.model, $scope.codes);
-            } else {
-                $scope.model = defaultLangMapConverter($scope.data);
+            $scope.model = {};
+            for (var i in $scope.data) {
+                if ($scope.data[i] && $scope.data[i].value && $scope.data[i].value.length > 0) {
+                	$scope.model[$scope.data[i].uri] = $scope.data[i].value;
+                }
             }
+            
             $scope.errors.dirty = true;
             $scope.errors.invalid = false;
             $scope.errors.pristine = false;
@@ -69,7 +58,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
                 }
 
                 for (var i in $scope.model) {
-                    $log.info("updateModel() - i = " + i);
+                   // $log.info("updateModel() - i = " + i);
                     if ($scope.model[i] && $scope.model[i] != null && $scope.model[i].trim().length > 0) {
                         $scope.errors.required = false;
                     } else {
@@ -82,6 +71,24 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             }
         };
 
+        $scope.sortData = function() {
+        	$scope.data.sort(function(a,b){
+        		var ap = userLangs.indexOf(a.uri);
+        		var bp = userLangs.indexOf(a.uri);
+        		if (ap!=-1 && bp!=-1) {
+        			return ap>bp ? 1 : ap<bp ? -1 : 0;
+        		}
+        		if (ap!=-1) {
+        			return 1;
+        		}
+        		if (bp!=-1) {
+        			return -1;
+        		}
+        		
+        		return $scope.codes[a.uri].nimi.localeCompare($scope.codes[b.uri].nimi);
+        	});
+        }
+
         // kielikoodit koodistosta
         Koodisto.getAllKoodisWithKoodiUri("kieli", LocalisationService.getLocale()).then(function(v) {
             var nc = {};
@@ -93,20 +100,17 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
 
         // data
         for (var kieliUri in $scope.model) {
-            if ($scope.type === 'koulutus') {
-                $scope.data.push(koulutusApiModelToDirectiveObjConverter($scope.model, $scope.init, kieliUri));
-            } else {
-                $scope.data.push(defaultToDirectiveObjConverter($scope.model, $scope.init, kieliUri));
-            }
+            $scope.data.push({uri: kieliUri, value: $scope.model[kieliUri], removable: userLangs.indexOf(kieliUri) == -1});
         }
 
-        // initissä annetut kielet näkyviin
-        for (var kieliUri in $scope.init) {
-            var lang = $scope.init[kieliUri];
-            if (angular.isUndefined($scope.model[lang])) {
+        // vakiokielet näkyviin
+        for (var i in userLangs) {
+            var lang = userLangs[i];
+            if (!$scope.model[lang]) {
                 $scope.data.push({uri: lang, value: "", removable: false});
             }
         }
+        $scope.sortData();
 
         // kielen poisto
         $scope.removeLang = function(uri) {
@@ -149,6 +153,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
                         if ($scope.preselection == lang) {
                             $modalInstance.close();
                             $scope.data.push({uri: lang, value: "", removable: true});
+                            $scope.sortData();
                             $scope.updateModel();
                         } else {
                             $scope.preselection = lang;
@@ -181,9 +186,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             }
         },
         scope: {
-            type: "@", //Modelin suora convertointi tiettyyn objektiin. Jata tyhjaksi jos et tarvitse erikoiskasittelya.
-            //init: "=", //lista kieli(urei)sta jotka näytetään vakiona (ja joita ei siis voi poistaa)
-            model: "=", // map jossa kieliuri -> teksti
+            model: "=", // map jossa kieliuri -> teksti tai decode/encode -funktioiden määräämässä muodossa
 
             // angular-form-logiikkaa varten
             name: "@", // nimi formissa
