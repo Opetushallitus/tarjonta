@@ -360,16 +360,13 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                    if (kieliUri === null) {
-                        if (!angular.isUndefined($scope.uiModel.opetuskielis) && !angular.isUndefined($scope.uiModel.opetuskielis.uris)) {
-                            kieliUri = $scope.uiModel.opetuskielis.uris[0];
-                        }
-                    }
-
-                    $scope.uiModel.selectedKieliUri = kieliUri;
+                	$scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
+                	if (!kieliUri) {
+                		return {};
+                	}
                     var kuvaus = null;
                     if (typeof boolIsKomo !== 'boolean') {
                         converter.throwError('An invalid boolean variable : ' + boolIsKomo);
