@@ -151,9 +151,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         
         function sortSelection() {
             $scope.selection.sort(function(a, b) {
-            	var ai = indexOfItem(a);
-            	var bi = indexOfItem(b);
-                return ai>bi ? 1 : ai<bi ? -1 : 0;
+                return indexOfItem(a)-indexOfItem(b);
             });
         }
 
