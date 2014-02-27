@@ -4,25 +4,147 @@
 angular.module('app').config([ '$routeProvider', function($routeProvider) {
   console.log("adding hakukausi routes");
   $routeProvider.when("/hakukausi", {
-    templateUrl : "partials/hakukausi/hakukausi.html"
+    templateUrl : "partials/hakukausi/hakukausi-select.html"
   });
+
+  $routeProvider.when("/hakukausi/:kausi/:vuosi", {
+    templateUrl : "partials/hakukausi/hakukausi.html",
+    
+    //controls layout ei osaa päivittää tietojaan joten data pitää hakea ensin... 
+    resolve: {
+      dto: function($q,$route, ParameterService) {
+          var kausi = $route.current.params.kausi;
+          var vuosi = $route.current.params.vuosi;
+          
+          var deferred = $q.defer();
+          //päivitetty päivämäärää varten haetaan parametri
+          ParameterService.haeParametrit({
+            path : "PHK_",
+            name : kausi + vuosi
+          }).then(function(params){
+            if(params && params.length>0) {
+              deferred.resolve({tila:"VALMIS", modified:params[0].modified});
+            } else {
+              deferred.resolve({tila:"KESKEN"});
+            }
+            
+          });
+          
+          return deferred.promise;
+      }
+    }
+  
+  });
+
+  
 } ])
+
+
+//form & model directive patching (https://github.com/angular/angular.js/issues/1404)
+
+.config(function($provide) {
+    $provide.decorator('ngModelDirective', function($delegate) {
+      var ngModel = $delegate[0], controller = ngModel.controller;
+      ngModel.controller = ['$scope', '$element', '$attrs', '$injector', function(scope, element, attrs, $injector) {
+        var $interpolate = $injector.get('$interpolate');
+        attrs.$set('name', $interpolate(attrs.name || '')(scope));
+        $injector.invoke(controller, this, {
+          '$scope': scope,
+          '$element': element,
+          '$attrs': attrs
+        });
+      }];
+      return $delegate;
+    });
+    $provide.decorator('formDirective', function($delegate) {
+      var form = $delegate[0], controller = form.controller;
+      form.controller = ['$scope', '$element', '$attrs', '$injector', function(scope, element, attrs, $injector) {
+        var $interpolate = $injector.get('$interpolate');
+        attrs.$set('name', $interpolate(attrs.name || attrs.ngForm || '')(scope));
+        $injector.invoke(controller, this, {
+          '$scope': scope,
+          '$element': element,
+          '$attrs': attrs
+        });
+      }];
+      return $delegate;
+    });
+  })
 
 // controller
 .controller("HakukausiController",
-    [ "Koodisto", "$scope", "ParameterService", function HakukausiController(Koodisto, $scope, Parameter) {
+    [ "Koodisto", "$scope", "ParameterService", "$location", "$routeParams", "$route", function HakukausiController(Koodisto, $scope, Parameter, $location, $routeParams, $route) {
 
-      //validation
+      console.log("RP:", $routeParams);
+      console.log("scope:", $scope);
+      
+
+      var getKausiVuosiIdentifier=function(){
+        return $scope.kausivuosi.kausi + $scope.kausivuosi.vuosi;
+      }
+      
+      //validation pattern, used in the form
       $scope.timePattern=/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+
+      $scope.model={parameter:{},formControls: {},
+          showError: false,
+          showSuccess: false,
+          validationmsgs: [],
+          collapse: {
+              model: true
+          },
+          dto:$route.current.locals.dto
+      };
       
-      var vuosi = new Date().getFullYear();
-      $scope.model={parameter:{}};
+      if($route.current.locals.dto==undefined){
+        $scope.model.dto={
+        };
+      }
+
+      //vuosi & kausi provided
+      if($routeParams.kausi && $routeParams.vuosi) {
+        $scope.kausivuosi={kausi:$routeParams.kausi, vuosi:parseInt($routeParams.vuosi)};
+        
+        var kausivuosi = getKausiVuosiIdentifier();
+        console.log("loading data", kausivuosi);
+        $scope.saved=false;
+        $scope.model.parameter={};
+        Parameter.haeHakukaudenParametrit(kausivuosi, $scope.model.parameter);
+        $scope.model.showError=false;
+        $scope.model.showSuccess=false;
+
+        
+        //"viimeksi muokattu" pvm haku:
+        Parameter.haeParametrit({
+          path : "PHK_",
+          name : kausivuosi
+        }).then(function(params){
+          console.log("parameter fetched?");
+          if(params && params.length>0) {
+            console.log("modified:", $scope.model.dto.modified);
+            $scope.model.dto.modified=params[0].modified;
+            $scope.model.dto.tila="VALMIS";
+          } else {
+            $scope.model.dto.modified=undefined;
+            $scope.model.dto.tila="UUSI";
+            console.log("undefined!");
+          }
+          
+        });
+
+      } else {
+        $scope.kausivuosi={};
+      }
       
-      $scope.kausivuosi={}
+      
+      console.log($scope.kausivuosi)
+      
+
       //kausi-vuoden vuodet, kaksi vuotta taaksepäin
       $scope.vuodet = [];
+      var vuosi = new Date().getFullYear();
       for (var v = vuosi-2; v < vuosi + 10; v++) {
-        $scope.vuodet.push({vuosi:v,label:v});
+        $scope.vuodet.push(v);
       }
 
       var isVuosiKausiValid=function(){
@@ -31,37 +153,43 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
       
       $scope.isVuosiKausiValid=isVuosiKausiValid;
       
-      var getKausiVuosiIdentifier=function(){
-        return $scope.kausivuosi.kausi + $scope.kausivuosi.vuosi.vuosi
-      }
-      
-      var  isKausiVuosiSelected=function() {
-        if(isVuosiKausiValid()){
-          var kausivuosi = getKausiVuosiIdentifier();
-          console.log("loading data", kausivuosi);
-          Parameter.haeHakukaudenParametrit(kausivuosi, $scope.model.parameter);
-        }
-      };
-      
-      
       var saveParameters=function(){
+        $scope.saved=true;
+
         console.log("saving!!!, form:", $scope.hakukausiForm);
+        if(!$scope.hakukausiForm.$valid) {
+          console.log("invalid data, exiting");
+          $scope.model.showError=true;
+          return;
+        }
         var kausivuosi = getKausiVuosiIdentifier();
-        Parameter.tallennaHakukaudenParametrit(kausivuosi, $scope.model.parameter);
-      }
+        Parameter.tallennaHakukaudenParametrit(kausivuosi, $scope.model.parameter).then(
+            function(){
+              $scope.model.showError=false;
+              $scope.model.showSuccess=true;
+            });
+      };
       
       $scope.saveParameters=saveParameters;
 
       $scope.vuosiChanged=function(data){
-        console.log("vuosi changed");
-        isKausiVuosiSelected();
+        if(isVuosiKausiValid()) {
+          setLocation();
+        }
       };
 
-      $scope.kausiChanged=function(data){
-        console.log("kausi changed");
-        isKausiVuosiSelected();
+      $scope.kausiChanged=function(koodi){
+        $scope.kausivuosi.kausi=koodi.koodiUri;
+        if(isVuosiKausiValid()) {
+          setLocation();
+        }
       };
-      
+
+      var setLocation=function(){
+        var path="/hakukausi/" + $scope.kausivuosi.kausi + "/" + $scope.kausivuosi.vuosi;
+        console.log("changing path:", path)
+        $location.path(path);
+      }
 
     }
     ]
@@ -80,34 +208,6 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
     link:function(scope, element, attrs){
       scope.name = attrs.name;
       scope.nameb = attrs.name + "AM";  //"aina valintojen..."
-    }
-      
-  };
-})
-/**
- * Numeron editointi rivi
- */
-.directive('tParamEditNumber', function() {
-  return {
-    restrict: 'A',
-    scope:true,
-    templateUrl: 'partials/hakukausi/edit-number.html',
-    link:function(scope, element, attrs){
-      scope.name = attrs.name;
-    }
-      
-  };
-})
-/**
- * Stringin editointi
- */
-.directive('tParamEditString', function() {
-  return {
-    restrict: 'A',
-    scope:true,
-    templateUrl: 'partials/hakukausi/edit-number.html',
-    link:function(scope, element, attrs){
-      scope.name = attrs.name;
     }
       
   };
@@ -164,6 +264,19 @@ angular.module('app').config([ '$routeProvider', function($routeProvider) {
     link: function(scope, element, attrs){
       scope.tUseDefaultTt = attrs.tUseDefaultTt;
       scope.tUseTtKey = attrs.tUseTtKey;
+    }
+  }
+})
+
+/**
+ * Required
+ */
+.directive('tIsRequired', function(){
+  return {
+    restrict: 'A',
+    scope:true,
+    link: function(scope, element, attrs){
+      scope.tIsRequired = "true"===attrs.tIsRequired;
     }
   }
 })

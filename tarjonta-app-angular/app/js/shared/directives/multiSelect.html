@@ -5,7 +5,8 @@
 		<select  bindonce multiple="multiple"
 				ng-model="preselection"
 				ng-options="e.key as e.value for e in items"
-				ng-change="onPreselection(preselection)"
+                ng-dblclick="onPreselection(preselection)"
+                ng-enter="onPreselection(preselection)"
 				ng-disabled="disabled()">
 	    </select>
 	    <ul class="selection">
