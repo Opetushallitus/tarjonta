@@ -260,7 +260,8 @@ public class UiBuilder extends UiUtil {
         if (prompt != null) {
             combo.setInputPrompt(prompt);
         }
-        KoodistoComponent c = bean.createComponent(koodistoUri);
+        //Tuomas Katva 27.2.2014 -> OVT-6744 ei haeta passiivisia koodeja koodistosta.
+        KoodistoComponent c = bean.createComponent(koodistoUri,true);
 
         // Wire koodisto to combobox
         c.setField(combo);
