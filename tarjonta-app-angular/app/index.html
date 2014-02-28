@@ -142,6 +142,7 @@
         <script src="partials/koulutus/edit/aiheet-teemat.js"></script>
         <script src="partials/koulutus/edit/koulutusConverter.js"></script>
         <script src="partials/koulutus/edit/tutkintonimike.js"></script>
+        <script src="partials/koulutus/edit/laajuus.js"></script>
 
         <script src="partials/koulutus/edit/alkamispaiva-ja-kausi.js"></script>
 
@@ -154,11 +155,14 @@
         <script src="partials/haku/edit/hakuEditControllers.js"></script>
         <script src="partials/haku/review/hakuReviewControllers.js"></script>
 
+
         <script src="lib/ui-bootstrap-tpls-0.9.0.js"></script>
 
         <script src="partials/common/dialogService.js"></script>
 
         <script src="partials/tarjontaApp.js"></script>
+        <script src="partials/hakukausi/hakukausi.js"></script>
+
         <script src="partials/init.js"></script>
 
         <!-- TYYLIT - huomaa järjestys kun lisäilet -->
@@ -185,6 +189,8 @@
         <link href="css/dateTime.css" rel="stylesheet"/>
 
         <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
+
+
     </head>
 
     <body data-ng-controller="AppRoutingCtrl">
@@ -273,9 +279,12 @@
                     <div data-ng-switch-when="koodistoTest">
                         <div data-ng-include="'partials/koodistoTest.html'" data-ng-controller="KoodistoTestController"></div>
                     </div>
-                      
+
                     <div data-ng-switch-when="komo">
                         <div data-ng-include="'partials/komo/komo.html'" data-ng-controller="KomoController"></div>
+                    </div>
+                    <div data-ng-switch-default>
+                    	<ng-view>
                     </div>
                 </div><!-- /renderPath[0] -->
 
@@ -304,30 +313,30 @@
         </div>
 
         <div data-ng-controller="LoadingCtrl">
-        <div id="ajax-loader" class="pre-init max ng-class: { max:isModal(), min:!isModal(), lowered:isError() }" data-ng-show="loading">
-            <div class="frame">
-                <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
-                <span class="post-init spinner-msg" tt="loading" ng-show="!isError() && isTimeout(false)"></span>
-                <div class="post-init timeout" ng-show="!isError() && isTimeout(true)">
-                    <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
-                        tai järjestelmän väliaikaisesta kuormituksesta.</p>
+            <div id="ajax-loader" class="pre-init max ng-class: { max:isModal(), min:!isModal(), lowered:isError() }" data-ng-show="loading">
+                <div class="frame">
+                    <img class="spinner" alt="{{ t('loading')}}" src="img/ajax-loader-big.gif" />
+                    <span class="post-init spinner-msg" tt="loading" ng-show="!isError() && isTimeout(false)"></span>
+                    <div class="post-init timeout" ng-show="!isError() && isTimeout(true)">
+                        <p tt="loading.timeout">Taustapalvelin vastaa pyyntöihin epätavallisen hitaasti, joka voi johtua joko toimintahäiriöstä
+                            tai järjestelmän väliaikaisesta kuormituksesta.</p>
 
-                    <a href bg-click="restart()" class="btn float-right">
-                        <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
-                    </a>
+                        <a href bg-click="restart()" class="btn float-right">
+                            <span tt="tarjonta.tekninenvirhe.restart"></span> <img src="img/icon16-refresh.png"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="fail">
+                    <hr/>               
+                    <p>Palvelussa on hetkellinen häiriö, yritä hetken kuluttua uudelleen.</p>
+
+                    <p>Tillfällig avbrott i tjänsten, försök på nytt om en stund.</p>
+
+                    <hr/>
+                    <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
+
                 </div>
             </div>
-            <div class="fail">
-                <hr/>               
-                <p>Palvelussa on hetkellinen häiriö, yritä hetken kuluttua uudelleen.</p>
-
-                <p>Tillfällig avbrott i tjänsten, försök på nytt om en stund.</p>
-
-                <hr/>
-                <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
-
-            </div>
-        </div>
         </div>
 
         <script> tarjontaInit();</script>

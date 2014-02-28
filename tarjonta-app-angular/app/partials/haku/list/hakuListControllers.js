@@ -17,15 +17,47 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService',
-            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService) {
-                $log.info("HakuListController()");
+        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
+            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
+                
+          $log.info("HakuListController()");
+                
+                Koodisto.getAllKoodisWithKoodiUri('kausi').then(function(kaudet){
+                  var k = kaudet[0].koodi_uri=="kausi_k"?0:1;
+                  var kevat = kaudet[k];
+                  var syksy = kaudet[(k+1)%1];
+                  
+                  console.log(kaudet);
+                  //vuosi-kaudet
+                  for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++) {
+                    $scope.vuosikausi.push({vuosi:y,kausi:kevat.koodiUri + '#' + kevat.koodiVersio,label:y + ' ' + kevat.koodiNimi});
+                    $scope.vuosikausi.push({vuosi:y,kausi:syksy.koodiUri + '#' + syksy.koodiVersio,label: y + ' ' + syksy.koodiNimi});
+                  }
+                });
 
-                $scope.model = null;
-
-                function isEmpty(value) {
-                    return (typeof value === "undefined" || value == null || value.length === 0);
+                $scope.states=[];
+                $scope.vuosikausi=[];
+                
+                for (var s in CONFIG.env["tarjonta.tila"]) {
+                  $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
                 }
+                
+                
+                $scope.clearSearch = function() {
+                  $scope.searchParams=  {
+                    HAKUSANA: undefined,
+                    TILA : undefined,
+                    HAKUKAUSI : undefined,
+                    HAKUVUOSI : undefined,
+                    KOULUTUKSEN_ALKAMISKAUSI : undefined,
+                    KOULUTUKSEN_ALKAMISVUOSI : undefined,
+                    HAKUTAPA : undefined,
+                    HAKUTYYPPI : undefined,
+                    KOHDEJOUKKO : undefined
+                  };
+                };
+                
+                $scope.clearSearch();
 
                 $scope.doCreateNew = function() {
                     $log.info("doCreateNew()");
@@ -39,46 +71,21 @@ app.controller('HakuListController',
 
                 $scope.doSearch = function() {
                     $log.info("doSearch()");
-                    dialogService.showNotImplementedDialog();
-                };
-
-                $scope.doSearchClear = function() {
-                    $log.info("doSearchClear()");
-                    $scope.model.search.tila = "";
-                    delete $scope.model.search.koulutuksenAlkamiskausiUri;
-                    delete $scope.model.search.koulutuksenAlkamisVuosi;
-                };
-
-
-                $scope.getHakuName = function(haku) {
-                    var userLocale = LocalisationService.getLocale();
-                    var userKieliUri = "kieli_" + userLocale;
-
-                    var result = haku.nimi[userKieliUri];
-
-                    if (isEmpty(result)) {
-                        result = haku.nimi["kieli_fi"];
-                        if (!isEmpty(result)) {
-                            result = result + " (FI)";
-                        }
+                    var params = angular.copy($scope.searchParams);
+                    if(params['KOULUTUKSEN_ALKAMISVUOSIKAUSI']) {
+                      var kVuosikausi = params['KOULUTUKSEN_ALKAMISVUOSIKAUSI'];
+                      delete params['KOULUTUKSEN_ALKAMISVUOSIKAUSI']
+                      params['KOULUTUKSEN_ALKAMISVUOSI']=kVuosikausi.vuosi;
+                      params['KOULUTUKSEN_ALKAMISKAUSI']=kVuosikausi.kausi;
                     }
-                    if (isEmpty(result)) {
-                        result = haku.nimi["kieli_sv"];
-                        if (!isEmpty(result)) {
-                            result = result + " (SV)";
-                        }
-                    }
-                    if (isEmpty(result)) {
-                        result = haku.nimi["kieli_en"];
-                        if (!isEmpty(result)) {
-                            result = result + " (EN)";
-                        }
-                    }
-                    if (isEmpty(result)) {
-                        result = "[EI NIMIEÄ]";
-                    }
-
-                    return result;
+                    if(params['HAKUVUOSIKAUSI']) {
+                      var hVuosikausi = params['HAKUVUOSIKAUSI'];
+                      delete params['HAKUVUOSIKAUSI'];
+                      params['HAKUVUOSI']=hVuosikausi.vuosi;
+                      params['HAKUKAUSI']=hVuosikausi.kausi;
+                    } 
+                    
+                    HakuV1Service.search(params).then(function(haut){$scope.model.hakus=haut;});
                 };
 
                 $scope.init = function() {
@@ -95,14 +102,6 @@ app.controller('HakuListController',
                         place: "holder"
                     };
 
-                    // Load all hakus
-                    Haku.findAll(function(result) {
-                        $log.info("Haku.get() result", result);
-                        model.hakus = result.result;
-                    }, function(error) {
-                        $log.info("Haku.get() error", error);
-                        model.hakus = [];
-                    });
 
                     $log.info("init... done.");
                     $scope.model = model;

@@ -6,16 +6,14 @@
             title="model.tekstis"
             dto="model.valintaperustekuvaus">
 
-        <controls-button tt="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
+        <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
 
-        <controls-button tt="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
+        <controls-notify type="message" tt-expr="getNimetKey()" tt-params="[ getNimet() ]"></controls-notify>
+        <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
+        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
-        <controls-notify type="message" tt="getNimetKey()" tp="[ getNimet() ]"></controls-notify>
-
-        <controls-notify type="success" tt="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
-        <controls-notify type="error" tt="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
-
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
 
@@ -75,21 +73,5 @@
                 <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>
 
             </form>
-
-
     <display-controls model="formControls" display="footer"></display-controls>
-
-    <!--
-  <div ng-click="model.collapse.model= !model.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
-    </div>
-    <div ng-if="!model.collapse.model">
-    <div collapse="model.collapse.model">
-        <pre>
-            {{ model | json }}
-        </pre>
-    </div>
- </div>
-     -->
-
 </div>

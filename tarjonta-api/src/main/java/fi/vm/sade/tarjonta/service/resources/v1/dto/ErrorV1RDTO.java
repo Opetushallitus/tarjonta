@@ -196,6 +196,6 @@ public class ErrorV1RDTO implements Serializable {
                 + ", _errorTechnicalInformation=" + _errorTechnicalInformation
                 + "]";
     }
-    
-    
+
+
 }

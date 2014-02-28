@@ -3,80 +3,89 @@
     <table>
         <tr>
             <th></th>
-            <th ttt="haku.search.tila">Tila</th>
-            <th colspan="2" ttt="haku.search.alkamiskausiJaVuosi">Koulutuksen alkamiskausi ja vuosi</th>
+            <th><span tt="haku.list.tila"/></th>
+            <th><span tt="haku.list.alkamiskausiJaVuosi"/></th>
+            <th><span tt="haku.list.koulutuksenAlkamiskausiJaVuosi"/></th>
+            <th><span tt="haku.list.hakutapa"/></th>
+            <th><span tt="haku.list.hakutyyppi"/></th>
+            <th><span tt="haku.list.haunKohdejoukko"/></th>
         </tr>
 
         <tr>
-            <td><input type="text" placeholder="hakuehto" class="input search-query" ng-model="model.search.hakuehto" ng-enter="doSearch()"></td>
+            <td><input type="text" placeholder="{{t('haku.list.hakuehto')}}" class="input search-query" ng-model="searchParams.HAKUSANA" ng-enter="doSearch()"></td>
             <td>
-                <select ng-model="model.search.tila">
-                    <option value="" ttt="haku.tila.kaikki">-- Kaikki --</option>
-                    <option value="JULKAISTU" ttt="haku.tila.JULKAISTU">Julkaistu</option>
-                    <option value="VALMIS" ttt="haku.tila.VALMIS">Valmis</option>
-                    <option value="LUONNOS" ttt="haku.tila.LUONNOS">Luonnos</option>
-                    <option value="PERUTTU" ttt="haku.tila.PERUTTU">Peruttu</option>
-                    <option value="KOPIOITU" ttt="haku.tila.KOPIOITU">Kopioitu</option>
+                <select ng-model="searchParams.TILA" ng-options="s as t for (s,t) in states" >
+                    <option value="" tt="haku.list.hakuehto.tila"/></option>
                 </select>
             </td>
 
             <td>
-                <div koodistocombo koodistouri="'kausi'" locale="getLocale()" koodiuri="model.search.koulutuksenAlkamiskausiUri" version="true"></div>
+                <select ng-model="searchParams.HAKUVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
+                    <option value="" tt="haku.list.hakuehto.hakukausivuosi"></option>
+                </select>
             </td>
             <td>
-                <input type="number" placeholder="vuosi" ng-model="model.search.koulutuksenAlkamisVuosi">
+                <select ng-model="searchParams.KOULUTUKSEN_ALKAMISVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
+                    <option value="" tt="haku.list.hakuehto.koulutuksenkausivuosi"></option>
+                </select>
             </td>
-
+            <td>
+                <div koodistocombo prompt="t('haku.list.hakutapa.kaikki')" koodistouri="'hakutapa'" koodiuri="searchParams.HAKUTAPA" version="true"></div>
+            </td>
+            <td>
+				<div koodistocombo prompt="t('haku.list.hakutyyppi.kaikki')" koodistouri="'hakutyyppi'" koodiuri="searchParams.HAKUTYYPPI" version="true"></div>
+            </td>
+            <td>
+                <div koodistocombo prompt="t('haku.list.haunkohdejoukko.kaikki')" koodistouri="'haunkohdejoukko'" koodiuri="searchParams.KOHDEJOUKKO" version="true"></div>
+            </td>
         </tr>
 
         <tr>
-            <td class="align-right" colspan="4">
-                <div class="btn" ttt="haku.search.tyhjenna" ng-click="doSearchClear()">Tyhjennä</div>
-                <div class="btn" ttt="haku.search.hae" ng-click="doSearch()">Hae</div>
+            <td class="align-right" colspan="7">
+                <div class="btn" ng-click="clearSearch()"><span tt="haku.list.tyhjenna"></span></div>
+                <div class="btn" ng-click="doSearch()"><span tt="haku.list.hae"></span></div>
             </td>
         </tr>
     </table>
 
     <tabset>
-        <tab heading="Haut ({{ model.hakus.length}} kpl)">
+        <tab heading="{{t('haku.list.hakuvastaus.lkm', [model.hakus.length])}}">
 
             <div class="container-fluid">
 
                 <div class="row-fluid">
                     <div class="span4">
-                        <div class="btn" ttt="haku.list.luoUusiHaku" ng-click="doCreateNew()">Luo uusi haku</div>
-                        <div class="btn" ttt="haku.list.poista" ng-click="doDelete()">Poista</div>
+                        <div class="btn" ng-click="doCreateNew()"><span tt="haku.list.luoUusiHaku">Luo uusi haku</span></div>
+                        <div class="btn" ng-click="doDelete()"><span tt="haku.list.poista">Poista</span></div>
                     </div>
                 </div>
 
                 <div class="row-fluid">
                     <div class="span12">
-                        <table>
+                        <table ng-hide="model.hakus==0">
                             <tr>
-                                <th ttt="haku.list.nimi">Nimi</th>
-                                <th ttt="haku.list.hakutyyppi">Hakutyyppi</th>
-                                <th ttt="haku.list.hakukausi">Hakukausi</th>
-                                <th ttt="haku.list.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi</th>
-                                <th ttt="haku.list.haunKohdejoukko">Haun kohdejoukko</th>
-                                <th ttt="haku.list.muokkaa">Muokkaa</th>
-                                <th ttt="haku.list.tarkastele">Tarkastele</th>
+                                <th><span tt="haku.list.nimi">Nimi</span></th>
+                                <th><span tt="haku.list.hakutyyppi">Hakutyyppi</span></th>
+                                <th><span tt="haku.list.hakukausi">Hakukausi</span></th>
+                                <th><span tt="haku.list.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi</span></th>
+                                <th><span tt="haku.list.haunKohdejoukko">Haun kohdejoukkoX</span></th>
+                                <th><span tt="haku.list.muokkaa">Muokkaa</span></th>
+                                <th><span tt="haku.list.tarkastele">Tarkastele</span></th>
                             </tr>
 
                             <tr ng-repeat="haku in model.hakus">
-                                <td>{{getHakuName(haku) }}</td>
+                                <td>{{haku.nimi}}</td>
                                 <td><koodi uri="haku.hakutyyppiUri"/></td>
                                 <td><koodi uri="haku.hakukausiUri"/> {{haku.hakukausiVuosi}}</td>
                                 <td><koodi uri="haku.koulutuksenAlkamiskausiUri"/> {{haku.koulutuksenAlkamisVuosi }} </td>
                                 <td><koodi uri="haku.kohdejoukkoUri"/></td>
-                                <td><a href="#/haku/{{ haku.oid}}/edit">Edit</a></td>
-                                <td><a href="#/haku/{{ haku.oid}}">Review</a></td>
+                                <td><a href="#/haku/{{ haku.oid}}/edit"><span tt="haku.list.edit"/></a></td>
+                                <td><a href="#/haku/{{ haku.oid}}"><span tt="haku.list.review"/></a></td>
                             </tr>
                         </table>
                     </div>
                 </div>
             </div>
-
         </tab>
     </tabset>
-
 </div>

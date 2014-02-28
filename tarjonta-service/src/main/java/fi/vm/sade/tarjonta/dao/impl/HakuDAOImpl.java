@@ -15,26 +15,20 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import static fi.vm.sade.tarjonta.model.Haku.HAUN_ALKAMIS_PVM;
-import static fi.vm.sade.tarjonta.model.Haku.HAUN_LOPPUMIS_PVM;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.expr.ComparableExpressionBase;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -44,7 +38,9 @@ import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QTekstiKaannos;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
-import fi.vm.sade.tarjonta.service.types.SearchCriteriaType;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -80,6 +76,15 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     }
 
     @Override
+    public List<Haku> findByOids(List<String> oids) {
+        QHaku qHaku = QHaku.haku;
+
+        return from(qHaku).join(qHaku.nimi, QMonikielinenTeksti.monikielinenTeksti).fetch()
+                .join(QMonikielinenTeksti.monikielinenTeksti.tekstis, QTekstiKaannos.tekstiKaannos).fetch().where(qHaku.oid.in(oids)).distinct()
+                .list(qHaku);
+    }
+
+    @Override
     public List<Haku> findBySearchString(String searchString, String kieliKoodi) {
         QMonikielinenTeksti qTekstis = QMonikielinenTeksti.monikielinenTeksti;
         QTekstiKaannos qKaannos = QTekstiKaannos.tekstiKaannos;
@@ -97,80 +102,11 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
-
-    @Override
-    public List<Haku> findAll(SearchCriteriaType searchCriteria) {
-
-        // TODO: this will fail because translated texts were moved to KaannosTeksti instead keeping
-        // fixed fields for set of languages. instead of using criteria api, try using the DSL metadata
-        // generated for this domain
-
-
-        boolean p = searchCriteria.isPaattyneet();
-        boolean m = searchCriteria.isMeneillaan();
-        boolean t = searchCriteria.isTulevat();
-        String lang = searchCriteria.getLang();
-
-        EntityManager em = getEntityManager();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Haku> query = cb.createQuery(Haku.class);
-        Root<Haku> hakuera = query.from(Haku.class);
-
-        // disabled for now - see comments above
-        //query.orderBy(createOrderBy(lang, cb, hakuera));
-
-        Predicate where = null;
-
-        if (m && p && t) {
-            // kaikki
-        } else if (p && m && !t) {
-            // päättyneet ja meneillään -> alkuaika pienempi kuin nyt
-            where = cb.lessThan(hakuera.<Date>get(HAUN_ALKAMIS_PVM), cb.currentTimestamp());
-        } else if (!p && m && t) {
-            // meneilläään ja tulevat -> loppuaika suurempi kuin nyt
-            where = cb.greaterThan(hakuera.<Date>get(HAUN_LOPPUMIS_PVM), cb.currentTimestamp());
-        } else if (p && !m && t) {
-            // päättyneet ja tulevat -> loppuaika pienempi kuin nyt TAI alkuaika suurempi kuin nyt
-            where = cb.or(
-                    cb.lessThan(hakuera.<Date>get(HAUN_LOPPUMIS_PVM), cb.currentTimestamp()),
-                    cb.greaterThan(hakuera.<Date>get(HAUN_ALKAMIS_PVM), cb.currentTimestamp()));
-        } else if (p && !m && !t) {
-            // päättyneet -> loppuaika pienempi kuin nyt
-            where = cb.lessThan(hakuera.<Date>get(HAUN_LOPPUMIS_PVM), cb.currentTimestamp());
-        } else if (!p && m && !t) {
-            // meneillään -> alkuaika pienempi kuin nyt JA loppuaika suurempi kuin nyt
-            where = cb.between(cb.currentTimestamp(), hakuera.<Date>get(HAUN_ALKAMIS_PVM), hakuera.<Date>get(HAUN_LOPPUMIS_PVM));
-        } else if (!p && !m && t) {
-            // tulevat -> alkuaika suurempi kuin nyt
-            where = cb.greaterThan(hakuera.<Date>get(HAUN_ALKAMIS_PVM), cb.currentTimestamp());
-        } else { // (!m && !p && !t)
-            // ei mitään
-            return new ArrayList<Haku>();
-        }
-
-        query.select(hakuera);
-        if (where != null) {
-            query.where(where);
-        }
-
-        return getEntityManager().createQuery(query).getResultList();
-    }
-
-    private Order createOrderBy(String lang, CriteriaBuilder cb, Root<Haku> hakuera) {
-        Order orderBy;
-        if ("sv".equals(lang)) {
-            orderBy = cb.asc(hakuera.get("nimiSv"));
-        } else if ("en".equals(lang)) {
-            orderBy = cb.asc(hakuera.get("nimiEn"));
-        } else {
-            orderBy = cb.asc(hakuera.get("nimiFi"));
-        }
-        return orderBy;
-    }
     
     @Override
     public List<Haku> findBySearchCriteria(ListHakuSearchParam param) {
 
+        
 
         QHaku haku = QHaku.haku;
 
@@ -237,6 +173,78 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         getEntityManager().detach(entity);
         Preconditions.checkNotNull(getEntityManager().find(Haku.class, entity.getId()));
         super.update(entity);
+    }
+
+    
+    //mappi enumista sarakkeeseen
+    private final Map<Field,ComparableExpressionBase> mapping = new ImmutableMap.Builder<Field, ComparableExpressionBase>()
+            .put(Field.HAKUKAUSI, QHaku.haku.hakukausiUri)
+            .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi)
+            .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri)
+            .put(Field.KOULUTUKSEN_ALKAMISVUOSI, QHaku.haku.koulutuksenAlkamisVuosi)
+            .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri)
+            .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri)
+            .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri)
+            .put(Field.HAKUSANA, QTekstiKaannos.tekstiKaannos.arvo)
+            .put(Field.TILA, QHaku.haku.tila)
+            .build();
+    
+
+    private final Map<Match,String> matchType = new ImmutableMap.Builder<Match, String>()
+            .put(Match.MUST_MATCH, "=")
+            .put(Match.MUST_NOT, "!=")
+            .put(Match.LIKE, " like ")
+            .build();
+
+    public <T>List<T> findByCriteria(int count, int startIndex,
+            List<HakuSearchCriteria> criteriaList, boolean oidOnly) {
+
+        String q = "SELECT distinct " + (oidOnly?"haku.oid":"haku") + " from Haku haku join haku.nimi nimi join nimi.tekstis tekstiKaannos" + (criteriaList.size()>0?" where ":"");
+
+        for(int i=0;i<criteriaList.size();i++) {
+            HakuSearchCriteria criteria = criteriaList.get(i);
+            String field = mapping.get(criteria.getField()).toString();
+            if(field==null) {
+                //no mapping available
+                throw new IllegalArgumentException("No mapping found for criteria name:" + criteria.getField());
+            }
+            String template = (criteria.getField()==Field.HAKUSANA?"LOWER(%s)":"%s");
+            
+            q += String.format(template, field ) + matchType.get(criteria.getMatch()) + "?" + (i+1);
+            
+            if(i<criteriaList.size()-1) {
+                q += " AND ";
+            }
+        }
+        
+        System.out.println("q:" + q);
+        
+        final Query query = getEntityManager().createQuery(q);
+        for(int i=0;i<criteriaList.size();i++) {
+            HakuSearchCriteria criteria = criteriaList.get(i);
+            query.setParameter(i+1, (criteria.getField()==Field.HAKUSANA?criteria.getValue().toString().toLowerCase():criteria.getValue()));
+        }
+        
+        if (count > 0) {
+            query.setMaxResults(count);
+        }
+        if (startIndex > 0) {
+            query.setFirstResult(startIndex);
+        }
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> findOIDByCriteria(int count, int startIndex,
+            List<HakuSearchCriteria> criteriaList) {
+        return findByCriteria(count, startIndex, criteriaList, true);
+    }
+
+    @Override
+    public List<Haku> findHakuByCriteria(int count, int startIndex,
+            List<HakuSearchCriteria> criteriaList) {
+        return findByCriteria(count, startIndex, criteriaList, false);
     }
 
 }

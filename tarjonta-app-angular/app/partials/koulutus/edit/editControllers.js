@@ -2,9 +2,9 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService',
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService',
             function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
-                    $window, converter, koodisto, $modal, PermissionService) {
+                    $window, converter, koodisto, $modal, PermissionService, dialogService) {
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -12,16 +12,7 @@ app.controller('BaseEditController',
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
-              
-
                 $scope.formControls = {};
-
-                var showSuccess = function() {
-                    $scope.uiModel.showValidationErrors = false;
-                    $scope.uiModel.showSuccess = true;
-                    $scope.uiModel.showError = false;
-                    $scope.uiModel.hakukohdeTabsDisabled = false;
-                };
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
                 $scope.lisatiedot = [];
@@ -30,30 +21,24 @@ app.controller('BaseEditController',
                     var uiModel = {};
                     var model = {};
 
-                    uiModel.selectedKieliUri ="" //tab language
-                    uiModel.showValidationErrors = false;
-                    uiModel.showError = false;
-                    uiModel.showSuccess = false;
-                    uiModel.validationmsgs = [];
-
+                    uiModel.selectedKieliUri = "" //tab language
                     converter.createUiModels(uiModel);
+
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
-                        //DATA WAS LOADED BY KOMOTO OID
+                        /*
+                         * LOAD KOULUTUS BY GIVEN KOMOTO OID
+                         */
+                        $scope.controlFormMessages(uiModel, "LOAD");
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $scope.koulutusModel.result;
 
                         if (angular.isUndefined(model)) {
                             $location.path("/error");
                             return;
-                        }
-
-                        if (angular.isUndefined(model.opintojenLaajuusyksikko.uri)) {
-                            //remove when not needed...
-                            $scope.searchOpintojenLaajuusyksikko(model);
                         }
 
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
@@ -77,7 +62,10 @@ app.controller('BaseEditController',
 
                         uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
                     } else if (!angular.isUndefined($routeParams.org)) {
-                        //CREATE NEW KOULUTUS
+                        /*
+                         * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
+                         */
+                        $scope.controlFormMessages(uiModel, "INIT");
                         converter.createAPIModel(model, cfg.app.userLanguages);
                         $scope.loadRelationKoodistoData(model, uiModel, $routeParams.koulutuskoodi);
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
@@ -92,11 +80,13 @@ app.controller('BaseEditController',
                      * LOAD ALL KOODISTO KOODIS
                      */
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
-                        var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
-                        uiModel[key].promise = koodisPromise;
-                        koodisPromise.then(function(result) {
-                            uiModel[key].koodis = result;
-                        });
+                        if (angular.isUndefined(value.skipUiModel)) {
+                            var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
+                            uiModel[key].promise = koodisPromise;
+                            koodisPromise.then(function(result) {
+                                uiModel[key].koodis = result;
+                            });
+                        }
                     });
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                         if (angular.isUndefined(cfg.env[value.koodisto])) {
@@ -118,15 +108,64 @@ app.controller('BaseEditController',
                         });
                     });
 
+                    // lisätietokielivalinnat
+                    uiModel.lisatietoKielet = angular.copy(uiModel.opetuskielis.uris);
+                    for (var ki in model.kuvausKomo) {
+                        for (var lc in model.kuvausKomo[ki].tekstis) {
+                            if (uiModel.lisatietoKielet.indexOf(lc) == -1) {
+                                uiModel.lisatietoKielet.push(lc);
+                            }
+                        }
+                    }
+
+                    uiModel.lisatietoKielet.sort();
+
                     /*
                      * INIT SCOPES FOR RENDERER
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
                 };
-                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
-                    $scope.searchOpintojenLaajuusyksikko(apiModel);
 
+                function deleteLisatiedot(lc) {
+                    var lcp = $scope.uiModel.lisatietoKielet.indexOf(lc);
+                    if (lcp == -1) {
+                        return;
+                    }
+                    $scope.uiModel.lisatietoKielet.splice(lcp, 1);
+
+                    for (var ki in $scope.model.kuvausKomo) {
+                        for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
+                            $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
+                        }
+                    }
+                }
+
+                $scope.onLisatietoLangSelection = function() {
+                    for (var ki in $scope.model.kuvausKomo) {
+                        for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
+                            if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1
+                                    && $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length > 0) {
+                                // palautetaan listaan jottei angular digestoi ennen dialogia
+                                $scope.uiModel.lisatietoKielet.push(lc);
+                                $scope.uiModel.lisatietoKielet.sort();
+
+                                if ($scope.uiModel.opetuskielis.uris.indexOf(lc) == -1) {
+                                    // ei opetuskieli -> varmista poisto dialogilla
+                                    dialogService.showDialog({
+                                        ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
+                                        title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
+                                        description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[lc]])
+                                    }).result.then(function(ret) {
+                                        deleteLisatiedot(lc);
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
                     tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
@@ -136,7 +175,7 @@ app.controller('BaseEditController',
                         angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
                             uiModel[key].meta = restRelationData[key].meta;
 
-                            if (!angular.isUndefined(apiModel[key].uris)) {
+                            if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
                                 uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
                             }
                         });
@@ -153,19 +192,15 @@ app.controller('BaseEditController',
                     $scope.saveByStatus('VALMIS');
                 };
                 $scope.saveByStatus = function(tila) {
-                    if ($scope.uiModel.validationmsgs.length > 0) {
-                        $scope.uiModel.validationmsgs.splice(0, $scope.uiModel.validationmsgs.length);
-                    }
-                    $scope.formControls.notifs.errorDetail = [];
-                    $scope.uiModel.showError = false;
+                    $scope.controlFormMessages($scope.uiModel, "CLEAR");
 
                     if (angular.isUndefined(tila)) {
                         converter.throwError('Undefined tila');
                     }
 
-                    if ($scope.koulutusForm.$invalid) {
+                    if ($scope.koulutusForm.$invalid || !$scope.koulutusForm.$valid || ($scope.koulutusForm.$pristine && !$scope.isLoaded())) {
                         //invalid form data
-                        $scope.uiModel.showError = true;
+                        $scope.controlFormMessages($scope.uiModel, "ERROR", "UI_ERRORS");
                         return;
                     }
 
@@ -174,10 +209,10 @@ app.controller('BaseEditController',
 
                         if (authResponse.status !== 'OK') {
                             //not authenticated
-                            $scope.uiModel.showError = true;
+                            $scope.controlFormMessages($scope.uiModel, "ERROR", "AUTH");
                             return;
                         }
-                        
+
                         var KoulutusRes = tarjontaService.koulutus();
                         var apiModelReadyForSave = $scope.saveModelConverter(tila);
 
@@ -186,23 +221,12 @@ app.controller('BaseEditController',
 
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
-                                showSuccess();
+                                $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
-                                $scope.koulutusForm.$dirty = false;
-                                $scope.koulutusForm.$invalid = false;
-                                
                                 $scope.$broadcast("onImageUpload", ""); //save images
                             } else {
-                                $scope.uiModel.showValidationErrors = true;
-                               
-                                if (!angular.isUndefined(saveResponse.errors)) {
-                                    for (var i = 0; i < saveResponse.errors.length; i++) {
-                                        $scope.uiModel.validationmsgs.push(saveResponse.errors[i].errorMessageKey);
-                                    }
-                                }
-                                //save failed
-                                $scope.uiModel.showError = true;
+                                $scope.controlFormMessages($scope.uiModel, "ERROR", null, saveResponse.errors);
                             }
                         });
                     });
@@ -239,16 +263,18 @@ app.controller('BaseEditController',
                     });
 
                     angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
-                        apiModel[key] = {'uris': {}};
-                        //search version information for list of uris;
-                        var map = {};
-                        var meta = $scope.uiModel[key].meta;
-                        for (var i in meta) {
-                            map[meta[i].uri] = meta[i].versio;
+                        if (angular.isUndefined(value.skipApiModel)) {
+                            apiModel[key] = {'uris': {}};
+                            //search version information for list of uris;
+                            var map = {};
+                            var meta = $scope.uiModel[key].meta;
+                            for (var i in meta) {
+                                map[meta[i].uri] = meta[i].versio;
+                            }
+                            angular.forEach(uiModel[key].uris, function(uri) {
+                                apiModel[key].uris[uri] = map[uri];
+                            });
                         }
-                        angular.forEach(uiModel[key].uris, function(uri) {
-                            apiModel[key].uris[uri] = map[uri];
-                        });
                     });
 
                     //multi-select models, add version to the koodi 
@@ -263,6 +289,7 @@ app.controller('BaseEditController',
                         angular.forEach(uiModel[key].uris, function(uri) {
                             apiModel[key].uris[uri] = map[uri];
                         });
+
                     });
 
                     console.log(JSON.stringify(apiModel));
@@ -333,10 +360,13 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                   $scope.uiModel.selectedKieliUri = kieliUri;
+                	$scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
+                	if (!kieliUri) {
+                		return {};
+                	}
                     var kuvaus = null;
                     if (typeof boolIsKomo !== 'boolean') {
                         converter.throwError('An invalid boolean variable : ' + boolIsKomo);
@@ -358,17 +388,72 @@ app.controller('BaseEditController',
                     return kuvaus[textEnum].tekstis;
                 };
 
-                $scope.searchOpintojenLaajuusyksikko = function(apiModel) {
-                    var promise = koodisto.getKoodi(cfg.env['koodisto-uris.opintojenLaajuusyksikko'], 'opintojenlaajuusyksikko_2', $scope.koodistoLocale);
-
-                    promise.then(function(koodi) {
-                        apiModel['opintojenLaajuusyksikko'] = converter.convertKoodistoRelationApiModel(koodi);
-                    });
-                };
-
                 // TODO omaksi direktiivikseen tjsp..
                 $scope.kieliFromKoodi = function(koodi) {
+                    if (angular.isUndefined(koodi) || koodi === null && koodi.length === 0) {
+                        console.error("invalid language key : '" + koodi + "'");
+                    }
+
                     return $scope.langs[koodi];
+                };
+
+                /**
+                 * Control page messages.
+                 * 
+                 * @param {type} uiModel
+                 * @param {type} action
+                 * @param {type} errorDetailType
+                 * @returns {undefined}
+                 */
+                $scope.controlFormMessages = function(uiModel, action, errorDetailType, apiErrors) {
+                    switch (action) {
+                        case 'LOAD':
+                            //continue to init
+                        case 'INIT':
+                            uiModel.showErrorCheckField = false;
+                            uiModel.showValidationErrors = false;
+                            uiModel.showError = false;
+                            uiModel.showSuccess = false;
+                            uiModel.validationmsgs = [];
+                            break;
+                        case 'CLEAR':
+                            $scope.formControls.notifs.errorDetail = [];
+                            $scope.koulutusForm.$dirty = true;
+                            $scope.koulutusForm.$invalid = false;
+                            uiModel.validationmsgs = [];
+                            uiModel.showValidationErrors = false;
+                            uiModel.showError = false;
+                            uiModel.showSuccess = false;
+                            break;
+                        case 'SAVED':
+                            uiModel.showErrorCheckField = false;
+                            uiModel.showError = false;
+                            uiModel.showValidationErrors = false;
+                            uiModel.hakukohdeTabsDisabled = false;
+                            uiModel.validationmsgs = [];
+                            //Form
+                            $scope.koulutusForm.$dirty = false;
+                            $scope.koulutusForm.$invalid = false;
+                            uiModel.showSuccess = true;
+                            break;
+                        case 'ERROR':
+                        default:
+                            uiModel.showErrorCheckField = errorDetailType === 'UI_ERRORS'
+                            uiModel.showValidationErrors = errorDetailType === 'UI_ERRORS';
+                            uiModel.showError = true;
+                            uiModel.showSuccess = false;
+
+                            if (!angular.isUndefined(apiErrors)) {
+                                for (var i = 0; i < apiErrors.length; i++) {
+                                    uiModel.validationmsgs.push(apiErrors[i].errorMessageKey);
+                                }
+                            }
+                            break;
+                    }
+                };
+
+                $scope.isLoaded = function() {
+                    return  !angular.isUndefined($scope.model.oid) && $scope.model.oid !== null && $scope.model.oid.length > 0;
                 };
 
                 /*

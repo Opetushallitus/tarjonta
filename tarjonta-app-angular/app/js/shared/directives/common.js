@@ -37,17 +37,17 @@ app.directive('kuvaus', function() {
 })
 
 
-/** 
- * 
+/**
+ *
  * tulostaa koodin nimen
- * 
+ *
  * <koodi uri="jokukoodi_22" lang="fi">
- * 
+ *
  */
 .directive('koodi',function(Koodisto) {
-  
+
     return {
-        restrict: 'E',
+        restrict: 'EA',
         link: function(scope, element, attrs) {
           var uri = scope.$eval(attrs.uri);
           var lang = scope.$eval(attrs.lang);
@@ -58,44 +58,57 @@ app.directive('kuvaus', function() {
                 }
               );
           }
-        
+
     };
 })
 
 
-/** 
- * tulostaa päivämäärän:
- * <t-date value="haku.alkoitusPvm" timestamp="true"/>
+/**
+ * tulostaa päivämäärän: <t-show-date value="haku.alkoitusPvm" timestamp/>
+ * <t-show-date value="haku.alkoitusPvm" timestamp/> <div t-show-date
+ * value="haku.alkoitusPvm" timestamp>replaced</div> <div t-show-date
+ * value="haku.alkoitusPvm" timestamp/>
+ *
+ * mikäli arvo ei ole määritelty asettaa watchin ja hoitaa tulostuksen heti kun
+ * mahdollista, eli ts dataa ei tarvitse ladata routessa valmiiksi
  */
-.directive('tShowdate',function() {
-  
-    return {
-        restrict: 'E',
-        link: function(scope, element, attrs) {
-          console.log(attrs);
-          console.log(scope);
-          console.log(element);
-          var isLong = !"long" !== attrs.type;
-          var isTimestamp = attrs.timestamp!==undefined||true;
-          var value = scope.$eval(attrs.value);
-          var date = isLong?new Date(value):value;
-          
-          var d = date.getDate();
-          var m = date.getMonth() + 1;
-          var y = date.getFullYear();
-          var datestring = (d <= 9 ? '0' + d : d) + '. ' + (m<=9 ? '0' + m : m) + '. ' + y;
-          
-          
-          
-          console.log("value:", value);
-          if(value) {
-            element.replaceWith(datestring);
-          } else {
-            "-"
-          }
+.directive('tShowDate', function($filter) {
+
+  return {
+    restrict : 'EA',
+    link : function(scope, element, attrs) {
+
+      var value = scope.$eval(attrs.value);
+      if (!value) {
+        var unregister = scope.$watch(attrs.value, function(nv, ov) {
+          if(nv) processValue(nv);
+        });
+      }
+
+      var processValue = function(value) {
+        // console.log("tShowDate, value: ", attrs.value, value);
+
+        var isLong = (typeof value == "number");
+        var date = isLong ? new Date(value) : value;
+        var format = "d.M.yyyy";
+
+        if (angular.isDefined(attrs.timestamp)) {
+          format += " HH:mm";
         }
-        
-    };
+
+        var result = $filter('date')(date, format);
+        // console.log("DATE == " + result, format);
+        element.replaceWith(result);
+        if (unregister) {
+          unregister();
+        }
+      }
+
+      if(value) {
+        processValue(value);
+      }
+
+    }
+
+  };
 });
-
-

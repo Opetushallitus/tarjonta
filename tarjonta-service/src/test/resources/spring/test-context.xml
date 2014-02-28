@@ -14,11 +14,9 @@
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
-<!--     <context:component-scan base-package="fi.vm.sade.tarjonta.s" />
- -->
+
     <import resource="classpath:META-INF/spring/context/service-context.xml"/>
     <import resource="test-dao-context.xml" />
-    <import resource="test-publication-context.xml"/>
     <import resource="classpath:/META-INF/spring/logger-mock-context.xml" />
 
     <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />

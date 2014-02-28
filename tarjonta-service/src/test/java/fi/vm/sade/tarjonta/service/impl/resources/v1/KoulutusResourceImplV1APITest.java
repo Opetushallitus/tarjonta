@@ -43,8 +43,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -237,7 +237,6 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         dto.setHinta(1.11);
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 
         koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, OPETUSAIKAS);
@@ -257,13 +256,13 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
                 new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
                         PERSON[3], PERSON[4], PERSON[5], null,
                         HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuus(toKoodiUri(LAAJUUSARVO));
+        dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
-        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> v = koulutusResource
-                .postKorkeakouluKoulutus(dto);
+        ResultV1RDTO<KoulutusV1RDTO> v = koulutusResource
+                .postKoulutus(dto);
 
-        KoulutusKorkeakouluV1RDTO result = v.getResult();
+        KoulutusKorkeakouluV1RDTO result = (KoulutusKorkeakouluV1RDTO) v.getResult();
         String oid = result.getKomotoOid();
 
         
@@ -286,7 +285,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         // poista yht henkilö
         result.getYhteyshenkilos().clear();
 
-        koulutusResource.postKorkeakouluKoulutus(result);
+        koulutusResource.postKoulutus(result);
         v1 = koulutusResource.findByOid(oid, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(0, result.getYhteyshenkilos().size());

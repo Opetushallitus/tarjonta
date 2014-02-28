@@ -13,19 +13,17 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             };
             
             $scope.ctrl = {
-            	kausi: $scope.isKausiVuosiRadioButtonActive(),
-            	multi:false,
+            	kausi:$scope.isKausiVuosiRadioButtonActive(),
+            	multi:$scope.pvms.length>0,
                 koodis: []
             };
-            
+                        
             $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
-
+            
             $scope.$watch("kausiUri", function(valNew, valOld) {
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
             
-            
-
             $scope.clearKausiSelection = function() {
                 $scope.kausiUri = -1
             }
@@ -53,6 +51,23 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
         					$scope.cancel = function() {
         						modalInstance.dismiss();
         					}        					
+        					return $scope;
+        				}
+        			});
+            	}
+            }
+            
+            $scope.onToggleManyDates = function($event) {
+            	if ($scope.pvms.length>1) {
+            		$event.preventDefault();
+            		$event.stopImmediatePropagation();
+            		var modalInstance = $modal.open({
+        				scope: $scope,
+        				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog-na.html',
+        				controller: function($scope) {
+        					$scope.ok = function() {
+        						modalInstance.dismiss();
+        					}
         					return $scope;
         				}
         			});
@@ -97,6 +112,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 index: 0,
                 ignoreDateListChanges: false
             };
+            
+            $scope.thisYear = new Date(new Date().getFullYear(), 0, 1, 0,0,0,0);
             
             $scope.onDateAdded = function() {
             	for (var i in $scope.ctrl.addedDates) {

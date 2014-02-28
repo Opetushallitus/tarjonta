@@ -22,10 +22,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
@@ -44,6 +42,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -75,14 +74,14 @@ public interface KoulutusV1Resource {
     public Response deleteByOid(@PathParam("oid") String oid);
 
     @POST
-    @Path("/KORKEAKOULUTUS")
+    @Path("/KORKEAKOULUTUS") //TODO any koulutus really
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Luo uuden korkeakoulu koulutuksen",
-            notes = "Operaatio luo uuden korkeakoulu koulutuksen",
-            response = KoulutusKorkeakouluV1RDTO.class)
-    public ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO koulutus);
+            value = "Luo uuden koulutuksen",
+            notes = "Operaatio luo uuden koulutuksen",
+            response = KoulutusV1RDTO.class)
+    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO koulutus);
 
     @GET
     @Path("/{oid}/tekstis")
@@ -94,13 +93,17 @@ public interface KoulutusV1Resource {
     public KuvausV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
-    @Path("/koulutuskoodi/{koulutuskoodi}")
+    @Path("/koulutuskoodi/{koulutuskoodi}/{koulutusasteTyyppi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
-            response = KoulutusmoduuliRelationV1RDTO.class)
-    public ResultV1RDTO<KoulutusmoduuliRelationV1RDTO> getKoulutusRelation(@PathParam("koulutuskoodi") String koulutuskoodi, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
+            response = KoulutusmoduuliKorkeakouluRelationV1RDTO.class)
+    public ResultV1RDTO getKoulutusRelation(
+            @PathParam("koulutuskoodi") String koulutuskoodi,
+            @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
+            @QueryParam("meta") Boolean meta,
+            @QueryParam("lang") String lang);
 
     @GET
     @Path("/{oid}/tekstis/komoto")
@@ -157,12 +160,20 @@ public interface KoulutusV1Resource {
     public ResultV1RDTO<KuvaV1RDTO> getKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     @POST
+    @Path("/{oid}/kuva")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
+            notes = "Operaatio lisää kuvatiedoton koulutusmoduulin toteutukseen (yhdellä koulutuksella kuvia voi olla vain yksi per koodi uri)")
+    public ResultV1RDTO<KuvaV1RDTO> saveHtml5Kuva(@PathParam("oid") String oid, KuvaV1RDTO kuva);
+
+    @POST
     @Path("/{oid}/kuva/{kieliUri}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @ApiOperation(
             value = "Lisää kuvatiedoton koulutusmoduulin toteutukseen",
             notes = "Operaatio lisää kuvatiedoton koulutusmoduulin toteutukseen (yhdellä koulutuksella kuvia voi olla vain yksi per koodi uri)")
-    public Response saveKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, @Multipart("file") MultipartBody body);
+    public Response saveHtml4Kuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri, @Multipart("files") MultipartBody body);
 
     @DELETE
     @Path("/{oid}/kuva/{kieliUri}")

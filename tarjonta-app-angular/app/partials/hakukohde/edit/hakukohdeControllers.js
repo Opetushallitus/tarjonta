@@ -22,7 +22,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
+app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService,$route , $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
 
 
     var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
@@ -37,12 +37,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //All kieles is received from koodistomultiselect
     $scope.model.allkieles = [];
     $scope.model.selectedKieliUris = [];
-	
+
     $scope.model.userLang  =  AuthService.getLanguage();
 
     if ($scope.model.userLang === undefined) {
         $scope.model.userLang = "FI";
     }
+
+
+
 
     $scope.model.hakukohdeOppilaitosTyyppis = [];
 
@@ -98,6 +101,27 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     console.log('HAKUKOHDE : ', $scope.model.hakukohde);
 
+
+    var checkIsCopy = function() {
+
+        //If scope or route has isCopy parameter defined as true remove oid,
+        //so that new hakukohde will be created
+        console.log('IS THIS COPY ROUTE : ',$route.current.locals.isCopy);
+
+        if ($route.current.locals.isCopy) {
+            console.log('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
+            $scope.model.hakukohde.oid = undefined;
+
+        }
+
+        console.log('IS COPY : ' , $scope.isCopy);
+        if ($scope.isCopy !== undefined && $scope.isCopy) {
+            $scope.model.hakukohde.oid = undefined;
+
+        }
+
+
+    }
 
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
@@ -726,7 +750,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
             var haku = getHakuWithOid($scope.model.hakukohde.hakuOid);
 
-            if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
+            if (haku && haku.hakuaikas !== undefined && haku.hakuaikas.length > 1) {
 
                 angular.forEach(haku.hakuaikas,function(hakuaika){
 
@@ -851,12 +875,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.soraKuvaukset = {};
             }  */
-
+        console.log('SAVING HAKUKOHDE LUONNOS : ', $scope.model.hakukohde.oid);
+        //Check if hakukohde is copy, then remove oid and save hakukohde as new
+        checkIsCopy();
         if ($scope.model.hakukohde.oid === undefined) {
 
             console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
 
-            console.log('MODEL: ', $scope.model.hakukohde);
+            console.log('INSERTING MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
@@ -877,7 +903,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 $scope.model.continueToReviewEnabled = true;
                 console.log('SAVED MODEL : ', $scope.model.hakukohde);
             },function(error) {
-
+                console.log('ERROR INSERTING HAKUKOHDE : ', error);
                 showCommonUnknownErrorMsg();
 
             });
@@ -981,21 +1007,14 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
 
     $scope.dialog.titles = {};
 
-
-
     $scope.dialog.titles.toimintoTitle =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.title');
-
-
-
     $scope.dialog.titles.tableValintaRyhma = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.valintaryhma.title');
-
     $scope.dialog.titles.tableKuvauskielet = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.kuvauskielet.title');
-
     $scope.dialog.titles.tuoMyosMuutkieletTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.muutkielet.title');
-
     $scope.dialog.titles.okBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.ok');
-
     $scope.dialog.titles.cancelBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.cancel');
+    $scope.dialog.titles.kopioiHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.help');
+    $scope.dialog.titles.linkkausHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.help');
 
 
 

@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import javax.persistence.*;
@@ -276,7 +275,11 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     public Set<Hakuaika> getHakuaikas() {
-        return Collections.unmodifiableSet(hakuaikas);
+        if (hakuaikas == null) {
+            hakuaikas = new HashSet<Hakuaika>();
+        }
+        return hakuaikas;
+        // return Collections.unmodifiableSet(hakuaikas);
     }
 
     public void addHakuaika(Hakuaika hakuaika) {
@@ -288,6 +291,23 @@ public class Haku extends TarjontaBaseEntity {
         if (hakuaikas.remove(hakuaika)) {
             hakuaika.setHaku(null);
         }
+    }
+
+    public Hakuaika getHakuaikaById(String hakuaikaId) {
+        try {
+            return getHakuaikaById(Long.parseLong(hakuaikaId));
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    public Hakuaika getHakuaikaById(Long hakuaikaId) {
+        for (Hakuaika hakuaika : getHakuaikas()) {
+            if (hakuaika.getId().equals(hakuaikaId)) {
+                return hakuaika;
+            }
+        }
+        return null;
     }
 
     /**
@@ -373,5 +393,6 @@ public class Haku extends TarjontaBaseEntity {
     public void setMaxHakukohdes(int maxHakukohdes) {
         this.maxHakukohdes = maxHakukohdes;
     }
+
 }
 

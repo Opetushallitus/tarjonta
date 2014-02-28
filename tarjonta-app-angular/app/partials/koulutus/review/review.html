@@ -4,39 +4,24 @@
         model="formControls"
         dto="model.koulutus">
 
-        <controls-button icon="arrow-left" tt="koulutus.review.takaisin" action="goBack($event)"></controls-button>
-        <controls-button icon="remove" tt="koulutus.review.poista" action="doDelete($event)"></controls-button>
-        <controls-button tt="koulutus.review.kopioi" action="doCopy($event)"></controls-button>
-        <!-- 
-        <controls-button tt="koulutus.review.siirra.osaksi" action="doMoveToBeSubPart($event)"></controls-button>
-        <controls-button tt="koulutus.review.lisaa.rinnakkainen" action="doAddParallel($event)"></controls-button>
+        <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
+        <controls-button icon="remove" tt-key="koulutus.review.poista" action="doDelete($event)"></controls-button>
+        <controls-button tt-key="koulutus.review.kopioi" action="doCopy($event)"></controls-button>
+        <!--
+        <controls-button tt-key="koulutus.review.siirra.osaksi" action="doMoveToBeSubPart($event)"></controls-button>
+        <controls-button tt-key="koulutus.review.lisaa.rinnakkainen" action="doAddParallel($event)"></controls-button>
          -->
-        <controls-button icon="eye-open" tt="koulutus.review.esikatsele" action="doPreview($event)"></controls-button>
+        <controls-button icon="eye-open" tt-key="koulutus.review.esikatsele" action="doPreview($event)"></controls-button>
 
-       <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt="e" show="model.showError"></controls-notify>
-        
+       <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+
         <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
-        <controls-notify type="message" tt="'koulutus.review.murupolku'" tp="[model.koulutus.koulutuskoodi.kaannos, model.koulutus.organisaatio.nimi ]"></controls-notify>
-                
+        <controls-notify type="message" tt-expr="'koulutus.review.murupolku'" tt-params="[model.koulutus.koulutuskoodi.kaannos, model.koulutus.organisaatio.nimi ]"></controls-notify>
+
     </controls-model>
 
-
     <display-controls model="formControls" display="header"></display-controls>
-
     <div ng-include="resultPageUri"></div>
-
-    <hr>
-    <div ng-click="model.collapse.model = !model.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
-    </div>
-
-    <div collapse="model.collapse.model">
-        <pre>
-            {{ model | json }}
-        </pre>
-    </div>
-
     <display-controls model="formControls" display="footer"></display-controls>
-
 </div>
 

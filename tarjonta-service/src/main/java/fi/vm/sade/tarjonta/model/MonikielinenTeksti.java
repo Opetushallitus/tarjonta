@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Translatable texts with modest "metadata" properties.
@@ -165,7 +166,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     public List<TekstiKaannos> getKaannoksetAsList(){
         return Lists.newArrayList(tekstis.values());
-        
+    }
+    
+    public Map<String, String> asMap(){
+        Map<String, String> tekstit=Maps.newHashMap();
+        for(TekstiKaannos tk:tekstis.values()) {
+            tekstit.put(tk.getKieliKoodi(), tk.getArvo());
+        }
+        return tekstit;
     }
 
 }

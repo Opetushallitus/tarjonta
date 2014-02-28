@@ -1,13 +1,13 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import java.util.Date;
+import java.util.Map;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-
-import java.util.Date;
-import java.util.HashMap;
 
 /*
 * @author: Tuomas Katva 10/22/13
@@ -15,7 +15,9 @@ import java.util.HashMap;
 @ApiModel(value = "V1 Hakukohde's attachment(liite) REST-api model, used by KK-ui")
 public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
-    @ApiModelProperty(value = "Liite's hakukohde oid", required=true)
+	private static final long serialVersionUID = 1L;
+	
+	@ApiModelProperty(value = "Liite's hakukohde oid", required=true)
     private String hakukohdeOid;
     @ApiModelProperty(value = "Liite's name language uri", required = true)
     private String kieliUri;
@@ -23,10 +25,8 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     private String kieliNimi;
     @ApiModelProperty(value = "Liite's name", required = true)
     private String liitteenNimi;
-    //TODO: remove this and use the much simpler HashMap implementation
-    private TekstiRDTO liitteenKuvaus;
 
-    private HashMap<String,String> liitteenKuvaukset;
+    private Map<String,String> liitteenKuvaukset;
 
     private Date toimitettavaMennessa;
 
@@ -48,14 +48,6 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setLiitteenNimi(String liitteenNimi) {
         this.liitteenNimi = liitteenNimi;
-    }
-
-    public TekstiRDTO getLiitteenKuvaus() {
-        return liitteenKuvaus;
-    }
-
-    public void setLiitteenKuvaus(TekstiRDTO liitteenKuvaus) {
-        this.liitteenKuvaus = liitteenKuvaus;
     }
 
     public Date getToimitettavaMennessa() {
@@ -98,11 +90,11 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
         this.hakukohdeOid = hakukohdeOid;
     }
 
-    public HashMap<String, String> getLiitteenKuvaukset() {
+    public Map<String, String> getLiitteenKuvaukset() {
         return liitteenKuvaukset;
     }
 
-    public void setLiitteenKuvaukset(HashMap<String, String> liitteenKuvaukset) {
+    public void setLiitteenKuvaukset(Map<String, String> liitteenKuvaukset) {
         this.liitteenKuvaukset = liitteenKuvaukset;
     }
 }

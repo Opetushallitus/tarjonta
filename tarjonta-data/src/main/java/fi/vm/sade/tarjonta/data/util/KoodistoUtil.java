@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.tarjonta.data.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +34,9 @@ public class KoodistoUtil {
 
     public static String toKoodiUri(final String koodisto, final String value) {
         //URI data example : "koulutusohjelma_1603#1"
+        Preconditions.checkNotNull(value, "koodi value cannot be null.");
+        Preconditions.checkNotNull(koodisto, "koodisto cannot be null.");
+
         return new StringBuilder(koodisto.toLowerCase()).append(KOODI_PREFIX).append(value.toLowerCase()).append(KOODI_VERSION).toString();
     }
 
@@ -50,5 +57,32 @@ public class KoodistoUtil {
             list.add(koodi);
         }
 
+    }
+
+    public static KoodiV1RDTO toKoodiUri(final String uri) {
+        return new KoodiV1RDTO(uri, 1, null);
+    }
+
+    public static KoodiV1RDTO toMetaValue(final String value, String lang) {
+        return new KoodiV1RDTO(lang, 1, value);
+    }
+
+    public static String toNimiValue(final String value, String lang) {
+        return value + "_" + lang;
+    }
+
+    public static KoodiV1RDTO meta(final KoodiV1RDTO dto, final String kieliUri, final KoodiV1RDTO metaValue) {
+        dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+        return dto.getMeta().put(kieliUri, metaValue);
+    }
+
+    public static void koodiUrisMap(final KoodiUrisV1RDTO dto, final String... koodiUriWithoutVersion) {
+        if (dto.getUris() == null) {
+            dto.setUris(Maps.<String, Integer>newHashMap());
+        }
+
+        for (String uri : koodiUriWithoutVersion) {
+            dto.getUris().put(uri, 1);
+        }
     }
 }

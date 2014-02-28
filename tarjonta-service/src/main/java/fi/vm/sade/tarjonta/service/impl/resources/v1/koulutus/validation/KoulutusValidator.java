@@ -17,12 +17,16 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
+import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -30,8 +34,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KoulutusValidator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusValidator.class);
 
     public static List<ErrorV1RDTO> validateKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
@@ -64,13 +73,15 @@ public class KoulutusValidator {
                 KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE);
     }
 
-    private static void validateKoodistoRelations(KoulutusmoduuliRelationV1RDTO dto, Set<KoulutusValidationMessages> validationMessages) {
+    private static void validateKoodistoRelations(KoulutusKorkeakouluV1RDTO dto, Set<KoulutusValidationMessages> validationMessages) {
         validateKoodi(validationMessages, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
         validateKoodi(validationMessages, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(validationMessages, dto.getKoulutusaste(), KoulutusValidationMessages.KOULUTUS_KOULUTUSASTE_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSASTE_INVALID);
         validateKoodi(validationMessages, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(validationMessages, dto.getOpintoala(), KoulutusValidationMessages.KOULUTUS_OPINTOALA_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOALA_INVALID);
-        validateKoodi(validationMessages, dto.getOpintojenLaajuus(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUS_INVALID);
+        validateKoodi(validationMessages, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
+        validateKoodi(validationMessages, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
+
         validateKoodi(validationMessages, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTO_INVALID);
         validateKoodiUris(validationMessages, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID);
     }
@@ -211,5 +222,56 @@ public class KoulutusValidator {
         }
 
         validateKoodi(validationMessages, dto.getSuunniteltuKestoTyyppi(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING, KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_INVALID);
+    }
+
+    public static ResultV1RDTO<KuvaV1RDTO> validateKoulutusKuva(KuvaV1RDTO kuva) {
+        ResultV1RDTO<KuvaV1RDTO> result = new ResultV1RDTO<KuvaV1RDTO>();
+        validateKieliUri(kuva.getKieliUri(), "kieliUri", result);
+
+        String raw = kuva.getBase64data();
+
+        /*
+         * Data validation check
+         */
+        if (getValidBase64Image(raw) == null) {
+            result.addError(ErrorV1RDTO.createValidationError("base64data", "error_invalid_base64_data"));
+        }
+
+        validateMimeType(kuva.getMimeType(), "mimeType", result);
+
+        return result;
+    }
+
+    public static void validateMimeType(String mimeType, final String errorInObjectfieldname, ResultV1RDTO result) {
+        if (mimeType == null || mimeType.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_mime_type"));
+        } else if (ImageMimeValidator.validate(mimeType)) {
+            result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_unrecognized_mime_type"));
+        }
+    }
+
+    public static void validateKieliUri(final String kieliUri, final String errorInObjectfieldname, ResultV1RDTO result) {
+        if (kieliUri == null || kieliUri.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_uri"));
+        } else if (!KoodistoURI.isValidKieliUri(kieliUri)) {
+            result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_invalid_uri"));
+        }
+    }
+
+    public static String getValidBase64Image(final String rawbase64) {
+        String modifiedBase64 = rawbase64;
+        final boolean isBase64 = Base64.isBase64(rawbase64);
+        if (!isBase64) {
+            LOG.debug("Not valid base64 - try to clean received raw data. Data : '{}'", rawbase64);
+            modifiedBase64 = rawbase64.replaceFirst("^data:image/[^;]*;base64,?", "");
+
+            if (Base64.isBase64(modifiedBase64)) {
+                return modifiedBase64;
+            }
+        } else {
+            return rawbase64;
+        }
+
+        return null;
     }
 }

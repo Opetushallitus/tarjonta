@@ -284,7 +284,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         var d = dialogService.showDialog(texts);
 
         d.result.then(function(data){
-            if ("ACTION" === data) {
+            if (data) {
                 removeKuvaus(kuvaus);
             }
         });

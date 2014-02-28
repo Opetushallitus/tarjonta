@@ -31,7 +31,6 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -43,6 +42,8 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -50,12 +51,11 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.security.xssfilter.FilterXss;
-import fi.vm.sade.security.xssfilter.XssFilterListener;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -64,7 +64,6 @@ import org.apache.commons.lang.time.DateUtils;
  */
 @Entity
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
-@EntityListeners(XssFilterListener.class)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
@@ -150,13 +149,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<WebLinkki> linkkis = new HashSet<WebLinkki>();
     @Column(name = "ulkoinentunniste")
-    @FilterXss
     private String ulkoinenTunniste;
     @Column(name = "koulutusaste")
-    @FilterXss
     private String koulutusaste;
     @Column(name = "pohjakoulutusvaatimus")
-    @FilterXss
     private String pohjakoulutusvaatimus;
     /*
      * Koulutuksen Lisatiedot  (additional information)
@@ -965,4 +961,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         
         return this.koulutuksenAlkamisPvms.iterator().next();
     }
+    
+    /**
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields(){
+        for(MonikielinenTeksti teksti:tekstit.values()){
+            filter(teksti);
+        }
+    }
+
 }

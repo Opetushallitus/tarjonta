@@ -14,10 +14,16 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
 /**
- *
+ * 
  * @author mlyly
  */
 public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
+
+    public KoulutusLukioV1RDTO() {
+        super(KoulutusasteTyyppi.LUKIOKOULUTUS);
+    }
 
 }

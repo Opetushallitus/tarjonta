@@ -14,18 +14,45 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.annotation.Nullable;
+
+import com.wordnik.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.wordnik.swagger.annotations.ApiParam;
+
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
-import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
-import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
@@ -47,19 +74,8 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
-import java.util.*;
-import org.apache.commons.collections.CollectionUtils;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Nullable;
-import javax.ws.rs.PathParam;
 
 /**
  *
@@ -161,6 +177,25 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(String tarjoajaOid, String ulkoinenTunniste) {
+
+
+       Hakukohde hakukohde =  hakukohdeDao.findHakukohdeByUlkoinenTunniste(ulkoinenTunniste,tarjoajaOid);
+
+       ResultV1RDTO<HakukohdeV1RDTO> resultV1RDTO = new ResultV1RDTO<HakukohdeV1RDTO>();
+       if (hakukohde != null) {
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+           resultV1RDTO.setResult(converter.toHakukohdeRDTO(hakukohde));
+       }else {
+           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+       }
+
+        return resultV1RDTO;
+
+    }
+
+    @Override
     @Transactional
     public ResultV1RDTO<HashMap<String,String>> insertHakukohdeValintaPerusteet(String hakukohdeOid, HashMap<String,String> valintaPerusteet) {
         try {
@@ -238,6 +273,33 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             exceptionResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             return exceptionResult;
         }
+    }
+
+    private boolean checkForExistingUlkoinenTunniste(String tunniste,String tarjoajaOid,String hakukohdeOid) {
+
+        Hakukohde hakukohde = hakukohdeDao.findHakukohdeByUlkoinenTunniste(tunniste,tarjoajaOid);
+
+        if (hakukohde != null) {
+
+            if (hakukohdeOid != null) {
+                //If tunniste exists for another hakukohde then user cannot update this hakukohde to user the same
+                //"ulkoinen tunniste".
+                if (hakukohde.getOid().trim().equals(hakukohdeOid)) {
+
+                  return false;
+
+                } else {
+                    return true;
+                }
+
+            } else {
+                return true;
+            }
+
+        } else {
+            return false;
+        }
+
     }
 
 
@@ -346,11 +408,65 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
+    private String removeUriVersion(String uri) {
+
+        if (uri.contains("#")) {
+
+            StringTokenizer st = new StringTokenizer(uri,"#");
+
+            return st.nextToken();
+
+        } else {
+            return uri;
+        }
+
+    }
+
+    private boolean doesHakukohdeExist(HakukohdeV1RDTO hakukohdeV1RDTO, Haku haku) {
+
+        List<Hakukohde> hakukohdes = hakukohdeDao.findByTermYearAndProvider(haku.getHakukausiUri(),haku.getHakukausiVuosi(),hakukohdeV1RDTO.getTarjoajaOids().iterator().next());
+
+        if (hakukohdes != null) {
+            boolean wasFound = false;
+            for (Hakukohde hakukohde : hakukohdes) {
+
+               for (TekstiKaannos tekstiKaannos : hakukohde.getHakukohdeMonikielinenNimi().getKaannoksetAsList()) {
+                   LOG.debug("TRYING TO GET HAKUKOHDE NIMI WITH : {} ", hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi())) );
+                    String hakukohdeNimi = hakukohdeV1RDTO.getHakukohteenNimet().get(removeUriVersion(tekstiKaannos.getKieliKoodi()));
+                   LOG.debug("CHECKING HAKUKOHDE NIMI : {}",hakukohdeNimi );
+                    if (hakukohdeNimi != null && hakukohdeNimi.trim().equals(tekstiKaannos.getArvo())) {
+                        LOG.debug("HAKUKOHDE NAME MATCHES : {} TO {}",hakukohdeNimi,tekstiKaannos.getArvo());
+                        wasFound = true;
+                    }
+               }
+
+            }
+            return wasFound;
+        } else {
+            return false;
+        }
+
+    }
+
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
         List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+
+        if(hakukohdeRDTO.getUlkoinenTunniste() != null && hakukohdeRDTO.getUlkoinenTunniste().length() > 0) {
+
+            for(String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
+
+                if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,null)) {
+                    validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
+                }
+
+            }
+
+        }
+
+
         if (validationMessageses.size() > 0) {
             ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
             errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
@@ -364,9 +480,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
         hakukohde.setLastUpdateDate(new Date());
 
-        LOG.debug("INSERT HAKUKOHDE OID : ", hakukohde.getOid());
 
         Haku haku = hakuDao.findByOid(hakuOid);
+
+        //NOT NEEDED YET
+       /* if (doesHakukohdeExist(hakukohdeRDTO,haku)) {
+            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+            result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+            result.addError(ErrorV1RDTO.createValidationError(null, "hakukohde.exists", null));
+            return result;
+        } */
+
         hakukohde.setHaku(haku);
 
         if (hakukohdeRDTO.getHakuaikaId() != null) {
@@ -409,70 +533,94 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
-        String hakuOid = hakukohdeRDTO.getHakuOid();
+        try {
+        	//LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
+			String hakuOid = hakukohdeRDTO.getHakuOid();
 
-        List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
-        if (validationMessagesList.size() > 0 ) {
-            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-            for (HakukohdeValidationMessages message: validationMessagesList) {
-                errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
+			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+
+            if(hakukohdeRDTO.getUlkoinenTunniste() != null) {
+
+                for (String tarjoajaOid: hakukohdeRDTO.getTarjoajaOids()) {
+
+                    if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,hakukohdeRDTO.getOid())) {
+                        validationMessagesList.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
+                    }
+
+                }
+
             }
+
+
+
+			if (validationMessagesList.size() > 0 ) {
+			    ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+			    errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+			    for (HakukohdeValidationMessages message: validationMessagesList) {
+			        errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
+			    }
+			    errorResult.setResult(hakukohdeRDTO);
+			    return errorResult;
+			}
+
+			Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
+			hakukohde.setLastUpdateDate(new Date());
+			Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
+			//TODO: Fix it
+			//permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
+
+			//These are updated in a separate resource -> ei enää
+			/*hakukohde.getValintakoes().clear();
+			hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
+
+			hakukohde.getLiites().clear();
+			hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+			*/
+
+			hakukohde.setId(hakukohdeTemp.getId());
+			hakukohde.setVersion(hakukohdeTemp.getVersion());
+
+			//Just in case remove kuvaukses if tunniste is defined
+			if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+			    hakukohde.setValintaperusteKuvaus(null);
+			}
+
+			if (hakukohde.getSoraKuvausTunniste() != null) {
+			    hakukohde.setSoraKuvaus(null);
+			}
+
+			Haku haku = hakuDao.findByOid(hakuOid);
+
+			hakukohde.setHaku(haku);
+
+			if (hakukohdeRDTO.getHakuaikaId() != null) {
+			    hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
+			}
+
+
+			hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
+
+			hakukohdeDao.update(hakukohde);
+			solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
+			solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
+			    public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
+			        return arg0.getId();
+			    }
+			})));
+			publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
+
+			ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+			result.setStatus(ResultV1RDTO.ResultStatus.OK);
+			result.setResult(hakukohdeRDTO);
+			return result;
+		} catch (Exception e) {
+			LOG.warn("Exception occured while updating hakukohde "+hakukohdeOid, e);
+            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            errorResult.addError(ErrorV1RDTO.createSystemError(e,null));
             errorResult.setResult(hakukohdeRDTO);
             return errorResult;
-        }
-
-        Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-        hakukohde.setLastUpdateDate(new Date());
-        Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
-        //TODO: Fix it
-        //permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
-
-        //These are updated in a separate resource
-        hakukohde.getValintakoes().clear();
-        hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
-
-        hakukohde.getLiites().clear();
-        hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
-
-        hakukohde.setId(hakukohdeTemp.getId());
-        hakukohde.setVersion(hakukohdeTemp.getVersion());
-
-        //Just in case remove kuvaukses if tunniste is defined
-        if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
-            hakukohde.setValintaperusteKuvaus(null);
-        }
-
-        if (hakukohde.getSoraKuvausTunniste() != null) {
-            hakukohde.setSoraKuvaus(null);
-        }
-
-        Haku haku = hakuDao.findByOid(hakuOid);
-
-        hakukohde.setHaku(haku);
-
-        if (hakukohdeRDTO.getHakuaikaId() != null) {
-            hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
-        }
-
-
-        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
-        //TODO: valintakoes and liites
-
-        hakukohdeDao.update(hakukohde);
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
-            public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
-                return arg0.getId();
-            }
-        })));
-        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_INSERT);
-
-        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
-        result.setStatus(ResultV1RDTO.ResultStatus.OK);
-        result.setResult(hakukohdeRDTO);
-
-        return result;
+		}
     }
 
     @Override
