@@ -990,6 +990,22 @@ public class TarjontaUIHelper {
         return result;
     }
 
+    private KoodiUriAndVersioType getLatestKoodiNimiAndVersion(String koodiUri) {
+
+
+        String justUri = getKoodiURI(koodiUri);
+        KoodiUriAndVersioType result = new KoodiUriAndVersioType();
+        List<KoodiType> koodis = this.getKoodis(justUri);
+        if (koodis != null && koodis.size() > 0) {
+            result.setKoodiUri(justUri);
+
+            result.setVersio(koodis.get(koodis.size() - 1).getVersio());
+        }
+
+
+        return result;
+    }
+
     /**
      * Get koodisto koodi relations.
      *     
@@ -1010,10 +1026,13 @@ public class TarjontaUIHelper {
         }
 
         // Convert Koodi URI to API type
+        //TUOMAS
         KoodiUriAndVersioType koodiUriAndVersioType = getKoodiUriAndVersioByKoodiUri(koodiUri);
+        //KoodiUriAndVersioType koodiUriAndVersioType = getLatestKoodiNimiAndVersion(koodiUri);
 
         // Get relations and filter only wanted koodisto koodis
         List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);
+
         for (KoodiType koodiType : resultKoodis) {
 
             if (koodistoUri == null || koodiType.getKoodisto().getKoodistoUri().equals(koodistoUri)) {
@@ -1087,6 +1106,7 @@ public class TarjontaUIHelper {
 
             KoodiUriAndVersioType result = new KoodiUriAndVersioType();
             result.setKoodiUri(kt.getKoodiUri());
+
             result.setVersio(kt.getVersio());
 
             return result;
