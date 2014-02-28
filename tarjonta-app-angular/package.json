@@ -12,6 +12,7 @@
     "karma-jasmine": "*",
     "karma-ng-scenario": "*",
     "karma-ng-html2js-preprocessor": "~0.1.0",
-    "express": "3.4.4"
+    "express": "3.4.4",
+    "request": "2.34.0"
   }
 }
