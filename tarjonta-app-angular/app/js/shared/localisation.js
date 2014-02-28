@@ -472,17 +472,19 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $
      *
      * @type @call;$interval
      */
-    var timer = $interval(function () {
-        LocalisationService.updateAccessInformation();
-    }, 5 * 60 * 1000);
 
-    $scope.$on("$destroy", function() {
-        $log.info("LocalisationCtrl() -  $destroy");
-        if (timer) {
-            $interval.cancel(timer);
-            timer = null;
-        }
-        LocalisationService.updateAccessInformation();
-    });
+// Disabled for now: https://jira.oph.ware.fi/jira/browse/OVT-7007
+//    var timer = $interval(function () {
+//        LocalisationService.updateAccessInformation();
+//    }, 5 * 60 * 1000);
+//
+//    $scope.$on("$destroy", function() {
+//        $log.info("LocalisationCtrl() -  $destroy");
+//        if (timer) {
+//            $interval.cancel(timer);
+//            timer = null;
+//        }
+//        LocalisationService.updateAccessInformation();
+//    });
 
 });
