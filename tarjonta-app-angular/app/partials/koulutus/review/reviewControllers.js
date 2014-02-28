@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController($scope, $window, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+app.controller('BaseReviewController', ['PermissionService','$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService', 
+    function BaseReviewController(PermissionService, $scope, $window, $location, $route, $log, tarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses,SharedStateService,AuthService) {
         $log.info("BaseReviewController()");
         
          var koulutusModel = $route.current.locals.koulutusModel.result;
@@ -11,7 +11,12 @@ app.controller('BaseReviewController', ['$scope', '$window', '$location', '$rout
             $location.path("/error");
             return;
         }
-
+       
+       //käyttöoikeudet
+       PermissionService.koulutus.canEdit($scope.koulutusModel.result.komotoOid).then(function(data){
+         $scope.isMutable=data;
+       });
+       
         $scope.formControls = {};
         $scope.model = {
             koodistoLocale: LocalisationService.getLocale(),
@@ -131,7 +136,9 @@ app.controller('BaseReviewController', ['$scope', '$window', '$location', '$rout
         };
 
         $scope.doEdit = function(event, targetPart) {
+          if(!$scope.isMutable) { return; }
             $log.info("doEdit()...", event, targetPart);
+            
 
             if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_LIITA') {
                 $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
@@ -227,6 +234,8 @@ app.controller('BaseReviewController', ['$scope', '$window', '$location', '$rout
         };
 
         $scope.addHakukohde = function() {
+          if(!$scope.isMutable) { return; }
+
 
             console.log('KOULUTUS : ', $scope.model.koulutus);
 
