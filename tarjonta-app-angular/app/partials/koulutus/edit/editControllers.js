@@ -118,14 +118,22 @@ app.controller('BaseEditController',
                         }
                     }
 
-                    uiModel.lisatietoKielet.sort();
-
                     /*
                      * INIT SCOPES FOR RENDERER
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
                 };
+                
+                $scope.getLisatietoKielet = function() {
+                	for (var i in $scope.uiModel.opetuskielis.uris) {
+                		var lc = $scope.uiModel.opetuskielis.uris[i];
+                        if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
+                        	$scope.uiModel.lisatietoKielet.push(lc);
+                        }
+                	}
+                	return $scope.uiModel.lisatietoKielet;
+                }
 
                 function deleteLisatiedot(lc) {
                     var lcp = $scope.uiModel.lisatietoKielet.indexOf(lc);
