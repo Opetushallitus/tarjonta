@@ -24,18 +24,15 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);
 
-        $scope.koulutusModel = $route.current.locals.koulutusModel;
-        $scope.resolvePath = function(actionType, koulutus) {
-            if (!angular.isUndefined(koulutus.result)) {
-                var type = koulutus.result.koulutusasteTyyppi;
+        $scope.resolvePath = function(actionType) {
+            if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
+                var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
                 var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|KORKEAKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
-
                 if (patt.test(type)) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }
-
             } else {
                 console.error("Something went wrong?");
             }

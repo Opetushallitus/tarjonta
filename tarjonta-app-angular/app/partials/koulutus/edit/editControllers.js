@@ -34,7 +34,7 @@ app.controller('BaseEditController',
                          */
                         $scope.controlFormMessages(uiModel, "LOAD");
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
-                        model = $scope.koulutusModel.result;
+                        model = $route.current.locals.koulutusModel.result;
 
                         if (angular.isUndefined(model)) {
                             $location.path("/error");
@@ -345,9 +345,7 @@ app.controller('BaseEditController',
                         //server errors
                         return;
                     }
-
-                    $log.info("goBack()...");
-                    $route.current.locals.koulutusModel.result = $scope.model;
+                    
                     $location.path("/koulutus/" + $scope.model.oid);
                 };
 
