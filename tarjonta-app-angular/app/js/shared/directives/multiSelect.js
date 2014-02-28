@@ -138,8 +138,21 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 templateUrl: "js/shared/directives/multiSelect-chooser.html",
                 scope: ns
             });
-
-
+        }
+        
+        function indexOfItem(key) {
+        	for (var i in $scope.items) {
+        		if ($scope.items[i].key==key) {
+        			return i;
+        		}
+        	}
+        	return -1;
+        }
+        
+        function sortSelection() {
+            $scope.selection.sort(function(a, b) {
+                return indexOfItem(a)-indexOfItem(b);
+            });
         }
 
         // (multi)select-valinta
@@ -150,11 +163,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 }
             }
 
-            // TODO orderWith -tuki
-            $scope.selection.sort(function(a, b) {
-                return $scope.names[a].localeCompare($scope.names[b]);
-            });
-            
+            sortSelection();
             updateErrors();
             onChange();
         }
@@ -193,6 +202,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 }
             }
             filterSelection();
+            sortSelection();
             updateErrors();
         });
 

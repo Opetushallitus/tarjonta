@@ -20,23 +20,8 @@
 
     </controls-model>
 
-
     <display-controls model="formControls" display="header"></display-controls>
-
     <div ng-include="resultPageUri"></div>
-
-    <hr>
-    <div ng-click="model.collapse.model = !model.collapse.model">
-        <div class="collapseHeader" ng-class="{isOpen : !model.collapse.model}">Sivun data / malli:</div>
-    </div>
-
-    <div collapse="model.collapse.model">
-        <pre>
-            {{ model | json }}
-        </pre>
-    </div>
-
     <display-controls model="formControls" display="footer"></display-controls>
-
 </div>
 

@@ -68,7 +68,7 @@ angular
             var param = {
               value : parametri.value
             };
-            tallenna.save(param);
+            return tallenna.save(param).$promise;
           };
 
           return {
@@ -106,14 +106,20 @@ angular
 
             tallennaHakukaudenParametrit : function(hakuOid, parametrit) {
               console.log("saving to hakukausi + '" +hakuOid + "' the following parameters:", parametrit);
+              var promises = [];
+
               for ( var key in parametrit) {
-                tallennaParametri({
+                var p = tallennaParametri({
                   name : hakuOid,
                   path : key,
                   value : parametrit[key]
                 });
+                promises.push(p);
                 console.log("p:", key, parametrit[key]);
               }
+              
+              return $q.all(promises);
+              
             },
 
             /**

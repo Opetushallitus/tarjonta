@@ -6,16 +6,6 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
 	
 	var userLangs = window.CONFIG.app.userLanguages;
 
-    function defaultLangMapConverter(data) {
-        var m = {};
-        for (var i in data) {
-            if (data[i] && data[i].value && data[i].value.length > 0) {
-                m[data[i].uri] = data[i].value;
-            }
-        }
-        return m;
-    }
-
     function controller($scope) {
 
         $scope.codes = {};
@@ -97,7 +87,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             }
             $scope.codes = nc;
         });
-
+        
         // data
         for (var kieliUri in $scope.model) {
             $scope.data.push({uri: kieliUri, value: $scope.model[kieliUri], removable: userLangs.indexOf(kieliUri) == -1});
@@ -106,10 +96,12 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         // vakiokielet näkyviin
         for (var i in userLangs) {
             var lang = userLangs[i];
-            if (!$scope.model[lang]) {
+            if ($scope.model[lang]==undefined || $scope.model[lang]==null) {
+            	$scope.model[lang] = "";
                 $scope.data.push({uri: lang, value: "", removable: false});
             }
         }
+        
         $scope.sortData();
 
         // kielen poisto

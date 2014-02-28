@@ -86,10 +86,7 @@
                     <td>{{liite.toimitettavaMennessa | date:'d.M.yyyy H:mm'}}</td>
                     <td><div class="align-right"><button ng-click="deleteLiite(liite)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button></div></td>
                 </tr>
-            </table>
-            
-            <pre>{{ liitteetModel.selectedLiite[kieli.koodiUri] | json }}</pre>
-            
+            </table>          
         </tab>
         
         <tab class="addLangTab">
@@ -104,9 +101,5 @@
         </tab>
         
     </tabset>
-
-<!-- 
-    <pre>{{ liitteetModel | json}}</pre>
- -->
  
 </div>
