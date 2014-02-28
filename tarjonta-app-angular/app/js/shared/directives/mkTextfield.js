@@ -64,15 +64,15 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         $scope.sortData = function() {
         	$scope.data.sort(function(a,b){
         		var ap = userLangs.indexOf(a.uri);
-        		var bp = userLangs.indexOf(a.uri);
+        		var bp = userLangs.indexOf(b.uri);
         		if (ap!=-1 && bp!=-1) {
-        			return ap>bp ? 1 : ap<bp ? -1 : 0;
+        			return ap-bp;
         		}
         		if (ap!=-1) {
-        			return 1;
+        			return -1;
         		}
         		if (bp!=-1) {
-        			return -1;
+        			return 1;
         		}
         		
         		return $scope.codes[a.uri].nimi.localeCompare($scope.codes[b.uri].nimi);
