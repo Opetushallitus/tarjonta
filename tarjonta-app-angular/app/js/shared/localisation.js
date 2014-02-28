@@ -231,9 +231,9 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
 
         var result = this.getRawTranslation(key, locale);
 
-        if (!result) {
+        if (!angular.isDefined(result)) {
             // Should not happen, missing translations created automatically elsewhere...
-            result = "!!SHEISSE!! key=" + key + " - locale=" + locale;
+            result = "!!Virhe!! key=" + key + " - locale=" + locale;
         } else {
             // Expand parameters
             if (params != undefined) {
