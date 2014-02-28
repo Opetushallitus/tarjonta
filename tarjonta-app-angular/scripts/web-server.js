@@ -2,10 +2,10 @@ var express = require('express');
 var server = express(); 
 var request = require('request');
 
-var luokka="https://itest-virkailija.oph.ware.fi/"
-var reppu="https://test-virkailija.oph.ware.fi/"
+var luokka="https://itest-virkailija.oph.ware.fi"
+var reppu="https://test-virkailija.oph.ware.fi"
 
-var USE_ENV=reppu;
+var USE_ENV=luokka;
 
 
 
@@ -16,6 +16,7 @@ var env={
 function proxy(server, prefix) {
   var h=function(req,res){
 	url = env.remote + prefix + req.url;
+	console.log("proxying request to", url);
 	req.pipe(request(url)).pipe(res);
   }
 	server.use(prefix, h);
