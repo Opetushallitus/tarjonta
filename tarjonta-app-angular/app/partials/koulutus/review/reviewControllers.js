@@ -13,7 +13,7 @@ app.controller('BaseReviewController', ['PermissionService','$scope', '$window',
         }
        
        //käyttöoikeudet
-       PermissionService.koulutus.canEdit($scope.koulutusModel.result.komotoOid).then(function(data){
+       PermissionService.koulutus.canEdit(koulutusModel.komotoOid).then(function(data){
          $scope.isMutable=data;
        });
        
