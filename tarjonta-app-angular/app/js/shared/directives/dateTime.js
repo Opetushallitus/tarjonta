@@ -119,9 +119,20 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 
     	var thisyear = new Date().getFullYear();
 
-    	$scope.onFocusOut = function(){
-    		omitUpdate = false;
-    		updateModels();
+    	$scope.focusCount = 0;
+
+    	$scope.onFocusIn = function() {
+    		$scope.focusCount++;
+    		//console.log("Focus++",$scope.focusCount);
+    	}
+    	
+    	$scope.onFocusOut = function(isButton) {
+    		$scope.focusCount--;
+    		//console.log("Focus--",$scope.focusCount);
+    		if (!isButton) {
+        		omitUpdate = false;
+        		updateModels();
+    		}
     	}
     	
     	$scope.onModelChanged = function() {
@@ -179,8 +190,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     			$scope.ngChange();
     		}
     	}
-    	
+
     	$scope.openChooser = function() {
+    		//console.log("Chooser?",$scope.focusCount);
+    		if ($scope.focusCount==0) {
+    			return;
+    		}
     		var modalInstance = $modal.open({
 				scope: $scope,
 				templateUrl: 'js/shared/directives/dateTime-chooser.html',
