@@ -16,17 +16,7 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
@@ -2257,6 +2247,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         return null;
     }
 
+    private String getKoulutusOhjelmaUriWithKoulutusKoodiVersion(int koulutusKoodiUriVersio, String koulutusOhjelmaUri) {
+
+        final String delim = "#";
+
+        return koulutusOhjelmaUri + delim + new Integer(koulutusKoodiUriVersio).toString();
+    }
+
     public void loadSelectedKomoData() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         final KoulutuskoodiModel koulutuskoodi = model.getKoulutuskoodiModel();
@@ -2264,9 +2261,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         if (koulutuskoodi != null && koulutuskoodi.getKoodi() != null && ohjelma != null && ohjelma.getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
+            //TUOMAS KATVA
+            String koulutusOhjelmaUri = getKoulutusOhjelmaUriWithKoulutusKoodiVersion(koulutuskoodi.getKoodistoVersio(),ohjelma.getKoodistoUri());
             KoulutusmoduuliKoosteTyyppi tyyppi = model.getQuickKomo(
                     koulutuskoodi.getKoodistoUriVersio(),
-                    ohjelma.getKoodistoUriVersio());
+                    koulutusOhjelmaUri);
 
             if (tyyppi == null) {
                 LOG.error("No tutkinto & koulutusohjelma, result was null. Search by '{}'" + " and '{}'", koulutuskoodi.getKoodistoUriVersio(), ohjelma.getKoodistoUriVersio());
