@@ -3,7 +3,7 @@ var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResou
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService',
-            function BaseEditController($route, $timeout, $scope, $location, $log, tarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
+            function BaseEditController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService) {
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
@@ -174,7 +174,7 @@ app.controller('BaseEditController',
                 }
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
-                    tarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
+                    TarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
                             apiModel[key] = restRelationData[key];
@@ -221,7 +221,7 @@ app.controller('BaseEditController',
                             return;
                         }
 
-                        var KoulutusRes = tarjontaService.koulutus();
+                        var KoulutusRes = TarjontaService.koulutus();
                         var apiModelReadyForSave = $scope.saveModelConverter(tila);
 
                         KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
