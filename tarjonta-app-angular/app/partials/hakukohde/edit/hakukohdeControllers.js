@@ -123,6 +123,22 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+    var validateNameLengths = function() {
+
+        var retval = true;
+
+        angular.forEach($scope.model.hakukohde.hakukohteenNimet, function(hakukohdeNimi){
+
+            if (hakukohdeNimi.length > 225) {
+                retval = false;
+            }
+
+        });
+
+        return retval;
+
+    }
+
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
@@ -210,6 +226,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             $scope.model.nimiValidationFailed = true;
             errors.push(err);
 
+        }
+
+        if (!validateNameLengths()) {
+
+            var err = {};
+            err.errorMessageKey = 'hakukohde.edit.nimi.too.long';
+
+            errors.push(err);
         }
 
 
