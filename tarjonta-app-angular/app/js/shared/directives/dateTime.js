@@ -32,6 +32,21 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		throw ("Unknown type "+$scope.type);
     	}
     	
+    	function asTimestamp(s) {
+    		if (s==undefined || s==null) {
+    			return false;
+    		}
+    		return s instanceof Date ? s.getTime() : s;
+    	}
+    	
+    	function minTime() {
+    		return asTimestamp($scope.min());
+    	}
+    	
+    	function maxTime() {
+    		return asTimestamp($scope.max());
+    	}
+    	
     	function zpad(v) {
     		return v>9 ? v : "0"+v;
     	}
@@ -64,14 +79,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	}
     	
     	function applyConstraints(d) {
-    		var min = $scope.min();
-    		if (min && min.getTime) {
-    			min = min.getTime();
-    		}
-    		var max = $scope.max();
-    		if (max && max.getTime) {
-    			max = max.getTime();
-    		}
+    		var min = minTime();
+    		var max = maxTime();
     		
     		if (min && d.getTime() < min) {
     			d.setTime(min);
@@ -81,18 +90,20 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 
     		return d;
     	}
+    	
+    	function roundToDay(d) {
+    		if (d==false) {
+    			return false;
+    		}
+    		var t = new Date(d);
+    		return new Date(t.getFullYear(), t.getMonth(), t.getDate(), 0, 0, 0);
+    	}
 
     	function violatesConstraints(d) {
-    		var min = $scope.min();
-    		if (min && min.getTime) {
-    			min = min.getTime();
-    		}
-    		var max = $scope.max();
-    		if (max && max.getTime) {
-    			max = max.getTime();
-    		}
-    		var ret = (min && d.getTime() < min) || (max && d.getTime() > max);
-    		//console.log("-> violates = "+ret, d);
+    		d = roundToDay(d.getTime());
+    		var min = roundToDay(minTime());
+    		var max = roundToDay(maxTime());
+    		var ret = (min && d < min) || (max && d > max);
     		return ret;
     	}
 

@@ -200,12 +200,14 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         var ids = Object.keys(this.updateAccessedById);
         this.updateAccessedById = {};
 
-        $log.info("updateAccessInformation, ids=", ids);
-        Localisations.updateAccessed({ id: "access" }, ids, function () {
-            $log.info("success!");
-        }, function () {
-            $log.info("failed!");
-        });
+        $log.info("updateAccessInformation, ids=" + ids, ids);
+        if (angular.isDefined(ids)) {
+            Localisations.updateAccessed({ id: "access" }, ids, function () {
+                $log.info("success!");
+            }, function () {
+                $log.info("failed!");
+            });
+        }
     }
 
     // Localisations: MAP[locale][key] = {key, locale, value};
@@ -278,9 +280,13 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         var v = v0 ? v0[key] : undefined;
 
         // Update access info
-        if (v0) {
+        if (v) {
             // Bookkeeping for accessed updating, only the keys are used.
-            this.updateAccessedById[v0.id] = "";
+            if (angular.isDefined(v.id)) {
+                this.updateAccessedById[v.id] = "";
+            } else {
+                $log.info("WTF? tranlation id is undefined...? t=" + v, v);
+            }
         }
 
         // Get value if any
@@ -468,23 +474,21 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $
     };
 
     /**
-     * Updates used translations.
+     * Updates used translations every five minutes.
      *
      * @type @call;$interval
      */
+    var timer = $interval(function () {
+        LocalisationService.updateAccessInformation();
+    }, 5 * 60 * 1000);
 
-// Disabled for now: https://jira.oph.ware.fi/jira/browse/OVT-7007
-//    var timer = $interval(function () {
-//        LocalisationService.updateAccessInformation();
-//    }, 5 * 60 * 1000);
-//
-//    $scope.$on("$destroy", function() {
-//        $log.info("LocalisationCtrl() -  $destroy");
-//        if (timer) {
-//            $interval.cancel(timer);
-//            timer = null;
-//        }
-//        LocalisationService.updateAccessInformation();
-//    });
+    $scope.$on("$destroy", function() {
+        $log.info("LocalisationCtrl() -  $destroy");
+        if (timer) {
+            $interval.cancel(timer);
+            timer = null;
+        }
+        LocalisationService.updateAccessInformation();
+    });
 
 });
