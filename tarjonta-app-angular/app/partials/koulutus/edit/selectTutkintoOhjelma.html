@@ -7,6 +7,12 @@
 
         <p tt="selectTutkintoOhjelma.kuvaus"></p>
 
+
+        <ul ng-show="stoModel.errors.length > 0" class="errors">
+            <li ng-repeat="error in stoModel.errors">{{error.msg}}</li>
+        </ul>
+
+
         <h4 tt="selectTutkintoOhjelma.koulutusala"></h4>
 
         <koodistocombo koodistouri="stoModel.koulutusalaKoodistoUri" locale="'FI'" koodiuri="stoModel.koulutusala"></koodistocombo><!--'koulutusalaoph2002'-->
@@ -18,9 +24,9 @@
             <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="selectTutkintoOhjelma.hae"></div></button>
         </div>
 
-        <h4>{{ t("selectTutkintoOhjelma.hakutulokset", [stoModel.hakutulokset ? stoModel.hakutulokset.length : 0]) }}</h4>
+        <h4>{{ t("selectTutkintoOhjelma.hakutulokset", [stoModel.hakutulokset ? stoModel.hakutulokset.length : 0])}}</h4>
 
-        <div ng-switch="stoModel.hakutulokset.length==0 && stoModel.searched">
+        <div ng-switch="stoModel.hakutulokset.length == 0 && stoModel.searched">
             <div class="gridStyle" ng-grid="gridOptions" ng-switch-when="false"></div>
             <div ng-switch-default class="noResults" tt="selectTutkintoOhjelma.eihakutuloksia"></div>
         </div>
