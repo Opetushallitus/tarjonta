@@ -25,6 +25,8 @@ function proxy(server, prefix) {
 proxy(server, "/virkailija-raamit");
 proxy(server, "/cas");
 proxy(server, "/lokalisointi");
+proxy(server, "/koodisto-service");
+proxy(server, "/tarjonta-service");
 
 server.configure(function(){
   var dir = __dirname + "/../app/";
