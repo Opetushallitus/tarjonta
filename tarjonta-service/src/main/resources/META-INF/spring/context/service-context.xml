@@ -50,7 +50,6 @@
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeLiiteRDTOToLiiteConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.HakukohdeToRDTOConverter"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.RDTOTOHakukohdeConverter"/>  
-                <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity"/>
                 <bean class="fi.vm.sade.tarjonta.service.impl.conversion.rest.KomoRDTOConverterToEntity"/>
             </list>
         </property>
