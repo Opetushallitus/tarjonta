@@ -8,8 +8,8 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 	var urlHaeTiedot =baseUrl + "henkilo/:oid";
 	var urlHaeOrganisaatioHenkiloTiedot = baseUrl + "henkilo/:oid/organisaatiohenkilo";
 
-	var henkHaku = $resource(urlEtsi,{},{cache:true,get:{method:"GET", withCredentials:true}});
-	var henkilo = $resource(urlHaeTiedot,{},{cache:true,get:{method:"GET", withCredentials:true}});
+	var henkHaku = $resource(urlEtsi,{},{cache:true,get:{method:"GET"}});
+	var henkilo = $resource(urlHaeTiedot,{},{cache:true,get:{method:"GET"}});
 	var organisaatioHenkilo = $resource(urlHaeOrganisaatioHenkiloTiedot,{},{cache:true,get:{isArray: true, method:"GET", withCredentials:true}});
 
 	return {

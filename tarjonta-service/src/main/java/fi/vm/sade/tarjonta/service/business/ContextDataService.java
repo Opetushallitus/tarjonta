@@ -15,25 +15,23 @@
  */
 package fi.vm.sade.tarjonta.service.business;
 
-import fi.vm.sade.tarjonta.model.Haku;
-
 /**
- * @author Antti
+ *
+ * @author jani
  */
-public interface HakuBusinessService {
-
-    Haku save(Haku haku);
-
-    Haku update(Haku haku);
-
-    Haku findByOid(String oidString);
+public interface ContextDataService {
 
     /**
-     * Deletes a Haku if and only if it's state is
+     * Get user's user-service OID.
      *
-     * @param oid
+     * @return user OID
      */
-    public void delete(String oid);
+    public String getCurrentUserOid();
 
+    /**
+     * Get user's preferred language code. Default or fallback value is 'FI'.
+     *
+     * @return language code
+     */
+    public String getCurrentUserLang();
 }
-
