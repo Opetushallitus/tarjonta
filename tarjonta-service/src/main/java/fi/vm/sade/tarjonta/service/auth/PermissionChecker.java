@@ -36,7 +36,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
-import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class PermissionChecker {
@@ -47,12 +46,8 @@ public class PermissionChecker {
     HakukohdeDAOImpl hakukohdeDaoImpl;
     @Autowired
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
-
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
-
-    @Value("${auth.off:false}")
-    private String authOff;
 
     /**
      *
@@ -67,7 +62,7 @@ public class PermissionChecker {
     }
 
     private void checkPermission(boolean result) {
-        if (!(authOff != null && authOff.equals("true")) && !result) {
+        if (!result) {
             throw new NotAuthorizedException("no.permission");
         }
     }

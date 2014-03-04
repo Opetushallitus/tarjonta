@@ -54,9 +54,9 @@
  *
  */
 
-var app = angular.module('ControlsLayout', ['localisation']);
+var app = angular.module('ControlsLayout', ['localisation', 'Yhteyshenkilo']);
 
-app.directive('displayControls',function($log, LocalisationService, $filter) {
+app.directive('displayControls',function($log, LocalisationService, $filter, YhteyshenkiloService) {
 
     return {
         restrict: 'E',
@@ -127,17 +127,31 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
        			md.push(LocalisationService.t(key,
        					[ $filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user ]));
        		}
+                
+                /*
+                 * Reload modified data.
+                 * TODO: Currently called from other controllers...
+                 */
+                $scope.model.reloadDisplayControls = function() {
+                    $scope.model.metadata = [];
+                    $scope.dto = $scope.model.dto();
+                    if ($scope.dto.tila) {
+       			$scope.model.metadata.push(LocalisationService.t("tarjonta.tila."+$scope.dto.tila));
+       		    }
+                    
+//                    var promise = YhteyshenkiloService.haeHenkilo( $scope.dto.modifiedBy);
+//                    promise.then(function(response){
+//                        console.log(response);
+//                    });
 
-       		$scope.metadata = [];
-       		if ($scope.dto.tila) {
-       			$scope.metadata.push(LocalisationService.t("tarjonta.tila."+$scope.dto.tila));
-       		}
+       		    appendMetadata($scope.model.metadata, "tarjonta.metadata.modified", $scope.dto.modifiedBy, $scope.dto.modified)
+       		    appendMetadata($scope.model.metadata, "tarjonta.metadata.created", $scope.dto.createdBy, $scope.dto.created)
+                }
 
-       		appendMetadata($scope.metadata, "tarjonta.metadata.modified", $scope.dto.modifiedBy, $scope.dto.modified)
-       		appendMetadata($scope.metadata, "tarjonta.metadata.created", $scope.dto.createdBy, $scope.dto.created)
+       		$scope.model.reloadDisplayControls();
 
        		$scope.isNew = function() {
-       			return $scope.metadata.length==1;
+       			return $scope.model.metadata.length==1;
        		}
 
        		function titleText() {
@@ -163,7 +177,7 @@ app.directive('displayControls',function($log, LocalisationService, $filter) {
        			}
        			return title;
        		}
-
+                
        		$scope.getTitle = function() {
        			var ttext = titleText();
                         if(!angular.isString(ttext)){

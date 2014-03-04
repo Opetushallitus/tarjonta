@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.OIDService;
@@ -50,12 +49,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainConverter<KoulutusKorkeakouluV1RDTO, KoulutusmoduuliToteutus> {
+@Component
+public class KoulutusKorkeakouluDTOConverterToEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusKorkeakouluDTOConverterToEntity.class);
     @Autowired(required = true)
@@ -68,10 +69,10 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
     private OIDService oidService;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
     private final KoodistoURI koodistoUri = new KoodistoURI();
 
-    @Override
-    public KoulutusmoduuliToteutus convert(KoulutusKorkeakouluV1RDTO dto) {
+    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
@@ -167,6 +168,8 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
         komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
+
+        komoto.setLastUpdatedByOid(userOid);
         return komoto;
     }
 

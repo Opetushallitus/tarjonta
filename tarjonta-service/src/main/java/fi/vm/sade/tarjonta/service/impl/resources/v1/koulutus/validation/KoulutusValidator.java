@@ -172,15 +172,25 @@ public class KoulutusValidator {
             KoulutusValidationMessages missing,
             KoulutusValidationMessages invalidKoodi,
             KoulutusValidationMessages invalidValue) {
+        Set<KoulutusValidationMessages> tempError = Sets.<KoulutusValidationMessages>newHashSet();
+
         if (dto.getTekstis().isEmpty()) {
+            //no items
             validationMessages.add(missing);
         } else {
             for (Entry<String, String> e : dto.getTekstis().entrySet()) {
-
-                if (!notNullStrOrEmpty(e.getValue())) {
-                    validationMessages.add(invalidValue);
+                if (notNullStrOrEmpty(e.getValue())) {
+                    //validation was success
+                    //at least one text items was available and correct;
+                    return;
+                } else {
+                    //validation will fail
+                    tempError.add(invalidValue);
                 }
             }
+
+            //all set items are empty or null values;
+            validationMessages.addAll(tempError);
         }
     }
 
