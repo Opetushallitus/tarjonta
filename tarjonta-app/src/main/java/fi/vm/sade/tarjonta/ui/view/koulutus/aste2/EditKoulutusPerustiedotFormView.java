@@ -31,6 +31,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
+import fi.vm.sade.authentication.service.types.dto.YhteystiedotTyyppiType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
@@ -462,15 +464,18 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
      *
      * @param henkiloType
      */
-    private void populateYhtHenkiloFields(HenkiloType henkiloType) {
+    private void populateYhtHenkiloFields(HenkiloFatType henkiloType) {
         if (henkiloType == null) {
             return;
         }
         this.yhtHenkKokoNimi.setValue(henkiloType.getEtunimet() + " " + henkiloType.getSukunimi());
         this.koulutusModel.setYhtHenkiloOid(henkiloType.getOidHenkilo());
         if (henkiloType.getOrganisaatioHenkilos() != null && !henkiloType.getOrganisaatioHenkilos().isEmpty()) {
-            this.yhtHenkEmail.setValue(henkiloType.getOrganisaatioHenkilos().get(0).getSahkopostiosoite());
-            this.yhtHenkPuhelin.setValue(henkiloType.getOrganisaatioHenkilos().get(0).getPuhelinnumero());
+            this.yhtHenkEmail.setValue(TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType, YhteystiedotTyyppiType.YHTEYSTIETO_SAHKOPOSTI));
+            String puhelinNro = TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType,YhteystiedotTyyppiType.YHTEYSTIETO_PUHELINNUMERO) != null ?
+                    TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType, YhteystiedotTyyppiType.YHTEYSTIETO_PUHELINNUMERO) :
+                    TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType, YhteystiedotTyyppiType.YHTEYSTIETO_MATKAPUHELINNUMERO);
+            this.yhtHenkPuhelin.setValue(puhelinNro);
             this.yhtHenkTitteli.setValue(henkiloType.getOrganisaatioHenkilos().get(0).getTehtavanimike());
         } else {
             this.yhtHenkEmail.setValue(null);

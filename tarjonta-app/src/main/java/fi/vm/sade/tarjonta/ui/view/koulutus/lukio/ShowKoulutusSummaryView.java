@@ -20,9 +20,6 @@ import java.util.*;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
-import fi.vm.sade.authentication.service.UserService;
-import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.view.common.*;
@@ -156,7 +153,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
 
     private Label buildTallennettuLabel(Date date, String viimPaivittajaOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
-        String viimPaivittaja = uiHelper.findUserWithOid(viimPaivittajaOid);
+        String viimPaivittaja = uiHelper.findUsernameWithOid(viimPaivittajaOid);
         Label lastUpdLbl = new Label("( " + T("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
         return lastUpdLbl;
     }

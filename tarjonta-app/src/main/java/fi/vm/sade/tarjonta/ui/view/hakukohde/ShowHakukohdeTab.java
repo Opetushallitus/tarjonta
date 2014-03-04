@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.authentication.service.UserService;
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -633,11 +635,14 @@ public class ShowHakukohdeTab extends VerticalLayout {
         return rows;
     }
 
+
+
     private Label buildTallennettuLabel(Date date, String viimPaivOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
         String viimPaivittaja = null;
         try {
-            viimPaivittaja =  uiHelper.findUserWithOid(viimPaivOid);
+
+            viimPaivittaja = uiHelper.tryGetViimPaivittaja(viimPaivOid);
         } catch (Exception ep) {
 
 

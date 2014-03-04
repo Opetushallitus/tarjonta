@@ -36,6 +36,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
@@ -222,7 +223,7 @@ public class AutocompleteTextField extends TextField implements Handler {
      */
 
     private void handleValueChange() {
-        fireEvent(new HenkiloAutocompleteEvent(this, (HenkiloType) (suggestionList.getValue()), HenkiloAutocompleteEvent.SELECTED));
+        fireEvent(new HenkiloAutocompleteEvent(this, (HenkiloFatType) (suggestionList.getValue()), HenkiloAutocompleteEvent.SELECTED));
         if (!isFocused) {
             handleEnter();
         }
@@ -337,19 +338,19 @@ public class AutocompleteTextField extends TextField implements Handler {
         /**
          * The user selected.
          */
-        private HenkiloType henkilo;
+        private HenkiloFatType henkilo;
 
-        public HenkiloAutocompleteEvent(Component source, HenkiloType henkilo, int eventType) {
+        public HenkiloAutocompleteEvent(Component source, HenkiloFatType henkilo, int eventType) {
             super(source);
             this.setEventType(eventType);
             this.setHenkilo(henkilo);
         }
 
-        public HenkiloType getHenkilo() {
+        public HenkiloFatType getHenkilo() {
             return henkilo;
         }
 
-        public void setHenkilo(HenkiloType henkilo) {
+        public void setHenkilo(HenkiloFatType henkilo) {
             this.henkilo = henkilo;
         }
 
