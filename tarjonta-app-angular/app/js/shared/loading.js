@@ -10,6 +10,7 @@ angular.module('loading', ['localisation'])
     timeoutMinor: false,
     timeoutMajor: false,
     scope: null,
+    errorHandlingRequested: null,
     
     timeoutShort: window.CONFIG.env["ui.timeout.short"],
     timeoutLong: window.CONFIG.env["ui.timeout.long"],
@@ -76,6 +77,16 @@ angular.module('loading', ['localisation'])
         	}, service.timeoutShort);
     		
     	}, service.timeoutLong);
+    },
+    /**
+     * Kutsutaan error-callbackissa; estää teknisen virheen dialogin näytön. 
+     */
+    onErrorHandled: function() {
+    	if (service.errorHandlingRequested) {
+    		service.errorHandlingRequested=false;
+    	} else if (service.errorHandlingRequested==null) {
+    		throw "loadingService.onErrorHandled called from outside of error callback";
+    	}
     }
   };
   
@@ -91,13 +102,20 @@ angular.module('loading', ['localisation'])
 
 .factory('onCompleteInterceptor', function(loadingService, $q) {
   return function(promise) {
-    var decrementRequestCountSuccess = function(response) {
+    function decrementRequestCountSuccess(response) {
     	loadingService.afterRequest(true, response);
         return response;
     };
-    var decrementRequestCountError = function(response) {
-    	loadingService.afterRequest(false, response);
-        return $q.reject(response);
+    function decrementRequestCountError(response) {
+        var ret = $q.reject(response);
+    	return {then: function(callback, errback) {
+    		ret.then(callback, function(reason){
+    			loadingService.errorHandlingRequested = true;
+            	var ret = errback(reason);
+            	loadingService.afterRequest(!loadingService.errorHandlingRequested, response);
+    			loadingService.errorHandlingRequested = null;
+			});
+    	}};
     };
     return promise.then(decrementRequestCountSuccess, decrementRequestCountError);
   };

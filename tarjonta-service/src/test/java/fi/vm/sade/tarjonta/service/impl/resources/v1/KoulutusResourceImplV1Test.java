@@ -40,9 +40,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -51,7 +49,6 @@ import static org.easymock.EasyMock.createMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
-import org.springframework.core.convert.ConversionService;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
@@ -59,8 +56,9 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonV1RDTO;
@@ -82,7 +80,6 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -105,6 +102,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Transactional()
 public class KoulutusResourceImplV1Test {
 
+    private static final String USER_OID = "mock_test_user";
     private static final String KOULUTUSOHELMA = "koulutusohjelma";
     private static final Integer VUOSI = 2013;
     private static final String KAUSI_KOODI_URI = "kausi_k";
@@ -138,10 +136,8 @@ public class KoulutusResourceImplV1Test {
     private final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
     private OrganisaatioService organisaatioServiceMock;
     private OIDService oidServiceMock;
-    private ConversionService conversionServiceMock;
     private EntityConverterToKoulutusKorkeakouluRDTO converterToRDTO;
-    private KoulutusKorkeakouluDTOConverterToEntity convertToKomoto;
-    private ConvertEntityStub convertToEntityStub;
+    private KoulutusKorkeakouluDTOConverterToEntity convertToEntity;
     private OrganisaatioDTO organisaatioDTO;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
@@ -154,11 +150,12 @@ public class KoulutusResourceImplV1Test {
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
     private KoulutusCommonV1RDTO commonConverter;
     private PermissionChecker permissionChecker;
+    private ContextDataService contextDataService;
     private KoodistoURI koodistoUri;
 
     @Before
     public void setUp() {
-        setCurrentUser("mock_test_user", getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
+        setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
         //used in regexp kieli uri validation
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
@@ -173,30 +170,30 @@ public class KoulutusResourceImplV1Test {
         komoKoulutusConverters = new KoulutusKuvausV1RDTO<KomoTeksti>();
         commonConverter = new KoulutusCommonV1RDTO();
         //CREATE MOCKS
-        conversionServiceMock = createMock(ConversionService.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         oidServiceMock = createMock(OIDService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         solrIndexerMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
         koodistoUri = createMock(KoodistoURI.class);
+        contextDataService = new ContextDataServiceImpl();
 
         //INIT DATA CONVERTERS
         converterToRDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
-        convertToKomoto = new KoulutusKorkeakouluDTOConverterToEntity();
+        convertToEntity = new KoulutusKorkeakouluDTOConverterToEntity();
         instance = new KoulutusResourceImplV1();
-        convertToEntityStub = new ConvertEntityStub();
 
         //SET VALUES TO INSTANCES
-        Whitebox.setInternalState(convertToKomoto, "oidService", oidServiceMock);
+        Whitebox.setInternalState(convertToEntity, "oidService", oidServiceMock);
 
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
-        Whitebox.setInternalState(instance, "conversionService", conversionServiceMock);
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
         Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
         Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
+        Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
+        Whitebox.setInternalState(instance, "contextDataService", contextDataService);
 
         //no need for replay or verify:
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);
@@ -206,8 +203,8 @@ public class KoulutusResourceImplV1Test {
         Whitebox.setInternalState(converterToRDTO, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(converterToRDTO, "komotoKuvausConverters", komotoKoulutusConverters);
 
-        Whitebox.setInternalState(convertToKomoto, "komoKuvausConverters", komoKoulutusConverters);
-        Whitebox.setInternalState(convertToKomoto, "komotoKuvausConverters", komotoKoulutusConverters);
+        Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
+        Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
     }
 
     @After
@@ -255,7 +252,6 @@ public class KoulutusResourceImplV1Test {
 
         //EXPECT
         expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(3);
-        expect(conversionServiceMock.convert(isA(KoulutusKorkeakouluV1RDTO.class), eq(KoulutusmoduuliToteutus.class))).andStubDelegateTo(convertToEntityStub);
         //the calls of the OidServices must be in correct order!
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMO_OID);
         expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMOTO_OID);
@@ -313,7 +309,6 @@ public class KoulutusResourceImplV1Test {
         /* REPLAY */
         replay(oidServiceMock);
         replay(organisaatioServiceMock);
-        replay(conversionServiceMock);
         replay(tarjontaKoodistoHelperMock);
         /*
          * INSERT KORKEAKOULU TO DB
@@ -330,7 +325,6 @@ public class KoulutusResourceImplV1Test {
 
         verify(oidServiceMock);
         verify(organisaatioServiceMock);
-        verify(conversionServiceMock);
         verify(tarjontaKoodistoHelperMock);
     }
 
@@ -383,7 +377,7 @@ public class KoulutusResourceImplV1Test {
         assertEquals(PERSON[4], next.getSahkoposti());
         assertEquals(PERSON[5], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
-
+        assertEquals(USER_OID, result.getModifiedBy());
     }
 
     private static String toKoodiUriStr(final String type) {
@@ -468,29 +462,6 @@ public class KoulutusResourceImplV1Test {
         assertEquals(null, dto.getArvo());
         assertEquals(field + "_uri", get.getUri());
         assertEquals(new Integer(1), get.getVersio());
-    }
-
-    private class ConvertEntityStub<T extends KoulutusmoduuliToteutus> implements ConversionService {
-
-        @Override
-        public boolean canConvert(Class<?> type, Class<?> type1) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public boolean canConvert(TypeDescriptor td, TypeDescriptor td1) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public <T> T convert(Object o, Class<T> type) {
-            return (T) convertToKomoto.convert((KoulutusKorkeakouluV1RDTO) o);
-        }
-
-        @Override
-        public Object convert(Object o, TypeDescriptor td, TypeDescriptor td1) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
     }
 
     protected KoodiType createKoodiType(final String fieldName, String arvo) {

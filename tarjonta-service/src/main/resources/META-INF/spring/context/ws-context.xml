@@ -53,6 +53,14 @@
     <bean id="komoResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1" />
     <bean id="lastModifiedResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LastModifiedResourceV1Impl" />
 
+    <bean id="tarjontaProcessResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ProcessResourceV1Impl" />
+
+    <!--
+      TEST PROCESS, just to show how to define these, require parameter, time.
+      For example, post this to create it: { process: "processTest", parameters: { time : 13 } }
+    -->
+    <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
+
     <!-- CORS (cross domain) support for rest services -->
     <!--
       <bean id="cors-filter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
@@ -80,6 +88,8 @@
             <ref bean="kuvausResourceV1"/>
             <ref bean="komoResourceV1"/>
             <ref bean="lastModifiedResourceV1"/>
+
+            <ref bean="tarjontaProcessResourceV1"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <!--             <ref bean="cors-filter" /> -->

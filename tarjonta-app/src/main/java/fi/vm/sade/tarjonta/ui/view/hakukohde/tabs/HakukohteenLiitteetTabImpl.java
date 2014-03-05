@@ -160,7 +160,7 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
             if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
                 userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
             }  else {
-                userName = henkilo.getKayttajatunnus();
+                userName = henkilo.getKayttajatiedot().getUsername();
             }
             return userName;
         } catch (Exception exp) {
