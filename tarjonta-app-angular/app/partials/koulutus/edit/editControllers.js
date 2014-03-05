@@ -229,6 +229,7 @@ app.controller('BaseEditController',
 
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
+                                $scope.formControls.reloadDisplayControls();
                                 $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;

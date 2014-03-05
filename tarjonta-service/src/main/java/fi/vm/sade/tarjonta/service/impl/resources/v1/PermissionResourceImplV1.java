@@ -14,13 +14,15 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.resources.v1.PermissionV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.UserV1RDTO;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -30,27 +32,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class PermissionResourceImplV1 implements PermissionV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(PermissionResourceImplV1.class);
-
     private static final String ROLE_READ = "ROLE_APP_TARJONTA_READ";
     private static final String ROLE_UPDATE = "ROLE_APP_TARJONTA_READ_UPDATE";
     private static final String ROLE_CRUD = "ROLE_APP_TARJONTA_CRUD";
 
+    @Autowired
+    private ContextDataService contextDataService;
+
     @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
     @Override
     public ResultV1RDTO<String> authorize() {
-        LOG.info("authorize()");
+        LOG.debug("authorize()");
         ResultV1RDTO dto = new ResultV1RDTO();
-        dto.setResult(getCurrentUserName());
+        dto.setResult(contextDataService.getCurrentUserOid());
         return dto;
     }
 
-    private String getCurrentUserName() {
-        if (SecurityContextHolder.getContext() == null
-                || SecurityContextHolder.getContext().getAuthentication() == null
-                || SecurityContextHolder.getContext().getAuthentication().getName() == null) {
-            return "NA";
-        }
-
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
+    @Override
+    public ResultV1RDTO<UserV1RDTO> getUser() {
+        LOG.debug("getUser()");
+        ResultV1RDTO<UserV1RDTO> dto = new ResultV1RDTO<UserV1RDTO>();
+        dto.setResult(new UserV1RDTO(contextDataService.getCurrentUserOid(), contextDataService.getCurrentUserLang()));
+        return dto;
     }
 }

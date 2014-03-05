@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -29,16 +30,13 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 
-import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
@@ -287,13 +285,15 @@ public class ShowKoulutusViewTab extends CustomComponent {
         return "";
     }
 
+
+
     private Label buildTallennettuLabel(Date date, String lastUpdatedBy) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
         Label lastUpdLbl = null;
         if (lastUpdatedBy != null) {
             String lastUpdater = null;
             try {
-                lastUpdater = uiHelper.findUserWithOid(lastUpdatedBy);
+                lastUpdater = uiHelper.tryGetViimPaivittaja(lastUpdatedBy);
             } catch (Exception exp) {
 
             }

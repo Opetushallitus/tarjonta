@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.authentication.service.types.dto.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import net.sf.ehcache.CacheManager;
 
@@ -132,6 +132,28 @@ public class TarjontaUIHelper {
         }
     }
 
+
+    public String tryGetViimPaivittaja(String viimPaivittajaOid) {
+        try {
+            String userName = null;
+            if(viimPaivittajaOid!=null) {
+                HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+
+                if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                    userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+                } else {
+                    userName = henkilo.getKayttajatiedot().getUsername();
+                }
+                return userName;
+            }
+        } catch (Exception exp) {
+
+            //log.warn("Unable to get user with oid : {} exception : {}", viimPaivittajaOid, exp.toString());
+        }
+
+        //fall back to viimPaivittajaOid
+        return _i18n.getMessage("tuntematon.kayttaja");
+    }
     /**
      * Splits koodiUri to URI and Version. Default version for those uris
      * without version information is "-1".
@@ -700,6 +722,22 @@ public class TarjontaUIHelper {
         return teksti;
     }
 
+
+
+    public static String getYhteystietoFromHenkiloType(HenkiloFatType henkiloFatType, YhteystiedotTyyppiType yhteystietoTyyppi) {
+        String sahkoposti = null;
+        if (henkiloFatType.getOrganisaatioHenkilos() != null) {
+        for(YhteystiedotRyhmaType yhteystiedotRyhmaType : henkiloFatType.getOrganisaatioHenkilos().get(0).getYhteystiedotRyhma()) {
+            for (HenkiloYhteystiedotType henkiloYhteystiedotType : yhteystiedotRyhmaType.getHenkiloYhteystiedot()) {
+                if(henkiloYhteystiedotType.getYhteystiedotTyyppi().equals(yhteystietoTyyppi)) {
+                    sahkoposti = henkiloYhteystiedotType.getYhteystiedotArvo();
+                }
+            }
+        }
+        }
+        return sahkoposti;
+    }
+
     /**
      * Avaimet mapin avaimet: fi, sv, en
      * @param locale
@@ -721,10 +759,11 @@ public class TarjontaUIHelper {
         return null;
     }
 
-    public String findUserWithOid(String oid) {
+    public String findUsernameWithOid(String oid) {
         if (oid != null) {
             HenkiloType henkiloType = userService.findByOid(oid);
-            return henkiloType.getKayttajatunnus();
+            return henkiloType.getKayttajatiedot().getUsername();
+
         } else {
             return "";
         }

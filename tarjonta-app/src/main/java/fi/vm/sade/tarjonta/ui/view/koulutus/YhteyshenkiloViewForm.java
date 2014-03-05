@@ -18,9 +18,13 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import static fi.vm.sade.generic.common.validation.ValidationConstants.EMAIL_PATTERN;
+
+import fi.vm.sade.authentication.service.types.dto.YhteystiedotTyyppiType;
 import fi.vm.sade.generic.ui.validation.JSR303FieldValidator;
+import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -75,7 +79,7 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
      *
      * @param henkiloType
      */
-    public void populateYhtHenkiloFields(HenkiloType henkiloType) {
+    public void populateYhtHenkiloFields(HenkiloFatType henkiloType) {
 
         if (henkiloType == null) {
             return;
@@ -84,9 +88,13 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
 
         this.yhtHenkKokoNimi.setValue(henkiloType.getEtunimet() + " " + henkiloType.getSukunimi());
         this.model.setYhtHenkiloOid(henkiloType.getOidHenkilo());
+
         if (henkiloType.getOrganisaatioHenkilos() != null && !henkiloType.getOrganisaatioHenkilos().isEmpty()) {
-            this.getYhtHenkEmail().setValue(henkiloType.getOrganisaatioHenkilos().get(0).getSahkopostiosoite());
-            this.getYhtHenkPuhelin().setValue(henkiloType.getOrganisaatioHenkilos().get(0).getPuhelinnumero());
+            this.getYhtHenkEmail().setValue(TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType, YhteystiedotTyyppiType.YHTEYSTIETO_SAHKOPOSTI));
+            String puhelinNro = TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType,YhteystiedotTyyppiType.YHTEYSTIETO_PUHELINNUMERO) != null ?
+                    TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType, YhteystiedotTyyppiType.YHTEYSTIETO_PUHELINNUMERO) :
+                    TarjontaUIHelper.getYhteystietoFromHenkiloType(henkiloType, YhteystiedotTyyppiType.YHTEYSTIETO_MATKAPUHELINNUMERO);
+            this.getYhtHenkPuhelin().setValue(puhelinNro);
             this.getYhtHenkTitteli().setValue(henkiloType.getOrganisaatioHenkilos().get(0).getTehtavanimike());
         } else {
             this.getYhtHenkEmail().setValue(null);
@@ -122,8 +130,7 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
     /**
      * Builds the yhteyshenkilo part of the form.
      *
-     * @param grid
-     * @param propertyKey
+
      */
     public void init() {
         selectionFieldLayout = new VerticalLayout();
