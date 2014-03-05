@@ -47,8 +47,11 @@ import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
@@ -105,6 +108,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private KoodiService koodiService;
 
     @Autowired
+    private OidService oidService;
+
+    @Autowired
     private HakukohdeResource hakukohdeResource;
 
     @Autowired
@@ -120,6 +126,15 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Before
     @Override
     public void before() {
+        
+        try {
+            Mockito.stub(oidService.get(Type.KOMO)).toReturn("oid-komo");
+            Mockito.stub(oidService.get(Type.KOMOTO)).toReturn("oid-komoto");
+        } catch (OIDCreationException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
         try {
             clearIndex(solrServerFactory.getOrganisaatioSolrServer());

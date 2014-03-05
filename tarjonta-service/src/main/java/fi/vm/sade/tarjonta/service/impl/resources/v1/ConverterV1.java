@@ -26,8 +26,10 @@ import java.util.TreeSet;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +38,6 @@ import org.springframework.stereotype.Service;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -96,7 +95,7 @@ public class ConverterV1 {
     @Autowired
     KoulutusmoduuliDAO komoDao;
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
     @Autowired
     KoulutusmoduuliToteutusDAO komotoDao;
     @Autowired
@@ -161,14 +160,15 @@ public class ConverterV1 {
         return t;
     }
 
-    public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku) throws ExceptionMessage {
+
+    public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku) throws OIDCreationException {
         if (hakuV1RDTO == null) {
             return null;
         }
 
         if (haku == null) {
             haku = new Haku();
-            haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+            haku.setOid(oidService.get(Type.HAKU));
         }
 
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
@@ -651,10 +651,10 @@ public class ConverterV1 {
         String newHakukohdeOid = null;
         LOG.debug("OIDSERVICE: {}", oidService);
         try {
-            newHakukohdeOid = oidService.newOid(NodeClassCode.TEKN_5);
+            newHakukohdeOid = oidService.get(Type.HAKUKOHDE);
             LOG.debug("OID SERVICE NEW OID : {}", newHakukohdeOid);
-        } catch (ExceptionMessage emm) {
-            LOG.warn("UNABLE TO GET OID : {}", emm.toString());
+        }  catch (OIDCreationException emm) {
+            LOG.warn("UNABLE TO GET OID : {}", emm.toString() );
         }
 
         if (hakukohdeRDTO.getOid() != null && hakukohdeRDTO.getOid().trim().length() > 0) {

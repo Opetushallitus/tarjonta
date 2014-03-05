@@ -18,6 +18,9 @@ package fi.vm.sade.tarjonta.service.business.impl;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.YhteyshenkiloDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
@@ -37,7 +37,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.toKoodistoUriSet;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
@@ -55,7 +54,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
@@ -295,6 +294,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
+            parentKomoto.setOid("foofoooid");
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
@@ -316,47 +316,12 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     private String generateOid() {
         try {
-            return oidService.newOid(NodeClassCode.TEKN_5);
-        } catch (ExceptionMessage ex) {
+            return oidService.get(Type.KOMOTO);
+        } catch (OIDCreationException ex) {
             throw new TarjontaBusinessException("OID service unavailable.", ex);
         }
     }
 
-    private int ibmCheck(Long oid) {
-        String oidStr = oid.toString();
-
-        int sum = 0;
-        int[] alternate = {7, 3, 1};
-
-        for (int i = oidStr.length() - 1, j = 0; i >= 0; i--, j++) {
-            int n = Integer.parseInt(oidStr.substring(i, i + 1));
-
-            sum += n * alternate[j % 3];
-        }
-
-        return 10 - sum % 10;
-    }
-
-    /*
-     * updating the startDate to siblings of the komoto given in koulutus. 
-     */
-    /*private void handleChildKomos(Koulutusmoduuli parentKomo, Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
-     for (Koulutusmoduuli curChildKomo : parentKomo.getAlamoduuliList()) {
-
-     String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
-     List<KoulutusmoduuliToteutus> curKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(curChildKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
-
-     if (curKomotos == null) {
-     continue;
-     }
-     for (KoulutusmoduuliToteutus curKomoto : curKomotos) {
-     if (!curKomoto.getOid().equals(koulutus.getOid())) {
-     curKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
-     this.koulutusmoduuliToteutusDAO.update(curKomoto);
-     }
-     }
-     }
-     }*/
     private boolean isNew(BaseEntity e) {
         // no good
         return (e.getId() == null);

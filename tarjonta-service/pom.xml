@@ -270,8 +270,14 @@
         -->
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
+            <artifactId>oid-service</artifactId>
+            <version>${oid.version}</version>
+            <classifier>embed</classifier>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
-            <version>${oid.api.version}</version>
+            <version>${oid.version}</version>
         </dependency>
 
         <!-- used by koodisto sync service -->
@@ -327,9 +333,10 @@
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
-            <groupId>jgrapht</groupId>
-            <artifactId>jgrapht</artifactId>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-jdk1.5</artifactId>
             <version>0.7.3</version>
         </dependency>
 

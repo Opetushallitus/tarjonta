@@ -18,9 +18,6 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -28,6 +25,9 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
@@ -66,7 +66,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity {
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
@@ -87,9 +87,10 @@ public class KoulutusKorkeakouluDTOConverterToEntity {
             //insert new komo&komoto data to database.
             komoto.setKoulutusmoduuli(komo);
             try {
-                komo.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-                komoto.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-            } catch (ExceptionMessage ex) {
+                komo.setOid(oidService.get(Type.KOMO));
+                komoto.setOid(oidService.get(Type.KOMOTO));
+            } catch (OIDCreationException ex) {
+                //XXX Should signal error!
                 LOG.error("OIDService failed!", ex);
             }
         }

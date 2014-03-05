@@ -22,8 +22,9 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodistoItemType;
 import fi.vm.sade.koodisto.service.types.common.TilaType;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -48,14 +49,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.easymock.EasyMock.createMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
@@ -135,7 +137,8 @@ public class KoulutusResourceImplV1Test {
     private KoulutusResourceImplV1 instance;
     private final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
     private OrganisaatioService organisaatioServiceMock;
-    private OIDService oidServiceMock;
+    @Autowired
+    private OidService oidService;
     private EntityConverterToKoulutusKorkeakouluRDTO converterToRDTO;
     private KoulutusKorkeakouluDTOConverterToEntity convertToEntity;
     private OrganisaatioDTO organisaatioDTO;
@@ -152,9 +155,15 @@ public class KoulutusResourceImplV1Test {
     private PermissionChecker permissionChecker;
     private ContextDataService contextDataService;
     private KoodistoURI koodistoUri;
+    
 
     @Before
-    public void setUp() {
+    public void setUp() throws OIDCreationException {
+
+        
+        Mockito.stub(oidService.get(Type.KOMO)).toReturn(KOMO_OID);
+        Mockito.stub(oidService.get(Type.KOMOTO)).toReturn(KOMOTO_OID);
+        
         setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
         //used in regexp kieli uri validation
@@ -171,7 +180,6 @@ public class KoulutusResourceImplV1Test {
         commonConverter = new KoulutusCommonV1RDTO();
         //CREATE MOCKS
         organisaatioServiceMock = createMock(OrganisaatioService.class);
-        oidServiceMock = createMock(OIDService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         solrIndexerMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
@@ -184,7 +192,7 @@ public class KoulutusResourceImplV1Test {
         instance = new KoulutusResourceImplV1();
 
         //SET VALUES TO INSTANCES
-        Whitebox.setInternalState(convertToEntity, "oidService", oidServiceMock);
+        Whitebox.setInternalState(convertToEntity, "oidService", oidService);
 
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
         Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
@@ -253,8 +261,6 @@ public class KoulutusResourceImplV1Test {
         //EXPECT
         expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(3);
         //the calls of the OidServices must be in correct order!
-        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMO_OID);
-        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn(KOMOTO_OID);
 
         permissionChecker.checkCreateKoulutus(ORGANISAATIO_OID);
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISAATIO_OID);
@@ -307,7 +313,6 @@ public class KoulutusResourceImplV1Test {
         //  expectKoulutusohjelmaUris(KOULUTUSOHELMA);
 
         /* REPLAY */
-        replay(oidServiceMock);
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
         /*
@@ -323,7 +328,6 @@ public class KoulutusResourceImplV1Test {
         KoulutusKorkeakouluV1RDTO result1 = (KoulutusKorkeakouluV1RDTO) result.getResult();
         assertLoadData(result1);
 
-        verify(oidServiceMock);
         verify(organisaatioServiceMock);
         verify(tarjontaKoodistoHelperMock);
     }
