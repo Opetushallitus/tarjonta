@@ -143,7 +143,9 @@ public class YhteyshenkiloViewForm extends VerticalLayout {
             public void componentEvent(Event event) {
                 if (event instanceof AutocompleteTextField.HenkiloAutocompleteEvent
                         && ((AutocompleteTextField.HenkiloAutocompleteEvent) event).getEventType() == AutocompleteTextField.HenkiloAutocompleteEvent.SELECTED) {
-                    populateYhtHenkiloFields(((AutocompleteTextField.HenkiloAutocompleteEvent) event).getHenkilo());
+
+                    HenkiloFatType fatHenkilo = presenter.getFatHenkiloWithOid(((AutocompleteTextField.HenkiloAutocompleteEvent) event).getHenkilo().getOidHenkilo());
+                    populateYhtHenkiloFields(fatHenkilo);
                 } else if (event instanceof AutocompleteTextField.HenkiloAutocompleteEvent
                         && ((AutocompleteTextField.HenkiloAutocompleteEvent) event).getEventType() == AutocompleteTextField.HenkiloAutocompleteEvent.NOT_SELECTED) {
                     restoreInitialValuesToYhtHenkiloFields();
