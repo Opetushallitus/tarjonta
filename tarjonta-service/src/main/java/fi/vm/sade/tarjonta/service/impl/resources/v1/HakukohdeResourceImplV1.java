@@ -452,6 +452,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         String hakuOid = hakukohdeRDTO.getHakuOid();
+        Date today = new Date();
         List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
 
         if(hakukohdeRDTO.getUlkoinenTunniste() != null && hakukohdeRDTO.getUlkoinenTunniste().length() > 0) {
@@ -478,7 +479,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         hakukohdeRDTO.setOid(null);
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-        hakukohde.setLastUpdateDate(new Date());
+        hakukohde.setLastUpdateDate(today);
 
 
         Haku haku = hakuDao.findByOid(hakuOid);
@@ -526,6 +527,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
         result.setStatus(ResultV1RDTO.ResultStatus.OK);
+        hakukohdeRDTO.setModified(today);
         result.setResult(hakukohdeRDTO);
         return result;
     }
@@ -534,6 +536,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
         try {
+
+            Date today = new Date();
         	//LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
 			String hakuOid = hakukohdeRDTO.getHakuOid();
 
@@ -564,7 +568,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			}
 
 			Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-			hakukohde.setLastUpdateDate(new Date());
+			hakukohde.setLastUpdateDate(today);
 			Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
 			//TODO: Fix it
 			//permissionChecker.checkUpdateHakukohde(hakukohdeTemp.getOid());
@@ -611,6 +615,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
 			ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
 			result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            hakukohdeRDTO.setModified(today);
 			result.setResult(hakukohdeRDTO);
 			return result;
 		} catch (Exception e) {

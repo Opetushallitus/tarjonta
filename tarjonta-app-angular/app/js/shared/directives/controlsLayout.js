@@ -127,7 +127,11 @@ app.directive('displayControls',function($log, LocalisationService, $filter, Yht
        			md.push(LocalisationService.t(key,
        					[ $filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user ]));
        		}
-                
+            //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
+            $scope.$watch('dto.modified',function(newValue,oldValue) {
+                $scope.model.reloadDisplayControls();
+            });
+
                 /*
                  * Reload modified data.
                  * TODO: Currently called from other controllers...
