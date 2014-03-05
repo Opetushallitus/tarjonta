@@ -132,6 +132,11 @@ public class TarjontaUIHelper {
         }
     }
 
+    public HenkiloFatType getFatHenkiloWithOid(String fatOid) {
+
+        return userService.findByOid(fatOid);
+
+    }
 
     public String tryGetViimPaivittaja(String viimPaivittajaOid) {
         try {

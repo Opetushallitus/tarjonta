@@ -27,7 +27,7 @@
 
                     <tr>
 
-                        <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help"/>
+                        <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help">Valintaperuste edit HELP</td>
                         <td></td>
                     </tr>
                     <!-- väli -->
@@ -40,7 +40,7 @@
                             <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet"></mk-textfield>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi"></p>
+                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
                         </td>
                     </tr>
                     <!-- väli -->
@@ -48,16 +48,18 @@
                     <tr >
 
                         <td>
-                            <span tt="kk.valintaperustekuvaus.kausi.title"></span>
+                            <span tt="kk.valintaperustekuvaus.kausi.title">Kausi</span>
                             <koodistocombo name="kausicombo" koodistouri="'kausi'" isrequired="true" koodiuri="model.valintaperustekuvaus.kausi" locale="model.userLang"/>
-                            <span tt="kk.valintaperustekuvaus.vuosi.title"></span>
+                            <span tt="kk.valintaperustekuvaus.vuosi.title">Vuosi</span>
                             <select name="vuosiselect" data-ng-model="model.valintaperustekuvaus.vuosi" required data-ng-options="year for year in model.years"></select>
                         </td>
 
 
                         <td>
                             <div>
-                                <p class="error" ng-show="model.showError && valintaPerusteForm.kausicombo.$invalid" tt="valintaperuste.edit.valintaPerusteForm.kausicombo"></p>
+                                <p class="error" ng-show="model.showError && valintaPerusteForm.kausicombo.$invalid" tt="valintaperuste.edit.valintaPerusteForm.kausicombo">
+                                    Viallinen kausi
+                                </p>
                              <!-- <show-errors form="valintaPerusteForm" field="kausicombo" tt-prefix="valintaperuste.edit"></show-errors> -->
                             </div>
 
