@@ -1,9 +1,9 @@
-<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
+<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')"> 
     <controls-model
-        model="formControls"
+        model="controlModel.formControls"
         tt-create="koulutus.edit.header.title"
         title="model.koulutusohjelma.tekstis"
-        dto="model">
+        dto="controlModel.formStatus">
 
         <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
@@ -22,12 +22,12 @@
 
     </controls-model>
 
-    <display-controls model="formControls" display="header"></display-controls>
+    <display-controls model="controlModel.formControls" display="header"></display-controls>
 
     <form name="koulutusForm" >
         <div class="body" ng-include="resultPageUri"></div>
     </form>
 
-    <display-controls model="formControls" display="footer"></display-controls>
+    <display-controls model="controlModel.formControls" display="footer"></display-controls>
 
 </div>

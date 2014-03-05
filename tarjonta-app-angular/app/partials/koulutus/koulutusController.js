@@ -20,6 +20,15 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
     function KoulutusRoutingController($scope, $log, $routeParams, $route) {
         $scope.resultPageUri;
 
+        $scope.controlModel = {
+            formStatus: {
+                modifiedBy: '',
+                modified: null,
+                tila : ''
+            },
+            formControls: {reloadDisplayControls: function() {}}
+        };
+
         $log.info("KoulutusRoutingController()", $routeParams);
         $log.info("$route: ", $route);
         $log.info("SCOPE: ", $scope);

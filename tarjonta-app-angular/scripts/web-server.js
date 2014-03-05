@@ -9,12 +9,13 @@ var reppu="https://test-virkailija.oph.ware.fi"
 
 
 var USE_ENV=luokka;
+var port = 8888;
 
 
 var env={
 	remote:USE_ENV,
-user:'xxx',
-pass:'yyy'
+user:'missing-user-id',
+pass:'missing-password'
 }
 var ticketUrl = env.remote + "/service-access/accessTicket?client_id=" + env.user + "&client_secret=" + env.pass + "&service_url=" + env.remote + "/authentication-service";
 
@@ -42,8 +43,6 @@ server.configure(function(){
   server.use(express.static(dir));
 });
 
-
-
 http.get(ticketUrl,function(res){
 
   res.on("data", function(ticket) {
@@ -54,8 +53,7 @@ http.get(ticketUrl,function(res){
     console.log("Got error: " + e.message);
   });
 
-
-console.log("http://127.0.0.1:8000/");
-server.listen(8000);
+console.log("http://127.0.0.1:"  + port);
+server.listen(port);
 
 
