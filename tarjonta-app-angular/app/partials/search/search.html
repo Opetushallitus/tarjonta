@@ -23,8 +23,8 @@
         <label for="suunnitellut">{{t("organisaatiohaku.label.nayta.myos.suunnitellut")}}</label><br/><br/>
 
         <div class="buttons">
-            <a href class="btn btn-primary" ng-click="resetOrg()"><span tt="organisaatiohaku.button.tyhjenna"></span></a>
-            <a href class="btn btn-primary" ng-click="submitOrg()"><span tt="organisaatiohaku.button.hae"/> <span class="icon-search"></span></a>
+            <a href class="btn btn-primary" ng-click="resetOrg()"><span tt="organisaatiohaku.button.tyhjenna">Tyhjennä</span></a>
+            <a href class="btn btn-primary" ng-click="submitOrg()"><span tt="organisaatiohaku.button.hae">Hae</span> <span class="icon-search"></span></a>
         </div>
     </div>
 
@@ -67,8 +67,8 @@
                     <select ng-model="spec.season" ng-options="s as t for (s,t) in seasons"/>
                 </td>
                 <td class="controls">
-                    <a href class="btn" ng-click="reset()"><span tt="tarjonta.haku.tyhjenna"/></a>
-                    <a href class="btn btn-primary"" ng-click="search()"><span tt="tarjonta.haku.hae"/> <span class="icon-search"></span></a>
+                    <a href class="btn" ng-click="reset()"><span tt="tarjonta.haku.tyhjenna">Tyhjennä</span></a>
+                    <a href class="btn btn-primary"" ng-click="search()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></a>
                 </td>
 
             </tr>
@@ -83,15 +83,15 @@
 	<div id="searchResults">
         <div class="tools">
             <!-- <a href class="btn" ng-click="report()" disabled="true"><span tt="tarjonta.haku.tulosta_raportti"/> <span class="icon-print"></span></a> -->
-        </div>	   
+        </div>
 	    <tabset>
 	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
 
 	        	<div class="controls">
-	        	
-                    <a href class="btn" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi"/></a>
-                    <a href class="btn" ng-click="luoHakukohdeEnabled()?luoUusiHakukohde():function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde"/> <span class="icon-plus-sign"></span></a>
-                    <a href class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus"/> <span class="icon-plus-sign"></span></a>
+
+                    <a href class="btn" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi">Siirrä tai kopioi</span></a>
+                    <a href class="btn" ng-click="luoHakukohdeEnabled()?luoUusiHakukohde():function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde">Luo uusi hakukohde</span> <span class="icon-plus-sign"></span></a>
+                    <a href class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus">Luo uusi koulutus</span> <span class="icon-plus-sign"></span></a>
                 </div>
 
 	        	<results-table
@@ -116,7 +116,7 @@
 	        </tab>
 
 	    </tabset>
-	    
+
     </div>
 </div>
 </div>

@@ -46,6 +46,22 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         		}
         	}
         	
+        	langs.sort(function(a, b){
+        		var ap = $scope.userLangs.indexOf(a);
+        		var bp = $scope.userLangs.indexOf(b);
+        		if (ap!=-1 && bp!=-1) {
+        			return ap-bp;
+        		}
+        		if (ap!=-1) {
+        			return -1;
+        		}
+        		if (bp!=-1) {
+        			return 1;
+        		}
+        		
+        		return $scope.langs[a.uri].localeCompare($scope.langs[b.uri]);
+        	});
+        	
     		$scope.selectedLangs = langs;
         	/*console.log("MODEL = ",$scope.model);
         	console.log("TABS = ",$scope.selectedTab);
