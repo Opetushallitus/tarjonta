@@ -117,7 +117,7 @@ window.CONFIG = {
         "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
 
         //ohjausparametrit"
-        "tarjontaOhjausparametritResutUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
+        "tarjontaOhjausparametritRestUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
         "place": "holder"
 
 
