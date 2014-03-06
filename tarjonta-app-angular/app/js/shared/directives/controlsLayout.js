@@ -130,7 +130,10 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             }
             //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
             $scope.$watch('dto.modified', function(newValue, oldValue) {
-                if (newValue !== oldValue || $scope.model.metadata.length === 0) {
+                if(angular.isUndefined(newValue) && angular.isUndefined(oldValue)){
+                    //missing date.
+                    return;
+                }else if (newValue !== oldValue || $scope.model.metadata.length === 0) {
                     $scope.model.reloadDisplayControls();
                 }
             });
@@ -139,7 +142,6 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
              * Reload modified&status data.
              */
             $scope.model.reloadDisplayControls = function() {
-                $scope.model.metadata = [];
                 $scope.dto = $scope.model.dto();
 
                 var userOid = $scope.dto.modifiedBy;
@@ -151,7 +153,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 if (!angular.isUndefined(userOid) && userOid !== null && userOid.length > 0) {
                     var promise = YhteyshenkiloService.haeHenkilo(userOid);
                     promise.then(function(response) {
-                        
+                        $scope.model.metadata = [];
                         if ($scope.dto.tila) {
                             $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
                         }

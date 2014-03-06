@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -32,7 +33,6 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
-import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
@@ -165,6 +165,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
+    /**
+     * Insert and update koulutus object to database. When komoto OID is set,
+     * then the post method will be handled as koulutus data update.
+     *
+     * @param dto
+     * @return
+     */
     private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
 
         validateRestObjectKorkeakouluDTO(dto);
@@ -182,7 +189,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             solrIndexer.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            //publication.sendEvent(response.getTila(), response.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
             resultRDTO.setResult(converterToRDTO.convert(fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
         } else {
             resultRDTO.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
@@ -356,7 +362,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
                 resultRDTO.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(clazz, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(lang.toUpperCase()), meta));
             }
-        } catch (Exception ex) {
+        } catch (InstantiationException ex) {
+            LOG.error("Relation initialization error.", ex);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+        } catch (IllegalAccessException ex) {
+            LOG.error("Relation illegal access error.", ex);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+        } catch (GenericFault ex) {
+            LOG.error("Koodisto relation error.", ex);
+            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+        } catch (TarjontaBusinessException ex) {
             LOG.error("Koodisto relation error.", ex);
             resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         }
@@ -413,29 +428,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converter.fromKoulutuksetVastaus(r));
     }
 
-//    @Override
-//    public ResultV1RDTO<KoulutusLukioV1RDTO> postLukiokoulutus(KoulutusLukioV1RDTO koulutus) {
-//        LOG.info("postLukiokoulutus({})", koulutus);
-//
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public ResultV1RDTO<KoulutusAmmatillinenPeruskoulutusV1RDTO> postAmmatillinenPeruskoulutus(KoulutusAmmatillinenPeruskoulutusV1RDTO koulutus) {
-//        LOG.info("postAmmatillinenPeruskoulutus({})", koulutus);
-//
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public ResultV1RDTO<KoulutusPerusopetuksenLisaopetusV1RDTO> postPerusopetuksenLisaopetusKoulutus(KoulutusPerusopetuksenLisaopetusV1RDTO koulutus) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    @Override
-//    public ResultV1RDTO<KoulutusValmentavaJaKuntouttavaV1RDTO> postValmentavaJaKuntouttavaKoulutus(KoulutusValmentavaJaKuntouttavaV1RDTO koulutus) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
     @Override
     public Response deleteKuva(String oid, String kieliUri) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
@@ -501,8 +493,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     /**
      * Legacy HTML4 image upload for IE9.
      *
-     * @param oid
-     * @param kieliUri
+     * @param oid komoto OID
+     * @param kieliUri koodisto language uri, without version
      * @param body
      * @return
      */
@@ -569,8 +561,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     /**
      * HTML5 image upload.
      *
-     * @param oid
-     * @param image
+     * @param oid komoto OID
+     * @param kuva image DTO
      * @return ResultV1DTO with status and error information.
      */
     @Override
