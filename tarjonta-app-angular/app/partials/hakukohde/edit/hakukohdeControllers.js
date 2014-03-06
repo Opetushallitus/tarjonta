@@ -553,6 +553,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
+    var splitUri = function(uri) {
+
+        var tokenizedArray = uri.split("#");
+        return tokenizedArray[0];
+
+    };
+
     var getOppilaitosTyyppis = function(organisaatiot) {
 
         var oppilaitosTyyppiPromises = [];
@@ -620,9 +627,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
-            if (haku.kohdejoukkoUri==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
 
+            var kohdeJoukkoUriNoVersion = splitUri(haku.kohdejoukkoUri);
+            console.log('HAUN KOHDEJOUKKO : ', kohdeJoukkoUriNoVersion);
+            console.log('ENV KK KOHDEJOUKKO : ', window.CONFIG.app['haku.kohdejoukko.kk.uri']);
+            if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
 
+                console.log('KOHDEJOUKKO MATCHED !!!!!');
                 //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
                 if (haku.koulutuksenAlkamiskausiUri === koulutusKausiUri && haku.koulutuksenAlkamisVuosi === koulutusVuosi) {
                     $scope.model.hakus.push(haku);

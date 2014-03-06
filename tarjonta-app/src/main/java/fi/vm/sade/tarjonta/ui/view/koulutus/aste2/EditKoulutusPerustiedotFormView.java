@@ -429,7 +429,12 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             public void componentEvent(Event event) {
                 if (event instanceof HenkiloAutocompleteEvent
                         && ((HenkiloAutocompleteEvent) event).getEventType() == HenkiloAutocompleteEvent.SELECTED) {
-                    populateYhtHenkiloFields(((HenkiloAutocompleteEvent) event).getHenkilo());
+                    if (((HenkiloAutocompleteEvent) event).getHenkilo() != null && presenter != null) {
+                    HenkiloFatType fatHenkilo = presenter.getFatHenkiloWithOid(((HenkiloAutocompleteEvent) event).getHenkilo().getOidHenkilo());
+                    if (fatHenkilo != null) {
+                        populateYhtHenkiloFields(fatHenkilo);
+                    }
+                    }
                 } else if (event instanceof HenkiloAutocompleteEvent
                         && ((HenkiloAutocompleteEvent) event).getEventType() == HenkiloAutocompleteEvent.NOT_SELECTED) {
                     restoreInitialValuesToYhtHenkiloFields();

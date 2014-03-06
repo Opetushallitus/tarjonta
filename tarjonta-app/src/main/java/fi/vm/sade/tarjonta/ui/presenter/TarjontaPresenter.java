@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,7 +246,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         refreshHakukohdeUIModel(fresh);
     }
-    
+
+    public HenkiloFatType getFatHenkiloWithOid(String oid) {
+
+        return userService.findByOid(oid);
+
+    }
+
     // Figure out the type
     private void updateHakukohdeKoulutusasteTyyppi(HakukohdeViewModel hakukohde) {
         Preconditions.checkNotNull(hakukohde);
@@ -2333,7 +2340,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         //Doing the search to UserService
         HenkiloSearchObjectType searchType = new HenkiloSearchObjectType();
-        searchType.setConnective(SearchConnectiveType.AND);
+
+        //searchType.setConnective(SearchConnectiveType.AND);
         String[] nimetSplit = value.split(" ");
         if (nimetSplit.length > 1) {
             searchType.setSukunimi(nimetSplit[nimetSplit.length - 1]);
@@ -2345,6 +2353,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
         List<HenkiloType> henkilos = new ArrayList<HenkiloType>();
         try {
+
             henkilos = this.userService.listHenkilos(searchType, paging);
         } catch (Exception ex) {
             LOG.error("Problem fetching henkilos: {}", ex.getMessage());

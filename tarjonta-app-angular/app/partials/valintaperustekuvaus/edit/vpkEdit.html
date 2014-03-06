@@ -3,7 +3,7 @@
 
     <tr class="required">
 
-        <th tt="kk.valintaperustekuvaus.oppilaitostyyppi"/>
+        <th tt="kk.valintaperustekuvaus.oppilaitostyyppi">Oppilaitostyyppi</th>
         <td>
             <koodistocombo onchangecallback="model.koodistoComboCallback" koodistouri="'oppilaitostyyppi'" locale="'FI'" koodiuri="model.valintaperustekuvaus.organisaatioTyyppi"></koodistocombo>
         </td>
@@ -13,10 +13,10 @@
     </tr>
     <tr>
         <th></th>
-        <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help"/>
+        <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help">Valintaperuste edit HELP</td>
     </tr>
     <tr class="required">
-        <th tt="kk.valintaperustekuvaus.ryhma"/>
+        <th tt="kk.valintaperustekuvaus.ryhma">Ryhmä</th>
         <td>
             <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet"></mk-textfield>
         </td>
@@ -28,5 +28,3 @@
 </table>
 
 <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>
-
-

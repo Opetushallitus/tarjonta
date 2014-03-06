@@ -13,7 +13,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   $scope.model = {};
 
-  $scope.model.years = [];
+ $scope.model.years = [];
 
   $scope.model.validationmsgs = [];
 

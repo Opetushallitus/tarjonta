@@ -1,17 +1,17 @@
 <div id="luo-koulutus-dialogi">
 	<div class="modal-header">
-		<h3><span  tt="luoKoulutusDialogi.otsikko"/></h3>
+        <h3><span  tt="luoKoulutusDialogi.otsikko">Luo uusi koulutus</span></h3>
 	</div>
 
 	<div class="modal-body">
-        <div tt="luoKoulutusDialogi.kuvaus"></div>
-        
-        <h4><span tt="luoKoulutsDialogi.koulutus"/></h4>
+        <div tt="luoKoulutusDialogi.kuvaus">Luo koulutusdialogi kuvaus</div>
+
+        <h4><span tt="luoKoulutsDialogi.koulutus">Koulutus</span></h4>
         <select ng-hide="piilotaKoulutustyyppi" ng-model="model.koulutustyyppi"
                     ng-options="k.koodiNimi for k in sallitutKoulutustyypit">
-                        <option value="">-- valitse --</option>
+                        <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
         </select>
-        <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka"/></h4>
+        <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>
 
 		<table width="100%">
 			<tr>
@@ -19,9 +19,9 @@
 						data-angular-treeview="true" data-tree-id="lkorganisaatio"
 						data-org-tree-model="lkorganisaatiot" data-node-id="oid"
 						data-node-label="nimi" data-node-children="children" autoselect="luoKoulutusDialogOrg"></div></td>
-				<td width="50%" ng-hide="organisaatioValittu()" tt="luoKoulutusDialogi.organisaatiotaEiValittu"/>
+                        <td width="50%" ng-hide="organisaatioValittu()" tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
 				<td width="50%" ng-show="organisaatioValittu()">
-				    <p tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin"/>
+                    <p tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin">Luodaan seuraaviin organisaatioihin</p>
 				    <ul>
                     <li ng-repeat="organisaatio in model.organisaatiot">
                         <a ng-click="poistaValittu(organisaatio)">[X]</a> {{organisaatio.nimi}}
@@ -33,8 +33,8 @@
 
 	</div>
 	<div class="modal-footer">
-		<button class="btn" ng-click="peruuta()"><span tt="luoKoulutusDialogi.peruuta"/></button>
-		<button class="btn" disabled="true" ng-click="liitaToiseenOrganisaatioon()"><span tt="luoKoulutusDialogi.liitaToiseenOrganisaatioon"/></button>
-		<button class="btn btn-primary" ng-disabled="jatkaDisabled()" ng-click="jatka()"><span tt="luoKoulutusDialogi.jatka"/></button>
+        <button class="btn" ng-click="peruuta()"><span tt="luoKoulutusDialogi.peruuta">Peruuta</span></button>
+        <button class="btn" disabled="true" ng-click="liitaToiseenOrganisaatioon()"><span tt="luoKoulutusDialogi.liitaToiseenOrganisaatioon">Liitä toiseen organisaatioon</span></button>
+        <button class="btn btn-primary" ng-disabled="jatkaDisabled()" ng-click="jatka()"><span tt="luoKoulutusDialogi.jatka">Jatka</span></button>
 	</div>
 </div>

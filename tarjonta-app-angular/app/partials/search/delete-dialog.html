@@ -3,18 +3,18 @@
     <div class="modal-header">
         <h3>{{t(otsikko)}}</h3>
     </div>
-    
+
     <div class="modal-body">
 
 		<p>{{t(ohje)}}</p>
-		
+
 		<p class="subject">{{nimi}}</p>
 
     </div>
-    
+
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="cancel()">{{t('tarjonta.toiminnot.peruuta')}}</button>
-        <button class="btn btn-primary" ng-click="ok()">{{t('tarjonta.toiminnot.poista')}}</button>
+        <button class="btn btn-warning" ng-click="cancel()" tt="tarjonta.toiminnot.peruuta">Peruuta</button>
+        <button class="btn btn-primary" ng-click="ok()" tt="tarjonta.toiminnot.poista">Poista</button>
     </div>
 
 </div>

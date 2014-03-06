@@ -20,7 +20,7 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('ngGrid'));
     var CONFIG_ENV_MOCK = {
         "env": {
-            "authentication-service.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/",
+            "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo",
             "key-env-1": "mock-value-env-1",
             "key-env-2": "mock-value-env-2"
         }, "app": {
@@ -34,7 +34,7 @@ describe('Edit koulutus testeja', function() {
 //    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
-     beforeEach(module('Tarjonta'));
+    beforeEach(module('Tarjonta'));
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('imageupload'));
     beforeEach(module('TarjontaCache'));
@@ -82,6 +82,7 @@ describe('Edit koulutus testeja', function() {
         expect($scope.stoModel.hakulause).toEqual('');
     }));
 
+/*
     it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
         $controller('EditYhteyshenkiloCtrl', {
             $scope: $scope
@@ -99,7 +100,7 @@ describe('Edit koulutus testeja', function() {
         $scope.editYhModel.clearYh();
         expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
     }));
-
+*/
 
     it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller, $httpBackend) {
 

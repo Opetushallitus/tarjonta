@@ -8,11 +8,9 @@ app.controller('BaseEditController',
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
-                $scope.uiModel = null;
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
-                $scope.formControls = {};
 
                 // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
                 $scope.lisatiedot = [];
@@ -40,6 +38,8 @@ app.controller('BaseEditController',
                             $location.path("/error");
                             return;
                         }
+
+                        $scope.updateFormStatusInformation(model);
 
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
                             if (value.henkiloTyyppi === 'YHTEYSHENKILO') {
@@ -124,15 +124,15 @@ app.controller('BaseEditController',
                     $scope.uiModel = uiModel;
                     $scope.model = model;
                 };
-                
+
                 $scope.getLisatietoKielet = function() {
-                	for (var i in $scope.uiModel.opetuskielis.uris) {
-                		var lc = $scope.uiModel.opetuskielis.uris[i];
+                    for (var i in $scope.uiModel.opetuskielis.uris) {
+                        var lc = $scope.uiModel.opetuskielis.uris[i];
                         if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
-                        	$scope.uiModel.lisatietoKielet.push(lc);
+                            $scope.uiModel.lisatietoKielet.push(lc);
                         }
-                	}
-                	return $scope.uiModel.lisatietoKielet;
+                    }
+                    return $scope.uiModel.lisatietoKielet;
                 }
 
                 function deleteLisatiedot(lc) {
@@ -229,7 +229,7 @@ app.controller('BaseEditController',
 
                             if (saveResponse.status === 'OK') {
                                 $scope.model = model;
-                                $scope.formControls.reloadDisplayControls();
+                                $scope.updateFormStatusInformation($scope.model);
                                 $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
                                 $scope.lisatiedot = converter.KUVAUS_ORDER;
@@ -239,6 +239,18 @@ app.controller('BaseEditController',
                             }
                         });
                     });
+                };
+
+                $scope.updateFormStatusInformation = function(model) {
+                    //look more info from KoulutusRoutingController and controlLayouts.js
+                    $scope.controlModel.formStatus = {
+                        modifiedBy: model.modifiedBy,
+                        modified: model.modified,
+                        tila: model.tila
+                    };
+
+                    //force reload
+                    $scope.controlModel.formControls.reloadDisplayControls();
                 };
 
                 $scope.saveModelConverter = function(tila) {
@@ -354,7 +366,7 @@ app.controller('BaseEditController',
                         //server errors
                         return;
                     }
-                    
+
                     $location.path("/koulutus/" + $scope.model.oid);
                 };
 
@@ -367,13 +379,13 @@ app.controller('BaseEditController',
                 };
 
                 $scope.selectKieli = function(kieliUri) {
-                	$scope.uiModel.selectedKieliUri = kieliUri;
+                    $scope.uiModel.selectedKieliUri = kieliUri;
                 }
 
                 $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
-                	if (!kieliUri) {
-                		return {};
-                	}
+                    if (!kieliUri) {
+                        return {};
+                    }
                     var kuvaus = null;
                     if (typeof boolIsKomo !== 'boolean') {
                         converter.throwError('An invalid boolean variable : ' + boolIsKomo);
@@ -424,7 +436,7 @@ app.controller('BaseEditController',
                             uiModel.validationmsgs = [];
                             break;
                         case 'CLEAR':
-                            $scope.formControls.notifs.errorDetail = [];
+                            $scope.controlModel.formControls.notifs.errorDetail = [];
                             $scope.koulutusForm.$dirty = true;
                             $scope.koulutusForm.$invalid = false;
                             uiModel.validationmsgs = [];
