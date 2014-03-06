@@ -15,21 +15,28 @@
  */
 package fi.vm.sade.tarjonta.service.impl;
 
-import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
-import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.OptimisticLockException;
+
+import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +51,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import fi.vm.sade.log.client.LoggerHelper;
 import fi.vm.sade.log.client.LoggerMock;
 import fi.vm.sade.log.model.Tapahtuma;
-
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -56,20 +65,50 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaunNimi;
+import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListHakuVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
+import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
+import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
-
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.persistence.OptimisticLockException;
-import org.junit.After;
 
 /**
  *
@@ -384,6 +423,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
 
         Valintakoe valintakoe = getValintakoe();
+        valintakoe.setHakukohde(hakukohde);
 
         hakukohde.getValintakoes().add(valintakoe);
 
@@ -864,9 +904,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         HakukohdeLiite liite = new HakukohdeLiite();
         liite.setHakukohde(hakukohde);
         liite.setLiitetyyppi("tyyppi");
+        liite.setHakukohdeLiiteNimi("nimi");
+        liite.setErapaiva(new Date());
         hakukohde.addLiite(liite);
         Valintakoe valintakoe = new Valintakoe();
-        valintakoe.setHakukohdeId(hakukohde.getId());
+        valintakoe.setHakukohde(hakukohde);
         hakukohde.addValintakoe(valintakoe);
         this.hakukohdeDAO.update(hakukohde);
         hakukohde = hakukohdeDAO.read(hakukohde.getId());
@@ -1064,9 +1106,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         HakukohdeLiite liite = new HakukohdeLiite();
         liite.setHakukohde(hakukohde);
         liite.setLiitetyyppi("tyyppi");
+        liite.setHakukohdeLiiteNimi("nimi");
+       liite.setErapaiva(new Date());
         hakukohde.addLiite(liite);
         Valintakoe valintakoe = new Valintakoe();
-        valintakoe.setHakukohdeId(hakukohde.getId());
+        valintakoe.setHakukohde(hakukohde);
         hakukohde.addValintakoe(valintakoe);
         this.hakukohdeDAO.update(hakukohde);
         hakukohde = hakukohdeDAO.read(hakukohde.getId());

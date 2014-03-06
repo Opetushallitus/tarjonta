@@ -29,12 +29,16 @@ public class Pisteraja extends TarjontaBaseEntity  {
 
     private static final long serialVersionUID = 1878029033380865674L;
 
+    @Column(name="valinnanpisterajatyyppi", nullable=false)
     private String valinnanPisterajaTyyppi;
 
+    @Column(name="alinpistemaara", nullable=false)
     private BigDecimal alinPistemaara;
 
+    @Column(name="ylinpistemaara", nullable=false)
     private BigDecimal ylinPistemaara;
 
+    @Column(name="alinhyvaksyttypistemaara", nullable=false)
     private BigDecimal alinHyvaksyttyPistemaara;
 
     /**
