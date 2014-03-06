@@ -77,6 +77,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.hakukelpoisuusValidationErrMsg = false;
 
+    $scope.model.tallennaValmiinaEnabled = true;
+
+    $scope.model.tallennaLuonnoksenaEnabled = true;
+
     var koulutusSet = new buckets.Set();
 
     /*
@@ -102,7 +106,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     console.log('HAKUKOHDE : ', $scope.model.hakukohde);
 
 
-    var checkIsCopy = function() {
+    var checkIsCopy = function(tilaParam) {
 
         //If scope or route has isCopy parameter defined as true remove oid,
         //so that new hakukohde will be created
@@ -111,15 +115,19 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         if ($route.current.locals.isCopy) {
             console.log('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
             $scope.model.hakukohde.oid = undefined;
+            $scope.model.hakukohde.tila = tilaParam;
 
         }
 
         console.log('IS COPY : ' , $scope.isCopy);
         if ($scope.isCopy !== undefined && $scope.isCopy) {
             $scope.model.hakukohde.oid = undefined;
+            $scope.model.hakukohde.tila = tilaParam;
 
         }
 
+
+        $scope.model.isCopy = true;
 
     }
 
@@ -175,6 +183,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+
+
     var checkJatkaBtn =   function() {
 
         if ($scope.model.hakukohde === undefined || $scope.model.hakukohde.oid === undefined) {
@@ -188,7 +198,23 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
+    var checkIfSavingCopy = function() {
 
+        if ($scope.model.isCopy) {
+
+            if ($scope.model.hakukohde.oid !== undefined) {
+
+                $scope.model.isCopy = false;
+
+                $location.path('/hakukohde/'+$scope.model.hakukohde.oid +'/edit');
+            }
+
+
+
+
+        }
+
+    }
 
     var showCommonUnknownErrorMsg = function() {
 
@@ -445,7 +471,25 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
+    $scope.model.canSaveAsLuonnos = function() {
 
+        if ($scope.model.hakukohde.tila === "LUONNOS") {
+
+            return true;
+
+        } else if ($scope.model.hakukohde.tila === "VALMIS") {
+
+            return false;
+
+        } else if ($scope.model.hakukohde.tila === undefined) {
+
+            return true;
+
+        } else {
+            return true;
+        }
+
+    }
 
     if ($scope.model.hakukohde.lisatiedot !== undefined) {
         angular.forEach($scope.model.hakukohde.lisatiedot,function(lisatieto){
@@ -584,6 +628,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     haeTarjoajaOppilaitosTyypit();
     checkJatkaBtn();
+    checkIsCopy();
 
 
 
@@ -629,11 +674,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             // TODO selvitä uri valitun koulutuksen perusteella
 
             var kohdeJoukkoUriNoVersion = splitUri(haku.kohdejoukkoUri);
-            console.log('HAUN KOHDEJOUKKO : ', kohdeJoukkoUriNoVersion);
-            console.log('ENV KK KOHDEJOUKKO : ', window.CONFIG.app['haku.kohdejoukko.kk.uri']);
+
             if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
 
-                console.log('KOHDEJOUKKO MATCHED !!!!!');
                 //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
                 if (haku.koulutuksenAlkamiskausiUri === koulutusKausiUri && haku.koulutuksenAlkamisVuosi === koulutusVuosi) {
                     $scope.model.hakus.push(haku);
@@ -845,6 +888,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                    $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                    showSuccess();
+                   checkIfSavingCopy();
                } else {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                    showError(hakukohde.errors);
@@ -912,7 +956,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             }  */
         console.log('SAVING HAKUKOHDE LUONNOS : ', $scope.model.hakukohde.oid);
         //Check if hakukohde is copy, then remove oid and save hakukohde as new
-        checkIsCopy();
+        checkIsCopy("LUONNOS");
         if ($scope.model.hakukohde.oid === undefined) {
 
             console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
@@ -924,6 +968,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                    $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                    showSuccess();
+                   checkIfSavingCopy();
                } else {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                   showError(hakukohde.errors);
