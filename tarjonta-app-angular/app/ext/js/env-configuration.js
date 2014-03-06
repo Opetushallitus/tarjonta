@@ -92,23 +92,22 @@ window.CONFIG = {
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
 
-        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "/tarjonta-service/rest/v1/",
 
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+         "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
-        "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
+        "tarjontaLocalisationRestUrl": "/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
 
-        "tarjontaKoodistoRestUrlPrefix" : "https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/",
+        "tarjontaKoodistoRestUrlPrefix" : "/koodisto-service/rest/json/",
 
         // NOTE: seems to be koodisto-uris.opintojenLaajuusarvo ???
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
-        // Only for development, since production reads "/cas/myroles"
-        "casUrl": "cas_me_ophadmin.json",
+        "casUrl": "/cas/me",
         //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
          //"henkilöhaku"
