@@ -54,7 +54,6 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
@@ -71,6 +70,9 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+
+import org.joda.time.DateTime;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -127,8 +129,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     public void before() {
         
         try {
-            Mockito.stub(oidService.get(Type.KOMO)).toReturn("oid-komo");
-            Mockito.stub(oidService.get(Type.KOMOTO)).toReturn("oid-komoto");
+            Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("oid-komo");
+            Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("oid-komoto");
         } catch (OIDCreationException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

@@ -57,7 +57,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
@@ -75,6 +74,8 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -161,8 +162,8 @@ public class KoulutusResourceImplV1Test {
     public void setUp() throws OIDCreationException {
 
         
-        Mockito.stub(oidService.get(Type.KOMO)).toReturn(KOMO_OID);
-        Mockito.stub(oidService.get(Type.KOMOTO)).toReturn(KOMOTO_OID);
+        Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO_OID);
+        Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO_OID);
         
         setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
 
