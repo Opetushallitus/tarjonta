@@ -74,6 +74,7 @@ app.directive('showErrors', function($log, LocalisationService) {
              * Translation key that is needed to show the error message.
              */
             $scope.ttKey = $scope.ttPrefix + "." + $scope.field + ".error";
+            $scope.ttValue = LocalisationService.t($scope.ttKey);
 
             /**
              * This method decides if the error message should be shown.
