@@ -109,12 +109,15 @@ window.CONFIG = {
         // NOTE: seems to be koodisto-uris.opintojenLaajuusarvo ???
         "koodistoUriOpintojenLaajuus": "opintojenlaajuus",
 
-        // "casUrl": "/cas/me",
-        // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/me",
-        "casUrl" : "cas_me_ophadmin.json",
-
-         //"henkilöhaku"
-        "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
+        // Only for development, since production reads "/cas/myroles"
+        "casUrl": "cas_me_ophadmin.json",
+        //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
+        
+         "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
+        //henkilöhaku
+        //"authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo", 
+        "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/permission/user?",
+        "authentication-service.henkilo.search.params"  : "?count=2000&index=0&ht=VIRKAILIJA",
 
         //ohjausparametrit"
         "tarjontaOhjausparametritRestUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",

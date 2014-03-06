@@ -67,7 +67,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             display: "@" // header|footer
         },
         controller: function($scope) {
-           
+
             switch ($scope.display) {
                 case "header":
                 case "footer":
@@ -130,10 +130,10 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             }
             //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
             $scope.$watch('dto.modified', function(newValue, oldValue) {
-                if(angular.isUndefined(newValue) && angular.isUndefined(oldValue)){
+                if (angular.isUndefined(newValue) && angular.isUndefined(oldValue)) {
                     //missing date.
                     return;
-                }else if (newValue !== oldValue || $scope.model.metadata.length === 0) {
+                } else if (newValue !== oldValue || $scope.model.metadata.length === 0) {
                     $scope.model.reloadDisplayControls();
                 }
             });
@@ -149,20 +149,25 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     userOid = $scope.dto.createdBy;
                 }
 
+                if ($scope.dto.tila) {
+                    $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
+                }
+
+                var date = $scope.dto.modified;
+                var lokalisointiKey = "tarjonta.metadata.modified";
+                if (!angular.isUndefined($scope.dto.created) && $scope.dto.created !== null) {
+                    date = $scope.dto.created;
+                    lokalisointiKey = "tarjonta.metadata.created";
+                }
+
                 //load user info by oid
                 if (!angular.isUndefined(userOid) && userOid !== null && userOid.length > 0) {
                     var promise = YhteyshenkiloService.haeHenkilo(userOid);
                     promise.then(function(response) {
                         $scope.model.metadata = [];
+
                         if ($scope.dto.tila) {
                             $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
-                        }
-
-                        var date = $scope.dto.modified;
-                        var lokalisointiKey = "tarjonta.metadata.modified";
-                        if (!angular.isUndefined($scope.dto.created) && $scope.dto.created !== null) {
-                            date = $scope.dto.created;
-                            lokalisointiKey = "tarjonta.metadata.created";
                         }
 
                         var name = "";
@@ -174,6 +179,8 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                         }
                         appendMetadata($scope.model.metadata, lokalisointiKey, name, date);
                     });
+                } else {
+                    appendMetadata($scope.model.metadata, lokalisointiKey, userOid, date);
                 }
             };
 

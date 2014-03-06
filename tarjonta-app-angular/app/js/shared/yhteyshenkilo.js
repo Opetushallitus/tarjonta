@@ -3,10 +3,10 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 //"henkiloservice"
 .factory('YhteyshenkiloService', function ($resource, $log, $q, Config, CacheService) {
 	
-	var baseUrl = Config.env['authentication-service.rest.url'];
-	var urlEtsi = baseUrl + "henkilo?count=2000&index=0&ht=VIRKAILIJA";
-	var urlHaeTiedot =baseUrl + "henkilo/:oid";
-	var urlHaeOrganisaatioHenkiloTiedot = baseUrl + "henkilo/:oid/organisaatiohenkilo";
+	var baseUrl = Config.env['authentication-service.henkilo.rest.url'];
+	var urlEtsi = baseUrl +  Config.env['authentication-service.henkilo.search.params'];
+	var urlHaeTiedot =baseUrl + "/:oid";
+	var urlHaeOrganisaatioHenkiloTiedot = baseUrl + "/:oid/organisaatiohenkilo";
 
 	var henkHaku = $resource(urlEtsi,{},{cache:true,get:{method:"GET", withCredentials:true}});
 	var henkilo = $resource(urlHaeTiedot,{},{cache:true,get:{method:"GET", withCredentials:true}});
