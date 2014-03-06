@@ -23,13 +23,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +31,13 @@ import org.springframework.stereotype.Service;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -52,7 +52,11 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
@@ -505,9 +509,8 @@ public class ConverterV1 {
             }
         }
 
-        if (hakukohde.getValintojenAloituspaikatLkm() != null) {
-            hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
-        }
+        hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
+
         if (hakukohde.getYlinValintaPistemaara() != null) {
             hakukohdeRDTO.setYlinValintapistemaara(hakukohde.getYlinValintaPistemaara());
         }

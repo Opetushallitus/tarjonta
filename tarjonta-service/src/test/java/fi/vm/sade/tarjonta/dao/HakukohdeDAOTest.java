@@ -15,17 +15,18 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
-import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
-import fi.vm.sade.tarjonta.model.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.validation.ValidationException;
+
+import javax.persistence.PersistenceException;
+
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,6 +36,15 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
+import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 
 /**
  */
@@ -73,7 +83,7 @@ public class HakukohdeDAOTest {
 
     }
 
-    @Test(expected = ValidationException.class)
+    @Test(expected = PersistenceException.class)
     public void testCreateWithoutName() {
 
         hakukohdeDAO.insert(new Hakukohde());

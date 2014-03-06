@@ -4,12 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,11 +56,9 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -69,9 +70,7 @@ import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import org.joda.time.DateTime;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -187,6 +186,18 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "suunniteltu-kesto-uri", "FI");
 
         super.before();
+    }
+    
+    @Override
+    @After
+    public void after() {
+    	super.after();
+    	executeInTransaction(new Runnable() {
+			@Override
+			public void run() {
+		    	tarjontaFixtures.deleteAll();
+			}
+		});
     }
 
     private OrganisaatioDTO getOrgDTO(String string) {
@@ -408,6 +419,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return kk;
     }
 
+    /*
     private HakukohdeV1RDTO getHakukohde(String koulutusOid) {
         HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
         hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
@@ -434,6 +446,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         hakukohde.setLiitteidenToimitusOsoite(osoite);
         return hakukohde;
     }
+    */
 
     /**
      * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on

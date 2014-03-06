@@ -38,6 +38,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     public List<Hakukohde> findOrphanHakukohteet();
 
     HakukohdeLiite findHakuKohdeLiiteById(String id);
+    boolean removeHakuKohdeLiiteById(String id);
 
     List<HakukohdeLiite> findHakukohdeLiitesByHakukohdeOid(String oid);
 
@@ -76,7 +77,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<Hakukohde> findByTermYearAndProvider(String term,int year,String providerOid);
 
     List<KoulutusmoduuliToteutus> komotoTest(String term, int year, String providerOid);
-
+    
     // String getAlkamiskausiUri();
 
     /**

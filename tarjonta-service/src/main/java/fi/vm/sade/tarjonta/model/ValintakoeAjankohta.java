@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.model;
 
 import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,12 +36,15 @@ public class ValintakoeAjankohta extends TarjontaBaseEntity {
 
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="alkamisaika", nullable=false)
     private Date alkamisaika;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="paattymisaika", nullable=false)
     private Date paattymisaika;
 
     @FilterXss
+    @Column(name="lisatietoja")
     private String lisatietoja;
 
     private Osoite ajankohdanOsoite;

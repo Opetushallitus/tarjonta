@@ -180,10 +180,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void poistaHakukohdeLiite(@WebParam(name = "hakukohdeLiiteTunniste", targetNamespace = "") String hakukohdeLiiteTunniste) {
         permissionChecker.checkUpdateHakukohdeByHakukohdeliiteTunniste(hakukohdeLiiteTunniste);
-        HakukohdeLiite liite = hakukohdeDAO.findHakuKohdeLiiteById(hakukohdeLiiteTunniste);
-        Hakukohde hakukohde = liite.getHakukohde();
-        hakukohde.removeLiite(liite);
-        hakukohdeDAO.insert(hakukohde);
+    	hakukohdeDAO.removeHakuKohdeLiiteById(hakukohdeLiiteTunniste);
     }
 
     @Override

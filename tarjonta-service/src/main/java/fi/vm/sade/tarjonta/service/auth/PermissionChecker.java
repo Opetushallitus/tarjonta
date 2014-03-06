@@ -98,7 +98,7 @@ public class PermissionChecker {
     public void checkUpdateHakukohdeByValintakoeTunniste(String valintakoeTunniste) {
         Preconditions.checkNotNull(valintakoeTunniste, "Valintakoe tunniste cannot be null.");
         Valintakoe valintakoe = hakukohdeDaoImpl.findValintaKoeById(valintakoeTunniste);
-        Hakukohde hakukohde = hakukohdeDaoImpl.read(valintakoe.getHakukohdeId());
+        Hakukohde hakukohde = hakukohdeDaoImpl.read(valintakoe.getHakukohde().getId());
         Set<KoulutusmoduuliToteutus> komot = hakukohde.getKoulutusmoduuliToteutuses();
         if (komot.size() > 0) {
             checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
