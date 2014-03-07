@@ -81,6 +81,11 @@ window.CONFIG = {
         "ui.timeout.long": 60000,
         "web.url.oppija.preview" : "https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/",
 
+        //
+        // Uri to "Jatkuva Haku" - UI changes according to this
+        //
+        "ui.koodisto.hakutapa.jatkuvaHaku.uri" : "hakutapa_03#1",
+
         //käsin lisätyt:
 
         //

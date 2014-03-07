@@ -3,12 +3,12 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
         String newHakukohdeOid = null;
         LOG.debug("OIDSERVICE: {}", oidService);
         try {
-            newHakukohdeOid = oidService.get(Type.HAKUKOHDE);
+            newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
             LOG.debug("OID SERVICE NEW OID : {}", newHakukohdeOid);
         }  catch (OIDCreationException emm) {
             LOG.warn("UNABLE TO GET OID : {}", emm.toString() );

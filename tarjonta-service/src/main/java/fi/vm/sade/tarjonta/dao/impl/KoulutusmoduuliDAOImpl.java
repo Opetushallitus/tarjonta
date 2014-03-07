@@ -21,7 +21,6 @@ import java.util.List;
 
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +47,7 @@ import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -292,7 +292,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null!");
         Koulutusmoduuli komo = EntityUtils.copyFieldsToKoulutusmoduuli(tyyppi);
         try {
-            komo.setOid(oidService.get(Type.KOMO));
+            komo.setOid(oidService.get(TarjontaOidType.KOMO));
         } catch (OIDCreationException ex) {
             throw new TarjontaBusinessException("OID service unavailable.", ex);
         }

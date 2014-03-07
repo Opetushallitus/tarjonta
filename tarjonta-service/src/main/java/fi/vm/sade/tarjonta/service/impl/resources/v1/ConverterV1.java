@@ -81,6 +81,7 @@ import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -172,7 +173,7 @@ public class ConverterV1 {
 
         if (haku == null) {
             haku = new Haku();
-            haku.setOid(oidService.get(Type.HAKU));
+            haku.setOid(oidService.get(TarjontaOidType.HAKU));
         }
 
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
@@ -654,7 +655,7 @@ public class ConverterV1 {
         String newHakukohdeOid = null;
         LOG.debug("OIDSERVICE: {}", oidService);
         try {
-            newHakukohdeOid = oidService.get(Type.HAKUKOHDE);
+            newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
             LOG.debug("OID SERVICE NEW OID : {}", newHakukohdeOid);
         }  catch (OIDCreationException emm) {
             LOG.warn("UNABLE TO GET OID : {}", emm.toString() );

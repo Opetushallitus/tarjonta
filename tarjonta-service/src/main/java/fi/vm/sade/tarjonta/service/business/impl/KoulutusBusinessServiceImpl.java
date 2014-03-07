@@ -20,7 +20,6 @@ import java.util.*;
 
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +44,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
  *
@@ -316,7 +316,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     private String generateOid() {
         try {
-            return oidService.get(Type.KOMOTO);
+            return oidService.get(TarjontaOidType.KOMOTO);
         } catch (OIDCreationException ex) {
             throw new TarjontaBusinessException("OID service unavailable.", ex);
         }
