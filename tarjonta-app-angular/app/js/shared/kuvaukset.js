@@ -13,7 +13,10 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
             if (kuvausTunniste !== undefined) {
 
                 var kuvausGetUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+kuvausTunniste;
-                $http.delete(kuvausGetUri)
+                $http.delete(kuvausGetUri,
+                    {
+                        withCredentials: true
+                    })
                     .success(function(data){
                         promise.resolve(data);
                     })
@@ -83,6 +86,7 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
 
 
                 $http.post(kuvausPostUri,kuvaus,{
+                    withCredentials: true,
                      headers : {'Content-Type': 'application/json; charset=UTF-8'}
 
                 })
@@ -111,6 +115,7 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
 
                 var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
                 $http.put(kuvausPostUri,kuvaus,{
+                    withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
 
                 })
