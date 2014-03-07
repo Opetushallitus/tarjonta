@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.KuvausV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
@@ -33,6 +34,9 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
     @Autowired
     private ConverterV1 converter;
+
+    @Autowired
+    private PermissionChecker permissionChecker;
 
     @Override
     @Transactional(readOnly = true)
@@ -314,6 +318,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
             LOG.debug("CREATING NEW KUVAUS ");
+            permissionChecker.checkCreateValintaPeruste();
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
 
             if (!checkForExistingKuvaus(valintaperusteSoraKuvaus)) {
@@ -392,6 +397,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     public ResultV1RDTO<KuvausV1RDTO> updateKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
+            permissionChecker.checkUpdateValintaperustekuvaus();
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
 
             ValintaperusteSoraKuvaus oldVps = kuvausDAO.read(valintaperusteSoraKuvaus.getId());
@@ -425,7 +431,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
         try {
 
-
+            permissionChecker.checkRemoveValintaPeruste();
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.parseLong(tunniste));
 
             kuvausDAO.remove(valintaperusteSoraKuvaus);

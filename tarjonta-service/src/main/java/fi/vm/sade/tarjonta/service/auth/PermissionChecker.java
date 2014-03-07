@@ -102,7 +102,7 @@ public class PermissionChecker {
         Set<KoulutusmoduuliToteutus> komot = hakukohde.getKoulutusmoduuliToteutuses();
         if (komot.size() > 0) {
             checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
-        } // hakukohde must always have komoto?
+        } // hakukohde must always have komoto? -> YES
     }
 
     public void checkCreateHakukohde(HakukohdeTyyppi hakukohde) {
@@ -111,7 +111,16 @@ public class PermissionChecker {
             checkPermission(permissionService
                     .userCanUpdateHakukohde(OrganisaatioContext
                             .getContext(komot.iterator().next().getTarjoaja())));
-        } // hakukohde must always have komoto?
+        } // hakukohde must always have komoto? -> YES
+    }
+
+    public void checkCreateHakukohde(String hakukohdeOid) {
+
+        Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
+        List<KoulutusmoduuliToteutus> komot = koulutusmoduuliDAOImpl.findKomotoByHakukohde(hakukohde);
+        if (komot.size() > 0) {
+            checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
+        }
     }
 
     public void checkRemoveHakukohde(String hakukohdeOid) {
@@ -129,7 +138,15 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanCreateHaku());
     }
 
+    public void checkCreateValintaPeruste() {
+        checkPermission(permissionService.userCanCreateHaku());
+    }
+
     public void checkRemoveHaku() {
+        checkPermission(permissionService.userCanDeleteHaku());
+    }
+
+    public void checkRemoveValintaPeruste() {
         checkPermission(permissionService.userCanDeleteHaku());
     }
 
