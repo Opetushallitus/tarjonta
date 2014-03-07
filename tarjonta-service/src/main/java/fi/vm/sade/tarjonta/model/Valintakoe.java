@@ -50,8 +50,7 @@ public class Valintakoe extends TarjontaBaseEntity {
     @Column(name="kieli")
     private String kieli;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "valintakoe_id", nullable=false)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy="valintakoe")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER/*, optional=false*/)
@@ -62,8 +61,7 @@ public class Valintakoe extends TarjontaBaseEntity {
     @JoinColumn(name = "lisanaytot_monikielinenteksti_id")
     private MonikielinenTeksti lisanaytot;
     
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "valintakoe_id", nullable=false)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy="valintakoe")
     private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
 
     @Column(name="viimPaivitysPvm")

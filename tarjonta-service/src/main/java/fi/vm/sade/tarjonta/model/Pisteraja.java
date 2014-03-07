@@ -29,6 +29,10 @@ public class Pisteraja extends TarjontaBaseEntity  {
 
     private static final long serialVersionUID = 1878029033380865674L;
 
+    @ManyToOne (fetch = FetchType.LAZY, optional=false)
+    @JoinColumn(name="valintakoe_id", nullable=false)
+    private Valintakoe valintakoe;
+
     @Column(name="valinnanpisterajatyyppi", nullable=false)
     private String valinnanPisterajaTyyppi;
 
@@ -41,6 +45,14 @@ public class Pisteraja extends TarjontaBaseEntity  {
     @Column(name="alinhyvaksyttypistemaara", nullable=false)
     private BigDecimal alinHyvaksyttyPistemaara;
 
+    public Valintakoe getValintakoe() {
+		return valintakoe;
+	}
+    
+    public void setValintakoe(Valintakoe valintakoe) {
+		this.valintakoe = valintakoe;
+	}
+    
     /**
      * @return the valinnanPisterajaTyyppi
      */

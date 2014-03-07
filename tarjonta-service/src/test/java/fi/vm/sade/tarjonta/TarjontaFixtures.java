@@ -92,6 +92,7 @@ public class TarjontaFixtures {
         valintakoeAjankohta.setLisatietoja("Lisa lisa");
         valintakoeAjankohta.setAlkamisaika(new Date());
         valintakoeAjankohta.setPaattymisaika(new Date());
+        valintakoeAjankohta.setValintakoe(valintakoe);
 
         Osoite osoite = new Osoite();
         osoite.setPostitoimipaikka("HELLSINKI");

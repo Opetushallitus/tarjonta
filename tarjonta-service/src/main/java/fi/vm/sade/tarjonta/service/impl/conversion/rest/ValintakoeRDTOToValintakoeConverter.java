@@ -1,19 +1,18 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.core.convert.converter.Converter;
+
 import fi.vm.sade.tarjonta.model.Pisteraja;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoePisterajaRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
-import org.springframework.core.convert.converter.Converter;
-
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /*
 * @author: Tuomas Katva 10/3/13
@@ -28,7 +27,7 @@ public class ValintakoeRDTOToValintakoeConverter implements Converter<Valintakoe
         valintakoe.setKuvaus(CommonRestConverters.convertMapToMonikielinenTeksti(valintakoeRDTO.getKuvaus()));
         valintakoe.setLisanaytot(CommonRestConverters.convertMapToMonikielinenTeksti(valintakoeRDTO.getLisanaytot()));
         valintakoe.setTyyppiUri(valintakoeRDTO.getTyyppiUri());
-        valintakoe.setPisterajat(convertPisterajaRDTOToPisteraja(valintakoeRDTO.getValintakoePisterajas()));
+        valintakoe.setPisterajat(convertPisterajaRDTOToPisteraja(valintakoe, valintakoeRDTO.getValintakoePisterajas()));
         valintakoe.setAjankohtas(convertAjankohtaRDTOToAjankohta(valintakoeRDTO.getValintakoeAjankohtas()));
         valintakoe.setLastUpdateDate(valintakoeRDTO.getModified());
         valintakoe.setLastUpdatedByOid(valintakoeRDTO.getCreatedBy());
@@ -63,12 +62,13 @@ public class ValintakoeRDTOToValintakoeConverter implements Converter<Valintakoe
 
 
 
-    private Set<Pisteraja> convertPisterajaRDTOToPisteraja(List<ValintakoePisterajaRDTO> pisterajaRDTOs) {
+    private Set<Pisteraja> convertPisterajaRDTOToPisteraja(Valintakoe vk, List<ValintakoePisterajaRDTO> pisterajaRDTOs) {
         if (pisterajaRDTOs != null) {
             Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
 
             for (ValintakoePisterajaRDTO valintakoePisterajaRDTO:pisterajaRDTOs) {
                 Pisteraja pisteraja = new Pisteraja();
+                pisteraja.setValintakoe(vk);
                 pisteraja.setAlinHyvaksyttyPistemaara(new BigDecimal(valintakoePisterajaRDTO.getAlinHyvaksyttyPistemaara()));
                 pisteraja.setAlinPistemaara(new BigDecimal(valintakoePisterajaRDTO.getAlinPistemaara()));
                 pisteraja.setValinnanPisterajaTyyppi(valintakoePisterajaRDTO.getTyyppi());

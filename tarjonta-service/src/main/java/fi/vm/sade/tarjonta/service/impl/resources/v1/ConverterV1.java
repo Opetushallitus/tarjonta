@@ -736,11 +736,11 @@ public class ConverterV1 {
         hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
 
         for (ValintakoeV1RDTO valintakoeV1RDTO : hakukohdeRDTO.getValintakokeet()) {
-            hakukohde.getValintakoes().add(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));
+        	hakukohde.addValintakoe(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));
         }
 
         for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
-            hakukohde.getLiites().add(toHakukohdeLiite(liite));
+        	hakukohde.addLiite(toHakukohdeLiite(liite));
         }
 
         return hakukohde;
@@ -822,7 +822,7 @@ public class ConverterV1 {
         tekstiRDTOs.add(valintakoeV1RDTO.getValintakokeenKuvaus());
         valintakoe.setKuvaus(convertTekstiRDTOToMonikielinenTeksti(tekstiRDTOs));
         if (valintakoeV1RDTO.getValintakoeAjankohtas() != null) {
-            valintakoe.getAjankohtas().addAll(convertAjankohtaRDTOToValintakoeAjankohta(valintakoeV1RDTO.getValintakoeAjankohtas()));
+            valintakoe.getAjankohtas().addAll(convertAjankohtaRDTOToValintakoeAjankohta(valintakoe, valintakoeV1RDTO.getValintakoeAjankohtas()));
         }
 
         return valintakoe;
@@ -847,12 +847,13 @@ public class ConverterV1 {
         return monikielinenTeksti;
     }
 
-    private Set<ValintakoeAjankohta> convertAjankohtaRDTOToValintakoeAjankohta(List<ValintakoeAjankohtaRDTO> valintakoeAjankohtaRDTOs) {
+    private Set<ValintakoeAjankohta> convertAjankohtaRDTOToValintakoeAjankohta(Valintakoe vk, List<ValintakoeAjankohtaRDTO> valintakoeAjankohtaRDTOs) {
         Set<ValintakoeAjankohta> valintakoeAjankohtas = new HashSet<ValintakoeAjankohta>();
 
         for (ValintakoeAjankohtaRDTO valintakoeAjankohtaRDTO : valintakoeAjankohtaRDTOs) {
             ValintakoeAjankohta valintakoeAjankohta = new ValintakoeAjankohta();
 
+            valintakoeAjankohta.setValintakoe(vk);
             valintakoeAjankohta.setLisatietoja(valintakoeAjankohtaRDTO.getLisatiedot());
             valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(valintakoeAjankohtaRDTO.getOsoite()));
             valintakoeAjankohta.setAlkamisaika(valintakoeAjankohtaRDTO.getAlkaa());
