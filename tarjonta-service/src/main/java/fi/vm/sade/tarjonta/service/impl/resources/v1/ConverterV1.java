@@ -54,7 +54,6 @@ import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;

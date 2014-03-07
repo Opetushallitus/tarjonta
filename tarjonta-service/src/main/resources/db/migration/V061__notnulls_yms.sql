@@ -22,6 +22,9 @@ DROP TABLE valintakoe_pisteraja;
 
 /* *** muut roskat pois *** */
 DELETE FROM hakukohdeliite WHERE hakukohde_id IS NULL;
+
+DELETE FROM valintakoe_ajankohta WHERE valintakoe_id IN (SELECT id FROM valintakoe WHERE hakukohde_id IS NULL);
+DELETE FROM pisteraja WHERE valintakoe_id IN (SELECT id FROM valintakoe WHERE hakukohde_id IS NULL);
 DELETE FROM valintakoe WHERE hakukohde_id IS NULL;
 
 /* *** not-nullit *** */
