@@ -32,6 +32,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var defaultLang = "kieli_fi";
 
+    var julkaistuVal = "JULKAISTU";
+
+    var luonnosVal = "LUONNOS";
+
+    var valmisVal = "VALMIS";
+
 	$scope.formControls = {}; // controls-layouttia varten
 
     //All kieles is received from koodistomultiselect
@@ -473,11 +479,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.canSaveAsLuonnos = function() {
 
-        if ($scope.model.hakukohde.tila === "LUONNOS") {
+        if ($scope.model.hakukohde.tila === luonnosVal) {
 
             return true;
 
-        } else if ($scope.model.hakukohde.tila === "VALMIS") {
+        } else if ($scope.model.hakukohde.tila === valmisVal || $scope.model.hakukohde.tila === julkaistuVal) {
 
             return false;
 
@@ -866,7 +872,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         emptyErrorMessages();
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
-        $scope.model.hakukohde.tila = "VALMIS";
+        if ($scope.model.hakukohde.tila !== julkaistuVal) {
+            $scope.model.hakukohde.tila = valmisVal;
+        }
+
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
 
@@ -941,7 +950,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
-        $scope.model.hakukohde.tila = "LUONNOS";
+            if ($scope.model.hakukohde.tila !== julkaistuVal) {
+        $scope.model.hakukohde.tila = luonnosVal;
+            }
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
@@ -956,7 +967,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             }  */
         console.log('SAVING HAKUKOHDE LUONNOS : ', $scope.model.hakukohde.oid);
         //Check if hakukohde is copy, then remove oid and save hakukohde as new
-        checkIsCopy("LUONNOS");
+        checkIsCopy(luonnosVal);
         if ($scope.model.hakukohde.oid === undefined) {
 
             console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
