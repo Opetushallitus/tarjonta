@@ -1,5 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.Roles.ROLE_CRUD;
+
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -9,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -18,10 +21,11 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
- * A temporary resource to support vaadin ui to generate oids. do not use with
+ * A temporary resource to support vaadin ui to generate oids. Do not use with
  * anything new!!! Normally tarjonta service should generate oids.
  */
 @Path("/oid")
+@Secured({ROLE_CRUD})
 public class OidResourceImpl {
 
     @Autowired
