@@ -22,6 +22,7 @@ import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
@@ -48,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * REST API V1 implementation for Haku.
  *
  * @author mlyly
  */
@@ -69,6 +71,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private OIDService oidService;
 
+    @Autowired
+    private PermissionChecker permissionChecker;
+
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
         LOG.debug("search({})", params);
@@ -81,7 +86,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (!key.toUpperCase().equals(key)) {
                 continue;  //our fields are upper cased, see HakuSearchCriteria.Field.
             }
-            
+
             Field field;
             try {
                 field = Field.valueOf(key);
@@ -140,7 +145,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             return new ResultV1RDTO<List<HakuV1RDTO>>(Collections.EMPTY_LIST, ResultStatus.OK);
         }
         List<Haku> hakus = hakuDAO.findByOids(oids);
-        
+
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(
                 hakuDtos);
@@ -160,7 +165,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         List<Haku> hakus = hakuDAO.findAll();
 
-        
+
         LOG.debug("FOUND  : {} hakus", hakus.size());
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
@@ -204,6 +209,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
         LOG.info("createHaku() - {}", haku);
+        permissionChecker.checkCreateHaku();
+
         return updateHaku(haku);
     }
 
@@ -211,6 +218,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku) {
         LOG.info("updateHaku() - {}", haku);
+        permissionChecker.checkUpdateHaku(haku != null ? haku.getOid() : null);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
         // result.setResult(haku);
@@ -278,6 +286,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
         LOG.info("deleteHaku() oid={}", oid);
 
+        permissionChecker.checkRemoveHaku();
+
         ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
 
         Haku hakuToRemove = hakuDAO.findByOid(oid);
@@ -338,6 +348,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<String> setHakuState(String oid, String state) {
         LOG.info("setHakuState({}, {})", oid, state);
+
+        permissionChecker.checkUpdateHaku(oid);
 
         ResultV1RDTO<String> result = new ResultV1RDTO<String>();
         result.setResult(state);
