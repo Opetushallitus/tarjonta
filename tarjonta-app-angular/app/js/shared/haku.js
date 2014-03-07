@@ -81,14 +81,17 @@ app.factory('HakuV1', function($resource, $log, Config) {
         return $resource(serviceUrl, {oid: '@oid'}, {
             save: {
                 method: 'POST',
+                withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             get: {
                 method: 'GET',
+                withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             findAll: {
                 method: 'GET',
+                withCredentials: true,
                 params: {oid : 'findAll'},
                 isArray: false,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
@@ -96,15 +99,18 @@ app.factory('HakuV1', function($resource, $log, Config) {
             mget:{
               url:Config.env.tarjontaRestUrlPrefix + 'haku/multi',
               method: 'GET',
+              withCredentials: true,
               isArray: false,
             },
             search: {
               method: 'GET',
+              withCredentials: true,
               isArray: false,
               headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             remove: {
                 method: 'DELETE',
+                withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
@@ -117,14 +123,14 @@ app.factory('HakuV1', function($resource, $log, Config) {
 app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
 
   var userKieliUri = LocalisationService.getKieliUri();
-  
+
   /**
    * Palauttaa haun nimen käyttäjän kielellä, tai fallback fi,sv,en tai "[Ei nimeä]"
    */
   var resolveNimi = function(haku) {
     return haku.nimi[userKieliUri]||haku.nimi["kieli_fi"]||haku.nimi["kieli_sv"]||haku.nimi["kieli_en"]||"[Ei nimeä]";
   };
-  
+
   /**
    * palauttaa promisen hakutulokseen, resolvaa nimen valmiiksi
    */
@@ -139,7 +145,7 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
         console.log("resolving haut");
         defer.resolve(haut.result);
       });
-      
+
       return defer.promise;
    };
 
@@ -151,7 +157,7 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
     search:function(parameters){
       console.log("Searching with: ", parameters);
 
-      
+
       var defer = $q.defer();
 
       return HakuV1.search(parameters).$promise.then(function(data){
@@ -171,8 +177,8 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
 //
 //      return defer.promise;
     }
-    
-  
+
+
   };
 
 });
