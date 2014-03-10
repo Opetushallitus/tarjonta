@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.auth;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -114,10 +116,14 @@ public class PermissionChecker {
         } // hakukohde must always have komoto? -> YES
     }
 
-    public void checkCreateHakukohde(String hakukohdeOid) {
+    public void checkCreateHakukohde(List<String> komotoOids) {
 
-        Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
-        List<KoulutusmoduuliToteutus> komot = koulutusmoduuliDAOImpl.findKomotoByHakukohde(hakukohde);
+
+        List<KoulutusmoduuliToteutus> komot = new ArrayList<KoulutusmoduuliToteutus>();
+        for (String komotoOid : komotoOids) {
+            komot.add(koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid));
+        }
+
         if (komot.size() > 0) {
             checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
         }

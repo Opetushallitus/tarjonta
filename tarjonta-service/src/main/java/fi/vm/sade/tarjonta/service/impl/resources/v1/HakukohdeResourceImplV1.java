@@ -498,7 +498,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         }
 
-        permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getOid());
+        permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakukohdeKoulutusOids());
 
 
 
