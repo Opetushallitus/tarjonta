@@ -242,7 +242,7 @@ app.controller('HakuEditController',
                  * @returns true if current haku is JATKUVA_HAKU
                  */
                 $scope.isJatkuvaHaku = function() {
-                    return $scope.model.hakux.result.hakutapaUri == Config.env["ui.koodisto.hakutapa.jatkuvaHaku.uri"];
+                    return $scope.model.hakux.result.hakutapaUri == Config.env["koodisto.hakutapa.jatkuvaHaku.uri"];
                 };
 
 

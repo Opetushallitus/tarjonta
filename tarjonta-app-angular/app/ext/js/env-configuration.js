@@ -84,7 +84,7 @@ window.CONFIG = {
         //
         // Uri to "Jatkuva Haku" - UI changes according to this
         //
-        "ui.koodisto.hakutapa.jatkuvaHaku.uri" : "hakutapa_03#1",
+        "koodisto.hakutapa.jatkuvaHaku.uri" : "hakutapa_03#1",
 
         //käsin lisätyt:
 
@@ -116,11 +116,11 @@ window.CONFIG = {
 
         // Only for development, since production reads "/cas/myroles"
         "casUrl": "cas_me_ophadmin.json",
-        //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
-        
+        // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
+
          "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
         //henkilöhaku
-        //"authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo", 
+        //"authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
         "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/permission/user?",
         "authentication-service.henkilo.search.params"  : "?count=2000&index=0&ht=VIRKAILIJA",
 
