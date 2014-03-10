@@ -16,11 +16,6 @@
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
                   address="${koodisto.public.webservice.url.backend}"/>
 
-   <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
-<!--
-DISABLED    <jaxws:client id="oidService" serviceClass="fi.vm.sade.oid.service.OIDService" address="${oid.webservice.url.backend:http://NO_OID_WEBSERVICE_URL_CONFIGURED}"/>
--->
-
     <jaxws:client id="tarjontaAdminService"
                   serviceClass="fi.vm.sade.tarjonta.service.TarjontaAdminService"
                   address="${tarjonta.admin.webservice.url.backend}"/>

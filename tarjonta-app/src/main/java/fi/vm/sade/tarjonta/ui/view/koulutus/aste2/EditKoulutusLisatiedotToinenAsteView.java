@@ -19,10 +19,10 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
-import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
@@ -84,7 +84,7 @@ public class EditKoulutusLisatiedotToinenAsteView extends AbstractEditLayoutView
     }
 
     @Override
-    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
+    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws OidCreationException {
         presenter.saveKoulutus(tila, KoulutusActiveTab.LISATIEDOT);
         return presenter.getModel().getKoulutusPerustiedotModel().getOid();
     }
