@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import fi.vm.sade.tarjonta.data.test.GenerateTestData;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
@@ -51,22 +52,26 @@ public class HakuGenerator extends AbstractGenerator {
     private static final Date DATE_HAKUAIKA_BEGIN = new DateTime(2014, 1, 1, 1, 1).toDate();
     private static final Date DATE_HAKUAIKA_END = new DateTime(2020, 1, 1, 1, 1).toDate();
     private WebResource hakuResource;
+    private String tarjontaServiceTicket;
 
     public HakuGenerator() {
         super(OID_TYPE);
     }
 
-    public HakuGenerator(WebResource hakuResource) {
+    public HakuGenerator(WebResource hakuResource, String tarjontaServiceTicket) {
         super(OID_TYPE);
         this.hakuResource = hakuResource;
+        this.tarjontaServiceTicket = tarjontaServiceTicket;
     }
 
     public String create() {
         final HakuV1RDTO dto = createHaku();
 
         ResultV1RDTO<HakuV1RDTO> post = hakuResource.
+                queryParam("ticket", tarjontaServiceTicket).
                 accept(MediaType.APPLICATION_JSON + ";charset=UTF-8").
                 header("Content-Type", "application/json; charset=UTF-8").
+                header("Cookie", GenerateTestData.getJsessionId(tarjontaServiceTicket)).
                 post(new GenericType<ResultV1RDTO<HakuV1RDTO>>() {
                 }, dto);
 

@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.data.rest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.ArrayList;
 
 import java.util.Date;
@@ -32,6 +31,7 @@ import org.springframework.stereotype.Component;
 //import com.fasterxml.jackson.core.type.TypeReference;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import fi.vm.sade.tarjonta.data.test.GenerateTestData;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -48,9 +48,6 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -62,7 +59,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class KoulutusGenerator extends AbstractGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusGenerator.class);
-    ;
     private static final String OID_TYPE = "LOI_";
     private static final Date DATE = new DateTime(2014, 1, 1, 1, 1).toDate();
     private static final String JSON_UTF8 = MediaType.APPLICATION_JSON + ";charset=UTF-8";
@@ -72,13 +68,13 @@ public class KoulutusGenerator extends AbstractGenerator {
 
     private String threadName;
     private WebResource tarjontaKoulutusRest;
-    private WebResource permissionResource;
 
     private Map<KTYPE, KoulutusmoduuliKorkeakouluRelationV1RDTO> map = Maps.<KTYPE, KoulutusmoduuliKorkeakouluRelationV1RDTO>newHashMap();
 
     private String ticket;
     private String jsessionId;
     private String id;
+    private String tarjontaServiceTicket;
 
     public enum KTYPE {
 
@@ -89,52 +85,13 @@ public class KoulutusGenerator extends AbstractGenerator {
         super(OID_TYPE);
     }
 
-    public KoulutusGenerator(String threadName, WebResource tarjontaKoulutusRest, WebResource permissionResource, final boolean isAmk) throws IOException {
+    public KoulutusGenerator(String threadName, String tarjontaServiceTicket, WebResource tarjontaKoulutusRest, WebResource permissionResource, final boolean isAmk) throws IOException {
         super(OID_TYPE);
         this.threadName = threadName;
+        this.tarjontaServiceTicket = tarjontaServiceTicket;
         this.tarjontaKoulutusRest = tarjontaKoulutusRest;
-        this.permissionResource = permissionResource;
         this.id = generateDate();
 
-//
-//        this.ticket = CasClient.getTicket(KorkeakoulutusDataUploader.ENV_CAS + "/cas", "ophadmin", "ilonkautta!", KorkeakoulutusDataUploader.TARJONTA_SERVICE);
-////        ResultV1RDTO<String> resource = permissionResource.path("authorize").
-////                accept(MediaType.APPLICATION_JSON + ";charset=UTF-8").
-////                header("Content-Type", "application/json; charset=UTF-8").
-////                header("CasSecurityTicket", this.ticket).
-////                header("Connection", "keep-alive").
-////                header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8").
-////                header("Accept-Encoding", "gzip,deflate,sdch").
-////                header("Accept-Language", "en,en-US;q=0.8,fi;q=0.6").
-////                header("Content-Type", "application/json; charset=UTF-8").
-////                header("Host", "itest-virkailija.oph.ware.fi").
-////                header("Cookie", "JSESSIONID=8365F4958766DF67077A193F4F778E6C;").
-////                header("DNT", "1").
-////                header("Origin", KorkeakoulutusDataUploader.ENV).
-////                header("Referer", KorkeakoulutusDataUploader.TARJONTA_SERVICE).
-////                header("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36").
-////                get(new GenericType<ResultV1RDTO<String>>() {
-////                });
-//
-//        HttpClient client = new HttpClient();
-//
-//        HttpMethod request1 = new GetMethod("http://localhost:8585/tarjonta-service/rest/v1/permission/authorize");
-//        request1.setRequestHeader("CasSecurityTicket", ticket);
-//        request1.setRequestHeader("Connection", "keep-alive");
-//        request1.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-//        request1.setRequestHeader("Accept-Encoding", "gzip,deflate,sdch");
-//        request1.setRequestHeader("Accept-Language", "en,en-US;q=0.8,fi;q=0.6");
-//        request1.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-//        request1.setRequestHeader("Host", "itest-virkailija.oph.ware.fi");
-//        request1.setRequestHeader("Cookie", "JSESSIONID=8365F4958766DF67077A193F4F778E6C;");
-//        request1.setRequestHeader("DNT", "1");
-//        request1.setRequestHeader("Origin", KorkeakoulutusDataUploader.ENV);
-//        request1.setRequestHeader("Referer", KorkeakoulutusDataUploader.TARJONTA_SERVICE);
-//        request1.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36");
-//
-//        int executeMethod = client.executeMethod(request1);
-//        System.out.println("executeMethod :" + executeMethod);
-//        this.jsessionId = getJsessionId(request1, client);
         if (isAmk) {
             map.put(KTYPE.amk, getKoodiRelations("621101"));
         } else {
@@ -173,8 +130,6 @@ public class KoulutusGenerator extends AbstractGenerator {
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
 
         dto.setKoulutuskoodi(relation.getKoulutuskoodi());
-        dto.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
-
         dto.getKoulutuksenAlkamisPvms().add(DATE);
 
         KoodistoUtil.koodiUrisMap(dto.getTutkintonimikes(), "tutkintonimikekk_121");
@@ -229,13 +184,14 @@ public class KoulutusGenerator extends AbstractGenerator {
         createKoulutusohjelmaNames(dto, type, relation.getKoulutuskoodi().getArvo());
 
         ObjectMapper mapper = new ObjectMapper();
-        String writeValueAsString = mapper.writeValueAsString(dto);
-        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> post = tarjontaKoulutusRest.path("KORKEAKOULUTUS").
+        final String writeValueAsString = mapper.writeValueAsString(dto);
+        LOG.info("tarjontaServiceTicket : '{}'", tarjontaServiceTicket);
+
+        ResultV1RDTO<KoulutusKorkeakouluV1RDTO> post =  tarjontaKoulutusRest.path("KORKEAKOULUTUS").
+                queryParam("ticket", tarjontaServiceTicket).
                 accept(MediaType.APPLICATION_JSON + ";charset=UTF-8").
                 header("Content-Type", "application/json; charset=UTF-8").
-                header("CasSecurityTicket", ticket).
-                header("Connection", "keep-alive").
-                header("Cookie", jsessionId).
+                header("Cookie", GenerateTestData.getJsessionId(tarjontaServiceTicket)).
                 post(new GenericType<ResultV1RDTO<KoulutusKorkeakouluV1RDTO>>() {
                 }, writeValueAsString);
 
@@ -253,32 +209,7 @@ public class KoulutusGenerator extends AbstractGenerator {
 
         return result;
     }
-
-    private String getJsessionId(HttpMethod method, HttpClient client) throws IOException {
-
-        String responseTxt = method.getResponseBodyAsString();
-
-        System.out.println("----\n\nStatus : " + method.getStatusCode());
-        System.out.println("\nURI: " + method.getURI());
-        System.out.println("\nResponse Path: " + method.getPath());
-        System.out.println("\nRequest Headers: " + method.getRequestHeaders().length);
-        for (Header h : method.getRequestHeaders()) {
-            System.out.println("  " + h.getName() + " = " + h.getValue());
-        }
-
-        String jsessionId = "";
-        System.out.println("\nCookies: " + client.getState().getCookies().length);
-        for (org.apache.commons.httpclient.Cookie c : client.getState().getCookies()) {
-            jsessionId = c.getName() + " = " + c.getValue();
-            System.out.println("  " + jsessionId);
-            break;
-        }
-        System.out.println("Response Text: ");
-        System.out.println(responseTxt);
-
-        return jsessionId;
-    }
-
+    
     private KoulutusmoduuliKorkeakouluRelationV1RDTO getKoodiRelations(final String koulutuskoodi) {
         WebResource.Builder bulder = tarjontaKoulutusRest.
                 path("koulutuskoodi").
@@ -294,7 +225,7 @@ public class KoulutusGenerator extends AbstractGenerator {
         return get.getResult();
     }
 
-    private void createKoulutusohjelmaNames(KoulutusKorkeakouluV1RDTO dto, KTYPE text, final String koulutuskoodi) {        
+    private void createKoulutusohjelmaNames(KoulutusKorkeakouluV1RDTO dto, KTYPE text, final String koulutuskoodi) {
         dto.getKoulutusohjelma().getTekstis().put(LANGUAGE_URI_FI, KoodistoUtil.toNimiValue(id + " " + text + " " + koulutuskoodi, LANGUAGE_URI_FI));
         dto.getKoulutusohjelma().getTekstis().put(LANGUAGE_URI_SV, KoodistoUtil.toNimiValue(id + " " + text + " " + koulutuskoodi, LANGUAGE_URI_SV));
     }

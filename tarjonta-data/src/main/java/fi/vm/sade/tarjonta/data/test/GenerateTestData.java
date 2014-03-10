@@ -16,9 +16,18 @@
 package fi.vm.sade.tarjonta.data.test;
 
 import fi.vm.sade.tarjonta.data.rest.KorkeakoulutusDataUploader;
+import fi.vm.sade.tarjonta.data.rest.KoulutusGenerator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +37,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class GenerateTestData {
 
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenerateTestData.class);
     /* Will create a small data for script testing. */
     private static final int MAX_ORGANISATIONS = 2;
     /* set how many LOI items you want for organisation */
@@ -35,7 +45,7 @@ public class GenerateTestData {
 
     private static final int MAX_KOULUTUS_PER_ORGANISATION = 4;
 
-    public static final String ENV = "https://itest-virkailija.oph.ware.fi";//"http://localhost:8585";
+    public static final String ENV = "https://itest-virkailija.oph.ware.fi";
 
     public static final String ENV_CAS = "https://itest-virkailija.oph.ware.fi";
 
@@ -47,6 +57,10 @@ public class GenerateTestData {
 
     public static final String TARJONTA_SERVICE_REST = ENV + SERVICE_REST;
 
+    public static String PASSWORD = "";
+
+    public static String USERNAME = "";
+
     public GenerateTestData() {
     }
 
@@ -56,8 +70,74 @@ public class GenerateTestData {
         //https://itest-virkailija.oph.ware.fi/cas/login?service=http%3A%2F%2Flocalhost%3A8585%2Ftarjonta-service%2Fj_spring_cas_security_check
         //final DataUploader uploader = context.getBean(DataUploader.class);
         //uploader.upload(MAX_ORGANISATIONS, MAX_KOMOTOS_PER_ORGANISATION);
-        final KoodistoURI uris = context.getBean(KoodistoURI.class);
+//        final KoodistoURI uris = context.getBean(KoodistoURI.class);
+        Properties props = context.getBean("appProperties", Properties.class);
+        USERNAME = props.getProperty("auth.username");
+        PASSWORD = props.getProperty("auth.password");
         final KorkeakoulutusDataUploader uploader = context.getBean(KorkeakoulutusDataUploader.class);
         uploader.upload(MAX_ORGANISATIONS, MAX_KOULUTUS_PER_ORGANISATION);
+    }
+
+    public static String getTicket() {
+        HttpClient client = new HttpClient();
+        HttpMethod request1 = new GetMethod(
+                ENV_CAS + "/service-access/accessTicket"
+                + "?client_id=" + USERNAME
+                + "&client_secret=" + PASSWORD
+                + "&service_url=" + TARJONTA_SERVICE);
+        try {
+            int executeMethod = client.executeMethod(request1);
+            LOG.info("executeMethod :" + executeMethod + " '" + request1.getResponseBodyAsString().trim() + "'");
+            HttpMethod request2 = new GetMethod(TARJONTA_SERVICE_REST + "/permission/authorize?ticket=" + request1.getResponseBodyAsString().trim());
+
+            executeMethod = client.executeMethod(request2);
+            String jsessionId = "";
+            LOG.info("\nCookies: " + client.getState().getCookies().length);
+            for (org.apache.commons.httpclient.Cookie c : client.getState().getCookies()) {
+                jsessionId = c.getName() + " = " + c.getValue();
+                LOG.info("  " + jsessionId);
+                break;
+            }
+
+            LOG.info("executeMethod :" + executeMethod + " '" + request2.getResponseBodyAsString().trim() + "' " + jsessionId);
+            return request1.getResponseBodyAsString().trim();
+        } catch (IOException ex) {
+            Logger.getLogger(GenerateTestData.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    public static String getJsessionId(final String ticket) {
+        HttpClient client = new HttpClient();
+        try {
+
+            HttpMethod method = new GetMethod(TARJONTA_SERVICE_REST + "/permission/authorize?ticket=" + ticket);
+            int executeMethod = client.executeMethod(method);
+
+            LOG.info("----\n\nStatus : " + method.getStatusCode());
+            LOG.info("\nURI: " + method.getURI());
+            LOG.info("\nResponse Path: " + method.getPath());
+            LOG.info("\nRequest Headers: " + method.getRequestHeaders().length);
+            for (Header h : method.getRequestHeaders()) {
+                LOG.info("  " + h.getName() + " = " + h.getValue());
+            }
+
+            String jsessionId = "";
+            LOG.info("\nCookies: " + client.getState().getCookies().length);
+            for (org.apache.commons.httpclient.Cookie c : client.getState().getCookies()) {
+                jsessionId = c.getName() + " = " + c.getValue();
+                break;
+            }
+
+            jsessionId = jsessionId.trim();
+
+            LOG.info("executeMethod :" + executeMethod + " '" + method.getResponseBodyAsString().trim() + "' jession : '" + jsessionId + "'");
+            return jsessionId;
+        } catch (IOException ex) {
+            Logger.getLogger(GenerateTestData.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 }

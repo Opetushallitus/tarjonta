@@ -61,7 +61,10 @@ public class KorkeakoulutusDataUploader {
 
     private WebResource linkResource;
 
+    private String tarjontaServiceCasTicket;
+
     public KorkeakoulutusDataUploader() {
+
         ClientConfig cc = new DefaultClientConfig();
         cc.getClasses().add(JacksonJsonProvider.class);
         Client clientWithJacksonSerializer = Client.create(cc);
@@ -101,7 +104,7 @@ public class KorkeakoulutusDataUploader {
             }
             subOrgs.add(t);
         }
-        HakuGenerator hakuGenerator = new HakuGenerator(hakuResource);
+        HakuGenerator hakuGenerator = new HakuGenerator(hakuResource, GenerateTestData.getTicket());
         final String hakuOid = hakuGenerator.create();
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
 
@@ -121,7 +124,9 @@ public class KorkeakoulutusDataUploader {
                             hakuResource,
                             hakukohdeResource,
                             linkResource,
-                            iterator.next()
+                            iterator.next(),
+                            GenerateTestData.getTicket()
+                            
                     );
 
                     threads[i].start();
