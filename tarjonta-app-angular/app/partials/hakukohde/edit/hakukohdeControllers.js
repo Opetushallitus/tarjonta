@@ -917,6 +917,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         } else {
 
             console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+
             var returnResource = $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {

@@ -5,6 +5,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,8 +17,12 @@ import java.util.Set;
 */
 public class HakukohdeValidator {
 
+
+
     public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
+
+        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
 
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
@@ -43,7 +48,9 @@ public class HakukohdeValidator {
             validationMessages.addAll(validateValintakokees(hakukohdeRDTO.getValintakokeet()));
         }
 
-
+        if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) ||  hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU))  {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
+        }
 
         return validationMessages;
     }
