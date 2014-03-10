@@ -23,9 +23,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.HakuPresenter;
@@ -117,7 +117,7 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
     }
 
     @Override
-    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
+    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws OidCreationException {
 
         String selectedHakutapa = presenter.getModel().getHakutapa();
         String selectedHakutyyppi = presenter.getModel().getHakutyyppi();
@@ -127,12 +127,12 @@ public class EditHakuView extends AbstractEditLayoutView<HakuViewModel, EditHaku
 
         if (haunAlkamisPvm.before(today)) {
             errorView.addError(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
-            throw new ExceptionMessage(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
+            throw new OidCreationException(getI18n().getMessage("hakualkamisaikaMenneessaMsg"));
         }
         if (selectedHakutapa.equals(yhteishakuUri) && !selectedHakutyyppi.equals(lisahakuUri)) {
             if (!presenter.getHakuModel().isHaussaKaytetaanSijoittelua() || !presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {
             errorView.addError(getI18n().getMessage("yhteishakuMsg"));
-            throw new ExceptionMessage(getI18n().getMessage("yhteishakuMsg"));
+            throw new OidCreationException(getI18n().getMessage("yhteishakuMsg"));
             }
         }
         if (presenter.getHakuModel().isKaytetaanJarjestelmanHakulomaketta()) {

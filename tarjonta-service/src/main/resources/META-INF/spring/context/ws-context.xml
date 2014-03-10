@@ -15,8 +15,6 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-    <bean id="oidService" class="fi.vm.sade.oid.service.simple.OIDServiceSimpleImpl" />
-
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
                   address="${organisaatio.webservice.url.backend}"/>
@@ -41,7 +39,6 @@
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
-    <bean id="tarjontaOIDResource" class="fi.vm.sade.tarjonta.service.impl.resources.OidResourceImpl" />
 
     <!-- API V1 -->
     <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1" />
@@ -78,7 +75,6 @@
             <ref bean="tarjontaKomoResource"/>
             <ref bean="tarjontaKomotoResource"/>
             <ref bean="indexerResource"/>
-            <ref bean="tarjontaOIDResource"/>
 
             <!-- API V1 -->
             <ref bean="tarjontaTilaResourceV1"/>

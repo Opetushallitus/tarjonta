@@ -17,12 +17,11 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
@@ -34,6 +33,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.net.MalformedURLException;
@@ -69,7 +69,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private ConverterV1 _converter;
 
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
 
     @Autowired
     private PermissionChecker permissionChecker;
@@ -230,7 +230,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             if (isNew) {
                 // Generate new OID for haku to be created
-                haku.setOid(oidService.newOid(NodeClassCode.TEKN_5));
+                haku.setOid(oidService.get(TarjontaOidType.HAKU));
                 LOG.info("updateHakue() - NEW haku!");
             }
 

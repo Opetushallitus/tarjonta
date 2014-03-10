@@ -27,7 +27,9 @@
 
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.tarjonta" />
-    <context:component-scan base-package="fi.vm.sade.oid" />
+    <!-- 
+    <context:component-scan base-package="fi.vm.sade.oid.generator" />
+     -->
 
     <!-- Configure AOP and aspect to handle and wrap exceptions to GenericFault -->
     <aop:aspectj-autoproxy>
