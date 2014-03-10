@@ -76,6 +76,8 @@ import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
@@ -109,6 +111,7 @@ import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
  *
@@ -140,6 +143,9 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     private HakuDAO hakuDAO;
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+    @Autowired
+    private OidService oidService;
+
     private KoulutuksenKestoTyyppi kesto3Vuotta;
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceTest.class);
 
@@ -153,6 +159,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     @Override
     public void before() {
         LoggerHelper.init(new LoggerMock());
+        try {
+            Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("foofoooid");
+        } catch (OIDCreationException e) {
+            throw new RuntimeException(e);
+        }
 
         OrganisaatioPerustieto perustieto = new OrganisaatioPerustieto();
         perustieto.setNimi("fi", "org nimi fi");

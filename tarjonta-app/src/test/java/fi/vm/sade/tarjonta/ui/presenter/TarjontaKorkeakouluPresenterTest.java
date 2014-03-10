@@ -1,6 +1,5 @@
 package fi.vm.sade.tarjonta.ui.presenter;
 
-import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
@@ -31,8 +30,6 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -58,7 +55,10 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
@@ -88,7 +88,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
     private TarjontaKorkeakouluPresenter instance;
     private TarjontaAdminService tarjontaAdminServiceMock;
     private TarjontaPublicService tarjontaPublicServiceMock;
-    private OIDService oidServiceMock;
     private OrganisaatioSearchService organisaatioSearchServiceMock;
     private KoulutusKoodistoConverter koulutusKoodisto;
     private KorkeakouluConverter korkeakouluConverter;
@@ -120,7 +119,7 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws OidCreationException {
         helpper = new KoodistoURI();
         helpper.setKoodistoTutkintoUri(createKoodistoUri(KOULUTUSKOODI));
         helpper.setKoulutusalaUri(createKoodistoUri(KOULUTUSALA));
@@ -157,17 +156,20 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         kuvailevatTiedotTab = tabSheet.addTab(lisatiedotView, "kuvailevattiedot");
 
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
-        oidServiceMock = createMock(OIDService.class);
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
         organisaatioSearchServiceMock = createMock(OrganisaatioSearchService.class);
         koulutusKoodisto = new KoulutusKoodistoConverter();//createMock(KoulutusKoodistoConverter.class);
         tarjontaUiHelper = createMock(TarjontaUIHelper.class);
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
 
+        OidHelper oidHelper = createMock(OidHelper.class);
+        expect(oidHelper.getOid(TarjontaOidType.KOMOTO)).andReturn(KOMOTO_OID);
+        replay(oidHelper);
+        Whitebox.setInternalState(korkeakouluConverter, "oidHelper", oidHelper);
+
         //Whitebox.setInternalState(kuvailevatTiedotView, "formView", new EditKorkeakouluKuvailevatTiedotView(null));
         Whitebox.setInternalState(editKoulutusView, "kuvailevatTiedot", kuvailevatTiedotTab);
         Whitebox.setInternalState(korkeakouluConverter, "helper", tarjontaKoodistoHelperMock);
-        Whitebox.setInternalState(korkeakouluConverter, "oidService", oidServiceMock);
         Whitebox.setInternalState(korkeakouluConverter, "organisaatioSearchService", organisaatioSearchServiceMock);
         Whitebox.setInternalState(korkeakouluConverter, "koulutusKoodisto", koulutusKoodisto);
         Whitebox.setInternalState(instance, "editKoulutusView", editKoulutusView);
@@ -305,12 +307,10 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
         expect(tarjontaAdminServiceMock.lisaaKoulutus(capture(localeCapture))).andReturn(lisaaKoulutusVastausTyyppi);
         expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(orgs);
-        expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
 
         /*
          * replay
          */
-        replay(oidServiceMock);
         replay(tarjontaAdminServiceMock);
         replay(organisaatioSearchServiceMock);
 
@@ -322,7 +322,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
         /*
          * verify
          */
-        verify(oidServiceMock);
         verify(tarjontaAdminServiceMock);
         verify(organisaatioSearchServiceMock);
 
@@ -490,7 +489,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
 
         expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(orgs);
-        expect(oidServiceMock.newOid(and(isA(NodeClassCode.class), eq(NodeClassCode.TEKN_5)))).andReturn(KOMOTO_OID).anyTimes();
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
 
@@ -522,7 +520,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          * replay
          */
         replay(tarjontaUiHelper);
-        replay(oidServiceMock);
         replay(organisaatioSearchServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(tarjontaKoodistoHelperMock);
@@ -537,7 +534,6 @@ public class TarjontaKorkeakouluPresenterTest extends BaseTarjontaTest {
          */
         verify(tarjontaKoodistoHelperMock);
         verify(tarjontaUiHelper);
-        verify(oidServiceMock);
         verify(organisaatioSearchServiceMock);
         verify(tarjontaPublicServiceMock);
 

@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.Roles.*;
 import fi.vm.sade.tarjonta.service.resources.v1.PermissionV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.UserV1RDTO;
@@ -32,9 +33,6 @@ import org.springframework.security.access.annotation.Secured;
 public class PermissionResourceImplV1 implements PermissionV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(PermissionResourceImplV1.class);
-    private static final String ROLE_READ = "ROLE_APP_TARJONTA_READ";
-    private static final String ROLE_UPDATE = "ROLE_APP_TARJONTA_READ_UPDATE";
-    private static final String ROLE_CRUD = "ROLE_APP_TARJONTA_CRUD";
 
     @Autowired
     private ContextDataService contextDataService;

@@ -30,9 +30,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -45,13 +42,15 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
@@ -66,7 +65,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
     private static final Logger LOG = LoggerFactory.getLogger(Koulutus2asteConverter.class);
     @Autowired(required = true)
-    private OIDService oidService;
+    private OidHelper oidHelper;
 
     public Koulutus2asteConverter() {
         super();
@@ -79,7 +78,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final OrganisationOidNamePair pair, final String komotoOid) throws ExceptionMessage {
+    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final OrganisationOidNamePair pair, final String komotoOid) throws OidCreationException {
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
         final OrganisaatioPerustieto dto = searchOrganisationByOid(tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid(), pair);
@@ -106,14 +105,14 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, OrganisationOidNamePair selectedOrganisation) throws ExceptionMessage {
+    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, OrganisationOidNamePair selectedOrganisation) throws OidCreationException {
         final String organisaatioOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         KoulutusToisenAsteenPerustiedotViewModel model = tarjontaModel.getKoulutusPerustiedotModel();
 
         final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(organisaatioOid, selectedOrganisation);
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
-        mapToKoulutusTyyppi(lisaa, model, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
+        mapToKoulutusTyyppi(lisaa, model, oidHelper.getOid(TarjontaOidType.KOMOTO), organisaatio);
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
         //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), lisaa.getYhteyshenkilo());
@@ -144,7 +143,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(TarjontaModel model, final LueKoulutusVastausTyyppi tyyppi, Locale locale) throws ExceptionMessage {
+    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(TarjontaModel model, final LueKoulutusVastausTyyppi tyyppi, Locale locale) throws OidCreationException {
         //set selected tarjoaja to UI model
         final OrganisationOidNamePair pair = new OrganisationOidNamePair();
         final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), pair);

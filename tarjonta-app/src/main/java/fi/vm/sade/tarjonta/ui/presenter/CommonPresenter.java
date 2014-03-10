@@ -24,7 +24,6 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.Window;
 
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -36,6 +35,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.service.PublishingService;
@@ -78,7 +78,7 @@ public abstract class CommonPresenter<MODEL extends BaseUIViewModel> {
     @Autowired(required=true)
     protected EventBus eventBus;
     @Autowired
-    protected OIDService oidService;
+    protected OidHelper oidHelper;
     @Autowired(required = true)
     protected KoodiService koodiService;
     @Autowired(required = true)

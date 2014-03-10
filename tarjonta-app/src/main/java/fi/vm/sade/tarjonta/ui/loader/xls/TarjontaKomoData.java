@@ -22,9 +22,6 @@ import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
@@ -47,6 +44,9 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.SearchWordUtil;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class TarjontaKomoData {
     @Autowired
     private KoodiService koodiService;
     @Autowired(required = true)
-    private OIDService oidService;
+    private OidHelper oidHelper;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
@@ -127,7 +127,7 @@ public class TarjontaKomoData {
         }
     }
 
-    public void createData(boolean saveChanges) throws IOException, ExceptionMessage {
+    public void createData(boolean saveChanges) throws IOException, OidCreationException {
         log.info("Starting to load KOMOs from Excel file");
         if (dataReader == null) {
             dataReader = new DataReader();
@@ -253,7 +253,7 @@ public class TarjontaKomoData {
      * @return
      * @throws ExceptionMessage
      */
-    private KoulutusmoduuliKoosteTyyppi createChildKomo(final ExcelMigrationDTO dto) throws ExceptionMessage {
+    private KoulutusmoduuliKoosteTyyppi createChildKomo(final ExcelMigrationDTO dto) throws OidCreationException {
         Preconditions.checkNotNull(dto.getKoulutuskoodiKoodiarvo(), "Import data error - koulutuskoodi value cannot be null!");
         final String koulutuskoodiUri = getUriWithVersion(dto.getKoulutuskoodiKoodiarvo(), KoodistoURI.KOODISTO_TUTKINTO_URI);
         //base values
@@ -297,7 +297,7 @@ public class TarjontaKomoData {
         }
 
         koChildKomo.setKoulutuskoodiUri(koulutuskoodiUri);
-        koChildKomo.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
+        koChildKomo.setOid(oidHelper.getOid(TarjontaOidType.KOMO));
         koChildKomo.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         //other:
         switch (dto.getKoulutusateTyyppi()) {
@@ -322,8 +322,8 @@ public class TarjontaKomoData {
         return koChildKomo;
     }
 
-    private KoulutusmoduuliKoosteTyyppi updateTutkintoFields(final ExcelMigrationDTO dto, KoulutusmoduuliKoosteTyyppi tutkinto, final String koulutuskoodiUri) throws ExceptionMessage {
-        tutkinto.setOid(this.oidService.newOid(NodeClassCode.TEKN_5));
+    private KoulutusmoduuliKoosteTyyppi updateTutkintoFields(final ExcelMigrationDTO dto, KoulutusmoduuliKoosteTyyppi tutkinto, final String koulutuskoodiUri) throws OidCreationException {
+        tutkinto.setOid(oidHelper.getOid(TarjontaOidType.KOMO));
         tutkinto.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
 
         //search Uris from Koodisto for komo
@@ -375,7 +375,7 @@ public class TarjontaKomoData {
      * @return
      * @throws ExceptionMessage
      */
-    private KoulutusmoduuliKoosteTyyppi createParentKomo(final ExcelMigrationDTO dto, final String koulutuskoodiUri) throws ExceptionMessage {
+    private KoulutusmoduuliKoosteTyyppi createParentKomo(final ExcelMigrationDTO dto, final String koulutuskoodiUri) throws OidCreationException {
         Preconditions.checkNotNull(koulutuskoodiUri, "Import data error - koulutuskoodi value cannot be null!");
         KoulutusmoduuliKoosteTyyppi tutkintoParentKomo = new KoulutusmoduuliKoosteTyyppi();
         if (parentKomosReadyForInsertAndUpdate.containsKey(koulutuskoodiUri)) {
@@ -635,7 +635,7 @@ public class TarjontaKomoData {
 //        }
 //        log.info("Total count of the imported KOMOs : {}", count);
 //    }
-    private void separateExcelKomos() throws ExceptionMessage {
+    private void separateExcelKomos() throws OidCreationException {
         /*
          * DATA WITH PARENT CHILD RELATION
          */

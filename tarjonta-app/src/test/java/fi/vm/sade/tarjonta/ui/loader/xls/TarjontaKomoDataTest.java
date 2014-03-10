@@ -15,14 +15,10 @@
  */
 package fi.vm.sade.tarjonta.ui.loader.xls;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
@@ -33,10 +29,11 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.ExcelMigrationDTO;
 import fi.vm.sade.tarjonta.ui.loader.xls.helper.RelaatioMap;
 import fi.vm.sade.tarjonta.ui.loader.xls.dto.GenericRow;
@@ -54,13 +51,13 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.easymock.Capture;
 import static org.easymock.EasyMock.*;
+
 import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
@@ -76,7 +73,6 @@ public class TarjontaKomoDataTest {
     private KoodiService koodiServiceMock;
     private TarjontaAdminService tarjontaAdminServiceMock;
     private TarjontaPublicService tarjontaPublicServiceMock;
-    private OIDService oidServiceMock;
     private DataReader dataReader;
 
     @BeforeClass
@@ -124,11 +120,15 @@ public class TarjontaKomoDataTest {
         koodiServiceMock = createMock(KoodiService.class);
         tarjontaAdminServiceMock = createMock(TarjontaAdminService.class);
         tarjontaPublicServiceMock = createMock(TarjontaPublicService.class);
-        oidServiceMock = createMock(OIDService.class);
 
+        OidHelper oidHelper = createMock(OidHelper.class);
+        expect(oidHelper.getOid(TarjontaOidType.KOMO)).andReturn("komoto-oid");
+        expect(oidHelper.getOid(TarjontaOidType.KOMO)).andReturn("komoto-oid2");
+        replay(oidHelper);
+        Whitebox.setInternalState(instance, "oidHelper", oidHelper);
+        
         Whitebox.setInternalState(instance, "dataReader", dataReader);
         Whitebox.setInternalState(instance, "mapKoodistos", map);
-        Whitebox.setInternalState(instance, "oidService", oidServiceMock);
         Whitebox.setInternalState(instance, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
         Whitebox.setInternalState(instance, "koodiService", koodiServiceMock);
         Whitebox.setInternalState(instance, "tarjontaAdminService", tarjontaAdminServiceMock);
@@ -336,13 +336,13 @@ public class TarjontaKomoDataTest {
      * Test of getLoadedData method, of class TarjontaKomoData.
      *
      * The test uses the real KOMO excel data!
+     * @throws OidCreationException 
      */
     @Test
-    public void testGetLoadedDataUpdate() throws IOException, ExceptionMessage {
+    public void testGetLoadedDataUpdate() throws IOException, OidCreationException {
 
         final Capture<KoulutusmoduuliKoosteTyyppi> komoParent = new Capture<KoulutusmoduuliKoosteTyyppi>();
         final Capture<KoulutusmoduuliKoosteTyyppi> komoChild = new Capture<KoulutusmoduuliKoosteTyyppi>();
-        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn("random_oid_" + createNeOid()).anyTimes();
         expect(tarjontaAdminServiceMock.paivitaKoulutusmoduuli(capture(komoParent))).andReturn(NOT_IMPLEMENTED);
         expect(tarjontaAdminServiceMock.paivitaKoulutusmoduuli(capture(komoChild))).andReturn(NOT_IMPLEMENTED);
 
@@ -380,7 +380,6 @@ public class TarjontaKomoDataTest {
         /*
          * replays
          */
-        replay(oidServiceMock);
         replay(tarjontaAdminServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(koodiServiceMock);
@@ -394,7 +393,6 @@ public class TarjontaKomoDataTest {
         /*
          * verify
          */
-        verify(oidServiceMock);
         verify(tarjontaAdminServiceMock);
         verify(tarjontaPublicServiceMock);
         verify(koodiServiceMock);
@@ -415,14 +413,14 @@ public class TarjontaKomoDataTest {
      * The test uses the real KOMO excel data!
      *
      * @throws IOException
+     * @throws OidCreationException 
      * @throws ExceptionMessage
      */
     @Test
-    public void testGetLoadedDataInsert() throws IOException, ExceptionMessage {
+    public void testGetLoadedDataInsert() throws IOException, OidCreationException {
         final Capture<KoulutusmoduuliKoosteTyyppi> komoParent = new Capture<KoulutusmoduuliKoosteTyyppi>();
         final Capture<KoulutusmoduuliKoosteTyyppi> komoChild = new Capture<KoulutusmoduuliKoosteTyyppi>();
 
-        expect(oidServiceMock.newOid(NodeClassCode.TEKN_5)).andReturn("random_oid_" + createNeOid()).anyTimes();
         expect(tarjontaAdminServiceMock.lisaaKoulutusmoduuli(capture(komoParent))).andReturn(expectKoulutusmoduuliKoosteTyyppi());
         expect(tarjontaAdminServiceMock.lisaaKoulutusmoduuli(capture(komoChild))).andReturn(expectKoulutusmoduuliKoosteTyyppi());
 
@@ -443,7 +441,6 @@ public class TarjontaKomoDataTest {
         /*
          * replay
          */
-        replay(oidServiceMock);
         replay(tarjontaAdminServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(koodiServiceMock);
@@ -457,7 +454,6 @@ public class TarjontaKomoDataTest {
         /*
          * verify
          */
-        verify(oidServiceMock);
         verify(tarjontaAdminServiceMock);
         verify(tarjontaPublicServiceMock);
         verify(koodiServiceMock);

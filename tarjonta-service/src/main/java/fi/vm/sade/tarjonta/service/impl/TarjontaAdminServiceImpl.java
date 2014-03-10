@@ -65,12 +65,15 @@ import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
  * @author Tuomas Katva
@@ -108,11 +111,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private TarjontaSearchService searchService;
     @Autowired
-    private fi.vm.sade.log.client.Logger auditLogger;
-    @Autowired
     private PermissionChecker permissionChecker;
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
+    @Autowired
+    private OidService oidService;
 
     @Override
     @Transactional(readOnly = false)
@@ -1075,6 +1078,19 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.info("  result = {}", result);
 
         return result;
+    }
+
+    @Override
+    public String haeOid(String parameters) {
+
+        try {
+            TarjontaOidType type = TarjontaOidType.valueOf(parameters);
+            return oidService.get(type);
+        } catch (OIDCreationException e) {
+            throw new RuntimeException("Could not create oid", e);
+        } catch (IllegalArgumentException iae) {
+            throw new RuntimeException("Unknown type:" + parameters + " use one of: " + TarjontaOidType.values());
+        }
     }
     
 }
