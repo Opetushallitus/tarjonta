@@ -32,11 +32,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var defaultLang = "kieli_fi";
 
-    var julkaistuVal = "JULKAISTU";
 
-    var luonnosVal = "LUONNOS";
-
-    var valmisVal = "VALMIS";
 
 	$scope.formControls = {}; // controls-layouttia varten
 
@@ -88,6 +84,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.tallennaLuonnoksenaEnabled = true;
 
     var koulutusSet = new buckets.Set();
+
+
+    var julkaistuVal = "JULKAISTU";
+
+    var luonnosVal = "LUONNOS";
+
+    var valmisVal = "VALMIS";
+
+    var peruttuVal = "PERUTTU";
 
     /*
         ----->  Helper functions
@@ -479,21 +484,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.canSaveAsLuonnos = function() {
 
-        if ($scope.model.hakukohde.tila === luonnosVal) {
-
-            return true;
-
-        } else if ($scope.model.hakukohde.tila === valmisVal || $scope.model.hakukohde.tila === julkaistuVal) {
-
-            return false;
-
-        } else if ($scope.model.hakukohde.tila === undefined) {
-
-            return true;
-
-        } else {
-            return true;
-        }
+        console.log('CAN SAVE AS LUONNOS : ', CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila));
+        return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
 
     }
 
@@ -869,6 +861,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
      */
 
     $scope.model.saveValmis = function() {
+        PermissionService.permissionResource().authorize({}, function(authResponse) {
         emptyErrorMessages();
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
@@ -942,16 +935,20 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         }
         }
+    })
     };
 
     $scope.model.saveLuonnos = function() {
 
+        PermissionService.permissionResource().authorize({}, function(authResponse) {
+
+        console.log('GOT AUTH RESPONSE : ' , authResponse);
         emptyErrorMessages();
 
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
         $scope.model.showError = false;
-            if ($scope.model.hakukohde.tila !== julkaistuVal) {
-        $scope.model.hakukohde.tila = luonnosVal;
+            if ($scope.model.hakukohde.tila === undefined || $scope.model.hakukohde.tila === luonnosVal) {
+            $scope.model.hakukohde.tila = luonnosVal;
             }
 
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
@@ -1022,6 +1019,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             });
         }
         }
+    })
     };
 
 
