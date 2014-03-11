@@ -138,8 +138,8 @@ public class ConverterV1 {
         t.setHakutyyppiUri(haku.getHakutyyppiUri());
         t.setHaunTunniste(haku.getHaunTunniste());
         t.setKohdejoukkoUri(haku.getKohdejoukkoUri());
-        t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
-        t.setLastUpdatedDate(haku.getLastUpdateDate());
+        // t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
+        // t.setLastUpdatedDate(haku.getLastUpdateDate());
         t.setTila(haku.getTila().name());
         t.setHakukausiVuosi(haku.getHakukausiVuosi());
         t.setMaxHakukohdes(haku.getMaxHakukohdes());
@@ -337,7 +337,7 @@ public class ConverterV1 {
 
 
         valintaperusteSoraKuvaus.setViimPaivittajaOid(contextDataService.getCurrentUserOid());
-        
+
 
         if (kuvausV1RDTO.getModified() != null) {
             valintaperusteSoraKuvaus.setViimPaivitysPvm(kuvausV1RDTO.getModified());

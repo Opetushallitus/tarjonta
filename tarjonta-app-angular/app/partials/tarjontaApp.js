@@ -468,8 +468,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                       "loppuPvm" : new Date().getTime()
                                     } ],
                                     "hakukohdeOids" : [ ],
-                                    "lastUpdatedByOid" : "NA",
-                                    "lastUpdatedDate" : new Date().getTime(),
+                                    "modified" : new Date().getTime(),
+                                    "modifiedBy" : "NA",
                                     "nimi" : {
                                       "kieli_fi" : "",
                                       "kieli_sv" : "",
