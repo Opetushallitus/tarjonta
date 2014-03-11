@@ -41,6 +41,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
@@ -411,7 +412,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             return false;
         }
 
-        if (isEmpty(haku.getHakukausiUri())) {
+        if (!isJatkuvaHaku(haku) && isEmpty(haku.getHakukausiUri())) {
             result.addError(ErrorV1RDTO.createValidationError("hakukausiUri", "haku.validation.hakukausiUri.invalid"));
         }
         if (isEmpty(haku.getHakutapaUri())) {
@@ -420,18 +421,15 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if (isEmpty(haku.getHakutyyppiUri())) {
             result.addError(ErrorV1RDTO.createValidationError("hakutyyppiUri", "haku.validation.hakutyyppiUri.invalid"));
         }
-//        if (isEmpty(haku.getHaunTunniste())) {
-//            result.addError(ErrorV1RDTO.createValidationError("haunTunniste", "haku.validation.haunTunniste.invalid"));
-//        }
         if (isEmpty(haku.getKohdejoukkoUri())) {
             result.addError(ErrorV1RDTO.createValidationError("kohdejoukkoUri", "haku.validation.kohdejoukkoUri.invalid"));
         }
-        if (isEmpty(haku.getKoulutuksenAlkamiskausiUri())) {
+
+        if (!isJatkuvaHaku(haku) && isEmpty(haku.getKoulutuksenAlkamiskausiUri())) {
             result.addError(ErrorV1RDTO.createValidationError("koulutuksenAlkamiskausiUri", "haku.validation.koulutuksenAlkamiskausiUri.invalid"));
         }
 
-        // TODO Nimi validation - always one of fi, sv, en?
-        if (haku.getNimi() == null || haku.getNimi().isEmpty()) {
+        if (isEmpty(haku.getNimi())) {
             result.addError(ErrorV1RDTO.createValidationError("nimi", "haku.validation.nimi.empty"));
         }
 
@@ -442,10 +440,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
             }
         } else {
-            // Cannot have this since we have hakulomakeUri
-            if (haku.getMaxHakukohdes() > 0) {
-                result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
-            }
+//            // Cannot have this since we have hakulomakeUri
+//            if (haku.getMaxHakukohdes() > 0) {
+//                result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
+//            }
 
             try {
                 URL url = new URL(haku.getHakulomakeUri());
@@ -454,37 +452,35 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
-
-        // TODO not valid if this is JATKUVA HAKU!
-        if (!isJatkuvaHaku(haku)) {
-            if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
-                result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
-            }
+        // Must have at least one hakuaika
+        if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
         }
 
         for (HakuaikaV1RDTO hakuaikaV1RDTO : haku.getHakuaikas()) {
+            // Start time is required
             if (hakuaikaV1RDTO.getAlkuPvm() == null) {
                 result.addError(ErrorV1RDTO.createValidationError("alkuPvm", "haku.validation.hakuaikas.alkuPvm.empty"));
             }
-            if (hakuaikaV1RDTO.getLoppuPvm() == null) {
-                result.addError(ErrorV1RDTO.createValidationError("loppuPvm", "haku.validation.hakuaikas.loppuPvm.empty"));
-            }
 
-            if (hakuaikaV1RDTO.getAlkuPvm() != null && hakuaikaV1RDTO.getLoppuPvm() != null && hakuaikaV1RDTO.getAlkuPvm().after(hakuaikaV1RDTO.getLoppuPvm())) {
-                result.addError(ErrorV1RDTO.createValidationError("loppuPvm", "haku.validation.hakuaikas.invalidOrder"));
+            // End time is required IF this is not continous haku
+            if (!isJatkuvaHaku(haku)) {
+                if (hakuaikaV1RDTO.getLoppuPvm() == null) {
+                    result.addError(ErrorV1RDTO.createValidationError("loppuPvm", "haku.validation.hakuaikas.loppuPvm.empty"));
+                }
+
+                if (hakuaikaV1RDTO.getAlkuPvm() != null && hakuaikaV1RDTO.getLoppuPvm() != null && hakuaikaV1RDTO.getAlkuPvm().after(hakuaikaV1RDTO.getLoppuPvm())) {
+                    result.addError(ErrorV1RDTO.createValidationError("loppuPvm", "haku.validation.hakuaikas.invalidOrder"));
+                }
             }
 
             // TODO tarkista vuosi - haun alkamiskausi / vuosi?
             // TODO tarkista kausi - haun alkamiskausi / vuosi?
         }
 
-
-
-
-        // TODO  haku.getHakukausiArvo() - what is this?
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
-        // TODO haku.getMaxHakukohdes()
+
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 
@@ -496,8 +492,30 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return !result.hasErrors();
     }
 
+    /**
+     * @param s
+     * @return true if string s is empty or null
+     */
     private boolean isEmpty(String s) {
         return (s == null || s.trim().isEmpty());
+    }
+
+    /**
+     * @param map
+     * @return true if map is totally empty OR all values in the map are empty
+     */
+    private boolean isEmpty(Map<String, String> map) {
+        if (map == null || map.isEmpty()) {
+            return true;
+        }
+
+        boolean result = true;
+
+        for (String nimiValue : map.values()) {
+            result = result && isEmpty(nimiValue);
+        }
+
+        return result;
     }
 
 
@@ -508,11 +526,18 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private String _jatkuvaHakutapaUri;
 
     private boolean isJatkuvaHaku(HakuV1RDTO haku) {
+
         if (haku == null || isEmpty(haku.getHakutapaUri())) {
             return false;
         }
 
-        return (haku.getHakutapaUri().equals(_jatkuvaHakutapaUri));
+        boolean result = (haku.getHakutapaUri().equals(_jatkuvaHakutapaUri));
+
+//        LOG.info("isJatkuvaHaku(), uri = '{}'", haku.getHakutapaUri());
+//        LOG.info("        property uri = '{}'", _jatkuvaHakutapaUri);
+//        LOG.info("        => result = {}", result);
+
+        return result;
     }
 
 }

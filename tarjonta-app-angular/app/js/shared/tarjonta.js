@@ -38,6 +38,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     "state=" + escape(args.state) + "&" +
                     "season=" + escape(args.season) + "&" +
                     "komoOid=" + escape(args.komoOid) + "&" +
+                    "kooulutusOid=" + escape(args.koulutusOid) + "&" +
                     "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"

@@ -270,8 +270,10 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
                 return _canCreate(orgOid);
             },
             canMoveOrCopy: function(orgOid) {
-                console.log("TODO koulutus.canMoveOrCopy", orgOid);
-                return true;
+              var deferred = $q.defer();
+              console.log("TODO!!"); 
+              deferred.resolve(true);
+              return deferred.promise;
             },
             canPreview: function(orgOid) {
                 if (orgOid === undefined) {
