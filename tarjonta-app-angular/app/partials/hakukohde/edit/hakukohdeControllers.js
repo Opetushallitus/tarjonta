@@ -67,6 +67,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.validationmsgs = [];
 
+    $scope.model.liitteidenToimitusOsoite = {};
+
     $scope.model.hakus = [];
 
     $scope.model.hakuaikas = [];
@@ -551,12 +553,36 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 orgPromise.then(function(data){
 
 
-                    if (data.postiosoite !== undefined) {
 
+                    var hakutoimistoNotFound = true;
+                    if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
+                        console.log('METADATA FOUND');
+                        angular.forEach(data.metadata.yhteystiedot,function(yhteystieto)  {
 
-                        $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
-                        $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
-                        $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+                            if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === "posti") {
+
+                                $scope.model.liitteidenToimitusOsoite.osoiterivi1 = yhteystieto.osoite;
+                                $scope.model.liitteidenToimitusOsoite.postinumero = yhteystieto.postinumeroUri;
+                                $scope.model.liitteidenToimitusOsoite.postitoimipaikka = yhteystieto.postitoimipaikka;
+                                //$scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = yhteystieto.osoite;
+                                //$scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = yhteystieto.postinumeroUri;
+                                //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = yhteystieto.postitoimipaikka;
+                                hakutoimistoNotFound = false;
+                            }
+
+                        });
+
+                    }
+                    console.log('hakutoimistoNotFound :', hakutoimistoNotFound );
+                    console.log('LIITTEIDEN TOIMITUSOSOITE : ', $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1);
+                    if (data.postiosoite !== undefined && hakutoimistoNotFound) {
+
+                        $scope.model.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+                        $scope.model.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+                        $scope.model.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
+                        //$scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
+                        //$scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
+                        //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
                         postinumero = data.postiosoite.postinumeroUri;
                     }
                 });
