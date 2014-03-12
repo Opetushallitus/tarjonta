@@ -94,18 +94,19 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @return
      */
     public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
-    
+
     /**
      * Find komoto ids by hakukohdeids
+     *
      * @param hakukohdeIds
      * @param requiredStatus
      * @return
      */
     List<Long> searchKomotoIdsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
 
-    
     /**
      * Find komoto oids by hakukohdeids
+     *
      * @param hakukohdeIds
      * @param requiredStatus
      * @return
@@ -113,4 +114,14 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
     List<String> searchKomotoOIDsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
 
     public List<Long> findIdsByoids(Collection<String> oids);
+
+    /**
+     * Vaihtaa koulutusmoduulin toteutuksen tilan suoraa
+     * poistetuksi/passivoiduksi.
+     *
+     * @param komotoOid
+     * @param userOid
+     */
+    public void safeDelete(final String komotoOid, final String userOid);
+
 }

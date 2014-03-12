@@ -206,18 +206,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 method: 'POST',
                 withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            remove: {
+                url: Config.env.tarjontaRestUrlPrefix + "koulutus/:oid",
+                method: 'DELETE',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
     };
 
-    dataFactory.deleteKoulutus = function(id) {
-        console.log("deleteKoulutus(): ", id);
-        var ret = $q.defer();
-        $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res) {
-            ret.resolve(res);
-        });
-        return ret.promise;
-    };
     dataFactory.loadKuvausTekstis = function(oid) {
         console.log("save KomoTekstis(): ", oid);
         var ret = $q.defer();

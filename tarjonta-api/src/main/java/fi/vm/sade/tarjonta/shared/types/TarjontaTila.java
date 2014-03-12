@@ -25,7 +25,7 @@ import java.util.List;
  * @author Jukka Raanamo
  */
 public enum TarjontaTila {
-
+    POISTETTU,
     LUONNOS,
     VALMIS,
     JULKAISTU,

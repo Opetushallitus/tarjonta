@@ -28,7 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
@@ -39,6 +41,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
@@ -269,7 +272,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         kkKoulutusAstes.add(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value());
         kkKoulutusAstes.add(KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value());
 
-       whereExpr = QuerydslUtils.and(whereExpr,komo.koulutustyyppi.notIn(kkKoulutusAstes));
+        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppi.notIn(kkKoulutusAstes));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {
@@ -303,5 +306,17 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     @Override
     public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri) {
         return findTutkintoOhjelma(koulutusLuokitusUri, null);
+    }
+
+    @Override
+    public void safeDelete(final String komoOid, final String userOid) {
+        Preconditions.checkNotNull(komoOid, "Komo OID string object cannot be null.");
+        List<String> oids = Lists.<String>newArrayList();
+        oids.add(komoOid);
+        Koulutusmoduuli findByOid = findByOid(komoOid);
+        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
+        findByOid.setTila(TarjontaTila.POISTETTU);
+        //TODO: add field for the entity 
+        //findByOid.setLastUpdatedByOid(userOid);
     }
 }

@@ -19,10 +19,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.support.Expressions;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
-import com.mysema.query.types.path.DateTimePath;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -37,7 +36,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
-import org.hibernate.ejb.criteria.path.MapKeyHelpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,12 +303,12 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri) {
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         QBinaryData qBinaryData = QBinaryData.binaryData;
- 
+
         return from(qKomoto).
                 join(qKomoto.kuvat, qBinaryData).
                 where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.get(kieliUri).eq(qBinaryData))).singleResult(qBinaryData);
     }
-    
+
     /**
      * Search LOI entities by application option OIDs.
      *
@@ -320,19 +318,18 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
      */
     public List<Long> searchKomotoIdsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus) {
 
-        boolean hasStatus =requiredStatus!=null && requiredStatus.length>0 && requiredStatus[0]!=null;  
-        
-        Query q = getEntityManager().createQuery(hasStatus?
-                "SELECT ktm.id FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
-                + "WHERE hk.id IN(:hakukohdeIds) AND ktm.tila IN(:requiredStatus)":
-                    
-                    "SELECT ktm.id FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
-                    + "WHERE hk.id IN(:hakukohdeIds)"
-                );
+        boolean hasStatus = requiredStatus != null && requiredStatus.length > 0 && requiredStatus[0] != null;
+
+        Query q = getEntityManager().createQuery(hasStatus
+                ? "SELECT ktm.id FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                + "WHERE hk.id IN(:hakukohdeIds) AND ktm.tila IN(:requiredStatus)"
+                : "SELECT ktm.id FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                + "WHERE hk.id IN(:hakukohdeIds)"
+        );
         q.setParameter("hakukohdeIds", hakukohdeIds);
         log.debug("searching for komotos with status:" + Lists.newArrayList(requiredStatus));
 
-        if(hasStatus) { 
+        if (hasStatus) {
             q.setParameter("requiredStatus", Lists.newArrayList(requiredStatus));
         }
 
@@ -340,23 +337,22 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
         return list;
     }
-    
+
     @Override
     public List<String> searchKomotoOIDsByHakukohdesId(
             Collection<Long> hakukohdeIds, TarjontaTila... requiredStatus) {
-        boolean hasStatus =requiredStatus!=null && requiredStatus.length>0 && requiredStatus[0]!=null;  
-        
-        Query q = getEntityManager().createQuery(hasStatus?
-                "SELECT ktm.oid FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
-                + "WHERE hk.id IN(:hakukohdeIds) AND ktm.tila IN(:requiredStatus)":
-                    
-                    "SELECT ktm.oid FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
-                    + "WHERE hk.id IN(:hakukohdeIds)"
-                );
+        boolean hasStatus = requiredStatus != null && requiredStatus.length > 0 && requiredStatus[0] != null;
+
+        Query q = getEntityManager().createQuery(hasStatus
+                ? "SELECT ktm.oid FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                + "WHERE hk.id IN(:hakukohdeIds) AND ktm.tila IN(:requiredStatus)"
+                : "SELECT ktm.oid FROM Hakukohde hk, IN(hk.koulutusmoduuliToteutuses) ktm "
+                + "WHERE hk.id IN(:hakukohdeIds)"
+        );
         q.setParameter("hakukohdeIds", hakukohdeIds);
         log.debug("searching for komotos with status:" + Lists.newArrayList(requiredStatus));
 
-        if(hasStatus) { 
+        if (hasStatus) {
             q.setParameter("requiredStatus", Lists.newArrayList(requiredStatus));
         }
 
@@ -364,7 +360,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
 
         return list;
     }
-    
+
     @Override
     public List<Long> findIdsByoids(Collection<String> oids) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
@@ -372,4 +368,14 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return from(komoto).where(criteria).distinct().list(komoto.id);
     }
 
+    @Override
+    public void safeDelete(final String komotoOid, final String userOid) {
+        Preconditions.checkNotNull(komotoOid, "Komoto OID string object cannot be null.");
+        List<String> oids = Lists.<String>newArrayList();
+        oids.add(komotoOid);
+        KoulutusmoduuliToteutus findByOid = findByOid(komotoOid);
+        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
+        findByOid.setTila(TarjontaTila.POISTETTU);
+        findByOid.setLastUpdatedByOid(userOid);
+    }
 }

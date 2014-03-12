@@ -16,8 +16,12 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
@@ -25,6 +29,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakoulu
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.util.ArrayList;
@@ -283,5 +289,59 @@ public class KoulutusValidator {
         }
 
         return null;
+    }
+
+    public static void validateKoulutus(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
+        if (komoto == null) {
+            dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        } else if (komoto.getKoulutusmoduuli() == null) {
+            dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+        }
+    }
+
+    public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<String> children, final List<String> parent, KoulutuksetVastaus kv, ResultV1RDTO dto) {
+        final Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+
+        if (komo.getKoulutusmoduuliToteutusList().size() > 1) {
+            Set<String> komotoOids = Sets.<String>newHashSet();
+            for (KoulutusmoduuliToteutus t : komo.getKoulutusmoduuliToteutusList()) {
+                komotoOids.add(t.getOid());
+            }
+
+            dto.addError(ErrorV1RDTO.createValidationError("komo.komotos", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_REMOVE_KOMOTO.lower(), komotoOids.toArray(new String[komotoOids.size()])));
+        }
+
+        if (!children.isEmpty()) {
+            dto.addError(ErrorV1RDTO.createValidationError("komo.link.childs", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_CHILD_REMOVE_LINK.lower(), children.toArray(new String[children.size()])));
+        }
+
+        if (!parent.isEmpty()) {
+            dto.addError(ErrorV1RDTO.createValidationError("komo.link.parents", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK.lower(), parent.toArray(new String[parent.size()])));
+        }
+
+        /*
+         * Ei haukohteita == OK
+         * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
+         */
+        if (!komoto.getHakukohdes().isEmpty()) {
+            final String komotoOid = komoto.getOid();
+
+            int includedToHakukohde = 0;
+            for (KoulutusPerustieto kp : kv.getKoulutukset()) {
+                if (komotoOid.equals(kp.getKomotoOid())) {
+                    includedToHakukohde = 1;
+                    break;
+                }
+            }
+
+            if ((komoto.getHakukohdes().size() - includedToHakukohde) < 1) {
+                Set<String> hakukohdeOids = Sets.<String>newHashSet();
+                for (Hakukohde hk : komoto.getHakukohdes()) {
+                    hakukohdeOids.add(hk.getOid());
+                }
+
+                dto.addError(ErrorV1RDTO.createValidationError("komoto.hakukohdes", KoulutusValidationMessages.KOULUTUS_RELATION_KOMOTO_HAKUKOHDE_REMOVE_LINK.lower(), hakukohdeOids.toArray(new String[hakukohdeOids.size()])));
+            }
+        }
     }
 }
