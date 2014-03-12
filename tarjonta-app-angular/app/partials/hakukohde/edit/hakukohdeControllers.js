@@ -580,7 +580,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     console.log('hakutoimistoNotFound :', hakutoimistoNotFound );
                     console.log('LIITTEIDEN TOIMITUS OSOITE : ', $scope.model.liitteidenToimitusOsoite);
                     if (data.postiosoite !== undefined && hakutoimistoNotFound) {
-
+                        $scope.model.liitteidenToimitusOsoite[defaultLang] = {};
                         $scope.model.liitteidenToimitusOsoite[defaultLang].osoiterivi1 = data.postiosoite.osoite;
                         $scope.model.liitteidenToimitusOsoite[defaultLang].postinumero = data.postiosoite.postinumeroUri;
                         $scope.model.liitteidenToimitusOsoite[defaultLang].postitoimipaikka = data.postiosoite.postitoimipaikka;
@@ -589,6 +589,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                         //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
                         postinumero = data.postiosoite.postinumeroUri;
                     }
+                    console.log('LIITTEIDEN TOIMITUSOSOITE : ' ,   $scope.model.liitteidenToimitusOsoite);
+                    console.log('DEFAULT LANG : ' , defaultLang);
                 });
 
 
