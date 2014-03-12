@@ -25,19 +25,23 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
     return $resource(hakukohdeUri,{oid:'@oid'},{
         update: {
             method: 'PUT',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
 
         remove : {
           method: 'DELETE',
+          withCredentials: true,
           headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         save: {
             method: 'POST',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         get : {
             method: 'GET',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
     });
@@ -52,18 +56,22 @@ app.factory('Liite',function($resource, Config) {
     return $resource(hakukohdeLiiteUri,{hakukohdeOid:'@hakukohdeOid',liiteId:'@liiteId'},{
         update: {
             method: 'PUT',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         save: {
             method: 'POST',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         getAll : {
             method: 'GET',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         remove : {
             method: 'DELETE',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
     });
@@ -78,18 +86,22 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
     return $resource(hakukohdeValintakoeUri,{hakukohdeOid:'@hakukohdeOid',valintakoeOid:'@valintakoeOid'},{
         update: {
             method: 'PUT',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         save: {
             method: 'POST',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         getAll : {
             method: 'GET',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         remove : {
             method: 'DELETE',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
 
@@ -110,6 +122,7 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
                 var hakukohdeKoulutusUri =  Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
 
                 $http.post(hakukohdeKoulutusUri,koulutusOids,{
+                    withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
 
                 }).success(function(data){
@@ -132,6 +145,7 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
                 var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
                 $http.post(hakukohdeKoulutusUri,koulutusOids,{
+                    withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
 
                 }).success(function(data){

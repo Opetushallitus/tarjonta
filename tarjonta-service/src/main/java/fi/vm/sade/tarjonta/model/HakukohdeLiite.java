@@ -18,6 +18,8 @@ package fi.vm.sade.tarjonta.model;
 import java.util.Date;
 import javax.persistence.*;
 
+import com.google.common.base.Preconditions;
+
 /**
  *
  */
@@ -27,11 +29,12 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 6186622208433509334L;
 
-    @Column(name="hakukohde_liite_nimi")
-    private String hakukohdeLiiteNimi;
-
-    @ManyToOne (fetch = FetchType.EAGER)
+    @ManyToOne (fetch = FetchType.LAZY, optional=false)
+    @JoinColumn(name="hakukohde_id", nullable=false)
     private Hakukohde hakukohde;
+  
+    @Column(name="hakukohde_liite_nimi", nullable=false)
+    private String hakukohdeLiiteNimi;
 
     /**
      * Koodisto URI.
@@ -39,13 +42,13 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     @Column(name = "liitetyyppi")
     private String liitetyyppi;
 
-    /**
+    /* *
      * Textual name for the koodisto URI, in Finnish.
      */
-    private String liitteenTyyppiKoodistoNimi;
+    //@Column(name = "liitteenTyyppiKoodistoNimi", nullable=false)
+    //private String liitteenTyyppiKoodistoNimi;
 
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name = "kuvaus_teksti_id")
     private MonikielinenTeksti kuvaus;
 
@@ -56,17 +59,25 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     private String kieli;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="erapaiva", nullable=false)
     private Date erapaiva;
 
+    @Column(name="sahkoinenToimitusosoite")
     private String sahkoinenToimitusosoite;
 
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate;
+    
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
 
 
+    @PrePersist
+    public void checkConstraints() {
+    	Preconditions.checkState(liitetyyppi!=null || kieli!=null, "Either liitetyyppiuri or kieli must be set");
+    }
+    
     public Date getErapaiva() {
         return erapaiva;
     }
@@ -115,12 +126,15 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
         this.hakukohde = hakukohde;
     }
 
+    @Deprecated
     public String getLiitteenTyyppiKoodistoNimi() {
-        return liitteenTyyppiKoodistoNimi;
+        return hakukohdeLiiteNimi; //liitteenTyyppiKoodistoNimi;
     }
 
+    @Deprecated
     public void setLiitteenTyyppiKoodistoNimi(String liitteenTyyppiKoodistoNimi) {
-        this.liitteenTyyppiKoodistoNimi = liitteenTyyppiKoodistoNimi;
+    	hakukohdeLiiteNimi = liitteenTyyppiKoodistoNimi;
+    	//this.liitteenTyyppiKoodistoNimi = liitteenTyyppiKoodistoNimi;
     }
 
     public Date getLastUpdateDate() {

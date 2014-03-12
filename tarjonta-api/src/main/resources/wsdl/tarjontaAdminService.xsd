@@ -65,6 +65,9 @@
     <xs:element name="testaaTilasiirtyma" type="tns:GeneerinenTilaTyyppi"/>
     <xs:element name="testaaTilasiirtymaVastaus" type="xs:boolean"/>
 
+    <xs:element name="haeOid" type="xs:string"/>
+    <xs:element name="haeOidVastaus" type="xs:string"/>
+
     <xs:element name="tarkistaKoulutusKopiointi" type="tns:TarkistaKoulutusKopiointiTyyppi"/>
     <xs:element name="tarkistaKoulutusKopiointiVastaus" type="xs:boolean"/>
 

@@ -33,16 +33,16 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.BasicLanguage;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import fi.vm.sade.tarjonta.ui.model.HakuaikaViewModel;
@@ -63,7 +63,7 @@ public class HakukohdeViewModelToDTOConverter {
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired(required = true)
-    private OIDService oidService;
+    private OidHelper oidHelper;
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HakukohdeViewModelToDTOConverter.class);
     private static final String NUMBER_FORMAT = "#.##";
     
@@ -118,8 +118,8 @@ public class HakukohdeViewModelToDTOConverter {
         hakukohde.setHakukohteenTila(hakukohdevm.getTila());
         if (hakukohdevm.getOid() == null) {
             try {
-                hakukohde.setOid(oidService.newOid(NodeClassCode.PALVELUT));
-            } catch (ExceptionMessage ex) {
+                hakukohde.setOid(oidHelper.getOid(TarjontaOidType.HAKUKOHDE));
+            } catch (OidCreationException ex) {
                 LOG.warn("UNABLE TO GET OID : " + ex.toString());
             }
         } else {
@@ -318,20 +318,6 @@ public class HakukohdeViewModelToDTOConverter {
         }
 
         return tekstis;
-    }
-
-    /**
-     * @return the oidService
-     */
-    public OIDService getOidService() {
-        return oidService;
-    }
-
-    /**
-     * @param oidService the oidService to set
-     */
-    public void setOidService(OIDService oidService) {
-        this.oidService = oidService;
     }
 
     public static HakukohdeNameUriModel hakukohdeNameUriModelFromKoodi(final KoodiType koodiType) {

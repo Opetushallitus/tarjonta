@@ -27,7 +27,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
@@ -37,6 +36,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.List;
 import java.util.Map.Entry;
@@ -78,7 +78,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
             komo = koulutusmoduuliDAO.findByOid(dto.getOid());
         } else {
             try {
-                komo.setOid(oidService.get(Type.KOMO));
+                komo.setOid(oidService.get(TarjontaOidType.KOMO));
             } catch (OIDCreationException ex) {
                 LOG.error("OIDService failed!", ex);
             }

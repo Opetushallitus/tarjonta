@@ -20,10 +20,10 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +62,7 @@ public class KomoResourceImpl implements KomoResource {
     public String hello() {
         try {
             LOG.debug("/komo/hello -- hello()");
-            return "Well hello! Have a nice OID - " + oidService.get(Type.KOMO);
+            return "Well hello! Have a nice OID - " + oidService.get(TarjontaOidType.KOMO);
         } catch (OIDCreationException ex) {
             LOG.error("Failed", ex);
             return "ERROR - SEE LOG";

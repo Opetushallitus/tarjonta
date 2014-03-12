@@ -52,8 +52,8 @@
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.liite.modal.toimitusosoite"></th>
                     <td>
-                        <input type="radio" name="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="false" /> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span><br/>
-                        <input type="radio" name="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="true"/> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
+                        <input type="radio" name="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-click="setDefaultAddress(kieli.koodiUri)" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="false" /> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanOrganisaationPostiosoitetta"></span><br/>
+                        <input type="radio" name="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" data-ng-click="emptyAddress(kieli.koodiUri)" ng-model="liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled" ng-value="true"/> <span tt="tarjonta.hakukohde.liite.modal.kaytetaanMuutaOsoitetta"></span><br/>
                         
                         <div class="inset">
                             <osoite-field model="liitteetModel.selectedLiite[kieli.koodiUri].liitteenToimitusOsoite" ng-disabled="!liitteetModel.selectedLiite[kieli.koodiUri].muuOsoiteEnabled"></osoite-field>

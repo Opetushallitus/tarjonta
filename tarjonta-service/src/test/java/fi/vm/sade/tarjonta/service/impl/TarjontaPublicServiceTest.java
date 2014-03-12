@@ -167,6 +167,7 @@ public class TarjontaPublicServiceTest {
         Valintakoe valintakoe = fixtures.createValintakoe();
 
         Pisteraja pisteraja = new Pisteraja();
+        pisteraja.setValintakoe(valintakoe);
         pisteraja.setValinnanPisterajaTyyppi("Paasykoe");
         pisteraja.setAlinHyvaksyttyPistemaara(new BigDecimal("5.0"));
         pisteraja.setAlinPistemaara(new BigDecimal("4.0"));

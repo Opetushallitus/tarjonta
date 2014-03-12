@@ -39,7 +39,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusSisaltyvyysDAOImpl;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -50,6 +49,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -157,8 +157,8 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "suunniteltu_kesto_uri", "FI");
         stubKoodi(koodiService, "ammattinimike_uri", "FI");
         stubKoodi(koodiService, "EQF_uri", "FI");
-        Mockito.stub(oidService.get(Type.KOMO)).toReturn("komo-oid");
-        Mockito.stub(oidService.get(Type.KOMOTO)).toReturn("komoto-oid");
+        Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("komo-oid");
+        Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("komoto-oid");
     }
 
     private OrganisaatioDTO getOrganisaatio(String organisaatioOid) {

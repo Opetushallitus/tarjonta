@@ -23,13 +23,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +31,13 @@ import org.springframework.stereotype.Service;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -52,7 +52,10 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
@@ -77,6 +80,7 @@ import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -134,8 +138,8 @@ public class ConverterV1 {
         t.setHakutyyppiUri(haku.getHakutyyppiUri());
         t.setHaunTunniste(haku.getHaunTunniste());
         t.setKohdejoukkoUri(haku.getKohdejoukkoUri());
-        t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
-        t.setLastUpdatedDate(haku.getLastUpdateDate());
+        // t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
+        // t.setLastUpdatedDate(haku.getLastUpdateDate());
         t.setTila(haku.getTila().name());
         t.setHakukausiVuosi(haku.getHakukausiVuosi());
         t.setMaxHakukohdes(haku.getMaxHakukohdes());
@@ -168,7 +172,7 @@ public class ConverterV1 {
 
         if (haku == null) {
             haku = new Haku();
-            haku.setOid(oidService.get(Type.HAKU));
+            haku.setOid(oidService.get(TarjontaOidType.HAKU));
         }
 
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
@@ -333,7 +337,7 @@ public class ConverterV1 {
 
 
         valintaperusteSoraKuvaus.setViimPaivittajaOid(contextDataService.getCurrentUserOid());
-        
+
 
         if (kuvausV1RDTO.getModified() != null) {
             valintaperusteSoraKuvaus.setViimPaivitysPvm(kuvausV1RDTO.getModified());
@@ -505,9 +509,8 @@ public class ConverterV1 {
             }
         }
 
-        if (hakukohde.getValintojenAloituspaikatLkm() != null) {
-            hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
-        }
+        hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
+
         if (hakukohde.getYlinValintaPistemaara() != null) {
             hakukohdeRDTO.setYlinValintapistemaara(hakukohde.getYlinValintaPistemaara());
         }
@@ -651,7 +654,7 @@ public class ConverterV1 {
         String newHakukohdeOid = null;
         LOG.debug("OIDSERVICE: {}", oidService);
         try {
-            newHakukohdeOid = oidService.get(Type.HAKUKOHDE);
+            newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
             LOG.debug("OID SERVICE NEW OID : {}", newHakukohdeOid);
         }  catch (OIDCreationException emm) {
             LOG.warn("UNABLE TO GET OID : {}", emm.toString() );
@@ -733,11 +736,11 @@ public class ConverterV1 {
         hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
 
         for (ValintakoeV1RDTO valintakoeV1RDTO : hakukohdeRDTO.getValintakokeet()) {
-            hakukohde.getValintakoes().add(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));
+        	hakukohde.addValintakoe(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));
         }
 
         for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
-            hakukohde.getLiites().add(toHakukohdeLiite(liite));
+        	hakukohde.addLiite(toHakukohdeLiite(liite));
         }
 
         return hakukohde;
@@ -819,7 +822,7 @@ public class ConverterV1 {
         tekstiRDTOs.add(valintakoeV1RDTO.getValintakokeenKuvaus());
         valintakoe.setKuvaus(convertTekstiRDTOToMonikielinenTeksti(tekstiRDTOs));
         if (valintakoeV1RDTO.getValintakoeAjankohtas() != null) {
-            valintakoe.getAjankohtas().addAll(convertAjankohtaRDTOToValintakoeAjankohta(valintakoeV1RDTO.getValintakoeAjankohtas()));
+            valintakoe.getAjankohtas().addAll(convertAjankohtaRDTOToValintakoeAjankohta(valintakoe, valintakoeV1RDTO.getValintakoeAjankohtas()));
         }
 
         return valintakoe;
@@ -844,12 +847,13 @@ public class ConverterV1 {
         return monikielinenTeksti;
     }
 
-    private Set<ValintakoeAjankohta> convertAjankohtaRDTOToValintakoeAjankohta(List<ValintakoeAjankohtaRDTO> valintakoeAjankohtaRDTOs) {
+    private Set<ValintakoeAjankohta> convertAjankohtaRDTOToValintakoeAjankohta(Valintakoe vk, List<ValintakoeAjankohtaRDTO> valintakoeAjankohtaRDTOs) {
         Set<ValintakoeAjankohta> valintakoeAjankohtas = new HashSet<ValintakoeAjankohta>();
 
         for (ValintakoeAjankohtaRDTO valintakoeAjankohtaRDTO : valintakoeAjankohtaRDTOs) {
             ValintakoeAjankohta valintakoeAjankohta = new ValintakoeAjankohta();
 
+            valintakoeAjankohta.setValintakoe(vk);
             valintakoeAjankohta.setLisatietoja(valintakoeAjankohtaRDTO.getLisatiedot());
             valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(valintakoeAjankohtaRDTO.getOsoite()));
             valintakoeAjankohta.setAlkamisaika(valintakoeAjankohtaRDTO.getAlkaa());

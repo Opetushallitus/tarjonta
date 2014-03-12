@@ -217,47 +217,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 						$scope.months.push({month:i, name:LocalisationService.t("tarjonta.kalenteri.kk."+(i+1))});
 					}
 					
+					$scope.calendar=[];
 					$scope.years = [];
 
-					$scope.model = ctrl.model ? ctrl.model : new Date();
+					$scope.model = ctrl.model instanceof Date ? new Date(ctrl.model.getTime()) : new Date();
 					
-					var isValidDate=Object.prototype.toString.call($scope.model) == "[object Date]" && !isNaN($scope.model.getTime());
-					  
-                                        if(angular.isUndefined($scope.model) || $scope.model === null || !isValidDate){
-                                            $scope.model = new Date();
-                                        }
-                                        
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
-					$scope.calendar=[];
 					
-					function getWeekFromDate(d, dowOffset) {
-						// https://gist.github.com/dblock/1081513
-						
-						// Create a copy of this date object
-						var target = new Date(d.valueOf());
-						// ISO week date weeks start on monday
-						// so correct the day number
-						var dayNr = (d.getDay() + 6) % 7;
-						 
-						// Set the target to the thursday of this week so the
-						// target date is in the right year
-						target.setDate(target.getDate() - dayNr + 3);
-						 
-						// ISO 8601 states that week 1 is the week
-						// with january 4th in it
-						var jan4 = new Date(target.getFullYear(), 0, 4);
-						 
-						// Number of days between target date and january 4th
-						var dayDiff = (target - jan4) / 86400000;
-						 
-						// Calculate week number: Week 1 (january 4th) plus the
-						// number of weeks between target date and january 4th
-						var weekNr = 1 + Math.ceil(dayDiff / 7);
-						 
-						return weekNr;
-					}
-					
-					$scope.ok = function() {						
+					$scope.ok = function() {
 						ctrl.model = $scope.model;
 						updateModels();
 						modalInstance.dismiss();
@@ -267,38 +234,24 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 						modalInstance.dismiss();
 					}
 					
-					function getMonday(d) {
-						if (d.getDay()==1) { // maanantai
-							return d;
-						}
-						var ret = new Date(d.getTime());
-
-						ret.setDate(d.getDay()==0
-								? ret.getDate()-6
-								: ret.getDate()-d.getDay()+1);
-						return ret;
-					}
-
 					function updateCalendar(){
 						$scope.select.m = $scope.model.getMonth();
 						$scope.select.y = $scope.model.getFullYear();
-						
-						var sd = new Date($scope.model.getFullYear(), $scope.model.getMonth(), 1);
-						var ed = new Date($scope.model.getFullYear(), $scope.model.getMonth()+1, 1);
-						
-						var s = getWeekFromDate(sd);
-						var e = getWeekFromDate(ed);
-						
-						//console.log("D: "+s+" -> "+e,$scope.model);
+
 						var ret = [];
-						//for (var i=s; i!=e; nextWeek(i)) {
-						while (getMonday(sd).getTime()<ed.getTime()) {
-							var i = getWeekFromDate(sd);
-							var wd = {week:i, days:[]};
-							var d = new Date($scope.model.getFullYear(), 0, 1+ 7*(i-1) );
-							d.setDate(d.getDate() - d.getDay());
+
+						var cal = new ISOCalendar($scope.model.getFullYear(), $scope.model.getMonth());
+						
+						var start = cal.getMonday();
+						var end = cal.getLastDayOfMonth().getFriday();
+						
+						//console.log("START = ",start);
+						//console.log("END = ",end);
+						
+						while (start.compareTo(end)<=0) {
+							var wd = {week:start.getIsoWeek(), days:[]};
+							var d = start.toDate();
 							for (var j=0; j<7; j++) {
-								d.setDate(d.getDate()+1);
 								wd.days.push({
 									day: d.getDate(),
 									month: d.getMonth(),
@@ -310,13 +263,15 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 										&& (d.getMonth()==$scope.model.getMonth())
 										&& (d.getFullYear()==$scope.model.getFullYear())									
 									});								
-							}							
-							ret.push(wd);							
-							sd.setTime(sd.getTime() + 604800000);
+								d.setDate(d.getDate()+1);
+							}
+							
+							ret.push(wd);
+							start = start.getNextWeek();
 						}
 						$scope.calendar = ret;
-						
 						$scope.years = [];
+						
 						var y = $scope.model.getFullYear();
 						for (var i = y-2; i<=y+2; i++) {
 							var nd = new Date($scope.model.getTime());

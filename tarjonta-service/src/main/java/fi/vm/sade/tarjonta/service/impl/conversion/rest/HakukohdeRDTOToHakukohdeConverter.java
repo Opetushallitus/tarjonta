@@ -4,8 +4,8 @@ import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.OidService.Type;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         String newHakukohdeOid = null;
         LOG.info("OIDSERVICE: {}", oidService);
         try {
-            newHakukohdeOid = oidService.get(Type.HAKUKOHDE);
+            newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
             LOG.info("OID SERVICE NEW OID : {}",newHakukohdeOid);
         }  catch (OIDCreationException emm) {
             LOG.warn("UNABLE TO GET OID : {}", emm.toString() );

@@ -174,18 +174,21 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     }
     
     $scope.addValintakoe = function(lc) {
-    	for (var i in $scope.model.hakukohde.valintakokeet) {
+    	/*for (var i in $scope.model.hakukohde.valintakokeet) {
     		if ($scope.model.hakukohde.valintakokeet[i].kieliUri==lc && !$scope.model.hakukohde.valintakokeet[i].oid) {
     			return;
     		}
-    	}
-    	$scope.model.hakukohde.valintakokeet.push({
-    		hakukohdeOid:$scope.model.hakukohde.oid,
-    		kieliUri:lc,
-    		valintakoeNimi:"",
-    		valintakokeenKuvaus: {uri: lc, teksti: ""},
-    		valintakoeAjankohtas: []
-    	});
+    	}*/
+    	
+    	var vk = {
+        		hakukohdeOid:$scope.model.hakukohde.oid,
+        		kieliUri:lc,
+        		valintakoeNimi:"",
+        		valintakokeenKuvaus: {uri: lc, teksti: ""},
+        		valintakoeAjankohtas: []
+        	};
+    	$scope.model.hakukohde.valintakokeet.unshift(vk);
+    	return vk;
     }
 
     $scope.getValintakokeetByKieli = function(lc) {
@@ -198,6 +201,9 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     		}
     	}
     	
+    	if (ret.length==0) {
+    		ret.push($scope.addValintakoe(lc));
+    	}
     	return ret;
     }
     function containsOpetuskieli(lc) {
@@ -223,6 +229,12 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     		if (si==-1) {
     			$scope.kokeetModel.opetusKielet.splice(i,1);
     			//$scope.kokeetModel.selectedAjankohta[lc] = undefined;
+    			for (var j in $scope.model.hakukohde.valintakokeet) {
+    				var vk = $scope.model.hakukohde.valintakokeet[j];
+    				if (vk.kieliUri==k.koodiUri) {
+    					$scope.model.hakukohde.valintakokeet.splice(j, 1);
+    				}
+    			}
 			}
     	}
     	
