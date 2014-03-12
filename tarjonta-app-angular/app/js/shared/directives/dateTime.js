@@ -2,7 +2,7 @@
 
 var app = angular.module('TarjontaDateTime', ['localisation']);
 
-app.directive('tDateTime', function($log, $modal, LocalisationService) {
+app.directive('tDateTime', function($log, $modal, LocalisationService, dialogService) {
 
     function controller($scope) {
     	
@@ -14,7 +14,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     			date: LocalisationService.t("tarjonta.kalenteri.prompt.pvm"),
     			time: LocalisationService.t("tarjonta.kalenteri.prompt.aika"),
     	}
-    	
+
+    	var violation = null;
     	var omitUpdate = false;
     	
     	// model <-> ngModel muunnos olion ja aikaleiman välillä
@@ -51,8 +52,34 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		return v>9 ? v : "0"+v;
     	}
     	
+    	function dateToString(d) {
+    		return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear();
+    	}
+    	
+    	function timeToString(d) {
+    		return d.getHours()+":"+zpad(d.getMinutes());
+    	}
+    	
+    	function dateTimeToString(d) {
+    		if (d==null || d==undefined) {
+    			return null;
+    		}
+    		if (!(d instanceof Date)) {
+    			d = new Date(d); // timestamp
+    		}
+    		
+    		var ret = dateToString(d);
+    		
+    		if ($scope.timestamp) {
+    			ret = ret + " " + timeToString(d);
+    		}
+    		
+    		return ret;    		
+    	}
+    	
     	// model <-> date/time -> ngModel -muunnos
     	function updateModels() {
+    		//console.log("UPDATE MODEL", omitUpdate);
     		if (omitUpdate) {
     			omitUpdate = false;
     			return;
@@ -60,10 +87,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		if ($scope.model==null) {
             	   $scope.date = "";
             	   $scope.time = "";
-            	     $scope.ngModel = null;
+            	   $scope.ngModel = null;
     		} else {
-            	  $scope.date = $scope.model.getDate()+"."+($scope.model.getMonth()+1)+"."+$scope.model.getFullYear();
-            	  $scope.time = $scope.model.getHours()+":"+zpad($scope.model.getMinutes());
+            	  $scope.date = dateToString($scope.model); 
+            	  $scope.time = timeToString($scope.model);
             	  $scope.ngModel = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
     		}
     	}
@@ -83,11 +110,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		var max = maxTime();
     		
     		if (min && d.getTime() < min) {
-    			d.setTime(min);
+    			d = new Date(min);
     		} else if (max && d.getTime() > max) {
-    			d.setTime(max);
+    			d = new Date(max);
     		}
-
     		return d;
     	}
     	
@@ -140,11 +166,30 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	$scope.onFocusOut = function(isButton) {
     		$scope.focusCount--;
     		//console.log("Focus--",$scope.focusCount);
-    		if (!isButton) {
-        		omitUpdate = false;
-        		updateModels();
-    		}
-    	}
+	
+			if (isButton) {
+				return;
+			}
+
+       		omitUpdate = false;
+       		updateModels();
+
+			if ($scope.ttBounds && violation) {
+				
+				dialogService.showDialog({
+	                ok: LocalisationService.t("ok"),
+	                cancel: null,
+	                title: LocalisationService.t("tarjonta.kalenteri"),
+	                description: LocalisationService.t($scope.ttBounds,
+	                		[dateTimeToString(violation),
+	                		 dateTimeToString(minTime()),
+	                		 dateTimeToString(maxTime())])
+	            });
+			}
+			violation = null;
+
+       		
+	}
     	
     	$scope.onModelChanged = function() {
     		var nd = $scope.model;
@@ -192,11 +237,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         		nd.setMinutes(tm);
         		
         		if (!isNaN(nd.getTime())) {
-        			omitUpdate = true;
-        			$scope.model = applyConstraints(nd);
+    				omitUpdate = true;
+    				//console.log("Update / Focus = "+$scope.focusCount,nd);
+    				var cd = applyConstraints(nd);
+    				violation = cd.getTime() == nd.getTime() ? null : nd;
+        			$scope.model = cd;
         		}
     		}
-    		    		
+    		
     		if ($scope.ngChange) {
     			$scope.ngChange();
     		}
@@ -368,6 +416,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         	// minimi ja maksimi (js Date tai unix timestamp)
         	min: "&",
         	max: "&",
+        	
+        	// virheilmoitus, joka näytetään (jos määritelty), jos päivämäärä on min-max-arvojen ulkopuolella
+        	ttBounds: "@",
 
         	// disablointi
         	disabled: "@",
