@@ -8,7 +8,7 @@
         ng-disabled="isDisabled()"
         ng-change="onModelChanged()"
         ng-focus="onFocusIn()"
-        ng-blur="onFocusOut(true)"/>
+        ng-blur="onFocusOut(false)"/>
     <input class="time" type="text" maxlength="5"
         placeholder="{{prompts.time}}"
         ng-pattern="/\d?\d:\d?\d/"
@@ -18,10 +18,10 @@
         ng-disabled="isDisabled()"
         ng-change="onModelChanged()"
         ng-focus="onFocusIn()"
-        ng-blur="onFocusOut(true)"/>
+        ng-blur="onFocusOut(false)"/>
     <button class="btn"
         ng-focus="onFocusIn()"
-        ng-blur="onFocusOut(false)"
+        ng-blur="onFocusOut(true)"
         ng-disabled="isDisabled()"
         ng-click="openChooser()">
         <span class="icon-calendar"></span>
