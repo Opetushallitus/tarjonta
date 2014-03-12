@@ -539,20 +539,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
 			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
 
-            if(hakukohdeRDTO.getUlkoinenTunniste() != null) {
-
-                for (String tarjoajaOid: hakukohdeRDTO.getTarjoajaOids()) {
-
-                    if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,hakukohdeRDTO.getOid())) {
-                        validationMessagesList.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
-                    }
-
-                }
-
-            }
-
-
-
 			if (validationMessagesList.size() > 0 ) {
 			    ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
 			    errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);

@@ -146,6 +146,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
+
     var validateNameLengths = function() {
 
         var retval = true;
