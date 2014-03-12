@@ -30,11 +30,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
-    var defaultLang = "kieli_fi";
     $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden ja valintakokeiden kielien esijärjestystä varten
-
-
-
+    $scope.model.defaultLang = 'kieli_fi';
+    
 	$scope.formControls = {}; // controls-layouttia varten
 
     //All kieles is received from koodistomultiselect
@@ -581,17 +579,17 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     console.log('hakutoimistoNotFound :', hakutoimistoNotFound );
                     console.log('LIITTEIDEN TOIMITUS OSOITE : ', $scope.model.liitteidenToimitusOsoite);
                     if (data.postiosoite !== undefined && hakutoimistoNotFound) {
-                        $scope.model.liitteidenToimitusOsoite[defaultLang] = {};
-                        $scope.model.liitteidenToimitusOsoite[defaultLang].osoiterivi1 = data.postiosoite.osoite;
-                        $scope.model.liitteidenToimitusOsoite[defaultLang].postinumero = data.postiosoite.postinumeroUri;
-                        $scope.model.liitteidenToimitusOsoite[defaultLang].postitoimipaikka = data.postiosoite.postitoimipaikka;
+                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang] = {};
+                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].osoiterivi1 = data.postiosoite.osoite;
+                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].postinumero = data.postiosoite.postinumeroUri;
+                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].postitoimipaikka = data.postiosoite.postitoimipaikka;
                         //$scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
                         //$scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
                         //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
                         postinumero = data.postiosoite.postinumeroUri;
                     }
                     console.log('LIITTEIDEN TOIMITUSOSOITE : ' ,   $scope.model.liitteidenToimitusOsoite);
-                    console.log('DEFAULT LANG : ' , defaultLang);
+                    console.log('DEFAULT LANG : ' , $scope.model.defaultLang);
                 });
 
 
@@ -687,7 +685,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
-            var hakuLang = userLang !== undefined ? userLang : defaultLang;
+            var hakuLang = userLang !== undefined ? userLang : $scope.model.defaultLang;
 
             for (var kieliUri in haku.nimi) {
 
