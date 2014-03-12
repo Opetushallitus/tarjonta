@@ -31,6 +31,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var postinumero = undefined;
 
     var defaultLang = "kieli_fi";
+    $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden ja valintakokeiden kielien esijärjestystä varten
 
 
 

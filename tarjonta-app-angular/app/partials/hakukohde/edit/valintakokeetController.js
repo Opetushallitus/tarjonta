@@ -113,7 +113,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     
     $scope.canSaveAjankohta = function(valintakoe) {
     	var ajankohta = valintakoe.selectedAjankohta;
-    	return ajankohta && notEmpty([ajankohta.alkaa, ajankohta.loppuu, ajankohta.osoite.osoiterivi1, ajankohta.osoite.postinumero]);
+    	return ajankohta && ajankohta.osoite && notEmpty([ajankohta.alkaa, ajankohta.loppuu, ajankohta.osoite.osoiterivi1, ajankohta.osoite.postinumero]);
     }
     
     $scope.resetAjankohta = function(valintakoe) {
