@@ -7,7 +7,7 @@ angular
     .factory(
         'ParameterService',
         function($q, $resource, $log, Config) {
-          var NAME="tarjontaOhjausparametritResutUrlPrefix";
+          var NAME="tarjontaOhjausparametritRestUrlPrefix";
           if(Config.env[NAME]==undefined) {
             throw "'" + NAME + "' ei ole määritelty!";
           }

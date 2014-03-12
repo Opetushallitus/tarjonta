@@ -81,6 +81,11 @@ window.CONFIG = {
         "ui.timeout.long": 60000,
         "web.url.oppija.preview" : "https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/",
 
+        //
+        // Uri to "Jatkuva Haku" - UI changes according to this
+        //
+        "koodisto.hakutapa.jatkuvaHaku.uri" : "hakutapa_03#1",
+
         //käsin lisätyt:
 
         //
@@ -95,6 +100,7 @@ window.CONFIG = {
         "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
 
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
@@ -102,6 +108,7 @@ window.CONFIG = {
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
 
+        // "tarjontaKoodistoRestUrlPrefix" : "/koodisto-service/rest/json/",
         "tarjontaKoodistoRestUrlPrefix" : "https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/",
 
         // NOTE: seems to be koodisto-uris.opintojenLaajuusarvo ???
@@ -109,13 +116,16 @@ window.CONFIG = {
 
         // Only for development, since production reads "/cas/myroles"
         "casUrl": "cas_me_ophadmin.json",
-        //"casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
+        // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
-         //"henkilöhaku"
-        "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
+         "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
+        //henkilöhaku
+        //"authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
+        "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/permission/user?",
+        "authentication-service.henkilo.search.params"  : "?count=2000&index=0&ht=VIRKAILIJA",
 
         //ohjausparametrit"
-        "tarjontaOhjausparametritResutUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
+        "tarjontaOhjausparametritRestUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
         "place": "holder"
 
 

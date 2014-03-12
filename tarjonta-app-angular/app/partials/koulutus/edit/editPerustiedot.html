@@ -1,26 +1,26 @@
    <table class="tarjontaForm">
         <!-- koulutuskoodi -->
         <tr class="info">
-            <th tt="koulutus.edit.koulutuskoodi"/>
+            <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
             <td>{{model.koulutuskoodi.nimi}} <span class="float-right">{{model.koulutuskoodi.arvo}}</span></td>
             <td><!--a href ng-click="tutkintoDialogModel.open()" tt="koulutus.edit.muokkaaTutkinto"/--></td>
         </tr>
 
         <!-- koulutusohjelma -->
         <tr class="required">
-            <th tt="koulutus.edit.koulutusohjelma"/>
+            <th tt="koulutus.edit.koulutusohjelma">Koulutusohjelma</th>
             <td>
         <mk-textfield model="model.koulutusohjelma.tekstis"
                       name="koulutusohjelma" required></mk-textfield>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && koulutusForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p> 
+            <p class="error" ng-show="uiModel.showError && koulutusForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p>
         </td>
         </tr>
 
         <tr>
             <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.lisaa-kieli.help"/>
+            <td colspan="2" class="help" tt="koulutus.edit.lisaa-kieli.help">Lisää uusi kieli HELP</td>
         </tr>
 
         <!-- väli -->
@@ -28,99 +28,99 @@
 
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
-            <th tt="koulutus.edit.tutkinto-ohjelman-tunniste"/>
+            <th tt="koulutus.edit.tutkinto-ohjelman-tunniste">Tutkinto-ohjelman tunniste</th>
             <td><input name="tutkintoOhjelmanTunniste" type="text" data-ng-model="model.tunniste" /></td>
             <td></td>
         </tr>
         <tr>
             <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.tutkinto-ohjelman-tunniste.help"/>
+            <td colspan="2" class="help" tt="koulutus.edit.tutkinto-ohjelman-tunniste.help">Tutkinto-ohjelman tunniste HELP</td>
         </tr>
 
         <!-- k. aste -->
         <tr>
-            <th tt="koulutus.edit.koulutusaste"/>
+            <th tt="koulutus.edit.koulutusaste">Koulutusaste</th>
             <td>{{model.koulutusaste.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- k. ala -->
         <tr>
-            <th tt="koulutus.edit.koulutusala"/>
+            <th tt="koulutus.edit.koulutusala">Koulutusala</th>
             <td>{{model.koulutusala.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- o. ala -->
         <tr>
-            <th tt="koulutus.edit.opintoala"/>
+            <th tt="koulutus.edit.opintoala">Opintoala</th>
             <td>{{model.opintoala.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- tutkinto -->
         <tr>
-            <th tt="koulutus.edit.tutkinto"/>
+            <th tt="koulutus.edit.tutkinto">Tutkinto</th>
             <td>{{model.tutkinto.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- tutkintonimike -->
         <tr>
-            <th tt="koulutus.edit.tutkintonimike"/>
+            <th tt="koulutus.edit.tutkintonimike">Tutkintonimike</th>
             <td><tutkintonimike model="uiModel.tutkintonimikes"></tutkintonimike></td>
         </tr>
         <tr>
-            <th tt="koulutus.edit.eqf-luokitus"/>
+            <th tt="koulutus.edit.eqf-luokitus">EQF-luokitus</th>
             <td>{{model.eqf.nimi}}</td>
             <td></td>
         </tr>
 
         <!-- opintojen laajuus -->
         <tr class="required">
-            <th tt="koulutus.edit.opintojen-laajuus"/> 
-            <td><laajuus 
-                     arvo-model="model.opintojenLaajuusarvo" 
+            <th tt="koulutus.edit.opintojen-laajuus">Opintojen laajuus</th>
+            <td><laajuus
+                     arvo-model="model.opintojenLaajuusarvo"
                      arvo-ui-model="uiModel.opintojenLaajuusarvos"
                      yksikko="model.opintojenLaajuusyksikko"></laajuus></td>
             <td>
-                <p class="error" ng-show="uiModel.showError && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required"/>
+                <p class="error" ng-show="uiModel.showError && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
             </td>
         </tr>
         <tr>
             <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.opintojen-laajuus.help"/>
+            <td colspan="2" class="help" tt="koulutus.edit.opintojen-laajuus.help">Opintojen laajuus HELP</td>
         </tr>
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>
 
-        <!-- koulutuksen alkamispvm -->   
+        <!-- koulutuksen alkamispvm -->
         <tr class="required">
-            <th tt="koulutus.edit.koulutuksen-alkamispvm"/>
+            <th tt="koulutus.edit.koulutuksen-alkamispvm">Koulutuksen alkamispvm</th>
             <td>
-        <alkamispaiva-ja-kausi 
-            pvms="model.koulutuksenAlkamisPvms"       
+        <alkamispaiva-ja-kausi
+            pvms="model.koulutuksenAlkamisPvms"
             vuosi="model.koulutuksenAlkamisvuosi"
             kausi-uri = "model.koulutuksenAlkamiskausi.uri"
             kausi-ui-model="uiModel.koulutuksenAlkamiskausi">
-        </alkamispaiva-ja-kausi> 
+        </alkamispaiva-ja-kausi>
         </td>
         <td>
-          
+
         </td>
         </tr>
 
         <!-- suunniteltu kesto -->
         <tr class="required">
-            <th tt="koulutus.edit.suunniteltu-kesto"/>
+            <th tt="koulutus.edit.suunniteltu-kesto">Suunniteltu kesto</th>
             <td>
                 <input required name="suunniteltuKestoArvo" class="thin" type="text" data-ng-model="model.suunniteltuKestoArvo" required />
                 <select required name="suunniteltuKestoTyyppi" class="thin" ng-model="model.suunniteltuKestoTyyppi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKestoTyyppi.koodis | orderBy:'koodiNimi'"></select>
             </td>
             <td>
                 <p class="error" ng-show="uiModel.showError && (koulutusForm.suunniteltuKestoArvo.$error.required || koulutusForm.suunniteltuKestoTyyppi.$error.required)"
-                   tt="koulutus.edit.suunniteltu-kesto.required"/>
+                   tt="koulutus.edit.suunniteltu-kesto.required">Suunniteltu kesto vaaditaan</p>
             </td>
         </tr>
 
@@ -129,7 +129,7 @@
 
         <!-- opetuskielet -->
         <tr class="required">
-            <th tt="koulutus.edit.opetuskielet"/>
+            <th tt="koulutus.edit.opetuskielet">Opetuskielet</th>
             <td>
 
         <multi-select
@@ -142,42 +142,46 @@
 
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required">
+                Opetuskielet vaaditaan
+            </p>
         </td>
         </tr>
         <tr>
             <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.opetuskielet.help"/>
+            <td colspan="2" class="help" tt="koulutus.edit.opetuskielet.help">Opetuskielet HELP</td>
         </tr>
 
         <!-- k. maksullisuus -->
         <tr>
-            <th tt="koulutus.edit.maksullisuus"/>
+            <th tt="koulutus.edit.maksullisuus">Maksullisuus</th>
             <td>
                 <input type="checkbox" data-ng-model="model.opintojenMaksullisuus" />
-                <span tt="koulutus.edit.maksullisuus.valinta"/>
+                <span tt="koulutus.edit.maksullisuus.valinta">Maksullisuuden valinta</span>
             </td>
             <td></td>
         </tr>
         <tr>
             <th></th>
             <td>
-                <span tt="koulutus.edit.maksullisuus.hinta"></span>
-                <input  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" />
-                <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa"></span>
+                <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
+                <input  type="number"  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" />
+                <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
             </td>
             <td>
-                <p class="error" ng-show="uiModel.showError && koulutusForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required"/>
+                <p class="error" ng-show="uiModel.showError && koulutusForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required">
+                    Maksullisuus vaaditaan
+                </p>
             </td>
         </tr>
         <tr>
             <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.maksullisuus.help"/>
+            <td colspan="2" class="help" tt="koulutus.edit.maksullisuus.help">Maksullisuus HELP</td>
         </tr>
 
         <!-- opetusaikas -->
         <tr class="required">
-            <th tt="koulutus.edit.opetusaikas"/>
+            <th tt="koulutus.edit.opetusaikas">Opetusajat</th>
             <td>
         <multi-select
             model="uiModel.tmp"
@@ -187,13 +191,13 @@
             name="opetusAikas" required/>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required">Opetusajat vaaditaan</p>
         </td>
         </tr>
 
         <!-- opetusmuodot -->
         <tr class="required">
-            <th tt="koulutus.edit.opetusmuodot"/>
+            <th tt="koulutus.edit.opetusmuodot">Opetusmuodot</th>
             <td>
         <multi-select
             model="uiModel.tmp"
@@ -203,13 +207,13 @@
             name="opetusmuodos" required/>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required">Opetusmuodot vaaditaan</p>
         </td>
         </tr>
 
         <!-- opetuspaikka -->
         <tr class="required">
-            <th tt="koulutus.edit.opetusPaikkas"/>
+            <th tt="koulutus.edit.opetusPaikkas">Opetuspaikat</th>
             <td>
         <multi-select
             model="uiModel.tmp"
@@ -219,15 +223,15 @@
             name="opetusPaikkas" required/>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required"/>
+            <p class="error" ng-show="uiModel.showError && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required">Opetuspaikat vaaditaan</p>
         </td>
         </tr>
 
         <!-- teemat -->
         <tr class="required">
-            <th tt="koulutus.edit.aiheet"/>
-            <td>        
-        <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>        
+            <th tt="koulutus.edit.aiheet">Aiheet</th>
+            <td>
+        <aiheet-ja-teemat model="uiModel.aihees.uris"></aiheet-ja-teemat>
         </td>
         <td>
             <!--p class="error" ng-show="uiModel.showError && koulutusForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/-->
@@ -235,7 +239,7 @@
         </tr>
         <tr>
             <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.aihe-teema.help"/>
+            <td colspan="2" class="help" tt="koulutus.edit.aihe-teema.help">Aiheet vaaditaan</td>
         </tr>
 
         <!-- väli -->

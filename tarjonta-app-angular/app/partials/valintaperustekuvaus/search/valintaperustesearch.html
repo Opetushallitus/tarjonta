@@ -8,10 +8,10 @@
 
             <!-- otsikkorivi -->
             <tr>
-                <th>{{t('tarjonta.valintaperustekuvaus.haenimella')}}</th>
-                <th>{{t('tarjonta.valintaperustekuvaus.vuosi')}}</th>
-                <th>{{t('tarjonta.valintaperustekuvaus.kausi')}}</th>
-                <th>{{t('tarjonta.valintaperustekuvaus.oppilaitostyyppi')}}</th>
+                <th tt="tarjonta.valintaperustekuvaus.haenimella">Hae nimellä</th>
+                <th tt="tarjonta.valintaperustekuvaus.vuosi">Vuosi</th>
+                <th tt="tarjonta.valintaperustekuvaus.kausi">Kausi</th>
+                <th tt="tarjonta.valintaperustekuvaus.oppilaitostyyppi">Oppilaitostyyppi</th>
 
                 <th colspan="2">&nbsp;</th>
             </tr>
@@ -34,8 +34,8 @@
                 </td>
 
                 <td class="controls">
-                    <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.tyhjenna')}}" ng-click="reset()"/>
-                    <input class="btn btn-primary" type="button" value="{{t('tarjonta.valintaperustekuvaus.hae')}}" ng-click="search()"/>
+                    <input class="btn" type="button" tt="tarjonta.valintaperustekuvaus.tyhjenna" value="Tyhjennä" ng-click="reset()"/>
+                    <input class="btn btn-primary" type="button" tt="tarjonta.valintaperustekuvaus.hae" value="Hae" ng-click="search()"/>
                 </td>
 
             </tr>
@@ -49,44 +49,41 @@
     <div id="searchResults">
         <tabset>
             <tab heading="{{t('kk.valintaperusteet.tab.valintaperusteet')}}">
-                <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.luouusi')}}" ng-click="createNew('valintaperustekuvaus')"/>
+                <input class="btn" type="button"  tt="tarjonta.valintaperustekuvaus.luouusi" value="Luo uusi" ng-click="createNew('valintaperustekuvaus')"/>
 
                 <table>
                     <tr>
-                        <th tt="tarjonta.valintaperustekuvaus.list.nimi"></th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi"></th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi"></th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.nimi">Nimi</th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi">Oppilaitostyyppi</th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi">Vuosi ja kausi</th>
                     </tr>
                     <tr data-ng-repeat="valintaperuste in model.valintaperusteet">
                             <td ><a href="" data-ng-click="selectKuvaus(valintaperuste)">{{valintaperuste.kuvauksenNimi}}</a> </td>
                             <td data-ng-bind-html="valintaperuste.organisaatioTyyppi"></td>
                             <td data-ng-bind-html="valintaperuste.vuosikausi"></td>
-                            <td><a href="" data-ng-click="removeKuvaus(valintaperuste)">{{t('tarjonta.valintaperustekuvaus.poista.link')}}</a> </td>
-                            <td><a href="" data-ng-click="copyKuvaus(valintaperuste)">{{t('tarjonta.valintaperustekuvaus.kopioi.link')}}</a> </td>
-
+                            <td><a href="" data-ng-click="removeKuvaus(valintaperuste)"><span tt="tarjonta.valintaperustekuvaus.poista.link">Poista</span></a> </td>
+                            <td><a href="" data-ng-click="copyKuvaus(valintaperuste)"><span tt="tarjonta.valintaperustekuvaus.kopioi.link">Kopioi</span></a> </td>
                     </tr>
                 </table>
 
             </tab>
             <tab heading="{{t('kk.valintaperusteet.tab.sora')}}">
-                <input class="btn" type="button" value="{{t('tarjonta.valintaperustekuvaus.luouusi')}}" ng-click="createNew('SORA')"/>
+                <input class="btn" type="button" tt="tarjonta.valintaperustekuvaus.luouusi" value="Luo uusi" ng-click="createNew('SORA')"/>
                 <table>
                     <tr>
-                        <th tt="tarjonta.valintaperustekuvaus.list.nimi"></th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi"></th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi"></th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.nimi">Nimi</th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi">Oppilaitostyyppi</th>
+                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi">Vuosi ja kausi</th>
                     </tr>
                     <tr data-ng-repeat="sora in model.sorat" >
                             <td ><a href="" data-ng-click="selectKuvaus(sora)">{{sora.kuvauksenNimi}}</a> </td>
 
                             <td data-ng-bind-html="sora.organisaatioTyyppi"></td>
                             <td data-ng-bind-html="sora.vuosikausi"></td>
-                        <td><a href="" data-ng-click="removeKuvaus(sora)">{{t('tarjonta.valintaperustekuvaus.poista.link')}}</a> </td>
-                        <td><a href="" data-ng-click="copyKuvaus(sora)">{{t('tarjonta.valintaperustekuvaus.kopioi.link')}}</a> </td>
-
+                            <td><a href="" data-ng-click="removeKuvaus(sora)"><span tt="tarjonta.valintaperustekuvaus.poista.link">Poista</span></a> </td>
+                            <td><a href="" data-ng-click="copyKuvaus(sora)"><span tt="tarjonta.valintaperustekuvaus.kopioi.link">Kopioi</span></a> </td>
                     </tr>
                 </table>
-
             </tab>
 
         </tabset>

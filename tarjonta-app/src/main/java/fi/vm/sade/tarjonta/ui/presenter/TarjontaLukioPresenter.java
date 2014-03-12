@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import fi.vm.sade.tarjonta.ui.service.UserContext;
 import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
@@ -54,6 +51,8 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusLukioConverter;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -76,7 +75,7 @@ public class TarjontaLukioPresenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(TarjontaLukioPresenter.class);
     @Autowired(required = true)
-    protected OIDService oidService;
+    protected OidHelper oidHelper;
     @Autowired(required = true)
     private TarjontaAdminService tarjontaAdminService;
     @Autowired(required = true)
@@ -101,7 +100,7 @@ public class TarjontaLukioPresenter {
      * @param tila
      * @throws ExceptionMessage
      */
-    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws OidCreationException {
         LOG.debug("in saveKoulutus, tila : {}", tila);
         this.editLukioKoulutusView.enableKuvailevatTiedotTab();
         this.kuvailevatTiedotView.getLisatiedotForm().reBuildTabsheet();
@@ -135,7 +134,7 @@ public class TarjontaLukioPresenter {
                     perustiedot.setKomotoOid(lisaa.getOid());
                 } else {
                     LOG.debug("Unable to add koulutus because of the duplicate");
-                    throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+                    throw new OidCreationException("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
                 }
             }
         }

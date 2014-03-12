@@ -2,13 +2,14 @@
 
     <controls-model
         model="formControls"
-        tt-create="hakukohde.edit.header.title"
+        tt-create="hakukohde.create.header.title"
+        tt-edit="hakukohde.edit.header.title"
         title="model.koulutusohjelma.tekstis"
         dto="model.hakukohde">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveHakukohde()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveHakukohde()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="!model.continueToReviewEnabled"></controls-button>
 
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?

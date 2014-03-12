@@ -20,14 +20,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
@@ -37,6 +36,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.List;
 import java.util.Map.Entry;
@@ -58,7 +58,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     private final KoodistoURI koodistoUri = new KoodistoURI();
@@ -78,8 +78,8 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
             komo = koulutusmoduuliDAO.findByOid(dto.getOid());
         } else {
             try {
-                komo.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-            } catch (ExceptionMessage ex) {
+                komo.setOid(oidService.get(TarjontaOidType.KOMO));
+            } catch (OIDCreationException ex) {
                 LOG.error("OIDService failed!", ex);
             }
         }

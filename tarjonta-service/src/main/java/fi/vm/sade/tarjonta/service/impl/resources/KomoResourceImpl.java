@@ -15,15 +15,15 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.KomoResource;
 import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
@@ -55,15 +55,15 @@ public class KomoResourceImpl implements KomoResource {
     private ConversionService conversionService;
 
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
 
     // GET /komo/hello
     @Override
     public String hello() {
         try {
             LOG.debug("/komo/hello -- hello()");
-            return "Well hello! Have a nice OID - " + oidService.newOid(NodeClassCode.TEKN_5);
-        } catch (ExceptionMessage ex) {
+            return "Well hello! Have a nice OID - " + oidService.get(TarjontaOidType.KOMO);
+        } catch (OIDCreationException ex) {
             LOG.error("Failed", ex);
             return "ERROR - SEE LOG";
         }

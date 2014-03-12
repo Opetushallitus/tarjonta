@@ -31,9 +31,6 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutuksenKestoTyyppi;
@@ -47,7 +44,10 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
@@ -67,12 +67,12 @@ public class KorkeakouluConverter extends KoulutusConveter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KorkeakouluConverter.class);
     @Autowired(required = true)
-    private OIDService oidService;
+    private OidHelper oidHelper;
 
     public KorkeakouluConverter() {
     }
 
-    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, KoulutusasteTyyppi koulutusasteTyyppi, OrganisationOidNamePair selectedOrganisation, final SaveButtonState tila) throws ExceptionMessage {
+    public LisaaKoulutusTyyppi createLisaaKoulutusTyyppi(TarjontaModel tarjontaModel, KoulutusasteTyyppi koulutusasteTyyppi, OrganisationOidNamePair selectedOrganisation, final SaveButtonState tila) throws OidCreationException {
         final String organisationOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         final KorkeakouluPerustiedotViewModel perustiedotModel = tarjontaModel.getKorkeakouluPerustiedot();
         final KorkeakouluKuvailevatTiedotViewModel kuvailevatTiedotModel = tarjontaModel.getKorkeakouluKuvailevatTiedot();
@@ -80,7 +80,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
-        convertToKorkeakouluKoulutusTyyppi(lisaa, koulutusasteTyyppi, perustiedotModel, tarjontaModel.getValitseKoulutusModel(), oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
+        convertToKorkeakouluKoulutusTyyppi(lisaa, koulutusasteTyyppi, perustiedotModel, tarjontaModel.getValitseKoulutusModel(), oidHelper.getOid(TarjontaOidType.KOMOTO), organisaatio);
         convertToKorkeakouluLisatiedotTyyppi(lisaa, kuvailevatTiedotModel);
 
         return lisaa;
@@ -93,7 +93,7 @@ public class KorkeakouluConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid, final KoulutusasteTyyppi koulutusaste, final SaveButtonState tila) throws ExceptionMessage {
+    public PaivitaKoulutusTyyppi createPaivitaKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid, final KoulutusasteTyyppi koulutusaste, final SaveButtonState tila) throws OidCreationException {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KorkeakouluPerustiedotViewModel perustiedotModel = tarjontaModel.getKorkeakouluPerustiedot();

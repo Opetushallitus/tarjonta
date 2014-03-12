@@ -128,6 +128,8 @@ public class EntityConverterToKoulutusKorkeakouluRDTO {
 
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);
+        kkDto.setVersion(komoto.getVersion());
+        
         return kkDto;
     }
 }

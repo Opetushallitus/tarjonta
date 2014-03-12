@@ -62,6 +62,7 @@
         <script src="lib/buckets-minified.js"></script>
         <script src="lib/treeview/angular.treeview.js"></script>
 
+        <script src="js/isocalendar/isocalendar.js"></script>
         <script src="js/shared/auth.js"></script>
         <script src="js/shared/permissions.js"></script>
         <script src="js/shared/cache.js"></script>
@@ -204,8 +205,11 @@
                         <div data-ng-include="'partials/error.html'"></div>
                     </div>
                     <div data-ng-switch-when="home">
+                        <h2 tt="home.title">Koulutusten ja hakukohteiden hallinta</h2>
                         <div data-ng-include="'partials/search/search.html'"></div>
                     </div>
+
+<!--
                     <div data-ng-switch-when="kk">
                         <div data-ng-switch on="renderPath[1]">
                             <div data-ng-switch-when="edit">
@@ -214,10 +218,13 @@
                             <div data-ng-switch-when="review">
                                 <div data-ng-include="'partials/kk/review/review.html'" data-ng-controller="KKReviewController"></div>
                             </div>
-                        </div><!-- /renderPath[1] -->
-                    </div><!-- 0:/kk -->
+                        </div>
+                    </div>
+-->
 
                     <div data-ng-switch-when="koulutus">
+                        <h2 tt="koulutus.title">Koulutusten hallinta</h2>
+
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="KoulutusRoutingController">
                             <div data-ng-switch-when="review">
                                 <div data-ng-include="'partials/koulutus/review/review.html'"></div>
@@ -232,6 +239,8 @@
                     </div><!-- 0:/koulutus -->
 
                     <div data-ng-switch-when="hakukohde">
+                            <h2 tt="hakukohde.title">Hakukohteiden hallinta</h2>
+
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="HakukohdeRoutingController">
                             <div data-ng-switch-when="review">
                                 <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
@@ -247,6 +256,8 @@
 
                     <div data-ng-switch-when="haku">
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="HakuRoutingController">
+                            <h2 tt="haku.title">Hakujen hallinta</h2>
+
                             <div data-ng-switch-when="list">
                                 <div data-ng-include="'partials/haku/list/list.html'"></div>
                             </div>
@@ -263,6 +274,8 @@
                     </div><!-- 0:/haku -->
 
                     <div data-ng-switch-when="valintaPerusteKuvaus">
+                        <h2 tt="valintaperustekuvaus.title">Valintaperuste- ja SORA-kuvausten hallinta</h2>
+
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="ValintaperusteEditController">
                             <div data-ng-switch-when="edit">
                                 <div data-ng-include="'partials/valintaperustekuvaus/edit/valintaperustekuvaus.html'"></div>
@@ -327,7 +340,7 @@
                     </div>
                 </div>
                 <div class="fail">
-                    <hr/>               
+                    <hr/>
                     <p>Palvelussa on hetkellinen häiriö, yritä hetken kuluttua uudelleen.</p>
 
                     <p>Tillfällig avbrott i tjänsten, försök på nytt om en stund.</p>

@@ -195,12 +195,29 @@ angular.module('app.controllers', ['app.services','localisation','Organisaatio',
 	};
 
 	$scope.$watch( 'selection.koulutukset', function( newObj, oldObj ) {
-		$scope.koulutusActions.canMoveOrCopy = PermissionService.koulutus.canMoveOrCopy(newObj);
-		$scope.koulutusActions.canCreateHakukohde=false;
+	  if(!newObj ||newObj.length==0) {
+	    //mitään ei valittuna
+            $scope.koulutusActions.canMoveOrCopy = false;
+            $scope.koulutusActions.canCreateHakukohde=false;
+            return;
+	  }
+	  PermissionService.koulutus.canMoveOrCopy(newObj).then(function(result) {
+            $scope.koulutusActions.canMoveOrCopy = result;
+	  });
 
-		PermissionService.hakukohde.canCreate(newObj).then(function(result){
-			$scope.koulutusActions.canCreateHakukohde = result;
-		});
+	  //lopullinen tulos tallennetaan tänne (on oikeus luoda hakukohde jos oikeus kaikkiin koulutuksiin):
+	  var r = {result:true};
+	  
+	  TarjontaService.haeKoulutukset({koulutusOid:newObj}).then(function(koulutukset){
+	    if(koulutukset && koulutukset.tulokset && koulutukset.tulokset.length>0){
+	      for(var i=0;i<koulutukset.tulokset.length;i++) {
+	        PermissionService.hakukohde.canCreate(koulutukset.tulokset[i].oid).then(function(result){
+	          r.result=r.result && result;
+	          $scope.koulutusActions.canCreateHakukohde = r.result;
+	        });
+	      }
+	    }
+	  });
 
 
 	}, true);

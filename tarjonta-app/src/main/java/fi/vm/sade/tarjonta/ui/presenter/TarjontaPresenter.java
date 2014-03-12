@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.ui.presenter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +34,11 @@ import fi.vm.sade.authentication.service.UserService;
 import fi.vm.sade.authentication.service.types.HenkiloPagingObjectType;
 import fi.vm.sade.authentication.service.types.HenkiloSearchObjectType;
 import fi.vm.sade.authentication.service.types.dto.HenkiloType;
-import fi.vm.sade.authentication.service.types.dto.SearchConnectiveType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
@@ -105,6 +103,7 @@ import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.conversion.ConversionUtils;
 import fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeLiiteTyyppiToViewModelConverter;
@@ -245,7 +244,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         refreshHakukohdeUIModel(fresh);
     }
-    
+
+    public HenkiloFatType getFatHenkiloWithOid(String oid) {
+
+        return userService.findByOid(oid);
+
+    }
+
     // Figure out the type
     private void updateHakukohdeKoulutusasteTyyppi(HakukohdeViewModel hakukohde) {
         Preconditions.checkNotNull(hakukohde);
@@ -1071,7 +1076,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(koulutus.getSuunniteltuKesto());
             getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(koulutus.getSuunniteltuKestoTyyppi());
             koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-        } catch (ExceptionMessage ex) {
+        } catch (OidCreationException ex) {
             LOG.error("Service call failed.", ex);
             showMainDefaultView();
         }
@@ -1132,7 +1137,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
             }
             koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-        } catch (ExceptionMessage ex) {
+        } catch (OidCreationException ex) {
             LOG.error("Service call failed.", ex);
             showMainDefaultView();
         }
@@ -1624,7 +1629,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 * @param tila (save state)
      * @throws ExceptionMessage
      */
-    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws OidCreationException {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
         
         String oid = null;
@@ -1656,7 +1661,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 // this.lisatiedotView.getEditKoulutusLisatiedotForm().reBuildTabsheet();
     }
 
-    private String persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws ExceptionMessage {
+    private String persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws OidCreationException {
         //persist new KOMO and KOMOTO
         final KoodiModel koulutuksenTyyppi = koulutusModel.getKoulutuksenTyyppi();
        
@@ -1677,7 +1682,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         } else {
 
             LOG.debug("Unable to add koulutus because of the duplicate");
-            throw new ExceptionMessage("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
+            throw new OidCreationException("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage");
         }
     }
 
@@ -2333,7 +2338,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
         //Doing the search to UserService
         HenkiloSearchObjectType searchType = new HenkiloSearchObjectType();
-        searchType.setConnective(SearchConnectiveType.AND);
+
+        //searchType.setConnective(SearchConnectiveType.AND);
         String[] nimetSplit = value.split(" ");
         if (nimetSplit.length > 1) {
             searchType.setSukunimi(nimetSplit[nimetSplit.length - 1]);
@@ -2345,6 +2351,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HenkiloPagingObjectType paging = new HenkiloPagingObjectType();
         List<HenkiloType> henkilos = new ArrayList<HenkiloType>();
         try {
+
             henkilos = this.userService.listHenkilos(searchType, paging);
         } catch (Exception ex) {
             LOG.error("Problem fetching henkilos: {}", ex.getMessage());
@@ -2511,14 +2518,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void setLukioPresenter(TarjontaLukioPresenter lukioPresenter) {
         this.lukioPresenter = lukioPresenter;
     }
-
-    /**
-     * @return the oidService
-     */
-    public OIDService getOidService() {
-        return oidService;
-    }
-
 
     /**
      * Get koulutustarjoaja.

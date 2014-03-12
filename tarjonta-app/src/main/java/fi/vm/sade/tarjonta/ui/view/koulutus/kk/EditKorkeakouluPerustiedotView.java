@@ -20,9 +20,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -70,12 +70,12 @@ public class EditKorkeakouluPerustiedotView extends AbstractEditLayoutView<Korke
     }
 
     @Override
-    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws ExceptionMessage {
+    public String actionSave(SaveButtonState tila, Button.ClickEvent event) throws OidCreationException {
         try {
             presenter.getKorkeakouluPresenter().saveKoulutus(tila);
             presenter.getKorkeakouluPresenter().getReloadKoulutusListData();
             return model.getKomotoOid();
-        } catch (ExceptionMessage exceptionMessage) {
+        } catch (OidCreationException exceptionMessage) {
             if (exceptionMessage.getMessage().equalsIgnoreCase("EditKoulutusPerustiedotYhteystietoView.koulutusExistsMessage")) {
                 throw new Validator.InvalidValueException(I18N.getMessage(exceptionMessage.getMessage()));
             } else {

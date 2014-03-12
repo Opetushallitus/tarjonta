@@ -1,8 +1,18 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
 
 
-app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService,dialogService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService, SisaltyvyysUtil, TreeHandlers) {
+app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService,dialogService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService, SisaltyvyysUtil, TreeHandlers, PermissionService) {
 
+      //edit buttons are active when mutable
+      $scope.isMutable=false;
+      
+      console.log("scope.model:", $scope.model)
+      
+      //käyttöoikeudet
+      PermissionService.hakukohde.canEdit($scope.model.hakukohde.oid).then(function(data){
+        $scope.isMutable=data;
+      });
+  
       console.log('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
       /*

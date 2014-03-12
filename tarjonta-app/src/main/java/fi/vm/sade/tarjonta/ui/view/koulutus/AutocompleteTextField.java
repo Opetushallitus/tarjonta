@@ -223,7 +223,9 @@ public class AutocompleteTextField extends TextField implements Handler {
      */
 
     private void handleValueChange() {
-        fireEvent(new HenkiloAutocompleteEvent(this, (HenkiloFatType) (suggestionList.getValue()), HenkiloAutocompleteEvent.SELECTED));
+        HenkiloType henkiloType = (HenkiloType) (suggestionList.getValue());
+
+        fireEvent(new HenkiloAutocompleteEvent(this, henkiloType , HenkiloAutocompleteEvent.SELECTED));
         if (!isFocused) {
             handleEnter();
         }
@@ -338,19 +340,19 @@ public class AutocompleteTextField extends TextField implements Handler {
         /**
          * The user selected.
          */
-        private HenkiloFatType henkilo;
+        private HenkiloType henkilo;
 
-        public HenkiloAutocompleteEvent(Component source, HenkiloFatType henkilo, int eventType) {
+        public HenkiloAutocompleteEvent(Component source, HenkiloType henkilo, int eventType) {
             super(source);
             this.setEventType(eventType);
             this.setHenkilo(henkilo);
         }
 
-        public HenkiloFatType getHenkilo() {
+        public HenkiloType getHenkilo() {
             return henkilo;
         }
 
-        public void setHenkilo(HenkiloFatType henkilo) {
+        public void setHenkilo(HenkiloType henkilo) {
             this.henkilo = henkilo;
         }
 

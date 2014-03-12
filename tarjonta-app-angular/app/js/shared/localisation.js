@@ -43,14 +43,17 @@ app.factory('Localisations', function($log, $resource, Config) {
     }, {
         update: {
             method: 'PUT',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         save: {
             method: 'POST',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
         updateAccessed: {
             method: 'PUT',
+            withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
     });

@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -35,14 +37,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 
 /**
@@ -54,19 +55,23 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakukohde";
     private static final long serialVersionUID = -3320464257959195992L;
-    @Column(name = "oid", unique=true)
+    
+    @Column(name = "oid", unique=true, updatable=false)
     private String oid;
+
     @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch=FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "hakukohde_id")
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="hakukohde", orphanRemoval=true)
+    //@JoinColumn(name = "hakukohde_id", nullable=false)
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
+    
     /**
      * The koodisto uri of the name of this hakukohde object.
      */
-
     @Column(name = "hakukohde_nimi")
     private String hakukohdeNimi;
+    
     /**
      * The string containing the human readable name of this hakukohde object.
      * Names in different languages are concatenated to this field. This field
@@ -78,13 +83,15 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Integer alinValintaPistemaara;
     @Column(name = "ylin_valinta_pistemaara")
     private Integer ylinValintaPistemaara;
-    @Column(name = "aloituspaikat_lkm")
-    private Integer aloituspaikatLkm;
-    private Integer valintojenAloituspaikatLkm;
+    @Column(name = "aloituspaikat_lkm", nullable=false)
+    private int aloituspaikatLkm;
+    @Column(name = "valintojenAloituspaikatLkm", nullable=false)
+    private int valintojenAloituspaikatLkm;
+    @Column(name = "kaytetaanHaunPaattymisenAikaa", nullable=false)
     private boolean kaytetaanHaunPaattymisenAikaa;
-    @Column(name = "kaytetaanJarjestelmanValintapalvelua")
+    @Column(name = "kaytetaanJarjestelmanValintapalvelua", nullable=false)
     private boolean kaytetaanJarjestelmanValintapalvelua;
-    @Column(name = "kaksoisTutkinto")
+    @Column(name = "kaksoisTutkinto", nullable=false)
     private boolean kaksoisTutkinto = false;
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
@@ -98,11 +105,12 @@ public class Hakukohde extends TarjontaBaseEntity {
     private TarjontaTila tila;
     @Embedded
     private Osoite liitteidenToimitusOsoite;
+    @Column(name = "sahkoinenToimitusOsoite")
     private String sahkoinenToimitusOsoite;
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "liitteidenToimitusPvm")
     private Date liitteidenToimitusPvm;
-    @ManyToOne
-    @NotNull
+    @ManyToOne(optional=false, fetch=FetchType.LAZY)
     private Haku haku;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "lisatiedot_teksti_id")
@@ -174,6 +182,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> soraKuvausKielet = new HashSet<String>();
+    
+    
+    @PreRemove
+    public void detachOnDelete() {
+    	for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
+    		komoto.getHakukohdes().remove(this);
+    	}
+    }
 
     public Hakuaika getHakuaika() {
 		return hakuaika;
@@ -260,14 +276,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     /**
      * @return the aloituspaikatLkm
      */
-    public Integer getAloituspaikatLkm() {
+    public int getAloituspaikatLkm() {
         return aloituspaikatLkm;
     }
 
     /**
      * @param aloituspaikatLkm the aloituspaikatLkm to set
      */
-    public void setAloituspaikatLkm(Integer aloituspaikatLkm) {
+    public void setAloituspaikatLkm(int aloituspaikatLkm) {
         this.aloituspaikatLkm = aloituspaikatLkm;
     }
 
@@ -287,8 +303,8 @@ public class Hakukohde extends TarjontaBaseEntity {
      *
      */
     public void addValintakoe(Valintakoe valintakoe) {
-
         valintakoes.add(valintakoe);
+        valintakoe.setHakukohde(this);
 
     }
 
@@ -298,7 +314,9 @@ public class Hakukohde extends TarjontaBaseEntity {
      * @param valintakoe
      */
     public void removeValintakoe(Valintakoe valintakoe) {
-        valintakoes.remove(valintakoe);
+        if (valintakoes.remove(valintakoe)) {
+        	valintakoe.setHakukohde(null);
+        }
     }
     /*
     public String getHakukelpoisuusvaatimus() {
@@ -360,7 +378,6 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void removeLiite(HakukohdeLiite liite) {
         liites.remove(liite);
-        liite.setHakukohde(null);
     }
 
     /**
@@ -436,11 +453,11 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.liitteidenToimitusPvm = liitteidenToimitusPvm;
     }
 
-    public Integer getValintojenAloituspaikatLkm() {
+    public int getValintojenAloituspaikatLkm() {
         return valintojenAloituspaikatLkm;
     }
 
-    public void setValintojenAloituspaikatLkm(Integer valintojenAloituspaikatLkm) {
+    public void setValintojenAloituspaikatLkm(int valintojenAloituspaikatLkm) {
         this.valintojenAloituspaikatLkm = valintojenAloituspaikatLkm;
     }
 

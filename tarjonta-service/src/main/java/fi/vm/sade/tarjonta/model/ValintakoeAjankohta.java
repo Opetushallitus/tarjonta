@@ -16,7 +16,12 @@
 package fi.vm.sade.tarjonta.model;
 
 import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,16 +38,31 @@ public class ValintakoeAjankohta extends TarjontaBaseEntity {
     private static final long serialVersionUID = -2304365086611685405L;
 
 
+    @ManyToOne (fetch = FetchType.LAZY, optional=false)
+    @JoinColumn(name="valintakoe_id", nullable=false)
+    private Valintakoe valintakoe;
+
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="alkamisaika", nullable=false)
     private Date alkamisaika;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="paattymisaika", nullable=false)
     private Date paattymisaika;
 
     @FilterXss
+    @Column(name="lisatietoja")
     private String lisatietoja;
 
     private Osoite ajankohdanOsoite;
+    
+    public Valintakoe getValintakoe() {
+		return valintakoe;
+	}
+    
+    public void setValintakoe(Valintakoe valintakoe) {
+		this.valintakoe = valintakoe;
+	}
 
     public Date getAlkamisaika() {
         return alkamisaika;

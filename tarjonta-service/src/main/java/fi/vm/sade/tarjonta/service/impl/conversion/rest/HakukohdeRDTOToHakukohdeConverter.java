@@ -1,23 +1,18 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Map;
 
 /*
 * @author: Tuomas Katva 10/1/13
@@ -28,7 +23,7 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeRDTOToHakukohdeConverter.class);
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
 
     @Override
     public Hakukohde convert(HakukohdeDTO hakukohdeDTO) {
@@ -36,9 +31,9 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         String newHakukohdeOid = null;
         LOG.info("OIDSERVICE: {}", oidService);
         try {
-            newHakukohdeOid = oidService.newOid(NodeClassCode.TEKN_5);
+            newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
             LOG.info("OID SERVICE NEW OID : {}",newHakukohdeOid);
-        }  catch (ExceptionMessage emm) {
+        }  catch (OIDCreationException emm) {
             LOG.warn("UNABLE TO GET OID : {}", emm.toString() );
         }
 

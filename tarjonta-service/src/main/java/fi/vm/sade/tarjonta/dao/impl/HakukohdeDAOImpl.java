@@ -23,6 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import fi.vm.sade.tarjonta.model.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,7 +89,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         hakukohde.getValintakoes().clear();
 
         for (Valintakoe valintakoe : valintakoes) {
-            valintakoe.setHakukohdeId(hakukohde.getId());
+            valintakoe.setHakukohde(hakukohde);
         }
 
         hakukohde.getValintakoes().addAll(valintakoes);
@@ -154,7 +155,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QValintakoe qValintakoe = QValintakoe.valintakoe;
         return from(qHakukohde, qValintakoe)
-                .where(qHakukohde.oid.eq(oid).and(qValintakoe.hakukohdeId.eq(qHakukohde.id)))
+                .where(qHakukohde.oid.eq(oid).and(qValintakoe.hakukohde.eq(qHakukohde)))
                 .list(qValintakoe);
     }
 
@@ -406,6 +407,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
         Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
+    }
+    
+    @Override
+    public boolean removeHakuKohdeLiiteById(String id) {
+    	return getEntityManager().createQuery("delete from "+HakukohdeLiite.class.getName()+" where id = ?").setParameter(1, Long.parseLong(id)).executeUpdate() != 0;
     }
 
     public void updateTilat(TarjontaTila toTila, List<String> oidit, Date updateDate, String userOid) {
