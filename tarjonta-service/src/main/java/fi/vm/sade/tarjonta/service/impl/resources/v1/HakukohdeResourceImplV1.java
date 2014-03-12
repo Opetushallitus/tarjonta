@@ -121,7 +121,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
-            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid, List<KoulutusasteTyyppi> koulutusastetyyppi) {
+            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid, List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid) {
 
         organisationOids = organisationOids != null ? organisationOids
                 : new ArrayList<String>();
@@ -137,6 +137,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.getTarjoajaOids().addAll(organisationOids);
         if(hakukohdeOid!=null) {
             q.setHakukohdeOid(hakukohdeOid);
+        }
+
+        if(hakuOid!=null) {
+            q.setHakuOid(hakuOid);
         }
 
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
@@ -538,20 +542,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			String hakuOid = hakukohdeRDTO.getHakuOid();
 
 			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
-
-            if(hakukohdeRDTO.getUlkoinenTunniste() != null) {
-
-                for (String tarjoajaOid: hakukohdeRDTO.getTarjoajaOids()) {
-
-                    if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,hakukohdeRDTO.getOid())) {
-                        validationMessagesList.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
-                    }
-
-                }
-
-            }
-
-
 
 			if (validationMessagesList.size() > 0 ) {
 			    ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();

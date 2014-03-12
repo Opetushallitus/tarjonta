@@ -19,14 +19,14 @@ var app = angular.module('app.haku.list.ctrl', []);
 app.controller('HakuListController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
             function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
-                
+
           $log.info("HakuListController()");
-                
+
                 Koodisto.getAllKoodisWithKoodiUri('kausi').then(function(kaudet){
                   var k = kaudet[0].koodi_uri=="kausi_k"?0:1;
                   var kevat = kaudet[k];
                   var syksy = kaudet[(k+1)%1];
-                  
+
                   console.log(kaudet);
                   //vuosi-kaudet
                   for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++) {
@@ -37,12 +37,12 @@ app.controller('HakuListController',
 
                 $scope.states=[];
                 $scope.vuosikausi=[];
-                
+
                 for (var s in CONFIG.env["tarjonta.tila"]) {
                   $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
                 }
-                
-                
+
+
                 $scope.clearSearch = function() {
                   $scope.searchParams=  {
                     HAKUSANA: undefined,
@@ -56,12 +56,12 @@ app.controller('HakuListController',
                     KOHDEJOUKKO : undefined
                   };
                 };
-                
+
                 $scope.clearSearch();
 
                 $scope.doCreateNew = function() {
                     $log.info("doCreateNew()");
-                    dialogService.showNotImplementedDialog();
+                    $location.path("/haku/NEW");
                 };
 
                 $scope.doDelete = function() {
@@ -83,8 +83,8 @@ app.controller('HakuListController',
                       delete params['HAKUVUOSIKAUSI'];
                       params['HAKUVUOSI']=hVuosikausi.vuosi;
                       params['HAKUKAUSI']=hVuosikausi.kausi;
-                    } 
-                    
+                    }
+
                     HakuV1Service.search(params).then(function(haut){$scope.model.hakus=haut;});
                 };
 
