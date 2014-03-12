@@ -4,8 +4,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
 	$scope.liitteetModel = {};
 
-    var defaultLang = "kieli_fi";
-	
     $scope.liitteetModel.opetusKielet = [];
     
     $scope.liitteetModel.selectedLiite = {};
@@ -53,17 +51,25 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         } else {
 
 
-            return {
+           if ($scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang] !== undefined) {
+
+               return {
 
 
-                osoiterivi1 : $scope.model.liitteidenToimitusOsoite[defaultLang].osoiterivi1,
-                postinumero : $scope.model.liitteidenToimitusOsoite[defaultLang].postinumero,
-                postitoimipaikka : $scope.model.liitteidenToimitusOsoite[defaultLang].postitoimipaikka
 
-                //osoiterivi1 : $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1,
-                //postinumero : $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero,
-                //postitoimipaikka : $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka
-            };
+                   osoiterivi1 : $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].osoiterivi1,
+                   postinumero : $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].postinumero,
+                   postitoimipaikka : $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].postitoimipaikka
+
+                   //osoiterivi1 : $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1,
+                   //postinumero : $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero,
+                   //postitoimipaikka : $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka
+               };
+
+           } else {
+               return {};
+           }
+
 
 
         }
