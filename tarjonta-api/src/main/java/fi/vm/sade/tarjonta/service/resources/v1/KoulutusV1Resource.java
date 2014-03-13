@@ -69,9 +69,9 @@ public interface KoulutusV1Resource {
     @DELETE
     @Path("/{oid}")
     @ApiOperation(
-            value = "Poistaa koulutuksen annetulla koulutuksen oid:lla",
-            notes = "Operaatio poistaa koulutuksen annetulla koulutuksen oid:lla")
-    public Response deleteByOid(@PathParam("oid") String oid);
+            value = "Passivoi koulutuksen annetulla koulutuksen oid:lla",
+            notes = "Operaatio passivoi koulutuksen annetulla koulutuksen oid:lla")
+    public ResultV1RDTO deleteByOid(@PathParam("oid") String oid);
 
     @POST
     @Path("/KORKEAKOULUTUS") //TODO any koulutus really

@@ -23,6 +23,7 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
@@ -33,6 +34,7 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
@@ -79,6 +81,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -95,13 +98,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
 
-    @Autowired
+    @Autowired(required = true)
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired
+    @Autowired(required = true)
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired
+    @Autowired(required = true)
     private TarjontaSearchService tarjontaSearchService;
-    @Autowired
+    @Autowired(required = true)
     private IndexerResource solrIndexer;
     @Autowired(required = true)
     private KoulutuskoodiRelations koulutuskoodiRelations;
@@ -113,19 +116,22 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
-    @Autowired
+    @Autowired(required = true)
     private ConverterV1 converter;
-    @Autowired
+    @Autowired(required = true)
     private PermissionChecker permissionChecker;
 
-    @Autowired
+    @Autowired(required = true)
     private ContextDataService contextDataService;
 
-    @Autowired
+    @Autowired(required = true)
     private EntityConverterToKoulutusKorkeakouluRDTO converterToRDTO;
 
-    @Autowired
+    @Autowired(required = true)
     private KoulutusKorkeakouluDTOConverterToEntity convertToEntity;
+
+    @Autowired(required = true)
+    private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta, String lang) {
@@ -138,6 +144,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         meta = checkArgsMeta(meta);
 
         if (komoto == null) {
+            resultRDTO.setStatus(ResultStatus.NOT_FOUND);
             return resultRDTO;
         }
 
@@ -224,25 +231,63 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public Response deleteByOid(String oid) {
-        permissionChecker.checkRemoveKoulutus(oid);
-        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
+    public ResultV1RDTO deleteByOid(final String komotoOid) {
 
-        if (komoto.getHakukohdes().isEmpty()) {
-            this.koulutusmoduuliToteutusDAO.remove(komoto);
-            try {
-                solrIndexer.deleteKoulutus(Lists.newArrayList(oid));
+        ResultV1RDTO result = new ResultV1RDTO();
+        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+        KoulutusValidator.validateKoulutus(komoto, result);
 
-            } catch (IOException e) {
-                throw new TarjontaBusinessException("indexing.error", e);
+        if (result.getStatus().equals(ResultStatus.OK)) {
+            permissionChecker.checkRemoveKoulutusByTarjoaja(komoto.getTarjoaja());
+
+            KoulutuksetKysely ks = new KoulutuksetKysely();
+            ks.getHakukohdeOids().add(komotoOid);
+            final KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
+            Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+
+            switch (KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi())) {
+                case KORKEAKOULUTUS:
+                    //delete komo + komoto
+
+                    final List<String> parent = koulutusSisaltyvyysDAO.getParents(komo.getOid());
+                    final List<String> children = koulutusSisaltyvyysDAO.getChildren(komo.getOid());
+
+                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, kv, result);
+
+                    if (!result.hasErrors()) {
+                        final String userOid = contextDataService.getCurrentUserOid();
+                        koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
+                        koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
+                        ArrayList<Long> ids = Lists.<Long>newArrayList();
+                        ids.add(komoto.getId());
+                        solrIndexer.indexKoulutukset(ids);
+                    }
+                    break;
             }
-
-        } else {
-            throw new KoulutusUsedException();
         }
-        return Response.ok().build();
+
+        return result;
     }
 
+//    public ResultV1RDTO deleteByOid(String oid) {
+//        permissionChecker.checkRemoveKoulutus(oid);
+//        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
+//
+//        ResultV1RDTO result = new ResultV1RDTO();
+//
+//        if (komoto.getHakukohdes().isEmpty()) {
+//            this.koulutusmoduuliToteutusDAO.remove(komoto);
+//            try {
+//                solrIndexer.deleteKoulutus(Lists.newArrayList(oid));
+//
+//            } catch (IOException e) {
+//                throw new TarjontaBusinessException("indexing.error", e);
+//            }
+//        } else {
+//            result.setStatus(ResultStatus.VALIDATION);
+//        }
+//        return result;
+//    }
     private void validateRestObjectKorkeakouluDTO(final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");

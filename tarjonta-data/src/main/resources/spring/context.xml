@@ -31,13 +31,16 @@
     <!--
       Load configuration settings
     -->
-    <context:property-placeholder
+    <context:property-placeholder 
         location="tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/override.properties"
         ignore-resource-not-found="true" properties-ref="defaultProps" />
-
+      
+    <util:properties id="appProperties" location="classpath:tarjonta-data.properties" />
+      
     <!--
       Load security settings
     -->
+
     <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <util:properties local-override="true">

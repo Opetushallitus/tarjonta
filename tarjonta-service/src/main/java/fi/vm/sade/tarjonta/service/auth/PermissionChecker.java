@@ -176,10 +176,17 @@ public class PermissionChecker {
 
     public void checkRemoveKoulutus(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
+        
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
                                 .getTarjoaja())));
     }
+    
+    public void checkRemoveKoulutusByTarjoaja(final String tarjoajaOid) {
+        checkPermission(permissionService
+                .userCanDeleteKoulutus(OrganisaatioContext.getContext(tarjoajaOid)));
+    }
+    
 
     public void checkRemoveKoulutusKuva(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);

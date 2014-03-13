@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @author Jani Wilén
  */
 public class KorkeakoulutusThreadedDataUploader extends Thread {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ThreadedDataUploader.class);
     private OrganisaatioDTO organisaatio;
     private String hakuOid;
@@ -46,7 +46,8 @@ public class KorkeakoulutusThreadedDataUploader extends Thread {
     private HakukohdeGenerator hakukohde;
     private WebResource linkResource;
     private boolean amk = false;
-    
+    private String tarjontaServiceCasTicket;
+
     public KorkeakoulutusThreadedDataUploader(
             String threadName,
             String hakuOid,
@@ -55,28 +56,31 @@ public class KorkeakoulutusThreadedDataUploader extends Thread {
             WebResource permissionResource,
             WebResource hakuResource,
             WebResource hakukohdeResource,
-            WebResource linkResource, OrganisaatioDTO organisaatio) throws IOException {
+            WebResource linkResource,
+            OrganisaatioDTO organisaatio,
+            String tarjontaServiceCasTicket
+    ) throws IOException {
         super(threadName);
-        
+
         this.organisaatio = organisaatio;
         this.maxKoulutusPerOrganisation = maxKoulutus;
         this.hakuOid = hakuOid;
         this.linkResource = linkResource;
         this.amk = organisaatio.getOppilaitosTyyppi().contains("42");
-        
-        this.koulutus = new KoulutusGenerator(threadName, tarjontaAdminService, permissionResource, this.amk);
-        this.hakukohde = new HakukohdeGenerator(hakukohdeResource, organisaatio.getOid());
+        this.tarjontaServiceCasTicket = tarjontaServiceCasTicket;
+        this.koulutus = new KoulutusGenerator(threadName, tarjontaServiceCasTicket, tarjontaAdminService, permissionResource, this.amk);
+        this.hakukohde = new HakukohdeGenerator(hakukohdeResource, tarjontaServiceCasTicket, organisaatio.getOid());
         this.kkObjects = Lists.<KoulutusKorkeakouluV1RDTO>newArrayList();
     }
-    
+
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
-        
+
         LOG.info("Thread start {}, oppilaitostyyppi : {}, amk : " + amk, getName(), organisaatio.getOppilaitosTyyppi());
         final int koulutusPerOrg = AbstractGenerator.randomIntByRange(1, maxKoulutusPerOrganisation);
         Preconditions.checkArgument(koulutusPerOrg != 0, "Invalid count of random = " + koulutusPerOrg + " user max : " + maxKoulutusPerOrganisation);
-        
+
         for (int i = 0; i < koulutusPerOrg; i++) {
             try {
                 if (amk) {
@@ -94,48 +98,49 @@ public class KorkeakoulutusThreadedDataUploader extends Thread {
                 }
             } catch (IOException ex) {
                 LOG.error("GENERATOR ERROR", ex);
-                
+
                 throw new RuntimeException("Error - ", ex);
             }
         }
-        
+
         String baseKomotoOid = null;
         String baseKomoOid = null;
         List<String> komotoOids = Lists.<String>newArrayList();
         List<String> komoOids = Lists.<String>newArrayList();
-        
+
         KoulutusKorkeakouluV1RDTO first = kkObjects.get(0);
         Preconditions.checkNotNull(first, "Koulutus object cannot be null.");
-        
+
         baseKomotoOid = first.getKomotoOid();
         Preconditions.checkNotNull(baseKomotoOid, "Base komoto OID cannot be null.");
-        
+
         baseKomoOid = first.getKomoOid();
         if (kkObjects.size() > 1 && !amk) {
             //link childs
             for (KoulutusKorkeakouluV1RDTO kk : kkObjects) {
                 Preconditions.checkNotNull(kk.getKomotoOid(), "Komoto OID cannot be null.");
-                
+
                 if (!kk.getKomotoOid().equals(baseKomotoOid)) {
                     komotoOids.add(kk.getKomotoOid());
                     komoOids.add(kk.getKomoOid());
                 }
             }
-  
+
             KomoLink link = new KomoLink();
             link.setChildren(komoOids);
             link.setParent(baseKomoOid);
             linkResource.
+                    queryParam("ticket", tarjontaServiceCasTicket).
                     accept(MediaType.APPLICATION_JSON + ";charset=UTF-8").
                     header("Content-Type", "application/json; charset=UTF-8").
                     header("Connection", "keep-alive").post(link);
         }
-        
+
         final int maxHakukohdes = AbstractGenerator.randomIntByRange(2, HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO.length - 1);
         for (int i = 0; i < maxHakukohdes; i++) {
             hakukohde.create(hakuOid, "korkeakoulu " + HakukohdeGenerator.HAKUKOHTEET_KOODISTO_ARVO[i], baseKomotoOid, komotoOids);
         }
-        
+
         long timePassed = System.currentTimeMillis() - startTime;
         LOG.info("Thread end {}, time passed {} seconds", getName(), TimeUnit.MILLISECONDS.toSeconds(timePassed));
     }
@@ -146,5 +151,5 @@ public class KorkeakoulutusThreadedDataUploader extends Thread {
     public OrganisaatioDTO getOrganisaatio() {
         return organisaatio;
     }
-    
+
 }

@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mysema.query.Tuple;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
@@ -71,12 +72,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-
         return from(qHakukohde)
-                .join(qHakukohde.koulutusmoduuliToteutuses,qKomoto)
+                .join(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
                 .where(qHakukohde.ulkoinenTunniste.eq(ulkoinenTunniste).and(qKomoto.tarjoaja.eq(tarjoajaOid)))
                 .singleResult(qHakukohde);
-
 
     }
 
@@ -180,38 +179,32 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         /*QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-        return from(qKomoto)
-                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qKomoto);     */
+         return from(qKomoto)
+         .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qKomoto);     */
+        Query query = getEntityManager().createQuery("SELECT k from KoulutusmoduuliToteutus k join fetch k.hakukohdes"
+                + "WHERE k.alkamiskausi = :kausi "
+                + "AND k.alkamisVuosi = :vuosi "
+                + "AND k.tarjoaja = :tarjoaja");
 
-      Query query = getEntityManager().createQuery("SELECT k from KoulutusmoduuliToteutus k join fetch k.hakukohdes" +
+        query.setParameter("kausi", term);
+        query.setParameter("vuosi", year);
+        query.setParameter("tarjoaja", providerOid);
 
-
-                "WHERE k.alkamiskausi = :kausi " +
-                "AND k.alkamisVuosi = :vuosi " +
-                "AND k.tarjoaja = :tarjoaja");
-
-        query.setParameter("kausi",term);
-        query.setParameter("vuosi",year);
-        query.setParameter("tarjoaja",providerOid);
-
-        return (List<KoulutusmoduuliToteutus>)query.getResultList();
+        return (List<KoulutusmoduuliToteutus>) query.getResultList();
 
     }
 
     @Override
-    public List<Hakukohde> findByNameTermAndYear(String name,String term, int year, String providerOid) {
-
-
+    public List<Hakukohde> findByNameTermAndYear(String name, String term, int year, String providerOid) {
 
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
-
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
                 .where(qHakukohde.hakukohdeNimi.eq(name)
-                .and(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
-    
+                        .and(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
+
     }
 
     @Override
@@ -223,7 +216,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
                 .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);
-
 
     }
 
@@ -299,7 +291,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         }
 
         if (!showKK) {
-            whereExpr = QuerydslUtils.and(whereExpr,hakukohde.hakukohdeNimi.isNotNull());
+            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.hakukohdeNimi.isNotNull());
         }
 
         // Result selection
@@ -438,4 +430,16 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         final BooleanExpression criteria = hakukohde.oid.in(oids);
         return from(hakukohde).where(criteria).distinct().list(QHakukohde.hakukohde.id);
     }
+
+    @Override
+    public void safeDelete(final String hakukohdeOid, final String userOid) {
+        Preconditions.checkNotNull(hakukohdeOid, "Hakukohde OID string object cannot be null.");
+        List<String> oids = Lists.<String>newArrayList();
+        oids.add(hakukohdeOid);
+        Hakukohde findByOid = findHakukohdeByOid(hakukohdeOid);
+        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
+        findByOid.setTila(TarjontaTila.POISTETTU);
+        findByOid.setLastUpdatedByOid(userOid);
+    }
+
 }
