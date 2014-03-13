@@ -1,12 +1,7 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import java.io.IOException;
-
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,16 +32,10 @@ public class SolrServerFactory implements InitializingBean {
 
     private SolrServer getSolr(final String url) {
         
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        httpclient.addRequestInterceptor(new HttpRequestInterceptor() {
-            
-            @Override
-            public void process(HttpRequest request, HttpContext context)
-                    throws HttpException, IOException {
-                request.removeHeaders("Connection");
-                request.addHeader("Connection", "close");
-            }
-        });
+        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        mgr.setDefaultMaxPerRoute(100);
+        mgr.setMaxTotal(1000);
+        DefaultHttpClient httpclient = new DefaultHttpClient(mgr);
         
         return new HttpSolrServer(url, httpclient);
     }
