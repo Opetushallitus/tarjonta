@@ -148,7 +148,8 @@
         <script src="partials/koulutus/edit/alkamispaiva-ja-kausi.js"></script>
 
         <script src="partials/koulutus/review/reviewControllers.js"></script>
-         <script src="partials/koulutus/remove/poista-koulutus-ctrl.js"></script>
+        <script src="partials/koulutus/remove/poista-koulutus-ctrl.js"></script>
+        <script src="partials/koulutus/copy/copy-move-koulutus.js"></script>
 
         <script src="partials/hakukohde/hakukohdeController.js"></script>
 
@@ -210,18 +211,18 @@
                         <div data-ng-include="'partials/search/search.html'"></div>
                     </div>
 
-<!--
-                    <div data-ng-switch-when="kk">
-                        <div data-ng-switch on="renderPath[1]">
-                            <div data-ng-switch-when="edit">
-                                <div data-ng-include="'partials/kk/edit/edit.html'" data-ng-controller="KKEditController"></div>
-                            </div>
-                            <div data-ng-switch-when="review">
-                                <div data-ng-include="'partials/kk/review/review.html'" data-ng-controller="KKReviewController"></div>
-                            </div>
-                        </div>
-                    </div>
--->
+                    <!--
+                                        <div data-ng-switch-when="kk">
+                                            <div data-ng-switch on="renderPath[1]">
+                                                <div data-ng-switch-when="edit">
+                                                    <div data-ng-include="'partials/kk/edit/edit.html'" data-ng-controller="KKEditController"></div>
+                                                </div>
+                                                <div data-ng-switch-when="review">
+                                                    <div data-ng-include="'partials/kk/review/review.html'" data-ng-controller="KKReviewController"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                    -->
 
                     <div data-ng-switch-when="koulutus">
                         <h2 tt="koulutus.title">Koulutusten hallinta</h2>
@@ -240,7 +241,7 @@
                     </div><!-- 0:/koulutus -->
 
                     <div data-ng-switch-when="hakukohde">
-                            <h2 tt="hakukohde.title">Hakukohteiden hallinta</h2>
+                        <h2 tt="hakukohde.title">Hakukohteiden hallinta</h2>
 
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="HakukohdeRoutingController">
                             <div data-ng-switch-when="review">
@@ -298,7 +299,7 @@
                         <div data-ng-include="'partials/komo/komo.html'" data-ng-controller="KomoController"></div>
                     </div>
                     <div data-ng-switch-default>
-                    	<ng-view>
+                        <ng-view>
                     </div>
                 </div><!-- /renderPath[0] -->
 

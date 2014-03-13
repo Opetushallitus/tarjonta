@@ -1,0 +1,42 @@
+<div id="kopioi-koulutus-dialogi">
+    <div class="modal-header">
+        <h3><span  tt="koulutus.copy.otsikko">Kopioi tai siirrä koulutus</span></h3>
+    </div>
+
+    <div class="modal-body">
+        <div tt="koulutus.copy.help">Kopioi tai siirrä koulutusdialogi kuvaus</div>
+
+        <ul ng-show="model.errors.length > 0" class="errors">
+            <li ng-repeat="error in model.errors">{{error.msg}}</li>
+        </ul>
+
+        <h4><span tt="koulutus.copy.siirra-tai-kopioi">Siirrä tai kopioi</span></h4>
+        <input type="radio" ng-model="model.mode" value="COPY"><span tt="koulutus.copy.kopioi">Kopioi</span><br/>
+        <input type="radio" ng-model="model.mode" value="MOVE"><span tt="koulutus.copy.siirra">Siirrä</span><br/>
+
+        <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>
+
+        <table width="100%">
+            <tr>
+                <td width="50%"><div class="treeview"
+                                     data-angular-treeview="true" data-tree-id="lkorganisaatio"
+                                     data-org-tree-model="lkorganisaatiot" data-node-id="oid"
+                                     data-node-label="nimi" data-node-children="children" autoselect="luoKoulutusDialogOrg"></div></td>
+                <td width="50%" ng-hide="organisaatioValittu()" tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
+                <td width="50%" ng-show="organisaatioValittu()">
+                    <p tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin">Luodaan seuraaviin organisaatioihin</p>
+                    <ul>
+                        <li ng-repeat="organisaatio in model.organisaatiot">
+                            <a ng-click="poistaValittu(organisaatio)">[X]</a> {{organisaatio.nimi}}
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="peruuta()"><span tt="luoKoulutusDialogi.peruuta">Peruuta</span></button>
+        <button class="btn btn-primary" ng-disabled="organisaatioValittu() <= 0" ng-click="jatka()"><span tt="luoKoulutusDialogi.jatka">Jatka</span></button>
+    </div>
+</div>

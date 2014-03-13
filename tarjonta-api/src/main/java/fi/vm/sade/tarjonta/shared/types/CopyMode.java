@@ -16,17 +16,13 @@
 package fi.vm.sade.tarjonta.shared.types;
 
 /**
- * Komoto lisätieto-avain.
- * 
- * <p>HUOM! Käytetään sekä tietokanta-avaimena että osana apia, eli älä muuta näitä arvoja.</p>
- * 
- * @author Timo Santasalo / Teknokala Ky
+ *
+ * @author jani
  */
-public enum KomoTeksti {
+public enum CopyMode {
 
-	KOULUTUKSEN_RAKENNE,
-	JATKOOPINTO_MAHDOLLISUUDET,
-	TAVOITTEET,
-	PATEVYYS
-
+    COPY,
+    MOVE,
+    TEST_COPY,
+    TEST_MOVE;
 }

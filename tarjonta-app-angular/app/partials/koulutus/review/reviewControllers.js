@@ -188,10 +188,6 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
         }
 
         $scope.doDelete = function(event) {
-            $log.info("doDelete()...");
-
-            var deferred = $q.defer();
-
             var poistaModalDialog = $modal.open({
                 templateUrl: 'partials/koulutus/remove/poista-koulutus.html',
                 controller: 'PoistaKoulutusCtrl',
@@ -227,8 +223,30 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             $location.path('/hakukohde/new/edit');
         };
         $scope.doCopy = function(event) {
-            $log.info("doCopy()...");
-            dialogService.showNotImplementedDialog();
+            var copyModalDialog = $modal.open({
+                templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
+                controller: 'CopyMoveKoulutusController',
+                resolve: {
+                    targetKoulutus: function() {
+                        return [{oid: $scope.model.koulutus.oid, koulutuskoodi: $scope.model.koulutus.koulutuskoodi.arvo, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]}];
+                    },
+                    targetOrganisaatio: function() {
+                        return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                    }
+                }
+            });
+
+            copyModalDialog.result.then(function() {
+                //not working:
+                // $route.reload();
+                //$location.path("/koulutus/" + $scope.model.koulutus.oid);
+                // force page reload, at least it works:
+                window.location.reload();
+            }, function() {
+                /* dismissed */
+            })
+
+
         };
         $scope.doMoveToBeSubPart = function(event) {
             $log.info("doMoveToBeSubPart()...");
