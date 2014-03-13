@@ -16,7 +16,7 @@ app.controller('BaseEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {};
+                    var uiModel = {isMutable : false};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -37,6 +37,10 @@ app.controller('BaseEditController',
                         if (angular.isUndefined(model)) {
                             $location.path("/error");
                             return;
+                        }
+
+                        if(model.tila === 'POISTETTU'){
+                            uiModel.isMutable=true;
                         }
 
                         $scope.updateFormStatusInformation(model);

@@ -30,10 +30,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
+    $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden ja valintakokeiden kielien esijärjestystä varten
     $scope.model.defaultLang = 'kieli_fi';
-
-
-
+    
 	$scope.formControls = {}; // controls-layouttia varten
 
     //All kieles is received from koodistomultiselect

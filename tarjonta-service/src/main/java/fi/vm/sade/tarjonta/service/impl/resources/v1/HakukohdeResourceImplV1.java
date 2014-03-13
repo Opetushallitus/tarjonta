@@ -26,9 +26,6 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
-import com.wordnik.swagger.annotations.ApiParam;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +72,9 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -556,8 +555,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
 			hakukohde.setLastUpdateDate(today);
 			Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
-
-
+			
 			//These are updated in a separate resource -> ei enää
 			/*hakukohde.getValintakoes().clear();
 			hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
@@ -585,12 +583,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			if (hakukohdeRDTO.getHakuaikaId() != null) {
 			    hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
 			}
-
+			
+			LOG.info("Hakukohde.liitteet = {}", hakukohde.getLiites());
+			LOG.info("Hakukohde.kokeet = {}", hakukohde.getValintakoes());
 
 			hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
             GeneerinenTilaTyyppi tilaTyyppi = new GeneerinenTilaTyyppi(hakukohde.getOid(), SisaltoTyyppi.HAKUKOHDE, fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
             if (publication.isValidStatusChange(tilaTyyppi)) {
                 hakukohdeDao.update(hakukohde);
+    			LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
+    			LOG.info("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());
                 solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                 solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
                     public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {

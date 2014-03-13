@@ -75,8 +75,17 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
         //hae koulutus
         var result = TarjontaService.haeKoulutukset({koulutusOid: koulutusOid});
 
+
+
+
         //tarkista permissio tarjoajaoidilla
-        result = result.then(function(hakutulos) {
+        result.then(function(hakutulos) {
+
+            if (hakutulos.tulokset[0].tulokset[0].tila === 'POISTETTU') {
+                //do not show buttons, if koulutus status is removed
+                defer.resolve(false);
+                return;
+            }
 //			console.log("hakutulos:", hakutulos);
             resolveData(defer.promise);
 
@@ -270,10 +279,10 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
                 return _canCreate(orgOid);
             },
             canMoveOrCopy: function(orgOid) {
-              var deferred = $q.defer();
-              console.log("TODO!!"); 
-              deferred.resolve(true);
-              return deferred.promise;
+                var deferred = $q.defer();
+                console.log("TODO!!");
+                deferred.resolve(true);
+                return deferred.promise;
             },
             canPreview: function(orgOid) {
                 if (orgOid === undefined) {
@@ -352,13 +361,13 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
             },
         },
         permissionResource: function() {
-                return $resource(Config.env.tarjontaRestUrlPrefix + "permission/authorize", {}, {
-                    authorize: {
-                        method: 'GET',
-                        withCredentials: true,
-                        headers: {'Content-Type': 'application/json; charset=UTF-8'}
-                    }
-                });
-            }
+            return $resource(Config.env.tarjontaRestUrlPrefix + "permission/authorize", {}, {
+                authorize: {
+                    method: 'GET',
+                    withCredentials: true,
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
+                }
+            });
+        }
     };
 });
