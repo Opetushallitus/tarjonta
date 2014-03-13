@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['PermissionService', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController(PermissionService, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
+    function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
         $log.info("BaseReviewController()");
         var koulutusModel = $route.current.locals.koulutusModel.result;
         if (angular.isUndefined(koulutusModel)) {
@@ -122,7 +122,7 @@ app.controller('BaseReviewController', ['PermissionService', '$scope', '$window'
                     controller: 'LiitaSisaltyvyysCtrl',
                     resolve: {
                         targetKomo: function() {
-                            return {oid:$scope.model.koulutus.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
+                            return {oid: $scope.model.koulutus.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
                             return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
@@ -183,21 +183,37 @@ app.controller('BaseReviewController', ['PermissionService', '$scope', '$window'
 
         }
 
+        $scope.getModalDialog = function() {
+            return $scope.poistaModalDialog;
+        }
+
         $scope.doDelete = function(event) {
             $log.info("doDelete()...");
 
-            $scope.poistaKoulutusDialog = $modal.open({
+            var deferred = $q.defer();
+
+            var poistaModalDialog = $modal.open({
                 templateUrl: 'partials/koulutus/remove/poista-koulutus.html',
                 controller: 'PoistaKoulutusCtrl',
                 resolve: {
                     targetKomoto: function() {
-                        return {oid: $scope.model.koulutus.oid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
+                        return {oid: $scope.model.koulutus.oid, koulutuskoodi: $scope.model.koulutus.koulutuskoodi.arvo, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                     },
                     organisaatioOid: function() {
                         return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
                     }
                 }
             });
+
+            poistaModalDialog.result.then(function() {
+                //not working:
+                // $route.reload();
+                //$location.path("/koulutus/" + $scope.model.koulutus.oid);
+                // force page reload, at least it works:
+                window.location.reload();
+            }, function() {
+                /* dismissed */
+            })
         };
         $scope.addHakukohde = function() {
             if (!$scope.isMutable) {

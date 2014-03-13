@@ -29,9 +29,9 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
             formControls: {reloadDisplayControls: function() {}}
         };
 
-        $log.info("KoulutusRoutingController()", $routeParams);
-        $log.info("$route: ", $route);
-        $log.info("SCOPE: ", $scope);
+//        $log.info("KoulutusRoutingController()", $routeParams);
+//        $log.info("$route: ", $route);
+//        $log.info("SCOPE: ", $scope);
 
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
@@ -50,5 +50,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $scope.getKoulutusPartialName = function(actionType) {
             $scope.resolvePath(actionType, $scope.koulutusModel);
         };
+        
+        return $scope;
     }
 ]);

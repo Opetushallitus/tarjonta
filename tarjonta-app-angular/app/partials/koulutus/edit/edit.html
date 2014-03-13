@@ -1,4 +1,4 @@
-<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')"> 
+<div id="editKoulutus" ng-controller="BaseEditController"  ng-init="getKoulutusPartialName('edit')">
     <controls-model
         model="controlModel.formControls"
         tt-create="koulutus.edit.header.title"
@@ -6,8 +6,8 @@
         dto="controlModel.formStatus">
 
         <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" primary="true"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)" primary="true"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" disabled="uiModel.isMutable" primary="true"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)"  disabled="uiModel.isMutable" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
 
         <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
