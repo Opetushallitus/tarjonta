@@ -19,7 +19,11 @@ var app = angular.module('app.haku.list.ctrl', []);
 app.controller('HakuListController',
         ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
             function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
-
+          
+          //sorting
+          $scope.predicate='tila';
+          $scope.reverse=false;
+          
           $log.info("HakuListController()");
 
                 Koodisto.getAllKoodisWithKoodiUri('kausi').then(function(kaudet){
@@ -64,11 +68,24 @@ app.controller('HakuListController',
                     $location.path("/haku/NEW");
                 };
 
-                $scope.doDelete = function() {
-                    $log.info("doDelete()");
-                    dialogService.showNotImplementedDialog();
+                $scope.doDelete = function(haku) {
+                  console.log("doDelete()", haku);
+                  dialogService.showNotImplementedDialog();
                 };
 
+                $scope.doDeleteSelected = function() {
+                  console.log("doDeleteSelected()");
+                  var selected=[];
+                  angular.forEach($scope.model.hakus, function(haku){
+                    if(haku.selected) selected.push(haku);
+                  });
+                  
+                  console.log("selected:", selected);
+                  dialogService.showNotImplementedDialog();
+                };
+
+                
+                
                 $scope.doSearch = function() {
                     $log.info("doSearch()");
                     var params = angular.copy($scope.searchParams);
@@ -83,9 +100,39 @@ app.controller('HakuListController',
                       delete params['HAKUVUOSIKAUSI'];
                       params['HAKUVUOSI']=hVuosikausi.vuosi;
                       params['HAKUKAUSI']=hVuosikausi.kausi;
-                    }
+                    } 
+                    
+                    HakuV1Service.search(params).then(function(haut){
 
-                    HakuV1Service.search(params).then(function(haut){$scope.model.hakus=haut;});
+                      $scope.review=function(haku){
+                        $location.path("/haku/" + haku.oid);
+                      };
+                      
+                      //"kirjapinon" linkit
+                      var actions = function(haku){
+                        console.log("$scope.doDelete", $scope.doDelete);
+                          var actions=[];
+                          //#/haku/{{ haku.oid}}/edit
+                          actions.push({name:"haku.menu.muokkaa", action:function(){
+                            $location.path("/haku/" + haku.oid + "/edit");
+                          }});
+                          
+                          actions.push({name:"haku.menu.tarkastele", action:function(){
+                            review(haku);
+                          }});
+                          
+                          actions.push({name:"haku.menu.poista", action:function(){$scope.doDelete(haku)}});
+                          
+                          return actions;
+                      };
+                      
+                      for(var i=0;i<haut.length;i++) {
+                        var haku = haut[i];
+                        haku.actions=actions(haku);
+                      }
+                      $scope.model.hakus=haut;
+                      }
+                    );
                 };
 
                 $scope.init = function() {

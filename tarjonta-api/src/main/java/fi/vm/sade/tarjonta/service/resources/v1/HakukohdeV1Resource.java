@@ -217,13 +217,13 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa listan hakukohteista annetuilla parametreilla", notes = "Palauttaa listan hakukohteista annetuilla parametreilla.", response = HakukohdeHakutulosV1RDTO.class)
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(
-            @ApiParam(value = "Hakutermit", required = true) @QueryParam("searchTerms") String searchTerms,
-            @ApiParam(value = "Lista organisaatioiden oid:tä", required = true) @QueryParam("organisationOid") List<String> organisationOids,
-            @ApiParam(value = "Lista hakukohteen tiloja", required = true) @QueryParam("tila") List<String> hakukohdeTilas,
-            @ApiParam(value = "Alkamiskausi", required = true) @QueryParam("alkamisKausi") String alkamisKausi,
-            @ApiParam(value = "Alkamisvuosi", required = true) @QueryParam("alkamisVuosi") Integer alkamisVuosi,
-            @ApiParam(value = "Hakukohteen oid", required = true) @QueryParam("hakukohdeOid") String hakukohdeOid,
-            @ApiParam(value = "Lista koulutusasteen tyyppejä", required = true) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi);
+            @ApiParam(value = "Hakutermit", required = false) @QueryParam("searchTerms") String searchTerms,
+            @ApiParam(value = "Lista organisaatioiden oid:tä", required = false) @QueryParam("organisationOid") List<String> organisationOids,
+            @ApiParam(value = "Lista hakukohteen tiloja", required = false) @QueryParam("tila") List<String> hakukohdeTilas,
+            @ApiParam(value = "Alkamiskausi", required = false) @QueryParam("alkamisKausi") String alkamisKausi,
+            @ApiParam(value = "Alkamisvuosi", required = false) @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+            @ApiParam(value = "Hakukohteen oid", required = false) @QueryParam("hakukohdeOid") String hakukohdeOid,
+            @ApiParam(value = "Lista koulutusasteen tyyppejä", required = false) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi, @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid);
 
     /**
      * Hakukohteen koulutuksten nimi ja oid, muut tiedot saa /search
