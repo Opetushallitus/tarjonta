@@ -1,5 +1,8 @@
 package fi.vm.sade.tarjonta.service.search;
 
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.solr.client.solrj.SolrServer;
@@ -35,7 +38,14 @@ public class SolrServerFactory implements InitializingBean {
         PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
         mgr.setDefaultMaxPerRoute(100);
         mgr.setMaxTotal(1000);
-        DefaultHttpClient httpclient = new DefaultHttpClient(mgr);
+        DefaultHttpClient httpclient = new DefaultHttpClient(mgr){
+
+            @Override
+            protected ConnectionReuseStrategy createConnectionReuseStrategy() {
+                return new NoConnectionReuseStrategy();
+            }
+            
+        };
         
         return new HttpSolrServer(url, httpclient);
     }
