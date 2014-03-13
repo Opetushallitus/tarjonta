@@ -730,11 +730,25 @@ public class ConverterV1 {
             }
         }
 
+        if (hakukohdeRDTO.getValintaPerusteKuvausKielet() != null) {
+
+           hakukohde.setValintaPerusteKuvausKielet(hakukohdeRDTO.getValintaPerusteKuvausKielet());
+
+        }
+
+        if (hakukohdeRDTO.getSoraKuvausKielet() != null) {
+
+            hakukohde.setSoraKuvausKielet(hakukohdeRDTO.getSoraKuvausKielet());
+
+        }
+
         if (hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset() != null) {
             hakukohde.setHakukelpoisuusVaatimusKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
         }
+        if (hakukohdeRDTO.getLiitteidenToimitusOsoite() != null) {
+            hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
+        }
 
-        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
 
         for (ValintakoeV1RDTO valintakoeV1RDTO : hakukohdeRDTO.getValintakokeet()) {
         	hakukohde.addValintakoe(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));

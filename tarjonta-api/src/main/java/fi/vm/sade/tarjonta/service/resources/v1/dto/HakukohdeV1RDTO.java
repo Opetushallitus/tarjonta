@@ -56,9 +56,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Boolean kaksoisTutkinto;
     private Long soraKuvausTunniste;
     private Set<String> opetusKielet;
-    @Deprecated // sama kuin opetuskielet
     private Set<String> valintaPerusteKuvausKielet;
-    @Deprecated // sama kuin opetuskielet
     private Set<String> soraKuvausKielet;
 
     public String getHakukohteenNimi() {

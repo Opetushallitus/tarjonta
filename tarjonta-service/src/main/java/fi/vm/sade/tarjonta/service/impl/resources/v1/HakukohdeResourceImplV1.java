@@ -351,6 +351,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+            LOG.debug("TRYING TO GET VALINTAPERUSTEKUVAUKSET WITH ID : " + hakukohdeRDTO.getValintaPerusteKuvausTunniste());
+            HashMap<String,String> valintaPerusteKuvaukset = getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(),hakukohdeRDTO.getValintaPerusteKuvausKielet());
+            if (valintaPerusteKuvaukset != null) {
+                LOG.debug("VALINTAPERUSTEKUVAUKSET SIZE : " + valintaPerusteKuvaukset.size());
+            } else {
+                LOG.debug("VALINTAPERUSTEKUVAUKSET WAS NULL!!!!");
+            }
              hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(),hakukohdeRDTO.getValintaPerusteKuvausKielet()));
         }
 
@@ -370,9 +377,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     private HashMap<String,String> getKuvauksetWithId(Long kuvausId, Set<String> kielet) {
 
         HashMap<String,String> kuvaukset = new HashMap<String,String>();
-
+        LOG.debug("TRYING TO GET VALINTAPERUSTEKUVAUS WITH KIELET: "  + kielet.size());
         ValintaperusteSoraKuvaus kuvaus = kuvausDAO.read(kuvausId);
-
+        LOG.debug("FOUND " + kuvaus.getTekstis().size() + " VALINTAPERUSTEKUVAUS TEKSTIS");
         if (kielet != null ) {
             for (MonikielinenMetadata meta: kuvaus.getTekstis()) {
                 for (String kieli : kielet) {
