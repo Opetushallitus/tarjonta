@@ -583,8 +583,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			if (hakukohdeRDTO.getHakuaikaId() != null) {
 			    hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
 			}
-
-			hakukohdeDao.update(hakukohde);
+			
+			LOG.info("Hakukohde.liitteet = {}", hakukohde.getLiites());
 
 			hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
             GeneerinenTilaTyyppi tilaTyyppi = new GeneerinenTilaTyyppi(hakukohde.getOid(), SisaltoTyyppi.HAKUKOHDE, fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
