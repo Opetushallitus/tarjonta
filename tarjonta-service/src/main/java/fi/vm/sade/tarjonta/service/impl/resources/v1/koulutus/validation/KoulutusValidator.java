@@ -14,14 +14,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.linking.validation.LinkingValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
@@ -33,6 +32,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -291,11 +291,14 @@ public class KoulutusValidator {
         return null;
     }
 
-    public static void validateKoulutus(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
+    public static void validateKoulutusUpdate(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
         if (komoto == null) {
             dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         } else if (komoto.getKoulutusmoduuli() == null) {
             dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+        } else {
+            //check is deleted
+            checkIsDeleted(komoto, dto);
         }
     }
 
@@ -342,6 +345,14 @@ public class KoulutusValidator {
 
                 dto.addError(ErrorV1RDTO.createValidationError("komoto.hakukohdes", KoulutusValidationMessages.KOULUTUS_RELATION_KOMOTO_HAKUKOHDE_REMOVE_LINK.lower(), hakukohdeOids.toArray(new String[hakukohdeOids.size()])));
             }
+        }
+    }
+
+    private static void checkIsDeleted(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
+        Preconditions.checkNotNull(komoto, "Koulutusmoduulin toteutus cannot be null!");
+        Preconditions.checkNotNull(komoto.getTila(), "Status cannot be null!");
+        if (komoto.getTila().equals(TarjontaTila.POISTETTU)) {
+            dto.addError(ErrorV1RDTO.createValidationError("komoto.tila", KoulutusValidationMessages.KOULUTUS_DELETED.lower(), komoto.getOid()));
         }
     }
 }

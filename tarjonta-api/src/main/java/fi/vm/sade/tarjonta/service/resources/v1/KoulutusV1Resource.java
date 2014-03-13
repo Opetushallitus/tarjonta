@@ -140,7 +140,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Lisää koulutusmoduuliin monikielisen kuvaustekstin",
             notes = "Operaatio lisää koulutusmoduuliin monikielisen kuvaustekstin")
-    public Response saveKomoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomoTeksti> dto);
+    public ResultV1RDTO saveKomoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomoTeksti> dto);
 
     @DELETE
     @Path("/{oid}/teksti/{key}/{kieliUri}")
@@ -181,7 +181,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Poistaa kuvatiedoton koulutusmoduulin toteutuksesta annetulla koodi uri:lla",
             notes = "Operaatio poistaa kuvatiedoton koulutusmoduulin toteutuksesta annetulla koodi uri:lla")
-    public Response deleteKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
+    public ResultV1RDTO deleteKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
 
     /**
      * Päivittää koulutuksen tilan (olettaen että kyseinen tilasiirtymä on
