@@ -66,7 +66,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.validationmsgs = [];
 
-    $scope.model.liitteidenToimitusOsoite = {};
+    var deferredOsoite = $q.defer();
+
+    $scope.model.liitteidenToimitusOsoite = {}
+
+    $scope.model.liitteenToimitusOsoitePromise = deferredOsoite.promise;
 
     $scope.model.hakus = [];
 
@@ -548,6 +552,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                 $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
 
+
                 var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
                 //When organisaatio is loaded set the liitteiden toimitusosoite on the model
                 orgPromise.then(function(data){
@@ -556,13 +561,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                     var hakutoimistoNotFound = true;
                     if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
-                        console.log('METADATA FOUND : ', data);
                         angular.forEach(data.metadata.yhteystiedot,function(yhteystieto)  {
 
                             if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === "posti") {
                                 var kieliUris = yhteystieto.kieli.split('#');
                                 var kieliUri = kieliUris[0];
-                                console.log('KIELI URI : ', kieliUri);
                                 $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
                                 $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                                 $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
@@ -576,8 +579,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                         });
 
                     }
-                    console.log('hakutoimistoNotFound :', hakutoimistoNotFound );
-                    console.log('LIITTEIDEN TOIMITUS OSOITE : ', $scope.model.liitteidenToimitusOsoite);
                     if (data.postiosoite !== undefined && hakutoimistoNotFound) {
                         $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang] = {};
                         $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].osoiterivi1 = data.postiosoite.osoite;
@@ -588,8 +589,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                         //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
                         postinumero = data.postiosoite.postinumeroUri;
                     }
-                    console.log('LIITTEIDEN TOIMITUSOSOITE : ' ,   $scope.model.liitteidenToimitusOsoite);
-                    console.log('DEFAULT LANG : ' , $scope.model.defaultLang);
+
+                    deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                 });
 
 

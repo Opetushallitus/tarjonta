@@ -25,6 +25,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -102,34 +103,30 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
-    
+
     @Override
     public List<Haku> findBySearchCriteria(ListHakuSearchParam param) {
 
-        
-
         QHaku haku = QHaku.haku;
-
-
 
         BooleanExpression whereExpr = null;
 
         if (param.getTila() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr,haku.tila.eq(param.getTila()));
+            whereExpr = QuerydslUtils.and(whereExpr, haku.tila.eq(param.getTila()));
         }
 
         if (param.getKoulutuksenAlkamisKausi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr,haku.koulutuksenAlkamiskausiUri.eq(param.getKoulutuksenAlkamisKausi()));
+            whereExpr = QuerydslUtils.and(whereExpr, haku.koulutuksenAlkamiskausiUri.eq(param.getKoulutuksenAlkamisKausi()));
         }
 
         if (param.getKoulutuksenAlkamisVuosi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr,haku.koulutuksenAlkamisVuosi.eq(param.getKoulutuksenAlkamisVuosi()));
+            whereExpr = QuerydslUtils.and(whereExpr, haku.koulutuksenAlkamisVuosi.eq(param.getKoulutuksenAlkamisVuosi()));
 
         }
 
         JPAQuery q = from(haku);
         if (whereExpr != null) {
-        q = q.where(whereExpr);
+            q = q.where(whereExpr);
         }
 
         return q.list(haku);
@@ -139,7 +136,6 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
         // Convert Enums from API enum to DB enum
-
         QHaku haku = QHaku.haku;
 
         BooleanExpression whereExpr = null;
@@ -167,7 +163,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
         return q.list(haku.oid);
     }
-    
+
     @Override
     public void update(final Haku entity) {
         getEntityManager().detach(entity);
@@ -175,9 +171,8 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         super.update(entity);
     }
 
-    
     //mappi enumista sarakkeeseen
-    private final Map<Field,ComparableExpressionBase> mapping = new ImmutableMap.Builder<Field, ComparableExpressionBase>()
+    private final Map<Field, ComparableExpressionBase> mapping = new ImmutableMap.Builder<Field, ComparableExpressionBase>()
             .put(Field.HAKUKAUSI, QHaku.haku.hakukausiUri)
             .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi)
             .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri)
@@ -188,43 +183,42 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             .put(Field.HAKUSANA, QTekstiKaannos.tekstiKaannos.arvo)
             .put(Field.TILA, QHaku.haku.tila)
             .build();
-    
 
-    private final Map<Match,String> matchType = new ImmutableMap.Builder<Match, String>()
+    private final Map<Match, String> matchType = new ImmutableMap.Builder<Match, String>()
             .put(Match.MUST_MATCH, "=")
             .put(Match.MUST_NOT, "!=")
             .put(Match.LIKE, " like ")
             .build();
 
-    public <T>List<T> findByCriteria(int count, int startIndex,
+    public <T> List<T> findByCriteria(int count, int startIndex,
             List<HakuSearchCriteria> criteriaList, boolean oidOnly) {
 
-        String q = "SELECT distinct " + (oidOnly?"haku.oid":"haku") + " from Haku haku join haku.nimi nimi join nimi.tekstis tekstiKaannos" + (criteriaList.size()>0?" where ":"");
+        String q = "SELECT distinct " + (oidOnly ? "haku.oid" : "haku") + " from Haku haku join haku.nimi nimi join nimi.tekstis tekstiKaannos" + (criteriaList.size() > 0 ? " where " : "");
 
-        for(int i=0;i<criteriaList.size();i++) {
+        for (int i = 0; i < criteriaList.size(); i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
             String field = mapping.get(criteria.getField()).toString();
-            if(field==null) {
+            if (field == null) {
                 //no mapping available
                 throw new IllegalArgumentException("No mapping found for criteria name:" + criteria.getField());
             }
-            String template = (criteria.getField()==Field.HAKUSANA?"LOWER(%s)":"%s");
-            
-            q += String.format(template, field ) + matchType.get(criteria.getMatch()) + "?" + (i+1);
-            
-            if(i<criteriaList.size()-1) {
+            String template = (criteria.getField() == Field.HAKUSANA ? "LOWER(%s)" : "%s");
+
+            q += String.format(template, field) + matchType.get(criteria.getMatch()) + "?" + (i + 1);
+
+            if (i < criteriaList.size() - 1) {
                 q += " AND ";
             }
         }
-        
+
         System.out.println("q:" + q);
-        
+
         final Query query = getEntityManager().createQuery(q);
-        for(int i=0;i<criteriaList.size();i++) {
+        for (int i = 0; i < criteriaList.size(); i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
-            query.setParameter(i+1, (criteria.getField()==Field.HAKUSANA?criteria.getValue().toString().toLowerCase():criteria.getValue()));
+            query.setParameter(i + 1, (criteria.getField() == Field.HAKUSANA ? criteria.getValue().toString().toLowerCase() : criteria.getValue()));
         }
-        
+
         if (count > 0) {
             query.setMaxResults(count);
         }
@@ -245,6 +239,17 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public List<Haku> findHakuByCriteria(int count, int startIndex,
             List<HakuSearchCriteria> criteriaList) {
         return findByCriteria(count, startIndex, criteriaList, false);
+    }
+
+    @Override
+    public void safeDelete(final String hakuOid, final String userOid) {
+        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
+        List<String> oids = Lists.<String>newArrayList();
+        oids.add(hakuOid);
+        Haku findByOid = findByOid(hakuOid);
+        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
+        findByOid.setTila(TarjontaTila.POISTETTU);
+        findByOid.setLastUpdatedByOid(userOid);
     }
 
 }

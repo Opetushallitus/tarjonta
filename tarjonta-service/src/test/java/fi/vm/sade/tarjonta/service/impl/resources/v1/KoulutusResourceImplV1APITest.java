@@ -273,10 +273,9 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         KoulutusKorkeakouluV1RDTO result = (KoulutusKorkeakouluV1RDTO) v.getResult();
         String oid = result.getKomotoOid();
 
-        
         String strErrorKeys = "";
         if (v.getErrors() != null && !v.getErrors().isEmpty()) {
-            
+
             for (ErrorV1RDTO d : v.getErrors()) {
                 strErrorKeys += d.getErrorMessageKey() + " ";
             }

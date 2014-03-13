@@ -13,7 +13,25 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     
     $scope.liitteetModel.langs = [];
     $scope.liitteetModel.selectedLangs = [];
-    
+
+    $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
+
+
+        for(var osoiteLang in osoitteet) {
+
+            if ($scope.liitteetModel.selectedLiite[osoiteLang] !== undefined) {
+                $scope.liitteetModel.selectedLiite[osoiteLang].liitteenToimitusOsoite = osoitteet[osoiteLang];
+            }
+
+
+        }
+
+        $scope.liitteetModel.selectedLiite[$scope.model.defaultLang].liitteenToimitusOsoite = osoitteet[$scope.model.defaultLang];
+
+
+
+    });
+
 
     function getEmptyOsoite() {
         return {
@@ -51,6 +69,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         } else {
 
 
+
            if ($scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang] !== undefined) {
 
                return {
@@ -69,7 +88,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
            } else {
                return {};
            }
-
 
 
         }

@@ -34,7 +34,6 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
 //    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
-
     public List<Hakukohde> findOrphanHakukohteet();
 
     HakukohdeLiite findHakuKohdeLiiteById(String id);
@@ -72,14 +71,13 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     Hakukohde findHakukohdeByUlkoinenTunniste(String ulkoinenTunniste, String tarjoajaOid);
 
-    List<Hakukohde> findByNameTermAndYear(String name,String term, int year, String providerOid);
+    List<Hakukohde> findByNameTermAndYear(String name, String term, int year, String providerOid);
 
-    List<Hakukohde> findByTermYearAndProvider(String term,int year,String providerOid);
+    List<Hakukohde> findByTermYearAndProvider(String term, int year, String providerOid);
 
     List<KoulutusmoduuliToteutus> komotoTest(String term, int year, String providerOid);
     
     // String getAlkamiskausiUri();
-
     /**
      * Find list of OIDs with given search specs.
      *
@@ -94,6 +92,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     /**
      * Hae hakukohteet jotka liittyvät komotoon
+     *
      * @param id komoto id (ei oid!)
      * @return
      */
@@ -119,8 +118,14 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @return List<hakukohdeOid>
      */
     List<Long> searchHakukohteetByHakuOid(final Collection<String> hakuOids, final fi.vm.sade.tarjonta.shared.types.TarjontaTila... requiredStatus);
-    
-    
-    List<Long> findIdsByoids(Collection<String> oids);
-}
 
+    List<Long> findIdsByoids(Collection<String> oids);
+
+    /**
+     * Vaihtaa hakukohteen tilan suoraa poistetuksi/passivoiduksi.
+     *
+     * @param hakukohdeOid
+     * @param userOid
+     */
+    public void safeDelete(final String hakukohdeOid, final String userOid);
+}

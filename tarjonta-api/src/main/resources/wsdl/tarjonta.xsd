@@ -670,6 +670,7 @@
 
     <xs:simpleType name="TarjontaTila">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="POISTETTU"/>
             <xs:enumeration value="LUONNOS"/>
             <xs:enumeration value="VALMIS"/>
             <xs:enumeration value="JULKAISTU"/>
