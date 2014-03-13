@@ -556,46 +556,25 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                 $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
 
-                console.log('TARJOAJA OIDS : ', $scope.model.hakukohde.tarjoajaOids);
+
                 var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
                 //When organisaatio is loaded set the liitteiden toimitusosoite on the model
                 orgPromise.then(function(data){
 
                     console.log('GOT OSOITE DATA : ', data);
 
-                    var hakutoimistoNotFound = true;
-                    if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
 
-                        angular.forEach(data.metadata.yhteystiedot,function(yhteystieto)  {
+                    var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
 
-                            if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === "posti") {
-                                var kieliUris = yhteystieto.kieli.split('#');
-                                var kieliUri = kieliUris[0];
-                                $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
-                                $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
-                                $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
-                                $scope.model.liitteidenToimitusOsoite[kieliUri].postitoimipaikka = yhteystieto.postitoimipaikka;
-                                //$scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = yhteystieto.osoite;
-                                //$scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = yhteystieto.postinumeroUri;
-                                //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = yhteystieto.postitoimipaikka;
-                                hakutoimistoNotFound = false;
-                            }
-
-                        });
-
-                    }
-                    if (data.postiosoite !== undefined && hakutoimistoNotFound) {
-                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang] = {};
-                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].osoiterivi1 = data.postiosoite.osoite;
-                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].postinumero = data.postiosoite.postinumeroUri;
-                        $scope.model.liitteidenToimitusOsoite[$scope.model.defaultLang].postitoimipaikka = data.postiosoite.postitoimipaikka;
-                        //$scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = data.postiosoite.osoite;
-                        //$scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = data.postiosoite.postinumeroUri;
-                        //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = data.postiosoite.postitoimipaikka;
-                        postinumero = data.postiosoite.postinumeroUri;
+                    if (wasHakutoimistoFound) {
+                        console.log('HAKUTOIMISTO WAS FOUND');
+                        deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+                    } else {
+                        tryGetParentsApplicationOffice(data);
                     }
 
-                    deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+
+
                 });
 
 
@@ -606,6 +585,90 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     });
+
+    var checkAndAddHakutoimisto = function(data) {
+         var hakutoimistoFound = false;
+        if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
+
+            angular.forEach(data.metadata.yhteystiedot,function(yhteystieto)  {
+
+                if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === "posti") {
+                    var kieliUris = yhteystieto.kieli.split('#');
+                    var kieliUri = kieliUris[0];
+                    $scope.model.liitteidenToimitusOsoite[kieliUri] = {};
+                    $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
+                    $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
+                    $scope.model.liitteidenToimitusOsoite[kieliUri].postitoimipaikka = yhteystieto.postitoimipaikka;
+                    //$scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 = yhteystieto.osoite;
+                    //$scope.model.hakukohde.liitteidenToimitusOsoite.postinumero = yhteystieto.postinumeroUri;
+                    //$scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka = yhteystieto.postitoimipaikka;
+                    hakutoimistoFound = true;
+
+                }
+
+            });
+
+
+        }
+
+        return hakutoimistoFound;
+
+    }
+
+
+    var tryGetParentsApplicationOffice = function(currentOrg) {
+
+        var isOppilaitos = false;
+
+        var isKoulutusToimija = false;
+
+        var oppilaitosTyyppi = "Oppilaitos";
+
+        var koulutusToimijaTyyppi = "Koulutustoimija";
+
+        angular.forEach(currentOrg.tyypit,function(tyyppi){
+
+            if (tyyppi === oppilaitosTyyppi) {
+                isOppilaitos = true;
+            }
+            if (tyyppi === koulutusToimijaTyyppi) {
+                isKoulutusToimija = true;
+            }
+
+        });
+
+        if (!isOppilaitos && !isKoulutusToimija) {
+            if (currentOrg.parentOid !== undefined) {
+
+                var anotherOrgPromise =  OrganisaatioService.byOid(currentOrg.parentOid);
+                anotherOrgPromise.then(function(data) {
+
+                    console.log('GOT PARENT DATA : ', data);
+
+                    var wasHakutoimistoFoundNow = checkAndAddHakutoimisto(data);
+                    if (wasHakutoimistoFoundNow) {
+                        console.log('PARENT HAKUTOIMISTO FOUND : ', wasHakutoimistoFoundNow);
+                        deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+                    } else {
+                        console.log('PARENT HAKUTOIMISTO WAS NOT FOUND : ', wasHakutoimistoFoundNow);
+                        deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+                    }
+
+
+                });
+
+            } else {
+
+                deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+
+            }
+
+
+        } else {
+            deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+        }
+
+    }
 
 
     var removeHashAndVersion = function(oppilaitosTyyppis) {
