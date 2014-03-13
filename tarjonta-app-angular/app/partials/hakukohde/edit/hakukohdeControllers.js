@@ -556,15 +556,16 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                 $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
 
-
+                console.log('TARJOAJA OIDS : ', $scope.model.hakukohde.tarjoajaOids);
                 var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
                 //When organisaatio is loaded set the liitteiden toimitusosoite on the model
                 orgPromise.then(function(data){
 
-
+                    console.log('GOT OSOITE DATA : ', data);
 
                     var hakutoimistoNotFound = true;
                     if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
+
                         angular.forEach(data.metadata.yhteystiedot,function(yhteystieto)  {
 
                             if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === "posti") {
