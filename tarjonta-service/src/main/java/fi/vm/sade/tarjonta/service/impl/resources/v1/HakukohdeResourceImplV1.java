@@ -590,6 +590,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             GeneerinenTilaTyyppi tilaTyyppi = new GeneerinenTilaTyyppi(hakukohde.getOid(), SisaltoTyyppi.HAKUKOHDE, fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
             if (publication.isValidStatusChange(tilaTyyppi)) {
                 hakukohdeDao.update(hakukohde);
+    			LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
                 solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                 solrIndexer.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
                     public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
@@ -601,7 +602,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
                 hakukohdeRDTO.setModified(today);
-                result.setResult(hakukohdeRDTO);
+                result.setResult(converter.toHakukohdeRDTO(hakukohde));
                 return result;
             } else {
                 ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
