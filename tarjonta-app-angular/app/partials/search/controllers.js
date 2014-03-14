@@ -24,19 +24,6 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
               }
             });
             
-            //käyttäjän oletusorganisaatio jos vain 1 määritelty
-            function getDefaultOrg(){
-              if(AuthService.getOrganisations()&&AuthService.getOrganisations().length==1) {
-                return AuthService.getOrganisations()[0];  
-              }
-            }
-
-            //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
-            if(getDefaultOrg() && !$routeParams.oid) {
-              selectOrg=getDefaultOrg();
-            }
-          
-
             // 1. Organisaatiohaku
             function setDefaultHakuehdot() {
                 $scope.hakuehdot = {
@@ -48,14 +35,34 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                     "skipparents": true
                 };
             }
+            setDefaultHakuehdot();
 
             if (SharedStateService.state.puut && SharedStateService.state.puut["organisaatio"].scope !== $scope) {
                 console.log("scope has changed???");
                 SharedStateService.state.puut["organisaatio"].scope = $scope;
             }
+            
+            //käyttäjän oletusorganisaatio jos vain 1 määritelty
+            function getDefaultOrg(){
+              if(AuthService.getOrganisations()&&AuthService.getOrganisations().length==1) {
+                return AuthService.getOrganisations()[0];  
+              }
+            }
 
-            setDefaultHakuehdot();
+            //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
+            if(getDefaultOrg() && !$routeParams.oid) {
+              selectOrg=getDefaultOrg();
 
+              //hae orgsit
+              OrganisaatioService.etsi({oidRestrictionList:[getDefaultOrg()]}).then(function(vastaus) {
+                  $scope.$root.tulos = vastaus.organisaatiot;
+              });
+              
+            }
+            
+            
+            
+            
             $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
                 //console.log("oppilaitostyypit", koodit);
                 angular.forEach(koodit, function(koodi) {
