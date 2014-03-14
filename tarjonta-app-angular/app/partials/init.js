@@ -1,26 +1,26 @@
 
 function tarjontaInit() {
-	
+
 	var loader = $("div#ajax-loader");
 
 	var init_counter = 0;
 	var fail = false;
-	
+
 	jQuery.support.cors = true;
-	
+
 	function initFail(id, xhr, status) {
 	    fail = true;
 	    console.log("Init failure: " + id + " -> "+status, xhr);
 	    loader.toggleClass("fail", true);
 	}
-	
+
 	function initFunction(id, xhr, status) {
 	    init_counter--;
-	
+
 	    console.log("Got ready signal from: " + id + " -> "+status+" -> IC="+init_counter/*, xhr*/);
-	
+
 	    if (!fail && init_counter == 0) {
-	    		    	
+
 	        angular.element(document).ready(function() {
 	            angular.module('myApp', ['app']);
 	            angular.bootstrap(document, ['myApp']);
@@ -28,11 +28,11 @@ function tarjontaInit() {
 	        });
 	    }
 	};
-	
+
 	 function logRequest(xhr, status) {
 		 console.log("LOG "+status+": "+xhr.status+" "+xhr.statusText, xhr);
 	 }
-	
+
 	//
 	// Get current users info (/cas/me)
 	//
@@ -51,7 +51,7 @@ function tarjontaInit() {
 	        initFail("AUTHENTICATION", xhr, status);
 	    }
 	});
-	
+
 	//
 	// Preload "tarjonta.tila"???
 	//
@@ -70,11 +70,11 @@ function tarjontaInit() {
 	        initFail("tarjonta.tila", xhr, status);
 	    }
 	});
-	
+
 	//
 	// Preload application localisations for tarjonta
 	//
-	var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=tarjonta";
+	var localisationUrl = window.CONFIG.env.tarjontaLocalisationRestUrl + "?category=tarjonta&value=cached";
 	console.log("** Loading localisation info; from: ", localisationUrl);
 	init_counter++;
 	jQuery.ajax(localisationUrl, {
@@ -90,5 +90,5 @@ function tarjontaInit() {
 	        initFail("localisations", xhr, status);
 	    }
 	});
-		
+
 }

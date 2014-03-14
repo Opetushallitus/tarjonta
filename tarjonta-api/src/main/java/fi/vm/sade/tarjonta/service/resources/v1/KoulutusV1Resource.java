@@ -18,10 +18,12 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
@@ -42,7 +44,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
@@ -69,9 +70,23 @@ public interface KoulutusV1Resource {
     @DELETE
     @Path("/{oid}")
     @ApiOperation(
-            value = "Passivoi koulutuksen annetulla koulutuksen oid:lla",
-            notes = "Operaatio passivoi koulutuksen annetulla koulutuksen oid:lla")
+            value = "Poistaa (passivoi) koulutuksen annetulla koulutuksen oid:lla",
+            notes = "Operaatio Poistaa (passivoi) koulutuksen annetulla koulutuksen oid:lla")
     public ResultV1RDTO deleteByOid(@PathParam("oid") String oid);
+
+    @POST
+    @Path("/{oid}/siirra")
+    @ApiOperation(
+            value = "Kopioi tai siirtää koulutuksen annetulla koulutuksen oid:lla",
+            notes = "Operaatio kopioi tai siirtää koulutuksen annetulla koulutuksen oid:lla")
+    public ResultV1RDTO copyOrMove(@PathParam("oid") String oid, KoulutusCopyV1RDTO koulutusCopy);
+
+    @POST
+    @Path("/siirra")
+    @ApiOperation(
+            value = "Kopioi tai siirtää monta koulutusta",
+            notes = "Operaatio kopioi tai siirtää monta koulutusta")
+    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO1 koulutusMultiCopy);
 
     @POST
     @Path("/KORKEAKOULUTUS") //TODO any koulutus really

@@ -34,7 +34,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
      */
 
     var getUserOrgs = function() {
-
+        console.log('AUTH SERVICE : ', AuthService.getUsername());
+        console.log('AUTH SERVICE FIRST NAME : ', AuthService.getFirstName);
         if (!AuthService.isUserOph())   {
 
             $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
