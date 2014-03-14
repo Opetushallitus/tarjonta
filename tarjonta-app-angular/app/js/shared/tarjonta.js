@@ -195,7 +195,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
      * @returns {undefined}
      */
-    dataFactory.koulutus = function() {
+    dataFactory.koulutus = function(oid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/KORKEAKOULUTUS/", {}, {
             update: {
                 method: 'POST',
@@ -210,6 +210,18 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             remove: {
                 url: Config.env.tarjontaRestUrlPrefix + "koulutus/:oid",
                 method: 'DELETE',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            copyAndMove: {
+                url: Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "/siirra",
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            copyAndMoveMultiple: {
+                url: Config.env.tarjontaRestUrlPrefix + "koulutus/siirra",
+                method: 'POST',
                 withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }

@@ -109,7 +109,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity {
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
         komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF));
-        komo.setTila(TarjontaTila.JULKAISTU); //is this correct state for a new komo?
+        komo.setTila(dto.getTila()); //has the same status as teh komoto 
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));

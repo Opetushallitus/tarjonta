@@ -491,6 +491,27 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 });
             };
 
+            $scope.siirraTaiKopioi = function() {
+                var modalInstance = $modal.open({
+                    templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
+                    controller: 'CopyMoveKoulutusController',
+                    resolve: {
+                        targetKoulutus: function() {
+                            return $scope.selection.koulutukset;
+                        },
+                        targetOrganisaatio: function() {
+                            return  {oid: $scope.selectedOrgOid, nimi: ''}
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function() {
+                    //$route.reload();
+                    $location.path("/");
+                }, function() { /* dismissed */
+                })
+            };
+
 
 //	
 //    

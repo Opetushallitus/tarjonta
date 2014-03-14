@@ -53,7 +53,6 @@ app.controller('PoistaKoulutusCtrl', ['$scope', 'Config', '$location', '$route',
 
                 if (authResponse.status !== 'OK') {
                     //not authenticated
-                    $scope.controlFormMessages($scope.uiModel, "ERROR", "AUTH");
                     return;
                 }
 
@@ -62,10 +61,11 @@ app.controller('PoistaKoulutusCtrl', ['$scope', 'Config', '$location', '$route',
                         $modalInstance.close(response);
                     } else {
                         if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
+                            /*
                             for (var i = 0; i < response.errors.length; i++) {
                                 $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
                             }
-
+                            */
                             $scope.model.errors.push({msg: LocalisationService.t("koulutus.poista.error.yleisvirhe", [$scope.handleNimi(targetKomoto.nimi)])});
                             $scope.model.btnDisableRemove = true;
                         }

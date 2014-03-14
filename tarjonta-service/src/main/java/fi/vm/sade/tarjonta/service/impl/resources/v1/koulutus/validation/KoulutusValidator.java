@@ -240,10 +240,8 @@ public class KoulutusValidator {
         validateKoodi(validationMessages, dto.getSuunniteltuKestoTyyppi(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING, KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_INVALID);
     }
 
-    public static ResultV1RDTO<KuvaV1RDTO> validateKoulutusKuva(KuvaV1RDTO kuva) {
-        ResultV1RDTO<KuvaV1RDTO> result = new ResultV1RDTO<KuvaV1RDTO>();
+    public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO<KuvaV1RDTO> result) {
         validateKieliUri(kuva.getKieliUri(), "kieliUri", result);
-
         String raw = kuva.getBase64data();
 
         /*
@@ -254,8 +252,6 @@ public class KoulutusValidator {
         }
 
         validateMimeType(kuva.getMimeType(), "mimeType", result);
-
-        return result;
     }
 
     public static void validateMimeType(String mimeType, final String errorInObjectfieldname, ResultV1RDTO result) {
@@ -293,9 +289,11 @@ public class KoulutusValidator {
 
     public static void validateKoulutusUpdate(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
         if (komoto == null) {
+            dto.addError(ErrorV1RDTO.createValidationError("oid", KoulutusValidationMessages.KOULUTUS_KOMOTO_MISSING.lower()));
             dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         } else if (komoto.getKoulutusmoduuli() == null) {
             dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            dto.addError(ErrorV1RDTO.createValidationError("unknown", KoulutusValidationMessages.KOULUTUS_KOMO_MISSING.lower()));
         } else {
             //check is deleted
             checkIsDeleted(komoto, dto);
