@@ -53,10 +53,13 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         			var oidList = roolit[i].match(/_[0-9\.]+$/g);
         			if(oidList && oidList.length>0) {
         				//poimi tarjonta roolit
-        				if(roolit[i].indexOf("APP_TARJONTA")==0) {
+        				if(roolit[i].indexOf("APP_TARJONTA")==0 && roolit[i].indexOf("KK")==-1) {
         					var org = oidList[0].substring(1);
-                			//console.log("adding org:", org);
-        					instance.organisaatiot.push(org);
+
+                                                if(roolit[i].indexOf('CRUD')!=-1 || roolit[i].indexOf('UPDATE')!=-1) {
+                                                  console.log("adding org:", org, roolit[i]);
+                                                  instance.organisaatiot.push(org);
+                                                }
         				}
         			}
         		}
@@ -214,12 +217,12 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         },
 
         /**
-         * Palauttaa käyttäjän organisaatiot ('TARJONTA-APP')
+         * Palauttaa käyttäjän organisaatiot ('TARJONTA-APP') joihin muokkaus/luontioikeudet
          */
         getOrganisations: function(){
         	//TODO palauta kopio?
         	return MyRolesModel.organisaatiot;
-        }
+        },
 
     };
 });
