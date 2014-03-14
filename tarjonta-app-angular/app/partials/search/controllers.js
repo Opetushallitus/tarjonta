@@ -8,7 +8,6 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             //organisaation vaihtuessa suoritettavat toimenpiteet
             $scope.$watch("selectedOrgOid", function(newObj, oldObj) {
               if(newObj) {
-                console.log("ORG CHANGED!!!");
                 //päivitä permissio
                 PermissionService.koulutus.canCreate(newObj).then(function(data) {
                   $scope.koulutusActions.canCreateKoulutus = data;
@@ -22,9 +21,8 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 updateLocation();
 
               });
-
               }
-            })
+            });
             
             //käyttäjän oletusorganisaatio jos vain 1 määritelty
             function getDefaultOrg(){
@@ -540,31 +538,4 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 })
             };
 
-
-//	
-//    
-//    $scope.tutkintoDialogModel = {};
-//	
-//	$scope.tutkintoDialogModel.open = function() {
-//		
-//			var modalInstance = $modal.open({
-//				scope: $scope,
-//				templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-//				controller: 'SelectTutkintoOhjelmaController'
-//			});
-//		
-//			modalInstance.result.then(function(selectedItem) {
-//				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-//				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
-//				if (selectedItem.koodiUri != null) {
-//					$window.location.href = '#/koulutus/edit/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
-//				} 
-//			}, function() {
-//				$scope.tutkintoDialogModel.selected = null;
-//				console.log('Cancel, dialog closed');
-//			});
-//	};
-
-        })
-        
-        ;
+        });
