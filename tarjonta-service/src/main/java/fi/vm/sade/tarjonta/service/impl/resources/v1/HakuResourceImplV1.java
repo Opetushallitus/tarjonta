@@ -218,31 +218,31 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     // POST /haku/OID
     @Override
-    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO haku) {
-        LOG.info("updateHaku() - {}", haku);
-        permissionChecker.checkUpdateHaku(haku != null ? haku.getOid() : null);
+    public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO hakuDto) {
+        LOG.info("updateHaku() - {}", hakuDto);
+        permissionChecker.checkUpdateHaku(hakuDto != null ? hakuDto.getOid() : null);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
         // result.setResult(haku);
 
         try {
-            boolean isNew = isEmpty(haku.getOid());
+            boolean isNew = isEmpty(hakuDto.getOid());
 
             Haku hakuToUpdate = null;
 
             if (isNew) {
                 // Generate new OID for haku to be created
-                haku.setOid(oidService.get(TarjontaOidType.HAKU));
-                LOG.info("updateHakue() - NEW haku!");
+                hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
+                LOG.info("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
             }
 
             if (!isNew) {
-                LOG.info("updateHaku() - find by oid");
+                LOG.info("updateHaku() - OLD haku - find by oid");
 
                 // Check is haku exists
-                hakuToUpdate = hakuDAO.findByOid(haku.getOid());
+                hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
                 if (hakuToUpdate == null) {
-                    result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", haku.getOid()));
+                    result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
                     return result;
                 }
@@ -251,13 +251,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             LOG.info("updateHaku() - validate");
 
             // 1. Server side validate, returns false if validation fails
-            if (!validateHaku(haku, result)) {
+            if (!validateHaku(hakuDto, result)) {
                 return result;
             }
 
             LOG.info("updateHaku() - convert");
 
-            hakuToUpdate = _converter.convertHakuV1DRDTOToHaku(haku, hakuToUpdate);
+            hakuToUpdate = _converter.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
 
             if (isNew) {
                 LOG.info("updateHaku() - insert");
@@ -270,7 +270,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             LOG.info("updateHaku() - make whopee!");
 
             // Convert to DTO - reload to get hakuaika id's for example
-            hakuToUpdate = hakuDAO.findByOid(haku.getOid());
+            hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
             result.setResult(_converter.fromHakuToHakuRDTO(hakuToUpdate, false));
 
             result.setStatus(ResultV1RDTO.ResultStatus.OK);

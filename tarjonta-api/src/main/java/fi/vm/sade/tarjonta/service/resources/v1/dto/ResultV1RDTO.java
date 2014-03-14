@@ -214,4 +214,28 @@ public class ResultV1RDTO<T> implements Serializable {
         this._params = _params;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName());
+        sb.append("[status=");
+        sb.append(getStatus() != null ? getStatus().name() : "null");
+        sb.append(", errors=[");
+        if (hasErrors()) {
+            for (ErrorV1RDTO errorV1RDTO : _errors) {
+                sb.append(errorV1RDTO.toString());
+                sb.append(", ");
+            }
+        }
+        sb.append("], result=");
+        sb.append(getResult() != null ? getResult().toString() : "null");
+        sb.append("]");
+        return sb.toString();
+    }
+
+
+
+
+
+
 }
