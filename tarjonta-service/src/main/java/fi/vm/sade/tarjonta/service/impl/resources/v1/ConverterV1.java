@@ -172,7 +172,10 @@ public class ConverterV1 {
 
         if (haku == null) {
             haku = new Haku();
-            haku.setOid(oidService.get(TarjontaOidType.HAKU));
+
+            if (hakuV1RDTO.getOid() == null) {
+                hakuV1RDTO.setOid(oidService.get(TarjontaOidType.HAKU));
+            }
         }
 
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
@@ -187,6 +190,9 @@ public class ConverterV1 {
         haku.setKoulutuksenAlkamiskausiUri(hakuV1RDTO.getKoulutuksenAlkamiskausiUri());
         haku.setKoulutuksenAlkamisVuosi(hakuV1RDTO.getKoulutuksenAlkamisVuosi());
         haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
+        if (hakuV1RDTO.getTila() == null) {
+            hakuV1RDTO.setTila(TarjontaTila.LUONNOS.name());
+        }
         haku.setTila(TarjontaTila.valueOf(hakuV1RDTO.getTila()));
         haku.setNimi(convertMapToMonikielinenTeksti(hakuV1RDTO.getNimi()));
         haku.setMaxHakukohdes(hakuV1RDTO.getMaxHakukohdes());
