@@ -2,9 +2,9 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService',
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function BaseEditController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
-                    $window, converter, koodisto, $modal, PermissionService, dialogService) {
+                    $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -127,7 +127,20 @@ app.controller('BaseEditController',
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
+
+
                 };
+
+                $scope.canSaveAsLuonnos = function() {
+
+                    if ($scope.uiModel.isMutable) {
+                        return $scope.uiModel.isMutable;
+                    }
+                    return CommonUtilService.canSaveAsLuonnos($scope.model.tila);
+                    return true;
+
+                }
+
 
                 $scope.getLisatietoKielet = function() {
                     for (var i in $scope.uiModel.opetuskielis.uris) {
