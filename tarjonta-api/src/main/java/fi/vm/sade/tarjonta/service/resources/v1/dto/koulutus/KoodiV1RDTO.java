@@ -196,14 +196,15 @@ public class KoodiV1RDTO implements Serializable {
 
     @Override
     public String toString() {
-        return super.toString() + " "
-                + this.kieliUri + ","
-                + this.kieliVersio + ","
-                + this.kieliArvo + ","
-                + this.kieliKaannos + ","
-                + this.uri + ","
-                + this.versio + ","
-                + this.arvo + ","
-                + this.nimi;
+        return this.getClass().getSimpleName() +
+                "[kieliUri="  + this.kieliUri +
+                ", kieliVersio=" + this.kieliVersio +
+                ", kieliArvi=" + this.kieliArvo +
+                ", kieliKaannos=" + this.kieliKaannos +
+                ", uri=" + this.uri +
+                ", version=" + this.versio +
+                ", arvo=" + this.arvo +
+                ", nimi=" + this.nimi +
+                "]";
     }
 }

@@ -121,7 +121,9 @@ public class PermissionChecker {
 
         List<KoulutusmoduuliToteutus> komot = new ArrayList<KoulutusmoduuliToteutus>();
         for (String komotoOid : komotoOids) {
-            komot.add(koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid));
+        	KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid);
+        	Preconditions.checkArgument(komoto!=null, "No such komoto: %s", komotoOid);
+            komot.add(komoto);
         }
 
         if (komot.size() > 0) {
