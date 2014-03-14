@@ -592,6 +592,10 @@ public class ConverterV1 {
 
             for (String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
                 OrganisaatioDTO org = organisaatioService.findByOid(tarjoajaOid);
+                
+                if (org==null) {
+                	continue;
+                }
 
                 for (fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti text : org.getNimi().getTeksti()) {
                     //TODO: Maybe should return kieli uri instead :)
@@ -679,9 +683,7 @@ public class ConverterV1 {
             hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
         }
 
-        if (hakukohdeRDTO.getKaksoisTutkinto() != null) {
-            hakukohde.setKaksoisTutkinto(hakukohdeRDTO.getKaksoisTutkinto());
-        }
+        hakukohde.setKaksoisTutkinto(hakukohdeRDTO.getKaksoisTutkinto());
 
         if (hakukohdeRDTO.getHakukohteenNimiUri() != null) {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
