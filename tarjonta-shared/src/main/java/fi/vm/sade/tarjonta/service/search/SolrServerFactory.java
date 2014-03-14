@@ -1,10 +1,12 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpResponse;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,6 +48,15 @@ public class SolrServerFactory implements InitializingBean {
             }
             
         };
+
+        httpclient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+            
+            public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+                return 0;
+            }
+            
+        });
+
         
         return new HttpSolrServer(url, httpclient);
     }
