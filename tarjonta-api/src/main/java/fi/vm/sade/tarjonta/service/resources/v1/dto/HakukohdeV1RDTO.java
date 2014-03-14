@@ -13,10 +13,12 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 @ApiModel(value = "V1 Hakukohde REST-api model, used by KK-ui")
 public class HakukohdeV1RDTO extends BaseV1RDTO {
 
-    private String hakukohteenNimi;
+	private static final long serialVersionUID = 1L;
+	
+	private String hakukohteenNimi;
     private String hakukohteenNimiUri;
     @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=false)
-    private HashMap<String,String> hakukohteenNimet;
+    private Map<String,String> hakukohteenNimet;
     private Map<String,String> tarjoajaNimet;
     private Set<String> tarjoajaOids;
     @ApiModelProperty(value = "Hakukohde's haku's oid",required = true)
@@ -42,10 +44,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String valintaperustekuvausKoodiUri;
     private Date liitteidenToimitusPvm;
     private String ulkoinenTunniste;
-    private HashMap<String,String> lisatiedot;
-    private HashMap<String,String> valintaperusteKuvaukset;
-    private HashMap<String,String> soraKuvaukset;
-    private HashMap<String,String> hakukelpoisuusVaatimusKuvaukset;
+    private Map<String,String> lisatiedot;
+    private Map<String,String> valintaperusteKuvaukset;
+    private Map<String,String> soraKuvaukset;
+    private Map<String,String> hakukelpoisuusVaatimusKuvaukset;
     private boolean kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
@@ -288,32 +290,32 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
     }
 
-    public HashMap<String, String> getHakukohteenNimet() {
+    public Map<String, String> getHakukohteenNimet() {
         return hakukohteenNimet;
     }
 
-    public void setHakukohteenNimet(HashMap<String, String> hakukohteenNimet) {
+    public void setHakukohteenNimet(Map<String, String> hakukohteenNimet) {
         this.hakukohteenNimet = hakukohteenNimet;
     }
 
 
-    public HashMap<String, String> getLisatiedot() {
+    public Map<String, String> getLisatiedot() {
         return lisatiedot;
     }
 
-    public void setLisatiedot(HashMap<String, String> lisatiedot) {
+    public void setLisatiedot(Map<String, String> lisatiedot) {
         this.lisatiedot = lisatiedot;
     }
 
-    public HashMap<String, String> getValintaperusteKuvaukset() {
+    public Map<String, String> getValintaperusteKuvaukset() {
         return valintaperusteKuvaukset;
     }
 
-    public void setValintaperusteKuvaukset(HashMap<String, String> valintaperusteKuvaukset) {
+    public void setValintaperusteKuvaukset(Map<String, String> valintaperusteKuvaukset) {
         this.valintaperusteKuvaukset = valintaperusteKuvaukset;
     }
 
-    public HashMap<String, String> getSoraKuvaukset() {
+    public Map<String, String> getSoraKuvaukset() {
         return soraKuvaukset;
     }
 
@@ -329,11 +331,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakuaikaId = hakuaikaId;
     }
 
-    public HashMap<String, String> getHakukelpoisuusVaatimusKuvaukset() {
+    public Map<String, String> getHakukelpoisuusVaatimusKuvaukset() {
         return hakukelpoisuusVaatimusKuvaukset;
     }
 
-    public void setHakukelpoisuusVaatimusKuvaukset(HashMap<String, String> hakukelpoisuusVaatimusKuvaukset) {
+    public void setHakukelpoisuusVaatimusKuvaukset(Map<String, String> hakukelpoisuusVaatimusKuvaukset) {
         this.hakukelpoisuusVaatimusKuvaukset = hakukelpoisuusVaatimusKuvaukset;
     }
 
