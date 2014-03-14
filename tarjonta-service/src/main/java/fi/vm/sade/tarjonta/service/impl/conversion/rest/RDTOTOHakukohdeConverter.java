@@ -1,20 +1,28 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
+import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /*
 * @author: Tuomas Katva 10/14/13
@@ -48,7 +56,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
         if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
            //hakukohde.setHakukohdeMonikielinenNimi(convertTekstiRDTOToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
-            hakukohde.setHakukohdeMonikielinenNimi(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
+            hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
         }
         if (hakukohdeRDTO.getHakukohteenNimiUri() != null) {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
@@ -62,17 +70,17 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
         if (hakukohdeRDTO.getValintaperusteKuvaukset() != null) {
-        hakukohde.setValintaperusteKuvaus(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getValintaperusteKuvaukset()));
+        hakukohde.setValintaperusteKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getValintaperusteKuvaukset()));
         }
         if (hakukohdeRDTO.getSoraKuvaukset() != null) {
-        hakukohde.setSoraKuvaus(convertHashMapToMonikielinenTeksti(hakukohdeRDTO.getSoraKuvaukset()));
+        hakukohde.setSoraKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getSoraKuvaukset()));
         }
         hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo());
         hakukohde.setAlinValintaPistemaara(hakukohdeRDTO.getAlinValintaPistemaara());
         hakukohde.setYlinValintaPistemaara(hakukohdeRDTO.getYlinValintapistemaara());
 
         if (hakukohdeRDTO.getLisatiedot() != null){
-            hakukohde.setLisatiedot(convertStringHashMapToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
+            hakukohde.setLisatiedot(convertMapToMonikielinenTeksti(hakukohdeRDTO.getLisatiedot()));
         }
 
         if (hakukohdeRDTO.getHakukelpoisuusvaatimusUris() != null) {
@@ -142,23 +150,11 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
         return valintakoeAjankohtas;
     }
 
-    private MonikielinenTeksti convertHashMapToMonikielinenTeksti(HashMap<String,String> nimet) {
-        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
-        for(String key : nimet.keySet()) {
-            TekstiKaannos tekstiKaannos = new TekstiKaannos(monikielinenTeksti,key,nimet.get(key));
-            monikielinenTeksti.addTekstiKaannos(tekstiKaannos);
-        }
-        return monikielinenTeksti;
-    }
-
-    private MonikielinenTeksti convertStringHashMapToMonikielinenTeksti(HashMap<String,String> tekstis) {
+    private MonikielinenTeksti convertMapToMonikielinenTeksti(Map<String,String> tekstis) {
 
         MonikielinenTeksti teksti = new MonikielinenTeksti();
-
         for(String key : tekstis.keySet()) {
-
             teksti.addTekstiKaannos(key,tekstis.get(key));
-
         }
 
         return teksti;
