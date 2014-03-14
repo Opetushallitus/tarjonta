@@ -465,6 +465,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakukohdeKoulutusOids());
         Date today = new Date();
         List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+/*
 
         if(hakukohdeRDTO.getUlkoinenTunniste() != null && hakukohdeRDTO.getUlkoinenTunniste().length() > 0) {
 
@@ -477,6 +478,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
 
         }
+*/
 
 
 
