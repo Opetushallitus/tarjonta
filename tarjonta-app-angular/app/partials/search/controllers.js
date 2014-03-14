@@ -197,7 +197,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             };
 
             $scope.$watch('selection.koulutukset', function(newObj, oldObj) {
-                if (!newObj || newObj.length == 0) {
+                if (!newObj || newObj.length == 0 || newObj.length > 1) {
                     //mitään ei valittuna
                     $scope.koulutusActions.canMoveOrCopy = false;
                     $scope.koulutusActions.canCreateHakukohde = false;
@@ -492,27 +492,46 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             };
 
             $scope.siirraTaiKopioi = function() {
+                var komotoOid = $scope.selection.koulutukset[0]; //single select
+                var koulutusNimi;
+                var organisaatioNimi;
+
+                var stop = false;
+                for (var i = 0; i < $scope.koulutusResults.tulokset.length; i++) {
+                    var org = $scope.koulutusResults.tulokset;
+
+                    for (var c = 0; c < org[i].tulokset.length; c++) {
+                        if (komotoOid === org[i].tulokset[c].oid) {
+                            koulutusNimi = org[i].tulokset[c].nimi;
+                            stop = true;
+                            break;
+                        }
+                    }
+
+                    if (stop) {
+                        break;
+                    }
+
+                }
+
                 var modalInstance = $modal.open({
                     templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
                     controller: 'CopyMoveKoulutusController',
                     resolve: {
                         targetKoulutus: function() {
-                            return $scope.selection.koulutukset;
+                            return  [{oid: komotoOid, nimi: koulutusNimi}]
                         },
                         targetOrganisaatio: function() {
-                            return  {oid: $scope.selectedOrgOid, nimi: ''}
+                            return  {oid: $scope.selectedOrgOid, nimi: organisaatioNimi}
                         }
                     }
                 });
 
                 modalInstance.result.then(function() {
                     //$route.reload();
-                    $location.path("/");
                 }, function() { /* dismissed */
                 })
             };
-
-
 //	
 //    
 //    $scope.tutkintoDialogModel = {};
