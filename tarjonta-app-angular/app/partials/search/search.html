@@ -44,7 +44,7 @@
 
         <div class="title">
             <span>{{selectedOrgName}}</span>
-            <a href="" ng-click="clearOrg()">[{{t('tarjonta.haku.poistaOrgValinta')}}]</a>
+            <a ng-show="organisaatioValittu()"  href="" ng-click="clearOrg()">[<span tt="tarjonta.haku.poistaOrgValinta">Poista organisaatiovalinta</span>]</a><a ng-show="!organisaatioValittu()"  href="" ng-click="setDefaultOrg()">[<span tt="tarjonta.haku.palautaOletusOrgValinta">Palauta oletus org valinta</span>]</a>
         </div>
 
         <table class="spec">

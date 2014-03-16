@@ -130,6 +130,7 @@ public class KoodistoURI {
     public static String KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI;
 
     public static final String PATTERN_KIELI_URI = "^%s_[a-z]{2}$";
+    public static final String PATTERN_KAUSI_URI = "^kausi_(k|s)$";
 
     @Value("${koodisto-uris.vapaaSivistys:haunkohdejoukko_18#1}")
     public void setKoodiKohdejoukkoVapaaSivistysUri(String uri) {
@@ -415,4 +416,12 @@ public class KoodistoURI {
                 KOODISTO_KIELI_URI),
                 kieliUri);
     }
+
+    public static boolean isValidKausiUri(String kausiUri) {
+        if (kausiUri == null || kausiUri.isEmpty()) {
+            return false;
+        }
+        return Pattern.matches(PATTERN_KAUSI_URI, kausiUri);
+    }
+
 }
