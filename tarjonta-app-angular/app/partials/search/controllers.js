@@ -8,7 +8,6 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             //organisaation vaihtuessa suoritettavat toimenpiteet
             $scope.$watch("selectedOrgOid", function(newObj, oldObj) {
               if(newObj) {
-                console.log("ORG CHANGED!!!");
                 //päivitä permissio
                 PermissionService.koulutus.canCreate(newObj).then(function(data) {
                   $scope.koulutusActions.canCreateKoulutus = data;
@@ -22,23 +21,9 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 updateLocation();
 
               });
-
               }
-            })
+            });
             
-            //käyttäjän oletusorganisaatio jos vain 1 määritelty
-            function getDefaultOrg(){
-              if(AuthService.getOrganisations()&&AuthService.getOrganisations().length==1) {
-                return AuthService.getOrganisations()[0];  
-              }
-            }
-
-            //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
-            if(getDefaultOrg() && !$routeParams.oid) {
-              selectOrg=getDefaultOrg();
-            }
-          
-
             // 1. Organisaatiohaku
             function setDefaultHakuehdot() {
                 $scope.hakuehdot = {
@@ -50,14 +35,34 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                     "skipparents": true
                 };
             }
+            setDefaultHakuehdot();
 
             if (SharedStateService.state.puut && SharedStateService.state.puut["organisaatio"].scope !== $scope) {
                 console.log("scope has changed???");
                 SharedStateService.state.puut["organisaatio"].scope = $scope;
             }
 
-            setDefaultHakuehdot();
+            //käyttäjän oletusorganisaatio jos vain 1 määritelty
+            function getDefaultOrg(){
+              if(AuthService.getOrganisations()&&AuthService.getOrganisations().length==1) {
+                return AuthService.getOrganisations()[0];  
+              }
+            }
 
+            //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
+            if(getDefaultOrg() && !$routeParams.oid) {
+              selectOrg=getDefaultOrg();
+
+              //hae orgsit
+              OrganisaatioService.etsi({oidRestrictionList:[getDefaultOrg()]}).then(function(vastaus) {
+                  $scope.$root.tulos = vastaus.organisaatiot;
+              });
+              
+            }
+            
+            
+            
+            
             $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
                 //console.log("oppilaitostyypit", koodit);
                 angular.forEach(koodit, function(koodi) {
@@ -116,7 +121,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                     $scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
                 });
             };
-            
+
             $scope.setDefaultOrg = function(){
               $scope.selectedOrgOid=getDefaultOrg();
             }
@@ -211,7 +216,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             $scope.clearOrg = function() {
                 $scope.selectedOrgOid = OPH_ORG_OID;
             }
-            
+
             $scope.reset = function() {
                 $scope.spec.terms = "";
                 $scope.spec.state = "*";
@@ -225,7 +230,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             };
 
             $scope.$watch('selection.koulutukset', function(newObj, oldObj) {
-                if (!newObj || newObj.length == 0) {
+                if (!newObj || newObj.length == 0 || newObj.length > 1) {
                     //mitään ei valittuna
                     $scope.koulutusActions.canMoveOrCopy = false;
                     $scope.koulutusActions.canCreateHakukohde = false;
@@ -367,7 +372,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
 
             $scope.luoKoulutusDisabled = function() {
                 var disabled = !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
-    	//console.log("luoKoulutusDisabled, organisaatioValittu:", $scope.organisaatioValittu(), "canCreateKoulutus:", $scope.koulutusActions.canCreateKoulutus);
+//    	console.log("luoKoulutusDisabled, organisaatioValittu:", $scope.organisaatioValittu(), "canCreateKoulutus:", $scope.koulutusActions.canCreateKoulutus);
                 return disabled;
             };
 
@@ -520,51 +525,43 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             };
 
             $scope.siirraTaiKopioi = function() {
+                var komotoOid = $scope.selection.koulutukset[0]; //single select
+                var koulutusNimi;
+                var organisaatioNimi;
+
+                var stop = false;
+                for (var i = 0; i < $scope.koulutusResults.tulokset.length; i++) {
+                    var org = $scope.koulutusResults.tulokset;
+
+                    for (var c = 0; c < org[i].tulokset.length; c++) {
+                        if (komotoOid === org[i].tulokset[c].oid) {
+                            koulutusNimi = org[i].tulokset[c].nimi;
+                            stop = true;
+                            break;
+                        }
+                    }
+
+                    if (stop) {
+                        break;
+                    }
+
+                }
+
                 var modalInstance = $modal.open({
                     templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
                     controller: 'CopyMoveKoulutusController',
                     resolve: {
                         targetKoulutus: function() {
-                            return $scope.selection.koulutukset;
+                            return  [{oid: komotoOid, nimi: koulutusNimi}]
                         },
                         targetOrganisaatio: function() {
-                            return  {oid: $scope.selectedOrgOid, nimi: ''}
+                            return  {oid: $scope.selectedOrgOid, nimi: organisaatioNimi}
                         }
                     }
                 });
-
-                modalInstance.result.then(function() {
-                    //$route.reload();
-                    $location.path("/");
+                modalInstance.result.then(function() {/* close */
                 }, function() { /* dismissed */
                 })
             };
 
-
-//	
-//    
-//    $scope.tutkintoDialogModel = {};
-//	
-//	$scope.tutkintoDialogModel.open = function() {
-//		
-//			var modalInstance = $modal.open({
-//				scope: $scope,
-//				templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-//				controller: 'SelectTutkintoOhjelmaController'
-//			});
-//		
-//			modalInstance.result.then(function(selectedItem) {
-//				console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-//				console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
-//				if (selectedItem.koodiUri != null) {
-//					$window.location.href = '#/koulutus/edit/' + $scope.selectedOrgOid + '/' + selectedItem.koodiArvo + '/';
-//				} 
-//			}, function() {
-//				$scope.tutkintoDialogModel.selected = null;
-//				console.log('Cancel, dialog closed');
-//			});
-//	};
-
-        })
-        
-        ;
+        });
