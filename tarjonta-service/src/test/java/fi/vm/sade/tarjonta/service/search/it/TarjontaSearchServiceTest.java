@@ -126,7 +126,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Before
     @Override
     public void before() {
-        
+
         try {
             Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("oid-komo");
             Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("oid-komoto");
@@ -134,7 +134,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        
+
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
         try {
             clearIndex(solrServerFactory.getOrganisaatioSolrServer());
@@ -188,7 +188,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         super.before();
     }
-    
+
     @Override
     @After
     public void after() {
@@ -469,7 +469,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     }
 
-    private void stubKoodi(KoodiService koodiService, String uri, String arvo) {
+    public static void stubKoodi(KoodiService koodiService, String uri, String arvo) {
         List<KoodiType> vastaus = Lists.newArrayList(getKoodiType(uri, arvo));
         Mockito.stub(
                 koodiService.searchKoodis(Matchers
@@ -477,7 +477,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                         vastaus);
     }
 
-    private KoodiType getKoodiType(String uri, String arvo) {
+    public static KoodiType getKoodiType(String uri, String arvo) {
         KoodiType kt = new KoodiType();
         kt.setKoodiArvo(arvo);
         kt.setKoodiUri(uri);
@@ -487,14 +487,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return kt;
     }
 
-    private KoodiMetadataType getKoodiMeta(String arvo, KieliType kieli) {
+    public static KoodiMetadataType getKoodiMeta(String arvo, KieliType kieli) {
         KoodiMetadataType type = new KoodiMetadataType();
         type.setKieli(kieli);
         type.setNimi(arvo + "-nimi-" + kieli.toString());
         return type;
     }
 
-    private static class KoodistoCriteriaMatcher implements
+    public static class KoodistoCriteriaMatcher implements
             Matcher<SearchKoodisCriteriaType> {
 
         private String uri;
