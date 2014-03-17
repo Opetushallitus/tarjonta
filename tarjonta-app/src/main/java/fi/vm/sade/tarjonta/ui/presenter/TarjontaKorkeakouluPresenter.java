@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.presenter;
 
-import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioPerustietoType;
 import fi.vm.sade.tarjonta.service.types.*;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
@@ -28,12 +27,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.SelectedOrgModel;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.helper.RegexModelFilter;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.helper.conversion.KorkeakouluConverter;
@@ -42,7 +41,6 @@ import fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusKoodistoConverter;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KorkeakouluPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.kk.KoulutuskoodiRowModel;
-import fi.vm.sade.tarjonta.ui.model.koulutus.kk.TutkintoohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.EditKorkeakouluPerustiedotView;
@@ -53,6 +51,13 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseKoulutusDialog;
 import fi.vm.sade.tarjonta.ui.view.koulutus.kk.ValitseTutkintoohjelmaDialog;
 import java.util.List;
 import java.util.Locale;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -189,11 +194,19 @@ public class TarjontaKorkeakouluPresenter {
         public void initKomo(String parameters) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
+
+        @Override
+        @SOAPBinding(parameterStyle = ParameterStyle.BARE)
+        @WebResult(name = "haeOidVastaus", targetNamespace = "http://service.tarjonta.sade.vm.fi/types", partName = "parameters")
+        @WebMethod
+        public String haeOid(
+                @WebParam(partName = "parameters", name = "haeOid", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") String parameters) {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
     private static transient final Logger LOG = LoggerFactory.getLogger(TarjontaKorkeakouluPresenter.class);
     private static transient final String URI_LANG_FI = "kieli_fi";
-    @Autowired(required = true)
-    protected OIDService oidService;
     private TarjontaAdminService tarjontaAdminService = new FakeTarjontaAdminService();
     @Autowired(required = true)
     private TarjontaPublicService tarjontaPublicService;
@@ -228,7 +241,7 @@ public class TarjontaKorkeakouluPresenter {
      * @throws ExceptionMessage
      * @return komo oid
      */
-    public void saveKoulutus(SaveButtonState tila) throws ExceptionMessage {
+    public void saveKoulutus(SaveButtonState tila) throws OidCreationException {
 
         LOG.debug("in saveKoulutus, tila : {}", tila);
         /**

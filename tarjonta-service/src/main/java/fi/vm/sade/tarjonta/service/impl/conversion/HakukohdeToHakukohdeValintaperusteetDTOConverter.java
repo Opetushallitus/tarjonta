@@ -342,7 +342,7 @@ public class HakukohdeToHakukohdeValintaperusteetDTOConverter extends BaseRDTOCo
         t.setModified(s.getLastUpdateDate());
         t.setModifiedBy(s.getLastUpdatedByOid());
 
-        t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm() != null ? s.getValintojenAloituspaikatLkm() : 0);
+        t.setValintojenAloituspaikatLkm(s.getValintojenAloituspaikatLkm());
 
 
         // Opetuskielet

@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.authentication.service.types.dto.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import net.sf.ehcache.CacheManager;
 
@@ -132,6 +132,33 @@ public class TarjontaUIHelper {
         }
     }
 
+    public HenkiloFatType getFatHenkiloWithOid(String fatOid) {
+
+        return userService.findByOid(fatOid);
+
+    }
+
+    public String tryGetViimPaivittaja(String viimPaivittajaOid) {
+        try {
+            String userName = null;
+            if(viimPaivittajaOid!=null) {
+                HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+
+                if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
+                    userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
+                } else {
+                    userName = henkilo.getKayttajatiedot().getUsername();
+                }
+                return userName;
+            }
+        } catch (Exception exp) {
+
+            //log.warn("Unable to get user with oid : {} exception : {}", viimPaivittajaOid, exp.toString());
+        }
+
+        //fall back to viimPaivittajaOid
+        return _i18n.getMessage("tuntematon.kayttaja");
+    }
     /**
      * Splits koodiUri to URI and Version. Default version for those uris
      * without version information is "-1".
@@ -700,6 +727,22 @@ public class TarjontaUIHelper {
         return teksti;
     }
 
+
+
+    public static String getYhteystietoFromHenkiloType(HenkiloFatType henkiloFatType, YhteystiedotTyyppiType yhteystietoTyyppi) {
+        String sahkoposti = null;
+        if (henkiloFatType.getOrganisaatioHenkilos() != null) {
+        for(YhteystiedotRyhmaType yhteystiedotRyhmaType : henkiloFatType.getOrganisaatioHenkilos().get(0).getYhteystiedotRyhma()) {
+            for (HenkiloYhteystiedotType henkiloYhteystiedotType : yhteystiedotRyhmaType.getHenkiloYhteystiedot()) {
+                if(henkiloYhteystiedotType.getYhteystiedotTyyppi().equals(yhteystietoTyyppi)) {
+                    sahkoposti = henkiloYhteystiedotType.getYhteystiedotArvo();
+                }
+            }
+        }
+        }
+        return sahkoposti;
+    }
+
     /**
      * Avaimet mapin avaimet: fi, sv, en
      * @param locale
@@ -721,10 +764,11 @@ public class TarjontaUIHelper {
         return null;
     }
 
-    public String findUserWithOid(String oid) {
+    public String findUsernameWithOid(String oid) {
         if (oid != null) {
             HenkiloType henkiloType = userService.findByOid(oid);
-            return henkiloType.getKayttajatunnus();
+            return henkiloType.getKayttajatiedot().getUsername();
+
         } else {
             return "";
         }
@@ -990,6 +1034,22 @@ public class TarjontaUIHelper {
         return result;
     }
 
+    private KoodiUriAndVersioType getLatestKoodiNimiAndVersion(String koodiUri) {
+
+
+        String justUri = getKoodiURI(koodiUri);
+        KoodiUriAndVersioType result = new KoodiUriAndVersioType();
+        List<KoodiType> koodis = this.getKoodis(justUri);
+        if (koodis != null && koodis.size() > 0) {
+            result.setKoodiUri(justUri);
+
+            result.setVersio(koodis.get(koodis.size() - 1).getVersio());
+        }
+
+
+        return result;
+    }
+
     /**
      * Get koodisto koodi relations.
      *     
@@ -1010,10 +1070,13 @@ public class TarjontaUIHelper {
         }
 
         // Convert Koodi URI to API type
+        //TUOMAS
         KoodiUriAndVersioType koodiUriAndVersioType = getKoodiUriAndVersioByKoodiUri(koodiUri);
+        //KoodiUriAndVersioType koodiUriAndVersioType = getLatestKoodiNimiAndVersion(koodiUri);
 
         // Get relations and filter only wanted koodisto koodis
         List<KoodiType> resultKoodis = _koodiService.listKoodiByRelation(koodiUriAndVersioType, alaKoodi, suhdeTyyppi);
+
         for (KoodiType koodiType : resultKoodis) {
 
             if (koodistoUri == null || koodiType.getKoodisto().getKoodistoUri().equals(koodistoUri)) {
@@ -1087,6 +1150,7 @@ public class TarjontaUIHelper {
 
             KoodiUriAndVersioType result = new KoodiUriAndVersioType();
             result.setKoodiUri(kt.getKoodiUri());
+
             result.setVersio(kt.getVersio());
 
             return result;

@@ -59,9 +59,8 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
             hakukohdeRDTO.setAlinValintaPistemaara(hakukohde.getAlinValintaPistemaara());
         }
 
-        if (hakukohde.getValintojenAloituspaikatLkm() != null) {
-            hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
-        }
+        hakukohdeRDTO.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
+
         if (hakukohde.getYlinValintaPistemaara() != null) {
             hakukohdeRDTO.setYlinValintapistemaara(hakukohde.getYlinValintaPistemaara());
         }

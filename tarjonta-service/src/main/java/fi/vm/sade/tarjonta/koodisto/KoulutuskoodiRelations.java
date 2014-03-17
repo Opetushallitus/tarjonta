@@ -80,7 +80,7 @@ public class KoulutuskoodiRelations<T extends KoulutusmoduuliStandardRelationV1R
         dto.setKoulutuskoodi(singleKoodi(koulutuskoodiUri, FieldNames.KOULUTUSKOODI, locale, showMeta));
 
         for (KoodiType type : koodistoRelations) {
-            LOG.info("KOODISTO : " + type.getKoodisto().getKoodistoUri());
+            //LOG.trace("KOODISTO : " + type.getKoodisto().getKoodistoUri());
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
                 dto.setKoulutusala(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUSALA, locale, showMeta));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI)) {

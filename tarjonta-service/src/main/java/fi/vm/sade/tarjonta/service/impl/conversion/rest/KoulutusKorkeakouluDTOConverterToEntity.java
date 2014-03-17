@@ -17,11 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -29,6 +25,8 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
@@ -41,6 +39,7 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -50,12 +49,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Jani Wilén
  */
-public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainConverter<KoulutusKorkeakouluV1RDTO, KoulutusmoduuliToteutus> {
+@Component
+public class KoulutusKorkeakouluDTOConverterToEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusKorkeakouluDTOConverterToEntity.class);
     @Autowired(required = true)
@@ -65,13 +66,13 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
     private final KoodistoURI koodistoUri = new KoodistoURI();
 
-    @Override
-    public KoulutusmoduuliToteutus convert(KoulutusKorkeakouluV1RDTO dto) {
+    public KoulutusmoduuliToteutus convert(final KoulutusKorkeakouluV1RDTO dto, final String userOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
@@ -86,9 +87,10 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
             //insert new komo&komoto data to database.
             komoto.setKoulutusmoduuli(komo);
             try {
-                komo.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-                komoto.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-            } catch (ExceptionMessage ex) {
+                komo.setOid(oidService.get(TarjontaOidType.KOMO));
+                komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
+            } catch (OIDCreationException ex) {
+                //XXX Should signal error!
                 LOG.error("OIDService failed!", ex);
             }
         }
@@ -107,7 +109,7 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         komo.setKoulutusala(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA));
         komo.setOpintoala(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
         komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF));
-        komo.setTila(TarjontaTila.JULKAISTU); //is this correct state for a new komo?
+        komo.setTila(dto.getTila()); //has the same status as teh komoto 
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
@@ -167,6 +169,8 @@ public class KoulutusKorkeakouluDTOConverterToEntity extends AbstractToDomainCon
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
         komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
+
+        komoto.setLastUpdatedByOid(userOid);
         return komoto;
     }
 

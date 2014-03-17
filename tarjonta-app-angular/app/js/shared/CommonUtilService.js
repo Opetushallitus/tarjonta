@@ -3,6 +3,35 @@ var app = angular.module('CommonUtilServiceModule', ['ngResource','config']);
 
 app.service('CommonUtilService',function($resource, $log,$q, Config,OrganisaatioService){
 
+    var julkaistuVal = "JULKAISTU";
+
+    var luonnosVal = "LUONNOS";
+
+    var valmisVal = "VALMIS";
+
+    var peruttuVal = "PERUTTU";
+
+    this.canSaveAsLuonnos = function(tila) {
+
+        if (tila === luonnosVal) {
+
+            return true;
+
+        } else if (tila === valmisVal || tila === julkaistuVal || tila === peruttuVal) {
+
+            return false;
+
+        } else if (tila === undefined) {
+
+            return true;
+
+        } else {
+            return true;
+        }
+
+
+    },
+
     this.haeOppilaitostyypit = function(organisaatio) {
 
         var deferred = $q.defer();

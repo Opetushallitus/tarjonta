@@ -396,7 +396,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the hakukohdes
      */
     public Set<Hakukohde> getHakukohdes() {
-        return Collections.unmodifiableSet(hakukohdes);
+        return hakukohdes;
     }
     
     public void addHakukohde(Hakukohde hakukohde) {

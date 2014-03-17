@@ -1,9 +1,14 @@
 package fi.vm.sade.tarjonta.service.search;
 
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpResponse;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -15,8 +20,6 @@ import com.google.common.base.Preconditions;
 @Profile(value = {"default", "solr"})
 public class SolrServerFactory implements InitializingBean {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    
     @Value("${tarjonta.solr.baseurl:}")
     protected String solrBaseUrl;
     
@@ -33,8 +36,29 @@ public class SolrServerFactory implements InitializingBean {
     }
 
     private SolrServer getSolr(final String url) {
-        logger.info("instantiating new solr client with url {}", url);
-        return new HttpSolrServer(url);
+        
+        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        mgr.setDefaultMaxPerRoute(100);
+        mgr.setMaxTotal(1000);
+        DefaultHttpClient httpclient = new DefaultHttpClient(mgr){
+
+            @Override
+            protected ConnectionReuseStrategy createConnectionReuseStrategy() {
+                return new NoConnectionReuseStrategy();
+            }
+            
+        };
+
+        httpclient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+            
+            public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+                return 0;
+            }
+            
+        });
+
+        
+        return new HttpSolrServer(url, httpclient);
     }
 
     @Override

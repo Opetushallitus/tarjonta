@@ -24,10 +24,8 @@ var app = angular.module('app.haku.edit.ctrl', []);
  * @param {type} param2
  */
 app.controller('HakuEditController',
-        ['$q', '$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'ParameterService',
-            function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService) {
+            function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService, Config) {
                 $log.info("HakuEditController()", $scope);
-
 
                 var clearErrors = function(){
                   $scope.model.validationmsgs=[];
@@ -239,6 +237,15 @@ app.controller('HakuEditController',
                 };
 
 
+                /**
+                 *
+                 * @returns true if current haku is JATKUVA_HAKU
+                 */
+                $scope.isJatkuvaHaku = function() {
+                    return $scope.model.hakux.result.hakutapaUri == Config.env["koodisto.hakutapa.jatkuvaHaku.uri"];
+                };
+
+
                 $scope.saveParameters= function(haku) {
                     $log.info("saveParameters()");
                 	ParameterService.tallenna(haku.oid, $scope.model.parameter);
@@ -268,9 +275,9 @@ app.controller('HakuEditController',
                         parameter: {
                           //parametrit populoituu tänne... ks. haeHaunParametrit(...)
 
-                        }
+                        },
 
-
+                        config : Config.env
                     };
 
                     $log.info("init... done.");
@@ -280,4 +287,4 @@ app.controller('HakuEditController',
                 ParameterService.haeHaunParametrit(hakuOid, model.parameter);
               };
               $scope.init();
-            } ]);
+          } );

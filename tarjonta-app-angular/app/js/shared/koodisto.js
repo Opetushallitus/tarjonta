@@ -219,18 +219,32 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          @returns {promise} return promise which contains array of koodi view models
          */
 
-        getAllKoodisWithKoodiUri: function(koodistoUriParam, locale) {
+        getAllKoodisWithKoodiUri: function(koodistoUriParam, locale, includePassiivises) {
 
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
 
         	return CacheService.lookup("koodisto/"+koodistoUriParam+"/"+locale, function(returnKoodisPromise){
 
+                var includePassive = false;
+                if (includePassiivises !== undefined) {
+                    includePassive = includePassiivises;
+                }
+                var passiivinenTila = "PASSIIVINEN";
                 var returnKoodis = [];
                 var koodiUri = host + ':koodistoUri/koodi';
 
                 $resource(koodiUri, {koodistoUri: '@koodistoUri'},{cache:true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
                     angular.forEach(koodis, function(koodi) {
-                    	returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+
+                        if (includePassive) {
+                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                        } else {
+                            if (koodi.tila !== passiivinenTila) {
+                                returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                            }
+
+                        }
+
                     });
                     returnKoodisPromise.resolve(returnKoodis);
                 });

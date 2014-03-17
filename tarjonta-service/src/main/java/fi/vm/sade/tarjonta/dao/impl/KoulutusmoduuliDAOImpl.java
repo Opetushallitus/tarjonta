@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,20 +28,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
@@ -49,6 +50,7 @@ import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 /**
@@ -62,7 +64,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     private static final Logger log = LoggerFactory.getLogger(KoulutusmoduuliDAO.class);
 
     @Autowired
-    private OIDService oidService;
+    private OidService oidService;
 
     @Override
     public Koulutusmoduuli findByOid(String oid) {
@@ -270,7 +272,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         kkKoulutusAstes.add(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value());
         kkKoulutusAstes.add(KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value());
 
-       whereExpr = QuerydslUtils.and(whereExpr,komo.koulutustyyppi.notIn(kkKoulutusAstes));
+        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppi.notIn(kkKoulutusAstes));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {
@@ -293,8 +295,8 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliKoosteTyyppi object cannot be null!");
         Koulutusmoduuli komo = EntityUtils.copyFieldsToKoulutusmoduuli(tyyppi);
         try {
-            komo.setOid(oidService.newOid(NodeClassCode.TEKN_5));
-        } catch (ExceptionMessage ex) {
+            komo.setOid(oidService.get(TarjontaOidType.KOMO));
+        } catch (OIDCreationException ex) {
             throw new TarjontaBusinessException("OID service unavailable.", ex);
         }
 
@@ -304,5 +306,17 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     @Override
     public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri) {
         return findTutkintoOhjelma(koulutusLuokitusUri, null);
+    }
+
+    @Override
+    public void safeDelete(final String komoOid, final String userOid) {
+        Preconditions.checkNotNull(komoOid, "Komo OID string object cannot be null.");
+        List<String> oids = Lists.<String>newArrayList();
+        oids.add(komoOid);
+        Koulutusmoduuli findByOid = findByOid(komoOid);
+        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
+        findByOid.setTila(TarjontaTila.POISTETTU);
+        //TODO: add field for the entity 
+        //findByOid.setLastUpdatedByOid(userOid);
     }
 }

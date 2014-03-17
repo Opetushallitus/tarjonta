@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.auth;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +38,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
-import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class PermissionChecker {
@@ -47,12 +48,8 @@ public class PermissionChecker {
     HakukohdeDAOImpl hakukohdeDaoImpl;
     @Autowired
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
-
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
-
-    @Value("${auth.off:false}")
-    private String authOff;
 
     /**
      *
@@ -67,7 +64,7 @@ public class PermissionChecker {
     }
 
     private void checkPermission(boolean result) {
-        if (!(authOff != null && authOff.equals("true")) && !result) {
+        if (!result) {
             throw new NotAuthorizedException("no.permission");
         }
     }
@@ -103,11 +100,11 @@ public class PermissionChecker {
     public void checkUpdateHakukohdeByValintakoeTunniste(String valintakoeTunniste) {
         Preconditions.checkNotNull(valintakoeTunniste, "Valintakoe tunniste cannot be null.");
         Valintakoe valintakoe = hakukohdeDaoImpl.findValintaKoeById(valintakoeTunniste);
-        Hakukohde hakukohde = hakukohdeDaoImpl.read(valintakoe.getHakukohdeId());
+        Hakukohde hakukohde = hakukohdeDaoImpl.read(valintakoe.getHakukohde().getId());
         Set<KoulutusmoduuliToteutus> komot = hakukohde.getKoulutusmoduuliToteutuses();
         if (komot.size() > 0) {
             checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
-        } // hakukohde must always have komoto?
+        } // hakukohde must always have komoto? -> YES
     }
 
     public void checkCreateHakukohde(HakukohdeTyyppi hakukohde) {
@@ -116,7 +113,22 @@ public class PermissionChecker {
             checkPermission(permissionService
                     .userCanUpdateHakukohde(OrganisaatioContext
                             .getContext(komot.iterator().next().getTarjoaja())));
-        } // hakukohde must always have komoto?
+        } // hakukohde must always have komoto? -> YES
+    }
+
+    public void checkCreateHakukohde(List<String> komotoOids) {
+
+
+        List<KoulutusmoduuliToteutus> komot = new ArrayList<KoulutusmoduuliToteutus>();
+        for (String komotoOid : komotoOids) {
+        	KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid);
+        	Preconditions.checkArgument(komoto!=null, "No such komoto: %s", komotoOid);
+            komot.add(komoto);
+        }
+
+        if (komot.size() > 0) {
+            checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
+        }
     }
 
     public void checkRemoveHakukohde(String hakukohdeOid) {
@@ -134,7 +146,15 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanCreateHaku());
     }
 
+    public void checkCreateValintaPeruste() {
+        checkPermission(permissionService.userCanCreateHaku());
+    }
+
     public void checkRemoveHaku() {
+        checkPermission(permissionService.userCanDeleteHaku());
+    }
+
+    public void checkRemoveValintaPeruste() {
         checkPermission(permissionService.userCanDeleteHaku());
     }
 
@@ -158,10 +178,17 @@ public class PermissionChecker {
 
     public void checkRemoveKoulutus(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
+        
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
                                 .getTarjoaja())));
     }
+    
+    public void checkRemoveKoulutusByTarjoaja(final String tarjoajaOid) {
+        checkPermission(permissionService
+                .userCanDeleteKoulutus(OrganisaatioContext.getContext(tarjoajaOid)));
+    }
+    
 
     public void checkRemoveKoulutusKuva(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
@@ -211,5 +238,9 @@ public class PermissionChecker {
 
     public void checkUpdateValintaperustekuvaus() {
         checkPermission(permissionService.userCanEditValintaperustekuvaus());
+    }
+
+    public void checkUpdateHaku(String oid) {
+        checkCreateHaku();
     }
 }

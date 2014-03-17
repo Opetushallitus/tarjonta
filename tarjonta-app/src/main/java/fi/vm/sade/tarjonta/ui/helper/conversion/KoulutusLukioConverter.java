@@ -35,9 +35,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.generic.common.I18N;
-import fi.vm.sade.oid.service.ExceptionMessage;
-import fi.vm.sade.oid.service.OIDService;
-import fi.vm.sade.oid.service.types.NodeClassCode;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
@@ -54,7 +51,10 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
+import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
+import fi.vm.sade.tarjonta.ui.helper.OidHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
@@ -74,12 +74,12 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusLukioConverter.class);
     @Autowired(required = true)
-    private OIDService oidService;
+    private OidHelper oidHelper;
 
     public KoulutusLukioConverter() {
     }
 
-    public LisaaKoulutusTyyppi createLisaaLukioKoulutusTyyppi(TarjontaModel tarjontaModel, OrganisationOidNamePair selectedOrganisation, final SaveButtonState tila) throws ExceptionMessage {
+    public LisaaKoulutusTyyppi createLisaaLukioKoulutusTyyppi(TarjontaModel tarjontaModel, OrganisationOidNamePair selectedOrganisation, final SaveButtonState tila) throws OidCreationException {
         final String organisationOid = tarjontaModel.getTarjoajaModel().getSelectedOrganisationOid();
         final KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();
         final KoulutusLukioKuvailevatTiedotViewModel kuvailevatTiedotModel = tarjontaModel.getKoulutusLukioKuvailevatTiedot();
@@ -87,7 +87,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
         LisaaKoulutusTyyppi lisaa = new LisaaKoulutusTyyppi();
         lisaa.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
-        convertToLukioKoulutusTyyppi(lisaa, perustiedotModel, oidService.newOid(NodeClassCode.TEKN_5), organisaatio);
+        convertToLukioKoulutusTyyppi(lisaa, perustiedotModel, oidHelper.getOid(TarjontaOidType.KOMOTO), organisaatio);
         convertToLukioKoulutusLisatiedotTyyppi(lisaa, kuvailevatTiedotModel);
         KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
         pohjakoulutusvaatimus.setUri(KoodistoURI.KOODI_POHJAKOULUTUS_PERUSKOULU_URI);
@@ -102,7 +102,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public PaivitaKoulutusTyyppi createPaivitaLukioKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid, final SaveButtonState tila) throws ExceptionMessage {
+    public PaivitaKoulutusTyyppi createPaivitaLukioKoulutusTyyppi(final TarjontaModel tarjontaModel, final String komotoOid, final SaveButtonState tila) throws OidCreationException {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedotModel = tarjontaModel.getKoulutusLukioPerustiedot();

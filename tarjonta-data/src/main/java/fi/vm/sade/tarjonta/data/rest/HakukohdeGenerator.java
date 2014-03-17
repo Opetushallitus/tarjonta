@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import fi.vm.sade.tarjonta.data.test.GenerateTestData;
 import fi.vm.sade.tarjonta.data.util.KoodistoUtil;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -65,15 +66,16 @@ public class HakukohdeGenerator extends AbstractGenerator {
     private static final String OID_TYPE = "AO_";
     private WebResource hakukohdeResource;
     private String orgOid;
-
+    private String tarjontaServiceCasTicket;
     private String id;
 
     public HakukohdeGenerator() {
         super(OID_TYPE);
     }
 
-    public HakukohdeGenerator(WebResource hakukohdeResource, final String orgOid) {
+    public HakukohdeGenerator(WebResource hakukohdeResource, final String tarjontaServiceCasTicket, final String orgOid) {
         super(OID_TYPE);
+        this.tarjontaServiceCasTicket = tarjontaServiceCasTicket;
         this.hakukohdeResource = hakukohdeResource;
         this.orgOid = orgOid;
         this.id = generateDate();
@@ -94,8 +96,10 @@ public class HakukohdeGenerator extends AbstractGenerator {
 
     private void post(HakukohdeV1RDTO hakukohde) {
         ResultV1RDTO<HakukohdeV1RDTO> post = hakukohdeResource.
+                queryParam("ticket", tarjontaServiceCasTicket).
                 accept(MediaType.APPLICATION_JSON + ";charset=UTF-8").
                 header("Content-Type", "application/json; charset=UTF-8").
+                header("Cookie", GenerateTestData.getJsessionId(tarjontaServiceCasTicket)).
                 post(new GenericType<ResultV1RDTO<HakukohdeV1RDTO>>() {
                 }, hakukohde);
         if (post.getErrors() != null) {
@@ -114,9 +118,9 @@ public class HakukohdeGenerator extends AbstractGenerator {
         dto.getHakukohdeKoulutusOids().addAll(komotoOids);
 
         dto.setHakuOid(hakuOid);
-        dto.setHakuaikaAlkuPvm( new DateTime(2014, 1, 1, 1, 1).toDate());
+        dto.setHakuaikaAlkuPvm(new DateTime(2014, 1, 1, 1, 1).toDate());
         dto.setHakuaikaLoppuPvm(new DateTime(2020, 8, 1, 1, 1).toDate());
-       // dto.setHakukohteenNimi("nimi " + hakuOid);
+        // dto.setHakukohteenNimi("nimi " + hakuOid);
         HashMap<String, String> nimet = Maps.<String, String>newHashMap();
         nimet.put(LANGUAGE_URI_FI, this.id + " " + hakuOid + " fi");
         nimet.put(LANGUAGE_URI_SV, this.id + " " + hakuOid + " sv");

@@ -13,20 +13,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.koodisto.service;
 
-import com.google.common.collect.Sets;
-import java.util.Set;
+package fi.vm.sade.tarjonta.shared.types;
 
-/**
- *
- * @author Jukka Raanamo
- */
-public abstract class KoodistoTestSupport {
+public enum TarjontaOidType {
+    KOMO(13), KOMOTO(17), HAKUKOHDE(20), HAKU(29);
 
-    protected static Set<String> set(String... elements) {
-        return Sets.newHashSet(elements);
+    private final String value;
+
+    public String getValue() {
+        return value;
     }
 
+    private TarjontaOidType(int value) {
+        this.value = Integer.toString(value);
+    }
 }
-

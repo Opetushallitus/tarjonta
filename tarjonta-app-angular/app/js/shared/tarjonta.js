@@ -38,6 +38,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     "state=" + escape(args.state) + "&" +
                     "season=" + escape(args.season) + "&" +
                     "komoOid=" + escape(args.komoOid) + "&" +
+                    "kooulutusOid=" + escape(args.koulutusOid) + "&" +
                     "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"
@@ -194,7 +195,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
      * @returns {undefined}
      */
-    dataFactory.koulutus = function() {
+    dataFactory.koulutus = function(oid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/KORKEAKOULUTUS/", {}, {
             update: {
                 method: 'POST',
@@ -205,18 +206,28 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 method: 'POST',
                 withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            remove: {
+                url: Config.env.tarjontaRestUrlPrefix + "koulutus/:oid",
+                method: 'DELETE',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            copyAndMove: {
+                url: Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "/siirra",
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            copyAndMoveMultiple: {
+                url: Config.env.tarjontaRestUrlPrefix + "koulutus/siirra",
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
             }
         });
     };
 
-    dataFactory.deleteKoulutus = function(id) {
-        console.log("deleteKoulutus(): ", id);
-        var ret = $q.defer();
-        $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + id).remove({}, function(res) {
-            ret.resolve(res);
-        });
-        return ret.promise;
-    };
     dataFactory.loadKuvausTekstis = function(oid) {
         console.log("save KomoTekstis(): ", oid);
         var ret = $q.defer();
@@ -364,7 +375,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
 
     dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
-        console.log("resourceLink called!");
+        console.log("save resourceLink called!");
         dataFactory.resourceLink.save({parent: parent, children: angular.isArray(child) ? child : [child]}, fnSuccess, fnError);
     };
 
@@ -389,8 +400,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 checkput: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
                 },
-                put: {
+                save: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                    method: 'POST'
                 },
                 test: {
                     url: Config.env.tarjontaRestUrlPrefix + "link/test",

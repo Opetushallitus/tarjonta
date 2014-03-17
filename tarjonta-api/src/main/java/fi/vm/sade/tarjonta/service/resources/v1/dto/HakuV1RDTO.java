@@ -14,7 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 
 import java.util.ArrayList;
@@ -28,46 +29,61 @@ import java.util.Map;
  *
  * @author mlyly
  */
+@ApiModel(value = "Haku REST-api malli (rajapinnan versio V1)")
 public class HakuV1RDTO extends BaseV1RDTO {
 
+	@ApiModelProperty(value = "Hakukauden koodisto uri", required=true)
     private String hakukausiUri;
 
-    private String hakukausiArvo;
-
-    private String hakutapaUri;
-
+	@ApiModelProperty(value = "Hakukauden vuosi", required=true)
     private int hakukausiVuosi;
 
+	@ApiModelProperty(value = "Hakutapa koodisto uri", required=true)
+    private String hakutapaUri;
+
+	@ApiModelProperty(value = "Hakulomakkeen www-osoite", required=false)
     private String hakulomakeUri;
 
+	@ApiModelProperty(value = "Hakutyypin koodisto uri", required=true)
     private String hakutyyppiUri;
 
+	@ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required=true)
     private String kohdejoukkoUri;
 
+	@ApiModelProperty(value = "Koulutuksen alkamisvuosi", required=true)
     private int koulutuksenAlkamisVuosi;
 
+	@ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto uri", required=true)
     private String koulutuksenAlkamiskausiUri;
 
+	@ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required=true)
     private String tila;
 
+	@ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required=true)
     private boolean sijoittelu;
 
-//    private List<TekstiRDTO> nimi;
-
+	@ApiModelProperty(value = "Lista haun hakuaikoja", required=true)
     private List<HakuaikaV1RDTO> hakuaikas;
 
+	@ApiModelProperty(value = "Haun hakukohdehteiden OID lista", required=true)
     private List<String> hakukohdeOids;
 
+	@ApiModelProperty(value = "Haun tunniste", required=true)
     private String haunTunniste;
 
-    private String lastUpdatedByOid;
+//	@ApiModelProperty(value = "Viimeisen päivittäjän tunniste", required=true)
+//    private String lastUpdatedByOid;
+//
+//	@ApiModelProperty(value = "Viimeisen päivityksen aikaleima", required=true)
+//    private Date lastUpdatedDate;
 
-    private Date lastUpdatedDate;
-
+	@ApiModelProperty(value = "Haun monikielinen nimi", required=true)
     private Map<String, String> nimi = new HashMap<String, String>();
 
+	@ApiModelProperty(value = "Koodiston avattua metadataa", required=false)
     private Map<String, KoodiV1RDTO> koodiMeta;
 
+	@ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä, ei rajoita tarjontaa vaan kouutusinformaatiossa käytössä", required=true)
     private int maxHakukohdes;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
@@ -95,14 +111,6 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setHakukausiUri(String hakukausiUri) {
         this.hakukausiUri = hakukausiUri;
-    }
-
-    public String getHakukausiArvo() {
-        return hakukausiArvo;
-    }
-
-    public void setHakukausiArvo(String hakukausiArvo) {
-        this.hakukausiArvo = hakukausiArvo;
     }
 
     public String getHakutapaUri() {
@@ -200,21 +208,21 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.haunTunniste = haunTunniste;
     }
 
-    public String getLastUpdatedByOid() {
-        return lastUpdatedByOid;
-    }
-
-    public void setLastUpdatedByOid(String lastUpdatedByOid) {
-        this.lastUpdatedByOid = lastUpdatedByOid;
-    }
-
-    public Date getLastUpdatedDate() {
-        return lastUpdatedDate;
-    }
-
-    public void setLastUpdatedDate(Date lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
-    }
+//    public String getLastUpdatedByOid() {
+//        return lastUpdatedByOid;
+//    }
+//
+//    public void setLastUpdatedByOid(String lastUpdatedByOid) {
+//        this.lastUpdatedByOid = lastUpdatedByOid;
+//    }
+//
+//    public Date getLastUpdatedDate() {
+//        return lastUpdatedDate;
+//    }
+//
+//    public void setLastUpdatedDate(Date lastUpdatedDate) {
+//        this.lastUpdatedDate = lastUpdatedDate;
+//    }
 
     public int getHakukausiVuosi() {
         return hakukausiVuosi;

@@ -34,7 +34,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
      */
 
     var getUserOrgs = function() {
-
+        console.log('AUTH SERVICE : ', AuthService.getUsername());
+        console.log('AUTH SERVICE FIRST NAME : ', AuthService.getFirstName);
         if (!AuthService.isUserOph())   {
 
             $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
@@ -373,27 +374,11 @@ app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,Loca
      */
 
 
-
-
-    $scope.dialog = {};
+    $scope.dialog = {
+        type : Tyyppi
+    };
 
     $scope.dialog.userOrgTypes = [];
-
-    if (Tyyppi !== undefined && Tyyppi === 'valintaperustekuvaus') {
-        $scope.dialog.title = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.title');
-    }  else {
-        $scope.dialog.title = LocalisationService.t('tarjonta.sorakuvaus.luo.uusi.dialog.title');
-    }
-
-
-
-    $scope.dialog.description = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.instruction');
-
-    $scope.dialog.koodistocombotitle = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.oppilaitostyyppi.title');
-
-    $scope.dialog.ok = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.ok');
-
-    $scope.dialog.cancel = LocalisationService.t('tarjonta.valintaperustekuvaus.luo.uusi.dialog.cancel');
 
     /*
 

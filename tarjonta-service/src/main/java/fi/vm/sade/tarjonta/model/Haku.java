@@ -106,7 +106,7 @@ public class Haku extends TarjontaBaseEntity {
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
 
-    @OneToMany(mappedBy = "haku", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "haku", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku", fetch = FetchType.EAGER)

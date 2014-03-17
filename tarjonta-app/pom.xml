@@ -69,7 +69,7 @@
         </dependency>
 
         <dependency>
-            <groupId>fi.vm.sade.auth</groupId>
+            <groupId>fi.vm.sade.authentication</groupId>
             <artifactId>authentication-api</artifactId>
             <version>${authentication.api.version}</version>
         </dependency>
@@ -118,8 +118,7 @@
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
-            <version>${oid.api.version}</version>
-            <type>jar</type>
+            <version>${oid.version}</version>
         </dependency>
 
         <dependency>
@@ -302,6 +301,11 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
+                        <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <scope>test</scope>
+                </dependency>
 
     </dependencies>
 

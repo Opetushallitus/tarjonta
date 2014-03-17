@@ -2,7 +2,7 @@
 
 var app = angular.module('TarjontaDateTime', ['localisation']);
 
-app.directive('tDateTime', function($log, $modal, LocalisationService) {
+app.directive('tDateTime', function($log, $modal, LocalisationService, dialogService) {
 
     function controller($scope) {
     	
@@ -14,7 +14,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     			date: LocalisationService.t("tarjonta.kalenteri.prompt.pvm"),
     			time: LocalisationService.t("tarjonta.kalenteri.prompt.aika"),
     	}
-    	
+
+    	var violation = null;
     	var omitUpdate = false;
     	
     	// model <-> ngModel muunnos olion ja aikaleiman välillä
@@ -32,12 +33,53 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		throw ("Unknown type "+$scope.type);
     	}
     	
+    	function asTimestamp(s) {
+    		if (s==undefined || s==null) {
+    			return false;
+    		}
+    		return s instanceof Date ? s.getTime() : s;
+    	}
+    	
+    	function minTime() {
+    		return asTimestamp($scope.min());
+    	}
+    	
+    	function maxTime() {
+    		return asTimestamp($scope.max());
+    	}
+    	
     	function zpad(v) {
     		return v>9 ? v : "0"+v;
     	}
     	
+    	function dateToString(d) {
+    		return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear();
+    	}
+    	
+    	function timeToString(d) {
+    		return d.getHours()+":"+zpad(d.getMinutes());
+    	}
+    	
+    	function dateTimeToString(d) {
+    		if (d==null || d==undefined) {
+    			return null;
+    		}
+    		if (!(d instanceof Date)) {
+    			d = new Date(d); // timestamp
+    		}
+    		
+    		var ret = dateToString(d);
+    		
+    		if ($scope.timestamp) {
+    			ret = ret + " " + timeToString(d);
+    		}
+    		
+    		return ret;    		
+    	}
+    	
     	// model <-> date/time -> ngModel -muunnos
     	function updateModels() {
+    		//console.log("UPDATE MODEL", omitUpdate);
     		if (omitUpdate) {
     			omitUpdate = false;
     			return;
@@ -45,10 +87,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     		if ($scope.model==null) {
             	   $scope.date = "";
             	   $scope.time = "";
-            	     $scope.ngModel = null;
+            	   $scope.ngModel = null;
     		} else {
-            	  $scope.date = $scope.model.getDate()+"."+($scope.model.getMonth()+1)+"."+$scope.model.getFullYear();
-            	  $scope.time = $scope.model.getHours()+":"+zpad($scope.model.getMinutes());
+            	  $scope.date = dateToString($scope.model); 
+            	  $scope.time = timeToString($scope.model);
             	  $scope.ngModel = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
     		}
     	}
@@ -64,35 +106,30 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
     	}
     	
     	function applyConstraints(d) {
-    		var min = $scope.min();
-    		if (min && min.getTime) {
-    			min = min.getTime();
-    		}
-    		var max = $scope.max();
-    		if (max && max.getTime) {
-    			max = max.getTime();
-    		}
+    		var min = minTime();
+    		var max = maxTime();
     		
     		if (min && d.getTime() < min) {
-    			d.setTime(min);
+    			d = new Date(min);
     		} else if (max && d.getTime() > max) {
-    			d.setTime(max);
+    			d = new Date(max);
     		}
-
     		return d;
+    	}
+    	
+    	function roundToDay(d) {
+    		if (d==false) {
+    			return false;
+    		}
+    		var t = new Date(d);
+    		return new Date(t.getFullYear(), t.getMonth(), t.getDate(), 0, 0, 0);
     	}
 
     	function violatesConstraints(d) {
-    		var min = $scope.min();
-    		if (min && min.getTime) {
-    			min = min.getTime();
-    		}
-    		var max = $scope.max();
-    		if (max && max.getTime) {
-    			max = max.getTime();
-    		}
-    		var ret = (min && d.getTime() < min) || (max && d.getTime() > max);
-    		//console.log("-> violates = "+ret, d);
+    		d = roundToDay(d.getTime());
+    		var min = roundToDay(minTime());
+    		var max = roundToDay(maxTime());
+    		var ret = (min && d < min) || (max && d > max);
     		return ret;
     	}
 
@@ -119,10 +156,40 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 
     	var thisyear = new Date().getFullYear();
 
-    	$scope.onFocusOut = function(){
-    		omitUpdate = false;
-    		updateModels();
+    	$scope.focusCount = 0;
+
+    	$scope.onFocusIn = function() {
+    		$scope.focusCount++;
+    		//console.log("Focus++",$scope.focusCount);
     	}
+    	
+    	$scope.onFocusOut = function(isButton) {
+    		$scope.focusCount--;
+    		//console.log("Focus--",$scope.focusCount);
+	
+			if (isButton) {
+				return;
+			}
+
+       		omitUpdate = false;
+       		updateModels();
+
+			if ($scope.ttBounds && violation) {
+				
+				dialogService.showDialog({
+	                ok: LocalisationService.t("ok"),
+	                cancel: null,
+	                title: LocalisationService.t("tarjonta.kalenteri"),
+	                description: LocalisationService.t($scope.ttBounds,
+	                		[dateTimeToString(violation),
+	                		 dateTimeToString(minTime()),
+	                		 dateTimeToString(maxTime())])
+	            });
+			}
+			violation = null;
+
+       		
+	}
     	
     	$scope.onModelChanged = function() {
     		var nd = $scope.model;
@@ -170,17 +237,24 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         		nd.setMinutes(tm);
         		
         		if (!isNaN(nd.getTime())) {
-        			omitUpdate = true;
-        			$scope.model = applyConstraints(nd);
+    				omitUpdate = true;
+    				//console.log("Update / Focus = "+$scope.focusCount,nd);
+    				var cd = applyConstraints(nd);
+    				violation = cd.getTime() == nd.getTime() ? null : nd;
+        			$scope.model = cd;
         		}
     		}
-    		    		
+    		
     		if ($scope.ngChange) {
     			$scope.ngChange();
     		}
     	}
-    	
+
     	$scope.openChooser = function() {
+    		//console.log("Chooser?",$scope.focusCount);
+    		if ($scope.focusCount==0) {
+    			return;
+    		}
     		var modalInstance = $modal.open({
 				scope: $scope,
 				templateUrl: 'js/shared/directives/dateTime-chooser.html',
@@ -191,47 +265,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 						$scope.months.push({month:i, name:LocalisationService.t("tarjonta.kalenteri.kk."+(i+1))});
 					}
 					
+					$scope.calendar=[];
 					$scope.years = [];
 
-					$scope.model = ctrl.model ? ctrl.model : new Date();
+					$scope.model = ctrl.model instanceof Date ? new Date(ctrl.model.getTime()) : new Date();
 					
-					var isValidDate=Object.prototype.toString.call($scope.model) == "[object Date]" && !isNaN($scope.model.getTime());
-					  
-                                        if(angular.isUndefined($scope.model) || $scope.model === null || !isValidDate){
-                                            $scope.model = new Date();
-                                        }
-                                        
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
-					$scope.calendar=[];
 					
-					function getWeekFromDate(d, dowOffset) {
-						// https://gist.github.com/dblock/1081513
-						
-						// Create a copy of this date object
-						var target = new Date(d.valueOf());
-						// ISO week date weeks start on monday
-						// so correct the day number
-						var dayNr = (d.getDay() + 6) % 7;
-						 
-						// Set the target to the thursday of this week so the
-						// target date is in the right year
-						target.setDate(target.getDate() - dayNr + 3);
-						 
-						// ISO 8601 states that week 1 is the week
-						// with january 4th in it
-						var jan4 = new Date(target.getFullYear(), 0, 4);
-						 
-						// Number of days between target date and january 4th
-						var dayDiff = (target - jan4) / 86400000;
-						 
-						// Calculate week number: Week 1 (january 4th) plus the
-						// number of weeks between target date and january 4th
-						var weekNr = 1 + Math.ceil(dayDiff / 7);
-						 
-						return weekNr;
-					}
-					
-					$scope.ok = function() {						
+					$scope.ok = function() {
 						ctrl.model = $scope.model;
 						updateModels();
 						modalInstance.dismiss();
@@ -241,38 +282,24 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 						modalInstance.dismiss();
 					}
 					
-					function getMonday(d) {
-						if (d.getDay()==1) { // maanantai
-							return d;
-						}
-						var ret = new Date(d.getTime());
-
-						ret.setDate(d.getDay()==0
-								? ret.getDate()-6
-								: ret.getDate()-d.getDay()+1);
-						return ret;
-					}
-
 					function updateCalendar(){
 						$scope.select.m = $scope.model.getMonth();
 						$scope.select.y = $scope.model.getFullYear();
-						
-						var sd = new Date($scope.model.getFullYear(), $scope.model.getMonth(), 1);
-						var ed = new Date($scope.model.getFullYear(), $scope.model.getMonth()+1, 1);
-						
-						var s = getWeekFromDate(sd);
-						var e = getWeekFromDate(ed);
-						
-						//console.log("D: "+s+" -> "+e,$scope.model);
+
 						var ret = [];
-						//for (var i=s; i!=e; nextWeek(i)) {
-						while (getMonday(sd).getTime()<ed.getTime()) {
-							var i = getWeekFromDate(sd);
-							var wd = {week:i, days:[]};
-							var d = new Date($scope.model.getFullYear(), 0, 1+ 7*(i-1) );
-							d.setDate(d.getDate() - d.getDay());
+
+						var cal = new ISOCalendar($scope.model.getFullYear(), $scope.model.getMonth());
+						
+						var start = cal.getMonday();
+						var end = cal.getLastDayOfMonth().getFriday();
+						
+						//console.log("START = ",start);
+						//console.log("END = ",end);
+						
+						while (start.compareTo(end)<=0) {
+							var wd = {week:start.getIsoWeek(), days:[]};
+							var d = start.toDate();
 							for (var j=0; j<7; j++) {
-								d.setDate(d.getDate()+1);
 								wd.days.push({
 									day: d.getDate(),
 									month: d.getMonth(),
@@ -284,13 +311,15 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
 										&& (d.getMonth()==$scope.model.getMonth())
 										&& (d.getFullYear()==$scope.model.getFullYear())									
 									});								
-							}							
-							ret.push(wd);							
-							sd.setTime(sd.getTime() + 604800000);
+								d.setDate(d.getDate()+1);
+							}
+							
+							ret.push(wd);
+							start = start.getNextWeek();
 						}
 						$scope.calendar = ret;
-						
 						$scope.years = [];
+						
 						var y = $scope.model.getFullYear();
 						for (var i = y-2; i<=y+2; i++) {
 							var nd = new Date($scope.model.getTime());
@@ -387,6 +416,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService) {
         	// minimi ja maksimi (js Date tai unix timestamp)
         	min: "&",
         	max: "&",
+        	
+        	// virheilmoitus, joka näytetään (jos määritelty), jos päivämäärä on min-max-arvojen ulkopuolella
+        	ttBounds: "@",
 
         	// disablointi
         	disabled: "@",

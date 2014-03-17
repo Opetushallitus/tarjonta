@@ -1,12 +1,11 @@
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
-import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -20,10 +19,18 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Pisteraja;
+import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeValintaperusteetDTO;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 
 /**
  * Created with IntelliJ IDEA.
@@ -72,7 +79,7 @@ public class HakukohdeResourceImplTest {
         Hakukohde hakukohde = fixtures.createHakukohde();
         hakukohde.setHaku(haku);
 
-        Set<Valintakoe> valintakokeet = new HashSet<Valintakoe>();
+        //Set<Valintakoe> valintakokeet = new HashSet<Valintakoe>();
 
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
         monikielinenTeksti.addTekstiKaannos("fi", "suomeksi");
@@ -97,27 +104,23 @@ public class HakukohdeResourceImplTest {
         lisapisteRaja.setAlinPistemaara(new BigDecimal("0.5"));
         lisapisteRaja.setYlinPistemaara(new BigDecimal("5.0"));
 
-        Set<Pisteraja> rajat1 = new HashSet<Pisteraja>();
-        rajat1.add(paasykoeRaja);
-        Set<Pisteraja> rajat2 = new HashSet<Pisteraja>();
-        rajat2.add(lisanayttoRaja);
-        Set<Pisteraja> rajat3 = new HashSet<Pisteraja>();
-        rajat3.add(lisapisteRaja);
-
         Valintakoe paasykoe = new Valintakoe();
         paasykoe.setTyyppiUri(PAASY_JA_SOVELTUVUUSKOE);
         paasykoe.setKuvaus(monikielinenTeksti);
-        paasykoe.setPisterajat(rajat1);
+        paasykoeRaja.setValintakoe(paasykoe);
+        paasykoe.setPisterajat(Collections.singleton(paasykoeRaja));
         hakukohde.addValintakoe(paasykoe);
 
         Valintakoe lisanaytto = new Valintakoe();
         lisanaytto.setTyyppiUri(LISANAYTTO);
-        lisanaytto.setPisterajat(rajat2);
+        lisanayttoRaja.setValintakoe(lisanaytto);
+        lisanaytto.setPisterajat(Collections.singleton(lisanayttoRaja));
         hakukohde.addValintakoe(lisanaytto);
 
         Valintakoe lisapiste = new Valintakoe();
         lisapiste.setTyyppiUri(LISAPISTE);
-        lisapiste.setPisterajat(rajat3);
+        lisapisteRaja.setValintakoe(lisapiste);
+        lisapiste.setPisterajat(Collections.singleton(lisapisteRaja));
         hakukohde.addValintakoe(lisapiste);
 
         PainotettavaOppiaine musiikki = new PainotettavaOppiaine();

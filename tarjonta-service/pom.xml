@@ -171,9 +171,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.hibernate</groupId>
-        	<artifactId>hibernate-core</artifactId>
-        	<version>4.1.0.Final</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.175</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>4.1.0.Final</version>
         </dependency>
         <dependency>
         	<groupId>org.hibernate</groupId>
@@ -270,8 +276,14 @@
         -->
         <dependency>
             <groupId>fi.vm.sade.oid</groupId>
+            <artifactId>oid-service</artifactId>
+            <version>${oid.version}</version>
+            <classifier>embed</classifier>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.oid</groupId>
             <artifactId>oid-api</artifactId>
-            <version>${oid.api.version}</version>
+            <version>${oid.version}</version>
         </dependency>
 
         <!-- used by koodisto sync service -->
@@ -327,9 +339,10 @@
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
-            <groupId>jgrapht</groupId>
-            <artifactId>jgrapht</artifactId>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-jdk1.5</artifactId>
             <version>0.7.3</version>
         </dependency>
 
@@ -406,7 +419,7 @@
             <version>2.6.1</version>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.auth</groupId>
+            <groupId>fi.vm.sade.authentication</groupId>
             <artifactId>authentication-api</artifactId>
             <version>${authentication.api.version}</version>
         </dependency>
@@ -488,6 +501,14 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>7.2.0.v20101020</version>
+                <configuration>
+			        <systemProperties>
+			            <systemProperty>
+			                <name>log4j.configuration</name>
+			                <value>src/main/resources/log4j.properties</value>
+			            </systemProperty>
+			        </systemProperties>
+			    </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

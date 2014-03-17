@@ -236,10 +236,11 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
             String userName = null;
             if(viimPaivittajaOid!=null) {
                 HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
+
                 if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
                     userName = henkilo.getEtunimet() + " " + henkilo.getSukunimi();
                 } else {
-                    userName = henkilo.getKayttajatunnus();
+                    userName = henkilo.getKayttajatiedot().getUsername();
                 }
             return userName;
             }

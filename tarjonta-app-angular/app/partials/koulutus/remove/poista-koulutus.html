@@ -1,0 +1,16 @@
+<div class="tarjonta-dialog" id="poista-koulutus">
+    <div class="modal-header">
+        <h3 tt="koulutus.dialogTitle.poista"></h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind-html="model.text.info"></p>
+
+        <ul ng-show="model.errors.length > 0" class="errors">
+            <li ng-repeat="error in model.errors">{{error.msg}}</li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="cancel()"><span tt="koulutus.peruuta">Peruuta</span></button>
+        <button class="btn btn-primary" ng-disabled="model.btnDisableRemove"  ng-click="remove()"><span tt="koulutus.poista">Poista</span></button>
+    </div>
+</div>

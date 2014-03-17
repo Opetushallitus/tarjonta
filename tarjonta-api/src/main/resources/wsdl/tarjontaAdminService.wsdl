@@ -166,6 +166,14 @@
         <wsdl:part element="ns1:testaaTilasiirtymaVastaus" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="haeOid">
+        <wsdl:part element="ns1:haeOid" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="haeOidVastaus">
+        <wsdl:part element="ns1:haeOidVastaus" name="parameters"/>
+    </wsdl:message>
+
     <wsdl:message name="tarkistaKoulutusKopiointi">
         <wsdl:part element="ns1:tarkistaKoulutusKopiointi" name="parameters"/>
     </wsdl:message>
@@ -401,6 +409,17 @@
             </wsdl:output>
         </wsdl:operation>
 
+        <wsdl:operation name="haeOid">
+            <wsdl:documentation>
+                Hakee oidin tarjonta palvelusta. Tämä operaatio poistetaan heti kun V1 versio rajapinnasta on käytössä koko tarjonnassa.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeOid" name="haeOid">
+            </wsdl:input>
+            <wsdl:output message="tns:haeOidVastaus" name="haeOidVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+
         <wsdl:operation name="initSample">
             <wsdl:documentation>
                 Alustaa tarjonnan esimerkki datalla. Poistetaan kunnes koodisto tarjoaa
@@ -548,6 +567,16 @@
         </wsdl:operation>
 
         <wsdl:operation name="testaaTilasiirtyma">
+            <soap:operation soapAction="" type="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="haeOid">
             <soap:operation soapAction="" type="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>

@@ -273,4 +273,12 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
     public Koulutusmoduuli createKomoKorkeakoulu(KoulutusmoduuliKoosteTyyppi komoKoosteTyyppi);
 
     public Koulutusmoduuli findKoulutus(String koulutusLuokitusUri);
+
+    /**
+     * Vaihtaa koulutusmoduulin tilan suoraa poistetuksi/passivoiduksi.
+     *
+     * @param komoOid
+     * @param userOid
+     */
+    public void safeDelete(final String komoOid, final String userOid);
 }
