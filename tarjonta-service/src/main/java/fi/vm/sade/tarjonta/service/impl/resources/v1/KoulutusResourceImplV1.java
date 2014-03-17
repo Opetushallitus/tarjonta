@@ -473,7 +473,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String searchTerms,
             List<String> organisationOids,
             List<String> koulutusOids,
-            String hakukohdeTila,
+            String komotoTila,
             String alkamisKausi,
             Integer alkamisVuosi, List<KoulutusasteTyyppi> koulutusastetyyppi, String komoOid) {
         
@@ -487,7 +487,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
         q.getKoulutusOids().addAll(koulutusOids);
-        q.setKoulutuksenTila(hakukohdeTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(hakukohdeTila).asDto());
+        q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
         
