@@ -82,25 +82,25 @@ describe('Edit koulutus testeja', function() {
         expect($scope.stoModel.hakulause).toEqual('');
     }));
 
-/*
-    it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
-        $controller('EditYhteyshenkiloCtrl', {
-            $scope: $scope
-        });
-
-        $scope.uiModel = {};
-        $scope.uiModel.contactPerson = {};
-        $scope.uiModel.contactPerson.nimet = 'Testi nimi';
-        $scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
-        $scope.uiModel.contactPerson.titteli = 'Herra';
-        $scope.uiModel.contactPerson.puhelin = '050432134534';
-        $scope.uiModel.contactPerson.etunimet = 'Testi';
-        $scope.uiModel.contactPerson.sukunimi = 'nimi';
-
-        $scope.editYhModel.clearYh();
-        expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
-    }));
-*/
+    /*
+     it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
+     $controller('EditYhteyshenkiloCtrl', {
+     $scope: $scope
+     });
+     
+     $scope.uiModel = {};
+     $scope.uiModel.contactPerson = {};
+     $scope.uiModel.contactPerson.nimet = 'Testi nimi';
+     $scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
+     $scope.uiModel.contactPerson.titteli = 'Herra';
+     $scope.uiModel.contactPerson.puhelin = '050432134534';
+     $scope.uiModel.contactPerson.etunimet = 'Testi';
+     $scope.uiModel.contactPerson.sukunimi = 'nimi';
+     
+     $scope.editYhModel.clearYh();
+     expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
+     }));
+     */
 
     it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller, $httpBackend) {
 
@@ -262,7 +262,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('ui.bootstrap'));
     beforeEach(module('localisation'));
     beforeEach(module('TarjontaCache'));
-
+    beforeEach(module('CommonUtilServiceModule'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('Organisaatio'));
