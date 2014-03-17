@@ -122,7 +122,7 @@ public class IndexerResource {
     /**
      * @deprecated do not call this
      */
-    public synchronized void indexHakukohde(List<Hakukohde> hakukohteet) {
+    public void indexHakukohde(List<Hakukohde> hakukohteet) {
         List<Long> ids = Lists.newArrayList();
         for (Hakukohde hakukohde : hakukohteet) {
             ids.add(hakukohde.getId());
@@ -137,7 +137,7 @@ public class IndexerResource {
     /**
      * @deprecated do not call this
      */
-    public synchronized void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
+    public void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
         List<Long> ids = Lists.newArrayList();
 
         for (KoulutusmoduuliToteutus koulutus : koulutukset) {
@@ -150,7 +150,7 @@ public class IndexerResource {
         }
     }
 
-    private synchronized void index(final SolrServer solr, List<SolrInputDocument> docs) {
+    private void index(final SolrServer solr, List<SolrInputDocument> docs) {
         if (docs.size() > 0) {
             final List<SolrInputDocument> localDocs = ImmutableList.copyOf(docs);
             afterCommit(new TransactionSynchronizationAdapter() {
@@ -170,11 +170,11 @@ public class IndexerResource {
         }
     }
 
-    public synchronized void deleteKoulutus(List<String> oids) throws IOException {
+    public void deleteKoulutus(List<String> oids) throws IOException {
         deleteByOid(oids, koulutusSolr);
     }
 
-    private synchronized void deleteByOid(List<String> oids, final SolrServer solr)
+    private void deleteByOid(List<String> oids, final SolrServer solr)
             throws IOException {
         final List<String> localOids = ImmutableList.copyOf(oids);
 
@@ -199,11 +199,11 @@ public class IndexerResource {
         }
     }
 
-    public synchronized void deleteHakukohde(ArrayList<String> oids) throws IOException {
+    public void deleteHakukohde(ArrayList<String> oids) throws IOException {
         deleteByOid(oids, hakukohdeSolr);
     }
 
-    public synchronized void indexHakukohteet(List<Long> hakukohdeIdt) {
+    public void indexHakukohteet(List<Long> hakukohdeIdt) {
         if(hakukohdeIdt.size()==0) {
             return;
         }
@@ -231,7 +231,7 @@ public class IndexerResource {
         commit(hakukohdeSolr);
     }
 
-    public synchronized void indexHakukohdeIndexEntities(List<HakukohdeIndexEntity> hakukohteet) throws SolrServerException,
+    public void indexHakukohdeIndexEntities(List<HakukohdeIndexEntity> hakukohteet) throws SolrServerException,
             IOException {
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 100;
@@ -258,7 +258,7 @@ public class IndexerResource {
      * @throws IOException
      * @throws SolrServerException
      */
-    public synchronized void indexKoulutukset(List<Long> koulutukset) {
+    public void indexKoulutukset(List<Long> koulutukset) {
         if(koulutukset.size()==0) {
             return;
         }
@@ -283,7 +283,7 @@ public class IndexerResource {
         commit(koulutusSolr);
     }
 
-    private synchronized void commit(SolrServer solr) {
+    private void commit(SolrServer solr) {
         try {
             solr.commit(true, true, false);
         } catch (SolrServerException e) {
