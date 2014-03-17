@@ -6,18 +6,20 @@ var app = angular.module('app.koulutus.copy.ctrl', []);
 
 app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus', 'targetOrganisaatio',
     'TarjontaService', 'LocalisationService', '$q', '$scope',
-    'OrganisaatioService', 'AuthService', 'PermissionService',
+    'OrganisaatioService', 'AuthService', 'PermissionService', '$location',
     function($modalInstance, targetKoulutus, targetOrganisaatio,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService) {
+            OrganisaatioService, AuthService, PermissionService, $location) {
 
         // Tähän populoidaan formin valinnat:
         console.log("resetting form selections");
         $scope.model = {
+            text: {
+                help: LocalisationService.t("koulutus.copy.help", [targetKoulutus[0].nimi])
+            },
             errors: [],
             targetKoulutus: targetKoulutus,
             targetOrganisaatio: targetOrganisaatio,
-            koulutustyyppi: undefined,
             organisaatiot: [],
             mode: 'COPY'
         };
@@ -26,16 +28,72 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
         $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
             console.log("oprganisaatio valittu", organisaatio);
             //XXX nyt vain yksi organisaatio valittavissa
-            if ($scope.model.organisaatiot.length == 0 && organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
+            $scope.model.organisaatiot = [];
+            if (!angular.isUndefined(organisaatio) && organisaatio !== null) {
                 lisaaOrganisaatio(organisaatio);
             }
+
         });
         $scope.valitut = $scope.valitut || [];
         $scope.organisaatiomap = $scope.organisaatiomap || {};
-        $scope.sallitutKoulutustyypit = $scope.sallitutKoulutustyypit || [];
         $scope.lkorganisaatiot = {};
+
+        var promises = [];
+        var deferred = $q.defer();
+        promises.push(deferred.promise);
+
+
+        /*
+         * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan allaolevista oppilaitoksista,
+         * oppilaitoksen tyypit tulee oppilaitokselta, toimipisteen tyyppi typee ylemmän tason oppilaitokselta.
+         * TODO lisää testi
+         */
+        var haeOppilaitostyypit = function(organisaatio) {
+
+            var deferred = $q.defer();
+            var oppilaitostyypit = [];
+            /*
+             * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
+             */
+            var addTyyppi = function(organisaatio) {
+                if (organisaatio.oppilaitostyyppi !== undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
+                    oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
+                }
+            };
+            if (organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA") != -1 && organisaatio.children !== undefined) {
+                //	koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan olevan oppilaitoksia)
+                for (var i = 0; i < organisaatio.children.length; i++) {
+                    addTyyppi(organisaatio.children[i]);
+                }
+                deferred.resolve(oppilaitostyypit);
+            } else if (organisaatio.organisaatiotyypit.indexOf("OPPILAITOS") != -1 && organisaatio.oppilaitostyyppi !== undefined) {
+                //oppilaitos, kerää tyyppi
+                addTyyppi(organisaatio);
+                deferred.resolve(oppilaitostyypit);
+            } else if (organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE") != -1) {
+                //opetuspiste, kerää parentin tyyppi
+                var parent = $scope.organisaatiomap[organisaatio.parentOid];
+                if (undefined !== parent) {
+                    addTyyppi(parent);
+                    deferred.resolve(oppilaitostyypit);
+                } else {
+                    //parentti ei ole saatavilla, kysytään organisaatioservicestä
+                    console.log("organisaatio:", organisaatio);
+                    OrganisaatioService.etsi({oidRestrictionList: organisaatio.parentOid}).then(function(vastaus) {
+                        $scope.organisaatiomap[organisaatio.parentoid] = vastaus.organisaatiot[0].oppilaitostyyppi;
+                        deferred.resolve([vastaus.organisaatiot[0].oppilaitostyyppi]);
+                    }, function() {
+                        deferred.resolve([]);
+                    });
+                }
+            } else {
+                console.log("Tuntematon organisaatiotyyppi:", organisaatio.organisaatiotyypit);
+            }
+            return deferred.promise;
+        };
+
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
-        OrganisaatioService.etsi({oidRestrictionList: $scope.model.targetOrganisaatio.oid || AuthService.getOrganisations()}).then(function(vastaus) {
+        OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
             //console.log("asetetaan org hakutulos modeliin.");
             $scope.lkorganisaatiot = vastaus.organisaatiot;
             //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
@@ -72,88 +130,8 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
         });
         var lisaaOrganisaatio = function(organisaatio) {
             $scope.model.organisaatiot.push(organisaatio);
-            var oppilaitostyypit = haeOppilaitostyypit(organisaatio);
-            oppilaitostyypit.then(function(data) {
-                paivitaKoulutustyypit(data);
-            });
         };
-        var paivitaKoulutustyypit = function(oppilaitostyypit) {
-            var sallitutKoulutustyypit = [];
-            if (oppilaitostyypit !== undefined) {
-                for (var i = 0; i < oppilaitostyypit.length; i++) {
-                    var oppilaitostyyppiUri = oppilaitostyypit[i];
-                    console.log("getting koulutustyyppi for ", oppilaitostyyppiUri);
-                    var koulutustyypit = []; //tarvitaanko???
-                    //console.log("got:", koulutustyypit);
-                    if (koulutustyypit) {
-                        for (var j = 0; j < koulutustyypit.length; j++) {
-                            if (sallitutKoulutustyypit.indexOf(koulutustyypit[j]) == -1) {
-                                sallitutKoulutustyypit.push(koulutustyypit[j]);
-                            }
-                        }
-                    } else {
-                        console.log("oppilaitostyypille: '", oppilaitostyyppiUri, "' ei löydy koulutustyyppejä");
-                    }
 
-                }
-                //console.log("asetetaan koulutustyypit: ", sallitutKoulutustyypit);
-            }
-            $scope.sallitutKoulutustyypit = sallitutKoulutustyypit;
-        };
-        //alusta koulutustyypit (kaikki valittavissa olevat)
-        paivitaKoulutustyypit();
-        /*
-         * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan allaolevista oppilaitoksista,
-         * oppilaitoksen tyypit tulee oppilaitokselta, toimipisteen tyyppi typee ylemmän tason oppilaitokselta.
-         * TODO lisää testi
-         */
-        var haeOppilaitostyypit = function(organisaatio) {
-
-            var deferred = $q.defer();
-            var oppilaitostyypit = [];
-            /*
-             * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
-             */
-            var addTyyppi = function(organisaatio) {
-                if (organisaatio.oppilaitostyyppi !== undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
-                    oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
-                }
-            };
-            if (organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA") != -1 && organisaatio.children !== undefined) {
-                //	koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan olevan oppilaitoksia)
-                for (var i = 0; i < organisaatio.children.length; i++) {
-                    addTyyppi(organisaatio.children[i]);
-                }
-                deferred.resolve(oppilaitostyypit);
-            }
-
-            else if (organisaatio.organisaatiotyypit.indexOf("OPPILAITOS") != -1 && organisaatio.oppilaitostyyppi !== undefined) {
-                //oppilaitos, kerää tyyppi
-                addTyyppi(organisaatio);
-                deferred.resolve(oppilaitostyypit);
-            }
-
-            else if (organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE") != -1) {
-                //opetuspiste, kerää parentin tyyppi
-                var parent = $scope.organisaatiomap[organisaatio.parentOid];
-                if (undefined !== parent) {
-                    addTyyppi(parent);
-                    deferred.resolve(oppilaitostyypit);
-                } else {
-                    //parentti ei ole saatavilla, kysytään organisaatioservicestä
-                    console.log("organisaatio:", organisaatio);
-                    OrganisaatioService.etsi({oidRestrictionList: organisaatio.parentOid}).then(function(vastaus) {
-                        $scope.organisaatiomap[organisaatio.parentoid] = vastaus.organisaatiot[0].oppilaitostyyppi;
-                        deferred.resolve([vastaus.organisaatiot[0].oppilaitostyyppi]);
-                    }, function() {
-                        deferred.resolve([]);
-                    });
-                }
-            } else {
-                console.log("Tuntematon organisaatiotyyppi:", organisaatio.organisaatiotyypit);
-            }
-            return deferred.promise;
-        };
         /**
          * Peruuta nappulaa klikattu, sulje dialogi
          */
@@ -179,54 +157,46 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
                     mode: $scope.model.mode,
                     organisationOids: orgOids
                 };
-                if ($scope.model.targetKoulutus.length === 1) {
-
-                    TarjontaService.koulutus($scope.model.targetKoulutus[0].oid).copyAndMove(apiModel, function(response) {
-                        if (response.status === 'OK') {
-                            $modalInstance.close(response);
-                        } else {
-                            if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
-
-                                for (var i = 0; i < response.errors.length; i++) {
-                                    $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
-                                }
-
-                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error.yleisvirhe", [])});
-                                $scope.model.btnDisableRemove = true;
+//                if ($scope.model.targetKoulutus.length === 1) {
+                TarjontaService.koulutus($scope.model.targetKoulutus[0].oid).copyAndMove(apiModel, function(response) {
+                    if (response.status === 'OK') {
+                        $modalInstance.close(response);
+                        $location.path("/koulutus/" + $scope.model.targetKoulutus[0].oid + "/edit");
+                    } else {
+                        if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
+                            $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error.yleisvirhe", [])});
+                            for (var i = 0; i < response.errors.length; i++) {
+                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error." + response.errors[i].errorMessageKey)});
                             }
                         }
-                    });
-                } else {
-//                    var komotoOids = [];
-//                    for (var i = 0; i < $scope.model.targetKoulutus.length; i++) {
-//                        komotoOids.push($scope.model.targetKoulutus[i].oid);
-//                    }
-
-                    apiModel.komotoOids = $scope.model.targetKoulutus;
-
-                    TarjontaService.koulutus().copyAndMoveMultiple(apiModel, function(response) {
-                        if (response.status === 'OK') {
-                            $modalInstance.close(response);
-                        } else {
-                            if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
-
-                                for (var i = 0; i < response.errors.length; i++) {
-                                    $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
-                                }
-
-                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error.yleisvirhe", [])});
-                                $scope.model.btnDisableRemove = true;
-                            }
-                        }
-                    });
-                }
+                    }
+                });
+//                } else {
+//                  //MULTI COPY
+////                    var komotoOids = [];
+////                    for (var i = 0; i < $scope.model.targetKoulutus.length; i++) {
+////                        komotoOids.push($scope.model.targetKoulutus[i].oid);
+////                    }
+//
+//                    apiModel.komotoOids = $scope.model.targetKoulutus;
+//
+//                    TarjontaService.koulutus().copyAndMoveMultiple(apiModel, function(response) {
+//                        if (response.status === 'OK') {
+//                            $modalInstance.close(response);
+//                        } else {
+//                            if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
+//
+//                                for (var i = 0; i < response.errors.length; i++) {
+//                                    $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
+//                                }
+//
+//                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error.yleisvirhe", [])});
+//                                $scope.model.btnDisableRemove = true;
+//                            }
+//                        }
+//                    });
+//                }
             });
-        };
-        /**
-         * Tarkista että Koulutustyyppi valittu ja validi vrt valittu organisaatio
-         */
-        $scope.koulutustyyppiValidi = function() {
-            return $scope.sallitutKoulutustyypit.indexOf($scope.model.koulutustyyppi) != -1;
         };
         /**
          * Organisaatio valittu
