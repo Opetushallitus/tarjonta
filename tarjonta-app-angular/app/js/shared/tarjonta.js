@@ -375,7 +375,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
 
     dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
-        console.log("resourceLink called!");
+        console.log("save resourceLink called!");
         dataFactory.resourceLink.save({parent: parent, children: angular.isArray(child) ? child : [child]}, fnSuccess, fnError);
     };
 
@@ -400,8 +400,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 checkput: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
                 },
-                put: {
+                save: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                    method: 'POST'
                 },
                 test: {
                     url: Config.env.tarjontaRestUrlPrefix + "link/test",
