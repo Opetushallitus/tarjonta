@@ -28,13 +28,25 @@
         <class>fi.vm.sade.tarjonta.model.Pisteraja</class>
         <class>fi.vm.sade.tarjonta.model.Kielivalikoima</class>
         <class>fi.vm.sade.tarjonta.model.BinaryData</class>
+        
+        <!-- oid service: -->
+        <class>fi.vm.sade.oid.model.OID</class>
+        <class>fi.vm.sade.oid.model.NodeClass</class>
+        <class>fi.vm.sade.oid.model.OIDBaseData</class>
 
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:h2:mem:tarjonta"/>
+
+            <!--
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
             <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:tarjonta"/>
+            -->
             <property name="hibernate.connection.username" value="sa"/>
             <property name="hibernate.connection.password" value=""/>
 
