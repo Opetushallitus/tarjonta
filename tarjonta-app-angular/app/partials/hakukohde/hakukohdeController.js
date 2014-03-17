@@ -44,6 +44,7 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                 collapse: {
                     model : true
                 },
+                hakukohdeTabsDisabled : true,
                 hakukohde : {
                     valintaperusteKuvaukset : {},
                     soraKuvaukset : {},
@@ -73,6 +74,7 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                 collapse: {
                     model : true
                 },
+                hakukohdeTabsDisabled : false,
                 hakukohde : hakukohdeResource
             }
 
