@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,6 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 
@@ -38,7 +37,7 @@ import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 @Path("/indexer")
 public class IndexerResource {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static Logger logger = LoggerFactory.getLogger(IndexerResource.class);
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
     @Autowired
@@ -119,37 +118,6 @@ public class IndexerResource {
         this.koulutusSolr = factory.getSolrServer("koulutukset");
     }
 
-    /**
-     * @deprecated do not call this
-     */
-    public void indexHakukohde(List<Hakukohde> hakukohteet) {
-        List<Long> ids = Lists.newArrayList();
-        for (Hakukohde hakukohde : hakukohteet) {
-            ids.add(hakukohde.getId());
-        }
-        try {
-            indexHakukohteet(ids);
-        } catch (Exception e) {
-            throw new RuntimeException("indexing.error", e);
-        }
-    }
-
-    /**
-     * @deprecated do not call this
-     */
-    public void indexKoulutus(List<KoulutusmoduuliToteutus> koulutukset) {
-        List<Long> ids = Lists.newArrayList();
-
-        for (KoulutusmoduuliToteutus koulutus : koulutukset) {
-            ids.add(koulutus.getId());
-        }
-        try {
-            indexKoulutukset(ids);
-        } catch (Exception e) {
-            throw new RuntimeException("indexing.error", e);
-        }
-    }
-
     private void index(final SolrServer solr, List<SolrInputDocument> docs) {
         if (docs.size() > 0) {
             final List<SolrInputDocument> localDocs = ImmutableList.copyOf(docs);
@@ -193,8 +161,10 @@ public class IndexerResource {
 
     private static void afterCommit(TransactionSynchronization sync) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            logger.info("Transaction synchronization is ACTIVE. Executing later!");
             TransactionSynchronizationManager.registerSynchronization(sync);
         } else {
+            logger.info("Transaction synchronization is NOT ACTIVE. Executing right now!");
             sync.afterCommit();
         }
     }

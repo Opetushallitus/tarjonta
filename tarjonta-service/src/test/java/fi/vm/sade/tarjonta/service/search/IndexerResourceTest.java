@@ -82,9 +82,9 @@ public class IndexerResourceTest {
 
     @Test
     public void indexing() throws SolrServerException, IOException {
-        List<Hakukohde> hakukohteet = Lists.newArrayList();
-        hakukohteet.add(getHakukohde());
-        indexer.indexHakukohde(hakukohteet);
+        List<Long> hakukohteet = Lists.newArrayList();
+        hakukohteet.add(getHakukohde().getId());
+        indexer.indexHakukohteet(hakukohteet);
         verify(hakukohteetServer, times(2)).commit(true, true, false);
         verify(hakukohteetServer, times(1)).add(any(Collection.class));
         verify(koodiService, times(5)).searchKoodis(any(SearchKoodisCriteriaType.class));

@@ -3,6 +3,13 @@ package fi.vm.sade.tarjonta.service.search;
 //import org.apache.http.client.HttpClient;
 //import org.apache.http.impl.NoConnectionReuseStrategy;
 //import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.http.client.params.AllClientPNames;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,21 +39,14 @@ public class SolrServerFactory implements InitializingBean {
     }
 
     private SolrServer getSolr(final String url) {
+        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        DefaultHttpClient client = new DefaultHttpClient(mgr);
+        HttpParams params = client.getParams();
+        params.setBooleanParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.TRUE);
+//        HttpConnectionParams.setConnectionTimeout(params, 30);
+//        HttpConnectionParams.setSoTimeout(params, 60);     
+        return new HttpSolrServer(url, client);
         
-//        PoolingHttpClientConnectionManager mgr = new PoolingHttpClientConnectionManager();
-//        mgr.setDefaultMaxPerRoute(100);
-//        mgr.setMaxTotal(100);
-//        
-//        org.apache.http.impl.client.HttpClientBuilder b = org.apache.http.impl.client.HttpClientBuilder.create();
-//        
-//        HttpClient c = b.setConnectionManager(mgr)
-//                .setConnectionReuseStrategy(new NoConnectionReuseStrategy())
-//                .disableConnectionState().
-//                
-//                
-//                build();
-//        
-        return new HttpSolrServer(url);
     }
 
     @Override
