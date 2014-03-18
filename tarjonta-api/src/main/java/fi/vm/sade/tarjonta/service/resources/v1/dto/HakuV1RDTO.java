@@ -211,22 +211,6 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.haunTunniste = haunTunniste;
     }
 
-//    public String getLastUpdatedByOid() {
-//        return lastUpdatedByOid;
-//    }
-//
-//    public void setLastUpdatedByOid(String lastUpdatedByOid) {
-//        this.lastUpdatedByOid = lastUpdatedByOid;
-//    }
-//
-//    public Date getLastUpdatedDate() {
-//        return lastUpdatedDate;
-//    }
-//
-//    public void setLastUpdatedDate(Date lastUpdatedDate) {
-//        this.lastUpdatedDate = lastUpdatedDate;
-//    }
-
     public int getHakukausiVuosi() {
         return hakukausiVuosi;
     }

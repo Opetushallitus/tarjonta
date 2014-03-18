@@ -124,4 +124,22 @@
             </div>
         </td>
     </tr>
+
+    <tr>
+        <th data-tt='haku.edit.organisaatiot'>Organisaatiot</th>
+        <td colspan="2">
+            <p data-tt="haku.edit.organisaatiot.help">
+                Valituilla organisaatioilla on oikeus muokata tätä hakua ja liittää siihen hakukohteita.
+            </p>
+
+            <ul>
+                <li ng-repeat="org in model.selectedOrganisations">{{ org.nimi }}</li>
+            </ul>
+
+            <div class="btn" ng-click="doSelectOrganisations()" data-tt="haku.edit.valitse.organisaatio">
+                 <i class="icon-plus"></i> Muokkaa valittuja organisaatioita
+            </div>
+        </td>
+    </tr>
+
 </table>
