@@ -300,8 +300,11 @@ app.controller('HakuEditController',
             };
 
 
-            // TODO iff new Haku, then populate the selectedOrganisations with the users organisations
-
+            /**
+             * Initialize controller and ui state.
+             *
+             * @returns {undefined}
+             */
             $scope.init = function() {
                 $log.info("init...");
 
