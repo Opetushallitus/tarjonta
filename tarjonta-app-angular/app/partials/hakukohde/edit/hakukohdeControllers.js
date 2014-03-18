@@ -499,7 +499,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.canSaveAsLuonnos = function() {
 
-        console.log('CAN SAVE AS LUONNOS : ', CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila));
         return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
 
     }

@@ -261,6 +261,36 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid;
             //example : https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640
         };
+
+        $scope.findHakukohdeNimi = function(lang,hakukohde) {
+
+        var hakukohdeNimi;
+        var fallbackLang = "fi";
+
+            //Try to get hakukohde nimi with tab language
+            for(var language in hakukohde.nimi) {
+                  if (lang.locale === language.toUpperCase) {
+                      hakukohdeNimi = hakukohde.nimi[lang];
+                  }
+
+            }
+            //If not found then try to find in Finnish
+            if (hakukohdeNimi === undefined) {
+                hakukohdeNimi = hakukohde.nimi[fallbackLang];
+
+                //If even that is not found, just get some name
+                if (hakukohdeNimi === undefined) {
+
+                    for (var fooLang in hakukohde.nimi) {
+                        hakukohdeNimi = hakukohde.nimi[fooLang];
+                    }
+
+                }
+            }
+
+            return hakukohdeNimi;
+        }
+
         $scope.searchKoodi = function(obj, koodistouri, uri, locale) {
             var promise = koodisto.getKoodi(koodistouri, uri, locale);
             promise.then(function(data) {
