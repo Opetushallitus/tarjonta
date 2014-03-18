@@ -24,7 +24,7 @@
  * See "index.html" how the pre-loading is done to following global variable:
  * <b>window.CONFIG.env["tarjonta.localisations"]</b>
  *
- * @see index.html for preload implementation
+ * @see partials/init.js for preload implementation ("jQuery.ajax(...")
  *
  * @author mlyly
  */
@@ -75,24 +75,6 @@ app.factory('Localisations', function($log, $resource, Config) {
  *   {{ tl("this.is.anotker.key", "sv", ["param", "param too"]) }}
  * </pre>
  */
-app.directive('tt_OLD', ['LocalisationService', '$timeout', function(LocalisationService) {
-        return {
-            restrict: 'EA',
-            replace: true,
-            //template: '<div>TT TEMPLATE</div>',
-            scope: false,
-            compile: function(tElement, tAttrs, transclude) {
-                var t = LocalisationService.t(tAttrs["tt"]);
-                tElement.html(t);
-
-                return function postLink(scope, iElement, iAttrs, controller) {
-                    // $timeout(scope.$destroy.bind(scope), 0);
-                };
-            }
-        };
-    }]);
-
-
 app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationService) {
         return {
             restrict: 'A',
