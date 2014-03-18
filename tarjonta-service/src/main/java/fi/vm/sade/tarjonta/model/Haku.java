@@ -406,9 +406,8 @@ public class Haku extends TarjontaBaseEntity {
 
     public String[] getOrganisationOids() {
         if (organisationOids == null || organisationOids.isEmpty()) {
-            return null;
+            return new String[0];
         }
-
         return organisationOids.split(",");
     }
 
