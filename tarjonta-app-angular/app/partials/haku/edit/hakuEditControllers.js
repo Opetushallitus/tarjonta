@@ -24,7 +24,7 @@ var app = angular.module('app.haku.edit.ctrl', []);
  * @param {type} param2
  */
 app.controller('HakuEditController',
-        function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService) {
+        function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService, AuthService) {
             $log.info("HakuEditController()", $scope);
 
             var clearErrors = function() {
@@ -189,7 +189,7 @@ app.controller('HakuEditController',
              * @returns {boolean} true is haku in "model.hakux.result" is NEW (ie. doesn't have OID)
              */
             $scope.isNewHaku = function() {
-                return angular.isNotDefined($scope.model.hakux.result.oid);
+                return !angular.isDefined($scope.model.hakux.result.oid);
             };
 
             $scope.checkHaunNimiValidity = function() {
@@ -300,6 +300,8 @@ app.controller('HakuEditController',
             };
 
 
+            // TODO iff new Haku, then populate the selectedOrganisations with the users organisations
+
             $scope.init = function() {
                 $log.info("init...");
 
@@ -331,6 +333,14 @@ app.controller('HakuEditController',
 
                 // lataa nykyiset parametrit model.parameter objektiin
                 ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+
+                /**
+                 * If this is new haku initialize selected organisations with users list of organisations.
+                 */
+                if ($scope.isNewHaku()) {
+                    $scope.model.hakux.result.organisaatioOids = AuthService.getOrganisations();
+                    $log.info("NEW HAKU: ", $scope.model.hakux.result.organisaatioOids);
+                }
 
                 // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
