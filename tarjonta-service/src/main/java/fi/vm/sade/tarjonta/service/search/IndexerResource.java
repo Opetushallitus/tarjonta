@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,19 +119,34 @@ public class IndexerResource {
 
     private void index(final SolrServer solr, List<SolrInputDocument> docs) {
         if (docs.size() > 0) {
-            final List<SolrInputDocument> localDocs = ImmutableList.copyOf(docs);
+            final List<SolrInputDocument> localDocs = ImmutableList
+                    .copyOf(docs);
             afterCommit(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    try {
-                        logger.info("Indexing {} docs.", localDocs.size());
-                        solr.add(localDocs);
-                        logger.info("Committing changes to index.");
-                        solr.commit(true, true, false);
-                        logger.info("Done.");
-                    } catch (Exception e) {
-                        throw new RuntimeException("indexing.error", e);
+                    boolean completed = false;
+                    Exception lastException = null;
+
+                    // try 3 times
+                    for (int i = 0; i < 3; i++) {
+                        try {
+                            logger.info("Indexing {} docs, try {}", localDocs.size(), i);
+                            solr.add(localDocs);
+                            logger.info("Committing changes to index.");
+                            solr.commit(true, true, false);
+                            logger.info("Done.");
+                            completed = true;
+                        } catch (Exception e) {
+                            lastException = e;
+                        }
+                        if (completed) {
+                            break;
+                        }
                     }
+                    // fail
+                    throw new RuntimeException(
+                            "indexing.error, last exception:", lastException);
+
                 }
             });
         }
