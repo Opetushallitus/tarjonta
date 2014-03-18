@@ -1,8 +1,8 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.impl.NoConnectionReuseStrategy;
+//import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,23 +33,20 @@ public class SolrServerFactory implements InitializingBean {
 
     private SolrServer getSolr(final String url) {
         
-        PoolingHttpClientConnectionManager mgr = new PoolingHttpClientConnectionManager();
-        mgr.setDefaultMaxPerRoute(100);
-        mgr.setMaxTotal(100);
-        
-        org.apache.http.impl.client.HttpClientBuilder b = org.apache.http.impl.client.HttpClientBuilder.create();
-        
-        HttpClient c = b.setConnectionManager(mgr)
-                .setConnectionReuseStrategy(new NoConnectionReuseStrategy())
-                .disableConnectionState().
-                
-                
-                build();
-        
-        return new HttpSolrServer(url, c);
-        
-//        return new HttpSolrServer(url);
-
+//        PoolingHttpClientConnectionManager mgr = new PoolingHttpClientConnectionManager();
+//        mgr.setDefaultMaxPerRoute(100);
+//        mgr.setMaxTotal(100);
+//        
+//        org.apache.http.impl.client.HttpClientBuilder b = org.apache.http.impl.client.HttpClientBuilder.create();
+//        
+//        HttpClient c = b.setConnectionManager(mgr)
+//                .setConnectionReuseStrategy(new NoConnectionReuseStrategy())
+//                .disableConnectionState().
+//                
+//                
+//                build();
+//        
+        return new HttpSolrServer(url);
     }
 
     @Override
