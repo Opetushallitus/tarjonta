@@ -127,7 +127,7 @@ public class IndexerResource {
                     Exception lastException = null;
 
                     // try 3 times
-                    for (int i = 0; i < 3; i++) {
+                    for (int i = 0; i < 5; i++) {
                         try {
                             logger.info("Indexing {} docs, try {}", localDocs.size(), i);
                             solr.add(localDocs);
