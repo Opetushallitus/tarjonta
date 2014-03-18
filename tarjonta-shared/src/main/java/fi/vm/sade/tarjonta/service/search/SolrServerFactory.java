@@ -40,6 +40,8 @@ public class SolrServerFactory implements InitializingBean {
 
     private SolrServer getSolr(final String url) {
         PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        mgr.setDefaultMaxPerRoute(20);
+        mgr.setDefaultMaxPerRoute(100);
         DefaultHttpClient client = new DefaultHttpClient(mgr);
         HttpParams params = client.getParams();
         params.setBooleanParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.TRUE);
