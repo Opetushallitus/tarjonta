@@ -124,7 +124,6 @@ public class IndexerResource {
             afterCommit(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    boolean completed = false;
                     Exception lastException = null;
 
                     // try 3 times
@@ -135,12 +134,9 @@ public class IndexerResource {
                             logger.info("Committing changes to index.");
                             solr.commit(true, true, false);
                             logger.info("Done.");
-                            completed = true;
+                            return; //exit on success!
                         } catch (Exception e) {
                             lastException = e;
-                        }
-                        if (completed) {
-                            break;
                         }
                     }
                     // fail
