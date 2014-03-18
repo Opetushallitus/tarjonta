@@ -33,8 +33,8 @@ public class IndexSyncronizer {
     @Autowired
     private IndexerResource indexerResource;
 
-//    @Transactional
-//    @Scheduled(cron = "*/10 * * * * ?")
+    @Transactional
+    @Scheduled(cron = "*/10 * * * * ?")
     public void updateKoulutukset() {
         logger.debug("Searching for unindexed hakukohdes...");
         List<Long> ids = indexerDao.findUnindexedHakukohdeIds();
@@ -46,8 +46,8 @@ public class IndexSyncronizer {
         }
     }
 
-//    @Transactional
-//    @Scheduled(cron = "*/10 * * * * ?")
+    @Transactional
+    @Scheduled(cron = "*/10 * * * * ?")
     public void updateHakukohteet() {
         logger.debug("Searching for unindexed koulutukses...");
         List<Long> ids = indexerDao.findUnindexedKoulutusIds();
