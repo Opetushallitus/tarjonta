@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -123,6 +124,15 @@ public class Haku extends TarjontaBaseEntity {
      */
     @Column(name = "max_hakukohdes")
     private int maxHakukohdes = 0;
+
+
+    /**
+     * Array of organisation OIDs, comma separated. This lists the "tarjoaja" oids for the haku.
+     *
+     * This is needed for KK-spesific functionality.
+     * See task KJOH-744 -- (https://jira.oph.ware.fi/jira/browse/KJOH-744)
+     */
+    private String organisationOids;
 
     public String getOid() {
         return oid;
@@ -392,6 +402,22 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setMaxHakukohdes(int maxHakukohdes) {
         this.maxHakukohdes = maxHakukohdes;
+    }
+
+    public String[] getOrganisationOids() {
+        if (organisationOids == null || organisationOids.isEmpty()) {
+            return null;
+        }
+
+        return organisationOids.split(",");
+    }
+
+    public void setOrganisationOids(String[] organisationOids) {
+        if (organisationOids == null || organisationOids.length == 0) {
+            this.organisationOids = null;
+        } else {
+            this.organisationOids = StringUtils.join(organisationOids, ",");
+        }
     }
 
 }

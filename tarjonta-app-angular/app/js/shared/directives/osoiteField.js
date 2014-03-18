@@ -9,7 +9,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
     	$scope.tt = {
     			osoite: LocalisationService.t("osoitefield.osoiterivi"),
     			postinumero: LocalisationService.t("osoitefield.postinumero"),
-    			postitoimipaikka: LocalisationService.t("osoitefield.postitoimipaikka"),
+    			postitoimipaikka: LocalisationService.t("osoitefield.postitoimipaikka")
     	}
     	
     	$scope.postinumeroArvo = "";
@@ -48,7 +48,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
             		}
             	}
     		}
-    		if ($scope.model.postinumero) {
+    		if ($scope.model && $scope.model.postinumero) {
     			var pn = findPostinumeroWithUri($scope.model.postinumero)
             	$scope.postinumeroArvo = pn && pn.koodiArvo;
             	$scope.model.postitoimipaikka = pn && pn.koodiNimi;
