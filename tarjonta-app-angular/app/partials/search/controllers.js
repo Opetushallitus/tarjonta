@@ -327,6 +327,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                         if (result) {
                             ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
                                 action: function(ev) {
+
                                     $scope.openDeleteDialog(prefix, oid, nimi, actions.remove);
                                 }
                             });
@@ -393,7 +394,19 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 console.log("TODO raportti");
             };
 
-            var DeleteDialogCtrl = function($scope, $modalInstance) {
+            var DeleteDialogCtrl = function($scope, $modalInstance, ns) {
+
+
+                var init = function() {
+
+                    $scope.oid = ns.oid;
+                    $scope.nimi = ns.nimi;
+                    $scope.otsikko = ns.otsikko;
+                    $scope.ohje = ns.ohje;
+
+                };
+
+                init();
 
                 $scope.ok = function() {
                     $modalInstance.close();
@@ -407,17 +420,23 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
 
             $scope.openDeleteDialog = function(prefix, oid, nimi, action) {
 
-                var ns = $scope.$new();
+                ns = {};
                 ns.oid = oid;
                 ns.nimi = nimi;
-                ns.otsikko = "tarjonta.poistovahvistus.otsikko." + prefix;
-                ns.ohje = "tarjonta.poistovahvistus.ohje." + prefix;
+                ns.otsikko = LocalisationService.t("tarjonta.poistovahvistus.otsikko." + prefix);
+                ns.ohje = LocalisationService.t("tarjonta.poistovahvistus.ohje." + prefix);
 
                 if (prefix == "hakukohde") {
                     var modalInstance = $modal.open({
                         controller: DeleteDialogCtrl,
                         templateUrl: "partials/search/delete-dialog.html",
-                        scope: ns
+                        resolve : {
+
+                            ns : function() {
+                                return ns;
+                            }
+
+                        }
                     });
 
                     modalInstance.result.then(function() {
