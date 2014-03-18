@@ -50,7 +50,7 @@ public class SolrServerFactory implements InitializingBean {
         HttpParams params = client.getParams();
 //        HttpConnectionParams.setConnectionTimeout(params, 30);
         HttpConnectionParams.setStaleCheckingEnabled( params, true);
-        HttpConnectionParams.setSoTimeout(params, 500);
+        HttpConnectionParams.setSoTimeout(params, 1000);
         client.setHttpRequestRetryHandler(new StandardHttpRequestRetryHandler(3,true));
         return new HttpSolrServer(url, client);
         
