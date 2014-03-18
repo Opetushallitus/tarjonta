@@ -1,12 +1,8 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.HttpResponse;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.client.HttpClient;
 import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,28 +33,23 @@ public class SolrServerFactory implements InitializingBean {
 
     private SolrServer getSolr(final String url) {
         
-        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        PoolingHttpClientConnectionManager mgr = new PoolingHttpClientConnectionManager();
         mgr.setDefaultMaxPerRoute(100);
-        mgr.setMaxTotal(1000);
-        DefaultHttpClient httpclient = new DefaultHttpClient(mgr){
-
-            @Override
-            protected ConnectionReuseStrategy createConnectionReuseStrategy() {
-                return new NoConnectionReuseStrategy();
-            }
-            
-        };
-
-        httpclient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
-            
-            public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-                return 0;
-            }
-            
-        });
-
+        mgr.setMaxTotal(100);
         
-        return new HttpSolrServer(url, httpclient);
+        org.apache.http.impl.client.HttpClientBuilder b = org.apache.http.impl.client.HttpClientBuilder.create();
+        
+        HttpClient c = b.setConnectionManager(mgr)
+                .setConnectionReuseStrategy(new NoConnectionReuseStrategy())
+                .disableConnectionState().
+                
+                
+                build();
+        
+        return new HttpSolrServer(url, c);
+        
+//        return new HttpSolrServer(url);
+
     }
 
     @Override
