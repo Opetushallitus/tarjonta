@@ -638,6 +638,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<Boolean> deleteHakukohde(String oid) {
         permissionChecker.checkRemoveHakukohde(oid);
         try {
+            LOG.debug("REMOVING HAKUKOHDE : " + oid);
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
 

@@ -135,6 +135,8 @@ public class PermissionChecker {
         Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
         Set<KoulutusmoduuliToteutus> komot = hakukohde
                 .getKoulutusmoduuliToteutuses();
+
+        System.out.println(" HAKUKOHDE KOMOTOS SIZE :  " + komot.size());
         if (komot.size() > 0) {
             checkPermission(permissionService
                     .userCanDeleteHakukohde(OrganisaatioContext
