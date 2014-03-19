@@ -1,4 +1,3 @@
-
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
@@ -16,7 +15,7 @@ app.controller('BaseEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable : false};
+                    var uiModel = {isMutable: false};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -28,9 +27,9 @@ app.controller('BaseEditController',
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         /*
-                         * LOAD KOULUTUS BY GIVEN KOMOTO OID
+                         * SHOW KOULUTUS BY GIVEN KOMOTO OID
                          */
-                        $scope.controlFormMessages(uiModel, "LOAD");
+                        $scope.controlFormMessages(uiModel, "SHOW");
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $route.current.locals.koulutusModel.result;
 
@@ -39,8 +38,8 @@ app.controller('BaseEditController',
                             return;
                         }
 
-                        if(model.tila === 'POISTETTU'){
-                            uiModel.isMutable=true;
+                        if (model.tila === 'POISTETTU') {
+                            uiModel.isMutable = true;
                         }
 
                         $scope.updateFormStatusInformation(model);
@@ -81,7 +80,7 @@ app.controller('BaseEditController',
                     }
 
                     /*
-                     * LOAD ALL KOODISTO KOODIS
+                     * SHOW ALL KOODISTO KOODIS
                      */
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
                         if (angular.isUndefined(value.skipUiModel)) {
@@ -443,8 +442,13 @@ app.controller('BaseEditController',
                  */
                 $scope.controlFormMessages = function(uiModel, action, errorDetailType, apiErrors) {
                     switch (action) {
-                        case 'LOAD':
-                            //continue to init
+                        case 'SHOW':
+                            uiModel.showErrorCheckField = false;
+                            uiModel.showValidationErrors = true;
+                            uiModel.showError = false;
+                            uiModel.showSuccess = false;
+                            uiModel.validationmsgs = [];
+                            break;
                         case 'INIT':
                             uiModel.showErrorCheckField = false;
                             uiModel.showValidationErrors = false;
@@ -464,7 +468,7 @@ app.controller('BaseEditController',
                         case 'SAVED':
                             uiModel.showErrorCheckField = false;
                             uiModel.showError = false;
-                            uiModel.showValidationErrors = false;
+                            uiModel.showValidationErrors = true;
                             uiModel.hakukohdeTabsDisabled = false;
                             uiModel.validationmsgs = [];
                             //Form
@@ -475,7 +479,7 @@ app.controller('BaseEditController',
                         case 'ERROR':
                         default:
                             uiModel.showErrorCheckField = errorDetailType === 'UI_ERRORS'
-                            uiModel.showValidationErrors = errorDetailType === 'UI_ERRORS';
+                            uiModel.showValidationErrors = true;
                             uiModel.showError = true;
                             uiModel.showSuccess = false;
 
