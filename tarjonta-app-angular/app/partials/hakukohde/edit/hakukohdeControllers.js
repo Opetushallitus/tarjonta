@@ -123,6 +123,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     console.log('HAKUKOHDE : ', $scope.model.hakukohde);
 
+    console.log('IS TABS DISABLED : ' , $scope.model.hakukohdeTabsDisabled);
+
 
     var checkIsCopy = function(tilaParam) {
 
@@ -497,7 +499,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.canSaveAsLuonnos = function() {
 
-        console.log('CAN SAVE AS LUONNOS : ', CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila));
         return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
 
     }

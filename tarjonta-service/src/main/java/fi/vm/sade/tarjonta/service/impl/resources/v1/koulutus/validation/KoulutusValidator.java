@@ -168,7 +168,7 @@ public class KoulutusValidator {
      "meta" : {
      "kieli_sv" : {
      "koodi" : {
-     "uri" : "kieli_sv", 
+     "uri" : "kieli_sv",
      "versio" : "1",
      "arvo" : "koulutusohjelma xxx"
      },
@@ -176,13 +176,13 @@ public class KoulutusValidator {
      */
     private static void validateTextOneOrMany(Set<KoulutusValidationMessages> validationMessages, NimiV1RDTO dto,
             KoulutusValidationMessages missing,
-            KoulutusValidationMessages invalidKoodi,
-            KoulutusValidationMessages invalidValue) {
+            KoulutusValidationMessages invalid,
+            KoulutusValidationMessages invalidTextValue) {
         Set<KoulutusValidationMessages> tempError = Sets.<KoulutusValidationMessages>newHashSet();
 
         if (dto.getTekstis().isEmpty()) {
             //no items
-            validationMessages.add(missing);
+            validationMessages.add(invalid);
         } else {
             for (Entry<String, String> e : dto.getTekstis().entrySet()) {
                 if (notNullStrOrEmpty(e.getValue())) {
@@ -191,7 +191,7 @@ public class KoulutusValidator {
                     return;
                 } else {
                     //validation will fail
-                    tempError.add(invalidValue);
+                    tempError.add(missing);
                 }
             }
 
@@ -201,9 +201,10 @@ public class KoulutusValidator {
     }
 
     private static void checkKausiVuosi(Set<KoulutusValidationMessages> validationMessages, KoodiV1RDTO kausi, Integer year) {
-        if (kausi == null) {
+
+        if (kausi == null || isEmpty(kausi.getUri())) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING);
-        } else if (requireKoodiUriWithVersion(kausi)) {
+        } else if (!KoodistoURI.isValidKausiUri(kausi.getUri())) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID);
         }
 
@@ -212,13 +213,13 @@ public class KoulutusValidator {
         } else if (year < 2000) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
         }
-
     }
 
     private static void validateAlkamisPvms(Set<KoulutusValidationMessages> validationMessages, KoulutusKorkeakouluV1RDTO dto) {
         if (dto.getKoulutuksenAlkamisPvms() == null) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING);
         } else if (!dto.getKoulutuksenAlkamisPvms().isEmpty()) {
+
             final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
             KoulutusValidationMessages validateDates = KoulutusKorkeakouluDTOConverterToEntity.validateDates(
                     koulutuksenAlkamisPvms.iterator().next(),
@@ -352,5 +353,13 @@ public class KoulutusValidator {
         if (komoto.getTila().equals(TarjontaTila.POISTETTU)) {
             dto.addError(ErrorV1RDTO.createValidationError("komoto.tila", KoulutusValidationMessages.KOULUTUS_DELETED.lower(), komoto.getOid()));
         }
+    }
+
+    /**
+     * @param v
+     * @return true if null or empty (when trimmed) string
+     */
+    private static boolean isEmpty(String v) {
+        return (v == null) || (v.trim().isEmpty());
     }
 }

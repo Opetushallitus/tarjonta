@@ -61,11 +61,10 @@ public class TarjontaSearchService {
     private final SolrServer koulutusSolr;
     private final SolrServer hakukohdeSolr;
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-    
-    
+
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
-    
+
     @Autowired
     public TarjontaSearchService(SolrServerFactory factory) {
         this.koulutusSolr = factory.getSolrServer("koulutukset");
@@ -73,7 +72,9 @@ public class TarjontaSearchService {
     }
 
     /**
-     * 1st step in hakukohdehaku, returns organisation name (with provided locale), hit searchCount
+     * 1st step in hakukohdehaku, returns organisation name (with provided
+     * locale), hit searchCount
+     *
      * @param locale
      * @param kysely
      * @return
@@ -88,38 +89,38 @@ public class TarjontaSearchService {
             QueryResponse response = hakukohdeSolr.query(q);
             List<NamedList<Object>> resultList = NamedListUtil.from(response.getResponse()).get("grouped").get(SolrFields.Hakukohde.ORG_OID).get("groups").value();
             Set<String> orgOids = Sets.newHashSet();
-            for(NamedList<Object> group: resultList){
-                final String oid = NamedListUtil.getValue(group,"groupValue");
+            for (NamedList<Object> group : resultList) {
+                final String oid = NamedListUtil.getValue(group, "groupValue");
                 final SolrDocumentList results = NamedListUtil.from(group).get("doclist").value();
                 final Long count = results.getNumFound();
                 final OrganisaatioHakukohdeGroup g = new OrganisaatioHakukohdeGroup(oid, count);
                 hakukohteet.add(g);
                 orgOids.add(oid);
             }
-            
-            if(orgOids.size()>0) {
-            List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(orgOids);
-            Map<String, OrganisaatioPerustieto> oidOrgIndex = Maps.newHashMap();
-            for(OrganisaatioPerustieto perus: orgs) {
-                oidOrgIndex.put(perus.getOid(),  perus);
-            }
-            
-            for(OrganisaatioHakukohdeGroup group: hakukohteet){
-                final OrganisaatioPerustieto perus = oidOrgIndex.get(group.getOrganisaatioOid());
-                if(perus!=null){
-                    group.setOrganisaatioNimi(OrganisaatioDisplayHelper.getClosestBasic(locale,  perus));
-                } else {
-                    group.setOrganisaatioNimi(group.getOrganisaatioOid());
+
+            if (orgOids.size() > 0) {
+                List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(orgOids);
+                Map<String, OrganisaatioPerustieto> oidOrgIndex = Maps.newHashMap();
+                for (OrganisaatioPerustieto perus : orgs) {
+                    oidOrgIndex.put(perus.getOid(), perus);
+                }
+
+                for (OrganisaatioHakukohdeGroup group : hakukohteet) {
+                    final OrganisaatioPerustieto perus = oidOrgIndex.get(group.getOrganisaatioOid());
+                    if (perus != null) {
+                        group.setOrganisaatioNimi(OrganisaatioDisplayHelper.getClosestBasic(locale, perus));
+                    } else {
+                        group.setOrganisaatioNimi(group.getOrganisaatioOid());
+                    }
                 }
             }
-            }
-            
+
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
         return hakukohteet;
     }
-    
+
     public HakukohteetVastaus haeHakukohteet(
             final HakukohteetKysely kysely) {
 
@@ -162,18 +163,16 @@ public class TarjontaSearchService {
         final List<String> oids = kysely.getTarjoajaOids();
         final List<String> queryParts = Lists.newArrayList();
         //final String tila = kysely.getTilat() != null ? kysely.getTilat().name() : null;
-        
+
         final List<String> tilat = Lists.newArrayList(Iterables.transform(kysely.getTilat(), new Function<TarjontaTila, String>() {
             public String apply(TarjontaTila tila) {
                 return tila != null ? tila.name() : null;
-            } 
+            }
         }));
-        
+
         final SolrQuery q = new SolrQuery(QUERY_ALL);
 
-
         // nimihaku
-        
         if (nimi != null && nimi.length() > 0) {
             nimi = escape(nimi);
             queryParts.clear();
@@ -183,14 +182,14 @@ public class TarjontaSearchService {
             queryParts.clear();
         }
 
-        if (tilat.size()>0) {
+        if (tilat.size() > 0) {
             q.addFilterQuery(String.format("%s:(%s)", Hakukohde.TILA, Joiner.on(' ').skipNulls().join(tilat)));
         }
-        
-        if(kysely.getHakuOid()!=null) {
+
+        if (kysely.getHakuOid() != null) {
             addFilterForHakuOid(kysely.getHakuOid(), q);
         }
-        
+
         // vuosi & kausi
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
 
@@ -198,16 +197,18 @@ public class TarjontaSearchService {
         addFilterForOrgs(oids, queryParts, q);
 
         // restrict by hakukohdeoid
-        if(kysely.getHakukohdeOid()!=null) {
+        if (kysely.getHakukohdeOid() != null) {
             q.addFilterQuery(String.format("%s:%s", Hakukohde.OID, kysely.getHakukohdeOid()));
         }
 
         addFilterForKoulutukset(kysely.getKoulutusOids(), queryParts, q);
 
         //restrict with koulutusastetyyppi
-        if (kysely.getKoulutusasteTyypit().size()>0) {
-            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>(){
-                public String apply(KoulutusasteTyyppi src){ return src.value(); }
+        if (kysely.getKoulutusasteTyypit().size() > 0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>() {
+                public String apply(KoulutusasteTyyppi src) {
+                    return src.value();
+                }
             }));
             q.addFilterQuery(String.format("%s:(%s)", Hakukohde.KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
         }
@@ -219,8 +220,8 @@ public class TarjontaSearchService {
     private Map<String, OrganisaatioPerustieto> searchOrgs(Set<String> orgOids) throws SolrServerException {
         Map<String, OrganisaatioPerustieto> oidIndex = Maps.newHashMap();
         List<OrganisaatioPerustieto> orgVastaus = organisaatioSearchService.findByOidSet(orgOids);
-        for(OrganisaatioPerustieto org: orgVastaus) {
-            oidIndex.put(org.getOid(),  org);
+        for (OrganisaatioPerustieto org : orgVastaus) {
+            oidIndex.put(org.getOid(), org);
         }
         return oidIndex;
     }
@@ -272,7 +273,6 @@ public class TarjontaSearchService {
         KoulutuksetVastaus response = new KoulutuksetVastaus();
 
         final SolrQuery q = createKoulutusQuery(kysely);
-        
 
         try {
             // query solr
@@ -290,7 +290,7 @@ public class TarjontaSearchService {
 
             if (orgOids.size() > 0) {
                 Map<String, OrganisaatioPerustieto> orgs = searchOrgs(orgOids);
-                
+
                 SolrDocumentToKoulutusConverter converter = new SolrDocumentToKoulutusConverter();
 
                 response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs);
@@ -330,6 +330,9 @@ public class TarjontaSearchService {
 
         if (koulutuksenTila != null) {
             q.addFilterQuery(String.format("%s:%s", Koulutus.TILA, koulutuksenTila));
+        } else {
+            //when an empty search, do not show koulutus status of deleted
+            q.addFilterQuery(String.format("%s:%s", "-" + Koulutus.TILA, TarjontaTila.POISTETTU));
         }
 
         if (kysely.getKoulutusKoodi() != null) {
@@ -352,18 +355,17 @@ public class TarjontaSearchService {
         // restrict by org
         addFilterForOrgs(tarjoajaOids, queryParts, q);
 
-
         //restrict with hakukohde oids
         if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
             addFilterForHakukohdes(hakukohdeOids, queryParts, q);
         }
 
         //restrict with koulutusastetyyppi
-        if (kysely.getKoulutusasteTyypit().size()>0) {
-            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>(){
-                public String apply(KoulutusasteTyyppi src){
+        if (kysely.getKoulutusasteTyypit().size() > 0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>() {
+                public String apply(KoulutusasteTyyppi src) {
                     return src.value();
-                    
+
                 }
             }));
             q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSTYYPPI, Joiner.on(" ").join(tyypit)));
@@ -379,7 +381,7 @@ public class TarjontaSearchService {
     private void addFilterForKOulutus(List<String> tarjoajaOids, SolrQuery q) {
         q.addFilterQuery(String.format("%s:(%s)", Koulutus.OID, Joiner.on(" ").join(tarjoajaOids)));
     }
-    
+
     private void addFilterForHakuOid(String haunOid, SolrQuery q) {
         q.addFilterQuery(String.format("%s:(%s)", Hakukohde.HAUN_OID, haunOid));
     }

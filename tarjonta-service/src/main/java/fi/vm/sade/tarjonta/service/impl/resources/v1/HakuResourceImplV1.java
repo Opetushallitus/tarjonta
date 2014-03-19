@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
@@ -75,6 +76,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Autowired
     private PermissionChecker permissionChecker;
+
+    @Autowired
+    private KoodistoValidator koodistoValidator;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -405,29 +409,23 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * @return if false Haku has errors.
      */
     private boolean validateHaku(HakuV1RDTO haku, ResultV1RDTO<HakuV1RDTO> result) {
-        LOG.info("vaidateHaku() {}", haku);
+        LOG.info("validateHaku() {}", haku);
 
         if (haku == null) {
             result.addError(ErrorV1RDTO.createValidationError("", "haku.validation.null"));
             return false;
         }
 
-        if (!isJatkuvaHaku(haku) && isEmpty(haku.getHakukausiUri())) {
-            result.addError(ErrorV1RDTO.createValidationError("hakukausiUri", "haku.validation.hakukausiUri.invalid"));
-        }
-        if (isEmpty(haku.getHakutapaUri())) {
-            result.addError(ErrorV1RDTO.createValidationError("hakutapaUri", "haku.validation.hakutapaUri.invalid"));
-        }
-        if (isEmpty(haku.getHakutyyppiUri())) {
-            result.addError(ErrorV1RDTO.createValidationError("hakutyyppiUri", "haku.validation.hakutyyppiUri.invalid"));
-        }
-        if (isEmpty(haku.getKohdejoukkoUri())) {
-            result.addError(ErrorV1RDTO.createValidationError("kohdejoukkoUri", "haku.validation.kohdejoukkoUri.invalid"));
-        }
+        // Hakukausi uri has to be valid and existing since this is not "jatkuva haku"
+        koodistoValidator.validateKoodiUri(haku.getHakukausiUri(), !isJatkuvaHaku(haku), "hakukausiUri", result, "haku.validation");
 
-        if (!isJatkuvaHaku(haku) && isEmpty(haku.getKoulutuksenAlkamiskausiUri())) {
-            result.addError(ErrorV1RDTO.createValidationError("koulutuksenAlkamiskausiUri", "haku.validation.koulutuksenAlkamiskausiUri.invalid"));
-        }
+        // Also koulutusken alkamiskausi koodisto uri has to be existing if not "jatkuva haku"
+        koodistoValidator.validateKoodiUri(haku.getKoulutuksenAlkamiskausiUri(), !isJatkuvaHaku(haku), "koulutuksenAlkamiskausiUri", result, "haku.validation");
+
+        // These uris are always required
+        koodistoValidator.validateKoodiUri(haku.getHakutapaUri(), true, "hakutapaUri", result, "haku.validation");
+        koodistoValidator.validateKoodiUri(haku.getHakutyyppiUri(), true, "hakutyyppiUri", result, "haku.validation");
+        koodistoValidator.validateKoodiUri(haku.getKohdejoukkoUri(), true, "kohdejoukkoUri", result, "haku.validation");
 
         if (isEmpty(haku.getNimi())) {
             result.addError(ErrorV1RDTO.createValidationError("nimi", "haku.validation.nimi.empty"));
@@ -491,6 +489,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         return !result.hasErrors();
     }
+
 
     /**
      * @param s

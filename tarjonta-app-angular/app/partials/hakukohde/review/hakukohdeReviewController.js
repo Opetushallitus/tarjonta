@@ -428,6 +428,8 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
                     if (result.status === "OK") {
 
+                        //TKatva, 18.3.2014. Commented confirmation dialog away, if needed return it.
+/*
                         var confTexts = {
                             title: LocalisationService.t("hakukohde.review.remove.confirmation.title"),
                             description: LocalisationService.t("hakukohde.review.remove.confirmation.desc"),
@@ -437,7 +439,9 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
                         dd.result.then(function(daatta){
                             $location.path('/etusivu');
-                        });
+                        });*/
+                        $location.path('/etusivu');
+
 
 
 

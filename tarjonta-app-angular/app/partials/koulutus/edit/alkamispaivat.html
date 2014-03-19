@@ -1,7 +1,9 @@
 <ul>
     <li ng-repeat="pvm in ctrl.addedDates">
-	   
-	    <t-date-time type="object"
+            <!-- required t-date-time can be true or false -->
+            <t-date-time 
+                type="object" 
+                ng-required="enabled"
 	        name="alkamisPvm" 
 	        ng-model="pvm.date"
 	        ng-disabled="!enabled"
@@ -9,8 +11,7 @@
 	        min="thisYear"
 	        tt-bounds="koulutus.edit.alkamispaivat.outofbounds"
 	        ></t-date-time>
-           
-        <a  href
+        <a href
            data-ng-show="enabled && pvm.date!=null && ctrl.addedDates.length>1" 
            data-ng-click="clickRemoveDate(pvm)">[x]</a>
     </li>

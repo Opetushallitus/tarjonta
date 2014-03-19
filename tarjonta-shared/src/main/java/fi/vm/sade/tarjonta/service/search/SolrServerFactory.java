@@ -1,12 +1,17 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.HttpResponse;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.impl.NoConnectionReuseStrategy;
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.impl.NoConnectionReuseStrategy;
+//import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.params.AllClientPNames;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.protocol.HttpContext;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,30 +40,20 @@ public class SolrServerFactory implements InitializingBean {
         return getSolr(url);
     }
 
+    HttpRequestRetryHandler rh;
+    
     private SolrServer getSolr(final String url) {
-        
         PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        mgr.setDefaultMaxPerRoute(20);
         mgr.setDefaultMaxPerRoute(100);
-        mgr.setMaxTotal(1000);
-        DefaultHttpClient httpclient = new DefaultHttpClient(mgr){
-
-            @Override
-            protected ConnectionReuseStrategy createConnectionReuseStrategy() {
-                return new NoConnectionReuseStrategy();
-            }
-            
-        };
-
-        httpclient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
-            
-            public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-                return 0;
-            }
-            
-        });
-
+        DefaultHttpClient client = new DefaultHttpClient(mgr);
+        HttpParams params = client.getParams();
+//        HttpConnectionParams.setConnectionTimeout(params, 30);
+        HttpConnectionParams.setStaleCheckingEnabled( params, true);
+        HttpConnectionParams.setSoTimeout(params, 1000);
+        client.setHttpRequestRetryHandler(new StandardHttpRequestRetryHandler(3,true));
+        return new HttpSolrServer(url, client);
         
-        return new HttpSolrServer(url, httpclient);
     }
 
     @Override

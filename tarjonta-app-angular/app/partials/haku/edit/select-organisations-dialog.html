@@ -1,0 +1,45 @@
+<div id="select-organisations-dialog">
+    <div class="modal-header">
+        <h3><span  data-tt="haku.select.organisations.title">Valitse organisaatioita</span></h3>
+    </div>
+
+    <div class="modal-body">
+        <p data-tt="haku.select.organisations.help">
+            Tässä dialogissa voit valita organisaatioita, joilla on oikeus muokata ja liittää hakukohteita tähän hakuun.
+        </p>
+
+        <table width="100%">
+            <tr>
+                <td colspan="2">
+                    <span data-tt="haku.select.organisations.select.title">Valitse organisaatiot</span>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <ul style="height:250px" class="listView">
+                        <li>
+                            <div class="treeview"
+                                 data-angular-treeview="true" data-tree-id="lkorganisaatio"
+                                 data-org-tree-model="lkorganisaatiot" data-node-id="oid"
+                                 data-node-label="nimi" data-node-children="children">
+                            </div>
+                        </li>
+                    </ul>
+                </td>
+                <td width="50%">
+                    <ul style="height:250px" class="listView" >
+                        <li ng-repeat="organisaatio in model.organisaatiot">
+                            <a ng-click="doRemoveSelected(organisaatio)">[X]</a> {{organisaatio.nimi}}
+                        </li>
+                        <li ng-show="!hasSelectedOrganisations()" data-tt="haku.select.organisations.not-selected">Ei valittuja organisaatioita</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" ng-click="doCancel()" data-tt="haku.select.organisations.cancel">Peruuta</button>
+        <button class="btn btn-primary" ng-click="doOK()" data-tt="haku.select.organisations.ok">Jatka</button>
+    </div>
+</div>

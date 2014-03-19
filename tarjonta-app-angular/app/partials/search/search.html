@@ -44,7 +44,7 @@
 
         <div class="title">
             <span>{{selectedOrgName}}</span>
-            <a href="" ng-click="clearOrg()">[{{t('tarjonta.haku.poistaOrgValinta')}}]</a>
+            <a ng-show="organisaatioValittu()"  href="" ng-click="clearOrg()">[<span tt="tarjonta.haku.poistaOrgValinta">Poista organisaatiovalinta</span>]</a><a ng-show="!organisaatioValittu()"  href="" ng-click="setDefaultOrg()">[<span tt="tarjonta.haku.palautaOletusOrgValinta">Palauta oletus org valinta</span>]</a>
         </div>
 
         <table class="spec">
@@ -89,7 +89,7 @@
 
 	        	<div class="controls">
 
-                    <a href class="btn"  ng-click="koulutusActions.canMoveOrCopy ? siirraTaiKopioi() : function()" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi">Siirrä tai kopioi</span></a>
+                    <a href class="btn" ng-click="koulutusActions.canMoveOrCopy ? siirraTaiKopioi() : function()" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi">Siirrä tai kopioi</span></a>
                     <a href class="btn" ng-click="luoHakukohdeEnabled() ? luoUusiHakukohde() : function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde">Luo uusi hakukohde</span> <span class="icon-plus-sign"></span></a>
                     <a href class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus">Luo uusi koulutus</span> <span class="icon-plus-sign"></span></a>
                 </div>

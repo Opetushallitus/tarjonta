@@ -155,6 +155,8 @@ public class ConverterV1 {
             }
         }
 
+        t.setOrganisaatioOids(haku.getOrganisationOids());
+
         // Koodistos as (not) pre-resolved, who needs this?
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
@@ -233,6 +235,8 @@ public class ConverterV1 {
             LOG.info("DELETED hakuaika: ", hakuaika);
             haku.removeHakuaika(hakuaika);
         }
+
+        haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
 
         return haku;
     }
@@ -578,7 +582,7 @@ public class ConverterV1 {
             hakukohdeRDTO.setValintakokeet(valintakoeDtos);
 
         }
-        
+
         for (HakukohdeLiite liite : hakukohde.getLiites()) {
             hakukohdeRDTO.getHakukohteenLiitteet().add(fromHakukohdeLiite(liite));
         }
