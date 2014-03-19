@@ -269,8 +269,8 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
 
             //Try to get hakukohde nimi with tab language
             for(var language in hakukohde.nimi) {
-                  if (lang.locale === language.toUpperCase) {
-                      hakukohdeNimi = hakukohde.nimi[lang];
+                  if (lang.locale.toUpperCase() === language.toUpperCase()) {
+                      hakukohdeNimi = hakukohde.nimi[language];
                   }
 
             }
