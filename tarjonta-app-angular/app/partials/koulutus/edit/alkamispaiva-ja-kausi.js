@@ -4,75 +4,82 @@ var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation', 'Tarjont
 
 app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
-           $scope.isKausiVuosiRadioButtonActive = function(){
-                return $scope.pvms.length === 0 
-                        && (!angular.isUndefined($scope.vuosi) 
-                        && angular.isNumber($scope.vuosi)) 
-                        && (!angular.isUndefined($scope.kausiUri) 
-                        && $scope.kausiUri.length > 0)
+            $scope.isKausiVuosiRadioButtonActive = function() {
+                return $scope.pvms.length === 0
+                        && (!angular.isUndefined($scope.vuosi)
+                                && angular.isNumber($scope.vuosi))
+                        && (!angular.isUndefined($scope.kausiUri)
+                                && $scope.kausiUri.length > 0);
             };
-            
+
             $scope.ctrl = {
-            	kausi:$scope.isKausiVuosiRadioButtonActive(),
-            	multi:$scope.pvms.length>0,
-                koodis: []
+                kausi: $scope.isKausiVuosiRadioButtonActive(),
+                multi: $scope.pvms.length > 0,
+                koodis: [],
+                emptyOption: {koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: ''}
             };
-                        
-            $scope.ctrl.koodis.push({koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: -1})
-            
+
+            $scope.ctrl.koodis.push($scope.ctrl.emptyOption);
+            $scope.$watch("ctrl.kausi", function(valNew, valOld) {
+                $scope.form['kausivuosi'] = valNew;
+                if (valNew && $scope.kausi) {
+                    $scope.kausiUri = '';
+                }
+            });
+
             $scope.$watch("kausiUri", function(valNew, valOld) {
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
-            
+
             $scope.clearKausiSelection = function() {
-                $scope.kausiUri = -1
-            }
-            
+                $scope.kausiUri = "";
+            };
+
             $scope.onAddDate = function() {
-            	$scope.alkamisPaivat.clickAddDate();
-            }
-            
+                $scope.alkamisPaivat.clickAddDate();
+            };
+
             $scope.onEnableKausi = function($event) {
-            	if ($scope.pvms.length>0) {
-                	$event.preventDefault();
-                	$event.stopImmediatePropagation();
-                	
-                	// alkamispvm:iä valittu -> näytä vahvistusdialogi
-                	var ctrl = $scope.ctrl;
-                	var modalInstance = $modal.open({
-        				scope: $scope,
-        				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog.html',
-        				controller: function($scope) {
-        					$scope.ok = function() {
-        						ctrl.kausi = true;
-        						ctrl.multi = false;
-        						modalInstance.dismiss();
-        					}
-        					$scope.cancel = function() {
-        						modalInstance.dismiss();
-        					}        					
-        					return $scope;
-        				}
-        			});
-            	}
-            }
-            
+                if ($scope.pvms.length > 0) {
+                    $event.preventDefault();
+                    $event.stopImmediatePropagation();
+
+                    // alkamispvm:iä valittu -> näytä vahvistusdialogi
+                    var ctrl = $scope.ctrl;
+                    var modalInstance = $modal.open({
+                        scope: $scope,
+                        templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog.html',
+                        controller: function($scope) {
+                            $scope.ok = function() {
+                                ctrl.kausi = true;
+                                ctrl.multi = false;
+                                modalInstance.dismiss();
+                            };
+                            $scope.cancel = function() {
+                                modalInstance.dismiss();
+                            };
+                            return $scope;
+                        }
+                    });
+                }
+            };
+
             $scope.onToggleManyDates = function($event) {
-            	if ($scope.pvms.length>1) {
-            		$event.preventDefault();
-            		$event.stopImmediatePropagation();
-            		var modalInstance = $modal.open({
-        				scope: $scope,
-        				templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog-na.html',
-        				controller: function($scope) {
-        					$scope.ok = function() {
-        						modalInstance.dismiss();
-        					}
-        					return $scope;
-        				}
-        			});
-            	}
-            }
+                if ($scope.pvms.length > 1) {
+                    $event.preventDefault();
+                    $event.stopImmediatePropagation();
+                    var modalInstance = $modal.open({
+                        scope: $scope,
+                        templateUrl: 'partials/koulutus/edit/alkamispaiva-dialog-na.html',
+                        controller: function($scope) {
+                            $scope.ok = function() {
+                                modalInstance.dismiss();
+                            }
+                            return $scope;
+                        }
+                    });
+                }
+            };
 
             $scope.$watch("ctrl.mode", function(valNew, valOld) {
                 if (angular.isUndefined(valNew) || valNew === "" || valNew === true) {
@@ -94,8 +101,14 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             restrict: 'E',
             replace: true,
             templateUrl: "partials/koulutus/edit/alkamispaiva-ja-kausi.html",
+            require: ['^form'],
+            link: function(scope, element, attrs, controller) {
+                scope.form = controller[0];
+            }
+            ,
             controller: controller,
             scope: {
+                validationFieldName: "@",
                 pvms: "=",
                 vuosi: "=",
                 kausiUiModel: "=",
@@ -103,8 +116,6 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             }
         };
     }]);
-
-
 app.directive('alkamispaivat', ['$log', function($log) {
         function controller($scope, $q, $element, $compile) {
             $scope.ctrl = {
@@ -112,24 +123,23 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 index: 0,
                 ignoreDateListChanges: false
             };
-            
-            $scope.thisYear = new Date(new Date().getFullYear(), 0, 1, 0,0,0,0);
-            
-            $scope.onDateAdded = function() {
-            	for (var i in $scope.ctrl.addedDates) {
-            		if ($scope.ctrl.addedDates[i].date==null) {
-            			return;
-            		}
-            	}
-            	if ($scope.multi) {
-            		$scope.clickAddDate();
-            	}
-            }
+
+            $scope.thisYear = new Date(new Date().getFullYear(), 0, 1, 0, 0, 0, 0);
 
             $scope.clickAddDate = function() {
                 $scope.ctrl.addedDates.push({id: $scope.ctrl.index++, date: null});
             };
 
+            $scope.onDateAdded = function() {
+                for (var i in $scope.ctrl.addedDates) {
+                    if ($scope.ctrl.addedDates[i].date == null) {
+                        return;
+                    }
+                }
+                if ($scope.multi) {
+                    $scope.clickAddDate();
+                }
+            };
 
             $scope.clickRemoveDate = function(date) {
                 $scope.removeById($scope.ctrl.addedDates, date.id);
@@ -161,13 +171,13 @@ app.directive('alkamispaivat', ['$log', function($log) {
              * Initialize buttons and date fields.
              */
             $scope.reset = function() {
-            	if (!$scope.dates) {
-            		$scope.dates = [];
-            	}
+                if (!$scope.dates) {
+                    $scope.dates = [];
+                }
                 if ($scope.dates.length > 0) {
                     //when page is loaded and one or more datea are in the model, then
                     //set kausi to status of disabled and all date fields to active
-                                    	
+
                     //load data to directive model
                     var a = [];
                     for (var i = 0; i < $scope.dates.length; i++) {
@@ -223,21 +233,21 @@ app.directive('alkamispaivat', ['$log', function($log) {
             }, true);
 
             $scope.$watch("multi", function(valNew, valOld) {
-            	if (!valNew && $scope.ctrl.addedDates.length>1) {
-            		$scope.ctrl.addedDates = [$scope.ctrl.addedDates[0]];
-            	} else if (valNew && $scope.ctrl.addedDates.length==1) {
-            		$scope.clickAddDate();
-            	}
-            });            
-            
+                if (!valNew && $scope.ctrl.addedDates.length > 1) {
+                    $scope.ctrl.addedDates = [$scope.ctrl.addedDates[0]];
+                } else if (valNew && $scope.ctrl.addedDates.length == 1) {
+                    $scope.clickAddDate();
+                }
+            });
+
             $scope.$watch("enabled", function(valNew, valOld) {
                 if (!valNew) {
-                	$scope.ctrl.addedDates = [];
-                	$scope.clickAddDate();                	
+                    $scope.ctrl.addedDates = [];
+                    $scope.clickAddDate();
                 } else {
-	             	if ($scope.multi && $scope.dates.length==1 && $scope.dates[0]!=null) {
-	                     $scope.clickAddDate(); //add 1 date row
-	             	}
+                    if ($scope.multi && $scope.dates.length == 1 && $scope.dates[0] != null) {
+                        $scope.clickAddDate(); //add 1 date row
+                    }
                     $scope.fnClearKausi();
                 }
             });
@@ -251,7 +261,7 @@ app.directive('alkamispaivat', ['$log', function($log) {
             $scope.$watch("dates", function(valNew, valOld) {
                 $scope.reset();
             });
-            
+
             return $scope;
         }
 
@@ -260,9 +270,9 @@ app.directive('alkamispaivat', ['$log', function($log) {
             replace: true,
             templateUrl: "partials/koulutus/edit/alkamispaivat.html",
             controller: controller,
-            require: '^alkamispaivaJaKausi',
+            require: ['^alkamispaivaJaKausi'],
             link: function(scope, element, attrs, controller) {
-            	controller.alkamisPaivat = scope;
+                controller[0].alkamisPaivat = scope;
             },
             scope: {
                 dates: "=", //BaseEditController ui model
