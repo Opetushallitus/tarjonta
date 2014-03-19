@@ -401,7 +401,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         		return attrs.disabled || scope.ngDisabled();
         	}
         	scope.isRequired = function() {
-        		return attrs.required || scope.ngRequired();
+        		return (attrs.required &&  attrs.required !== 'false')|| scope.ngRequired();
         	}
         	if (scope.name && !angular.isUndefined(controller)) {
             	controller.$addControl({"$name": scope.name, "$error": scope.errors});

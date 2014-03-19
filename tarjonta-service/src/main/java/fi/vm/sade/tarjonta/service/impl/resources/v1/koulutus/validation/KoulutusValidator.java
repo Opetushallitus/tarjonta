@@ -176,13 +176,13 @@ public class KoulutusValidator {
      */
     private static void validateTextOneOrMany(Set<KoulutusValidationMessages> validationMessages, NimiV1RDTO dto,
             KoulutusValidationMessages missing,
-            KoulutusValidationMessages invalidKoodi,
-            KoulutusValidationMessages invalidValue) {
+            KoulutusValidationMessages invalid,
+            KoulutusValidationMessages invalidTextValue) {
         Set<KoulutusValidationMessages> tempError = Sets.<KoulutusValidationMessages>newHashSet();
 
         if (dto.getTekstis().isEmpty()) {
             //no items
-            validationMessages.add(missing);
+            validationMessages.add(invalid);
         } else {
             for (Entry<String, String> e : dto.getTekstis().entrySet()) {
                 if (notNullStrOrEmpty(e.getValue())) {
@@ -191,7 +191,7 @@ public class KoulutusValidator {
                     return;
                 } else {
                     //validation will fail
-                    tempError.add(invalidValue);
+                    tempError.add(missing);
                 }
             }
 
