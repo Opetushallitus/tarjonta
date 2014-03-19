@@ -29,6 +29,7 @@
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
+    <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1"/>
     <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1"/>
     <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
     <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />

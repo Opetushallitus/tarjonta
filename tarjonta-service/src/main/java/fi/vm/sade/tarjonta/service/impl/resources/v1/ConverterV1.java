@@ -586,12 +586,7 @@ public class ConverterV1 {
         for (HakukohdeLiite liite : hakukohde.getLiites()) {
             hakukohdeRDTO.getHakukohteenLiitteet().add(fromHakukohdeLiite(liite));
         }
-
-        if (hakukohde.getLiites() != null) {
-            List<HakukohdeLiiteV1RDTO> liites = new ArrayList<HakukohdeLiiteV1RDTO>();
-            hakukohdeRDTO.setHakukohteenLiitteet(liites);
-        }
-
+        
         if (hakukohdeRDTO.getTarjoajaOids() != null && hakukohdeRDTO.getTarjoajaOids().size() > 0) {
 
             for (String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
