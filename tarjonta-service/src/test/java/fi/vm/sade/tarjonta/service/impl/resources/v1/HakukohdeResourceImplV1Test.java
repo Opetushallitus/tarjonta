@@ -11,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -61,6 +62,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
     DirtiesContextTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
+@Ignore // SPRINGIN BUGI SPR-8857 ESTÄÄ TÄMÄN TESTIN AJAMISEN
 public class HakukohdeResourceImplV1Test extends Assert {
 	
 	private static final String TARJOAJA_NIMI = "Organisaatio ABC";
