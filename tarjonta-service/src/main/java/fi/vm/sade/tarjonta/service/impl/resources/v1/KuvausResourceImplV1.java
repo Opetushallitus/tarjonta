@@ -317,8 +317,8 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     public ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-            LOG.debug("CREATING NEW KUVAUS ");
             permissionChecker.checkCreateValintaPeruste();
+            LOG.debug("USER CAN CREATE KUVAUS.... CREATING");
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
 
             if (!checkForExistingKuvaus(valintaperusteSoraKuvaus)) {

@@ -35,10 +35,11 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     var getUserOrgs = function() {
         console.log('AUTH SERVICE : ', AuthService.getUsername());
-        console.log('AUTH SERVICE FIRST NAME : ', AuthService.getFirstName);
+        console.log('AUTH SERVICE FIRST NAME : ', AuthService.getFirstName());
         if (!AuthService.isUserOph())   {
 
             $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
+            $log.info('USER ORGANIZATIONS : ' , AuthService.getOrganisations());
             OrganisaatioService.etsi({oidRestrictionList:AuthService.getOrganisations()})
                 .then(function(data){
                     $log.info('OID RESTRICTION LIST : ', data);
