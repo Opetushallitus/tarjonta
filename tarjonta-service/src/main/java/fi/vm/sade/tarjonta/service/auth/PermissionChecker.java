@@ -152,7 +152,8 @@ public class PermissionChecker {
     }
 
     public void checkCreateValintaPeruste() {
-        checkPermission(permissionService.userCanCreateHaku());
+
+        checkPermission(permissionService.userCanCreateValintaperuste());
     }
 
     public void checkRemoveHaku() {
@@ -160,7 +161,7 @@ public class PermissionChecker {
     }
 
     public void checkRemoveValintaPeruste() {
-        checkPermission(permissionService.userCanDeleteHaku());
+        checkPermission(permissionService.userCanDeleteValintaperuste());
     }
 
     public void checkCreateKoulutus(String tarjoajaOid) {
@@ -242,7 +243,7 @@ public class PermissionChecker {
     }
 
     public void checkUpdateValintaperustekuvaus() {
-        checkPermission(permissionService.userCanEditValintaperustekuvaus());
+        checkPermission(permissionService.userCanUpdateValinteperuste());
     }
 
     public void checkUpdateHaku(String oid) {
