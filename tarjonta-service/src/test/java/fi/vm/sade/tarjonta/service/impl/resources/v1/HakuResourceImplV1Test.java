@@ -11,24 +11,43 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *//*
+ * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Lists;
+import fi.vm.sade.koodisto.service.KoodiService;
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.SecurityAwareTestBase;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import java.util.Date;
-import java.util.logging.Level;
+import java.util.List;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,10 +84,22 @@ public class HakuResourceImplV1Test extends SecurityAwareTestBase {
     @Autowired
     private OidService oidService;
 
+    @Autowired
+    private KoodiService koodiService;
+
     @Before
     public void setUp() throws Exception {
         LOG.info("setUp()");
+
+        // Stub oid service
         Mockito.stub(oidService.get(TarjontaOidType.HAKU)).toReturn("1.2.3.4.5");
+
+        // Test koodisto values that has to be stubbed
+        TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
+        TarjontaSearchServiceTest.stubKoodi(koodiService, "kausi_k", "K");
+        TarjontaSearchServiceTest.stubKoodi(koodiService, "hakutapa_01", "01");
+        TarjontaSearchServiceTest.stubKoodi(koodiService, "hakutyyppi_01", "01");
+        TarjontaSearchServiceTest.stubKoodi(koodiService, "haunkohdejoukko_12", "12");
     }
 
     @After
@@ -77,7 +108,7 @@ public class HakuResourceImplV1Test extends SecurityAwareTestBase {
     }
 
     @Test
-    public void testXXX() {
+    public void testCreateInvaludAndValidHakus() {
         LOG.info("testXXX()...");
 
         HakuV1RDTO dto = null;
@@ -112,11 +143,11 @@ public class HakuResourceImplV1Test extends SecurityAwareTestBase {
         // OK, fix the errors so that we can create a simple haku
         //
         dto = new HakuV1RDTO();
-        dto.setHakukausiUri("kausi_k#1");
-        dto.setHakutapaUri("hakutapa_xxx#1");
-        dto.setHakutyyppiUri("hakutyyppi_xxx#1");
-        dto.setKohdejoukkoUri("kohdejoukko_xxx#1");
-        dto.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        dto.setHakukausiUri("kausi_k");
+        dto.setHakutapaUri("hakutapa_01"); // yhteishaku
+        dto.setHakutyyppiUri("hakutyyppi_01"); // varsinainen haku
+        dto.setKohdejoukkoUri("haunkohdejoukko_12"); // korkeakoulutus
+        dto.setKoulutuksenAlkamiskausiUri("kausi_k"); // kevät
         dto.setMaxHakukohdes(42);
         dto.getNimi().put("kieli_fi", "Nimi suomi");
         dto.getHakuaikas().add(createHakuaika(null, new Date(), new Date()));

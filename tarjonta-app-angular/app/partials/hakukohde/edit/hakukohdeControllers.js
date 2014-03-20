@@ -123,6 +123,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     console.log('HAKUKOHDE : ', $scope.model.hakukohde);
 
+    console.log('IS TABS DISABLED : ' , $scope.model.hakukohdeTabsDisabled);
+
 
     var checkIsCopy = function(tilaParam) {
 
