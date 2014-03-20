@@ -3,9 +3,12 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManagerFactory;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -118,14 +122,21 @@ public class HakukohdeResourceImplV1Test extends Assert {
 	public void doBefore() throws Exception {
         Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("1.2.3.4.5");
         stubKoodi("kieli_fi", "suomi");
+        stubKoodi("posti_12345", "posti_12345");
         permissionChecker.setOverridePermissionChecks(true);
+	}
+	
+	@After
+	public void doAfter() {
+        permissionChecker.setOverridePermissionChecks(false);
 	}
 	
 	protected HakukohdeV1RDTO createTestHakukukohde1() {
 		OsoiteRDTO osoite = new OsoiteRDTO();
 		osoite.setOsoiterivi1("Juna Korsoon");
-		osoite.setPostinumero("12345");
+		osoite.setPostinumero("posti_12345");
 		osoite.setPostitoimipaikka("KORSO");
+		osoite.setPostinumeroArvo("12345");
 		
 		HakukohdeV1RDTO ret = new HakukohdeV1RDTO();
 		ret.setTila(TarjontaTila.LUONNOS.toString());
@@ -154,6 +165,7 @@ public class HakukohdeResourceImplV1Test extends Assert {
 		vka.setAlkaa(new Date());
 		vka.setLoppuu(new Date());
 		vkoe.getValintakoeAjankohtas().add(vka);
+		ret.getValintakokeet().add(vkoe);
 		
 		return ret;
 	}
@@ -188,6 +200,59 @@ public class HakukohdeResourceImplV1Test extends Assert {
 	public void testContext() {
 		assertNotNull(hakukohdeResource);
 	}
+
+	protected void assertEquals(ValintakoeV1RDTO expected, ValintakoeV1RDTO actual) {
+		
+		assertEquals(expected.getKieliUri(), actual.getKieliUri());
+		assertEquals(expected.getValintakoeNimi(), actual.getValintakoeNimi());
+		assertEquals(expected.getValintakokeenKuvaus(), actual.getValintakokeenKuvaus());
+		assertEquals(expected.getValintakoeAjankohtas().size(), actual.getValintakoeAjankohtas().size());
+		
+	}
+
+	protected void assertEquals(HakukohdeLiiteV1RDTO expected, HakukohdeLiiteV1RDTO actual) {
+		
+		assertEquals(expected.getKieliUri(), actual.getKieliUri());
+		assertEquals(expected.getLiitteenNimi(), actual.getLiitteenNimi());
+		assertEquals(expected.getLiitteenKuvaukset(), actual.getLiitteenKuvaukset());
+		
+	}
+
+	protected void assertEqualsValintakokeet(List<ValintakoeV1RDTO> expected, List<ValintakoeV1RDTO> actual) {
+		Map<String, ValintakoeV1RDTO> exp = new TreeMap<String, ValintakoeV1RDTO>();
+		for (ValintakoeV1RDTO vk : expected) {
+			exp.put(vk.getValintakoeNimi(), vk);
+		}
+		
+		Map<String, ValintakoeV1RDTO> act = new TreeMap<String, ValintakoeV1RDTO>();
+		for (ValintakoeV1RDTO vk : actual) {
+			act.put(vk.getValintakoeNimi(), vk);
+		}
+		
+		assertEquals(exp.keySet(), act.keySet());
+		
+		for (Map.Entry<String, ValintakoeV1RDTO> vke : exp.entrySet()) {
+			assertEquals(vke.getValue(), act.get(vke.getKey()));
+		}
+	}
+	
+	protected void assertEqualsLiitteet(List<HakukohdeLiiteV1RDTO> expected, List<HakukohdeLiiteV1RDTO> actual) {
+		Map<String, HakukohdeLiiteV1RDTO> exp = new TreeMap<String, HakukohdeLiiteV1RDTO>();
+		for (HakukohdeLiiteV1RDTO vk : expected) {
+			exp.put(vk.getLiitteenNimi(), vk);
+		}
+		
+		Map<String, HakukohdeLiiteV1RDTO> act = new TreeMap<String, HakukohdeLiiteV1RDTO>();
+		for (HakukohdeLiiteV1RDTO vk : actual) {
+			act.put(vk.getLiitteenNimi(), vk);
+		}
+		
+		assertEquals(exp.keySet(), act.keySet());
+		
+		for (Map.Entry<String, HakukohdeLiiteV1RDTO> vke : exp.entrySet()) {
+			assertEquals(vke.getValue(), act.get(vke.getKey()));
+		}
+	}
 	
 	protected void assertEquals(HakukohdeV1RDTO expected, HakukohdeV1RDTO actual) {
 		log.info("Compare {} -- {}", expected, actual);
@@ -202,7 +267,6 @@ public class HakukohdeResourceImplV1Test extends Assert {
 		assertEquals(expected.getHakukelpoisuusVaatimusKuvaukset(), actual.getHakukelpoisuusVaatimusKuvaukset());
 		assertEquals(expected.getHakukelpoisuusvaatimusUris(), actual.getHakukelpoisuusvaatimusUris());
 		assertEquals(expected.getHakukohdeKoulutusOids(), actual.getHakukohdeKoulutusOids());
-		assertEquals(expected.getHakukohteenLiitteet(), actual.getHakukohteenLiitteet());
 		assertEquals(expected.getHakukohteenNimet(), actual.getHakukohteenNimet());
 		assertEquals(expected.getHakukohteenNimi(), actual.getHakukohteenNimi());
 		assertEquals(expected.getHakukohteenNimiUri(), actual.getHakukohteenNimiUri());
@@ -211,7 +275,7 @@ public class HakukohdeResourceImplV1Test extends Assert {
 		assertEquals(expected.getLiitteidenToimitusOsoite(), actual.getLiitteidenToimitusOsoite());
 		assertEquals(expected.getLiitteidenToimitusPvm(), actual.getLiitteidenToimitusPvm());
 		assertEquals(expected.getLisatiedot(), actual.getLisatiedot());
-		assertEquals(expected.getOid(), actual.getOid());
+		//assertEquals(expected.getOid(), actual.getOid());
 		//assertEquals(expected.getOpetusKielet(), actual.getOpetusKielet());
 		assertEquals(expected.getSahkoinenToimitusOsoite(), actual.getSahkoinenToimitusOsoite());
 		assertEquals(expected.getSoraKuvaukset(), actual.getSoraKuvaukset());
@@ -222,7 +286,6 @@ public class HakukohdeResourceImplV1Test extends Assert {
 		assertEquals(expected.getTarjoajaOids(), actual.getTarjoajaOids());
 		assertEquals(expected.getTila(), actual.getTila());
 		assertEquals(expected.getUlkoinenTunniste(), actual.getUlkoinenTunniste());
-		assertEquals(expected.getValintakokeet(), actual.getValintakokeet());
 		assertEquals(expected.getValintaperusteKuvaukset(), actual.getValintaperusteKuvaukset());
 		assertEquals(expected.getValintaPerusteKuvausKielet(), actual.getValintaPerusteKuvausKielet());
 		assertEquals(expected.getValintaperustekuvausKoodiUri(), actual.getValintaperustekuvausKoodiUri());
@@ -230,15 +293,23 @@ public class HakukohdeResourceImplV1Test extends Assert {
 		assertEquals(expected.getValintojenAloituspaikatLkm(), actual.getValintojenAloituspaikatLkm());
 		assertEquals(expected.getYlinValintapistemaara(), actual.getYlinValintapistemaara());
 		
+		assertEqualsValintakokeet(expected.getValintakokeet(), actual.getValintakokeet());
+		assertEqualsLiitteet(expected.getHakukohteenLiitteet(), actual.getHakukohteenLiitteet());
 	}
 	
 	@Test
+	@DirtiesContext
 	public void testCreate() {
 		
 		initTestData();
-				
+		
+		log.info("\n **** TEST STORE **** \n ");
+		
 		final HakukohdeV1RDTO hk1 = createTestHakukukohde1();
 		ResultV1RDTO<HakukohdeV1RDTO> hk1r = hakukohdeResource.createHakukohde(hk1);
+
+		log.info("\n **** AFTR STORE **** \n ");
+
 		logAndAssertResult(hk1r);
 		
 		assertEquals(hk1, hk1r.getResult());

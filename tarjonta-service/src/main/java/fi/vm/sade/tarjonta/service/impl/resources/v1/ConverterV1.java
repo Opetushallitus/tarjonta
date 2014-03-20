@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Preconditions;
+
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -897,8 +899,10 @@ public class ConverterV1 {
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
         for (TekstiRDTO tekstiRDTO : tekstis) {
-            monikielinenTeksti.addTekstiKaannos(tekstiRDTO.getUri(), tekstiRDTO.getTeksti());
-            LOG.debug("MONIKIELINEN TEKSTI : {}", tekstiRDTO.getTeksti());
+        	if (tekstiRDTO!=null) {
+                monikielinenTeksti.addTekstiKaannos(tekstiRDTO.getUri(), tekstiRDTO.getTeksti());
+                LOG.debug("MONIKIELINEN TEKSTI : {}", tekstiRDTO.getTeksti());
+        	}
         }
 
         return monikielinenTeksti;

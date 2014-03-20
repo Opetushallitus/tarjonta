@@ -29,6 +29,9 @@ public class ValintakoeAjankohtaRDTO extends BaseRDTO {
     private String _lisatiedot;
 
     public OsoiteRDTO getOsoite() {
+    	if (_osoite==null) {
+    		_osoite = new OsoiteRDTO();
+    	}
         return _osoite;
     }
 
