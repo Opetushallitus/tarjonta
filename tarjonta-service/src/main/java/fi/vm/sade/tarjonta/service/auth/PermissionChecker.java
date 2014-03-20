@@ -50,6 +50,9 @@ public class PermissionChecker {
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
+    
+    
+    private boolean overridePermissionChecks = false;
 
     /**
      *
@@ -64,7 +67,7 @@ public class PermissionChecker {
     }
 
     private void checkPermission(boolean result) {
-        if (!result) {
+        if (!result && !overridePermissionChecks) {
             throw new NotAuthorizedException("no.permission");
         }
     }
@@ -149,7 +152,8 @@ public class PermissionChecker {
     }
 
     public void checkCreateValintaPeruste() {
-        checkPermission(permissionService.userCanCreateHaku());
+
+        checkPermission(permissionService.userCanCreateValintaperuste());
     }
 
     public void checkRemoveHaku() {
@@ -157,7 +161,7 @@ public class PermissionChecker {
     }
 
     public void checkRemoveValintaPeruste() {
-        checkPermission(permissionService.userCanDeleteHaku());
+        checkPermission(permissionService.userCanDeleteValintaperuste());
     }
 
     public void checkCreateKoulutus(String tarjoajaOid) {
@@ -239,10 +243,19 @@ public class PermissionChecker {
     }
 
     public void checkUpdateValintaperustekuvaus() {
-        checkPermission(permissionService.userCanEditValintaperustekuvaus());
+        checkPermission(permissionService.userCanUpdateValinteperuste());
     }
 
     public void checkUpdateHaku(String oid) {
         checkCreateHaku();
     }
+
+    public void setOverridePermissionChecks(boolean overridePermissionChecks) {
+		this.overridePermissionChecks = overridePermissionChecks;
+	}
+    
+    public boolean isOverridePermissionChecks() {
+		return overridePermissionChecks;
+	}
+
 }
