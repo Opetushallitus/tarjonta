@@ -203,7 +203,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 copyIfSet(sargs, "season", $scope.spec.season);
 
                 // Location should contain selected ORG oid if any
-                if ($scope.selectedOrgOid != null && $scope.selectedOrgOid != OPH_ORG_OID) {
+                if ($scope.selectedOrgOid != null) {
                     $location.path("/etusivu/" + $scope.selectedOrgOid);
                 } else {
                     $location.path("/etusivu");
@@ -284,7 +284,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 // muokkaa
                 if (tt.mutable) {
                     PermissionService[prefix].canEdit(oid).then(function(result) {
-                        console.log("row actions can edit", result);
+                        console.log("row actions can edit (" + prefix + ")", result);
                         if (result) {
                             ret.push({url: "#/" + prefix + "/" + oid + "/edit", title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
                         }
