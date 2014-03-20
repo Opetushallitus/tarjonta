@@ -275,7 +275,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 var tt = TarjontaService.getTilat()[tila];
 
                 var canRead = PermissionService[prefix].canPreview(oid);
-                console.log("row actions can read", canRead);
+                console.log("row actions can read (" + prefix + ")", canRead);
 
                 // tarkastele
                 if (canRead) {
@@ -302,19 +302,23 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 switch (tila) {
                     case "PERUTTU":
                     case "VALMIS":
-                        if (PermissionService[prefix].canTransition(oid, tila, "JULKAISTU")) {
-                            ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
-                                action: function() {
-                                    TarjontaService.togglePublished(prefix, oid, true).then(function(ns) {
-                                        actions.update(ns);
-                                        TarjontaService.evictHakutulokset();
-                                    });
-                                }
-                            });
-                        }
-                        break;
+                      PermissionService[prefix].canTransition(oid, tila, "JULKAISTU").then(function(canTransition){
+                       console.log("row actions can transition (" + prefix + ")", tila, "JULKAISTU", canTransition);
+
+                      if (canTransition) {
+                          ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
+                              action: function() {
+                                  TarjontaService.togglePublished(prefix, oid, true).then(function(ns) {
+                                      actions.update(ns);
+                                      TarjontaService.evictHakutulokset();
+                                  });
+                              }
+                          });
+                      }});
+                      break;
                     case "JULKAISTU":
-                        if (PermissionService[prefix].canTransition(oid, tila, "PERUTTU")) {
+                      PermissionService[prefix].canTransition(oid, tila, "PERUTTU").then(function(canTransition) {
+                        if (canTransition) {
                             ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
                                 action: function() {
                                     TarjontaService.togglePublished(prefix, oid, false).then(function(ns) {
@@ -323,16 +327,15 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                                     });
                                 }
                             });
-                        }
+                        }});
                         break;
                 }
                 // poista
                 if (tt.removable) {
-                    PermissionService[prefix].canDelete(oid).then(function(result) {
-                        if (result) {
+                    PermissionService[prefix].canDelete(oid).then(function(canDelete) {
+                        if (canDelete) {
                             ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
                                 action: function(ev) {
-
                                     $scope.openDeleteDialog(prefix, oid, nimi, actions.remove);
                                 }
                             });
