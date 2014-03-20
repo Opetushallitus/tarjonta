@@ -1,5 +1,5 @@
 
-angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTable'])
+angular.module('app.search.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTable'])
         .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService, AuthService) {
 
             var OPH_ORG_OID = Config.env["root.organisaatio.oid"];

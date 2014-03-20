@@ -13,7 +13,7 @@
             </div>
             
             <select class="month" ng-model="select.m" ng-options="m.month as m.name for m in getMonths()" ng-change="onComboSelect()"></select>
-            <select class="year" ng-model="select.y" ng-options="v for v in years" ng-change="onComboSelect()"></select>
+            <select class="year" ng-model="select.y" ng-options="v for v in ctrl.years" ng-change="onComboSelect()"></select>
 
             <div class="float-right">
 	            <button class="btn" ng-click="incMonth(1)" ng-disabled="!canIncMonth(1)"><span class="icon-step-forward"></span></button>
