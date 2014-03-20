@@ -7,23 +7,23 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
 
             //organisaation vaihtuessa suoritettavat toimenpiteet
             $scope.$watch("selectedOrgOid", function(newObj, oldObj) {
-              if(newObj) {
-                //päivitä permissio
-                PermissionService.koulutus.canCreate(newObj).then(function(data) {
-                  $scope.koulutusActions.canCreateKoulutus = data;
-                });
-                
-                //päivitä nimi
-                OrganisaatioService.nimi(newObj).then(function(nimi) {
-                  $scope.selectedOrgName = nimi;
+                if (newObj) {
+                    //päivitä permissio
+                    PermissionService.koulutus.canCreate(newObj).then(function(data) {
+                        $scope.koulutusActions.canCreateKoulutus = data;
+                    });
 
-                //päivitä lokaatio
-                updateLocation();
+                    //päivitä nimi
+                    OrganisaatioService.nimi(newObj).then(function(nimi) {
+                        $scope.selectedOrgName = nimi;
 
-              });
-              }
+                        //päivitä lokaatio
+                        updateLocation();
+
+                    });
+                }
             });
-            
+
             // 1. Organisaatiohaku
             function setDefaultHakuehdot() {
                 $scope.hakuehdot = {
@@ -43,26 +43,26 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             }
 
             //käyttäjän oletusorganisaatio jos vain 1 määritelty
-            function getDefaultOrg(){
-              if(AuthService.getOrganisations()&&AuthService.getOrganisations().length==1) {
-                return AuthService.getOrganisations()[0];  
-              }
+            function getDefaultOrg() {
+                if (AuthService.getOrganisations() && AuthService.getOrganisations().length == 1) {
+                    return AuthService.getOrganisations()[0];
+                }
             }
 
             //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
-            if(getDefaultOrg() && !$routeParams.oid) {
-              selectOrg=getDefaultOrg();
+            if (getDefaultOrg() && !$routeParams.oid) {
+                selectOrg = getDefaultOrg();
 
-              //hae orgsit
-              OrganisaatioService.etsi({oidRestrictionList:[getDefaultOrg()]}).then(function(vastaus) {
-                  $scope.$root.tulos = vastaus.organisaatiot;
-              });
-              
+                //hae orgsit
+                OrganisaatioService.etsi({oidRestrictionList: [getDefaultOrg()]}).then(function(vastaus) {
+                    $scope.$root.tulos = vastaus.organisaatiot;
+                });
+
             }
-            
-            
-            
-            
+
+
+
+
             $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
                 //console.log("oppilaitostyypit", koodit);
                 angular.forEach(koodit, function(koodi) {
@@ -122,10 +122,10 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                 });
             };
 
-            $scope.setDefaultOrg = function(){
-              $scope.selectedOrgOid=getDefaultOrg();
+            $scope.setDefaultOrg = function() {
+                $scope.selectedOrgOid = getDefaultOrg();
             }
-            
+
             // Kutsutaan formin resetissä, palauttaa default syötteet modeliin
             $scope.resetOrg = function() {
                 setDefaultHakuehdot();
@@ -139,7 +139,7 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             }
 
             // Selected org from route path or based on user organisation or oph org
-            $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg?selectOrg:OPH_ORG_OID;
+            $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
 
             $scope.hakukohdeResults = {};
             $scope.koulutusResults = {};
@@ -230,15 +230,20 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
             };
 
             $scope.$watch('selection.koulutukset', function(newObj, oldObj) {
-                if (!newObj || newObj.length == 0 || newObj.length > 1) {
+              
+                if (!newObj || newObj.length == 0) {
                     //mitään ei valittuna
                     $scope.koulutusActions.canMoveOrCopy = false;
                     $scope.koulutusActions.canCreateHakukohde = false;
                     return;
+                }else if(newObj.length > 1){
+                    //yksi valittuna
+                     $scope.koulutusActions.canMoveOrCopy = false;
+                }else{
+                    PermissionService.koulutus.canMoveOrCopy(newObj).then(function(result) {
+                      $scope.koulutusActions.canMoveOrCopy = result;
+                    }); 
                 }
-                PermissionService.koulutus.canMoveOrCopy(newObj).then(function(result) {
-                    $scope.koulutusActions.canMoveOrCopy = result;
-                });
 
                 //lopullinen tulos tallennetaan tänne (on oikeus luoda hakukohde jos oikeus kaikkiin koulutuksiin):
                 var r = {result: true};
@@ -430,9 +435,8 @@ angular.module('app.controllers', ['app.services', 'localisation', 'Organisaatio
                     var modalInstance = $modal.open({
                         controller: DeleteDialogCtrl,
                         templateUrl: "partials/search/delete-dialog.html",
-                        resolve : {
-
-                            ns : function() {
+                        resolve: {
+                            ns: function() {
                                 return ns;
                             }
 
