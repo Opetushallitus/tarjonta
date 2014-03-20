@@ -31,43 +31,64 @@ var OPH_ORG = "xxx";
 
 app.factory('MyRolesModel', function($http, $log, Config) {
 
-    //console.log("MyRolesModel()");
+    // $log.info("*** MyRolesModel()");
     OPH_ORG = Config.env["root.organisaatio.oid"];
 
     var factory = (function() {
 
         var instance = {};
-        instance.organisaatiot=[];
+        // instance.organisaatiot=[];
 
-        var defaultUserInfo = {lang:"fi", groups:[]};
-        
+        // Roles + organisation oid array stored in this map
+        instance.rolesToOrgsMap={};
+
+        var defaultUserInfo = {
+            lang:"fi",
+            groups:[]
+        };
+
         instance.userinfo = Config.env.cas!==undefined ? Config.env.cas.userinfo || defaultUserInfo:defaultUserInfo;
         instance.myroles = instance.userinfo.groups;
-        
+
         /**
          * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
          */
         var processRoleList=function(roolit) {
+            // $log.info("processRoleList()", roolit);
+
+            // Regexp to match/split roles and organisations
+            // "APP_XXX_1.2.3.4" -> ["APP_XXX_1.2.3.4" "APP_XXX", "1.2.3.4"]
+            var r = /^(.*)_([\d|.]+)$/g;
+
         	if(roolit!==undefined) {
         		for(var i=0;i<roolit.length;i++) {
-        			var oidList = roolit[i].match(/_[0-9\.]+$/g);
-        			if(oidList && oidList.length>0) {
-        				//poimi tarjonta roolit
-        				if(roolit[i].indexOf("APP_TARJONTA")==0 && roolit[i].indexOf("KK")==-1) {
-        					var org = oidList[0].substring(1);
 
-                                                if(roolit[i].indexOf('CRUD')!=-1 || roolit[i].indexOf('UPDATE')!=-1) {
-                                                  console.log("adding org:", org, roolit[i]);
-                                                  instance.organisaatiot.push(org);
-                                                }
-        				}
-        			}
+                    // Matchaa roolit + organisaatiot
+                    var m = r.exec(roolit[i]);
+                    if (m && m.length == 3) {
+                        var role = m[1];
+                        var org = m[2];
+
+                        if (angular.isDefined(instance.rolesToOrgsMap[role])) {
+                            // role already exists
+                        } else {
+                            // Create place for the role
+                            instance.rolesToOrgsMap[role] = [];
+                        }
+
+                        // Add organisatio to roles map if not there already
+                        if (instance.rolesToOrgsMap[role].indexOf(org) == -1) {
+                            instance.rolesToOrgsMap[role].push(org);
+                        }
+                    }
         		}
+
+                $log.info("AuthService: ROLES TO ORGANISATIONS MAP: ", instance.rolesToOrgsMap);
         	}
         };
-        
+
 //        console.log("myroles:", instance.myroles);
-        
+
       	processRoleList(instance.myroles);
 
         return instance;
@@ -79,7 +100,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config) {
 
 	var ORGANISAATIO_URL_BASE;
-	
+
 	if(undefined!==Config.env){
 		ORGANISAATIO_URL_BASE=Config.env["organisaatio.api.rest.url"];
 	}
@@ -101,7 +122,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                 MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
     };
 
-    // CRUD 
+    // CRUD
     var crudAccess = function(service, org) {
 //        $log.info("crudAccess()", service, org);
         return MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
@@ -110,7 +131,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
     //async call, returns promise!
     var accessCheck = function(service, orgOid, accessFunction) {
 //        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
-        
+
         if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
         	throw "missing org oid!";
         }
@@ -118,12 +139,12 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 //        console.log("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
 //       	console.log("getting url:", url);
-            	
+
       	$http.get(url,{cache:true}).then(function(result) {
 //        console.log("got:", result);
 
         var ooids = result.data.split("/");
-        
+
         for(var i=0;i<ooids.length;i++) {
             if (accessFunction(service, ooids[i])) {
                 deferred.resolve(true);
@@ -217,11 +238,33 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         },
 
         /**
-         * Palauttaa käyttäjän organisaatiot ('TARJONTA-APP') joihin muokkaus/luontioikeudet
+         * Palauttaa käyttäjän organisaatiot joihin muokkaus/luontioikeudet.
+         *
+         * Parametrina lista rooleista joiden organisaatioista ollaan kiinostuneita.
+         * OLETUKSENA (jos ei annata mitään) käytetään ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"].
          */
-        getOrganisations: function(){
-        	//TODO palauta kopio?
-        	return MyRolesModel.organisaatiot;
+        getOrganisations: function(roles){
+            // Default roles if not defined are
+            roles = roles ? roles : ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"];
+
+            // Force parameter to be array
+            if (!(roles instanceof Array)) {
+                roles = [roles];
+            }
+
+            var result = [];
+            angular.forEach(roles, function(role) {
+                var orgs = MyRolesModel.rolesToOrgsMap[role];
+                angular.forEach(orgs, function(org) {
+                    if (result.indexOf(org) == -1) {
+                        result.push(org);
+                    }
+                });
+            });
+
+            $log.debug("AuthService.getOrganisations()", roles, result);
+
+            return result;
         },
 
     };
