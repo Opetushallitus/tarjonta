@@ -42,21 +42,25 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 SharedStateService.state.puut["organisaatio"].scope = $scope;
             }
 
-            //käyttäjän oletusorganisaatio jos vain 1 määritelty
+            //käyttäjän oletusorganisaatio
             function getDefaultOrg() {
-                if (AuthService.getOrganisations() && AuthService.getOrganisations().length == 1) {
+                if (AuthService.getOrganisations() && AuthService.getOrganisations().length >0) {
                     return AuthService.getOrganisations()[0];
                 }
             }
 
             //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
             if (getDefaultOrg() && !$routeParams.oid) {
+              
                 selectOrg = getDefaultOrg();
 
-                //hae orgsit
-                OrganisaatioService.etsi({oidRestrictionList: [getDefaultOrg()]}).then(function(vastaus) {
+                if(AuthService.getOrganisations().indexOf(OPH_ORG_OID)==-1) {
+                  //hae orgsit jos ei oph
+                  console.log("orgsit:", AuthService.getOrganisations());
+                  OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
                     $scope.$root.tulos = vastaus.organisaatiot;
-                });
+                  });
+                }
 
             }
 
