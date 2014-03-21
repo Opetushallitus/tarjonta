@@ -50,6 +50,9 @@ public class PermissionChecker {
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
+    
+    
+    private boolean overridePermissionChecks = false;
 
     /**
      *
@@ -64,7 +67,7 @@ public class PermissionChecker {
     }
 
     private void checkPermission(boolean result) {
-        if (!result) {
+        if (!result && !overridePermissionChecks) {
             throw new NotAuthorizedException("no.permission");
         }
     }
@@ -246,4 +249,13 @@ public class PermissionChecker {
     public void checkUpdateHaku(String oid) {
         checkCreateHaku();
     }
+
+    public void setOverridePermissionChecks(boolean overridePermissionChecks) {
+		this.overridePermissionChecks = overridePermissionChecks;
+	}
+    
+    public boolean isOverridePermissionChecks() {
+		return overridePermissionChecks;
+	}
+
 }

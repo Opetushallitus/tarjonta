@@ -4,6 +4,10 @@ app.controller('BaseEditController',
             '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function BaseEditController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
+          
+          //käyttöoikeudet
+          $scope.isMutable=true;
+          
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -15,7 +19,7 @@ app.controller('BaseEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable: false};
+                    var uiModel = {isMutable: true};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -39,7 +43,7 @@ app.controller('BaseEditController',
                         }
 
                         if (model.tila === 'POISTETTU') {
-                            uiModel.isMutable = true;
+                            uiModel.isMutable = false;
                         }
 
                         $scope.updateFormStatusInformation(model);
@@ -127,11 +131,20 @@ app.controller('BaseEditController',
                     $scope.uiModel = uiModel;
                     $scope.model = model;
 
+                    //käyttöoikeudet
+                    if($scope.model.komotoOid){
+                      PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
+                        console.log("setting mutable to:", data);
+                        $scope.isMutable = data;
+                      });
+                    }
+
 
                 };
 
                 $scope.canSaveAsLuonnos = function() {
 
+                  if(!$scope.isMutable) return false; //permissio
                     if ($scope.uiModel.isMutable) {
                         return $scope.uiModel.isMutable;
                     }
@@ -139,6 +152,11 @@ app.controller('BaseEditController',
                     return true;
 
                 }
+                
+                $scope.canSaveAsValmis = function(){
+                  return $scope.uiModel.isMutable && $scope.isMutable;
+                }
+                
 
 
                 $scope.getLisatietoKielet = function() {

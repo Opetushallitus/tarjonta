@@ -55,7 +55,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private OsoiteRDTO liitteidenToimitusOsoite;
     private List<ValintakoeV1RDTO> valintakokeet;
     private Long valintaPerusteKuvausTunniste;
-    private Boolean kaksoisTutkinto;
+    private boolean kaksoisTutkinto;
     private Long soraKuvausTunniste;
     private Set<String> opetusKielet;
     private Set<String> valintaPerusteKuvausKielet;
@@ -300,6 +300,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
 
     public Map<String, String> getLisatiedot() {
+    	if (lisatiedot==null) {
+    		lisatiedot = new TreeMap<String, String>();
+    	}
         return lisatiedot;
     }
 
@@ -332,6 +335,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     }
 
     public Map<String, String> getHakukelpoisuusVaatimusKuvaukset() {
+    	if (hakukelpoisuusVaatimusKuvaukset==null) {
+    		hakukelpoisuusVaatimusKuvaukset = new TreeMap<String, String>();
+    	}
         return hakukelpoisuusVaatimusKuvaukset;
     }
 
@@ -355,22 +361,24 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.soraKuvausTunniste = soraKuvausTunniste;
     }
 
-    @Deprecated // sama kuin opetuskielet
     public Set<String> getValintaPerusteKuvausKielet() {
+    	if (valintaPerusteKuvausKielet==null) {
+    		valintaPerusteKuvausKielet = new TreeSet<String>();
+    	}
         return valintaPerusteKuvausKielet;
     }
 
-    @Deprecated // sama kuin opetuskielet
     public void setValintaPerusteKuvausKielet(Set<String> valintaPerusteKuvausKielet) {
         this.valintaPerusteKuvausKielet = valintaPerusteKuvausKielet;
     }
 
-    @Deprecated // sama kuin opetuskielet
     public Set<String> getSoraKuvausKielet() {
+    	if (soraKuvausKielet==null) {
+    		soraKuvausKielet = new TreeSet<String>();
+    	}
         return soraKuvausKielet;
     }
 
-    @Deprecated // sama kuin opetuskielet
     public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
         this.soraKuvausKielet = soraKuvausKielet;
     }
@@ -396,11 +404,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.tarjoajaNimet = tarjoajaNimet;
     }
 
-    public Boolean getKaksoisTutkinto() {
+    public boolean getKaksoisTutkinto() {
         return kaksoisTutkinto;
     }
 
-    public void setKaksoisTutkinto(Boolean kaksoisTutkinto) {
+    public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
     }
 
