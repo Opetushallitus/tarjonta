@@ -50,8 +50,7 @@ public class PermissionChecker {
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
-    
-    
+
     private boolean overridePermissionChecks = false;
 
     /**
@@ -64,6 +63,10 @@ public class PermissionChecker {
                     .userCanCopyKoulutusAsNew(OrganisaatioContext
                             .getContext(orgOid)));
         }
+    }
+
+    public void checkCopyKoulutusTarjoaja(final String tarjoajaOid) {
+        checkUpdateKoulutusByTarjoajaOid(tarjoajaOid);
     }
 
     private void checkPermission(boolean result) {
@@ -121,11 +124,10 @@ public class PermissionChecker {
 
     public void checkCreateHakukohde(List<String> komotoOids) {
 
-
         List<KoulutusmoduuliToteutus> komot = new ArrayList<KoulutusmoduuliToteutus>();
         for (String komotoOid : komotoOids) {
-        	KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid);
-        	Preconditions.checkArgument(komoto!=null, "No such komoto: %s", komotoOid);
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid);
+            Preconditions.checkArgument(komoto != null, "No such komoto: %s", komotoOid);
             komot.add(komoto);
         }
 
@@ -184,17 +186,16 @@ public class PermissionChecker {
 
     public void checkRemoveKoulutus(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
-        
+
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
                                 .getTarjoaja())));
     }
-    
+
     public void checkRemoveKoulutusByTarjoaja(final String tarjoajaOid) {
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(tarjoajaOid)));
     }
-    
 
     public void checkRemoveKoulutusKuva(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
@@ -251,11 +252,11 @@ public class PermissionChecker {
     }
 
     public void setOverridePermissionChecks(boolean overridePermissionChecks) {
-		this.overridePermissionChecks = overridePermissionChecks;
-	}
-    
+        this.overridePermissionChecks = overridePermissionChecks;
+    }
+
     public boolean isOverridePermissionChecks() {
-		return overridePermissionChecks;
-	}
+        return overridePermissionChecks;
+    }
 
 }
