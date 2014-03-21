@@ -63,7 +63,6 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="hakukohde", orphanRemoval=true)
-    //@JoinColumn(name = "hakukohde_id", nullable=false)
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
     
     /**
@@ -117,7 +116,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     private MonikielinenTeksti lisatiedot;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval=true)
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns =

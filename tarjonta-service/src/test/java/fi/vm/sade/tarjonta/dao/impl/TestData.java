@@ -82,6 +82,14 @@ public class TestData {
     public KoulutusmoduuliToteutus getPersistedKomoto4() {
         return komoto4;
     }
+    
+    public Haku getHaku1() {
+		return haku1;
+	}
+    
+    public Haku getHaku2() {
+		return haku2;
+	}
 
     public TestData() {
     }

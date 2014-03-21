@@ -24,6 +24,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     function compareByName(a, b) {
         var an = a.nimi;
         var bn = b.nimi;
+        if(!an){
+          console.log("cannot compare ", a , " with ", b);
+          return -1;
+        }
         /*
          * if a.nimi is null/undefined : 'Cannot call method 'localeCompare' of undefined'
          */
@@ -39,6 +43,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     "season=" + escape(args.season) + "&" +
                     "komoOid=" + escape(args.komoOid) + "&" +
                     "kooulutusOid=" + escape(args.koulutusOid) + "&" +
+                    "hakukohdeOid=" + escape(args.hakukohdeOid) + "&" +
                     "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"

@@ -398,7 +398,8 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
 
     $scope.goBack = function(event) {
-        window.history.back();
+//        window.history.back();
+        $location.path('/etusivu');
     };
 
     $scope.doCopy = function(event) {

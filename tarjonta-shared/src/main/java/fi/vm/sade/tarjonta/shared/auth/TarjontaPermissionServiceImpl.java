@@ -39,6 +39,8 @@ import fi.vm.sade.generic.service.PermissionService;
 public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     public static final String TARJONTA = "TARJONTA";
+
+    public static final String VALINTAPERUSTE_KUVAUS = "VALINTAPERUSTEKUVAUSTENHALLINTA";
     //OPH oid
     @Value("${root.organisaatio.oid}")
     String rootOrgOid;
@@ -55,8 +57,18 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
             super(TARJONTA);
         }
     }
+
+    @Component
+    public static class VPermissionService extends AbstractPermissionService {
+
+        public VPermissionService() { super (VALINTAPERUSTE_KUVAUS);}
+
+    }
     @Autowired
     TPermissionService wrapped;
+
+    @Autowired
+    VPermissionService vWrapped;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -113,7 +125,25 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanDeleteKoulutus(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
-    
+
+
+    /**
+     *
+     * Checks if user can create valintaperuste
+     *
+     */
+    public boolean userCanCreateValintaperuste() {
+        return vWrapped.userCanCreateReadUpdateAndDelete();
+    }
+
+    public boolean userCanUpdateValinteperuste() {
+        return vWrapped.userCanReadAndUpdate();
+    }
+
+    public boolean userCanDeleteValintaperuste() {
+        return vWrapped.userCanCreateReadUpdateAndDelete();
+    }
+
     /**
      * Checks if user can delete koulutus, takes into account hakuaika.
      *

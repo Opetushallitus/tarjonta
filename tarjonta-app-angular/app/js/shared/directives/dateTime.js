@@ -259,15 +259,13 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 				scope: $scope,
 				templateUrl: 'js/shared/directives/dateTime-chooser.html',
 				controller: function($scope) {
-					
+					$scope.ctrl = {years : []};
 					$scope.months = [];
 					for (var i=0; i<12; i++) {
 						$scope.months.push({month:i, name:LocalisationService.t("tarjonta.kalenteri.kk."+(i+1))});
 					}
 					
 					$scope.calendar=[];
-					$scope.years = [];
-
 					$scope.model = ctrl.model instanceof Date ? new Date(ctrl.model.getTime()) : new Date();
 					
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
@@ -282,7 +280,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 						modalInstance.dismiss();
 					}
 					
-					function updateCalendar(){
+					$scope.updateCalendar = function(){
 						$scope.select.m = $scope.model.getMonth();
 						$scope.select.y = $scope.model.getFullYear();
 
@@ -318,17 +316,17 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 							start = start.getNextWeek();
 						}
 						$scope.calendar = ret;
-						$scope.years = [];
+						$scope.ctrl.years = $scope.ctrl.years.splice(0, $scope.ctrl.years.length);
 						
 						var y = $scope.model.getFullYear();
 						for (var i = y-2; i<=y+2; i++) {
 							var nd = new Date($scope.model.getTime());
 							nd.setFullYear(i);
 							if (!violatesConstraints(nd)) {
-								$scope.years.push(i);
+								$scope.ctrl.years.push(i);
 							}
 						}
-						
+                                              
 						return ret;
 					}
 
@@ -339,17 +337,20 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 						$scope.model.setDate(d.day);
 						$scope.model.setMonth(d.month);
 						$scope.model.setFullYear(d.year);
-						updateCalendar();
+						$scope.updateCalendar();
 					}
 					
 					$scope.incYear = function(v) {
-						$scope.model.setFullYear($scope.model.getFullYear()+v);
-						updateCalendar();
+                                            var fy = $scope.model.getFullYear();
+						$scope.model.setFullYear(fy+v);
+                                             fy = $scope.model.getFullYear();
+                                                
+						$scope.updateCalendar();
 					}
 					
 					$scope.incMonth = function(v) {
 						$scope.model.setMonth($scope.model.getMonth()+v);
-						updateCalendar();
+						$scope.updateCalendar();
 					}
 					
 					$scope.canIncYear = function(v) {
@@ -379,10 +380,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 					$scope.onComboSelect = function() {
 						$scope.model.setMonth($scope.select.m);
 						$scope.model.setFullYear($scope.select.y);
-						updateCalendar();
+						$scope.updateCalendar();
 					}
 										
-					updateCalendar();
+					$scope.updateCalendar();
 					return $scope;
 				}
 			});
