@@ -266,7 +266,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 					}
 					
 					$scope.calendar=[];
-					$scope.model = ctrl.model instanceof Date ? new Date(ctrl.model.getTime()) : new Date();
+					$scope.model = ctrl.model instanceof Date ? new Date(ctrl.model.getTime()) : applyConstraints(new Date());
 					
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
 					
@@ -316,7 +316,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 							start = start.getNextWeek();
 						}
 						$scope.calendar = ret;
-						$scope.ctrl.years = $scope.ctrl.years.splice(0, $scope.ctrl.years.length);
+						$scope.ctrl.years = [];
 						
 						var y = $scope.model.getFullYear();
 						for (var i = y-2; i<=y+2; i++) {
