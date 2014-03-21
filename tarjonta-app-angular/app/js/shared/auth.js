@@ -58,12 +58,12 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 
             // Regexp to match/split roles and organisations
             // "APP_XXX_1.2.3.4" -> ["APP_XXX_1.2.3.4" "APP_XXX", "1.2.3.4"]
-            var r = /^(.*)_([\d|.]+)$/g;
 
         	if(roolit!==undefined) {
         		for(var i=0;i<roolit.length;i++) {
 
                     // Matchaa roolit + organisaatiot
+                    var r = /^(.*)_([\d|.]+)$/g;
                     var m = r.exec(roolit[i]);
                     if (m && m.length == 3) {
                         var role = m[1];
@@ -80,6 +80,8 @@ app.factory('MyRolesModel', function($http, $log, Config) {
                         if (instance.rolesToOrgsMap[role].indexOf(org) == -1) {
                             instance.rolesToOrgsMap[role].push(org);
                         }
+                    } else {
+                        $log.info("SKIPPING: '" + roolit[i] + "'");
                     }
         		}
 
