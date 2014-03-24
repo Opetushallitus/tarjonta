@@ -183,28 +183,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             }
         }
         hakukohdeDAO.updateValintakoe(updateValintakokees, hakukohdeOid);
-        return hakukohteenValintakokeet;
+        return convertValintakoeTyyppis(hakukohdeDAO.findHakukohdeByOid(hakukohdeOid).getValintakoes());
     }
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public List<ValintakoeTyyppi> tallennaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
-        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
-
-        List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-
-        if (hakukohde != null) {
-        	hakukohde.getValintakoes().clear();
-        	for (Valintakoe vk : valintakoes) {
-            	hakukohde.addValintakoe(vk);
-        	}
-        	hakukohdeDAO.merge(hakukohde);
-            return convertValintakoeTyyppis(hakukohde.getValintakoes());
-        } else {
-            throw new BusinessException("tarjonta.haku.no.hakukohde.found");
-        }
-
+    	return paivitaValintakokeitaHakukohteelle(hakukohdeOid, hakukohteenValintakokeet);
     }
 
     @Override
