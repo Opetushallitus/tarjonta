@@ -402,6 +402,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
     
     @Override
+    public void merge(Hakukohde hk) {
+	    getEntityManager().merge(hk);	
+    }
+    
+    @Override
     public boolean removeHakuKohdeLiiteById(String id) {
     	return getEntityManager().createQuery("delete from "+HakukohdeLiite.class.getName()+" where id = ?").setParameter(1, Long.parseLong(id)).executeUpdate() != 0;
     }

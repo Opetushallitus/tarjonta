@@ -46,6 +46,8 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<Valintakoe> findValintakoeByHakukohdeOid(String oid);
 
     Hakukohde findHakukohdeByOid(String oid);
+    
+    void merge(Hakukohde hk);
 
     /**
      * @deprecated {@link #findHakukohdeByOid(String)}

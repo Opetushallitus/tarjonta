@@ -199,7 +199,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         	for (Valintakoe vk : valintakoes) {
             	hakukohde.addValintakoe(vk);
         	}
-        	hakukohdeDAO.update(hakukohde);
+        	hakukohdeDAO.merge(hakukohde);
             return convertValintakoeTyyppis(hakukohde.getValintakoes());
         } else {
             throw new BusinessException("tarjonta.haku.no.hakukohde.found");
