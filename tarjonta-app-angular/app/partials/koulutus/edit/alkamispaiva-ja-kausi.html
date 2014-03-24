@@ -30,9 +30,11 @@
         </select>
         <span tt="koulutus.alkamispvm.vuosi">Alkamisvuosi</span>
         <input 
+            class="thin"
             ng-required="ctrl.kausi"
             name="alkamisvuosi" 
-            type="number"
+            ng-pattern="/^\d+$/"
+            type="text"
             ng-model="vuosi"
             ng-disabled="!ctrl.kausi"/>
     </div>
