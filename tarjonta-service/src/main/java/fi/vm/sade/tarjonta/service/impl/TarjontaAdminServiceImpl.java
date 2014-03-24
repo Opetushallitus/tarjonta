@@ -176,13 +176,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         permissionChecker.checkUpdateHakukohde(hakukohdeOid);
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
-        List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
+        /*List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
         for (Valintakoe valintakoe : valintakoes) {
             if (valintakoe.getId() != null) {
                 updateValintakokees.add(valintakoe);
             }
-        }
-        hakukohdeDAO.updateValintakoe(updateValintakokees, hakukohdeOid);
+        }*/
+        hakukohdeDAO.updateValintakoe(valintakoes, hakukohdeOid);
         return convertValintakoeTyyppis(hakukohdeDAO.findHakukohdeByOid(hakukohdeOid).getValintakoes());
     }
 

@@ -37,6 +37,8 @@ import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenT
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.PisterajaTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -104,10 +106,19 @@ public class TarjontaAdminServiceTest2 extends Assert {
 		nvk.getAjankohdat().add(
 				new AjankohtaTyyppi("ak1", new Date(), new Date(), new OsoiteTyyppi("sadsadsad", "", "posti_00001", "mesta")));
 		
+		PisterajaTyyppi pr = new PisterajaTyyppi();
+		pr.setValinnanPisteraja(ValinnanPisterajaTyyppi.PAASYKOE);
+		pr.setAlinHyvaksyttyPistemaara(5);
+		pr.setAlinPistemaara(1);
+		pr.setYlinPistemaara(10);
+		nvk.getPisterajat().add(pr);
+		
 		List<ValintakoeTyyppi> nvks = new ArrayList<ValintakoeTyyppi>(vks);
 		nvks.add(nvk);
+
+		List<ValintakoeTyyppi> nnvks = tarjontaAdminService.tallennaValintakokeitaHakukohteelle(TestData.HAKUKOHDE_OID1, nvks);
 		
-		tarjontaAdminService.tallennaValintakokeitaHakukohteelle(TestData.HAKUKOHDE_OID1, nvks);
+		assertEquals(nvks.size(), nnvks.size());
 		
 	}
 }

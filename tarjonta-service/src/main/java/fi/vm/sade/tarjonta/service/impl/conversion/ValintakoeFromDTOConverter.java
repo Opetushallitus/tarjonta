@@ -43,14 +43,14 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
 
         valintakoe.setKuvaus(CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(valintakoeTyyppi.getKuvaukset()));
         valintakoe.setTyyppiUri(valintakoeTyyppi.getValintakokeenTyyppi());
-        for (ValintakoeAjankohta ajankohta:convertAjankohtaTyyppiToValintakoeAjankohta(valintakoeTyyppi.getAjankohdat())) {
+        for (ValintakoeAjankohta ajankohta:convertAjankohtaTyyppiToValintakoeAjankohta(valintakoe, valintakoeTyyppi.getAjankohdat())) {
             valintakoe.addAjankohta(ajankohta);
         }
         if (valintakoeTyyppi.getLisaNaytot() != null) {
             valintakoe.setLisanaytot(CommonFromDTOConverter.convertMonikielinenTekstiTyyppiToDomainValue(valintakoeTyyppi.getLisaNaytot()));
         }
         if (valintakoeTyyppi.getPisterajat() != null) {
-            valintakoe.setPisterajat(convertPisterajat(valintakoeTyyppi.getPisterajat()));
+            valintakoe.setPisterajat(convertPisterajat(valintakoe, valintakoeTyyppi.getPisterajat()));
         }
 
         if (valintakoeTyyppi.getViimeisinPaivittajaOid() != null) {
@@ -62,10 +62,11 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
         return valintakoe;
     }
     
-    private Set<Pisteraja> convertPisterajat(List<PisterajaTyyppi> pisterajaTyypit) {
+    private Set<Pisteraja> convertPisterajat(Valintakoe vk, List<PisterajaTyyppi> pisterajaTyypit) {
         Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
         for (PisterajaTyyppi pisterajaTyyppi:pisterajaTyypit) {
             Pisteraja pisteRaja = new Pisteraja();
+            pisteRaja.setValintakoe(vk);
             pisteRaja.setAlinHyvaksyttyPistemaara(new BigDecimal(Double.toString(pisterajaTyyppi.getAlinHyvaksyttyPistemaara())));//pisterajaTyyppi.getAlinHyvaksyttyPistemaara());
             pisteRaja.setAlinPistemaara(new BigDecimal(Double.toString(pisterajaTyyppi.getAlinPistemaara())));//pisterajaTyyppi.getAlinPistemaara());
             pisteRaja.setValinnanPisterajaTyyppi(pisterajaTyyppi.getValinnanPisteraja().value());
@@ -78,17 +79,16 @@ public class ValintakoeFromDTOConverter extends AbstractToDomainConverter<Valint
         return pisterajat;
     }
 
-    private List<ValintakoeAjankohta> convertAjankohtaTyyppiToValintakoeAjankohta(List<AjankohtaTyyppi> ajankohtaTyyppis) {
+    private List<ValintakoeAjankohta> convertAjankohtaTyyppiToValintakoeAjankohta(Valintakoe vk, List<AjankohtaTyyppi> ajankohtaTyyppis) {
         ArrayList<ValintakoeAjankohta> valintakoeAjankohtas = new ArrayList<ValintakoeAjankohta>();
 
         for (AjankohtaTyyppi ajankohtaTyyppi:ajankohtaTyyppis) {
             ValintakoeAjankohta valintakoeAjankohta = new ValintakoeAjankohta();
-
-             valintakoeAjankohta.setAjankohdanOsoite(CommonFromDTOConverter.convertOsoiteToOsoiteTyyppi(ajankohtaTyyppi.getValintakoeAjankohtaOsoite()));
-             valintakoeAjankohta.setAlkamisaika(ajankohtaTyyppi.getAlkamisAika());
-             valintakoeAjankohta.setPaattymisaika(ajankohtaTyyppi.getPaattymisAika());
-             valintakoeAjankohta.setLisatietoja(ajankohtaTyyppi.getKuvaus());
-
+            valintakoeAjankohta.setValintakoe(vk);
+            valintakoeAjankohta.setAjankohdanOsoite(CommonFromDTOConverter.convertOsoiteToOsoiteTyyppi(ajankohtaTyyppi.getValintakoeAjankohtaOsoite()));
+            valintakoeAjankohta.setAlkamisaika(ajankohtaTyyppi.getAlkamisAika());
+            valintakoeAjankohta.setPaattymisaika(ajankohtaTyyppi.getPaattymisAika());
+            valintakoeAjankohta.setLisatietoja(ajankohtaTyyppi.getKuvaus());
             valintakoeAjankohtas.add(valintakoeAjankohta);
         }
 
