@@ -29,11 +29,6 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
-import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.service.business.exception.*;
-import fi.vm.sade.tarjonta.service.search.*;
-import fi.vm.sade.tarjonta.service.types.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -47,6 +42,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
@@ -63,6 +60,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -72,7 +70,39 @@ import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
+import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
+import fi.vm.sade.tarjonta.service.business.exception.HakukohdeExistsException;
+import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
+import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
+import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
+import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
+import fi.vm.sade.tarjonta.service.types.PaivitaTilaVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
+import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
+import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
@@ -297,6 +327,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         for (ValintakoeTyyppi valintakoeTyyppi : valintakoeTyyppis) {
             valintakoes.add(conversionService.convert(valintakoeTyyppi, Valintakoe.class));
+            for (Valintakoe vk : valintakoes) {
+            	for (ValintakoeAjankohta vka : vk.getAjankohtas()) {
+            		vka.setValintakoe(vk);
+            	}
+            }
         }
 
         return valintakoes;
