@@ -195,14 +195,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
         if (hakukohde != null) {
-            hakukohdeDAO.updateValintakoe(valintakoes, hakukohde.getOid());
-
-            hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-            if (hakukohde != null && hakukohde.getValintakoes() != null) {
-                return convertValintakoeTyyppis(hakukohde.getValintakoes());
-            } else {
-                return new ArrayList<ValintakoeTyyppi>();
-            }
+        	hakukohde.getValintakoes().clear();
+        	for (Valintakoe vk : valintakoes) {
+            	hakukohde.addValintakoe(vk);
+        	}
+        	hakukohdeDAO.update(hakukohde);
+            return convertValintakoeTyyppis(hakukohde.getValintakoes());
         } else {
             throw new BusinessException("tarjonta.haku.no.hakukohde.found");
         }
