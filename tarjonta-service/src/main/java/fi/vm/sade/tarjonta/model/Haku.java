@@ -134,6 +134,11 @@ public class Haku extends TarjontaBaseEntity {
      */
     private String organisationOids;
 
+    /**
+     * Tarjoaja organisation oid -
+     */
+    private String tarjoajaOid;
+
     public String getOid() {
         return oid;
     }
@@ -417,6 +422,14 @@ public class Haku extends TarjontaBaseEntity {
         } else {
             this.organisationOids = StringUtils.join(organisationOids, ",");
         }
+    }
+
+    public String getTarjoajaOid() {
+        return tarjoajaOid;
+    }
+
+    public void setTarjoajaOid(String tarjoajaOid) {
+        this.tarjoajaOid = tarjoajaOid;
     }
 
 }

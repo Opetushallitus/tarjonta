@@ -89,6 +89,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
 	@ApiModelProperty(value = "Tarjoaja organisatio oidit.", required=false)
     private String[] organisaatioOids;
 
+	@ApiModelProperty(value = "Tarjoaja organisatio oid.", required=false)
+    private String tarjoajaOid;
+
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -243,4 +246,11 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.organisaatioOids = organisaatioOids;
     }
 
+    public String getTarjoajaOid() {
+        return tarjoajaOid;
+    }
+
+    public void setTarjoajaOid(String tarjoajaOid) {
+        this.tarjoajaOid = tarjoajaOid;
+    }
 }

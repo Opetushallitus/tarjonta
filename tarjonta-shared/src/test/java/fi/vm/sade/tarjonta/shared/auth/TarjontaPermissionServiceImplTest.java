@@ -36,6 +36,7 @@ import fi.vm.sade.security.OrganisationHierarchyAuthorizer;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl.TPermissionService;
+import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl.HakujenHallintaPermissionService;
 
 public class TarjontaPermissionServiceImplTest {
 
@@ -61,6 +62,9 @@ public class TarjontaPermissionServiceImplTest {
         OrganisationHierarchyAuthorizer authorizer = new OrganisationHierarchyAuthorizer(oidProvider);
         permissionService.wrapped= new TPermissionService();
         permissionService.wrapped.setAuthorizer(authorizer);
+
+        permissionService.hakujenHallintaPermissionServiceWrapped = new HakujenHallintaPermissionService();
+        permissionService.hakujenHallintaPermissionServiceWrapped.setAuthorizer(authorizer);
 
         permissionService.afterPropertiesSet();
     }
@@ -135,17 +139,17 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanPublishHaku());
         Assert.assertTrue(permissionService.userCanCancelHakuPublish());
     }
-    
+
     List<GrantedAuthority> getAuthority(String appPermission, String oid) {
         GrantedAuthority orgAuthority = new SimpleGrantedAuthority(String.format("%s", appPermission));
         GrantedAuthority roleAuthority = new SimpleGrantedAuthority(String.format("%s_%s", appPermission, oid));
         return Lists.newArrayList(orgAuthority, roleAuthority);
     }
-    
+
     static void setCurrentUser(final String oid, final List<GrantedAuthority> grantedAuthorities) {
-        
+
         Authentication auth = new TestingAuthenticationToken(oid, null, grantedAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
-    
+
 }

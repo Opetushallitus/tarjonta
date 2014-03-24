@@ -48,6 +48,7 @@ import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -153,8 +154,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         List<Haku> hakus = hakuDAO.findByOids(oids);
 
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
-        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(
-                hakuDtos);
+        ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(hakuDtos);
         for (Haku haku : hakus) {
             HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku, false);
             hakuDtos.add(hakuV1RDTO);
@@ -162,8 +162,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-        return resultV1RDTO;
+        updateRightsInformation(resultV1RDTO, null);
 
+        return resultV1RDTO;
     }
 
     @Override
@@ -199,6 +200,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         try {
             result.setResult(_converter.fromHakuToHakuRDTO(oid));
+
+            updateRightsInformation(result, result.getResult());
+
             if (result.getResult() == null) {
                 result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             } else {
@@ -227,6 +231,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         permissionChecker.checkUpdateHaku(hakuDto != null ? hakuDto.getOid() : null);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
+
+        updateRightsInformation(result, hakuDto);
+
         // result.setResult(haku);
 
         try {
@@ -295,6 +302,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         permissionChecker.checkRemoveHaku();
 
         ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+        updateRightsInformation(result, null);
 
         Haku hakuToRemove = hakuDAO.findByOid(oid);
 
@@ -537,6 +545,37 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 //        LOG.info("        => result = {}", result);
 
         return result;
+    }
+
+    /**
+     * Debug functionality - check access rights to given haku / org.
+     *
+     * @param result
+     * @param hakuDto
+     */
+    private void updateRightsInformation(ResultV1RDTO result, HakuV1RDTO hakuDto) {
+        try {
+            permissionChecker.checkUpdateHaku("TODO ADD ORG OID HERE FROM HAKU DTO");
+            result.getAccessRights().put("update", true);
+        } catch (Throwable ex) {
+            result.getAccessRights().put("update", false);
+        }
+
+        try {
+            permissionChecker.checkCreateHaku();
+            result.getAccessRights().put("create", true);
+        } catch (Throwable ex) {
+            result.getAccessRights().put("create", false);
+        }
+
+        try {
+            permissionChecker.checkRemoveHaku();
+            result.getAccessRights().put("delete", true);
+        } catch (Throwable ex) {
+            result.getAccessRights().put("delete", false);
+        }
+
+        LOG.info("updateRightsInformation(): {}", result.getAccessRights());
     }
 
 }

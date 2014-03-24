@@ -50,8 +50,8 @@ public class PermissionChecker {
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
-    
-    
+
+
     private boolean overridePermissionChecks = false;
 
     /**
@@ -184,17 +184,17 @@ public class PermissionChecker {
 
     public void checkRemoveKoulutus(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
-        
+
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
                                 .getTarjoaja())));
     }
-    
+
     public void checkRemoveKoulutusByTarjoaja(final String tarjoajaOid) {
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(tarjoajaOid)));
     }
-    
+
 
     public void checkRemoveKoulutusKuva(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
@@ -247,13 +247,13 @@ public class PermissionChecker {
     }
 
     public void checkUpdateHaku(String oid) {
-        checkCreateHaku();
+        checkPermission(permissionService.userCanUpdateHaku());
     }
 
     public void setOverridePermissionChecks(boolean overridePermissionChecks) {
 		this.overridePermissionChecks = overridePermissionChecks;
 	}
-    
+
     public boolean isOverridePermissionChecks() {
 		return overridePermissionChecks;
 	}

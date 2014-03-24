@@ -41,6 +41,9 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public static final String TARJONTA = "TARJONTA";
 
     public static final String VALINTAPERUSTE_KUVAUS = "VALINTAPERUSTEKUVAUSTENHALLINTA";
+
+    public static final String HAKUJENHALLINTA = "HAKUJENHALLINTA";
+
     //OPH oid
     @Value("${root.organisaatio.oid}")
     String rootOrgOid;
@@ -61,14 +64,27 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     @Component
     public static class VPermissionService extends AbstractPermissionService {
 
-        public VPermissionService() { super (VALINTAPERUSTE_KUVAUS);}
-
+        public VPermissionService() {
+            super (VALINTAPERUSTE_KUVAUS);
+        }
     }
+
+    @Component
+    public static class HakujenHallintaPermissionService extends AbstractPermissionService {
+
+        public HakujenHallintaPermissionService() {
+            super(HAKUJENHALLINTA);
+        }
+    }
+
     @Autowired
     TPermissionService wrapped;
 
     @Autowired
     VPermissionService vWrapped;
+
+    @Autowired
+    HakujenHallintaPermissionService hakujenHallintaPermissionServiceWrapped;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -84,7 +100,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanCancelKoulutusPublish(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
-    
+
     /**
      * Checks if user can cancel koulutus publishment. Takes into account hakuaika.
      *
@@ -162,7 +178,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanPublishKoulutus(final OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
-    
+
     /**
      * Checks if user can publish koulutus.
      *
@@ -195,7 +211,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanUpdateHakukohde(final OrganisaatioContext context, final boolean hakuStarted) {
         return genericCanChangeTarjonta(context, hakuStarted, wrapped.ROLE_CRUD, wrapped.ROLE_RU);
     }
-    
+
     /**
      * Checks if user can update koulutus, takes into account hakuStarted.
      *
@@ -262,7 +278,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanDeleteHakukohdeFromKoulutus(OrganisaatioContext context) {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
-    
+
     /**
      * Checks if user can delete hakukohde from koulutus, takes into account hakuaika.
      *
@@ -290,41 +306,113 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     /**
      * Check if user can delete haku.
      *
+     * This is true if user has role HAKUJENHALLINTA_CRUD for root oid OR that role.
+     *
+     * TODO
+     * - YHTEISHAKU - only root oid user / OPH
+     * - others - only root oid user / OPH AND if that user belongs to creators organisation.
+     *
      * @return
      */
     public boolean userCanDeleteHaku() {
-        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+        // First check Tarojonta OPH user
+        boolean userCanDeleteHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta root user?
+        userCanDeleteHalku = userCanDeleteHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(rootOrgOid, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta crud then?
+        // TODO add organisation check for hakujenhallinta org!
+        userCanDeleteHalku = userCanDeleteHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        LOGGER.info("userCanDeleteHaku:" + userCanDeleteHalku);
+        return userCanDeleteHalku;
+        // return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 
     /**
-     * Check if user can delete haku.
+     * Check if user can create/delete haku.
+     *
+     * This is true if user has role HAKUJENHALLINTA_CRUD for root oid OR that role.
+     *
+     * TODO
+     * - YHTEISHAKU - only root oid user / OPH
+     * - others - only root oid user / OPH AND if that user belongs to creators organisation.
      *
      * @return
      */
     public boolean userCanCreateHaku() {
+        // First check Tarojonta OPH user
         boolean userCanCreateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
-        LOGGER.debug("userCanCreateHaku:" + userCanCreateHalku);
+
+        // Or hakujen hallinta root user?
+        userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(rootOrgOid, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta crud then?
+        // TODO add organisation check for hakujenhallinta org!
+        userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        LOGGER.info("userCanCreateHaku:" + userCanCreateHalku);
         return userCanCreateHalku;
+        // return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 
     /**
      * Check if user can edit haku.
      *
+     * TODO
+     * - YHTEISHAKU - onlu "oph" user
+     * - other hakus - has CRUD + haku belongs to that organisation
+     *
      * @return
      */
     public boolean userCanUpdateHaku() {
-        boolean userCanEditHaku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
-        LOGGER.debug("userCanEditHaku:" + userCanEditHaku);
-        return userCanEditHaku;
+        // First check Tarojonta OPH user
+        boolean userCanUpdateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta root user?
+        userCanUpdateHalku = userCanUpdateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(rootOrgOid, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta crud then?
+        // TODO add organisation check for hakujenhallinta org!
+        userCanUpdateHalku = userCanUpdateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta Update access?
+        // TODO add organisation check for hakujenhallinta org!
+        userCanUpdateHalku = userCanUpdateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_RU);
+
+        LOGGER.info("userCanUpdateHaku:" + userCanUpdateHalku);
+        return userCanUpdateHalku;
+
+//        boolean userCanEditHaku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+//        LOGGER.debug("userCanEditHaku:" + userCanEditHaku);
+//        return userCanEditHaku;
     }
 
     /**
      * Check if user can publish haku.
      *
+     * TODO
+     * - YHTEISHAKU - onlu "oph" user
+     * - other hakus - has CRUD + haku belongs to that organisation
+     *
      * @return
      */
     public boolean userCanPublishHaku() {
-        return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
+        // First check Tarojonta OPH user
+        boolean userCanPublishHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta root user?
+        userCanPublishHalku = userCanPublishHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(rootOrgOid, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        // Or hakujen hallinta crud then?
+        // TODO add organisation check for hakujenhallinta org!
+        userCanPublishHalku = userCanPublishHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+
+        LOGGER.info("userCanUpdateHaku:" + userCanPublishHalku);
+        return userCanPublishHalku;
+
+        // return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
     /**
@@ -353,7 +441,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean userCanCreateKoulutusmoduuli() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
-    
+
     public boolean userIsOphCrud() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
@@ -366,7 +454,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public boolean underConstruction() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
-    
+
     private boolean genericCanChangeTarjonta(final OrganisaatioContext context, boolean hakuStarted, String... roles) {
         boolean result = wrapped.checkAccess(context.ooid, roles) && !hakuStarted;
         if (!result) {
