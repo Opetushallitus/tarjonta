@@ -734,6 +734,37 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut',AuthService.getLanguage());
 
 
+    var filterHakus = function(hakus) {
+        var filteredHakus = filterHakusWithAika(hakus);
+        angular.forEach(filteredHakus,function(haku){
+           $scope.model.hakus.push(haku);
+        });
+
+
+    }
+
+    var filterHakusWithAika = function(hakus) {
+
+        var filteredHakus = [];
+        angular.forEach(hakus,function(haku){
+            // rajaus kk-hakukohteisiin; ks. OVT-6452
+            // TODO selvitä uri valitun koulutuksen perusteella
+
+            var kohdeJoukkoUriNoVersion = splitUri(haku.kohdejoukkoUri);
+
+            if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
+
+                //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
+                if (haku.koulutuksenAlkamiskausiUri === koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                    filteredHakus.push(haku);
+                }
+
+
+            }
+        });
+        return filteredHakus;
+    }
+
     /*
 
         -----> Retrieve all hakus
@@ -761,30 +792,12 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 }
 
             }
-            /*angular.forEach(haku.nimi,function(nimi){
-
-                if (nimi !== null && nimi !== undefined && nimi.arvo !== undefined && nimi.arvo.toUpperCase() === $scope.model.userLang.toUpperCase() ) {
-                    haku.lokalisoituNimi = nimi.teksti;
-                }
-
-            });*/
-            
-            // rajaus kk-hakukohteisiin; ks. OVT-6452
-            // TODO selvitä uri valitun koulutuksen perusteella
-
-            var kohdeJoukkoUriNoVersion = splitUri(haku.kohdejoukkoUri);
-
-            if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
-
-                //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
-                if (haku.koulutuksenAlkamiskausiUri === koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                    $scope.model.hakus.push(haku);
-                }
 
 
-            }
 
         });
+
+        filterHakus(hakuDatas);
 
         if ($scope.model.hakukohde.hakuOid !== undefined) {
             $scope.model.hakuChanged();

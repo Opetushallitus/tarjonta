@@ -32,6 +32,18 @@ app.service('CommonUtilService',function($resource, $log,$q, Config,Organisaatio
 
     },
 
+    this.haeOrganisaationTyypit = function(organisaatioOid) {
+
+        var deferred = $q.defer();
+
+        OrganisaatioService.byOid(organisaatioOid).then(function(vastaus) {
+            deferred.resolve([vastaus.organisaatiot[0].organisaatiotyypit]);
+        });
+
+        return deferred.promise;
+
+    }
+
     this.haeOppilaitostyypit = function(organisaatio) {
 
         var deferred = $q.defer();
