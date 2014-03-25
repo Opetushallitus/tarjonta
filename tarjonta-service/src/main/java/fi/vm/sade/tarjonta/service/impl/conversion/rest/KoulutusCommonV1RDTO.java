@@ -293,11 +293,10 @@ public class KoulutusCommonV1RDTO {
         //fallback
         if (nimi == null && tekstis.size() > 0) {
             nimi = tekstis.get(0).getValue();
-        } else {
+        } else if (nimi == null) {
             nimi = "No name";
         }
 
-        Preconditions.checkNotNull(nimi, "OrganisaatioDTO name object cannot be null.");
         OrganisaatioV1RDTO organisaatioRDTO = new OrganisaatioV1RDTO();
         organisaatioRDTO.setOid(organisaatioDto.getOid());
         organisaatioRDTO.setNimi(nimi);
