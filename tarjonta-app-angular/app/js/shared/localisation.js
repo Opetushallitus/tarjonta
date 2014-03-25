@@ -138,7 +138,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
  * LocalisationService.tl("this.is.the.key2", "fi", ["array", "of", "values"])  == localized value in given locale
  * </pre>
  */
-app.service('LocalisationService', function($log, $q, $http, $interval, Localisations, Config, AuthService, loadingService) {
+app.service('LocalisationService', function($log, $q, $http, $interval, Localisations, Config, AuthService) {
     $log.log("LocalisationService()");
 
     // Singleton state, default current locale for the user
@@ -180,6 +180,8 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
     this.updateAccessedById = {};
 
     this.updateAccessInformation = function() {
+        var uri = Config.env.tarjontaLocalisationRestUrl + "/access";
+
         var ids = Object.keys(this.updateAccessedById);
         this.updateAccessedById = {};
 
@@ -188,7 +190,6 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
             Localisations.updateAccessed({ id: "access" }, ids, function () {
                 $log.info("success!");
             }, function () {
-                loadingService.onErrorHandled();
                 $log.info("failed!");
             });
         }
@@ -458,15 +459,14 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $
     };
 
     /**
-     * Updates used translations every ten minutes.
+     * Updates used translations every five minutes.
      *
      * @type @call;$interval
      */
     var timer = $interval(function () {
         LocalisationService.updateAccessInformation();
-    }, 10 * 60 * 1000);
+    }, 5 * 60 * 1000);
 
-    // Cancel update timer if scope is destroyed
     $scope.$on("$destroy", function() {
         $log.info("LocalisationCtrl() -  $destroy");
         if (timer) {
