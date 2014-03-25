@@ -50,8 +50,7 @@ public class PermissionChecker {
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
-    
-    
+
     private boolean overridePermissionChecks = false;
 
     /**
@@ -66,14 +65,18 @@ public class PermissionChecker {
         }
     }
 
+    public void checkCopyKoulutusTarjoaja(final String tarjoajaOid) {
+        checkUpdateKoulutusByTarjoajaOid(tarjoajaOid);
+    }
+
     private void checkPermission(boolean result) {
         if (!result && !overridePermissionChecks) {
             throw new NotAuthorizedException("no.permission");
         }
     }
 
-    public void checkHakuUpdate() {
-        checkPermission(permissionService.userCanUpdateHaku());
+    public void checkHakuUpdate(String hakuOid) {
+        checkPermission(permissionService.userCanUpdateHaku(hakuOid));
     }
 
     public void checkUpdateHakukohde(String hakukohdeOid) {
@@ -121,11 +124,10 @@ public class PermissionChecker {
 
     public void checkCreateHakukohde(List<String> komotoOids) {
 
-
         List<KoulutusmoduuliToteutus> komot = new ArrayList<KoulutusmoduuliToteutus>();
         for (String komotoOid : komotoOids) {
-        	KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid);
-        	Preconditions.checkArgument(komoto!=null, "No such komoto: %s", komotoOid);
+            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(komotoOid);
+            Preconditions.checkArgument(komoto != null, "No such komoto: %s", komotoOid);
             komot.add(komoto);
         }
 
@@ -156,8 +158,8 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanCreateValintaperuste());
     }
 
-    public void checkRemoveHaku() {
-        checkPermission(permissionService.userCanDeleteHaku());
+    public void checkRemoveHaku(String hakuOid) {
+        checkPermission(permissionService.userCanDeleteHaku(hakuOid));
     }
 
     public void checkRemoveValintaPeruste() {
@@ -184,17 +186,16 @@ public class PermissionChecker {
 
     public void checkRemoveKoulutus(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
-        
+
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
                                 .getTarjoaja())));
     }
-    
+
     public void checkRemoveKoulutusByTarjoaja(final String tarjoajaOid) {
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(tarjoajaOid)));
     }
-    
 
     public void checkRemoveKoulutusKuva(String koulutusOid) {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
@@ -223,13 +224,13 @@ public class PermissionChecker {
             switch (tyyppi.getSisalto()) {
 
                 case HAKU:
-                    checkHakuUpdate();
+                    checkHakuUpdate(tyyppi.getOid());
                     break;
                 case HAKUKOHDE:
                     checkUpdateHakukohde(tyyppi.getOid());
                     break;
                 case KOMO:
-                    break; // XXX currently no permission check for this
+                    break; // TODO XXX currently no permission check for this
                 case KOMOTO:
                     checkUpdateKoulutusByKoulutusOid(tyyppi.getOid());
                     break;
@@ -247,15 +248,15 @@ public class PermissionChecker {
     }
 
     public void checkUpdateHaku(String oid) {
-        checkCreateHaku();
+        checkPermission(permissionService.userCanUpdateHaku(oid));
     }
 
     public void setOverridePermissionChecks(boolean overridePermissionChecks) {
 		this.overridePermissionChecks = overridePermissionChecks;
 	}
-    
+
     public boolean isOverridePermissionChecks() {
-		return overridePermissionChecks;
-	}
+        return overridePermissionChecks;
+    }
 
 }

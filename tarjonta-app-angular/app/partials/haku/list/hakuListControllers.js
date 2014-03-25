@@ -23,20 +23,28 @@ app.controller('HakuListController',
           //sorting
           $scope.predicate='tila';
           $scope.reverse=false;
+          $scope.kausi=[];
+          $scope.vuosi=[];
           
           $log.info("HakuListController()");
 
                 Koodisto.getAllKoodisWithKoodiUri('kausi').then(function(kaudet){
                   var k = kaudet[0].koodi_uri=="kausi_k"?0:1;
+                  
                   var kevat = kaudet[k];
                   var syksy = kaudet[(k+1)%1];
 
                   console.log(kaudet);
-                  //vuosi-kaudet
-                  for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++) {
-                    $scope.vuosikausi.push({vuosi:y,kausi:kevat.koodiUri + '#' + kevat.koodiVersio,label:y + ' ' + kevat.koodiNimi});
-                    $scope.vuosikausi.push({vuosi:y,kausi:syksy.koodiUri + '#' + syksy.koodiVersio,label: y + ' ' + syksy.koodiNimi});
+                  
+                  //vuodet
+                  for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++){
+                    $scope.vuosi.push(y);
                   }
+                  
+                  //kaudet
+                  $scope.kausi.push({kausi:kevat.koodiUri + "#" + kevat.koodiVersio, label:kevat.koodiNimi});
+                  $scope.kausi.push({kausi:syksy.koodiUri + "#" + syksy.koodiVersio, label:syksy.koodiNimi});
+                  
                 });
 
                 $scope.states=[];
@@ -95,11 +103,13 @@ app.controller('HakuListController',
                       params['KOULUTUKSEN_ALKAMISVUOSI']=kVuosikausi.vuosi;
                       params['KOULUTUKSEN_ALKAMISKAUSI']=kVuosikausi.kausi;
                     }
-                    if(params['HAKUVUOSIKAUSI']) {
-                      var hVuosikausi = params['HAKUVUOSIKAUSI'];
-                      delete params['HAKUVUOSIKAUSI'];
-                      params['HAKUVUOSI']=hVuosikausi.vuosi;
-                      params['HAKUKAUSI']=hVuosikausi.kausi;
+                    if(params['HAKUKAUSI']) {
+                      var hKausi = params['HAKUKAUSI'];
+                      params['HAKUKAUSI']=hKausi.kausi;
+                    } 
+                    if(params['KOULUTUKSEN_ALKAMISKAUSI']) {
+                      var hKausi = params['KOULUTUKSEN_ALKAMISKAUSI'];
+                      params['KOULUTUKSEN_ALKAMISKAUSI']=hKausi.kausi;
                     } 
                     
                     HakuV1Service.search(params).then(function(haut){

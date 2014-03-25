@@ -158,6 +158,7 @@ public class ConverterV1 {
         }
 
         t.setOrganisaatioOids(haku.getOrganisationOids());
+        t.setTarjoajaOids(haku.getTarjoajaOids());
 
         // Koodistos as (not) pre-resolved, who needs this?
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
@@ -239,6 +240,7 @@ public class ConverterV1 {
         }
 
         haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
+        haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
 
         return haku;
     }
@@ -588,12 +590,12 @@ public class ConverterV1 {
         for (HakukohdeLiite liite : hakukohde.getLiites()) {
             hakukohdeRDTO.getHakukohteenLiitteet().add(fromHakukohdeLiite(liite));
         }
-        
+
         if (hakukohdeRDTO.getTarjoajaOids() != null && hakukohdeRDTO.getTarjoajaOids().size() > 0) {
 
             for (String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
                 OrganisaatioDTO org = organisaatioService.findByOid(tarjoajaOid);
-                
+
                 if (org==null) {
                 	continue;
                 }

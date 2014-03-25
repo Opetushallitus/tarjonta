@@ -81,7 +81,10 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
-
+    
+    @ApiModelProperty(value = "Maisterin koulutukseen (maisteri+kandi) liitettävän kandidaatin koulutuksen koulutuskoodi", required = false)
+    private KoodiV1RDTO kandidaatinKoulutuskoodi;
+    
     /**
      * @return the tutkintonimike
      */
@@ -323,5 +326,19 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setOpintojenLaajuusarvo(KoodiV1RDTO opintojenLaajuusarvo) {
         this.opintojenLaajuusarvo = opintojenLaajuusarvo;
+    }
+
+    /**
+     * @return the kandidaatinKoulutuskoodi
+     */
+    public KoodiV1RDTO getKandidaatinKoulutuskoodi() {
+        return kandidaatinKoulutuskoodi;
+    }
+
+    /**
+     * @param kandidaatinKoulutuskoodi the kandidaatinKoulutuskoodi to set
+     */
+    public void setKandidaatinKoulutuskoodi(KoodiV1RDTO kandidaatinKoulutuskoodi) {
+        this.kandidaatinKoulutuskoodi = kandidaatinKoulutuskoodi;
     }
 }

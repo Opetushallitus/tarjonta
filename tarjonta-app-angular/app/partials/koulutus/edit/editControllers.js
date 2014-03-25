@@ -4,10 +4,10 @@ app.controller('BaseEditController',
             '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function BaseEditController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
-          
-          //käyttöoikeudet
-          $scope.isMutable=true;
-          
+
+                //käyttöoikeudet
+                $scope.isMutable = true;
+
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -132,11 +132,11 @@ app.controller('BaseEditController',
                     $scope.model = model;
 
                     //käyttöoikeudet
-                    if($scope.model.komotoOid){
-                      PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
-                        console.log("setting mutable to:", data);
-                        $scope.isMutable = data;
-                      });
+                    if ($scope.model.komotoOid) {
+                        PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
+                            console.log("setting mutable to:", data);
+                            $scope.isMutable = data;
+                        });
                     }
 
 
@@ -144,7 +144,8 @@ app.controller('BaseEditController',
 
                 $scope.canSaveAsLuonnos = function() {
 
-                  if(!$scope.isMutable) return false; //permissio
+                    if (!$scope.isMutable)
+                        return false; //permissio
                     if ($scope.uiModel.isMutable) {
                         return $scope.uiModel.isMutable;
                     }
@@ -152,11 +153,11 @@ app.controller('BaseEditController',
                     return true;
 
                 }
-                
-                $scope.canSaveAsValmis = function(){
-                  return $scope.uiModel.isMutable && $scope.isMutable;
+
+                $scope.canSaveAsValmis = function() {
+                    return $scope.uiModel.isMutable && $scope.isMutable;
                 }
-                
+
 
 
                 $scope.getLisatietoKielet = function() {
@@ -450,6 +451,32 @@ app.controller('BaseEditController',
                     return $scope.langs[koodi];
                 };
 
+                $scope.removeKandidaatinKoulutuskoodi = function(koodi) {
+                    $scope.model.kandidaatinKoulutuskoodi = {};
+                };
+
+                $scope.createSelectKoulutuskoodiModalDialog = function(koodi) {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+                        controller: 'SelectTutkintoOhjelmaController',
+                        resolve: {
+                            targetFilters: function() {
+                                return [cfg.app["koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto"]];
+                            }
+                        }
+                    });
+
+                    modalInstance.result.then(function(result) {/* close */
+                        $scope.model.kandidaatinKoulutuskoodi = {
+                            arvo: result.koodiArvo,
+                            uri: result.koodiUri,
+                            versio: result.koodiVersio,
+                            nimi: result.koodiNimi
+                        };
+                    }, function() { /* dismissed */
+                    });
+                };
+
                 /**
                  * Control page messages.
                  * 
@@ -523,6 +550,9 @@ app.controller('BaseEditController',
                         $scope.model.hinta = '';
                     }
                 });
+
+
+
 
                 $scope.init();
             }]);

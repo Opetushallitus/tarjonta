@@ -2,7 +2,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 
 //"organisaatioservice"
 .factory('OrganisaatioService', function ($resource, $log, $q, Config) {
-	
+  	
 	var orgHaku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/hae");
 	var orgLuku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/:oid");
 	
@@ -19,10 +19,91 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 	function localizeAll(organisaatioarray){
 		angular.forEach(organisaatioarray, localize);
 		return organisaatioarray;
-    }
+        }
+	
+	function etsi(hakuehdot){
+          var ret = $q.defer();
+          //    $log.info('searching organisaatiot, q:', hakuehdot);
+
+          orgHaku.get(hakuehdot,function(result){
+            //        $log.info("resolving promise with hit count:" + result.numHits);
+            localizeAll(result.organisaatiot);
+            ret.resolve(result);
+          });
+      
+          //    $log.info('past query now, returning promise...:');
+          return ret.promise;
+	}
+
+	
+        /*
+         * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
+         */
+        function addTyyppi(organisaatio, oppilaitostyypit){
+            if(organisaatio.oppilaitostyyppi!==undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi)==-1){
+                oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
+            }
+        };
+
+        /**
+         * Koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan olevan oppilaitoksia)
+         */
+        function getTyypitFromChildren(organisaatio, deferred) {
+          var oppilaitostyypit = [];
+          
+          if (organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA") != -1
+              && organisaatio.children !== undefined) {
+            for ( var i = 0; i < organisaatio.children.length; i++) {
+              addTyyppi(organisaatio.children[i], oppilaitostyypit);
+            }
+            deferred.resolve(oppilaitostyypit);
+          }
+          return deferred.promise;
+        }
+
+
+	
+	/*
+         * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan
+         * allaolevista oppilaitoksista, oppilaitoksen tyypit tulee
+         * oppilaitokselta, toimipisteen tyyppi typee ylemmän tason
+         * oppilaitokselta. TODO lisää testi
+         */
+        function haeOppilaitostyypit(organisaatioOid) {
+
+          var deferred = $q.defer();
+
+          //hae org (ja sen alapuoliset)
+          etsi({oidRestrictionList:organisaatioOid}).then(function(data) {
+            
+            var organisaatio = data.organisaatiot[0];
+            if(organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA")!=-1) {
+              return getTyypitFromChildren(organisaatio, deferred);
+            }
+
+            if(organisaatio.organisaatiotyypit.indexOf("OPPILAITOS")!=-1) {
+              //oppilaitos, palauta tyyppi tästä
+              var oppilaitostyypit=[];
+              addTyyppi(organisaatio, oppilaitostyypit);
+              deferred.resolve(oppilaitostyypit);
+              return deferred.promise;
+            }
+
+            if(organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE")!=-1) {
+              console.log("toimipiste, recurse...");
+              deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
+            };
+          });
+          
+          return deferred.promise;
+          
+        };
+	
 
 	return {
 
+	  haeOppilaitostyypit: haeOppilaitostyypit,
+	  
 	   /**
 	    * query (hakuehdot)
 	    * @param hakuehdot, muodossa: (java OrganisaatioSearchCriteria -luokka)
@@ -37,19 +118,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 	    * 
 	    * @returns promise
 	    */
-	   etsi: function(hakuehdot){
-		   var ret = $q.defer();
-//	       $log.info('searching organisaatiot, q:', hakuehdot);
-
-	       orgHaku.get(hakuehdot,function(result){
-//	           $log.info("resolving promise with hit count:" + result.numHits);
-	           localizeAll(result.organisaatiot);
-	           ret.resolve(result);
-	       });
-	       
-//	       $log.info('past query now, returning promise...:');
-	       return ret.promise;
-	   },
+	   etsi: etsi,
 	   
 	   /**
 	    * Hakee organisaatiolle voimassaolevan localen mukaisen nimen.

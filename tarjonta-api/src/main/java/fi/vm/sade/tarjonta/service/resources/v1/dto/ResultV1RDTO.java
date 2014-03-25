@@ -16,7 +16,9 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generic result wrapping for REST apis.
@@ -126,6 +128,9 @@ public class ResultV1RDTO<T> implements Serializable {
      */
     private GenericSearchParamsV1RDTO _params = null;
 
+
+    private Map<String, Boolean> _accessRights = new HashMap<String, Boolean>();
+
     public ResultStatus getStatus() {
         return _status;
     }
@@ -213,6 +218,18 @@ public class ResultV1RDTO<T> implements Serializable {
     public void setParams(GenericSearchParamsV1RDTO _params) {
         this._params = _params;
     }
+
+    public Map<String, Boolean> getAccessRights() {
+        return _accessRights;
+    }
+
+    public void setAccessRights(Map<String, Boolean> accessRights) {
+        if (accessRights == null) {
+            accessRights = new HashMap<String, Boolean>();
+        }
+        this._accessRights = accessRights;
+    }
+
 
     @Override
     public String toString() {

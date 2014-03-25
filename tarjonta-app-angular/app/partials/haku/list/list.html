@@ -2,7 +2,7 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span3 float-right">
+            <div class="span3 float-right">&nbsp;<br>
                 <input type="text" placeholder="{{t('haku.list.hakuehto')}}" class="input search-query" ng-model="searchParams.HAKUSANA" ng-enter="doSearch()">
             </div>
             <div class="span9">
@@ -13,18 +13,28 @@
                             <option value="" data-tt="haku.list.hakuehto.tila"/></option>
                         </select>
                     </div>
-
                     <div class="float-left">
-                        <div data-tt="haku.list.haunAlkamiskausiJaVuosi">Haun alkamiskausi</div>
-                        <select ng-model="searchParams.HAKUVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
-                            <option value="" data-tt="haku.list.hakuehto.hakukausivuosi"></option>
+                        <div data-tt="haku.list.haunAlkamiskausi">Haun alkamiskausi</div>
+                        <select ng-model="searchParams.HAKUKAUSI" ng-options="vk.label for vk in kausi" >
+                            <option value="" data-tt="haku.list.hakuehto.hakukausi"></option>
                         </select>
                     </div>
-
                     <div class="float-left">
-                        <div data-tt="haku.list.koulutuksenAlkamiskausiJaVuosi">Koulutuksen alkamiskausi</div>
-                        <select ng-model="searchParams.KOULUTUKSEN_ALKAMISVUOSIKAUSI" ng-options="vk.label for vk in vuosikausi" >
-                            <option value="" data-tt="haku.list.hakuehto.koulutuksenkausivuosi"></option>
+                        <div data-tt="haku.list.haunAlkamisvuosi">Haun alkamisvuosi</div>
+                        <select ng-model="searchParams.HAKUVUOSI" ng-options="vk for vk in vuosi" >
+                            <option value="" data-tt="haku.list.hakuehto.hakuvuosi"></option>
+                        </select>
+                    </div>
+                    <div class="float-left">
+                        <div data-tt="haku.list.koulutuksenAlkamiskausi">Koulutuksen alkamiskausi</div>
+                        <select ng-model="searchParams.KOULUTUKSEN_ALKAMISKAUSI" ng-options="vk.label for vk in kausi" >
+                            <option value="" data-tt="haku.list.hakuehto.koulutuksenAlkamiskausi"></option>
+                        </select>
+                    </div>
+                    <div class="float-left">
+                        <div data-tt="haku.list.koulutuksenAlakmisvuosi">Koulutuksen alkamisvuosi</div>
+                        <select ng-model="searchParams.KOULUTUKSEN_ALKAMISVUOSI" ng-options="vk for vk in vuosi" >
+                            <option value="" data-tt="haku.list.hakuehto.koulutuksenAlkamisvuosi"></option>
                         </select>
                     </div>
 

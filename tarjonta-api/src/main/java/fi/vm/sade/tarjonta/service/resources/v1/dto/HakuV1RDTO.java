@@ -86,8 +86,11 @@ public class HakuV1RDTO extends BaseV1RDTO {
 	@ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä, ei rajoita tarjontaa vaan kouutusinformaatiossa käytössä", required=true)
     private int maxHakukohdes;
 
-	@ApiModelProperty(value = "Tarjoaja organisatio oidit.", required=false)
+	@ApiModelProperty(value = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required=false)
     private String[] organisaatioOids;
+
+	@ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required=false)
+    private String[] tarjoajaOids;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
@@ -241,6 +244,14 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setOrganisaatioOids(String[] organisaatioOids) {
         this.organisaatioOids = organisaatioOids;
+    }
+
+    public String[] getTarjoajaOids() {
+        return tarjoajaOids;
+    }
+
+    public void setTarjoajaOids(String[] tarjoajaOids) {
+        this.tarjoajaOids = tarjoajaOids;
     }
 
 }

@@ -141,6 +141,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @MapKeyColumn(name = "teksti", nullable = false)
     private Map<KomoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomoTeksti, MonikielinenTeksti>();
 
+    @Column(name = "kandi_koulutuskoodi")
+    private String kandidaatinKoulutuskoodi;
+
     /**
      * JPA konstruktori
      */
@@ -642,16 +645,30 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public void setOppilaitostyyppi(String oppilaitostyyppi) {
         this.oppilaitostyyppi = oppilaitostyyppi;
     }
-    
-    
+
     /**
-     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää.
+     * Muut kentät esityskerroksen vastuulla!
      */
     @PrePersist
     @PreUpdate
-    public void filterHTMLFields(){
-        for(MonikielinenTeksti teksti:tekstit.values()){
+    public void filterHTMLFields() {
+        for (MonikielinenTeksti teksti : tekstit.values()) {
             filter(teksti);
         }
+    }
+
+    /**
+     * @return the kandidaatinKoulutuskoodi
+     */
+    public String getKandidaatinKoulutuskoodi() {
+        return kandidaatinKoulutuskoodi;
+    }
+
+    /**
+     * @param kandidaatinKoulutuskoodi the kandidaatinKoulutuskoodi to set
+     */
+    public void setKandidaatinKoulutuskoodi(String kandidaatinKoulutuskoodi) {
+        this.kandidaatinKoulutuskoodi = kandidaatinKoulutuskoodi;
     }
 }
