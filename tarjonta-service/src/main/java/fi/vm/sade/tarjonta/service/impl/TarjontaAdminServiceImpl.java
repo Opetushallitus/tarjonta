@@ -603,7 +603,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
         listaaHakuTyyppi.setHakuOid(haku.getOid());
 
-        HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppio).getResponse().get(0);
+        HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
 
         return hakuTyyppi;
     }
