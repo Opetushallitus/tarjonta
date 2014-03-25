@@ -217,6 +217,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     // POST /haku
     @Override
+    @Role
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
         LOG.info("createHaku() - {}", haku);
         permissionChecker.checkCreateHaku();

@@ -29,8 +29,9 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 /**
+ * Haku entity.
  *
- * @author Antti Salonen
+ * @author Team2
  */
 @Entity
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
@@ -127,7 +128,7 @@ public class Haku extends TarjontaBaseEntity {
 
 
     /**
-     * Array of organisation OIDs, comma separated. This lists the "tarjoaja" oids for the haku.
+     * Array of organisation OIDs, comma separated. This lists the organisations that can bind hakukohdes to this haku.
      *
      * This is needed for KK-spesific functionality.
      * See task KJOH-744 -- (https://jira.oph.ware.fi/jira/browse/KJOH-744)
@@ -135,7 +136,9 @@ public class Haku extends TarjontaBaseEntity {
     private String organisationOids;
 
     /**
-     * Tarjoaja organisation oid -
+     * Array of organisation OIDs, comma separated. This lists the "tarjoaja" oids for the haku (allowed to edit/delete it)
+     *
+     * Tarjoaja organisation oids;
      */
     private String tarjoajaOid;
 
@@ -424,13 +427,19 @@ public class Haku extends TarjontaBaseEntity {
         }
     }
 
-    public String getTarjoajaOid() {
-        return tarjoajaOid;
+    public String[] getTarjoajaOids() {
+        if (tarjoajaOid == null || tarjoajaOid.isEmpty()) {
+            return new String[0];
+        }
+        return tarjoajaOid.split(",");
     }
 
-    public void setTarjoajaOid(String tarjoajaOid) {
-        this.tarjoajaOid = tarjoajaOid;
+    public void setTarjoajaOids(String[] organisationOids) {
+        if (organisationOids == null || organisationOids.length == 0) {
+            this.tarjoajaOid = null;
+        } else {
+            this.tarjoajaOid = StringUtils.join(organisationOids, ",");
+        }
     }
 
 }
-

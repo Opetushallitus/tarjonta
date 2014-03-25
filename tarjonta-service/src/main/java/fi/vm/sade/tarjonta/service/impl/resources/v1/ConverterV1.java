@@ -158,7 +158,7 @@ public class ConverterV1 {
         }
 
         t.setOrganisaatioOids(haku.getOrganisationOids());
-        t.setTarjoajaOid(haku.getTarjoajaOid());
+        t.setTarjoajaOids(haku.getTarjoajaOids());
 
         // Koodistos as (not) pre-resolved, who needs this?
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
@@ -240,11 +240,7 @@ public class ConverterV1 {
         }
 
         haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
-
-        if (haku.getTarjoajaOid() == null) {
-            LOG.warn("TODO get users organisation to be the tarjoaja oid()");
-            haku.setTarjoajaOid(hakuV1RDTO.getTarjoajaOid());
-        }
+        haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
 
         return haku;
     }
