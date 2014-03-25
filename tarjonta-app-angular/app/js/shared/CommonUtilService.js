@@ -62,21 +62,13 @@ app.service('CommonUtilService',function($resource, $log,$q, Config,Organisaatio
 
         else if(organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE")!=-1) {
             //opetuspiste, kerää parentin tyyppi
-            var parent = $scope.organisaatiomap[organisaatio.parentOid];
-
-            if(undefined!== parent) {
-                addTyyppi(parent);
-                deferred.resolve(oppilaitostyypit);
-            } else {
                 //parentti ei ole saatavilla, kysytään organisaatioservicestä
-                console.log("organisaatio:", organisaatio);
                 OrganisaatioService.etsi({oidRestrictionList:organisaatio.parentOid}).then(function(vastaus) {
-                    $scope.organisaatiomap[organisaatio.parentoid] = vastaus.organisaatiot[0].oppilaitostyyppi;
                     deferred.resolve([vastaus.organisaatiot[0].oppilaitostyyppi]);
                 }, function(){
                     deferred.resolve([]);
                 });
-            }
+
         } else {
             console.log( "Tuntematon organisaatiotyyppi:", organisaatio.organisaatiotyypit );
         }

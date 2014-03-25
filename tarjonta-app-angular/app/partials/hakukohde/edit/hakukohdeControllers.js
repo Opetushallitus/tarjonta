@@ -121,10 +121,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     }
 
-    console.log('HAKUKOHDE : ', $scope.model.hakukohde);
-
-    console.log('IS TABS DISABLED : ' , $scope.model.hakukohdeTabsDisabled);
-
 
     var checkIsCopy = function(tilaParam) {
 
@@ -307,6 +303,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 },
 
                 oppilaitosTyypit : function() {
+
                     return $scope.model.hakukohdeOppilaitosTyyppis;
                 },
                 tyyppi : function() {
@@ -720,7 +717,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         //Resolve all promises and filter oppilaitostyyppis with user types
         $q.all(oppilaitosTyyppiPromises).then(function(data){
-
+            console.log('RESOLVED OPPILAITOSTYYPPI : ', data);
             $scope.model.hakukohdeOppilaitosTyyppis = removeHashAndVersion(data);
 
         });
