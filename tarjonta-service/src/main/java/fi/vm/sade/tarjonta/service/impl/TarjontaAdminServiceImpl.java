@@ -150,10 +150,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
-        permissionChecker.checkHakuUpdate();
+        permissionChecker.checkHakuUpdate(hakuDto != null ? hakuDto.getOid() : null);
 
 //        System.out.println("dto version:" + hakuDto.getVersion());
-        final Haku foundHaku = hakuBusinessService.findByOid(hakuDto.getOid());
+        final Haku foundHaku = hakuBusinessService.findByOid(hakuDto != null ? hakuDto.getOid() : null);
 
         if (foundHaku != null) {
             mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
@@ -603,7 +603,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
         listaaHakuTyyppi.setHakuOid(haku.getOid());
 
-        HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
+        HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppio).getResponse().get(0);
 
         return hakuTyyppi;
     }
@@ -611,15 +611,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
-        permissionChecker.checkRemoveHaku();
+        permissionChecker.checkRemoveHaku(hakuDto != null ? hakuDto.getOid() : null);
 
-        Haku haku = hakuBusinessService.findByOid(hakuDto.getOid());
+        Haku haku = hakuBusinessService.findByOid(hakuDto != null ? hakuDto.getOid() : null);
         if (checkHakuDepencies(haku)) {
             throw new HakuUsedException();
         } else {
             hakuDAO.remove(haku);
         }
-
     }
 
     private boolean checkHakuDepencies(Haku haku) {
@@ -1001,11 +1000,11 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
                 hakukohdeOidit.add(curTilaT.getOid());
             } else if (SisaltoTyyppi.HAKU.equals(curTilaT.getSisalto())
                     && curTilaT.getTila().equals(TarjontaTila.JULKAISTU)) {
-                //älä indeksoi välittömästi jos haku julkaistiin, indeksointi tapahtuu taustalla asynkronisesti 
+                //älä indeksoi välittömästi jos haku julkaistiin, indeksointi tapahtuu taustalla asynkronisesti
 //                addRelatedHakukohteetAndKoulutukset(curTilaT.getOid(), komotot,
 //                        hakukohteet);
             }
-            
+
         }
         if (koulutusOidit.size() > 0) {
             log.debug("indexing koulutukset:", koulutusOidit);
@@ -1110,5 +1109,5 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             throw new RuntimeException("Unknown type:" + parameters + " use one of: " + TarjontaOidType.values());
         }
     }
-    
+
 }

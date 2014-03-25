@@ -43,14 +43,14 @@ import fi.vm.sade.vaadin.util.UiUtil;
  */
 @Configurable
 public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
-    
+
     private static final long serialVersionUID = 146724841122879266L;
-    
+
     protected OptionGroup hakuOptions;
     protected List<HakuViewModel> selectedHaut = new ArrayList<HakuViewModel>();
     @Autowired
     private HakuPresenter presenter;
-    
+
 
     public MultipleHakuRemovalDialog(String questionStr,
             List<HakuViewModel> selectedHaut, String removeStr,
@@ -59,28 +59,28 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
                 null);
         this.removeListener = new Button.ClickListener() {
                     private static final long serialVersionUID = 5019806363620874205L;
-            
-            
+
+
             @Override
             public void buttonClick(ClickEvent event) {
                 presenter.closeHakuRemovalDialog();
                 removeSelectedHaut();
-                
+
             }
         };
         this.noRemoveListener = new Button.ClickListener() {
                     private static final long serialVersionUID = 5019806363620874205L;
-            
+
             @Override
             public void buttonClick(ClickEvent event) {
                 presenter.closeHakuRemovalDialog();
-                
+
             }
         };
         this.selectedHaut = selectedHaut;
-        
+
     }
-    
+
     @Override
     protected void buildLayout() {
         setSizeUndefined();
@@ -91,14 +91,31 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setSizeFull();
         Button noRemoveB = UiUtil.buttonSmallSecodary(hl, noRemoveStr, noRemoveListener);
-        noRemoveB.setVisible(this.presenter.getPermission().userCanDeleteHaku());
+        noRemoveB.setVisible(userCanDeleteAllSelectedHakus());
         Button removeB = UiUtil.buttonSmallSecodary(hl, removeStr, removeListener);
-        removeB.setVisible(this.presenter.getPermission().userCanDeleteHaku());
+        removeB.setVisible(userCanDeleteAllSelectedHakus());
         addComponent(hl);
         hl.setComponentAlignment(noRemoveB, Alignment.MIDDLE_LEFT);
         hl.setComponentAlignment(removeB, Alignment.MIDDLE_RIGHT);
     }
-    
+
+    /**
+     * Return true if userr has the right to remove all selected hakus.
+     *
+     * @return
+     */
+    private boolean userCanDeleteAllSelectedHakus() {
+        boolean result = true;
+
+        if (this.selectedHaut != null) {
+            for (HakuViewModel hakuViewModel : this.selectedHaut) {
+                result = result && this.presenter.getPermission().userCanDeleteHaku(hakuViewModel.getHakuOid());
+            }
+        }
+
+        return result;
+    }
+
     private void createOptionGroupLayout() {
         HorizontalLayout hl = UiUtil.horizontalLayout();
         hl.setMargin(true,false,false,false);
@@ -115,17 +132,17 @@ public class MultipleHakuRemovalDialog extends RemovalConfirmationDialog {
         hl.addComponent(hakuOptions);
         addComponent(hl);
     }
-    
+
     private void removeSelectedHaut() {
         Object values = hakuOptions.getValue();
         Collection<HakuViewModel> selectedHakuOptions = null;
             if (values instanceof  Collection) {
              selectedHakuOptions = (Collection<HakuViewModel>)values;
-             
+
              presenter.getSelectedhaut().clear();
              presenter.getSelectedhaut().addAll(selectedHakuOptions);
              presenter.removeSelectedHaut();
-             
+
             }
     }
 

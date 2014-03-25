@@ -115,10 +115,10 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanUpdateKoulutus(c1));
         Assert.assertTrue(permissionService.userCanDeleteKoulutus(c1));
         Assert.assertFalse(permissionService.userCanCreateHaku());
-        Assert.assertFalse(permissionService.userCanUpdateHaku());
-        Assert.assertFalse(permissionService.userCanDeleteHaku());
-        Assert.assertFalse(permissionService.userCanPublishHaku());
-        Assert.assertFalse(permissionService.userCanCancelHakuPublish());
+        Assert.assertFalse(permissionService.userCanUpdateHaku("NONE"));
+        Assert.assertFalse(permissionService.userCanDeleteHaku("NONE"));
+        Assert.assertFalse(permissionService.userCanPublishHaku("NONE"));
+        Assert.assertFalse(permissionService.userCanCancelHakuPublish("NONE"));
 
         //oph crud
         setCurrentUser(userOid, Lists.newArrayList(getAuthority(
@@ -134,10 +134,10 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1, true));
         Assert.assertTrue(permissionService.userCanDeleteHakukohde(c1));
         Assert.assertTrue(permissionService.userCanCreateHaku());
-        Assert.assertTrue(permissionService.userCanUpdateHaku());
-        Assert.assertTrue(permissionService.userCanDeleteHaku());
-        Assert.assertTrue(permissionService.userCanPublishHaku());
-        Assert.assertTrue(permissionService.userCanCancelHakuPublish());
+        Assert.assertTrue(permissionService.userCanUpdateHaku("NONE"));
+        Assert.assertTrue(permissionService.userCanDeleteHaku("NONE"));
+        Assert.assertTrue(permissionService.userCanPublishHaku("NONE"));
+        Assert.assertTrue(permissionService.userCanCancelHakuPublish("NONE"));
     }
 
     List<GrantedAuthority> getAuthority(String appPermission, String oid) {
