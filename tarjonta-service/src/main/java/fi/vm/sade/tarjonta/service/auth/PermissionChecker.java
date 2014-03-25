@@ -75,8 +75,8 @@ public class PermissionChecker {
         }
     }
 
-    public void checkHakuUpdate() {
-        checkPermission(permissionService.userCanUpdateHaku());
+    public void checkHakuUpdate(String hakuOid) {
+        checkPermission(permissionService.userCanUpdateHaku(hakuOid));
     }
 
     public void checkUpdateHakukohde(String hakukohdeOid) {
@@ -158,8 +158,8 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanCreateValintaperuste());
     }
 
-    public void checkRemoveHaku() {
-        checkPermission(permissionService.userCanDeleteHaku());
+    public void checkRemoveHaku(String hakuOid) {
+        checkPermission(permissionService.userCanDeleteHaku(hakuOid));
     }
 
     public void checkRemoveValintaPeruste() {
@@ -224,13 +224,13 @@ public class PermissionChecker {
             switch (tyyppi.getSisalto()) {
 
                 case HAKU:
-                    checkHakuUpdate();
+                    checkHakuUpdate(tyyppi.getOid());
                     break;
                 case HAKUKOHDE:
                     checkUpdateHakukohde(tyyppi.getOid());
                     break;
                 case KOMO:
-                    break; // XXX currently no permission check for this
+                    break; // TODO XXX currently no permission check for this
                 case KOMOTO:
                     checkUpdateKoulutusByKoulutusOid(tyyppi.getOid());
                     break;
@@ -248,7 +248,7 @@ public class PermissionChecker {
     }
 
     public void checkUpdateHaku(String oid) {
-        checkPermission(permissionService.userCanUpdateHaku());
+        checkPermission(permissionService.userCanUpdateHaku(oid));
     }
 
     public void setOverridePermissionChecks(boolean overridePermissionChecks) {

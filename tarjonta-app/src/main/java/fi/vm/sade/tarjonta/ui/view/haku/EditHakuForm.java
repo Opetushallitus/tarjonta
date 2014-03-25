@@ -117,10 +117,10 @@ public class EditHakuForm extends VerticalLayout {
     private TextField _haunNimiSE;
     @PropertyId("nimiEn")
     private TextField _haunNimiEN;*/
-    
+
     @PropertyId("mlNimi")
     private MultiLingualTextField haunNimi;
-    
+
     @PropertyId("haunTunniste")
     private Label _haunTunniste;
     // TODO hakuaika
@@ -143,7 +143,7 @@ public class EditHakuForm extends VerticalLayout {
     private Form form;
     private transient I18NHelper _i18n;
     private boolean attached = false;
-    
+
     @Value("${koodisto-uris.yhteishaku}")
     private String yhteishakuUri;
 
@@ -176,7 +176,7 @@ public class EditHakuForm extends VerticalLayout {
         // Create root layout for this component
         _layout = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         addComponent(_layout);
-        
+
 
         //
         // Init fields
@@ -220,8 +220,8 @@ public class EditHakuForm extends VerticalLayout {
         _haunNimiSE.setWidth("450px");
         _haunNimiEN = UiUtil.textField(null, "", T("HaunNimiEN.prompt"), false);
         _haunNimiEN.setWidth("450px");*/
-        
-        
+
+
         _haunTunniste = UiUtil.label((AbstractLayout) null, hakuViewModel.getHaunTunniste());
         _haunTunniste.setSizeUndefined();
         // TODO hakuaika
@@ -245,7 +245,7 @@ public class EditHakuForm extends VerticalLayout {
         grid.setSizeUndefined();
         _layout.addComponent(grid);
 
-        Label hakutyyppiL = UiUtil.label(null, T("Hakutyyppi")); 
+        Label hakutyyppiL = UiUtil.label(null, T("Hakutyyppi"));
         grid.addComponent(hakutyyppiL);
         grid.setComponentAlignment(hakutyyppiL, Alignment.MIDDLE_RIGHT);
         grid.addComponent(_hakutyyppi);
@@ -276,7 +276,7 @@ public class EditHakuForm extends VerticalLayout {
             grid.addComponent(hl);
             grid.newLine();
         }
-        
+
         Label kohdejoukkoL = UiUtil.label(null, T("HakuKohdejoukko"));
         grid.addComponent(kohdejoukkoL);
         grid.setComponentAlignment(kohdejoukkoL, Alignment.MIDDLE_RIGHT);
@@ -318,7 +318,7 @@ public class EditHakuForm extends VerticalLayout {
             vl.setSizeUndefined();
             vl.setSpacing(true);
             vl.setMargin(new MarginInfo(false, false, true, false));
-            
+
             //vl.setWidth(850, Sizeable.UNITS_PIXELS);
 
 
@@ -331,7 +331,7 @@ public class EditHakuForm extends VerticalLayout {
                     getSisaisetHakuajatContainer().addRowToHakuajat();
                 }
             });
-            lisaaHakuaika.setEnabled(presenter.getPermission().userCanUpdateHaku());
+            lisaaHakuaika.setEnabled(presenter.getPermission().userCanUpdateHaku(hakuViewModel.getHakuOid()));
             vl.addComponent(sisaisetHakuajatTable);
 
             grid.addComponent(vl);
@@ -362,9 +362,9 @@ public class EditHakuForm extends VerticalLayout {
             hakuViewModel.setHakuvuosi(Calendar.getInstance().get(Calendar.YEAR));
             hakuViewModel.setKoulutuksenAlkamisvuosi(Calendar.getInstance().get(Calendar.YEAR));
         }
-       
+
         JSR303FieldValidator.addValidatorsBasedOnAnnotations(this);
-    
+
         this.sisaisetHakuajatContainer = new HakuajatContainer(presenter.getHakuModel().getSisaisetHakuajat());
         this.sisaisetHakuajatTable.setContainerDataSource(this.getSisaisetHakuajatContainer());
         this.sisaisetHakuajatTable.setVisibleColumns(HAKUAJAT_COLUMNS);
@@ -378,16 +378,16 @@ public class EditHakuForm extends VerticalLayout {
     }
 
     public List<String> checkNimi() {
-    	MultiLingualText mt = (MultiLingualText) haunNimi.getValue();    	
+    	MultiLingualText mt = (MultiLingualText) haunNimi.getValue();
     	if (Strings.isNullOrEmpty(mt.getTextFi())
     		&& Strings.isNullOrEmpty(mt.getTextSv())
     		&& Strings.isNullOrEmpty(mt.getTextEn())) {
-    		return Collections.singletonList("EditHakuForm.validation.nimiNull"); 
+    		return Collections.singletonList("EditHakuForm.validation.nimiNull");
     	} else {
     		return Collections.emptyList();
     	}
     }
-    
+
     public boolean fieldEmpty(TextField textField) {
         return (textField == null)
                 || (textField.getValue() == null)
@@ -431,7 +431,7 @@ public class EditHakuForm extends VerticalLayout {
             List<String> errorMessages = new ArrayList<String>();
             List<HakuaikaViewModel> hakuajat = new ArrayList<HakuaikaViewModel>();
             for (HakuajatView curRow : this.getItemIds()) {
-                if (curRow.getLoppuPvm().getValue() == null 
+                if (curRow.getLoppuPvm().getValue() == null
                         || curRow.getAlkuPvm().getValue() == null) {
                     errorMessages.add(_i18n.getMessage("HakuaikaVirhe"));
                 } else if (curRow.getModel().getAlkamisPvm().after(curRow.getModel().getPaattymisPvm())) {
@@ -440,7 +440,7 @@ public class EditHakuForm extends VerticalLayout {
                     hakuajat.add(curRow.getModel());
                 }
             }
-            
+
             if (errorMessages.isEmpty() && hakuajat.isEmpty()) {
                 errorMessages.add(_i18n.getMessage("hakuajatEmpty"));
             }
@@ -458,7 +458,7 @@ public class EditHakuForm extends VerticalLayout {
                 }
             });
             addItem(hakuaikaRow);
-            hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanUpdateHaku());
+            hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanUpdateHaku(getHakuOid()));
         }
 
         private void initHakuaikaContainer(List<HakuaikaViewModel> hakuajat) {
@@ -474,8 +474,17 @@ public class EditHakuForm extends VerticalLayout {
                         removeItem(hakuaikaRow);
                     }
                 });
-                hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanUpdateHaku());
+                hakuaikaRow.getPoistaB().setVisible(presenter.getPermission().userCanUpdateHaku(getHakuOid()));
                 addItem(hakuaikaRow);
+            }
+        }
+
+        private String getHakuOid() {
+            if (presenter != null && presenter.getHakuModel() != null) {
+                return presenter.getHakuModel().getHakuOid();
+            } else {
+                LOG.error("getHakuOid - presenter / haku model == null");
+                return null;
             }
         }
     }
