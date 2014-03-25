@@ -485,7 +485,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
         Valintakoe valintakoe = new Valintakoe();
         aika.setValintakoe(valintakoe);
-        
+
         MonikielinenTeksti mo = new MonikielinenTeksti();
         mo.setTekstiKaannos("fi", "TESTIA");
         valintakoe.setKuvaus(mo);

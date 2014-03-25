@@ -78,7 +78,7 @@ public class HakuResultRow extends HorizontalLayout {
 
         @Override
         public void menuSelected(MenuBar.MenuItem selectedItem) {
-            
+
             menuItemClicked(selectedItem.getText());
 
         }
@@ -98,19 +98,19 @@ public class HakuResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
 
-        if (hakuPresenter.getPermission().userCanUpdateHaku()) {
+        if (hakuPresenter.getPermission().userCanUpdateHaku(haku.getHakuOid())) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKohteet"), menuCommand);
 
-        if (tila.isRemovable() && hakuPresenter.getPermission().userCanDeleteHaku()) {
+        if (tila.isRemovable() && hakuPresenter.getPermission().userCanDeleteHaku(haku.getHakuOid())) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
-        if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanPublishHaku()) {
+        if (tila.equals(TarjontaTila.VALMIS) && hakuPresenter.getPermission().userCanPublishHaku(haku.getHakuOid())) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish()) {
+        } else if (tila.equals(TarjontaTila.JULKAISTU) && hakuPresenter.getPermission().userCanCancelHakuPublish(haku.getHakuOid())) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         }
     }
@@ -245,7 +245,7 @@ public class HakuResultRow extends HorizontalLayout {
                 } else if (haku != null
                         && haku.getHakuOid() != null) {
                     hakuPresenter.unSelectHaku(haku);
-                    
+
                 }
             }
         });

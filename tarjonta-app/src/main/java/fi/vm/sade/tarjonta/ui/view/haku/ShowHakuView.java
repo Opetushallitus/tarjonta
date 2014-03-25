@@ -130,9 +130,9 @@ public class ShowHakuView extends AbstractVerticalInfoLayout {
                 }
             }
         });
-        
+
         //permissions
-        poista.setVisible(hakuPresenter.getPermission().userCanDeleteHaku());
+        poista.setVisible(hakuPresenter.getPermission().userCanDeleteHaku(model.getHakuOid()));
 
         addLayoutSplit();
         buildLayoutMiddleTop(layout);
@@ -218,7 +218,7 @@ public class ShowHakuView extends AbstractVerticalInfoLayout {
                          hakuPresenter.showHakuEdit(hakuPresenter.getHakuModel());
                     }
                 }
-                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanUpdateHaku()));
+                ,lastUpdLbl , this.hakuPresenter.getPermission().userCanUpdateHaku(hakuPresenter.getModel().getHakuOid())));
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
@@ -280,7 +280,7 @@ public class ShowHakuView extends AbstractVerticalInfoLayout {
                           ShowHakuView.this.getWindow().showNotification("Ei toteutettu");
                     }
                 }
-                ,null , hakuPresenter.getPermission().userCanUpdateHaku()));
+                ,null , hakuPresenter.getPermission().userCanUpdateHaku(model.getHakuOid())));
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");

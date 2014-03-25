@@ -312,9 +312,10 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * - YHTEISHAKU - only root oid user / OPH
      * - others - only root oid user / OPH AND if that user belongs to creators organisation.
      *
+     * @param hakuOid haku to delete
      * @return
      */
-    public boolean userCanDeleteHaku() {
+    public boolean userCanDeleteHaku(String hakuOid) {
         // First check Tarojonta OPH user
         boolean userCanDeleteHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
 
@@ -364,9 +365,10 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * - YHTEISHAKU - onlu "oph" user
      * - other hakus - has CRUD + haku belongs to that organisation
      *
+     * @param hakuOid haku to edit
      * @return
      */
-    public boolean userCanUpdateHaku() {
+    public boolean userCanUpdateHaku(String hakuOid) {
         // First check Tarojonta OPH user
         boolean userCanUpdateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
 
@@ -396,9 +398,10 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * - YHTEISHAKU - onlu "oph" user
      * - other hakus - has CRUD + haku belongs to that organisation
      *
+     * @param hakuOid haku to publish
      * @return
      */
-    public boolean userCanPublishHaku() {
+    public boolean userCanPublishHaku(String hakuOid) {
         // First check Tarojonta OPH user
         boolean userCanPublishHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
 
@@ -420,7 +423,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      *
      * @return
      */
-    public boolean userCanCancelHakuPublish() {
+    public boolean userCanCancelHakuPublish(String hakuOid) {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }
 
