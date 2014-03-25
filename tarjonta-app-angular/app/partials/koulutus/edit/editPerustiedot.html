@@ -87,10 +87,22 @@
                 <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
             </td>
         </tr>
-        <tr>
+        <!--tr>
             <th></th>
             <td colspan="2" class="help" tt="koulutus.edit.opintojen-laajuus.help">Opintojen laajuus HELP</td>
+        </tr-->
+        
+         <tr>
+            <th tt="koulutus.edit.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
+            <td>
+                <a href="" ng-if="model.kandidaatinKoulutuskoodi === Undefined || model.kandidaatinKoulutuskoodi === null || model.kandidaatinKoulutuskoodi.uri === Undefined" ng-click="createSelectKoulutuskoodiModalDialog()" tt="koulutus.edit.lisaa">Lisää</a>
+                {{model.kandidaatinKoulutuskoodi.nimi}} {{model.kandidaatinKoulutuskoodi.arvo}} <a href="" ng-if="model.kandidaatinKoulutuskoodi !== Undefined && model.kandidaatinKoulutuskoodi !== null && model.kandidaatinKoulutuskoodi.uri !== Undefined" ng-click="removeKandidaatinKoulutuskoodi()" tt="koulutus.edit.poista">Poista</a>
+            </td>
+            <td></td>
+            
+            
         </tr>
+        
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>

@@ -4,7 +4,8 @@
 
 var app = angular.module('app.edit.ctrl');
 
-app.controller('SelectTutkintoOhjelmaController', ['$scope', '$modalInstance', 'Koodisto', '$q', 'Config', 'TarjontaService', 'LocalisationService', function($scope, $modalInstance, Koodisto, $q, config, TarjontaService, LocalisationService) {
+app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$modalInstance', 'Koodisto', '$q', 'Config', 'TarjontaService', 'LocalisationService',
+    function($scope, targetFilters, $modalInstance, Koodisto, $q, config, TarjontaService, LocalisationService) {
 
         //filtterisivun malli
         $scope.stoModel = {koulutusalaKoodistoUri: config.env["koodisto-uris.koulutusala"],
@@ -68,13 +69,9 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', '$modalInstance', '
         //Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin) 
         //Kutsutaan haun yhteydessa jos kk tutkintoja ei viela haettu
         $scope.getKkTutkinnot = function() {
-//		var koulutusasteet = config.app["tarjonta.koulutusaste.korkeakoulu-uris"];
-
-            var koulutusasteet = $scope.model.koulutuasteet; // nää laitettu scopeen luo-koulutus-dialogissa
-
             //Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
             var promises = [];
-            angular.forEach(koulutusasteet, function(value, key) {
+            angular.forEach(targetFilters, function(value, key) {
                 promises.push(Koodisto.getYlapuolisetKoodit(value, 'FI'));
             });
             var koulutuskooditHaettu = $q.all(promises);
@@ -110,7 +107,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', '$modalInstance', '
                 var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala, 'FI');
                 hakutulosPromise.then(function(koodisParam) {
                     tempTutkinnot = koodisParam.filter(function(koodi) {
-                        return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] != undefined;
+                        return $scope.stoModel.korkeakoulututkinnot[koodi.koodiUri] !== undefined;
                     });
                     $scope.performStringSearch(tempTutkinnot);
                 });
@@ -155,11 +152,14 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', '$modalInstance', '
                 $scope.model = {};
 
                 $scope.open = function() {
-
                     var modalInstance = $modal.open({
-                        scope: $scope,
                         templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-                        controller: 'SelectTutkintoOhjelmaController'
+                        controller: 'SelectTutkintoOhjelmaController',
+                        resolve: {
+                            targetFilters: function() {
+                                return [];
+                            }
+                        }
                     });
 
                     modalInstance.result.then(function(selectedItem) {

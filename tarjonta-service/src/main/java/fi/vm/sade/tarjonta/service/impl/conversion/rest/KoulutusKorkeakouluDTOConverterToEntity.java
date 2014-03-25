@@ -115,6 +115,9 @@ public class KoulutusKorkeakouluDTOConverterToEntity {
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
         komo.setKoulutusKoodi(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
 
+        //Kandidaatti can be null object:
+        komo.setKandidaatinKoulutuskoodi(convertToUri(dto.getKandidaatinKoulutuskoodi(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, true));
+
         komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
@@ -154,9 +157,11 @@ public class KoulutusKorkeakouluDTOConverterToEntity {
         }
 
         if (dto.getOpetusAikas() != null) {
+            komoto.getOpetusAikas().clear();
             komoto.setOpetusAikas(convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
         }
         if (dto.getOpetusPaikkas() != null) {
+            komoto.getOpetusPaikkas().clear();
             komoto.setOpetusPaikkas(convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
         komoto.setKkPohjakoulutusvaatimus(convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUKSET));
@@ -175,10 +180,19 @@ public class KoulutusKorkeakouluDTOConverterToEntity {
     }
 
     private String convertToUri(final KoodiV1RDTO dto, final FieldNames msg) {
+        return convertToUri(dto, msg, false);
+    }
+
+    private String convertToUri(final KoodiV1RDTO dto, final FieldNames msg, boolean nullable) {
+
+        if (nullable && (dto == null || dto.getUri() == null)) {
+            //nullable koodisto uri
+            return null;
+        }
+        
         Preconditions.checkNotNull(dto, "KoodiV1RDTO object cannot be null! Error in field : %s.", msg);
         Preconditions.checkNotNull(dto.getUri(), "KoodiV1RDTO's koodisto koodi URI cannot be null! Error in field : %s.", msg);
         Preconditions.checkNotNull(dto.getVersio(), "KoodiV1RDTO's koodisto koodi version for koodi '%s' cannot be null! Error in field : %s.", dto.getUri(), msg);
-
         return convertToKoodiUri(dto.getUri(), dto.getVersio(), msg);
     }
 

@@ -82,7 +82,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
         //tarkista permissio tarjoajaoidilla
         result.then(function(hakutulos) {
 
-            if (hakutulos.tulokset[0].tulokset[0].tila === 'POISTETTU') {
+            if (hakutulos.tuloksia === 0 || hakutulos.tulokset[0].tulokset[0].tila === 'POISTETTU') {
                 //do not show buttons, if koulutus status is removed
                 defer.resolve(false);
                 return;
