@@ -9,7 +9,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
         }
         //fills promise.data with the actual value when it resolves.
         promise.then(function(data) {
-			console.log("resolvedata", data);
+            console.log("resolvedata", data);
             promise.data = data;
         }, function() { //error function
             promise.data = false;
@@ -43,7 +43,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
 
 
     var _canEditKoulutusMulti = function(koulutusOid) {
-      console.log("canedit hakukohde multi");
+        console.log("canedit hakukohde multi");
         var deferred = $q.defer();
 
         promises = [];
@@ -279,15 +279,19 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
             canCreate: function(orgOid) {
                 return _canCreate(orgOid);
             },
-            canMoveOrCopy: function(orgOid) {
+            canMoveOrCopy: function(koulutusOid) {
+                console.log("canMoveOrCopy koulutus");
                 var deferred = $q.defer();
-                console.log("TODO!!");
-                deferred.resolve(true);
+                var promise = _canEditKoulutus(koulutusOid);
+                promise.then(function(result) {
+                    deferred.resolve(result);
+                });
+
                 return deferred.promise;
             },
             canPreview: function(orgOid) {
                 if (orgOid === undefined) {
-                    console.log("koulutus.canMoveOrCopy", orgOid);
+                    console.log("koulutus.canPreview", orgOid);
                     return false;
                 }
                 // TODO
@@ -309,12 +313,12 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
                 return _canEditKoulutusMulti(koulutusoidit);
             },
             canTransition: function(koulutusOid, from, to) {
-              var koulutusoidit = angular.isArray(koulutusOid) ? koulutusOid : [koulutusOid];
-              if (koulutusoidit.length == 0) {
-                  return {data: false};
-              }
+                var koulutusoidit = angular.isArray(koulutusOid) ? koulutusOid : [koulutusOid];
+                if (koulutusoidit.length == 0) {
+                    return {data: false};
+                }
 
-              return _canEditKoulutusMulti(koulutusoidit);
+                return _canEditKoulutusMulti(koulutusoidit);
             },
             /**
              * Saako käyttäjä poistaa koulutuksen
@@ -348,12 +352,12 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
              * @returns
              */
             canEdit: function(hakukohdeOid) {
-              console.log("can edit hakukohde", hakukohdeOid);
+                console.log("can edit hakukohde", hakukohdeOid);
                 var hakukohdeoidit = angular.isArray(hakukohdeOid) ? hakukohdeOid : [hakukohdeOid];
                 return _canEditHakukohdeMulti(hakukohdeoidit);
             },
             canTransition: function(hakukohdeOid, from, to) {
-              console.log("can transition", hakukohdeOid, from, to);
+                console.log("can transition", hakukohdeOid, from, to);
                 var hakukohdeoidit = angular.isArray(hakukohdeOid) ? hakukohdeOid : [hakukohdeOid];
                 return _canEditHakukohdeMulti(hakukohdeoidit);
             },
