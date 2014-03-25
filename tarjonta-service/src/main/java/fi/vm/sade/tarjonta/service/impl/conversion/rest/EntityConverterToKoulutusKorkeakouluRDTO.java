@@ -84,6 +84,9 @@ public class EntityConverterToKoulutusKorkeakouluRDTO {
             case YLIOPISTOKOULUTUS:
             case AMMATTIKORKEAKOULUTUS:
                 kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
+                if (komo.getKandidaatinKoulutuskoodi() != null) {
+                    kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutuskoodi(), locale, FieldNames.KOULUTUSKOODI_KANDIDAATTI, showMeta));
+                }
                 break;
             case AMMATILLINEN_PERUSKOULUTUS:
                 kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaKoodi(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
@@ -129,7 +132,7 @@ public class EntityConverterToKoulutusKorkeakouluRDTO {
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), kkDto.getYhteyshenkilos());
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", kkDto);
         kkDto.setVersion(komoto.getVersion());
-        
+
         return kkDto;
     }
 }

@@ -4,8 +4,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -195,30 +192,6 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         type.setNimi(arvo + "-nimi-" + kieli.toString());
         return type;
     }
-
-    private static class KoodistoCriteriaMatcher implements
-            Matcher<SearchKoodisCriteriaType> {
-
-        private String uri;
-
-        public KoodistoCriteriaMatcher(String uri) {
-            this.uri = uri;
-        }
-
-        @Override
-        public boolean matches(Object arg0) {
-            SearchKoodisCriteriaType type = (SearchKoodisCriteriaType) arg0;
-            return type != null && type.getKoodiUris().contains(uri);
-        }
-
-        @Override
-        public void describeTo(Description arg0) {
-        }
-
-        @Override
-        public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-        }
-    };
 
     @Test
     public void testAPI() {

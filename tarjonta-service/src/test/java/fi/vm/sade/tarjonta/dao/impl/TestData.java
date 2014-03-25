@@ -38,23 +38,23 @@ import static org.junit.Assert.*;
  */
 public class TestData {
 
-    protected static final int VALINTAKOE_COUNT_FOR_OID1 = 3;
-    protected static final String KOMOTO_OID_1 = "komoto_oid1";
-    protected static final String KOMOTO_OID_2 = "komoto_oid2";
-    protected static final String KOMOTO_OID_3 = "komoto_oid3";
-    protected static final String KOMOTO_OID_4 = "komoto_oid4";
+	public static final int VALINTAKOE_COUNT_FOR_OID1 = 3;
+    public static final String KOMOTO_OID_1 = "komoto_oid1";
+    public static final String KOMOTO_OID_2 = "komoto_oid2";
+    public static final String KOMOTO_OID_3 = "komoto_oid3";
+    public static final String KOMOTO_OID_4 = "komoto_oid4";
 
-    protected static final String ORG_OID_1 = "organisation_oid1";
-    protected static final String KAUSI = "kausi_uri";
-    protected static final int YEAR = 2014;
+    public static final String ORG_OID_1 = "organisation_oid1";
+    public static final String KAUSI = "kausi_uri";
+    public static final int YEAR = 2014;
 
-    protected static final String HAKU_OID1 = "hakuoid1";
-    protected static final String HAKU_OID2 = "hakuoid2";
-    protected static final String HAKUKOHDE_OID1 = "hakukohde_oid_1";
-    protected static final String HAKUKOHDE_OID2 = "hakukohde_oid_2";
-    protected static final String HAKUKOHDE_OID3 = "hakukohde_oid_3";
-    protected static final String HUMAN_READABLE_NAME_1 = "human_readable_name";
-    protected static final String KOODISTO_URI_1 = "koodisto_uri";
+    public static final String HAKU_OID1 = "hakuoid1";
+    public static final String HAKU_OID2 = "hakuoid2";
+    public static final String HAKUKOHDE_OID1 = "hakukohde_oid_1";
+    public static final String HAKUKOHDE_OID2 = "hakukohde_oid_2";
+    public static final String HAKUKOHDE_OID3 = "hakukohde_oid_3";
+    public static final String HUMAN_READABLE_NAME_1 = "human_readable_name";
+    public static final String KOODISTO_URI_1 = "koodisto_uri";
     protected Hakukohde kohde1, kohde2, kohde3;
     protected Valintakoe koe1, koe2, koe3, koe4;
     protected Haku haku1, haku2;
@@ -82,7 +82,15 @@ public class TestData {
     public KoulutusmoduuliToteutus getPersistedKomoto4() {
         return komoto4;
     }
-
+    
+    public Haku getHaku1() {
+		return haku1;
+	}
+    
+    public Haku getHaku2() {
+		return haku2;
+	}
+    
     public TestData() {
     }
 

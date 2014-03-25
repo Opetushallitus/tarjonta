@@ -105,10 +105,11 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
     				resolveAiheet($scope, teema);
     			}
 	    		$scope.teemat.sort(comparator);
+                        updateErrors();
     		}
 	    );
 		
-		return $scope;
+            return $scope;
 	}
 
 	return {

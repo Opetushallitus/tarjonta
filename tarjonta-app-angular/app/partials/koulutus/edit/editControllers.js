@@ -1,10 +1,13 @@
-
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('BaseEditController',
         ['$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function BaseEditController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
+
+                //käyttöoikeudet
+                $scope.isMutable = true;
+
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -16,7 +19,7 @@ app.controller('BaseEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable : false};
+                    var uiModel = {isMutable: true};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -28,9 +31,9 @@ app.controller('BaseEditController',
                      */
                     if (!angular.isUndefined($routeParams.id) && $routeParams.id !== null && $routeParams.id.length > 0) {
                         /*
-                         * LOAD KOULUTUS BY GIVEN KOMOTO OID
+                         * SHOW KOULUTUS BY GIVEN KOMOTO OID
                          */
-                        $scope.controlFormMessages(uiModel, "LOAD");
+                        $scope.controlFormMessages(uiModel, "SHOW");
                         $scope.lisatiedot = converter.KUVAUS_ORDER;
                         model = $route.current.locals.koulutusModel.result;
 
@@ -39,8 +42,8 @@ app.controller('BaseEditController',
                             return;
                         }
 
-                        if(model.tila === 'POISTETTU'){
-                            uiModel.isMutable=true;
+                        if (model.tila === 'POISTETTU') {
+                            uiModel.isMutable = false;
                         }
 
                         $scope.updateFormStatusInformation(model);
@@ -81,7 +84,7 @@ app.controller('BaseEditController',
                     }
 
                     /*
-                     * LOAD ALL KOODISTO KOODIS
+                     * SHOW ALL KOODISTO KOODIS
                      */
                     angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
                         if (angular.isUndefined(value.skipUiModel)) {
@@ -128,11 +131,21 @@ app.controller('BaseEditController',
                     $scope.uiModel = uiModel;
                     $scope.model = model;
 
+                    //käyttöoikeudet
+                    if ($scope.model.komotoOid) {
+                        PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
+                            console.log("setting mutable to:", data);
+                            $scope.isMutable = data;
+                        });
+                    }
+
 
                 };
 
                 $scope.canSaveAsLuonnos = function() {
 
+                    if (!$scope.isMutable)
+                        return false; //permissio
                     if ($scope.uiModel.isMutable) {
                         return $scope.uiModel.isMutable;
                     }
@@ -140,6 +153,11 @@ app.controller('BaseEditController',
                     return true;
 
                 }
+
+                $scope.canSaveAsValmis = function() {
+                    return $scope.uiModel.isMutable && $scope.isMutable;
+                }
+
 
 
                 $scope.getLisatietoKielet = function() {
@@ -433,6 +451,32 @@ app.controller('BaseEditController',
                     return $scope.langs[koodi];
                 };
 
+                $scope.removeKandidaatinKoulutuskoodi = function(koodi) {
+                    $scope.model.kandidaatinKoulutuskoodi = {};
+                };
+
+                $scope.createSelectKoulutuskoodiModalDialog = function(koodi) {
+                    var modalInstance = $modal.open({
+                        templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+                        controller: 'SelectTutkintoOhjelmaController',
+                        resolve: {
+                            targetFilters: function() {
+                                return [cfg.app["koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto"]];
+                            }
+                        }
+                    });
+
+                    modalInstance.result.then(function(result) {/* close */
+                        $scope.model.kandidaatinKoulutuskoodi = {
+                            arvo: result.koodiArvo,
+                            uri: result.koodiUri,
+                            versio: result.koodiVersio,
+                            nimi: result.koodiNimi
+                        };
+                    }, function() { /* dismissed */
+                    });
+                };
+
                 /**
                  * Control page messages.
                  * 
@@ -443,8 +487,13 @@ app.controller('BaseEditController',
                  */
                 $scope.controlFormMessages = function(uiModel, action, errorDetailType, apiErrors) {
                     switch (action) {
-                        case 'LOAD':
-                            //continue to init
+                        case 'SHOW':
+                            uiModel.showErrorCheckField = false;
+                            uiModel.showValidationErrors = true;
+                            uiModel.showError = false;
+                            uiModel.showSuccess = false;
+                            uiModel.validationmsgs = [];
+                            break;
                         case 'INIT':
                             uiModel.showErrorCheckField = false;
                             uiModel.showValidationErrors = false;
@@ -464,7 +513,7 @@ app.controller('BaseEditController',
                         case 'SAVED':
                             uiModel.showErrorCheckField = false;
                             uiModel.showError = false;
-                            uiModel.showValidationErrors = false;
+                            uiModel.showValidationErrors = true;
                             uiModel.hakukohdeTabsDisabled = false;
                             uiModel.validationmsgs = [];
                             //Form
@@ -475,7 +524,7 @@ app.controller('BaseEditController',
                         case 'ERROR':
                         default:
                             uiModel.showErrorCheckField = errorDetailType === 'UI_ERRORS'
-                            uiModel.showValidationErrors = errorDetailType === 'UI_ERRORS';
+                            uiModel.showValidationErrors = true;
                             uiModel.showError = true;
                             uiModel.showSuccess = false;
 
@@ -501,6 +550,9 @@ app.controller('BaseEditController',
                         $scope.model.hinta = '';
                     }
                 });
+
+
+
 
                 $scope.init();
             }]);

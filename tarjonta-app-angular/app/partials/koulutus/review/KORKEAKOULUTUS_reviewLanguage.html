@@ -27,7 +27,7 @@
         <th tt="koulutus.review.perustiedot.koulutus">Koulutuksen perustiedot</th>
         <td colspan="2">
             {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
-            <i>{{model.koulutus.koulutuskoodi.nimi}}</i>
+            <i>{{model.koulutus.koulutuskoodi.arvo}}</i>
         </td>
     </tr>
 
@@ -103,6 +103,15 @@
         <th tt="koulutus.review.perustiedot.opintojenLaajuus">Laajuus</th>
         <td colspan="2">
             {{ model.koulutus.opintojenLaajuus.meta[lang.koodi_uri].nimi}} {{model.koulutus.opintojenLaajuusyksikko.meta[lang.koodi_uri].nimi}}
+        </td>
+    </tr>
+    
+     <!-- kandidaatin koulutuskoodi (optional) -->
+    <tr>
+        <th tt="koulutus.review.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
+        <td colspan="2">
+            {{model.koulutus.kandidaatinKoulutuskoodi.meta[lang.koodi_uri].nimi}}
+            <i>{{model.koulutus.kandidaatinKoulutuskoodi.arvo}}</i>
         </td>
     </tr>
 
@@ -250,13 +259,13 @@
             <table class="table">
                 <tr data-ng-repeat="hakukohde in  model.hakukohteet">
                     <td>
-                        <a ng-href="#/hakukohde/{{hakukohde.oid}}">{{hakukohde.nimi[model.koodistoLocale]}}</a>
+                        <a ng-href="#/hakukohde/{{hakukohde.oid}}">{{findHakukohdeNimi(lang,hakukohde)}}</a>
                     </td>
                     <td>
                         <div class="align-right">
                             <!-- <a class="btn" href ><span tt="hakukohde.review.koulutus.nayta.koulutus">Näytä koulutus</span> <span class="icon-eye-open"></span></a> -->
 
-                            <a class="btn" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></a>
+                            <a class="btn" ng-disabled="!isMutable" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></a>
                         </div>
                     </td>
                 </tr>

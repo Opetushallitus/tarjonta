@@ -119,7 +119,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
             opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {koodisto: 'koodisto-uris.kieli'},
             aihees: {koodisto: 'koodisto-uris.aiheet'},
-            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'},
+            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
             koulutuksenAlkamisvuosi: {"default": ''},
             koulutusmoduuliTyyppi: {"default": 'TUTKINTO'},
@@ -366,6 +366,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.STR, function(value, key) {
+            console.log(value);
             apiModel[key] = value.default;
         });
 

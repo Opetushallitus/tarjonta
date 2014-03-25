@@ -702,6 +702,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return result;
         }
         
+        permissionChecker.checkCopyKoulutusTarjoaja(komoto.getTarjoaja());
+        
         if (koulutusCopy == null) {
             result.addError(ErrorV1RDTO.createValidationError("", KoulutusValidationMessages.KOULUTUS_INVALID_DATA.lower()));
         } else if (koulutusCopy.getMode() == null) {

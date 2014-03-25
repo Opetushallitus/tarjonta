@@ -93,7 +93,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         hakukohde.getValintakoes().addAll(valintakoes);
 
-        getEntityManager().flush();
+       //getEntityManager().flush();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         hakukohde.getLiites().addAll(liites);
 
-        getEntityManager().flush();
+        //getEntityManager().flush();
     }
 
     @Override
@@ -145,7 +145,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         managedLiite.setSahkoinenToimitusosoite(hakukohdeLiite.getSahkoinenToimitusosoite());
         managedLiite.setToimitusosoite(hakukohdeLiite.getToimitusosoite());
 
-        getEntityManager().flush();
+        //getEntityManager().flush();
 
     }
 
@@ -223,7 +223,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public void removeValintakoe(Valintakoe valintakoe) {
         if (valintakoe != null && valintakoe.getId() != null) {
             getEntityManager().remove(getEntityManager().find(Valintakoe.class, valintakoe.getId()));
-            getEntityManager().flush();
+            //getEntityManager().flush();
         }
     }
 
@@ -231,7 +231,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public void removeHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
         if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
             getEntityManager().remove(getEntityManager().find(HakukohdeLiite.class, hakukohdeLiite.getId()));
-            getEntityManager().flush();
+           // getEntityManager().flush();
         }
     }
 
@@ -399,6 +399,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         detach(entity); //optimistic locking requires detach + reload so that the entity exists in hibernate session before merging
         Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
+    }
+    
+    @Override
+    public void merge(Hakukohde hk) {
+	    getEntityManager().merge(hk);	
     }
     
     @Override

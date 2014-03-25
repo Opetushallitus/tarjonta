@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Preconditions;
+
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -156,6 +158,7 @@ public class ConverterV1 {
         }
 
         t.setOrganisaatioOids(haku.getOrganisationOids());
+        t.setTarjoajaOids(haku.getTarjoajaOids());
 
         // Koodistos as (not) pre-resolved, who needs this?
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
@@ -237,6 +240,7 @@ public class ConverterV1 {
         }
 
         haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
+        haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
 
         return haku;
     }
@@ -587,15 +591,14 @@ public class ConverterV1 {
             hakukohdeRDTO.getHakukohteenLiitteet().add(fromHakukohdeLiite(liite));
         }
 
-        if (hakukohde.getLiites() != null) {
-            List<HakukohdeLiiteV1RDTO> liites = new ArrayList<HakukohdeLiiteV1RDTO>();
-            hakukohdeRDTO.setHakukohteenLiitteet(liites);
-        }
-
         if (hakukohdeRDTO.getTarjoajaOids() != null && hakukohdeRDTO.getTarjoajaOids().size() > 0) {
 
             for (String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
                 OrganisaatioDTO org = organisaatioService.findByOid(tarjoajaOid);
+
+                if (org==null) {
+                	continue;
+                }
 
                 for (fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti text : org.getNimi().getTeksti()) {
                     //TODO: Maybe should return kieli uri instead :)
@@ -683,9 +686,7 @@ public class ConverterV1 {
             hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
         }
 
-        if (hakukohdeRDTO.getKaksoisTutkinto() != null) {
-            hakukohde.setKaksoisTutkinto(hakukohdeRDTO.getKaksoisTutkinto());
-        }
+        hakukohde.setKaksoisTutkinto(hakukohdeRDTO.getKaksoisTutkinto());
 
         if (hakukohdeRDTO.getHakukohteenNimiUri() != null) {
             hakukohde.setHakukohdeNimi(hakukohdeRDTO.getHakukohteenNimiUri());
@@ -900,8 +901,10 @@ public class ConverterV1 {
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
         for (TekstiRDTO tekstiRDTO : tekstis) {
-            monikielinenTeksti.addTekstiKaannos(tekstiRDTO.getUri(), tekstiRDTO.getTeksti());
-            LOG.debug("MONIKIELINEN TEKSTI : {}", tekstiRDTO.getTeksti());
+        	if (tekstiRDTO!=null) {
+                monikielinenTeksti.addTekstiKaannos(tekstiRDTO.getUri(), tekstiRDTO.getTeksti());
+                LOG.debug("MONIKIELINEN TEKSTI : {}", tekstiRDTO.getTeksti());
+        	}
         }
 
         return monikielinenTeksti;

@@ -291,11 +291,11 @@ app.controller('HakuEditController',
                 });
 
                 modalInstance.result.then(function(oids) {
-                    $log.info("OK: ", oids);
+                    $log.debug("OK - dialog closed with selected organisations: ", oids);
                     $scope.model.hakux.result.organisaatioOids = oids;
                     $scope.updateSelectedOrganisationsList();
                 }, function (oids) {
-                    $log.info("DISMISS?: ", oids);
+                    // dismissed - no changes to oids
                 });
             };
 

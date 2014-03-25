@@ -7,7 +7,7 @@
 
         <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" disabled="!canSaveAsLuonnos()" primary="true"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)"  disabled="uiModel.isMutable" primary="true"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)"  disabled="!canSaveAsValmis()" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
 
         <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
@@ -15,7 +15,7 @@
 
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
-        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify>
+        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify> 
 
         <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
         <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
