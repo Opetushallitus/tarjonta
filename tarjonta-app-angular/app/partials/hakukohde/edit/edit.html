@@ -33,16 +33,16 @@
 	            <div data-ng-include="'partials/hakukohde/edit/editPerustiedot.html'"></div>
 			</form>
         </tab>
-        <tab disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">
+        <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">
             <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
         </tab>
        <!-- <tab  heading="{{t('kk.hakukohde.valintakokeet')}}">
             <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
         </tab>-->
-        <tab disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
+        <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
             <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
         </tab>
-        <tab disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintaperustekuvaus')}}">
+        <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.valintaperustekuvaus')}}">
             <div data-ng-include="'partials/hakukohde/edit/valintaperusteKuvaukset.html'" data-ng-controller="HakukohdeEditController"></div>
         </tab>
 
