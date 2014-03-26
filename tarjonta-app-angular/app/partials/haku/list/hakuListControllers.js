@@ -17,8 +17,8 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
-            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
+        ['$scope', '$location', '$log', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
+            function HakuListController($scope, $location, $log, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
 
           $log = $log.getInstance("HakuListController");
 
@@ -128,13 +128,13 @@ app.controller('HakuListController',
                           actions.push({name:LocalisationService.t("haku.menu.muokkaa"), action:function(){
                             $location.path("/haku/" + haku.oid + "/edit");
                           }});
-                          
+
                           actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
                             review(haku);
                           }});
-                          
+
                           actions.push({name:LocalisationService.t("haku.menu.poista"), action:function(){$scope.doDelete(haku)}});
-                          
+
                           return actions;
                       };
 
