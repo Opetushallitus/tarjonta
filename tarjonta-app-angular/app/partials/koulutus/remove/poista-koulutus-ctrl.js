@@ -14,8 +14,11 @@
  */
 var app = angular.module('app.koulutus.remove.ctrl', []);
 
-app.controller('PoistaKoulutusCtrl', ['$scope', 'Config', '$location', '$route', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoto', 'organisaatioOid', 'PermissionService',
-    function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService) {
+app.controller('PoistaKoulutusCtrl', ['$scope', 'Config', '$location', '$route', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoto', 'organisaatioOid', 'PermissionService', '$log',
+    function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService, $log) {
+
+        $log = $log.getInstance("PoistaKoulutusCtrl");
+
         /*
          * Select koulutus data objects.
          */
@@ -49,7 +52,7 @@ app.controller('PoistaKoulutusCtrl', ['$scope', 'Config', '$location', '$route',
 
             $scope.model.errors = [];
             PermissionService.permissionResource().authorize({}, function(authResponse) {
-                console.log("Authorization check : " + authResponse.result);
+                $log.debug("Authorization check : " + authResponse.result);
 
                 if (authResponse.status !== 'OK') {
                     //not authenticated

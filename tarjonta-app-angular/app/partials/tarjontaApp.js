@@ -156,41 +156,6 @@ angular.module('app').config(["$provide", function($provide) {
                     }
                 };
 
-
-//
-//                // Save the original $log.debug()
-//                var debugFn = $delegate.debug;
-//                var infoFn = $delegate.info;
-//
-//                $delegate.debug = function( )
-//                {
-//                    // console.log("log.debug.decorator!");
-//
-//                    var args = [].slice.call(arguments),
-//                            now = new Date();
-//
-//                    // Prepend timestamp
-//                    args[0] = formatDate(now) + " - D - " + args[0];
-//
-//                    // Call the original with the output prepended with formatted timestamp
-//                    debugFn.apply(null, args)
-//                };
-//
-//                $delegate.info = function( )
-//                {
-//                    // console.log("log.info.decorator!");
-//
-//                    var args = [].slice.call(arguments),
-//                            now = new Date();
-//
-//                    // Prepend timestamp
-//                    args[0] = formatDate(now) + " - I - " + args[0];
-//
-//                    // Call the original with the output prepended with formatted timestamp
-//                    infoFn.apply(null, args)
-//                };
-
-
                 return $delegate;
             }]);
 
@@ -332,7 +297,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         if ($route.current.params.id !== "new") {
                             var deferredPermission = $q.defer();
                             Hakukohde.get({oid: $route.current.params.id}, function(data) {
-                                console.log("GOT HAKUKOHDE DATA: ", data);
+                                $log.debug("GOT HAKUKOHDE DATA: ", data);
 
 
 
@@ -341,7 +306,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                 //deferredPermission.resolve(canEditVar);
                                 canEditVar.then(function(permission) {
 
-                                    console.log('GOT PERMISSION DATA ', permission);
+                                    $log.debug('GOT PERMISSION DATA ', permission);
                                     deferredPermission.resolve(permission);
 
                                 });
@@ -367,9 +332,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
 
                         if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
-                            console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
+                            $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
                             var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
-                            console.log('CREATE VAR : ', canCreateVar);
+                            $log.debug('CREATE VAR : ', canCreateVar);
                             return canCreateVar;
                         } else {
                             return undefined;
@@ -440,7 +405,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             if ($route.current.params.id !== "new") {
                                 var deferredPermission = $q.defer();
                                 Hakukohde.get({oid: $route.current.params.id}, function(data) {
-                                    console.log("GOT HAKUKOHDE DATA: ", data);
+                                    $log.debug("GOT HAKUKOHDE DATA: ", data);
 
 
 
@@ -449,7 +414,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                     //deferredPermission.resolve(canEditVar);
                                     canEditVar.then(function(permission) {
 
-                                        console.log('GOT PERMISSION DATA ', permission);
+                                        $log.debug('GOT PERMISSION DATA ', permission);
                                         deferredPermission.resolve(permission);
 
                                     });
@@ -475,9 +440,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             }
 
                             if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
-                                console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
+                                $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
                                 var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
-                                console.log('CREATE VAR : ', canCreateVar);
+                                $log.debug('CREATE VAR : ', canCreateVar);
                                 return canCreateVar;
                             } else {
                                 return undefined;
@@ -630,18 +595,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeParams', '$log', 'PermissionService',
     function($scope, $route, $routeParams, $log, PermissionService) {
 
-        $log.debug("app.AppRoutingCtrl()");
+        $log = $log.getInstance("AppRoutingCtrl");
+
+        $log.debug("init");
 
         $scope.count = 0;
 
-
         PermissionService.permissionResource().authorize({}, function(response) {
-            console.log("Authorization check : " + response.result);
+            $log.debug("Authorization check : " + response.result);
         });
 
-
         var render = function() {
-            $log.debug("app.AppRoutingCtrl.render()");
+            $log.debug("render()");
 
             var renderAction = $route.current.action;
             var renderPath = renderAction ? renderAction.split(".") : [];
@@ -661,7 +626,7 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
         $scope.$on(
                 "$routeChangeSuccess",
                 function($currentRoute, $previousRoute) {
-                    $log.debug("app.AppRoutingCtrl.$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
+                    $log.debug("$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
                     render();
                 }
         );

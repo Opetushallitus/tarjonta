@@ -5,6 +5,9 @@ app.controller('BaseEditController',
             function BaseEditController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
+                $log = $log.getInstance("BaseEditController");
+                $log.debug("init");
+
                 //käyttöoikeudet
                 $scope.isMutable = true;
 
@@ -61,7 +64,7 @@ app.controller('BaseEditController',
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri);
 
                         /*
-                         * remove version data from the list 
+                         * remove version data from the list
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                             uiModel[key].uris = _.keys(model[key].uris);
@@ -134,7 +137,7 @@ app.controller('BaseEditController',
                     //käyttöoikeudet
                     if ($scope.model.komotoOid) {
                         PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
-                            console.log("setting mutable to:", data);
+                            $log.debug("setting mutable to:", data);
                             $scope.isMutable = data;
                         });
                     }
@@ -248,7 +251,7 @@ app.controller('BaseEditController',
                     }
 
                     PermissionService.permissionResource().authorize({}, function(authResponse) {
-                        console.log("Authorization check : " + authResponse.result);
+                        $log.debug("Authorization check : " + authResponse.result);
 
                         if (authResponse.status !== 'OK') {
                             //not authenticated
@@ -333,7 +336,7 @@ app.controller('BaseEditController',
                         }
                     });
 
-                    //multi-select models, add version to the koodi 
+                    //multi-select models, add version to the koodi
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
                         apiModel[key] = {'uris': {}};
                         //search version information for list of uris;
@@ -348,7 +351,7 @@ app.controller('BaseEditController',
 
                     });
 
-                    console.log(JSON.stringify(apiModel));
+                    $log.debug(JSON.stringify(apiModel));
                     return apiModel;
                 };
 
@@ -377,14 +380,14 @@ app.controller('BaseEditController',
                         controller: 'SelectTutkintoOhjelmaController'
                     });
                     modalInstance.result.then(function(selectedItem) {
-                        console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
-                        console.log('Koodiarvo is: ' + selectedItem.koodiArvo);
+                        $log.debug('Ok, dialog closed: ' + selectedItem.koodiNimi);
+                        $log.debug('Koodiarvo is: ' + selectedItem.koodiArvo);
                         if (!converter.isNull(selectedItem)) {
                             //$scope.model.koulutuskoodi = selectedItem;
                             $scope.model.koulutuskoodi.koodi.arvo = selectedItem.koodiArvo;
                         }
                     }, function() {
-                        console.log('Cancel, dialog closed');
+                        $log.debug('Cancel, dialog closed');
                     });
                 };
                 $scope.goBack = function(event) {
@@ -479,7 +482,7 @@ app.controller('BaseEditController',
 
                 /**
                  * Control page messages.
-                 * 
+                 *
                  * @param {type} uiModel
                  * @param {type} action
                  * @param {type} errorDetailType
@@ -550,9 +553,6 @@ app.controller('BaseEditController',
                         $scope.model.hinta = '';
                     }
                 });
-
-
-
 
                 $scope.init();
             }]);

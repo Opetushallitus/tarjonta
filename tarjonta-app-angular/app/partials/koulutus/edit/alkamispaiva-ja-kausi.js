@@ -3,6 +3,9 @@
 var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation', 'TarjontaDateTime']);
 
 app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
+
+        $log = $log.getInstance("alkamispaivaJaKausi");
+
         function controller($scope, $q, $element, $compile) {
             $scope.isKausiVuosiRadioButtonActive = function() {
                 return $scope.pvms.length === 0
@@ -116,7 +119,10 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             }
         };
     }]);
+
 app.directive('alkamispaivat', ['$log', function($log) {
+        $log = $log.getInstance("alkamispaivat");
+
         function controller($scope, $q, $element, $compile) {
             $scope.ctrl = {
                 addedDates: [],
@@ -254,7 +260,7 @@ app.directive('alkamispaivat', ['$log', function($log) {
 
             /*
              * DATA INIT / RELOAD LISTENER
-             * 
+             *
              * There is no init, because you can force directive data model
              * to reload by creating new array of dates.
              */

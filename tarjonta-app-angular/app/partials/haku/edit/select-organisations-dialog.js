@@ -24,6 +24,8 @@ app.controller('HakuEditSelectOrganisationsController', [
             $log,
             organisaatioOids) {
 
+        $log = $log.getInstance("HakuEditSelectOrganisationsController");
+
         $log.info("HakuEditSelectOrganisationsController()...");
 
         $log.info("SCOPE: ", $scope);

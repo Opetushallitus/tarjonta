@@ -3,6 +3,9 @@ var app = angular.module('app.review.ctrl', []);
 
 app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
     function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+
+        $log = $log.getInstance("BaseReviewController");
+
         $log.info("BaseReviewController()");
         var koulutusModel = $route.current.locals.koulutusModel.result;
         if (angular.isUndefined(koulutusModel)) {
@@ -89,11 +92,11 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
         var komoOid = koulutusModel.komoOid;
         TarjontaService.getChildKoulutuksetPromise(komoOid).then(function(children) {
             $scope.children = children;
-            console.log("children:", children);
+            $log.debug("children:", children);
         });
         TarjontaService.getParentKoulutuksetPromise(komoOid).then(function(parents) {
             $scope.parents = parents;
-            console.log("parents:", parents);
+            $log.debug("parents:", parents);
         });
         $scope.lisatiedot = KoulutusConverterFactory.KUVAUS_ORDER;
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
@@ -157,28 +160,28 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             checkIsOkToRemoveHakukohde(hakukohde);
             /*
              if (checkIsOkToRemoveHakukohde(hakukohde)) {
-             
+
              var texts = {
              title: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.title"),
              description: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.desc"),
              ok: LocalisationService.t("ok"),
              cancel: LocalisationService.t("cancel")
              };
-             
+
              var d = dialogService.showDialog(texts);
              d.result.then(function(data){
              if (data) {
              reallyRemoveHakukohdeFromKoulutus(hakukohde);
-             
+
              }
              });
-             
-             
+
+
              } else {
-             
+
              $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
              $scope.model.showError = true;
-             
+
              }   */
 
         }
@@ -215,7 +218,7 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             if (!$scope.isMutable) {
                 return;
             }
-            console.log('KOULUTUS : ', $scope.model.koulutus);
+            $log.debug('KOULUTUS : ', $scope.model.koulutus);
             var koulutusOids = [];
             koulutusOids.push($scope.model.koulutus.oid);
             SharedStateService.addToState('SelectedKoulutukses', koulutusOids);

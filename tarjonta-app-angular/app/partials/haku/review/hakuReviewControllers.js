@@ -15,8 +15,8 @@
 
 var app = angular.module('app.haku.review.ctrl', []);
 
-app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log', '$routeParams', 'LocalisationService', '$q', '$timeout', 'ParameterService',
-    function HakuReviewController($scope, $location, $route, $log, $routeParams, LocalisationService, $q, $timeout, ParameterService) {
+app.controller('HakuReviewController', ['$scope', '$route', '$log', '$routeParams', 'ParameterService',
+    function HakuReviewController($scope, $route, $log, $routeParams, ParameterService) {
 
         $log = $log.getInstance("HakuReviewController");
 
@@ -70,61 +70,4 @@ app.controller('HakuReviewController', ['$scope', '$location', '$route', '$log',
         $scope.parametrit={};
         ParameterService.haeHaunParametrit(hakuOid, $scope.parametrit);
 
-    }]);
-
-
-app.directive('xxx', [
-    '$timeout', '$q', '$log', '$resource',
-    function($timeout, $q, $log, $resource) {
-
-        var KOODI = $resource("https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/:koodisto/koodi/:koodi", {koodi: '@koodi', koodisto: '@kodisto', version: "@version"});
-
-        function resolveKoodi(koodistoUri, koodiUri, koodiVersion) {
-            var deferred = $q.defer();
-
-            var splittedKoodiUri = koodiUri.split("#");
-
-            // Handle "koodi#2" version format in koodis
-            if (splittedKoodiUri.length == 2) {
-                koodiUri = splittedKoodiUri[0];
-                koodiVersion = splittedKoodiUri[1];
-            }
-
-            $log.info("KOODISTO: '" + koodistoUri + "'");
-            $log.info("KOODI: '" + koodiUri + "'");
-            $log.info("KOODIVERSION: '" + koodiVersion + "'");
-
-            KOODI.get({koodisto: koodistoUri, koodi: koodiUri}, function(result) {
-                $log.info("RESULT", result);
-                deferred.resolve("SUCCESS! " + result.resourceUri);
-            }, function (error) {
-                deferred.resolve("KOODISTO LOOKUP FAILED");
-            });
-
-            return deferred.promise;
-        }
-
-        return {
-            restrict: 'EA',
-            replace: true,
-            scope: {
-                koodi: "=",
-                koodisto: "=",
-                version: "=?",
-                locale: "=?"
-            },
-            // template: '<span>A {{koodiUri}} B</span>',
-            compile: function(tElement, tAttrs, transclude) {
-                var t = "...resolving...";
-                tElement.html(t);
-
-                return function postLink(scope, iElement, iAttrs, controller) {
-                    resolveKoodi(scope.koodisto, scope.koodi, scope.version).then(function(result) {
-                        tElement.html(result);
-                    });
-                    // $timeout(scope.$destroy.bind(scope), 0);
-                };
-            }
-
-        };
     }]);
