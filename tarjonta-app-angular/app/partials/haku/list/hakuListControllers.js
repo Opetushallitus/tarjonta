@@ -17,8 +17,8 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$route', '$scope', '$location', '$log', '$routeParams', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
-            function HakuListController($route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
+        ['$scope', '$location', '$log', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto',
+            function HakuListController($scope, $location, $log, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto) {
           
           //sorting
           $scope.predicate='tila';
@@ -120,18 +120,18 @@ app.controller('HakuListController',
                       
                       //"kirjapinon" linkit
                       var actions = function(haku){
-                        console.log("$scope.doDelete", $scope.doDelete);
+//                        console.log("$scope.doDelete", $scope.doDelete);
                           var actions=[];
                           //#/haku/{{ haku.oid}}/edit
-                          actions.push({name:"haku.menu.muokkaa", action:function(){
+                          actions.push({name:LocalisationService.t("haku.menu.muokkaa"), action:function(){
                             $location.path("/haku/" + haku.oid + "/edit");
                           }});
                           
-                          actions.push({name:"haku.menu.tarkastele", action:function(){
+                          actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
                             review(haku);
                           }});
                           
-                          actions.push({name:"haku.menu.poista", action:function(){$scope.doDelete(haku)}});
+                          actions.push({name:LocalisationService.t("haku.menu.poista"), action:function(){$scope.doDelete(haku)}});
                           
                           return actions;
                       };
