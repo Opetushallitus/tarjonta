@@ -92,6 +92,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var koulutusSet = new buckets.Set();
 
+    var parentOrgOids = new buckets.Set();
+
 
     var julkaistuVal = "JULKAISTU";
 
@@ -516,43 +518,48 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         ------>  Load hakukohde koulutusnames
 
      */
-    var spec = {
-        koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
-    };
-    koulutusSet.clear();
-    TarjontaService.haeKoulutukset(spec).then(function(data){
+
+    var loadKoulutukses = function(){
+
+        var spec = {
+            koulutusOid : $scope.model.hakukohde.hakukohdeKoulutusOids
+        };
+        koulutusSet.clear();
+        TarjontaService.haeKoulutukset(spec).then(function(data){
 
 
-        console.log('KOULUTUKSET : ', data);
+            console.log('KOULUTUKSET : ', data);
 
-        var tarjoajaOidsSet = new buckets.Set();
-
-
-        if (data !== undefined) {
-
-            angular.forEach(data.tulokset,function(tulos){
-                if (tulos !== undefined && tulos.tulokset !== undefined) {
-
-                    tarjoajaOidsSet.add(tulos.oid);
-
-                    angular.forEach(tulos.tulokset,function(toinenTulos){
-
-                        koulutusKausiUri = toinenTulos.kausiUri;
-                        $scope.model.koulutusVuosi = toinenTulos.vuosi;
-
-                        koulutusSet.add(toinenTulos.nimi);
-
-                    });
-
-                }
-
-            });
+            var tarjoajaOidsSet = new buckets.Set();
 
 
-            $scope.model.koulutusnimet = koulutusSet.toArray();
+            if (data !== undefined) {
+
+                angular.forEach(data.tulokset,function(tulos){
+                    if (tulos !== undefined && tulos.tulokset !== undefined) {
+
+                        tarjoajaOidsSet.add(tulos.oid);
+
+                        angular.forEach(tulos.tulokset,function(toinenTulos){
+
+                            koulutusKausiUri = toinenTulos.kausiUri;
+                            $scope.model.koulutusVuosi = toinenTulos.vuosi;
+
+                            koulutusSet.add(toinenTulos.nimi);
+
+                        });
+
+                    }
+
+                });
+
+
+                $scope.model.koulutusnimet = koulutusSet.toArray();
 
 
                 $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+                getTarjoajaParentPaths($scope.model.hakukohde.tarjoajaOids);
 
 
                 var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
@@ -577,12 +584,16 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
-        }
+            }
 
 
 
 
-    });
+        });
+
+
+    }
+
 
     var checkAndAddHakutoimisto = function(data) {
          var hakutoimistoFound = false;
@@ -641,14 +652,10 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 var anotherOrgPromise =  OrganisaatioService.byOid(currentOrg.parentOid);
                 anotherOrgPromise.then(function(data) {
 
-                    console.log('GOT PARENT DATA : ', data);
-
                     var wasHakutoimistoFoundNow = checkAndAddHakutoimisto(data);
                     if (wasHakutoimistoFoundNow) {
-                        console.log('PARENT HAKUTOIMISTO FOUND : ', wasHakutoimistoFoundNow);
                         deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                     } else {
-                        console.log('PARENT HAKUTOIMISTO WAS NOT FOUND : ', wasHakutoimistoFoundNow);
                         deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                     }
 
@@ -689,7 +696,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         OrganisaatioService.etsi({oidRestrictionList:$scope.model.hakukohde.tarjoajaOids})
             .then(function(data){
-                console.log('GOT ORGANISAATIOT : ', data);
+
                 getOppilaitosTyyppis(data.organisaatiot);
 
             });
@@ -715,6 +722,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
 
+
+
         //Resolve all promises and filter oppilaitostyyppis with user types
         $q.all(oppilaitosTyyppiPromises).then(function(data){
             console.log('RESOLVED OPPILAITOSTYYPPI : ', data);
@@ -725,9 +734,14 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     };
 
-    haeTarjoajaOppilaitosTyypit();
-    checkJatkaBtn();
-    checkIsCopy();
+    var init = function() {
+        loadKoulutukses();
+        haeTarjoajaOppilaitosTyypit();
+        checkJatkaBtn();
+        checkIsCopy();
+    };
+
+    init();
 
 
 
@@ -735,13 +749,81 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
     var filterHakus = function(hakus) {
-        var filteredHakus = filterHakusWithAika(hakus);
-        angular.forEach(filteredHakus,function(haku){
-           $scope.model.hakus.push(haku);
+        return  filterHakusWithAika(filterHakusWithOrgs(hakus));
+
+    };
+
+    var getTarjoajaParentPaths = function(tarjoajaOids) {
+
+        angular.forEach(tarjoajaOids,function(tarjoajaOid){
+
+            var orgPromise = CommonUtilService.haeOrganisaationTiedot(tarjoajaOid);
+
+            orgPromise.then(function(org){
+                if (org.parentOidPath) {
+                    angular.forEach(org.parentOidPath.split("|"),function(parentOid) {
+                        if (parentOid.length > 1) {
+                            parentOrgOids.add(parentOid);
+                        }
+
+                    });
+                }
+
+            });
+        });
+
+    }
+
+    var getParentOrgMap = function(parentOrgSet) {
+
+        var parentOrgMap = {};
+        angular.forEach(parentOrgSet,function(parentOrg){
+            parentOrgMap[parentOrg] = 'X';
+        });
+        return parentOrgMap;
+    }
+
+    var checkIfOrgMatches = function(haku) {
+
+        var hakuOrganisaatioOids = haku.organisaatioOids;
+        var orgMatches = false;
+        var parentOrgMap = getParentOrgMap(parentOrgOids);
+
+        angular.forEach(hakuOrganisaatioOids,function(hakuOrganisaatioOid){
+
+
+            if(parentOrgMap[hakuOrganisaatioOid]) {
+                orgMatches = true;
+            }
+
+        });
+
+        return orgMatches;
+
+    };
+
+    var filterHakusWithOrgs = function(hakus) {
+
+        var filteredHakuArray = [];
+
+
+        angular.forEach(hakus,function(haku){
+
+            if (haku.organisaatioOids.length > 0) {
+
+                if (checkIfOrgMatches(haku)) {
+                    filteredHakuArray.push(haku);
+                }
+
+            } else {
+                filteredHakuArray.push(haku);
+            }
+
         });
 
 
-    }
+        return filteredHakuArray;
+    };
 
     var filterHakusWithAika = function(hakus) {
 
@@ -774,7 +856,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var hakuPromise = HakuService.getAllHakus();
 
     hakuPromise.then(function(hakuDatas) {
-        console.log('GOT HAKUS ', hakuDatas);
         $scope.model.hakus = [];
         angular.forEach(hakuDatas,function(haku){
 
@@ -797,7 +878,11 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         });
 
-        filterHakus(hakuDatas);
+        var filteredHakus = filterHakus(hakuDatas);
+
+        angular.forEach(filteredHakus,function(haku){
+            $scope.model.hakus.push(haku);
+        });
 
         if ($scope.model.hakukohde.hakuOid !== undefined) {
             $scope.model.hakuChanged();
