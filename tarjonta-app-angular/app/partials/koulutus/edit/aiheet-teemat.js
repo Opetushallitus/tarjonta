@@ -2,13 +2,15 @@
 var app = angular.module('AiheetJaTeematChooser', ['Koodisto','localisation']);
 
 app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
-	
+
+    $log = $log.getInstance("aiheetJaTeemat");
+
 	var locale = LocalisationService.getLocale();
-	
+
 	function comparator(a,b) {
 		return a.title.localeCompare(b.title);
 	}
-	
+
 	function resolveAiheet($scope, teema) {
 		Koodisto.getAlapuolisetKoodit(teema.uri, locale).then(function(aiheet){
 			for (var j in aiheet) {
@@ -25,11 +27,11 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 			}
 			teema.aiheet.sort(comparator);
 		});
-		
+
 	}
 
 	function controller($scope) {
-		
+
 		$scope.errors = {
         		required:false,
         		pristine:true,
@@ -37,13 +39,13 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
         }
 
 		$scope.teemat = [];
-		
+
 		function updateErrors() {
 			$scope.errors.required = $scope.model.length==0;
 			$scope.errors.dirty = true;
 			$scope.errors.pristine = false;
 		}
-		
+
 		$scope.toggle = function(auri, turi) {
 			var i = $scope.model.indexOf(auri);
 			if (i==-1) {
@@ -51,7 +53,7 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 			} else {
 				$scope.model.splice(i,1);
 			}
-			
+
 			for (var j in $scope.teemat) {
 				var t = $scope.teemat[j];
 				if (t.uri==turi) {
@@ -68,15 +70,15 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 			}
 			updateErrors();
 		}
-		
+
 		$scope.unselect = function(uri) {
 			var i = $scope.model.indexOf(uri);
 			if (i==-1) {
 				return;
 			}
-			
+
 			$scope.model.splice(i,1);
-			
+
 			for (var j in $scope.teemat) {
 				var t = $scope.teemat[j];
 				for (var j in t.aiheet) {
@@ -108,7 +110,7 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
                         updateErrors();
     		}
 	    );
-		
+
             return $scope;
 	}
 
@@ -125,7 +127,7 @@ app.directive('aiheetJaTeemat',function(LocalisationService, Koodisto, $log) {
 		scope: {
 			model: "=",
 			name: "@"
-		}		
+		}
 	};
-	
+
 });

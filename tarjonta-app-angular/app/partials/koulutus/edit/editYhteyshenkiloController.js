@@ -4,7 +4,11 @@
 
 var app = angular.module('app.edit.ctrl');
 
-app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', '$routeParams', function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams) {
+app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', '$routeParams', '$log',
+    function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams, $log) {
+
+        $log = $log.getInstance("EditYhteyshenkiloCtrl");
+        $log.debug("init");
 
         $scope.editYhModel = {data: []};
 

@@ -25,7 +25,8 @@ var app = angular.module('app.haku.edit.ctrl', []);
  */
 app.controller('HakuEditController',
         function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService, AuthService) {
-            $log.info("HakuEditController()", $scope);
+            $log = $log.getInstance("HakuEditController");
+            $log.info("initializing", $scope);
 
             var clearErrors = function() {
                 $scope.model.validationmsgs = [];
@@ -37,26 +38,26 @@ app.controller('HakuEditController',
              * Display form validation errors on screen
              */
             var reportFormValidationErrors = function(form) {
-                console.log("reportFormValidationErrors - form:::::", form);
+                $log.debug("reportFormValidationErrors - form:::::", form);
 
 //                    angular.forEach(form, function(value,name){
 //                      if(value.$invalid===true) {
 //                        var key = "error.validation." + name + "." + name;
-//                        console.log("k:" + key);
+//                        $log.debug("k:" + key);
 //                        $scope.model.validationmsgs.push({errorMessageKey:key});
 //                      }
 //
 //                    });
 
-                console.log("form", form);
+                $log.debug("form", form);
                 angular.forEach(form.$error, function(v, k) {
                     for (var i = 0; i < v.length; i++) {
                         if (v[i].$name) {
                             var key = "error.validation." + v[i].$name + "." + k;
-                            console.log("k:" + key);
+                            $log.debug("k:" + key);
                             $scope.model.validationmsgs.push({errorMessageKey: key});
                         } else {
-                            console.log("error found for field:", v[i], "key=", k)
+                            $log.debug("error found for field:", v[i], "key=", k)
                         }
                     }
                 });
@@ -133,12 +134,12 @@ app.controller('HakuEditController',
                     $log.info("doSave() - OK status = ", result.status);
 
                     // Clear validation messages
-                    console.log("validation messages:", $scope.model.validationmsgs);
-                    console.log("fc:", $scope.formControl)
+                    $log.debug("validation messages:", $scope.model.validationmsgs);
+                    $log.debug("fc:", $scope.formControl)
                     if ($scope.model.validationmsgs && $scope.model.validationmsgs.length > 0) {
                         $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
                     }
-                    console.log("validation messages after splice:", $scope.model.validationmsgs);
+                    $log.debug("validation messages after splice:", $scope.model.validationmsgs);
 
                     if (result.status == "OK") {
                         $scope.model.showError = false;

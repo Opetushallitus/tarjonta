@@ -92,6 +92,78 @@ angular.module('app',
 
 angular.module('app').value("globalConfig", window.CONFIG);
 
+angular.module('app').config(["$provide", function($provide) {
+
+        console.log("tarjontaApp.config - enhance logging...");
+
+        function formatDate(date) {
+            var result = "";
+            if (date) {
+                var d = date; // new Date();
+
+                result = result + ((d.getHours() < 10) ? "0" : "") + d.getHours();
+                result = result + ((d.getMinutes() < 10) ? "0" : "") + d.getMinutes();
+                result = result + ((d.getSeconds() < 10) ? "0" : "") + d.getSeconds();
+            }
+
+            return result;
+        }
+
+
+        $provide.decorator('$log', ["$delegate", function($delegate)
+            {
+                var _$log = (function($log)
+                {
+                    return {
+                        log: $log.log,
+                        info: $log.info,
+                        warn: $log.warn,
+                        debug: $log.debug,
+                        error: $log.error
+                    };
+                })($delegate);
+
+                var prepareLogFn = function(logFn, logLevel, logClass) {
+                    var enhanced = function() {
+                        var args = [].slice.call(arguments),
+                                now = new Date();
+
+                        // Prepend timestamp, level, class + actual result
+                        args[0] = formatDate(now) + " - " + logLevel + " - " + logClass + " :: " + args[0];
+
+                        // Call the original with the output prepended with formatted timestamp
+                        logFn.apply(null, args);
+                    };
+
+                    return enhanced;
+                };
+
+                // Default implementations, no class name
+                $delegate.log = prepareLogFn(_$log.log, "?", "?");
+                $delegate.info = prepareLogFn(_$log.info, "I", "?");
+                $delegate.warn = prepareLogFn(_$log.warn, "W", "?");
+                $delegate.debug = prepareLogFn(_$log.debug, "D", "?");
+                $delegate.error = prepareLogFn(_$log.error, "E", "?");
+
+                // Class spesific implementations
+                $delegate.getInstance = function(logClass) {
+                    return {
+                        log : prepareLogFn(_$log.log, "?", logClass),
+                        info : prepareLogFn(_$log.info, "I", logClass),
+                        warn : prepareLogFn(_$log.warn, "W", logClass),
+                        debug : prepareLogFn(_$log.debug, "D", logClass),
+                        error : prepareLogFn(_$log.error, "E", logClass)
+                    }
+                };
+
+                return $delegate;
+            }]);
+
+        console.log("tarjontaApp.config - enhance logging... done.");
+
+}]);
+
+
 angular.module('app').config(['$routeProvider', function($routeProvider) {
 
         $routeProvider
@@ -225,7 +297,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         if ($route.current.params.id !== "new") {
                             var deferredPermission = $q.defer();
                             Hakukohde.get({oid: $route.current.params.id}, function(data) {
-                                console.log("GOT HAKUKOHDE DATA: ", data);
+                                $log.debug("GOT HAKUKOHDE DATA: ", data);
 
 
 
@@ -234,7 +306,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                 //deferredPermission.resolve(canEditVar);
                                 canEditVar.then(function(permission) {
 
-                                    console.log('GOT PERMISSION DATA ', permission);
+                                    $log.debug('GOT PERMISSION DATA ', permission);
                                     deferredPermission.resolve(permission);
 
                                 });
@@ -260,9 +332,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
 
                         if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
-                            console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
+                            $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
                             var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
-                            console.log('CREATE VAR : ', canCreateVar);
+                            $log.debug('CREATE VAR : ', canCreateVar);
                             return canCreateVar;
                         } else {
                             return undefined;
@@ -333,7 +405,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             if ($route.current.params.id !== "new") {
                                 var deferredPermission = $q.defer();
                                 Hakukohde.get({oid: $route.current.params.id}, function(data) {
-                                    console.log("GOT HAKUKOHDE DATA: ", data);
+                                    $log.debug("GOT HAKUKOHDE DATA: ", data);
 
 
 
@@ -342,7 +414,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                     //deferredPermission.resolve(canEditVar);
                                     canEditVar.then(function(permission) {
 
-                                        console.log('GOT PERMISSION DATA ', permission);
+                                        $log.debug('GOT PERMISSION DATA ', permission);
                                         deferredPermission.resolve(permission);
 
                                     });
@@ -368,9 +440,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             }
 
                             if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
-                                console.log('CHECKING FOR CREATE : ', selectedTarjoajaOids);
+                                $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
                                 var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
-                                console.log('CREATE VAR : ', canCreateVar);
+                                $log.debug('CREATE VAR : ', canCreateVar);
                                 return canCreateVar;
                             } else {
                                 return undefined;
@@ -523,18 +595,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeParams', '$log', 'PermissionService',
     function($scope, $route, $routeParams, $log, PermissionService) {
 
-        $log.debug("app.AppRoutingCtrl()");
+        $log = $log.getInstance("AppRoutingCtrl");
+
+        $log.debug("init");
 
         $scope.count = 0;
 
-
         PermissionService.permissionResource().authorize({}, function(response) {
-            console.log("Authorization check : " + response.result);
+            $log.debug("Authorization check : " + response.result);
         });
 
-
         var render = function() {
-            $log.debug("app.AppRoutingCtrl.render()");
+            $log.debug("render()");
 
             var renderAction = $route.current.action;
             var renderPath = renderAction ? renderAction.split(".") : [];
@@ -554,7 +626,7 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
         $scope.$on(
                 "$routeChangeSuccess",
                 function($currentRoute, $previousRoute) {
-                    $log.debug("app.AppRoutingCtrl.$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
+                    $log.debug("$routeChangeSuccess : from, to = ", $currentRoute, $previousRoute);
                     render();
                 }
         );

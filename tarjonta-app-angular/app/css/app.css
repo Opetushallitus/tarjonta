@@ -31,6 +31,10 @@
     float:left;
 }
 
+.margin-left {
+    margin-left:20px;
+}
+
 .float-right {
     float:right;
 }

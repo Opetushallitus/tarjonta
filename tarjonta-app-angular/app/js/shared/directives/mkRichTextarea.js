@@ -18,8 +18,8 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     		throw new Error("mkRichTextarea.model must be a non-array object");
     	}
     	
-    	$scope.isDisabled = function() {
-    		return $scope.disabled()===true;
+    	$scope._isDisabled = function() {
+    		return $scope.isDisabled()===true;
     	}
 
     	$scope.langs = [];
@@ -87,7 +87,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     		updateLangs();
     	},false);
 
-    	$scope.$watch("disabled", function(nv, ov){
+    	$scope.$watch("isDisabled", function(nv, ov){
     		//console.log("disabled = ",$scope.disabled());
     		updateLangs();
     	});
@@ -102,7 +102,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         scope: {
             model: "=",  // map jossa kieliuri -> teksti, esim. {kieli_fi: "Suomeksi", kieli_sv: "På svenska"}
         	max: "@",	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
-        	disabled: "&" // disablointi
+        	isDisabled: "&" // disablointi
         }
     }
 
