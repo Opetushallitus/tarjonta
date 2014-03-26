@@ -35,6 +35,8 @@ var app = angular.module('localisation', ['ngResource', 'config']);
  */
 app.factory('Localisations', function($log, $resource, Config) {
 
+    $log = $log.getInstance("Localisations");
+
     var uri = Config.env.tarjontaLocalisationRestUrl;
     $log.info("Localisations() - uri = ", uri);
 
@@ -76,6 +78,9 @@ app.factory('Localisations', function($log, $resource, Config) {
  * </pre>
  */
 app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationService) {
+
+        $log = $log.getInstance("<tt>");
+
         return {
             restrict: 'A',
             replace: true,
@@ -138,8 +143,11 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
  * LocalisationService.tl("this.is.the.key2", "fi", ["array", "of", "values"])  == localized value in given locale
  * </pre>
  */
-app.service('LocalisationService', function($log, $q, $http, $interval, Localisations, Config, AuthService) {
-    $log.log("LocalisationService()");
+app.service('LocalisationService', function($log, Localisations, Config, AuthService, $injector) {
+
+    $log = $log.getInstance("LocalisationService");
+
+    $log.debug("LocalisationService()");
 
     // Singleton state, default current locale for the user
     this.locale = AuthService.getLanguage();
@@ -188,9 +196,10 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         $log.info("updateAccessInformation, ids=" + ids, ids);
         if (angular.isDefined(ids)) {
             Localisations.updateAccessed({ id: "access" }, ids, function () {
-                $log.info("success!");
+                $log.info("  updateAccessInformation success!");
             }, function () {
-                $log.info("failed!");
+                $log.info("  updateAccessInformation FAILED");
+                this.disableSystemErrorDialog();
             });
         }
     }
@@ -336,9 +345,12 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
                 Localisations.save(newEntry,
                         function(data) {
                             $log.info("  created new translation to server side! data = ", data);
+                            // Save created translation key to local cache
+                            self.putCachedLocalisation(key, l, data);
                         },
                         function(data, status, headers, config) {
                             $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
+                            self.disableSystemErrorDialog();
                         });
 
                 // Create temporary placeholder for next requests
@@ -349,6 +361,20 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         return originalText;
     };
 
+    /**
+     * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
+     *
+     * @returns {undefined}
+     */
+    this.disableSystemErrorDialog = function() {
+        var loadingService = $injector.get('loadingService');
+        if (loadingService) {
+            $log.info("  disable system error dialog.");
+            loadingService.onErrorHandled();
+        } else {
+            $log.warn("  FAILED TO disable system error dialog. Sorry.");
+        }
+    };
 
     /**
      * Get list of currently loaded translations.
@@ -386,7 +412,7 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         // Use the new map
         this.localisationMapByLocaleAndKey = tmp;
 
-        $log.info("===> result ", this.localisationMapByLocaleAndKey);
+        $log.debug("===> result ", this.localisationMapByLocaleAndKey);
         return this.localisationMapByLocaleAndKey;
     };
 
@@ -444,6 +470,8 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
  * An easy way to bind "t" function to global scope. (now attached in "body")
  */
 app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $interval, Config) {
+    $log = $log.getInstance("LocalisationCtrl");
+
     $log.info("LocalisationCtrl()");
 
     $scope.CONFIG = Config;
