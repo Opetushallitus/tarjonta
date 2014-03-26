@@ -27,7 +27,7 @@
         <th tt="koulutus.review.perustiedot.koulutus">Koulutuksen perustiedot</th>
         <td colspan="2">
             {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
-            <i>{{model.koulutus.koulutuskoodi.nimi}}</i>
+            <i>{{model.koulutus.koulutuskoodi.arvo}}</i>
         </td>
     </tr>
 
@@ -103,6 +103,15 @@
         <th tt="koulutus.review.perustiedot.opintojenLaajuus">Laajuus</th>
         <td colspan="2">
             {{ model.koulutus.opintojenLaajuus.meta[lang.koodi_uri].nimi}} {{model.koulutus.opintojenLaajuusyksikko.meta[lang.koodi_uri].nimi}}
+        </td>
+    </tr>
+    
+     <!-- kandidaatin koulutuskoodi (optional) -->
+    <tr>
+        <th tt="koulutus.review.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
+        <td colspan="2">
+            {{model.koulutus.kandidaatinKoulutuskoodi.meta[lang.koodi_uri].nimi}}
+            <i>{{model.koulutus.kandidaatinKoulutuskoodi.arvo}}</i>
         </td>
     </tr>
 

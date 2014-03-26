@@ -42,10 +42,10 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('debounce'));
     beforeEach(module('ngRoute'));
 
-
     beforeEach(function() {
         module(function($provide) {
             $provide.value('Config', CONFIG_ENV_MOCK);
+            $provide.value('targetFilters', []);
         });
     });
 
@@ -53,16 +53,24 @@ describe('Edit koulutus testeja', function() {
     beforeEach(inject(function($rootScope) {
         $scope = $rootScope.$new();
         $modalInstance = {
-            $scope: $scope,
+            $scope : $scope,
             templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-            controller: 'SelectTutkintoOhjelmaController'
+            controller: 'SelectTutkintoOhjelmaController',
+            targetFilters: function() {
+                return [];
+            }
         };
     }));
 
     it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
-            $scope: $scope,
-            $modalInstance: $modalInstance
+             $scope : $scope,
+            $modalInstance: $modalInstance,
+            resolve: {
+                targetFilters: function() {
+                    return [];
+                }
+            }
 
         });
         expect($scope.stoModel.hakutulokset).toEqual([]);
@@ -73,8 +81,11 @@ describe('Edit koulutus testeja', function() {
 
     it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
-            $scope: $scope,
-            $modalInstance: $modalInstance
+            $scope : $scope,
+            $modalInstance: $modalInstance,
+            targetFilters: function() {
+                return [];
+            }
         });
 
         $scope.stoModel.hakulause = 'AMK';

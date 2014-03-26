@@ -217,12 +217,15 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 	          function(koulutusasteKoodit){
 	              //valitun organisaation organisaatiotyyppiin liittyvät koulutusastekoodit on nyt resolvattu?
 	              console.log("koulutusastekoodit:", koulutusasteKoodit);
-	              $scope.model.koulutuasteet=koulutusasteKoodit; //used by selectTutkintohjelma dialog!!
-	              
+
 	              var modalInstance = $modal.open({
-	                scope: $scope,
 	                templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
-	                controller: 'SelectTutkintoOhjelmaController'
+	                controller: 'SelectTutkintoOhjelmaController',
+                        resolve: {
+                            targetFilters: function() {
+                                return koulutusasteKoodit;
+                            }
+                        }
 	              });
 	              
 	              modalInstance.result.then(function(selectedItem) {

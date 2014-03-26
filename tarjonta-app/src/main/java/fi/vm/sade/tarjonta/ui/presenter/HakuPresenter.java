@@ -78,7 +78,7 @@ public class HakuPresenter extends CommonPresenter<HakuViewModel> {
     private EditHakuForm editHaku;
     private HakuViewModel hakuModel;
     private HakuRootView _rootView;
-    
+
     public static final String COLUMN_A = "Kategoriat";
 
     /**
@@ -374,13 +374,13 @@ public class HakuPresenter extends CommonPresenter<HakuViewModel> {
 
     public void selectHaku(HakuViewModel haku) {
         selectedhaut.add(haku);
-        this.hakuList.toggleRemoveButton(getPermission().userCanDeleteHaku());
+        this.hakuList.toggleRemoveButton(getPermission().userCanDeleteHaku(haku.getHakuOid()));
     }
 
     public void unSelectHaku(HakuViewModel haku) {
         LOG.info("unSelectHaku({})", haku);
         selectedhaut.remove(haku);
-        this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty() && getPermission().userCanDeleteHaku());
+        this.hakuList.toggleRemoveButton(!selectedhaut.isEmpty() && getPermission().userCanDeleteHaku(haku.getHakuOid()));
     }
 
     /**
@@ -470,11 +470,11 @@ public class HakuPresenter extends CommonPresenter<HakuViewModel> {
     public HakuViewModel getModel() {
         return hakuModel;
     }
-    
+
     @Override
     PublishingService getPublishingService() {
         return publishingService;
     }
 
-    
+
 }

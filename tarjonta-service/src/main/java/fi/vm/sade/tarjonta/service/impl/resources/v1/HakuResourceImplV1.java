@@ -299,7 +299,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
         LOG.info("deleteHaku() oid={}", oid);
 
-        permissionChecker.checkRemoveHaku();
+        permissionChecker.checkRemoveHaku(oid);
 
         ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
         updateRightsInformation(result, null);
@@ -555,7 +555,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      */
     private void updateRightsInformation(ResultV1RDTO result, HakuV1RDTO hakuDto) {
         try {
-            permissionChecker.checkUpdateHaku("TODO ADD ORG OID HERE FROM HAKU DTO");
+            permissionChecker.checkUpdateHaku(hakuDto.getOid());
             result.getAccessRights().put("update", true);
         } catch (Throwable ex) {
             result.getAccessRights().put("update", false);
@@ -569,7 +569,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         try {
-            permissionChecker.checkRemoveHaku();
+            permissionChecker.checkRemoveHaku(hakuDto.getOid());
             result.getAccessRights().put("delete", true);
         } catch (Throwable ex) {
             result.getAccessRights().put("delete", false);
