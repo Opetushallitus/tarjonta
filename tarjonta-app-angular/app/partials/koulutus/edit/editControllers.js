@@ -255,7 +255,7 @@ app.controller('BaseEditController',
 
                         if (authResponse.status !== 'OK') {
                             //not authenticated
-                            $scope.controlFormMessages($scope.uiModel, "ERROR", "AUTH");
+                            $scope.controlFormMessages($scope.uiModel, "ERROR", ["koulutus.error.auth"]);
                             return;
                         }
 
