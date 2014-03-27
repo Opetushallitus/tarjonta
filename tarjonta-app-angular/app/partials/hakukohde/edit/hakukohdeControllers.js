@@ -64,6 +64,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.koulutusnimet = [];
 
+    $scope.model.organisaatioNimet = [];
+
     $scope.model.validationmsgs = [];
 
     var deferredOsoite = $q.defer();
@@ -94,6 +96,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var parentOrgOids = new buckets.Set();
 
+    var orgSet = new buckets.Set();
 
     var julkaistuVal = "JULKAISTU";
 
@@ -561,18 +564,50 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                 getTarjoajaParentPaths($scope.model.hakukohde.tarjoajaOids);
 
+                var orgQueryPromises = [];
 
-                var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
+                angular.forEach($scope.model.hakukohde.tarjoajaOids,function(tarjoajaOid){
+
+                    orgQueryPromises.push(OrganisaatioService.byOid(tarjoajaOid));
+
+                });
+
+                $q.all(orgQueryPromises).then(function(orgs){
+
+                    var counter = 0;
+
+                    angular.forEach(orgs,function(data){
+
+                        orgSet.add(data.nimi);
+
+                        if (counter === 0) {
+                            var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
+
+                            if (wasHakutoimistoFound) {
+                                deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
+                            } else {
+                                tryGetParentsApplicationOffice(data);
+                            }
+                        }
+
+                        counter++;
+
+                    });
+                    $scope.model.organisaatioNimet = orgSet.toArray();
+
+                    console.log('ORGANISAATIO NIMET : ', $scope.model.organisaatioNimet);
+                });
+
+
+
+                /*var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
                 //When organisaatio is loaded set the liitteiden toimitusosoite on the model
                 orgPromise.then(function(data){
 
-                    console.log('GOT OSOITE DATA : ', data);
-
-
+                    console.log('ORGANISAATIO DATA : ', data);
                     var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
 
                     if (wasHakutoimistoFound) {
-                        console.log('HAKUTOIMISTO WAS FOUND');
                         deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                     } else {
                         tryGetParentsApplicationOffice(data);
@@ -580,7 +615,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 
 
-                });
+                });*/
 
 
 
@@ -1268,6 +1303,38 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     		}
     		ret = ret + "<b>" + $scope.model.koulutusnimet[i] + "</b>";
     	}
+
+        if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0)  {
+
+            var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
+
+            ret  = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
+
+        } else {
+            var counter = 0;
+            var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
+            angular.forEach($scope.model.organisaatioNimet,function(organisaatioNimi) {
+
+
+                if (counter === 0) {
+
+
+                    ret  = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
+
+
+                } else {
+
+
+//                    ret = ret + ((counter===$scope.model.organisaatioNimet.length-1) ? " " : ", ");
+
+                    ret = ret + ", <b>" + organisaatioNimi + "</b>";
+
+                }
+                counter++;
+
+            });
+
+        }
     	
     	return ret;
     }
