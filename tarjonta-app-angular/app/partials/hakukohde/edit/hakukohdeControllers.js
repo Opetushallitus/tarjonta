@@ -46,8 +46,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     }
 
 
-
-
     $scope.model.hakukohdeOppilaitosTyyppis = [];
 
     var koulutusKausiUri;
@@ -77,6 +75,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.model.hakus = [];
 
     $scope.model.hakuaikas = [];
+
+    $scope.model.modifiedObj = {};
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
@@ -166,6 +166,17 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         });
 
         return retval;
+
+    }
+
+
+    var updateTilaModel = function(hakukohde) {
+
+        if (hakukohde) {
+            $scope.model.modifiedObj.modifiedBy = hakukohde.modifiedBy;
+            $scope.model.modifiedObj.modified = hakukohde.modified;
+            $scope.model.modifiedObj.tila = hakukohde.tila;
+        }
 
     }
 
@@ -774,6 +785,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         haeTarjoajaOppilaitosTyypit();
         checkJatkaBtn();
         checkIsCopy();
+        updateTilaModel($scope.model.hakukohde);
     };
 
     init();
@@ -807,7 +819,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             });
         });
 
-    }
+    };
+
 
     var getParentOrgMap = function(parentOrgSet) {
 
@@ -1114,7 +1127,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.soraKuvaukset = {};
             }*/
-
         if ($scope.model.hakukohde.oid === undefined) {
 
              console.log('SAVE VALMIS MODEL : ', $scope.model.hakukohde);
@@ -1124,6 +1136,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                    $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
+                   updateTilaModel($scope.model.hakukohde);
                    showSuccess();
                    checkIfSavingCopy();
                } else {
@@ -1153,6 +1166,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    updateTilaModel($scope.model.hakukohde);
                     showSuccess();
                 } else {
                     $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -1201,7 +1215,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
                 $scope.model.hakukohde.soraKuvaukset = {};
             }  */
-        console.log('SAVING HAKUKOHDE LUONNOS : ', $scope.model.hakukohde.oid);
         //Check if hakukohde is copy, then remove oid and save hakukohde as new
         checkIsCopy(luonnosVal);
         if ($scope.model.hakukohde.oid === undefined) {
@@ -1214,6 +1227,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                    $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                    $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
+                   updateTilaModel($scope.model.hakukohde);
                    showSuccess();
                    checkIfSavingCopy();
                } else {
@@ -1241,6 +1255,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                updateTilaModel($scope.model.hakukohde);
                 showSuccess();
                 } else {
                     $scope.model.hakukohde = new Hakukohde(hakukohde.result);
