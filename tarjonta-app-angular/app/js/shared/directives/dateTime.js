@@ -202,7 +202,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     			tm = $scope.model.getMinutes();
     		}
     		
-    		console.log("WAS dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm);
+    		//console.log("WAS dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm);
     		
     		var isnull = true;
     		
@@ -213,7 +213,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     			}
     			
     			dd = ds.length>0 ? ds[0] : dd;
-    			dm = ds.length>1 ? ds[1]-1 : dd;
+    			dm = ds.length>1 && ds[1]>0 ? ds[1]-1 : dm;
     			dy = ds.length>2 ? ds[2] : thisyear;
     			
     			if (dd>31 || dd<1 || dm>11 || dm<0) {
@@ -248,7 +248,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         		nd.setHours(th);
         		nd.setMinutes(tm);
         		
-        		console.log("ISN dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm);
+        		//console.log("ISN dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm);
 
         		if (!isNaN(nd.getTime())) {
     				omitUpdate = true;
