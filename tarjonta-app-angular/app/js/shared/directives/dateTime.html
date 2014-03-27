@@ -2,7 +2,7 @@
 
     <input class="date" type="text" maxlength="10"
         placeholder="{{prompts.date}}"
-        ng-pattern="/\d?\d\.\d?\d(\.\d?\d?\d?\d)?/"
+        ng-pattern="/0*\d?\d\.0*\d?\d(\.0*\d?\d?\d?\d)?/"
         ng-model="date"
         ng-required="isRequired()"
         ng-disabled="isDisabled()"
@@ -11,7 +11,7 @@
         ng-blur="onFocusOut(false)"/>
     <input class="time" type="text" maxlength="5"
         placeholder="{{prompts.time}}"
-        ng-pattern="/\d?\d(:\d?\d)?/"
+        ng-pattern="/0*\d?\d(:0*\d?\d)?/"
         ng-model="time"
         ng-show="timestamp"
         ng-required="timestamp && isRequired()"
