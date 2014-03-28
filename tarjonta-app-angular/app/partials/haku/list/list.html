@@ -104,9 +104,8 @@
 
 		<tr ng-repeat="haku in model.hakus| orderBy:predicate:reverse">
 			<td><input type="checkbox" ng-model="haku.selected"> <span
-				class="dropdown"> <a class="dropdown-toggle"> <img
-						src="img/icon-treetable-button.png">
-				</a>
+				class="dropdown"> <a class="dropdown-toggle" ng-click="initMenu(haku)"> <img
+						src="img/icon-treetable-button.png"></a>
 					<ul class="dropdown-menu">
 						<li ng-repeat="action in haku.actions"><a
 							ng-click="action.action()">{{action.name}}</a></li>

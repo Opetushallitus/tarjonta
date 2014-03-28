@@ -1,8 +1,9 @@
 /**
  * All methods return promise, when fulfilled the actual result will be stored inside promise under key "data"
  */
-angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).factory('PermissionService', function($resource, $log, $q, Config, AuthService, TarjontaService) {
+angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).factory('PermissionService', function($resource, $q, Config, AuthService, TarjontaService, HakuV1) {
 
+  var ophOid = Config.env['root.organisaatio.oid'];
     var resolveData = function(promise) {
         if (promise === undefined) {
             throw "need a promise";
@@ -43,7 +44,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
 
 
     var _canEditKoulutusMulti = function(koulutusOid) {
-        console.log("canedit hakukohde multi");
+        console.log("can edit hakukohde multi");
         var deferred = $q.defer();
 
         promises = [];
@@ -253,7 +254,55 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
         return deferred.promise;
     };
 
+    
+    function canUpdateHaku(){
+      return function(org){
+        return AuthService.updateOrg("HAKUJENHALLINTA", org);
+      };
+    }
 
+    function canCRUDHaku(){
+      return function(org){
+        return AuthService.crudOrg("HAKUJENHALLINTA", org);
+      };
+    }
+
+    function hasHakuPermission(hakuOid, permissionf){
+//      console.log("has haku permission, f:", permissionf);
+      var defer = $q.defer();
+      
+      //hae haku
+      HakuV1.get({oid:hakuOid}).$promise.then(function(haku){
+//        console.log("haku:", haku.result);
+        var haku = haku.result;
+        var orgs = haku.organisaatioOids;
+        
+        if(orgs.length==0) {
+//          console.log("speciaalikeissi");
+          //organisaatiota ei kerrottu, pitää olla oph?
+          defer.resolve(permissionf(ophOid));
+        } else {
+
+          // onko oikeus haun johonkin organisaatioon
+          var promises=[];
+          var hasAccess = {access:false};
+
+          function orAccess(result){
+//            console.log("oraccess");
+            hasAccess.sccess=hasAccess.access || result;
+          }
+        
+          for(var i=0;i<orgs.length;i++){
+            promises.push(permissionf(orgs[i]).then(orAccess));
+          }
+        defer.resolve($q.all(promises).then($q.when(hasAccess.access)));
+        }
+
+      });
+      
+      return defer.promise;
+    }
+    
     return {
         /**
          * funktiot jotka ottavat organisaatio oidin ovat yhteisiä molemmille (hk + k)!:
@@ -342,9 +391,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
             canPreview: function(orgOid) {
                 // TODO
                 console.log("TODO hakukohde.canPreview", orgOid);
-                var defer = $q.defer();
-                defer.resolve(true);
-                return defer.promise;
+                return $q.when(true);
             },
             /**
              * Saako käyttäjä muokata hakukohdetta
@@ -370,6 +417,27 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta']).fact
                 var hakukohdeoidit = angular.isArray(hakukohdeOid) ? hakukohdeOid : [hakukohdeOid];
                 return _canDeleteHakukohdeMulti(hakukohdeoidit);
             },
+        },
+        
+        haku: {
+          canCreate:function(){
+            //tarkista rooli
+            console.log("can create haku");
+            return $q.when(true);
+          },
+
+          /**
+           * Onko käyttäjällä oikeus muokata hakua.
+           */
+          canEdit:function(hakuOid){
+            console.log("canEdit", hakuOid);
+            return hasHakuPermission(hakuOid, canUpdateHaku());
+          },
+
+          canDelete:function(hakuOid){
+            return hasHakuPermission(hakuOid, canCRUDHaku());
+          }
+
         },
         permissionResource: function() {
             return $resource(Config.env.tarjontaRestUrlPrefix + "permission/authorize", {}, {

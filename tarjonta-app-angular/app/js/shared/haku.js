@@ -135,18 +135,12 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
    * palauttaa promisen hakutulokseen, resolvaa nimen valmiiksi
    */
   var mget = function(oids){
-    console.log("multiget:", oids);
-      var defer = $q.defer();
-      HakuV1.mget({oid:oids}).$promise.then(function(haut){
-        console.log("haut:", haut.result);
+      return HakuV1.mget({oid:oids}).$promise.then(function(haut){
         angular.forEach(haut.result, function(haku, key){
           haku.nimi=resolveNimi(haku);
         });
-        console.log("resolving haut");
-        defer.resolve(haut.result);
+        return haut.result;
       });
-
-      return defer.promise;
    };
 
 
@@ -155,27 +149,9 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
      * Hae hakuja määritellyillä hakuehdoilla
      */
     search:function(parameters){
-      console.log("Searching with: ", parameters);
-
-
-      var defer = $q.defer();
-
       return HakuV1.search(parameters).$promise.then(function(data){
-//        var haut=[];
         return mget(data.result);
-//        for(var i=0;i<data.result.length;i++) {
-//          promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
-//            var haku=hakuresult.result;
-//            haut.push(haku);
-//            haku.nimi= resolveNimi(haku);
-//          }));
-//        }
-//        $q.all(promises).then(function(){
-//          defer.resolve(haut);
-//        });
       });
-//
-//      return defer.promise;
     }
 
 
