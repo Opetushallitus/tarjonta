@@ -100,11 +100,11 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         KoulutusKorkeakouluV1RDTO dto = getKoulutus();
 
         //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(2);
+        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
         //the calls of the OidServices must be in correct order!
 
-        permissionChecker.checkCreateKoulutus(ORGANISAATIO_OID);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISAATIO_OID);
+        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
 
         /* 
          * KOODISTO DATA CALLS IN CORRECT CALL ORDER
