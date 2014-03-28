@@ -50,8 +50,8 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -110,7 +110,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     protected static final Logger log = LoggerFactory.getLogger(TarjontaPublicServiceImpl.class);
     @Autowired
-    private HakuBusinessService businessService;
+    private HakuService businessService;
     @Autowired
     private HakuDAO hakuDao;
     @Autowired
@@ -339,14 +339,14 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     /**
      * @return the businessService
      */
-    public HakuBusinessService getBusinessService() {
+    public HakuService getBusinessService() {
         return businessService;
     }
 
     /**
      * @param businessService the businessService to setv
      */
-    public void setBusinessService(HakuBusinessService businessService) {
+    public void setBusinessService(HakuService businessService) {
         this.businessService = businessService;
     }
 
