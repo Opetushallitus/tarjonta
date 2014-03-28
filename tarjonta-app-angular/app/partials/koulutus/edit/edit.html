@@ -24,7 +24,9 @@
 
     <display-controls model="controlModel.formControls" display="header"></display-controls>
 
-    <form name="koulutusForm" >
+    <form name="koulutusForm">
+        <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
+        <button ng-click="" class="hidden"></button>
         <div class="body" ng-include="resultPageUri"></div>
     </form>
 
