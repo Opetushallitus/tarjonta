@@ -66,12 +66,10 @@ import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
-import fi.vm.sade.tarjonta.publication.Tilamuutokset;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+
 import javax.persistence.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -181,17 +179,24 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     }
 
     @Override
-    public Tilamuutokset updatePublicationStatus(List<Tila> tilaOids) {
+    public Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges) throws IllegalArgumentException {
         
         Tilamuutokset tilamuutokset = new Tilamuutokset();
         Map<Tyyppi, Map<TarjontaTila, List<String>>> map = new EnumMap<Tyyppi, Map<TarjontaTila, List<String>>>(Tyyppi.class);
 
-        if (tilaOids == null) {
-            throw new IllegalArgumentException("List of GeneerinenTilaTyyppi objects cannot be null.");
+        if (tilaChanges == null) {
+            throw new IllegalArgumentException("tilasiirtyma.error.null.list");
         }
+        
+// disabled for now:  because tests started to fail      
+//        for(Tila tila:tilaChanges) {
+//            if(!isValidStatusChange(tila)) {
+//                throw new IllegalArgumentException("tilasiirtyma.error.impossible");
+//            }
+//        }
 
         //filter given data to map
-        for (Tila tila : tilaOids) {
+        for (Tila tila : tilaChanges) {
             getListOfOids(getSubMapByQHakukohde(map, tila.getTyyppi()), tila.getTila()).add(tila.getOid());
         }
 

@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.publication;
+package fi.vm.sade.tarjonta.shared.types;
 
 import java.util.TreeSet;
 

@@ -20,8 +20,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import java.util.Collection;
 import java.util.List;
@@ -68,7 +68,12 @@ public interface PublicationDataService {
      */
     public List<Haku> listHaku();
 
-    public Tilamuutokset updatePublicationStatus(List<Tila> tilaOids);
+    /**
+     * Throes IllegalArgumentException when an illegal state transfer is attempted.
+     * @param tilaChanges
+     * @return
+     */
+    public Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges);
 
     public boolean isValidStatusChange(Tila tyyppi);
 

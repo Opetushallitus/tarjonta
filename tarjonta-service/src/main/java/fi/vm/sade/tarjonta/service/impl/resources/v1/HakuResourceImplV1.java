@@ -20,6 +20,9 @@ import javax.ws.rs.core.UriInfo;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
@@ -36,6 +39,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,9 +52,10 @@ import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 /**
  * REST API V1 implementation for Haku.
@@ -80,6 +85,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Autowired
     private KoodistoValidator koodistoValidator;
+    
+    @Autowired(required = true)
+    private PublicationDataService publication;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -360,37 +368,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<String> setHakuState(String oid, String state) {
-        LOG.info("setHakuState({}, {})", oid, state);
+    public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila) {
+        LOG.info("setHakuState({}, {})", oid, tila);
 
         permissionChecker.checkUpdateHaku(oid);
-
-        ResultV1RDTO<String> result = new ResultV1RDTO<String>();
-        result.setResult(state);
-
+        
+        Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
+        Tilamuutokset tm = null;
         try {
-            // Validate state
-            TarjontaTila tila = TarjontaTila.valueOf(state);
-            if (tila == null) {
-                result.addError(ErrorV1RDTO.createValidationError(null, "haku.state.invalid", oid));
-                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-                return result;
-            }
-
-            // Get haku
-            Haku h = hakuDAO.findByOid(oid);
-            if (h == null) {
-                result.addError(ErrorV1RDTO.createValidationError(null, "haku.not.exists", oid));
-                result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-                return result;
-            }
-
-            hakuDAO.update(h);
-        } catch (Throwable ex) {
-            createSystemErrorFromException(ex, result);
+            tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+        } catch (IllegalArgumentException iae) {
+            ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+            r.addError(ErrorV1RDTO.createValidationError(null,  iae.getMessage()));
+            return r;
         }
 
-        return result;
+        return new ResultV1RDTO<Tilamuutokset>(tm);
     }
 
     /**
