@@ -30,6 +30,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import java.util.List;
 import org.powermock.reflect.Whitebox;
 import static org.easymock.EasyMock.createMock;
@@ -70,6 +71,8 @@ public class OppilaitosKoodiRelationsTest {
 
     @Before
     public void setUp() {
+        KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI = "koulutustyyppi";
+
         orgOph = new OrganisaatioDTO();
         orgOph.setOid(OPH_OID);
         orgOph.setParentOidPath("");
@@ -101,7 +104,6 @@ public class OppilaitosKoodiRelationsTest {
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
         Whitebox.setInternalState(instance, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
         Whitebox.setInternalState(instance, "rootOphOid", OPH_OID);
-
     }
 
     @Test
@@ -139,7 +141,7 @@ public class OppilaitosKoodiRelationsTest {
     @Test
     public void testIsKoulutusAllowedForOrganisationSearchSuccessQuick() {
         expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(2);
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, null, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
+        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
 
         replay(tarjontaKoodistoHelperMock);
         replay(organisaatioServiceMock);
@@ -160,7 +162,7 @@ public class OppilaitosKoodiRelationsTest {
         expect(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID)).andReturn(orgKoulutustoimija).times(1);
         expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(new OrganisaatioOidListType());
 
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, null, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(INVALID_KOODI)).times(2);
+        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(INVALID_KOODI)).times(2);
 
         replay(tarjontaKoodistoHelperMock);
         replay(organisaatioServiceMock);
@@ -181,7 +183,7 @@ public class OppilaitosKoodiRelationsTest {
         expect(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID)).andReturn(orgKoulutustoimija).times(1);
         expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(new OrganisaatioOidListType());
 
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, null, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI)).times(2);
+        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI)).times(2);
 
         replay(tarjontaKoodistoHelperMock);
         replay(organisaatioServiceMock);
@@ -204,7 +206,7 @@ public class OppilaitosKoodiRelationsTest {
 
         expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(1);;
 
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, null, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
+        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
 
         replay(tarjontaKoodistoHelperMock);
         replay(organisaatioServiceMock);
@@ -226,7 +228,7 @@ public class OppilaitosKoodiRelationsTest {
         expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(new OrganisaatioOidListType());
         expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(1);
 
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, null, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
+        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
         replay(tarjontaKoodistoHelperMock);
         replay(organisaatioServiceMock);
 

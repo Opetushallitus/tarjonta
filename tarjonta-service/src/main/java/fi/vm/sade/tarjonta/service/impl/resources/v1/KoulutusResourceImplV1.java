@@ -35,6 +35,9 @@ import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
@@ -77,10 +80,10 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -154,12 +157,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired(required = true)
     private OppilaitosKoodiRelations oppilaitosKoodiRelations;
+    
+    @Autowired(required = true)
+    private PublicationDataService publication;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta, String lang) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
 
-        ResultV1RDTO result = new ResultV1RDTO();
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
 
         lang = checkArgsLangCode(lang);
@@ -188,7 +194,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
         }
 
-        ResultV1RDTO result = new ResultV1RDTO(null, ResultStatus.ERROR);
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>(null, ResultStatus.ERROR);
         result.addError(ErrorV1RDTO.createSystemError(new IllegalArgumentException(), "type_unknown", dto.getClass() + " not handled"));
 
         return result;
@@ -206,7 +212,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         validateRestObjectKorkeakouluDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
-        ResultV1RDTO result = new ResultV1RDTO();
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         if (validateKoulutus.isEmpty()) {
 
             if (dto.getOid() != null && dto.getOid().length() > 0) {
@@ -254,9 +260,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO deleteByOid(final String komotoOid) {
+    public ResultV1RDTO<KoulutusV1RDTO> deleteByOid(final String komotoOid) {
 
-        ResultV1RDTO result = new ResultV1RDTO();
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(komotoOid);
         KoulutusValidator.validateKoulutusUpdate(komoto, result);
 
@@ -460,25 +466,20 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Override
     @Transactional(readOnly = false)
-    public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
-        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
-        ResultV1RDTO<String> result = new ResultV1RDTO<String>();
-        KoulutusValidator.validateKoulutusUpdate(komoto, result);
-        if (result.hasErrors()) {
-            return result;
-        }
-
-        if (!komoto.getTila().acceptsTransitionTo(tila)) {
-            return new ResultV1RDTO<String>(komoto.getTila().toString());
-        }
-        komoto.setTila(tila);
-
+    public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila) {
         permissionChecker.checkUpdateKoulutusByKoulutusOid(oid);
-        komoto.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
-        koulutusmoduuliToteutusDAO.update(komoto);
-        solrIndexer.indexKoulutukset(Collections.singletonList(komoto.getId()));
-        result.setResult(tila.toString());
-        return result;
+
+        Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
+        Tilamuutokset tm = null;
+        try {
+            tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+        } catch (IllegalArgumentException iae) {
+            ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+            r.addError(ErrorV1RDTO.createValidationError(null,  iae.getMessage()));
+            return r;
+        }
+
+        return new ResultV1RDTO<Tilamuutokset>(tm);
     }
 
     @SuppressWarnings("unchecked")

@@ -1,4 +1,4 @@
-package fi.vm.sade.tarjonta.service.impl;
+package fi.vm.sade.tarjonta.shared.types;
 
 import java.util.TreeSet;
 

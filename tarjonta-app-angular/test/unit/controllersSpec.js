@@ -43,6 +43,9 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('debounce'));
     beforeEach(module('ngRoute'));
     beforeEach(module('Logging'));
+    beforeEach(module('TarjontaPermissions'));
+    beforeEach(module('Haku'));
+
 
     beforeEach(function() {
         module(function($provide) {
@@ -238,6 +241,8 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('ngAnimate'));
     beforeEach(module('ngSanitize'));
     beforeEach(module('app.dialog'));
+    beforeEach(module('TarjontaPermissions'));
+    beforeEach(module('Haku'));
 
     beforeEach(function() {
         module(function($provide) {

@@ -36,6 +36,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 /**
  * Supported operations.
@@ -116,6 +118,6 @@ public interface HakuV1Resource {
     @PUT
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Päivittää haun tilan", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = String.class)
-    public ResultV1RDTO<String> setHakuState(@PathParam("oid") String oid, String state);
+    @ApiOperation(value = "Päivittää haun tilan", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = Tilamuutokset.class)
+    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid")String oid, @QueryParam("state") TarjontaTila tila);
 }
