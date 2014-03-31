@@ -64,9 +64,11 @@ import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QPisteraja;
 import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
+import fi.vm.sade.tarjonta.publication.Tilamuutokset;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.impl.Tilamuutokset;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -179,25 +181,24 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     }
 
     @Override
-    public Tilamuutokset updatePublicationStatus(List<GeneerinenTilaTyyppi> tilaOids) {
+    public Tilamuutokset updatePublicationStatus(List<Tila> tilaOids) {
         
         Tilamuutokset tilamuutokset = new Tilamuutokset();
-        Map<SisaltoTyyppi, Map<TarjontaTila, List<String>>> map = new EnumMap<SisaltoTyyppi, Map<TarjontaTila, List<String>>>(SisaltoTyyppi.class);
+        Map<Tyyppi, Map<TarjontaTila, List<String>>> map = new EnumMap<Tyyppi, Map<TarjontaTila, List<String>>>(Tyyppi.class);
 
         if (tilaOids == null) {
             throw new IllegalArgumentException("List of GeneerinenTilaTyyppi objects cannot be null.");
         }
 
         //filter given data to map
-        for (GeneerinenTilaTyyppi tila : tilaOids) {
-            final TarjontaTila convertedTila = EntityUtils.convertTila(tila.getTila());
-            getListOfOids(getSubMapByQHakukohde(map, tila.getSisalto()), convertedTila).add(tila.getOid());
+        for (Tila tila : tilaOids) {
+            getListOfOids(getSubMapByQHakukohde(map, tila.getTyyppi()), tila.getTila()).add(tila.getOid());
         }
 
         //Update selected tarjonta oids to given status.
-        for (Entry<SisaltoTyyppi, Map<TarjontaTila, List<String>>> qs : map.entrySet()) {
+        for (Entry<Tyyppi, Map<TarjontaTila, List<String>>> qs : map.entrySet()) {
             for (Entry<TarjontaTila, List<String>> tila : qs.getValue().entrySet()) {
-                final SisaltoTyyppi dataType = qs.getKey();
+                final Tyyppi dataType = qs.getKey();
                 final List<String> oids = tila.getValue();
                 final TarjontaTila toStatus = tila.getKey();
                 log.debug("updating:" + dataType + " to: " + toStatus);
@@ -212,17 +213,16 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     }
 
     @Override
-    public boolean isValidStatusChange(GeneerinenTilaTyyppi tyyppi) {
+    public boolean isValidStatusChange(Tila tyyppi) {
         checkParam(tyyppi, "GeneerinenTilaTyyppi");
         checkParam(tyyppi.getOid(), "OID");
         checkParam(tyyppi.getTila(), "TarjontaTila");
-        checkParam(tyyppi.getSisalto(), "SisaltoTyyppi");
+        checkParam(tyyppi.getTyyppi(), "SisaltoTyyppi");
 
         TarjontaTila fromStatus = null;
-        final TarjontaTila toStatus = EntityUtils.convertTila(tyyppi.getTila());
         final String oid = tyyppi.getOid();
 
-        switch (tyyppi.getSisalto()) {
+        switch (tyyppi.getTyyppi()) {
             case HAKU:
                 fromStatus = ((Haku) isNullEntity(from(QHaku.haku).
                         where(QHaku.haku.oid.eq(oid)).
@@ -245,17 +245,17 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                         singleResult(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus), oid)).getTila();
                 break;
             default:
-                throw new RuntimeException("Unsupported tarjonta type : " + tyyppi.getSisalto());
+                throw new RuntimeException("Unsupported tarjonta type : " + tyyppi.getTyyppi());
         }
 
         //the business rules for status codes.
-        return fromStatus.acceptsTransitionTo(toStatus);
+        return fromStatus.acceptsTransitionTo(tyyppi.getTila());
 
         //An parent object check is not implemented, but now we can 
         //manage with the simple status check.
     }
 
-    private Map<TarjontaTila, List<String>> getSubMapByQHakukohde(Map<SisaltoTyyppi, Map<TarjontaTila, List<String>>> map, SisaltoTyyppi q) {
+    private Map<TarjontaTila, List<String>> getSubMapByQHakukohde(Map<Tyyppi, Map<TarjontaTila, List<String>>> map, Tyyppi q) {
         if (map.containsKey(q)) {
             return map.get(q);
         } else {
@@ -321,7 +321,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     }
 
     @Transactional
-    private Tilamuutokset updateTarjontaTilaStatus(final Collection<String> oids, final SisaltoTyyppi dataType, final TarjontaTila toStatus) {
+    private Tilamuutokset updateTarjontaTilaStatus(final Collection<String> oids, final Tyyppi dataType, final TarjontaTila toStatus) {
         Tilamuutokset muutokset = new Tilamuutokset();
         log.info("oids : " + oids + ", dataType : " + dataType + ", toStatus : " + toStatus);
         final Date lastUpdatedDate = new Date(System.currentTimeMillis());

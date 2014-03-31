@@ -61,7 +61,10 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.publication.GeneerinenTilaTyyppiToTilaFunction;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tilamuutokset;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -980,12 +983,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
     }
 
+    
+    private GeneerinenTilaTyyppiToTilaFunction gttToT = new GeneerinenTilaTyyppiToTilaFunction();
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
-        Tilamuutokset tm = publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
+        List<Tila> params = Lists.transform(tarjontatiedonTila.getTilaOids(), gttToT);
+        
+        Tilamuutokset tm = publication.updatePublicationStatus(params);
         indexTilatToSolr(tarjontatiedonTila, tm);
         return new PaivitaTilaVastausTyyppi(Lists.newArrayList(tm.getMuutetutHakukohteet()), Lists.newArrayList(tm.getMuutetutKomotot()));
     }
@@ -1033,7 +1040,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
-        return publication.isValidStatusChange(parameters);
+        return publication.isValidStatusChange(gttToT.apply(parameters));
     }
 
     @Override
