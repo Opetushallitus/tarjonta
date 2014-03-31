@@ -1,0 +1,25 @@
+div.mkText ul.mkTextRows {
+    margin:0 0 0.5em 0;
+    padding:0;
+    list-style:none;   
+}
+
+div.mkText ul.mkTextRows span.lang {
+	color:#808080;
+}
+
+div.mkText div.mkTextTabs div.body {
+	height:180px;
+	overflow:auto;
+    border: 1px solid #dddddd;
+    border-top:none;
+    padding:10px;
+}
+
+div.mkText div.mkTextTabs ul.nav {
+    margin-bottom:0;	
+}
+
+div.mkText div.mkTextTabs {
+    margin-bottom:10px;
+}
