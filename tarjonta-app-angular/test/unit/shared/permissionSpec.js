@@ -39,6 +39,7 @@ describe('TarjontaPermissions', function() {
         }
     };
 
+    beforeEach(module('Haku'));
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('localisation'));
