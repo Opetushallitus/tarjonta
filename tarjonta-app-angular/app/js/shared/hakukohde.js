@@ -13,12 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-var app = angular.module('Hakukohde', ['ngResource','config']);
+var app = angular.module('Hakukohde', ['ngResource','config', 'Logging']);
 
 //TODO: after refactoring the rest to v1 change this
-app.factory('Hakukohde',function($resource, $log,$q, Config){
-
-
+app.factory('Hakukohde',function($resource, Config){
 
     var hakukohdeUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/:oid";
 
@@ -45,8 +43,6 @@ app.factory('Hakukohde',function($resource, $log,$q, Config){
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
     });
-
-
 
 });
 
@@ -112,61 +108,42 @@ app.factory('Valintakoe',function($resource, $log,$q, Config) {
 app.factory('HakukohdeKoulutukses',function($http,Config,$q){
 
     return {
-
-
-
         removeKoulutuksesFromHakukohde : function(hakukohdeOid,koulutusOids){
 
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-
                 var hakukohdeKoulutusUri =  Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
 
                 $http.post(hakukohdeKoulutusUri,koulutusOids,{
                     withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
-
                 }).success(function(data){
                     return true;
                 }).error(function(data){
                         return false;
                     });
-
             }
-
-
         },
 
         addKoulutuksesToHakukohde : function(hakukohdeOid, koulutusOids) {
-
-
-
             var promise = $q.defer();
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-
                 var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset/lisaa";
                 $http.post(hakukohdeKoulutusUri,koulutusOids,{
                     withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
-
                 }).success(function(data){
                     promise.resolve(true);
                 }).error(function(data){
                     promise.resolve(false);
                     });
-
             }
-
            return promise.promise;
         } ,
 
         getKoulutusHakukohdes : function(koulutusOid) {
-
             var promise = $q.defer();
-
             if (koulutusOid !== undefined) {
-
                 var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix+"koulutus/"+koulutusOid+"/hakukohteet";
-
                 $http.get(getKoulutusHakukohdesUri)
                     .success(function(data){
                         promise.resolve(data);
@@ -174,24 +151,16 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
                     .error(function(data){
                         promise.resolve(data);
                     });
-
             } else {
                 promise.resolve();
             }
-
-
             return promise.promise;
-
         } ,
 
         getHakukohdeKoulutukses : function(hakukohdeOid) {
-
             if (hakukohdeOid !== undefined) {
-
                 var promise = $q.defer();
-
                 var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix+"hakukohde/"+hakukohdeOid+"/koulutukset";
-
                 $http.get(getHakukohdeKoulutuksesUri)
                     .success(function(data){
                        promise.resolve(data);
@@ -199,18 +168,12 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
                     .error(function(data){
                       promise.resolve(data);
                     });
-
-
                 return promise.promise;
 
             } else {
                 return undefined;
             }
-
         }
-
-
-
     };
 
 });

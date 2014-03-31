@@ -28,7 +28,7 @@
  *
  * @author mlyly
  */
-var app = angular.module('localisation', ['ngResource', 'config']);
+var app = angular.module('localisation', ['ngResource', 'config', 'Logging']);
 
 /**
  * "Localisations" factory, returns resource for operating on localisations.

@@ -1,6 +1,8 @@
-var app = angular.module('Kuvaus', ['ngResource','config']);
+var app = angular.module('Kuvaus', ['ngResource','config', 'Logging']);
 
 app.factory('Kuvaus',function($http,Config,$q,$log){
+
+    $log = $log.getInstance("Kuvaus");
 
     var kuvausUriPrefix = "kuvaus/";
 

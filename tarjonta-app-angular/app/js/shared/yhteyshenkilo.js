@@ -1,8 +1,10 @@
-angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
+angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 
 //"henkiloservice"
 .factory('YhteyshenkiloService', function ($resource, $log, $q, Config, CacheService) {
-	
+
+    $log = $log.getInstance("YhteyshenkiloService");
+
 	var baseUrl = Config.env['authentication-service.henkilo.rest.url'];
 	var urlEtsi = baseUrl +  Config.env['authentication-service.henkilo.search.params'];
 	var urlHaeTiedot =baseUrl + "/:oid";
@@ -20,13 +22,15 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 	    */
 	   etsi: function(hakuehdot){
 		   var ret = $q.defer();
-		   
+
+           $log.warn("etsi() - DISABLED", hakuehdot);
+
 		   //, XXX disabloitu koska henkilöhakupalvelu ei kerkiä mukaan
 //	       $log.debug('haetaan yhteyshenkiot, q:', hakuehdot);
 //	       henkHaku.get(hakuehdot, function(result){
 //	    	   ret.resolve(result);
 //	       }, function(err){
-//	    	   console.error("Error loading data", err);
+//	    	   $log.debug("Error loading data", err);
 //	       });
 		   ret.resolve({});
 	       return ret.promise;
@@ -43,7 +47,8 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 	       henkilo.get(hakuehdot, function(result){
 	    	   ret.resolve(result);
 	       }, function(err){
-	    	   console.error("Error loading data", err);
+               // TODO add loadingService disable error dialog!
+	    	   $log.error("Error loading data", err);
 	       });
 	       return ret.promise;
 	   },
@@ -59,11 +64,12 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config' ])
 	       organisaatioHenkilo.get(hakuehdot, function(result){
 	    	   ret.resolve(result);
 	       }, function(err){
-	    	   console.error("Error loading data", err);
+               // TODO add loadingService disable error dialog!
+	    	   $log.error("Error loading data", err);
 	       });
 	       return ret.promise;
 	   }
 
-	
+
 	};
 });

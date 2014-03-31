@@ -1,4 +1,4 @@
-var app = angular.module('CommonUtilServiceModule', ['ngResource','config']);
+var app = angular.module('CommonUtilServiceModule', ['ngResource','config', 'Logging']);
 
 
 app.service('CommonUtilService',function($resource, $log,$q, Config,OrganisaatioService){
