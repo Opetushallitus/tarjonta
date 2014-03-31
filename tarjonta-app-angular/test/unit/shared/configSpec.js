@@ -24,13 +24,14 @@ describe('config', function() {
             "key-app-1": "mock-value-app-1"
         }
     }
-    
+
     //set mock data to module by using the value-method,
     var mockModule = angular.module('test.module', []);
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('config'));
+    beforeEach(module('Logging'));
 
     describe('Config', function() {
         var cgf, global;

@@ -25,7 +25,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -63,7 +62,7 @@ public class OppilaitosKoodiRelations {
      * @param organisaatioOid
      * @return
      */
-    public boolean isKoulutusAllowedForOppilaitostyyppi(final String organisaatioOid, final KoulutusasteTyyppi tyyppi) {
+    public boolean isKoulutusAllowedForOrganisation(final String organisaatioOid, final KoulutusasteTyyppi tyyppi) {
         Preconditions.checkNotNull(tyyppi, "KoulutusasteTyyppi enum cannot be null");
         Preconditions.checkNotNull(organisaatioOid, "Organisaatio OID cannot be null");
         final OrganisaatioDTO orgDto = organisaatioService.findByOid(organisaatioOid);
@@ -72,27 +71,15 @@ public class OppilaitosKoodiRelations {
             return false;
         }
 
-        final String oidPath = orgDto.getParentOidPath();
-        List<String> oids = splitOrganisationPath(oidPath);
+        List<String> oids = splitOrganisationPath(orgDto.getParentOidPath());
 
-        LOG.info("ORG PATH : {}", oidPath);
+        oids.remove(rootOphOid); //remove OPH OID from the list
+        oids.add(orgDto.getOid()); //add selected to end of the list
 
-        if (rootOphOid != null && !rootOphOid.isEmpty() && orgDto.getOid() != null && rootOphOid.equals(orgDto.getOid())) {
-            LOG.info("OPH ORGANISATION");
-            //OPH root organisation : allow all oppilaitostyyppis
-            return true;
-        }
-
-        //remove OPH OID from the list
-        oids.remove(rootOphOid);
-
-        //add selected to end of the list
-        oids.add(orgDto.getOid());
-
-        LOG.info("OIDS FOUND : {}", oids.size());
+        LOG.debug("OIDS FOUND : {}", oids.size());
 
         if (oids.size() > 1) {
-            //a quick way to get the type of OPPILAITOS
+            //a quick search of the OPPILAITOS
             if (isCorrectOppilaitostyyppis(oids.get(1), tyyppi)) {
                 return true;
             }
@@ -116,8 +103,8 @@ public class OppilaitosKoodiRelations {
 
                 if (!oppilaitostyyppiUris.isEmpty()) {
                     for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                        if (checkKoulutusAllowedForOppilaitostyyppi(tyyppi, oppilaitostyyppiUri)) {
-                            LOG.info("Found : {} KOULUTUSTOIMIJA parent of OPPILAITOS with correct oppilaitostyyppiUri {}", oid, oppilaitostyyppiUri);
+                        if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                            LOG.debug("Found : {} KOULUTUSTOIMIJA parent of OPPILAITOS with correct oppilaitostyyppiUri {}", oid, oppilaitostyyppiUri);
                             return true;
                         }
                     }
@@ -128,8 +115,8 @@ public class OppilaitosKoodiRelations {
 
                 if (!oppilaitostyyppiUris.isEmpty()) {
                     for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                        if (checkKoulutusAllowedForOppilaitostyyppi(tyyppi, oppilaitostyyppiUri)) {
-                            LOG.info("Found : {} OPPILAITOS with correct oppilaitostyyppi {}", oid, oppilaitostyyppiUri);
+                        if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                            LOG.debug("Found : {} OPPILAITOS with correct oppilaitostyyppi {}", oid, oppilaitostyyppiUri);
                             return true;
                         }
                     }
@@ -144,8 +131,8 @@ public class OppilaitosKoodiRelations {
 
         if (!oppilaitostyyppiUris.isEmpty()) {
             for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                if (checkKoulutusAllowedForOppilaitostyyppi(tyyppi, oppilaitostyyppiUri)) {
-                    LOG.info("Found (by path index) : {} OPPILAITOS with correct oppilaitostyyppi {}", orgOid, oppilaitostyyppiUri);
+                if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                    LOG.debug("Found (by path index) : {} OPPILAITOS with correct oppilaitostyyppi {}", orgOid, oppilaitostyyppiUri);
                     return true;
                 }
             }
@@ -155,6 +142,7 @@ public class OppilaitosKoodiRelations {
     }
 
     public static List splitOrganisationPath(String parentOidPath) {
+        Preconditions.checkNotNull(parentOidPath, "Organisation OID path cannot be null");
         final List<String> list = Lists.<String>newArrayList(parentOidPath.split("[|]"));
         list.removeAll(Arrays.asList("")); //remove empty strings
         return list;
@@ -199,14 +187,14 @@ public class OppilaitosKoodiRelations {
         return getOppilaitosTyyppis(dto);
     }
 
-    private boolean checkKoulutusAllowedForOppilaitostyyppi(final KoulutusasteTyyppi tyyppi, final String oppilaitosTyyppiUri) {
+    private boolean compareEnumToKoodiUr(final KoulutusasteTyyppi tyyppi, final String oppilaitosTyyppiUri) {
         Preconditions.checkNotNull(tyyppi, "KoulutusasteTyyppi enum cannot be null");
 
         if (oppilaitosTyyppiUri == null) {
             return false;
         }
 
-        Collection<KoodiType> koulutustyyppis = getKoulutustyyppi(oppilaitosTyyppiUri);
+        Collection<KoodiType> koulutustyyppis = searchKoulutustyyppiFromKoodisto(oppilaitosTyyppiUri);
         for (KoodiType koulutustyyppi : koulutustyyppis) {
 
             switch (tyyppi) {
@@ -221,9 +209,9 @@ public class OppilaitosKoodiRelations {
         return false;
     }
 
-    private Collection<KoodiType> getKoulutustyyppi(final String oppilaitostyyppiUri) {
+    private Collection<KoodiType> searchKoulutustyyppiFromKoodisto(final String oppilaitostyyppiUri) {
         Preconditions.checkNotNull(oppilaitostyyppiUri, "Oppilaitostyyppi URI cannot be null");
-        Collection<KoodiType> koodistoRelations = tarjontaKoodistoHelper.getKoodistoRelations(oppilaitostyyppiUri, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false);
+        final Collection<KoodiType> koodistoRelations = tarjontaKoodistoHelper.getKoodistoRelations(oppilaitostyyppiUri, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false);
 
         return koodistoRelations;
     }

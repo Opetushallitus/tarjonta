@@ -68,7 +68,6 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
-import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeExistsException;
@@ -76,6 +75,7 @@ import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
@@ -115,7 +115,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
     @Autowired(required = true)
-    private HakuBusinessService hakuBusinessService;
+    private HakuService hakuBusinessService;
     @Autowired(required = true)
     private KoulutusBusinessService koulutusBusinessService;
     @Autowired(required = true)
@@ -870,14 +870,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     /**
      * @return the businessService
      */
-    public HakuBusinessService getBusinessService() {
+    public HakuService getBusinessService() {
         return hakuBusinessService;
     }
 
     /**
      * @param businessService the businessService to set
      */
-    public void setBusinessService(HakuBusinessService businessService) {
+    public void setBusinessService(HakuService businessService) {
         this.hakuBusinessService = businessService;
     }
 

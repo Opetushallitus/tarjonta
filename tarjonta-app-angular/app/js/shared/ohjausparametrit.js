@@ -2,11 +2,14 @@
  * Parametri palvelu
  */
 angular
-    .module('Parameter', [ 'ngResource', 'config' ])
+    .module('Parameter', [ 'ngResource', 'config', 'Logging' ])
 
     .factory(
         'ParameterService',
         function($q, $resource, $log, Config) {
+
+          $log = $log.getInstance("ParameterService");
+
           var NAME="tarjontaOhjausparametritRestUrlPrefix";
           if(Config.env[NAME]==undefined) {
             throw "'" + NAME + "' ei ole määritelty!";
@@ -35,7 +38,7 @@ angular
               isArray : true
             }
           });
-          
+
           var haeTemplatet=function(hakuehdot) {
             $log.debug('haetaan templatet, q:', hakuehdot);
             var ret = $q.defer();
@@ -75,37 +78,37 @@ angular
 
             /**
              * Hakee parametrit hakuehdoilla, esim
-             * 
+             *
              * <pre>
              * {
              *   &quot;path&quot; : &quot;a&quot;,
              *   &quot;name&quot; : &quot;b&quot;
              * }
              * </pre>
-             * 
+             *
              * hakee parametriarvot joiden pathi alkaa a:lla ja nimi on b
-             * 
+             *
              * @returns promise
              */
             haeParametrit : haeParametrit,
 
             /**
              * Hakee templatet hakuehdoilla, esim
-             * 
+             *
              * <pre>
              * {
              *   &quot;path&quot; : &quot;a&quot;
              * }
              * </pre>
-             * 
+             *
              * hakee templatet joiden pathi alkaa a:lla
-             * 
+             *
              * @returns promise
              */
             haeTemplatet : haeTemplatet,
 
             tallennaHakukaudenParametrit : function(hakuOid, parametrit) {
-              console.log("saving to hakukausi + '" +hakuOid + "' the following parameters:", parametrit);
+              $log.debug("saving to hakukausi + '" +hakuOid + "' the following parameters:", parametrit);
               var promises = [];
 
               for ( var key in parametrit) {
@@ -115,15 +118,15 @@ angular
                   value : parametrit[key]
                 });
                 promises.push(p);
-                console.log("p:", key, parametrit[key]);
+                $log.debug("p:", key, parametrit[key]);
               }
-              
+
               return $q.all(promises);
-              
+
             },
 
             /**
-             * 
+             *
              * @param hakuOid
              *                haun oidi
              * @param parametri
@@ -131,8 +134,8 @@ angular
              */
             tallenna : function(hakuOid, parametrit) {
 
-              console.log("tallennetaan parametreja:", parametrit);
-              // console.log("target:", hakuOid);
+              $log.debug("tallennetaan parametreja:", parametrit);
+              // $log.debug("target:", hakuOid);
 
               // query all parameters
               var currentParams = {};
@@ -145,33 +148,33 @@ angular
                     path : prefix,
                     name : hakuOid
                   }).then(function(params) {
-                    console.log("current params from service", params);
+                    $log.debug("current params from service", params);
                     for ( var i = 0; i < params.length; i++) {
-                      console.log(params[i]);
+                      $log.debug(params[i]);
                       currentParams[params[i].path] = params[i];
                     }
                   });
                   promises.push(p);
                 })(prefixes[i]);
               }
-              
-              console.log("current parameters retrieved");
+
+              $log.debug("current parameters retrieved");
               $q.all(promises).then(function() {
-                console.log("saving parameters from form:", parametrit);
+                $log.debug("saving parameters from form:", parametrit);
                 for ( var key in parametrit) {
                   tallennaParametri({
                     name : hakuOid,
                     path : key,
                     value : parametrit[key]
                   });
-                  console.log("p:", key, parametrit[key]);
+                  $log.debug("p:", key, parametrit[key]);
                 }
               });
 
-              console.log("exit from service");
+              $log.debug("exit from service");
               //TODO update all changed
             },
-            
+
             /**
              * Hakee haun parametrit
              * @param hakuOid haun oidi
@@ -203,7 +206,7 @@ angular
                         var path = params[i].path;
                         var type = paramTemplates[path].type;
                         var value = params[i].value;
-                        console.log("path, type", path, type);
+                        $log.debug("path, type", path, type);
                         // if("DATE"===type) {
                         // value=new Date(value);
                         // }
@@ -215,7 +218,7 @@ angular
                 })(prefixes[i]);
               }
             },
-            
+
             /**
             * Hakee haun parametrit
             * @param kausivusi jonka paremetreja haetaan, <kausi><vuosi>, esim "kevat2010"
@@ -223,9 +226,9 @@ angular
             * @returns nothing
             */
            haeHakukaudenParametrit:function(kausivuosi, target){
-             console.log("haetaan parametreja kausivuosi:" + kausivuosi);
+             $log.debug("haetaan parametreja kausivuosi:" + kausivuosi);
              var paramTemplates={};
-             var prefixes = ["PHK_"]; 
+             var prefixes = ["PHK_"];
              for ( var i = 0; i < prefixes.length; i++) {
 
                (function(prefix) {
@@ -247,7 +250,7 @@ angular
                        var path = params[i].path;
                        var type = paramTemplates[path].type;
                        var value = params[i].value;
-                       console.log("path, type, value", path, type, value);
+                       $log.debug("path, type, value", path, type, value);
                        // if("DATE"===type) {
                        // value=new Date(value);
                        // }

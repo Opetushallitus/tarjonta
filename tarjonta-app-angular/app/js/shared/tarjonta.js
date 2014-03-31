@@ -1,6 +1,8 @@
-var app = angular.module('Tarjonta', ['ngResource', 'config']);
+var app = angular.module('Tarjonta', ['ngResource', 'config', 'Logging']);
 
-app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, CacheService, $q) {
+app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, CacheService, $q, $log) {
+
+    $log = $log.getInstance("TarjontaService");
 
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/search");
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/search");
@@ -25,7 +27,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var an = a.nimi;
         var bn = b.nimi;
         if(!an){
-          console.log("cannot compare ", a , " with ", b);
+          $log.debug("cannot compare ", a , " with ", b);
           return -1;
         }
         /*
@@ -157,7 +159,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         });
 
         tila.update(function(nstate) {
-            console.log("resolving:", nstate);
+            $log.debug("resolving:", nstate);
             ret.resolve(nstate.result);
         });
 
@@ -234,7 +236,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.loadKuvausTekstis = function(oid) {
-        console.log("save KomoTekstis(): ", oid);
+        $log.debug("save KomoTekstis(): ", oid);
         var ret = $q.defer();
         var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tekstis", {'oid': '@oid'});
         var Tekstis = KomoTekstis.get({'oid': oid}, function(res) {
@@ -244,7 +246,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return ret.$promise;
     };
     dataFactory.insertHakukohde = function(hakukohde, func) {
-        console.log('Inserting hakukohde : ', hakukohde);
+        $log.debug('Inserting hakukohde : ', hakukohde);
 
         return ret.promise;
     };
@@ -262,7 +264,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.getHakukohde = function(id) {
-        console.log("getHakukohde(): id = ", id);
+        $log.debug("getHakukohde(): id = ", id);
 
         var ret = $q.defer();
 
@@ -274,7 +276,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.deleteHakukohde = function(id) {
-        console.log("deleteHakukohde(): ", id);
+        $log.debug("deleteHakukohde(): ", id);
         var ret = $q.defer();
         $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/" + id).remove({}, function(res) {
             ret.resolve(res);
@@ -283,14 +285,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.getKoulutus = function(arg, func) {
-        console.log("getKoulutus()");
+        $log.debug("getKoulutus()");
         //param meta=false filter all meta fields
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
         return koulutus.get(arg, func);
     };
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
-        console.log("getKoulutuskoodiRelations()");
+        $log.debug("getKoulutuskoodiRelations()");
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/Korkeakoulutus?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
         return koulutus.get(arg, func);
     };
@@ -380,13 +382,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
 
     dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
-        console.log("save resourceLink called!");
+        $log.debug("save resourceLink called!");
         dataFactory.resourceLink.save({parent: parent, children: angular.isArray(child) ? child : [child]}, fnSuccess, fnError);
     };
 
-    /** 
+    /**
      * Linkityspalvelu -resurssi (palauttaa promisen)
-     * 
+     *
      * -get: listaa lapset (vain oidit)
      *    param: {oid:"oid"}
      * -save: tee liitos
@@ -397,7 +399,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      *    param: {child:"oid"}
      * -delete: poista liitos
      *    param: {parent:"oid", child:"oid"}
-     * 
+     *
      * </pre>
      */
     dataFactory.resourceLink =
@@ -430,7 +432,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             });
 
 
-    /** 
+    /**
      * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
      * oidRetrievePromise = promise joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
      */
@@ -460,14 +462,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return deferred.promise;
     };
 
-    /** 
+    /**
      * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getChildKoulutuksetPromise = function(koulutusoid) {
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({oid: koulutusoid}).$promise);
     };
 
-    /** 
+    /**
      * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
      */
     dataFactory.getParentKoulutuksetPromise = function(koulutusoid) {

@@ -155,7 +155,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
 
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOppilaitostyyppi(ORGANISATION_OID, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(false);
+        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(false);
 
         replay(koulutusmoduuliToteutusDAO);
         replay(organisaatioServiceMock);
@@ -179,7 +179,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOppilaitostyyppi(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
+        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
         koulutusmoduuliToteutusDAO.update(komoto);
 
         expect(hakukohdeDAO.findByKoulutusOid(KOMOTO_OID)).andReturn(Lists.<Hakukohde>newArrayList());
@@ -222,7 +222,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOppilaitostyyppi(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
+        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
 
         //remove all not needed referenses by using convert entity to dto (language can be any)
         expect(converterToRDTO.convert(komoto, "FI", false)).andReturn(kkDto);

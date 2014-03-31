@@ -17,6 +17,7 @@
 //});
 
 describe('Edit koulutus testeja', function() {
+
     beforeEach(module('ngGrid'));
     var CONFIG_ENV_MOCK = {
         "env": {
@@ -41,6 +42,7 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('debounce'));
     beforeEach(module('ngRoute'));
+    beforeEach(module('Logging'));
 
     beforeEach(function() {
         module(function($provide) {
@@ -98,7 +100,7 @@ describe('Edit koulutus testeja', function() {
      $controller('EditYhteyshenkiloCtrl', {
      $scope: $scope
      });
-     
+
      $scope.uiModel = {};
      $scope.uiModel.contactPerson = {};
      $scope.uiModel.contactPerson.nimet = 'Testi nimi';
@@ -107,7 +109,7 @@ describe('Edit koulutus testeja', function() {
      $scope.uiModel.contactPerson.puhelin = '050432134534';
      $scope.uiModel.contactPerson.etunimet = 'Testi';
      $scope.uiModel.contactPerson.sukunimi = 'nimi';
-     
+
      $scope.editYhModel.clearYh();
      expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
      }));
