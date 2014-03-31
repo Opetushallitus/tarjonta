@@ -76,7 +76,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
          */
         teksti(dto.getKoulutusohjelma(), KOULUTUSOHELMA, URI_KIELI_FI);
         dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
-        dto.getOrganisaatio().setOid(ORGANISAATIO_OID);
+        dto.getOrganisaatio().setOid(ORGANISATION_OID);
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
         dto.setOpintoala(toKoodiUri(OPINTOALA));
@@ -108,11 +108,11 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
 
         //EXPECT
-        expect(organisaatioServiceMock.findByOid(ORGANISAATIO_OID)).andReturn(organisaatioDTO).times(3);
+        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(3);
         //the calls of the OidServices must be in correct order!
 
-        permissionChecker.checkCreateKoulutus(ORGANISAATIO_OID);
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISAATIO_OID);
+        permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
+        permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
 
         /* 
          * KOODISTO DATA CALLS IN CORRECT CALL ORDER
@@ -185,7 +185,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertNotNull(result);
 
         assertEquals(KOMOTO_OID, result.getOid());
-        assertEquals(ORGANISAATIO_OID, result.getOrganisaatio().getOid());
+        assertEquals(ORGANISATION_OID, result.getOrganisaatio().getOid());
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
         assertEquals(KoulutusasteTyyppi.KORKEAKOULUTUS, result.getKoulutusasteTyyppi());

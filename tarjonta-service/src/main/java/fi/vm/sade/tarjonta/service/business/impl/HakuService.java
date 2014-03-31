@@ -5,23 +5,20 @@ import org.springframework.stereotype.Service;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 
 /**
  * @author Antti
  */
 @Service
-public class HakuBusinessServiceImpl implements HakuBusinessService {
+public class HakuService {
 
     @Autowired
     private HakuDAO hakuDao;
 
-    @Override
     public Haku save(Haku haku) {
         return hakuDao.insert(haku);
     }
 
-    @Override
     public Haku update(Haku haku) {
         if (haku.getId() == null) {
             throw new IllegalArgumentException("updating object with null id: " + haku);
@@ -34,7 +31,6 @@ public class HakuBusinessServiceImpl implements HakuBusinessService {
         return hakuDao.findByOid(oidString);
     }
 
-    @Override
     public void delete(String oid) {
 
         Haku haku = hakuDao.findByOid(oid);

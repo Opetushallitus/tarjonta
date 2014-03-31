@@ -156,21 +156,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 
     	var thisyear = new Date().getFullYear();
 
-    	$scope.focusCount = 0;
-
-    	$scope.onFocusIn = function() {
-    		$scope.focusCount++;
-    		//console.log("Focus++",$scope.focusCount);
-    	}
-    	
-    	$scope.onFocusOut = function(isButton) {
-    		$scope.focusCount--;
-    		//console.log("Focus--",$scope.focusCount);
-	
-			if (isButton) {
-				return;
-			}
-
+    	$scope.onFocusOut = function() {
+    		
        		omitUpdate = false;
        		updateModels();
 
@@ -252,7 +239,6 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 
         		if (!isNaN(nd.getTime())) {
     				omitUpdate = true;
-    				//console.log("Update / Focus = "+$scope.focusCount,nd);
     				var cd = applyConstraints(nd);
     				violation = cd.getTime() == nd.getTime() ? null : nd;
         			$scope.model = cd;
@@ -263,12 +249,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     			$scope.ngChange();
     		}
     	}
-
+    	
     	$scope.openChooser = function() {
-    		//console.log("Chooser?",$scope.focusCount);
-    		if ($scope.focusCount==0) {
-    			return;
-    		}
     		var modalInstance = $modal.open({
 				scope: $scope,
 				templateUrl: 'js/shared/directives/dateTime-chooser.html',

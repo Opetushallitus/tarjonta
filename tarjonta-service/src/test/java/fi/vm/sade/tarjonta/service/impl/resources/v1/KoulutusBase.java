@@ -26,9 +26,11 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -38,6 +40,7 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutu
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
@@ -99,7 +102,7 @@ abstract class KoulutusBase {
     protected static final String EQF = "EQF";
     protected static final String KOMO_OID = "komo_oid";
     protected static final String KOMOTO_OID = "komoto_oid";
-    protected static final String ORGANISAATIO_OID = "organisaatio_oid";
+    protected static final String ORGANISATION_OID = "organisaatio_oid";
     protected static final String ORGANISAATIO_NIMI = "organisaatio_nimi";
     protected static final String TUNNISTE = "tunniste_txt";
     protected static final String SUUNNITELTU_KESTO_VALUE = "10";
@@ -129,20 +132,21 @@ abstract class KoulutusBase {
     protected KoodistoURI koodistoUri;
     protected KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
     protected TarjontaSearchService tarjontaSearchService;
+    protected OppilaitosKoodiRelations oppilaitosKoodiRelations;
+    protected HakukohdeDAO hakukohdeDAO;
+    protected LinkingV1Resource linkingV1Resource;
 
     public void reload() throws OIDCreationException {
 
         Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn(KOMO_OID);
         Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn(KOMOTO_OID);
 
-        setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
-
         //used in regexp kieli uri validation
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
 
         //INIT ORGANISATION DTO
         organisaatioDTO = new OrganisaatioDTO();
-        organisaatioDTO.setOid(ORGANISAATIO_OID);
+        organisaatioDTO.setOid(ORGANISATION_OID);
         organisaatioDTO.setNimi(new MonikielinenTekstiTyyppi());
         organisaatioDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti(ORGANISAATIO_NIMI, LOCALE_FI));
 
@@ -158,27 +162,22 @@ abstract class KoulutusBase {
         contextDataService = new ContextDataServiceImpl();
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
         tarjontaSearchService = createMock(TarjontaSearchService.class);
+        oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
+        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
 
         //INIT DATA CONVERTERS
         converterToRDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
         convertToEntity = new KoulutusKorkeakouluDTOConverterToEntity();
         instance = new KoulutusResourceImplV1();
-
         //SET VALUES TO INSTANCES
-        Whitebox.setInternalState(convertToEntity, "oidService", oidService);
 
-        Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
-        Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
-        Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
-        Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
-        Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
-        Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
-        Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
-        Whitebox.setInternalState(instance, "contextDataService", contextDataService);
-        Whitebox.setInternalState(instance, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
-        Whitebox.setInternalState(instance, "tarjontaSearchService", tarjontaSearchService);
+        Whitebox.setInternalState(convertToEntity, "oidService", oidService);
+        initMockInstanceInternalStates();
 
         //no need for replay or verify:
+        Whitebox.setInternalState(instance, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
+        Whitebox.setInternalState(instance, "koulutusmoduuliDAO", koulutusmoduuliDAO);
+
         Whitebox.setInternalState(converterToRDTO, "commonConverter", commonConverter);
         Whitebox.setInternalState(commonConverter, "organisaatioService", organisaatioServiceMock);
         Whitebox.setInternalState(commonConverter, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
@@ -188,6 +187,36 @@ abstract class KoulutusBase {
 
         Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
+        Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
+        Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
+    }
+
+    protected void initMockInstanceInternalStates() {
+        setCurrentUser(USER_OID, getAuthority("APP_TARJONTA_CRUD", "test.user.oid.123"));
+
+        contextDataService = new ContextDataServiceImpl();
+
+        organisaatioServiceMock = createMock(OrganisaatioService.class);
+        solrIndexerMock = createMock(IndexerResource.class);
+        permissionChecker = createMock(PermissionChecker.class);
+        koodistoUri = createMock(KoodistoURI.class);
+        koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
+        tarjontaSearchService = createMock(TarjontaSearchService.class);
+        hakukohdeDAO = createMock(HakukohdeDAO.class);
+        oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
+        linkingV1Resource = createMock(LinkingV1Resource.class);
+
+        //SET VALUES TO INSTANCES
+        Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
+        Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
+        Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
+        Whitebox.setInternalState(instance, "contextDataService", contextDataService);
+        Whitebox.setInternalState(instance, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
+        Whitebox.setInternalState(instance, "tarjontaSearchService", tarjontaSearchService);
+        Whitebox.setInternalState(instance, "hakukohdeDAO", hakukohdeDAO);
+        Whitebox.setInternalState(instance, "oppilaitosKoodiRelations", oppilaitosKoodiRelations);
+        Whitebox.setInternalState(instance, "linkingV1Resource", linkingV1Resource);
+
     }
 
     protected final List<GrantedAuthority> getAuthority(String appPermission, String oid) {
@@ -249,7 +278,7 @@ abstract class KoulutusBase {
          */
         teksti(dto.getKoulutusohjelma(), KOULUTUSOHELMA, URI_KIELI_FI);
         dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
-        dto.getOrganisaatio().setOid(ORGANISAATIO_OID);
+        dto.getOrganisaatio().setOid(ORGANISATION_OID);
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
         dto.setOpintoala(toKoodiUri(OPINTOALA));

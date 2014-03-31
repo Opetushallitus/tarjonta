@@ -22,7 +22,6 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 
         $log = $log.getInstance("HakuService");
 
-
             var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
             return {
@@ -139,18 +138,13 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
    * palauttaa promisen hakutulokseen, resolvaa nimen valmiiksi
    */
   var mget = function(oids){
-    $log.debug("multiget:", oids);
-      var defer = $q.defer();
-      HakuV1.mget({oid:oids}).$promise.then(function(haut){
-        $log.debug("haut:", haut.result);
+      $log.debug("mget:", oids);
+      return HakuV1.mget({oid:oids}).$promise.then(function(haut){
         angular.forEach(haut.result, function(haku, key){
           haku.nimi=resolveNimi(haku);
         });
-        $log.debug("resolving haut");
-        defer.resolve(haut.result);
+        return haut.result;
       });
-
-      return defer.promise;
    };
 
 
@@ -160,29 +154,10 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
      */
     search:function(parameters){
       $log.debug("Searching with: ", parameters);
-
-
-      var defer = $q.defer();
-
       return HakuV1.search(parameters).$promise.then(function(data){
-//        var haut=[];
         return mget(data.result);
-//        for(var i=0;i<data.result.length;i++) {
-//          promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
-//            var haku=hakuresult.result;
-//            haut.push(haku);
-//            haku.nimi= resolveNimi(haku);
-//          }));
-//        }
-//        $q.all(promises).then(function(){
-//          defer.resolve(haut);
-//        });
       });
-//
-//      return defer.promise;
     }
-
-
   };
 
 });

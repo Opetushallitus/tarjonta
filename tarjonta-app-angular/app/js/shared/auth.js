@@ -124,9 +124,14 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
     // CRUD ||UPDATE
     var updateAccess = function(service, org) {
+      if(org) {
         //$log.info("updateAccess()", service, org, MyRolesModel);
         return MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
                 MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
+      } else {
+        return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 ||
+        MyRolesModel.myroles.indexOf(service + CRUD) > -1;
+      }
     };
 
     // CRUD

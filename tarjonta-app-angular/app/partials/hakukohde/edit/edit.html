@@ -30,6 +30,8 @@
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
         	<form name="editHakukohdeForm">
+		        <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
+		        <button ng-click="" class="hidden"></button>
 	            <div data-ng-include="'partials/hakukohde/edit/editPerustiedot.html'"></div>
 			</form>
         </tab>
