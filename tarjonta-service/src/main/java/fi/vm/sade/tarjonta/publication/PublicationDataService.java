@@ -20,7 +20,6 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.impl.Tilamuutokset;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -69,9 +68,9 @@ public interface PublicationDataService {
      */
     public List<Haku> listHaku();
 
-    public Tilamuutokset updatePublicationStatus(List<GeneerinenTilaTyyppi> tilaOids);
+    public Tilamuutokset updatePublicationStatus(List<Tila> tilaOids);
 
-    public boolean isValidStatusChange(GeneerinenTilaTyyppi tyyppi);
+    public boolean isValidStatusChange(Tila tyyppi);
 
     public void sendEvent(final fi.vm.sade.tarjonta.shared.types.TarjontaTila tila, final String oid, final String dataType, final String action);
 

@@ -52,6 +52,8 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
@@ -449,7 +451,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         wasFound = true;
                     }
                }
-
             }
             return wasFound;
         } else {
@@ -597,8 +598,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 			LOG.info("Hakukohde.kokeet = {}", hakukohde.getValintakoes());
 
 			hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
-            GeneerinenTilaTyyppi tilaTyyppi = new GeneerinenTilaTyyppi(hakukohde.getOid(), SisaltoTyyppi.HAKUKOHDE, fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
-            if (publication.isValidStatusChange(tilaTyyppi)) {
+            Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.valueOf(hakukohdeRDTO.getTila()), hakukohde.getOid()); 
+            if (publication.isValidStatusChange(tilamuutos)) {
                 hakukohdeDao.update(hakukohde);
     			LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
     			LOG.info("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());

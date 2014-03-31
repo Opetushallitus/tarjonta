@@ -49,7 +49,9 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.impl.Tilamuutokset;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tilamuutokset;
+import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -154,20 +156,11 @@ public class PublicationDataServiceImplTest {
         assertEquals(TarjontaTila.LUONNOS, k2.getTila());
         assertEquals(TarjontaTila.LUONNOS, k3.getTila());
 
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        GeneerinenTilaTyyppi g1 = new GeneerinenTilaTyyppi();
-        g1.setOid(k2.getOid());
-        g1.setSisalto(SisaltoTyyppi.KOMO);
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
-        list.add(g1);
-
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(k3.getOid());
-        g2.setSisalto(SisaltoTyyppi.KOMO);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        list.add(g2);
-
-        publicationDataService.updatePublicationStatus(list);
+        List<Tila> tilat = Lists.newArrayList();
+        tilat.add(new Tila(Tyyppi.KOMO, TarjontaTila.VALMIS, k2.getOid()));
+        tilat.add(new Tila(Tyyppi.KOMO, TarjontaTila.JULKAISTU, k3.getOid()));
+        
+        publicationDataService.updatePublicationStatus(tilat);
 
         k1 = em.find(Koulutusmoduuli.class, komo1.getId());
         em.detach(k1);
@@ -215,7 +208,7 @@ public class PublicationDataServiceImplTest {
     @Test
     public void testListHakukohde() {
         quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
-        List result = publicationDataService.listHakukohde();
+        List<Hakukohde> result = publicationDataService.listHakukohde();
         assertEquals(0, result.size());
 
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
@@ -229,7 +222,7 @@ public class PublicationDataServiceImplTest {
     @Test
     public void testListHaku() {
         quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
-        List result = publicationDataService.listHaku();
+        List<Haku> result = publicationDataService.listHaku();
         assertEquals(0, result.size());
 
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
@@ -249,33 +242,22 @@ public class PublicationDataServiceImplTest {
         //set the base state
         quickObjectStatusChange(TarjontaTila.LUONNOS, TarjontaTila.LUONNOS);
 
-        GeneerinenTilaTyyppi g1 = new GeneerinenTilaTyyppi();
-        g1.setOid(komo1.getOid());
-        g1.setSisalto(SisaltoTyyppi.KOMO);
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.LUONNOS,  komo1.getOid())));
 
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.LUONNOS);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
-
-        //set the 'to' state
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.VALMIS);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.VALMIS,  komo1.getOid())));
 
         quickObjectStatusChange(TarjontaTila.VALMIS, TarjontaTila.VALMIS);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.VALMIS,  komo1.getOid())));
 
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.JULKAISTU,  komo1.getOid())));
 
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.JULKAISTU,  komo1.getOid())));
 
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.PERUTTU,  komo1.getOid())));
 
         quickObjectStatusChange(TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
-        g1.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        assertEquals(true, publicationDataService.isValidStatusChange(g1));
+        assertEquals(true, publicationDataService.isValidStatusChange(new Tila(Tyyppi.KOMO, TarjontaTila.PERUTTU,  komo1.getOid())));
     }
 
     /**
@@ -304,24 +286,19 @@ public class PublicationDataServiceImplTest {
 
     @Test
     public void testiHakuPublish() {
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(haku1.getOid());
-        g2.setSisalto(SisaltoTyyppi.HAKU);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        list.add(g2);
+        List<Tila> tilat = Lists.newArrayList(new Tila(Tyyppi.HAKU, TarjontaTila.JULKAISTU, haku1.getOid()));
 
         //Happy path, publish everything
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         Date compareDate = getCompareDate();
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(true, true, true, compareDate);
 
         //partial publish - only the haku and hakukohde is published
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.LUONNOS, TarjontaTila.VALMIS);
         compareDate = getCompareDate();
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
 
         //koulutusohjelma not published as it's still luonnos
         check(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU);
@@ -330,33 +307,24 @@ public class PublicationDataServiceImplTest {
 
     @Test
     public void testiHakuCancel() {
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(haku1.getOid());
-        g2.setSisalto(SisaltoTyyppi.HAKU);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        list.add(g2);
+        List<Tila> tilat = Lists.newArrayList(new Tila(Tyyppi.HAKU, TarjontaTila.PERUTTU, haku1.getOid()));
 
         //set the base state to ready
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         //cancel haku and hakukohteet
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.PERUTTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
 
         //same as above, but toteutus has a different status
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.PERUTTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
     }
 
     @Test
     public void testiToteutusPublish() {
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(komoto1.getOid());
-        g2.setSisalto(SisaltoTyyppi.KOMOTO);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        list.add(g2);
+        List<Tila> tilat = Lists.newArrayList(new Tila(Tyyppi.KOMOTO, TarjontaTila.JULKAISTU, komoto1.getOid()));
+
 
         /*
          * Haku not yet ready => no status change for hakukohde.
@@ -364,7 +332,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS); //set the base state
         Date compareDate = getCompareDate();
 
-        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
         Assert.assertSame(0,tilamuutokset.getMuutetutHakukohteet().size());
         Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
@@ -375,7 +343,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         compareDate = getCompareDate();
-        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         checkLastUpdatedFields(false, true, true, compareDate);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         Assert.assertSame(1,tilamuutokset.getMuutetutKomotot().size());
@@ -386,7 +354,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.LUONNOS);
         compareDate = getCompareDate();
-        tilamuutokset =  publicationDataService.updatePublicationStatus(list);
+        tilamuutokset =  publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.LUONNOS, TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS);
         checkLastUpdatedFields(false, true, false, compareDate);
         Assert.assertSame(0,tilamuutokset.getMuutetutHakukohteet().size());
@@ -395,12 +363,9 @@ public class PublicationDataServiceImplTest {
 
     @Test
     public void testiHakukohdePublish() {
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(hakukohde1.getOid());
-        g2.setSisalto(SisaltoTyyppi.HAKUKOHDE);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.JULKAISTU);
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        list.add(g2);
+        
+        List<Tila> tilat = Lists.newArrayList(new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.JULKAISTU, hakukohde1.getOid()));
+
 
         /*
          * Haku not yet ready => no status change for koulutus.
@@ -408,7 +373,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS); //set the base state
         Date compareDate = getCompareDate();
 
-        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.VALMIS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, false, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -419,7 +384,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.VALMIS);
         compareDate = getCompareDate();
-        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, true, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -430,7 +395,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.LUONNOS);
         compareDate = getCompareDate();
-        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.LUONNOS, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU);
         checkLastUpdatedFields(false, false, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -440,12 +405,8 @@ public class PublicationDataServiceImplTest {
     
     @Test
     public void testiHakukohdeCancel() {
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(hakukohde1.getOid());
-        g2.setSisalto(SisaltoTyyppi.HAKUKOHDE);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        list.add(g2);
+        List<Tila> tilat = Lists.newArrayList(new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.PERUTTU, hakukohde1.getOid()));
+
 
         /*
          * Haku not yet ready => no status change for koulutus.
@@ -453,7 +414,7 @@ public class PublicationDataServiceImplTest {
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU); //set the base state
         Date compareDate = getCompareDate();
 
-        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        Tilamuutokset tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.VALMIS, TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU);
         checkLastUpdatedFields(false, false, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -464,7 +425,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU); //set the base state
         compareDate = getCompareDate();
-        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         checkLastUpdatedFields(false, true, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -475,7 +436,7 @@ public class PublicationDataServiceImplTest {
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.JULKAISTU); //set the base state
         compareDate = getCompareDate();
-        tilamuutokset = publicationDataService.updatePublicationStatus(list);
+        tilamuutokset = publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.VALMIS, TarjontaTila.PERUTTU);
         checkLastUpdatedFields(false, false, true, compareDate);
         Assert.assertSame(1,tilamuutokset.getMuutetutHakukohteet().size());
@@ -495,29 +456,25 @@ public class PublicationDataServiceImplTest {
 
     @Test
     public void testiToteutusCancel() {
-        GeneerinenTilaTyyppi g2 = new GeneerinenTilaTyyppi();
-        g2.setOid(komoto1.getOid());
-        g2.setSisalto(SisaltoTyyppi.KOMOTO);
-        g2.setTila(fi.vm.sade.tarjonta.service.types.TarjontaTila.PERUTTU);
-        List<GeneerinenTilaTyyppi> list = new ArrayList<GeneerinenTilaTyyppi>();
-        list.add(g2);
+        
+        List<Tila> tilat = Lists.newArrayList(new Tila(Tyyppi.KOMOTO, TarjontaTila.PERUTTU, komoto1.getOid()));
 
         /*
          * Cancel tutkinto(published -> cancelled) and hakukohde(ready -> cancelled).
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS);
 
         /*
          * Cancel tutkinto(published -> cancelled) and hakukohde(published -> cancelled).
          */
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU);
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.PERUTTU);
         
         quickObjectStatusChange(TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.JULKAISTU, TarjontaTila.VALMIS);
-        publicationDataService.updatePublicationStatus(list);
+        publicationDataService.updatePublicationStatus(tilat);
         check(TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS);
     }
 
