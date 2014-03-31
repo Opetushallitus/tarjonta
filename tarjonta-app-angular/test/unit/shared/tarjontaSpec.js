@@ -35,12 +35,13 @@ describe('Tarjonta', function() {
             "key-app-1": "mock-value-app-1"
         }
     };
-    
+
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('localisation'));
     beforeEach(module('Koodisto'));
     beforeEach(module('TarjontaCache'));
+    beforeEach(module('Logging'));
 
     var mockHttp = function($httpBackend){
     	var response = {status:true, data:["a","b","c","d"]};
@@ -55,10 +56,10 @@ describe('Tarjonta', function() {
             return response;
         });
         $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
-    };    
+    };
 
     describe('TarjontaService', function($injector) {
-    	
+
         beforeEach(function(){
             module(function ($provide) {
                 $provide.value('Config', CONFIG_ENV_MOCK);
@@ -74,7 +75,7 @@ describe('Tarjonta', function() {
         	expect(resourceLink.get).toNotEqual(undefined);
         	expect(resourceLink.parents).toNotEqual(undefined);
         }));
-        
+
         it('should call the known rest api', inject(function($httpBackend, TarjontaService) {
         	mockHttp($httpBackend);
         	var oid = "oid-1.2.3.4.5.6.7";
@@ -87,6 +88,6 @@ describe('Tarjonta', function() {
         	resourceLink.remove({parent:parentOid, child:oid});
         	$httpBackend.flush();
         }));
-        
+
     });
 });

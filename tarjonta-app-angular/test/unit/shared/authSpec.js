@@ -35,9 +35,10 @@ describe('auth', function() {
         }
     };
 
+    beforeEach(module('Logging'));
 
     describe('AuthService', function() {
-    	
+
         beforeEach(function(){
             module(function ($provide) {
                 $provide.value('Config', CONFIG_ENV_MOCK);
@@ -63,7 +64,7 @@ describe('auth', function() {
         it('should return user organisations', inject(function(AuthService) {
             expect(1).toEqual(AuthService.getOrganisations().length);
             expect("1.2.246.562.10.51053050251").toEqual(AuthService.getOrganisations()[0]);
-            
+
          }));
 
         it('should return user language', inject(function(AuthService) {

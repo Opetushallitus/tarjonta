@@ -21,7 +21,7 @@
  * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.userinfo"]
  */
 
-var app = angular.module("auth", ['ngResource', 'config']);
+var app = angular.module("auth", ['ngResource', 'config', 'Logging']);
 
 var USER = "USER_";
 var READ = "_READ";
@@ -31,7 +31,10 @@ var OPH_ORG = "xxx";
 
 app.factory('MyRolesModel', function($http, $log, Config) {
 
-    // $log.info("*** MyRolesModel()");
+    $log = $log.getInstance("MyRolesModel");
+
+    $log.info("MyRolesModel()");
+
     OPH_ORG = Config.env["root.organisaatio.oid"];
 
     var factory = (function() {
@@ -89,7 +92,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         	}
         };
 
-//        console.log("myroles:", instance.myroles);
+//        $log.debug("myroles:", instance.myroles);
 
       	processRoleList(instance.myroles);
 
@@ -101,13 +104,15 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config) {
 
-	var ORGANISAATIO_URL_BASE;
+    $log = $log.getInstance("AuthService");
+
+    var ORGANISAATIO_URL_BASE;
 
 	if(undefined!==Config.env){
 		ORGANISAATIO_URL_BASE=Config.env["organisaatio.api.rest.url"];
 	}
 
-	//console.log("prefix:", ORGANISAATIO_URL_BASE);
+	//$log.debug("prefix:", ORGANISAATIO_URL_BASE);
 
     // CRUD ||UPDATE || READ
     var readAccess = function(service, org) {
@@ -143,12 +148,12 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         	throw "missing org oid!";
         }
         var deferred = $q.defer();
-//        console.log("accessCheck().check()", service, orgOid, accessFunction);
+//        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
-//       	console.log("getting url:", url);
+//       	$log.debug("getting url:", url);
 
       	$http.get(url,{cache:true}).then(function(result) {
-//        console.log("got:", result);
+//        $log.debug("got:", result);
 
         var ooids = result.data.split("/");
 
@@ -160,7 +165,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         }
         deferred.resolve(false);
         }, function(){ //failure funktio
-//           	console.log("could not get url:", url);
+//           	$log.debug("could not get url:", url);
             deferred.resolve(false);
         });
 
@@ -199,7 +204,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
          * @returns
          */
         crudOrg: function(orgOid, service) {
-//        	console.log("crudorg", orgOid, service);
+//        	$log.debug("crudorg", orgOid, service);
             return accessCheck(service||'APP_TARJONTA', orgOid, crudAccess);
         },
         /**
@@ -277,3 +282,88 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
     };
 });
 
+
+
+/**
+ * Enhance logging output to contain datestamp + possible location information.
+ *
+ * If this module is loded the "$log" is enchanced with "getInstance(CLASS_NAME)" method
+ * and the all log entries logged with that logger has that "ClASS_NAME" displayed.
+ * Helps to locate logged lines in the code.
+ */
+
+app = angular.module("Logging", []);
+
+app.config(["$provide", function($provide) {
+
+        console.log("auth.js.Logging.config - enhance logging...");
+
+        function formatDate(date) {
+            var result = "";
+            if (date) {
+                var d = date; // new Date();
+
+                result = result + ((d.getHours() < 10) ? "0" : "") + d.getHours();
+                result = result + ((d.getMinutes() < 10) ? "0" : "") + d.getMinutes();
+                result = result + ((d.getSeconds() < 10) ? "0" : "") + d.getSeconds();
+            }
+
+            return result;
+        }
+
+
+        $provide.decorator('$log', ["$delegate", function($delegate)
+            {
+                var _$log = (function($log)
+                {
+                    return {
+                        log: $log.log,
+                        info: $log.info,
+                        warn: $log.warn,
+                        debug: $log.debug,
+                        error: $log.error
+                    };
+                })($delegate);
+
+                var prepareLogFn = function(logFn, logLevel, logClass) {
+                    var enhanced = function() {
+                        var args = [].slice.call(arguments),
+                                now = new Date();
+
+                        // Prepend timestamp, level, class + actual result
+                        args[0] = formatDate(now) + " - " + logLevel + " - " + logClass + " :: " + args[0];
+
+                        // Call the original with the output prepended with formatted timestamp
+                        logFn.apply(null, args);
+                    };
+
+                    // Special... only needed to support angular-mocks expectations
+                    enhanced.logs = [ ];
+
+                    return enhanced;
+                };
+
+                // Default implementations, no class name
+                $delegate.log = prepareLogFn(_$log.log, "?", "?");
+                $delegate.info = prepareLogFn(_$log.info, "I", "?");
+                $delegate.warn = prepareLogFn(_$log.warn, "W", "?");
+                $delegate.debug = prepareLogFn(_$log.debug, "D", "?");
+                $delegate.error = prepareLogFn(_$log.error, "E", "?");
+
+                // Class spesific implementations
+                $delegate.getInstance = function(logClass) {
+                    return {
+                        log : prepareLogFn(_$log.log, "?", logClass),
+                        info : prepareLogFn(_$log.info, "I", logClass),
+                        warn : prepareLogFn(_$log.warn, "W", logClass),
+                        debug : prepareLogFn(_$log.debug, "D", logClass),
+                        error : prepareLogFn(_$log.error, "E", logClass)
+                    }
+                };
+
+                return $delegate;
+            }]);
+
+        console.log("auth.js.Logging.config - enhance logging... done.");
+
+}]);

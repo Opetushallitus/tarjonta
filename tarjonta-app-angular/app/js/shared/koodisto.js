@@ -14,9 +14,10 @@
  */
 
 
-var app = angular.module('Koodisto', ['ngResource', 'config', 'TarjontaCache']);
+var app = angular.module('Koodisto', ['ngResource', 'config', 'TarjontaCache', 'Logging']);
 
 app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
+    $log = $log.getInstance("Koodisto");
 
     var host = Config.env["tarjontaKoodistoRestUrlPrefix"];
 
@@ -149,12 +150,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
           var uri = host + 'relaatio/sisaltyy-alakoodit/';
 
           for(var i=0;i<koodiUriList.length;i++) {
-            
+
             var koodiUri = koodiUriList[i];
             if(koodiUri.indexOf("#")!=-1) {
               koodiUri = koodiUri.substring(0,koodiUri.indexOf("#"));
             }
-            
+
             var promise = $resource(uri + koodiUri, {}, {get:{method:"GET", isArray:true},cache:true}).get().$promise.then(function(koodis) {
 //              console.log("alapuoliset:", koodis);
                 angular.forEach(koodis, function(koodi) {
@@ -165,7 +166,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
               });
               promises.push(promise);
             }
-          
+
             $q.all(promises).then(function(){
               deferred.resolve(returnKoodis);
             });
@@ -188,12 +189,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
         var uri = host + 'relaatio/sisaltyy-ylakoodit/';
 
         for(var i=0;i<koodiUriList.length;i++) {
-          
+
           var koodiUri = koodiUriList[i];
           if(koodiUri.indexOf("#")!=-1) {
             koodiUri = koodiUri.substring(0,koodiUri.indexOf("#"));
           }
-          
+
           var promise = $resource(uri + koodiUri, {}, {get:{method:"GET", isArray:true},cache:true}).get().$promise.then(function(koodis) {
 //            console.log("ylapuoliset:", koodis);
               angular.forEach(koodis, function(koodi) {
@@ -204,7 +205,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             });
             promises.push(promise);
           }
-        
+
           $q.all(promises).then(function(){
             deferred.resolve(returnKoodis);
           });
@@ -250,7 +251,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 });
 
         	});
-        	
+
         },
         /*
          @param {string} koodistouri from which koodis should be retrieved
@@ -295,7 +296,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
            // console.log('Returning promise from getKoodistoWithKoodiUri');
             return returnKoodi.promise;
         },
-        
+
         searchKoodi: function(koodiUri, locale){
           locale = locale || "fi"; // default locale is finnish
 
@@ -305,7 +306,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
           if(koodiUri.indexOf('#')!=-1) {
             koodiUri = koodiUri.substring(0,koodiUri.indexOf('#'));
           }
-          
+
           var resourceUrl = host + "searchKoodis";
           $resource(resourceUrl,{},{ 'get': {method:'GET', isArray:true},cache:true}).get({koodiUris:koodiUri}, function(result){
             for(var i=0;i<result.length;i++) {
@@ -317,7 +318,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 nimi[metadata.kieli]=metadata.nimi;
               }
               ret.resolve(nimi[locale.toUpperCase()]||nimi.FI||nimi.EN||nimi.SV); //fallback
-              
+
             }
 
           });
