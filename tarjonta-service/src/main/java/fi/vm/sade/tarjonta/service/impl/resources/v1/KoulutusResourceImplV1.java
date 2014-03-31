@@ -728,7 +728,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 final OrganisaatioDTO org = organisaatioService.findByOid(orgOid);
                 if (org == null) {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
-                } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOppilaitostyyppi(
+                } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(
                         orgOid,
                         EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi(komoto.getKoulutusmoduuli().getKoulutustyyppi()))) {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
