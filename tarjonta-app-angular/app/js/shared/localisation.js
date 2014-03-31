@@ -268,6 +268,10 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
      * @returns {v.value}
      */
     this.getRawTranslation = function(key, locale) {
+    	if (!key==null) {
+    		throw new Error("Illegal translation key: '"+key+"'");
+    	}
+    	
         // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[locale];
         // Get translation by key
