@@ -1,0 +1,5 @@
+<div ng-show="langs.length>0" class="mkTabs">
+	<tabset>
+		<tab ng-repeat="kieli in langs" heading="{{codes[kieli].nimi}}" select="onSelect(kieli)"></tab>
+	</tabset>
+</div>

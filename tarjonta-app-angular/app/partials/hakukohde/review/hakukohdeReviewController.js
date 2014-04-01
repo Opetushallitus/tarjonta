@@ -1,4 +1,4 @@
-var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea']);
+var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MonikielinenText']);
 
 
 app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService,dialogService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService, SisaltyvyysUtil, TreeHandlers, PermissionService) {
@@ -63,7 +63,22 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
     	 }
     	  return null;
       }
-
+      
+      // liitteiden / valintakokeiden kielet
+      function aggregateLangs(items) {
+    	  var ret = [];
+    	  for (var i in items) {
+    		  var kieli = items[i].kieliUri;
+    		  if (ret.indexOf(kieli)==-1) {
+    			  ret.push(kieli);
+    		  }
+    	  }
+    	  return ret;
+      }
+      
+      $scope.model.valintakoeKielet = aggregateLangs($scope.model.hakukohde.valintakokeet);
+      $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
+      
       console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
 
       /*
@@ -456,14 +471,6 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
         });
 
     }
-
-    $scope.getHakukelpoisuusVaatimusKuvaus = function(kieliUri) {
-        return $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset[kieliUri];
-    };
-
-        $scope.getLisatiedot = function(kieliUri) {
-        return $scope.model.hakukohde.lisatiedot[kieliUri];
-    };
 
     $scope.getLocalizedValintakoe = function(kieliUri) {
 

@@ -1,0 +1,21 @@
+<div ng-switch="getDisplay()" class="mkText">
+
+<ul ng-switch-when="rows" class="mkTextRows">
+<li ng-repeat="kieli in langs">
+{{model[kieli]}} <span class="lang">({{codes[kieli].nimi}})</span>
+</li>
+</ul>
+
+<div ng-switch-when="tabs" class="mkTextTabs">
+<tabset>
+	<tab ng-repeat="kieli in langs" heading="{{codes[kieli].nimi}}">
+	    <div ng-bind-html="model[kieli]" class="body"></div>
+	</tab>
+</tabset>
+</div>
+
+<div ng-switch-when="none">
+    <p ng-show="ttEmpty">{{getEmptyMessage()}}</p>
+</div>
+
+</div>

@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -215,7 +216,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Päivittää koulutuksen tilan",
             notes = "Operaatio päivittää koulutuksen tilan")
-    public ResultV1RDTO<String> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    public ResultV1RDTO<Tilamuutokset> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
