@@ -38,7 +38,7 @@ app.factory('Localisations', function($log, $resource, Config) {
     $log = $log.getInstance("Localisations");
 
     var uri = Config.env.tarjontaLocalisationRestUrl;
-    $log.info("Localisations() - uri = ", uri);
+    $log.debug("Localisations() - uri = ", uri);
 
     return $resource(uri + "/:id", {
         id: '@id'
@@ -87,7 +87,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
             //template: '<div tt="this.is.key" locale="fi">Default saved for the given key</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
-                // $log.info("tt compile", tElement, tAttrs, transclude);
+                // $log.debug("tt compile", tElement, tAttrs, transclude);
 
                 var key = tAttrs["tt"];
                 var locale = angular.isDefined(tAttrs["locale"]) ? tAttrs["locale"] : LocalisationService.getLocale();
@@ -113,7 +113,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
                     translation = "*CREATED* " + originalText;
                 }
 
-                // $log.info("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
+                // $log.debug("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
 
                 // Put translated text to DOM
                 if (localName === "input") {
@@ -147,12 +147,12 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
 
     $log = $log.getInstance("LocalisationService");
 
-    $log.debug("LocalisationService()");
+    // $log.debug("LocalisationService()");
 
     // Singleton state, default current locale for the user
     this.locale = AuthService.getLanguage();
 
-    $log.info("  user locale = " + this.locale);
+    // $log.debug("  user locale = " + this.locale);
 
     /**
      * Get users locale OR default locale "fi".
@@ -283,7 +283,7 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
             if (angular.isDefined(v.id)) {
                 this.updateAccessedById[v.id] = "";
             } else {
-                $log.info("WTF? tranlation id is undefined...? t=" + v, v);
+                $log.warn("Hmmm... translation id is undefined - all server loaded should have and id? t=" + v, v);
             }
         }
 
@@ -373,10 +373,10 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
     this.disableSystemErrorDialog = function() {
         var loadingService = $injector.get('loadingService');
         if (loadingService) {
-            $log.info("  disable system error dialog.");
+            $log.debug("  disable system error dialog.");
             loadingService.onErrorHandled();
         } else {
-            $log.warn("  FAILED TO disable system error dialog. Sorry.");
+            $log.warn("  FAILED TO disable system error dialog. Sorry about that.");
         }
     };
 
@@ -398,7 +398,7 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
      * @returns created lookup map and stores it to local services variable
      */
     this.updateLookupMap = function() {
-        $log.info("updateLookupMap()");
+        $log.debug("updateLookupMap()");
 
         // Create temporary map
         var tmp = {};

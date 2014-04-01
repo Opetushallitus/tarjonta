@@ -72,7 +72,6 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
         return deferred.promise;
     };
 
-
     var _canEditKoulutus = function(koulutusOid) {
 
         var defer = $q.defer();
