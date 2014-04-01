@@ -16,9 +16,12 @@
 // This solution based on:
 // see: http://stackoverflow.com/questions/13320015/how-to-write-a-debounce-service-in-angularjs
 
-var app = angular.module('debounce', []);
+var app = angular.module('debounce', ['Logging']);
 
 app.factory('debounce', ['$timeout', '$log', function($timeout, $log) {
+
+        $log = $log.getInstance("debounce");
+
         $log.info("debounce initializing...");
 
         var laters = {};

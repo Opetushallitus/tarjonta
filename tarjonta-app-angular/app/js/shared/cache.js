@@ -1,27 +1,29 @@
 /**
  * Cache-palvelu ui-tarpeisiin.
- * 
+ *
  * Cache-avain on joko string tai map.
  *  - String muotoinen avain k muunnetaan automaattisesti muotoon {key: k}
- * 
+ *
  * Map-muotoisen avaimen rakenne:
  *  - key: tekstimuotoinen pääavain (pakollinen, paitsi evictoidessa)
  *  - pattern: regex, johon täsmäävät avaimet poistetaan cachesta tallennettaessa (valinnainen)
  *  - expires: aika jolloin arvo poistuu cachesta; voi olla joko absoluuttinen (Date) tai relatiivinen (int)
- * 
+ *
  */
 
-angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService', function($resource, $log, $q, Config) {
-	
+angular.module('TarjontaCache', ['ngResource', 'config', 'Logging']).factory('CacheService', function($resource, $log, $q, Config) {
+
+    $log = $log.getInstance("TarjontaCache");
+
 	var cacheData = {};
-	
+
 	var cacheService = {};
-	
+
 	var cacheRequests = {};
 
 	/**
 	 * Täydentää cache-avaimen.
-	 * 
+	 *
 	 *  - Muuttaa patternin RegExp-olioksi, jos määritelty
 	 *  - Muuttaa ajan Dateksi, jos määritelty
 	 *  - Jos parametri on RegExp tai String, muuttaa mapiksi.
@@ -48,22 +50,22 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 	 */
 	cacheService.insert = function(key, value) {
 		key = prepare(key);
-		
+
 		for (var rk in cacheData) {
 			if (key.pattern!=undefined && key.pattern.test(rk)) {
-				console.log("Evicted from cache during insert", rk);
+				$log.debug("Evicted from cache during insert", rk);
 				cacheData[rk] = undefined;
 			}
 		}
-		
+
 		cacheData[key.key] = {
 				value: value,
 				expires: key.expires
 		}
 
-		console.log("Cache insert ",key);
+		$log.debug("Cache insert ",key);
 	}
-	
+
 	/**
 	 * Hakee tavaraa cachesta.
 	 */
@@ -71,23 +73,23 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 		key = prepare(key);
 		var rv = cacheData[key.key];
 		if (rv==undefined) {
-			console.log("Cache miss",key);
+			$log.debug("Cache miss",key);
 			return null;
 		}
-		
+
 		if (rv.expires!=undefined && rv.expires.getTime()<new Date().getTime()) {
 			// expired
-			console.log("Expired hit", key);
+			$log.debug("Expired hit", key);
 			cacheData[key.key] = null;
 			return null;
 		}
 
-		console.log("Cache hit", key);
+		$log.debug("Cache hit", key);
 
 		return rv.value;
 	}
-	
-	
+
+
 	/**
 	 * Poistaa tavaraa cachesta.
 	 * @param key Cache-avain.
@@ -95,46 +97,46 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 	cacheService.evict = function(key) {
 		key = prepare(key);
 		var now = new Date().getTime();
-		
+
 		for (var rk in cacheData) {
 			if (key.key==rk
 					|| (key.pattern!=undefined && key.pattern.test(rk))
 					|| (key.expires!=null && key.expires.getTime()<now)) {
-				console.log("Evicted from cache", rk);
+				$log.debug("Evicted from cache", rk);
 				cacheData[rk] = undefined;
 			}
 		}
 	}
-	
+
 	/**
 	 * Hakee tavaraa cachesta avaimen mukaan tai delegoi getterille.
-	 * 
+	 *
 	 * @param key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
 	 * @param getter Funktio, jolle hakeminen delegoidaan jos arvoa ei löytynyt. Parametriksi annetaan promise jonka funktio resolvaa.
 	 * @returns promise
 	 */
 	cacheService.lookup = function(key, getter) {
         var ret = $q.defer();
-		
+
         key = prepare(key);
-        
+
         var res = cacheService.find(key);
-        
+
 		if (res!=undefined) {
 			ret.resolve(res);
 		} else {
 			// palautetaan käynnissä oleva requesti jos sellainen on
 			if (cacheRequests[key.key]) {
-				console.log("Cache request hit", key);
+				$log.debug("Cache request hit", key);
 				return cacheRequests[key.key];
 			} else {
 				cacheRequests[key.key] = ret.promise;
 			}
-			
+
 			var query = $q.defer();
-			
+
 			query.promise.then(function(res){
-				//console.log("Cache RESOLVED "+key.key,res);
+				//$log.debug("Cache RESOLVED "+key.key,res);
 				cacheService.insert(key, res);
 				cacheRequests[key.key] = undefined;
 				ret.resolve(res);
@@ -145,12 +147,12 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 			}*/);
 			getter(query);
 		}
-		return ret.promise;	
+		return ret.promise;
 	};
 
 	/**
 	 * Rest-apumetodi cachesta hakemiseen.
-	 * 
+	 *
 	 * @param key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
 	 * @param resource Rest-resurssi;  $resource(...)
 	 * @param args Rest-kutsun parametrit.
@@ -164,7 +166,7 @@ angular.module('TarjontaCache', ['ngResource', 'config']).factory('CacheService'
 			});
 		});
 	};
-	
+
 	return cacheService;
-	
+
 });

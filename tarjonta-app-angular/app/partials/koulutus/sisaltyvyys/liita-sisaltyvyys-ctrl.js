@@ -15,6 +15,9 @@
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
 
 app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, LocalisationService) {
+
+    $log = $log.getInstance("SisaltyvyysUtil");
+
     return function() {
         var factoryScope = {};
 
@@ -35,10 +38,10 @@ app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, Localisatio
             var arrErrors = [];
 
             if (response.status === 'OK') {
-                console.log("success", response);
+                $log.debug("success", response);
                 modalInstance.close();
             } else {
-                console.log("save cancelled", response);
+                $log.debug("save cancelled", response);
                 angular.forEach(response.errors, function(error) {
                     //add additional information to the error data object
                     var arr = [];

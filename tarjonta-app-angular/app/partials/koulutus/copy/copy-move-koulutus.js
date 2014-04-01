@@ -147,9 +147,12 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
 
             PermissionService.permissionResource().authorize({}, function(authResponse) {
                 console.log("Authorization check : " + authResponse.result);
+                $scope.model.errors = [];
+
 
                 if (authResponse.status !== 'OK') {
                     //not authenticated
+                    $scope.model.errors.push($scope.uiModel, "ERROR", ["koulutus.error.auth"]);
                     return;
                 }
 
@@ -161,12 +164,15 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
                 TarjontaService.koulutus($scope.model.targetKoulutus[0].oid).copyAndMove(apiModel, function(response) {
                     if (response.status === 'OK') {
                         $modalInstance.close(response);
-                        $location.path("/koulutus/" + $scope.model.targetKoulutus[0].oid + "/edit");
+                        if (response.result.to.length > 0) {
+                            //TODO: handle multiple copies
+                            $location.path("/koulutus/" + response.result.to[0].oid + "/edit");
+                        }
                     } else {
                         if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
                             $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error.yleisvirhe", [])});
                             for (var i = 0; i < response.errors.length; i++) {
-                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error." + response.errors[i].errorMessageKey)});
+                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error." + response.errors[i].errorMessageKey, [])});
                             }
                         }
                     }

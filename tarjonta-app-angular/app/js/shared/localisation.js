@@ -28,15 +28,17 @@
  *
  * @author mlyly
  */
-var app = angular.module('localisation', ['ngResource', 'config']);
+var app = angular.module('localisation', ['ngResource', 'config', 'Logging']);
 
 /**
  * "Localisations" factory, returns resource for operating on localisations.
  */
 app.factory('Localisations', function($log, $resource, Config) {
 
+    $log = $log.getInstance("Localisations");
+
     var uri = Config.env.tarjontaLocalisationRestUrl;
-    $log.info("Localisations() - uri = ", uri);
+    $log.debug("Localisations() - uri = ", uri);
 
     return $resource(uri + "/:id", {
         id: '@id'
@@ -76,13 +78,16 @@ app.factory('Localisations', function($log, $resource, Config) {
  * </pre>
  */
 app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationService) {
+
+        $log = $log.getInstance("<tt>");
+
         return {
             restrict: 'A',
             replace: true,
             //template: '<div tt="this.is.key" locale="fi">Default saved for the given key</div>',
             scope: false,
             compile: function(tElement, tAttrs, transclude) {
-                // $log.info("tt compile", tElement, tAttrs, transclude);
+                // $log.debug("tt compile", tElement, tAttrs, transclude);
 
                 var key = tAttrs["tt"];
                 var locale = angular.isDefined(tAttrs["locale"]) ? tAttrs["locale"] : LocalisationService.getLocale();
@@ -108,7 +113,7 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
                     translation = "*CREATED* " + originalText;
                 }
 
-                // $log.info("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
+                // $log.debug("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
 
                 // Put translated text to DOM
                 if (localName === "input") {
@@ -138,13 +143,16 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
  * LocalisationService.tl("this.is.the.key2", "fi", ["array", "of", "values"])  == localized value in given locale
  * </pre>
  */
-app.service('LocalisationService', function($log, $q, $http, $interval, Localisations, Config, AuthService) {
-    $log.log("LocalisationService()");
+app.service('LocalisationService', function($log, Localisations, Config, AuthService, $injector) {
+
+    $log = $log.getInstance("LocalisationService");
+
+    // $log.debug("LocalisationService()");
 
     // Singleton state, default current locale for the user
     this.locale = AuthService.getLanguage();
 
-    $log.info("  user locale = " + this.locale);
+    // $log.debug("  user locale = " + this.locale);
 
     /**
      * Get users locale OR default locale "fi".
@@ -188,9 +196,10 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         $log.info("updateAccessInformation, ids=" + ids, ids);
         if (angular.isDefined(ids)) {
             Localisations.updateAccessed({ id: "access" }, ids, function () {
-                $log.info("success!");
+                $log.info("  updateAccessInformation success!");
             }, function () {
-                $log.info("failed!");
+                $log.info("  updateAccessInformation FAILED");
+                this.disableSystemErrorDialog();
             });
         }
     }
@@ -259,6 +268,10 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
      * @returns {v.value}
      */
     this.getRawTranslation = function(key, locale) {
+    	if (!key==null) {
+    		throw new Error("Illegal translation key: '"+key+"'");
+    	}
+    	
         // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[locale];
         // Get translation by key
@@ -270,7 +283,7 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
             if (angular.isDefined(v.id)) {
                 this.updateAccessedById[v.id] = "";
             } else {
-                $log.info("WTF? tranlation id is undefined...? t=" + v, v);
+                $log.warn("Hmmm... translation id is undefined - all server loaded should have and id? t=" + v, v);
             }
         }
 
@@ -336,9 +349,12 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
                 Localisations.save(newEntry,
                         function(data) {
                             $log.info("  created new translation to server side! data = ", data);
+                            // Save created translation key to local cache
+                            self.putCachedLocalisation(key, l, data);
                         },
                         function(data, status, headers, config) {
                             $log.warn("  FAILED to created new translation to server side! ", data, status, headers, config);
+                            self.disableSystemErrorDialog();
                         });
 
                 // Create temporary placeholder for next requests
@@ -349,6 +365,20 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         return originalText;
     };
 
+    /**
+     * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
+     *
+     * @returns {undefined}
+     */
+    this.disableSystemErrorDialog = function() {
+        var loadingService = $injector.get('loadingService');
+        if (loadingService) {
+            $log.debug("  disable system error dialog.");
+            loadingService.onErrorHandled();
+        } else {
+            $log.warn("  FAILED TO disable system error dialog. Sorry about that.");
+        }
+    };
 
     /**
      * Get list of currently loaded translations.
@@ -368,7 +398,7 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
      * @returns created lookup map and stores it to local services variable
      */
     this.updateLookupMap = function() {
-        $log.info("updateLookupMap()");
+        $log.debug("updateLookupMap()");
 
         // Create temporary map
         var tmp = {};
@@ -386,7 +416,7 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
         // Use the new map
         this.localisationMapByLocaleAndKey = tmp;
 
-        $log.info("===> result ", this.localisationMapByLocaleAndKey);
+        $log.debug("===> result ", this.localisationMapByLocaleAndKey);
         return this.localisationMapByLocaleAndKey;
     };
 
@@ -444,6 +474,8 @@ app.service('LocalisationService', function($log, $q, $http, $interval, Localisa
  * An easy way to bind "t" function to global scope. (now attached in "body")
  */
 app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $interval, Config) {
+    $log = $log.getInstance("LocalisationCtrl");
+
     $log.info("LocalisationCtrl()");
 
     $scope.CONFIG = Config;

@@ -1,11 +1,13 @@
-angular.module('Organisaatio', [ 'ngResource', 'config' ])
+angular.module('Organisaatio', [ 'ngResource', 'config', 'Logging' ])
 
 //"organisaatioservice"
 .factory('OrganisaatioService', function ($resource, $log, $q, Config) {
-  	
-	var orgHaku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/hae");
+
+    $log = $log.getInstance("OrganisaatioService");
+
+    var orgHaku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/hae");
 	var orgLuku = $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/:oid");
-	
+
 	function localize(organisaatio){
 		//TODO olettaa että käyttäjä suomenkielinen
 		organisaationimi=organisaatio.nimi.fi||organisaatio.nimi.sv||organisaatio.nimi.en;
@@ -15,12 +17,12 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 		}
 		return organisaatio;
 	}
-    
+
 	function localizeAll(organisaatioarray){
 		angular.forEach(organisaatioarray, localize);
 		return organisaatioarray;
         }
-	
+
 	function etsi(hakuehdot){
           var ret = $q.defer();
           //    $log.info('searching organisaatiot, q:', hakuehdot);
@@ -30,12 +32,12 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
             localizeAll(result.organisaatiot);
             ret.resolve(result);
           });
-      
+
           //    $log.info('past query now, returning promise...:');
           return ret.promise;
 	}
 
-	
+
         /*
          * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
          */
@@ -50,7 +52,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
          */
         function getTyypitFromChildren(organisaatio, deferred) {
           var oppilaitostyypit = [];
-          
+
           if (organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA") != -1
               && organisaatio.children !== undefined) {
             for ( var i = 0; i < organisaatio.children.length; i++) {
@@ -62,7 +64,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
         }
 
 
-	
+
 	/*
          * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan
          * allaolevista oppilaitoksista, oppilaitoksen tyypit tulee
@@ -75,7 +77,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 
           //hae org (ja sen alapuoliset)
           etsi({oidRestrictionList:organisaatioOid}).then(function(data) {
-            
+
             var organisaatio = data.organisaatiot[0];
             if(organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA")!=-1) {
               return getTyypitFromChildren(organisaatio, deferred);
@@ -90,20 +92,20 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
             }
 
             if(organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE")!=-1) {
-              console.log("toimipiste, recurse...");
+              $log.debug("toimipiste, recurse...");
               deferred.resolve(haeOppilaitostyypit(organisaatio.parentOid));
             };
           });
-          
+
           return deferred.promise;
-          
+
         };
-	
+
 
 	return {
 
 	  haeOppilaitostyypit: haeOppilaitostyypit,
-	  
+
 	   /**
 	    * query (hakuehdot)
 	    * @param hakuehdot, muodossa: (java OrganisaatioSearchCriteria -luokka)
@@ -113,16 +115,16 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
 		*   "oppilaitostyyppi" : "",
 		*   "lakkautetut" : false,
 		*   "suunnitellut" : false
-	    * } 
-	    * 
-	    * 
+	    * }
+	    *
+	    *
 	    * @returns promise
 	    */
 	   etsi: etsi,
-	   
+
 	   /**
 	    * Hakee organisaatiolle voimassaolevan localen mukaisen nimen.
-	    * 
+	    *
 	    * @param oid
 	    * @returns promise
 	    */
@@ -141,7 +143,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config' ])
             });
             return ret.promise;
         }
-	
-	
+
+
 	};
 })

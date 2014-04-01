@@ -37,6 +37,7 @@ describe('localisation', function() {
     var mockModule = angular.module('test.module', []);
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
+    beforeEach(module('Logging'));
     beforeEach(module('localisation'));
     beforeEach(module('test.module'));
     beforeEach(module('auth'));
@@ -46,10 +47,6 @@ describe('localisation', function() {
 
         // Create controller with scope
         beforeEach(inject(function($rootScope, $controller, $log) {
-            $log.debug = function(args) {
-                $log.info(args);
-            };
-
             scope = $rootScope.$new();
             controller = $controller("LocalisationCtrl", {$scope: scope});
         }));

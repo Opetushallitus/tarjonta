@@ -277,26 +277,29 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     // tallentaa liitteen
     $scope.saveLiite = function(kieliUri) {
-    	var ci = -1;
-		for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-			var cl = $scope.model.hakukohde.hakukohteenLiitteet[i];
-			if (cl.selected) {
-				ci = i;
-				break;			
-			}
-		}
-    	
-    	var liite = angular.copy($scope.liitteetModel.selectedLiite[kieliUri]);
-    	liite.selected = true;
-    	if (ci!=-1) {
-    		$scope.model.hakukohde.hakukohteenLiitteet[ci] = liite;
-    	} else {
-    		ci = $scope.model.hakukohde.hakukohteenLiitteet.length;
-        	$scope.model.hakukohde.hakukohteenLiitteet.push(liite);
-    	}
-    	
-    	liite.hakukohdeOid = $scope.model.hakukohde.oid;
-		$scope.createLiite(kieliUri);
+
+        if ($scope.canSaveLiite(kieliUri)) {
+            var ci = -1;
+            for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+                var cl = $scope.model.hakukohde.hakukohteenLiitteet[i];
+                if (cl.selected) {
+                    ci = i;
+                    break;
+                }
+            }
+
+            var liite = angular.copy($scope.liitteetModel.selectedLiite[kieliUri]);
+            liite.selected = true;
+            if (ci != -1) {
+                $scope.model.hakukohde.hakukohteenLiitteet[ci] = liite;
+            } else {
+                ci = $scope.model.hakukohde.hakukohteenLiitteet.length;
+                $scope.model.hakukohde.hakukohteenLiitteet.push(liite);
+            }
+
+            liite.hakukohdeOid = $scope.model.hakukohde.oid;
+            $scope.createLiite(kieliUri);
+        }
     }
     
 
@@ -308,9 +311,10 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		&& notEmpty(liite.liitteenKuvaukset[kieliUri])
     		&& liite.toimitettavaMennessa!=null
     		&& (!liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite))
-    		&& (!liite.muuOsoiteEnabled || (liite.liitteenToimitusOsoite
-    				&& notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
-    						liite.liitteenToimitusOsoite.postinumero])));
+    		//&& (!liite.muuOsoiteEnabled || );
+            && (liite.liitteenToimitusOsoite
+                && notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
+                    liite.liitteenToimitusOsoite.postinumero]))
     }
 
     // avaa uuden liitteen editoitavaksi

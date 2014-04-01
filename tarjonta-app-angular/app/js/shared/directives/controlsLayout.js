@@ -312,7 +312,13 @@ app.directive('controlsNotify', function($log) {
             }
 
             notifs.push({
-                ttExpr: scope.ttExpr,
+                ttExpr: function(){
+                	var ret = scope.ttExpr();
+                	if (!ret) {
+                		throw new Error("ttExpr returned illegal translation key: '"+ret+"'");
+                	}
+                	return ret;
+                },
                 ttParams: scope.ttParams,
                 type: scope.type,
                 show: scope.show});

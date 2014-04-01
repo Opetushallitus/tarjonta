@@ -15,12 +15,12 @@
 
 'use strict';
 
-var app = angular.module('Haku', ['ngResource', 'config']);
+var app = angular.module('Haku', ['ngResource', 'config', 'Logging']);
 
 
-app.factory('HakuService', function($http, $q, Config) {
+app.factory('HakuService', function($http, $q, Config, $log) {
 
-
+        $log = $log.getInstance("HakuService");
 
             var hakuUri = Config.env["tarjontaRestUrlPrefix"] + "haku/findAll";
 
@@ -38,7 +38,7 @@ app.factory('HakuService', function($http, $q, Config) {
                         // when the response is available
                     }).error(function(data, status, headers, config) {
 
-                        console.log('ERROR OCCURRED GETTING HAKUS: ', status);
+                        $log.debug('ERROR OCCURRED GETTING HAKUS: ', status);
                         // called asynchronously if an error occurs
                         // or server returns response with an error status.
                     });
@@ -60,7 +60,7 @@ app.factory('HakuService', function($http, $q, Config) {
 
                     }).error(function(data, status, headers, config) {
 
-                        console.log('ERROR GETTING HAKU WITH OID');
+                        $log.debug('ERROR GETTING HAKU WITH OID');
                     }
                     );
 
@@ -74,6 +74,8 @@ app.factory('HakuService', function($http, $q, Config) {
 
 
 app.factory('HakuV1', function($resource, $log, Config) {
+        $log = $log.getInstance("HakuV1");
+
         $log.info("HakuV1()");
 
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
@@ -120,7 +122,8 @@ app.factory('HakuV1', function($resource, $log, Config) {
 /**
  * Haku Service
  */
-app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
+app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
+  $log = $log.getInstance("HakuV1Service");
 
   var userKieliUri = LocalisationService.getKieliUri();
 
@@ -135,18 +138,13 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
    * palauttaa promisen hakutulokseen, resolvaa nimen valmiiksi
    */
   var mget = function(oids){
-    console.log("multiget:", oids);
-      var defer = $q.defer();
-      HakuV1.mget({oid:oids}).$promise.then(function(haut){
-        console.log("haut:", haut.result);
+      $log.debug("mget:", oids);
+      return HakuV1.mget({oid:oids}).$promise.then(function(haut){
         angular.forEach(haut.result, function(haku, key){
           haku.nimi=resolveNimi(haku);
         });
-        console.log("resolving haut");
-        defer.resolve(haut.result);
+        return haut.result;
       });
-
-      return defer.promise;
    };
 
 
@@ -155,30 +153,11 @@ app.factory('HakuV1Service', function($q, HakuV1, LocalisationService) {
      * Hae hakuja määritellyillä hakuehdoilla
      */
     search:function(parameters){
-      console.log("Searching with: ", parameters);
-
-
-      var defer = $q.defer();
-
+      $log.debug("Searching with: ", parameters);
       return HakuV1.search(parameters).$promise.then(function(data){
-//        var haut=[];
         return mget(data.result);
-//        for(var i=0;i<data.result.length;i++) {
-//          promises.push(HakuV1.get(data.result[i]).$promise.then(function(hakuresult){
-//            var haku=hakuresult.result;
-//            haut.push(haku);
-//            haku.nimi= resolveNimi(haku);
-//          }));
-//        }
-//        $q.all(promises).then(function(){
-//          defer.resolve(haut);
-//        });
       });
-//
-//      return defer.promise;
     }
-
-
   };
 
 });

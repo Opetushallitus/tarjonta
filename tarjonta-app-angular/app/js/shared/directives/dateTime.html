@@ -2,26 +2,24 @@
 
     <input class="date" type="text" maxlength="10"
         placeholder="{{prompts.date}}"
-        ng-pattern="/\d?\d\.\d?\d(\.\d?\d?\d?\d)?/"
+        ng-enter="openChooser()"
+        ng-pattern="/0*\d?\d\.0*\d?\d(\.0*\d?\d?\d?\d)?/"
         ng-model="date"
         ng-required="isRequired()"
         ng-disabled="isDisabled()"
         ng-change="onModelChanged()"
-        ng-focus="onFocusIn()"
-        ng-blur="onFocusOut(false)"/>
+        ng-blur="onFocusOut()"/>
     <input class="time" type="text" maxlength="5"
         placeholder="{{prompts.time}}"
-        ng-pattern="/\d?\d(:\d?\d)?/"
+        ng-enter="openChooser()"
+        ng-pattern="/0*\d?\d(:0*\d?\d)?/"
         ng-model="time"
         ng-show="timestamp"
         ng-required="timestamp && isRequired()"
         ng-disabled="isDisabled()"
         ng-change="onModelChanged()"
-        ng-focus="onFocusIn()"
-        ng-blur="onFocusOut(false)"/>
+        ng-blur="onFocusOut()"/>
     <button class="btn"
-        ng-focus="onFocusIn()"
-        ng-blur="onFocusOut(true)"
         ng-disabled="isDisabled()"
         ng-click="openChooser()">
         <span class="icon-calendar"></span>

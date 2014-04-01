@@ -21,7 +21,7 @@
  * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.userinfo"]
  */
 
-var app = angular.module("auth", ['ngResource', 'config']);
+var app = angular.module("auth", ['ngResource', 'config', 'Logging']);
 
 var USER = "USER_";
 var READ = "_READ";
@@ -31,7 +31,10 @@ var OPH_ORG = "xxx";
 
 app.factory('MyRolesModel', function($http, $log, Config) {
 
-    // $log.info("*** MyRolesModel()");
+    $log = $log.getInstance("MyRolesModel");
+
+    $log.info("MyRolesModel()");
+
     OPH_ORG = Config.env["root.organisaatio.oid"];
 
     var factory = (function() {
@@ -89,7 +92,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
         	}
         };
 
-//        console.log("myroles:", instance.myroles);
+//        $log.debug("myroles:", instance.myroles);
 
       	processRoleList(instance.myroles);
 
@@ -101,13 +104,15 @@ app.factory('MyRolesModel', function($http, $log, Config) {
 
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config) {
 
-	var ORGANISAATIO_URL_BASE;
+    $log = $log.getInstance("AuthService");
+
+    var ORGANISAATIO_URL_BASE;
 
 	if(undefined!==Config.env){
 		ORGANISAATIO_URL_BASE=Config.env["organisaatio.api.rest.url"];
 	}
 
-	//console.log("prefix:", ORGANISAATIO_URL_BASE);
+	//$log.debug("prefix:", ORGANISAATIO_URL_BASE);
 
     // CRUD ||UPDATE || READ
     var readAccess = function(service, org) {
@@ -119,9 +124,14 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
     // CRUD ||UPDATE
     var updateAccess = function(service, org) {
+      if(org) {
         //$log.info("updateAccess()", service, org, MyRolesModel);
         return MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
                 MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
+      } else {
+        return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 ||
+        MyRolesModel.myroles.indexOf(service + CRUD) > -1;
+      }
     };
 
     // CRUD
@@ -138,12 +148,12 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         	throw "missing org oid!";
         }
         var deferred = $q.defer();
-//        console.log("accessCheck().check()", service, orgOid, accessFunction);
+//        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
-//       	console.log("getting url:", url);
+//       	$log.debug("getting url:", url);
 
       	$http.get(url,{cache:true}).then(function(result) {
-//        console.log("got:", result);
+//        $log.debug("got:", result);
 
         var ooids = result.data.split("/");
 
@@ -155,7 +165,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         }
         deferred.resolve(false);
         }, function(){ //failure funktio
-//           	console.log("could not get url:", url);
+//           	$log.debug("could not get url:", url);
             deferred.resolve(false);
         });
 
@@ -194,7 +204,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
          * @returns
          */
         crudOrg: function(orgOid, service) {
-//        	console.log("crudorg", orgOid, service);
+//        	$log.debug("crudorg", orgOid, service);
             return accessCheck(service||'APP_TARJONTA', orgOid, crudAccess);
         },
         /**
@@ -271,4 +281,3 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
     };
 });
-
