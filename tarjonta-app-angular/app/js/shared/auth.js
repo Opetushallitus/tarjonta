@@ -277,7 +277,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             $log.debug("AuthService.getOrganisations()", roles, result);
 
             return result;
-        },
+        }
 
     };
 });

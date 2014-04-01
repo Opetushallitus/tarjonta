@@ -146,14 +146,17 @@ app.controller('BaseEditController',
                 };
 
                 $scope.canSaveAsLuonnos = function() {
-                 /*   var canSaveAsLuonnos = true;
+                    var canSaveAsLuonnos = true;
                     if (!$scope.isMutable)
                         canSaveAsLuonnos = false; //permissio
                     if ($scope.uiModel.isMutable) {
                         canSaveAsLuonnos = $scope.uiModel.isMutable;
                     }
-                    return canSaveAsLuonnos;*/
-                    return CommonUtilService.canSaveAsLuonnos($scope.model.tila);
+
+                    if (canSaveAsLuonnos) {}
+
+                    return canSaveAsLuonnos;
+
                 }
 
                 $scope.canSaveAsValmis = function() {

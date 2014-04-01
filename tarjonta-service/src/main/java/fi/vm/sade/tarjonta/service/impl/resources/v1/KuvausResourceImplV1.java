@@ -341,6 +341,9 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
 
         } catch (Exception exp) {
+
+            LOG.debug("EXCEPTION OCCURRED CREATING NEW KUVAUS : ", exp.toString());
+
            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
