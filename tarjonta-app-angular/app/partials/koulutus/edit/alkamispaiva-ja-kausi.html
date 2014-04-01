@@ -33,8 +33,9 @@
             class="thin"
             ng-required="ctrl.kausi"
             name="alkamisvuosi" 
-            ng-pattern="/^\d+$/"
-            type="text"
+            min="{{minYear}}"
+            max="{{maxYear}}"
+            type="number"
             ng-model="vuosi"
             ng-disabled="!ctrl.kausi"/>
     </div>
