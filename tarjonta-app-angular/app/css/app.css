@@ -627,6 +627,7 @@ input[type=text].typeahead {
 	background-repeat: no-repeat;
 	background-position: center right;
 	padding-right:22px;
+	width:194px;
 }
 
 /* virkailija-teeman checkbox-korjaus */
