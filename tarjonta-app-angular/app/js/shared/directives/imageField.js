@@ -1,6 +1,9 @@
 'use strict';
-var app = angular.module('ImageDirective', []);
+var app = angular.module('ImageDirective', ['Logging']);
 app.directive('imageField', function($log, TarjontaService, PermissionService) {
+    
+    $log = $log.getInstance("<imageField>");
+    
     function controller($scope, $q, $element, $compile) {
         /*
          * DEFAULT VARIABLES:
@@ -69,7 +72,7 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
         $scope.uploadImage = function(event, kieliUri, image) {
             var deferred = $q.defer();
             PermissionService.permissionResource().authorize({}, function(authResponse) {
-                console.log("Authorization check : " + authResponse.result);
+                $log.info("Authorization check : ", authResponse.result);
                 if (authResponse.status !== 'OK') {
                     //not authenticated
                     console.error("User auth failed.", error);
@@ -94,7 +97,7 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
         $scope.deleteImage = function(event, uri) {
             if (!angular.isUndefined(uri)) {
                 PermissionService.permissionResource().authorize({}, function(authResponse) {
-                    console.log("Authorization check : " + authResponse.result);
+                    $log.info("Authorization check : ", authResponse.result);
                     var ResourceImage = TarjontaService.resourceImage($scope.oid, uri);
                     ResourceImage.delete({}, function(response) {
                         var input = '<div id="show"><!-- image removed --></div>';
@@ -133,12 +136,12 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                 }
             }
         };
+
         /*
          * INIT ACTIONS:
          */
-
         $scope.$watch('uri', function(uri, oldObj) {
-            console.log(uri);
+            $log.info("uri = ", uri);
             if (!angular.isUndefined($scope.oid) &&
                     $scope.oid.length > 0 &&
                     uri &&

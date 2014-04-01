@@ -1,8 +1,10 @@
 'use strict';
 
-var app = angular.module('KoodistoTypeAhead', ['ngResource']);
+var app = angular.module('KoodistoTypeAhead', ['ngResource', 'Logging']);
 
 app.directive('koodistotypeahead',function(Koodisto,$log){
+
+    $log = $log.getInstance("<koodistotypeahead>");
 
     var filterKoodis = function(koodistoFilterUri,koodisParam) {
         var filteredkoodis = [];
@@ -108,12 +110,12 @@ app.directive('koodistotypeahead',function(Koodisto,$log){
 
                         }
                     });
-                    console.log('KOODISTO URI : ', $scope.koodistouri);
-                    console.log('FOUND KOODIS : ',$scope.allkoodis.length);
+                    $log.debug('KOODISTO URI : ', $scope.koodistouri);
+                    $log.debug('FOUND KOODIS : ',$scope.allkoodis.length);
                     //Check if 'client' has given uris that need to be selected
                     if ($scope.koodiuris !== undefined && $scope.koodiuris.length > 0) {
                         angular.forEach($scope.koodiuris,function(koodiURI){
-                            console.log('Trying to find koodi with uri: ', koodiURI);
+                            $log.debug('Trying to find koodi with uri: ', koodiURI);
                             var foundKoodi = findKoodiWithUri($scope.koodis,koodiURI);
 
                             $scope.selectedkoodiuris.push(foundKoodi);
@@ -183,8 +185,8 @@ app.directive('koodistotypeahead',function(Koodisto,$log){
                     $scope.removearvocallback(selectedValue.koodiUri);
                 }
 
-                console.log('Removed element : ', selectedValue.koodiUri);
-                console.log('Remaining: ', $scope.koodiuris);
+                $log.debug('Removed element : ', selectedValue.koodiUri);
+                $log.debug('Remaining: ', $scope.koodiuris);
             };
 
             $scope.itemSelected = function(item){
@@ -195,7 +197,7 @@ app.directive('koodistotypeahead',function(Koodisto,$log){
             };
 
             $scope.onKoodistoComboChange = function() {
-                console.log('SELECTED KOODI : ', $scope.koodi);
+                $log.debug('SELECTED KOODI : ', $scope.koodi);
                 if ($scope.koodi !== undefined) {
                     if ($scope.koodiuris !== undefined && $scope.koodiuris.length > 0) {
                         //Check that were not going add existing uri to collection

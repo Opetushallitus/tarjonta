@@ -1,8 +1,10 @@
 'use strict';
 
-var app = angular.module('KoodistoArvoCombo', ['ngResource']);
+var app = angular.module('KoodistoArvoCombo', ['ngResource', 'Logging']);
 
 app.directive('koodistoarvocombo',function(Koodisto,$log){
+    
+    $log = $log.getInstance("<koodistoarvocombo>");
 
     var filterKoodis = function(koodistoFilterUri,koodisParam) {
         var filteredkoodis = [];
