@@ -53,69 +53,68 @@
                         <div koodistocombo prompt="t('haku.list.haunkohdejoukko.kaikki')" koodistouri="'haunkohdejoukko'" koodiuri="searchParams.KOHDEJOUKKO" version="true"></div>
                     </div>
 
-                    <div class="float-left">
-                        <div>Uusi hakuehto</div>
-                        <select>
-                            <option value="">-- Kaikki --</option>
-                        </select>
+                    <div class="float-left margin-left">
+                    &nbsp;<br>
+                    <div class="btn" ng-click="clearSearch()" data-tt="haku.list.tyhjenna">Tyhjennä</div>
+
+                    <div class="btn" ng-click="doSearch()" data-tt="haku.list.hae">Hae</div>
                     </div>
-
-                    <div class="btn float-left" ng-click="clearSearch()" data-tt="haku.list.tyhjenna">Tyhjennä</div>
-
-                    <div class="btn float-left" ng-click="doSearch()" data-tt="haku.list.hae">Hae</div>
                 </div>
             </div>
         </div>
-
-        <tabset>
-            <tab heading="{{t('haku.list.hakuvastaus.lkm', [model.hakus.length])}}" ng-hide="model.hakus == 0">
-
-                <div class="container-fluid">
-
-                    <div class="row-fluid" >
-                        <div class="span3">
-                            <div class="btn" ng-click="doDeleteSelected()"><span data-tt="haku.list.poista">Poista</span></div>
-                        </div>
-                        <div class="span9 align-right">
-                            <div class="btn" ng-click="doCreateNew()"><span data-tt="haku.list.luoUusiHaku">Luo uusi haku</span></div>
-                            <select><option data-tt="haku.list.sorttaa.tila">Tilan mukainen järjestys</option></select>
-                        </div>
-
-                    </div>
-
-                    <div class="row-fluid">
-                        <div class="span12">
-                            <table class="wide" ng-hide="model.hakus == 0">
-                                <tr>
-                                    <th><span data-tt="haku.list.nimi">Nimi</span></th>
-                                    <th><span data-tt="haku.list.hakutyyppi">Hakutyyppi</span></th>
-                                    <th><span data-tt="haku.list.hakukausi">Hakukausi</span></th>
-                                    <th><span data-tt="haku.list.koulutuksen">Koulutuksen</span><br><span data-tt="haku.list.alkamiskausi">alkamiskausi</span></th>
-                                    <th><span data-tt="haku.list.hauntila">Haun tila</span></th>
-                                </tr>
-
-                                <tr ng-repeat="haku in model.hakus| orderBy:predicate:reverse">
-                                    <td>
-                                        <input type="checkbox" ng-model="haku.selected">
-                                        <span class="dropdown">
-                                            <a class="dropdown-toggle">
-                                                <img src="img/icon-treetable-button.png">
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li ng-repeat="action in haku.actions">
-                                                    <a ng-click="action.action()">{{t(action.name)}}</a>
-                                                </li>
-                                            </ul>
-                                        </span><a href ng-click="review(haku)">{{haku.nimi}}</a></td>
-                                    <td><koodi uri="haku.hakutyyppiUri"/></td>
-                                <td><koodi uri="haku.hakukausiUri"/> {{haku.hakukausiVuosi}}</td>
-                                <td><koodi uri="haku.koulutuksenAlkamiskausiUri"/> {{haku.koulutuksenAlkamisVuosi}} </td>
-                                <td>{{haku.tila}} </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </tab>
-        </tabset>
     </div>
+        
+        <tabset>
+            <tab heading="{{t('haku.list.hakuvastaus.lkm', [model.hakus.length])}}" ng-hide="model.hakus == 0"></tab>
+        </tabset>
+	<div class="container-fluid">
+		<div class="row-fluid align-bottom">
+			<div class="span3">
+				<div class="btn" ng-click="doDeleteSelected()">
+					<span data-tt="haku.list.poista">Poista</span>
+				</div>
+			</div>
+			<div class="span6 align-right">
+				<div class="btn" ng-click="doCreateNew()">
+					<span data-tt="haku.list.luoUusiHaku">Luo uusi haku</span>
+				</div>
+			</div>	
+			<div class="span3 align-left">
+				
+				<select><option data-tt="haku.list.sorttaa.tila">Tilan
+						mukainen järjestys</option></select>
+			</div>
+
+		</div>
+	</div>
+
+	<table class="wide" ng-hide="model.hakus == 0">
+		<tr>
+			<th class="align-left align-top"><span data-tt="haku.list.nimi">Nimi</span></th>
+			<th class="align-left align-top"><span
+				data-tt="haku.list.hakutyyppi">Hakutyyppi</span></th>
+			<th class="align-left align-top"><span
+				data-tt="haku.list.hakukausi">Hakukausi</span></th>
+			<th class="align-left align-top"><span
+				data-tt="haku.list.koulutuksen">Koulutuksen</span><br>
+			<span data-tt="haku.list.alkamiskausi">alkamiskausi</span></th>
+			<th class="align-left align-top"><span
+				data-tt="haku.list.hauntila">Haun tila</span></th>
+		</tr>
+
+		<tr ng-repeat="haku in model.hakus| orderBy:predicate:reverse">
+			<td><input type="checkbox" ng-model="haku.selected"> <span
+				class="dropdown"> <a class="dropdown-toggle" ng-click="initMenu(haku)"> <img
+						src="img/icon-treetable-button.png"></a>
+					<ul class="dropdown-menu">
+						<li ng-repeat="action in haku.actions"><a
+							ng-click="action.action()">{{action.name}}</a></li>
+					</ul>
+			</span><a href ng-click="review(haku)">{{haku.nimi}}</a></td>
+			<td><koodi uri="haku.hakutyyppiUri" /></td>
+			<td><koodi uri="haku.hakukausiUri" /> {{haku.hakukausiVuosi}}</td>
+			<td><koodi uri="haku.koulutuksenAlkamiskausiUri" />
+				{{haku.koulutuksenAlkamisVuosi}}</td>
+			<td>{{haku.tila}}</td>
+		</tr>
+	</table>

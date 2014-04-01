@@ -1,5 +1,9 @@
 var app = angular.module('KoulutusConverter', ['ngResource', 'config', 'auth']);
-app.factory('KoulutusConverterFactory', function(Koodisto) {
+app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
+
+    $log = $log.getInstance("KoulutusConverterFactory");
+    $log.debug("init");
+
     var factory = {};
 
     factory.isNull = function(obj) {
@@ -158,7 +162,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
 
     /**
      * Convert person data to UI format.
-     * 
+     *
      * @param {type} person
      * @returns {person}
      */
@@ -172,7 +176,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
 
     /**
      * Convert koodisto component data model to API meta model.
-     * 
+     *
      * @param {type} json object map
      * @param {type} koodisto component object
      */
@@ -189,7 +193,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
     };
     /**
      * Convert koodisto component data model to API koodi model.
-     * 
+     *
      * @param {type} koodisto component object
      */
     factory.convertKoodistoComboToKoodiDTO = function(kbObj) {
@@ -207,14 +211,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
     };
 
     /**
-     * @param string value 
-     * @param {'data' : [koodisto koodis], 'uri : 'koodisto_uri'} uiModel 
+     * @param string value
+     * @param {'data' : [koodisto koodis], 'uri : 'koodisto_uri'} uiModel
      * @returns {@exp;factory@call;convertKoodistoComboToKoodiDTO}
      */
     factory.convertKoodistoComboToKoodiUiDTO = function(arvo, uiModel) {
-        //uiModel.data; all option data items from a koodisto in 'Tarjonta KoodiType' objects. 
+        //uiModel.data; all option data items from a koodisto in 'Tarjonta KoodiType' objects.
         //convert only the selected koodi URI.
-        console.log("uiModel", uiModel);
+        $log.debug("uiModel", uiModel);
         return factory.convertKoodistoCombo(arvo, factory.searchKoodiByKoodiUri(uiModel.uri, uiModel));
     };
     factory.convertPersonsUiModelToDto = function(arrPersons) {
@@ -327,7 +331,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
 
     /**
      * Create full data model for tarjonta rest service.
-     * 
+     *
      * @param {type} apiModel
      * @returns {undefined}
      */
@@ -366,7 +370,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
         angular.forEach(factory.STRUCTURE.STR, function(value, key) {
-            console.log(value);
+            $log.debug(value);
             apiModel[key] = value.default;
         });
 
@@ -380,7 +384,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto) {
         });
 
 
-        console.log("createAPIModel", apiModel);
+        $log.debug("createAPIModel", apiModel);
     };
 
 

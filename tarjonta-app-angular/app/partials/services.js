@@ -2,36 +2,8 @@
 
 /* Services */
 var app = angular.module('app.services', ['ngResource']);
-//app.factory('instagram', function($resource) {
-//
-//    return {
-//        fetchPopular: function(callback) {
-//
-//            // The ngResource module gives us the $resource service. It makes working with
-//            // AJAX easy. Here I am using the client_id of a test app. Replace it with yours.
-//
-//            var api = $resource('https://api.instagram.com/v1/media/popular?client_id=:client_id&onchangecallback=JSON_CALLBACK', {
-//                client_id: '642176ece1e7445e99244cec26f4de1f'
-//            }, {
-//                // This creates an action which we've chosen to name "fetch". It issues
-//                // an JSONP request to the URL of the resource. JSONP requires that the
-//                // onchangecallback=JSON_CALLBACK part is added to the URL.
-//
-//                fetch: {method: 'JSONP'}
-//            });
-//
-//            api.fetch(function(response) {
-//
-//                // Call the supplied onchangecallback function
-//                callback(response.data);
-//
-//            });
-//        }
-//    };
-//
-//});
 
-// FIXME? Path?
+// TODO FIXME? Path?
 
 app.factory('TarjontaConfig', function($resource) {
     // TODO hardcoded, read from service
@@ -43,13 +15,12 @@ app.factory('TarjontaConfig', function($resource) {
     });
 });
 
-app.factory('KoodiService', function($resource, $log, $q ) {
+app.factory('KoodiService', function($resource, $log, $q) {
 
+    $log = $log.getInstance("KoodiService");
 
     return {
         getAllKoodisWithKoodiUri: function(koodistoUriParam, locale) {
-
-
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
             var returnKoodis = [];
 
@@ -61,7 +32,7 @@ app.factory('KoodiService', function($resource, $log, $q ) {
 
             resource.getResult(function(koodis) {
                 _(koodis).all(function(koodi) {
-                    log.info('Got koodi' + koodi);
+                    $log.info('Got koodi' + koodi);
                     var tarjontaKoodi = {
                         koodiArvo: koodi.koodiArvo,
                         koodiNimi: _.select(koodi.metadata, function(koodiMetaData) {
@@ -77,9 +48,9 @@ app.factory('KoodiService', function($resource, $log, $q ) {
 
         },
         getKoodistoWithKoodiUri: function(koodiUriParam, locale) {
+            $log.debug("getKoodistoWithKoodiUri()", koodiUriParam, locale);
 
             var returnKoodi = $q.defer();
-
 
             var testKoodiUri = "https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/:koodistoUri";
 

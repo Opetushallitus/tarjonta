@@ -17,23 +17,21 @@ package fi.vm.sade.tarjonta.service.impl;
 
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.service.business.HakukohdeBusinessService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
+ * Api agnostic code, do not use any API (rest/soap) DTOs here!
  */
 @Transactional(readOnly=true)
 @Service
-public class HakukohdeBusinessServiceImpl implements HakukohdeBusinessService {
+public class HakukohdeService  {
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    @Override
     @Transactional(readOnly=false)
     public Hakukohde createHakukohde(Hakukohde hakukohde) {
 
@@ -41,7 +39,6 @@ public class HakukohdeBusinessServiceImpl implements HakukohdeBusinessService {
 
     }
 
-    @Override
     @Transactional(readOnly=false)
    public Hakukohde updateHakukohde(Hakukohde hakukohde) {
 
@@ -50,7 +47,6 @@ public class HakukohdeBusinessServiceImpl implements HakukohdeBusinessService {
 
     }
 
-    @Override
     public List<Hakukohde> findByKoulutus(String koulutusmoduuliToteutusOid) {
 
         return hakukohdeDAO.findByKoulutusOid(koulutusmoduuliToteutusOid);

@@ -18,6 +18,9 @@ var app = angular.module('app.koulutus.ctrl', []);
 
 app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route',
     function KoulutusRoutingController($scope, $log, $routeParams, $route) {
+
+        $log = $log.getInstance("KoulutusRoutingController");
+
         $scope.resultPageUri;
 
         $scope.controlModel = {
@@ -50,7 +53,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $scope.getKoulutusPartialName = function(actionType) {
             $scope.resolvePath(actionType, $scope.koulutusModel);
         };
-        
+
         return $scope;
     }
 ]);

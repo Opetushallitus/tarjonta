@@ -1,4 +1,4 @@
-var app = angular.module('CommonUtilServiceModule', ['ngResource','config']);
+var app = angular.module('CommonUtilServiceModule', ['ngResource','config', 'Logging']);
 
 
 app.service('CommonUtilService',function($resource, $log,$q, Config,OrganisaatioService){
@@ -32,12 +32,12 @@ app.service('CommonUtilService',function($resource, $log,$q, Config,Organisaatio
 
     },
 
-    this.haeOrganisaationTyypit = function(organisaatioOid) {
+    this.haeOrganisaationTiedot = function(organisaatioOid) {
 
         var deferred = $q.defer();
 
         OrganisaatioService.byOid(organisaatioOid).then(function(vastaus) {
-            deferred.resolve([vastaus.organisaatiot[0].organisaatiotyypit]);
+            deferred.resolve(vastaus);
         });
 
         return deferred.promise;

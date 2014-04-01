@@ -39,11 +39,13 @@ describe('TarjontaPermissions', function() {
         }
     };
 
+    beforeEach(module('Haku'));
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('localisation'));
     beforeEach(module('Koodisto'));
     beforeEach(module('TarjontaCache'));
+    beforeEach(module('Logging'));
 
     beforeEach(function(){
         module(function ($provide) {
@@ -52,19 +54,19 @@ describe('TarjontaPermissions', function() {
     });
 
     beforeEach(module('TarjontaPermissions'));
-    
+
     var mockHttp = function($httpBackend) {
     	/*
-    	 * 
+    	 *
     	 *following structure:
-    	
+
     	1-
     	 |-1.2
     	     |-1.2.3  (crud)
     	     |-1.2.4  (ru)
     	     |-1.2.5  (read)
     	*/
-    	
+
     	var koulutushaku=function(oid){
     		return {
           	  "result" : {
@@ -98,7 +100,7 @@ describe('TarjontaPermissions', function() {
           		  "status" : "OK"
           		};
     	};
-    	
+
     	var hakukohdehaku=function(oid){
     		return {
     			  "result" : {
@@ -141,7 +143,7 @@ describe('TarjontaPermissions', function() {
     				  "status" : "OK"
     				};
     	};
-    	     
+
         $httpBackend.whenGET('/organisaatio/1.2.3/parentoids').respond("1/1.2/1.2.3");
         $httpBackend.whenGET('/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
         $httpBackend.whenGET('/organisaatio/1.2.4/parentoids').respond("1/1.2/1.2.4");
@@ -154,23 +156,23 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.4'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.3'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.3'));
-        
+
     };
-    
+
     describe('Permission service shold answer ', function($injector) {
-        
+
     	/** executes test, called by test() */
     	var doTest = function(promise, $httpBackend) {
         	var result = undefined;
-        	
+
         	promise.then(function(data){
         		result=data;
         	}, function(){
         		result=false;
         	});
-        	
+
         	$httpBackend.flush();
-        	
+
 //        	console.log("returning:" + result);
         	return result;
         };
@@ -193,7 +195,7 @@ describe('TarjontaPermissions', function() {
     	var testFn=function(PermissionService, orgOid){
     		return PermissionService.koulutus.canCreate(orgOid);
     	};
-    	
+
     	test(true, " for create koulutus when user has CRUD permission", "1.2.3", testFn);
     	test(false, " for create koulutus when user has RU permission","1.2.4", testFn);
     	test(false, " for create koulutus when user has R permission", "1.2.5", testFn);
@@ -204,7 +206,7 @@ describe('TarjontaPermissions', function() {
     	testFn=function(PermissionService, oid){
     		return PermissionService.koulutus.canEdit(oid);
     	};
-    	
+
     	test(true, " for edit koulutus when user has CRUD permission", "koulutus.1.2.3", testFn);
     	test(true, " for edit koulutus when user has RU permission", "koulutus.1.2.4", testFn);
     	test(false, " for edit koulutus when user has R permission", "koulutus.1.2.5", testFn);
@@ -215,7 +217,7 @@ describe('TarjontaPermissions', function() {
     	testFn=function(PermissionService, oid){
     		return PermissionService.koulutus.canDelete(oid);
     	};
-    	
+
     	test(true, " for delete koulutus when user has CRUD permission", "koulutus.1.2.3", testFn);
     	test(false, " for delete koulutus when user has RU permission", "koulutus.1.2.4", testFn);
     	test(false, " for delete koulutus when user has R permission", "koulutus.1.2.5", testFn);
@@ -226,7 +228,7 @@ describe('TarjontaPermissions', function() {
     	var testFn=function(PermissionService, orgOid){
     		return PermissionService.hakukohde.canCreate(orgOid);
     	};
-    	
+
     	test(true, " for create hakukohde when user has CRUD permission", "1.2.3", testFn);
     	test(false, " for create hakukohde when user has RU permission", "1.2.4", testFn);
     	test(false, " for create hakukohde when user has R permission", "1.2.5", testFn);
@@ -235,7 +237,7 @@ describe('TarjontaPermissions', function() {
     	testFn=function(PermissionService, oid){
     		return PermissionService.hakukohde.canEdit(oid);
     	};
-    	
+
     	test(true, " for edit hakukohde when user has CRUD permission", "hakukohde.1.2.3", testFn);
     	test(true, " for edit hakukohde when user has RU permission", "hakukohde.1.2.4", testFn);
     	test(false, " for edit hakukohde when user has R permission", "hakukohde.1.2.5", testFn);
@@ -246,7 +248,7 @@ describe('TarjontaPermissions', function() {
     	testFn=function(PermissionService, oid){
     		return PermissionService.hakukohde.canDelete(oid);
     	};
-    	
+
     	test(true, " for delete hakukohde when user has CRUD permission", "hakukohde.1.2.3", testFn);
     	test(false, " for delete hakukohde when user has RU permission", "hakukohde.1.2.4", testFn);
     	test(false, " for delete hakukohde when user has R permission", "hakukohde.1.2.5", testFn);

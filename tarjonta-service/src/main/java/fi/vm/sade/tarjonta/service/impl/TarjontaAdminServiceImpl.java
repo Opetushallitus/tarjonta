@@ -61,14 +61,15 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.publication.GeneerinenTilaTyyppiToTilaFunction;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
-import fi.vm.sade.tarjonta.service.business.HakuBusinessService;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeExistsException;
@@ -76,6 +77,7 @@ import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
@@ -104,6 +106,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 /**
  * @author Tuomas Katva
@@ -115,7 +118,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
     @Autowired(required = true)
-    private HakuBusinessService hakuBusinessService;
+    private HakuService hakuBusinessService;
     @Autowired(required = true)
     private KoulutusBusinessService koulutusBusinessService;
     @Autowired(required = true)
@@ -870,14 +873,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     /**
      * @return the businessService
      */
-    public HakuBusinessService getBusinessService() {
+    public HakuService getBusinessService() {
         return hakuBusinessService;
     }
 
     /**
      * @param businessService the businessService to set
      */
-    public void setBusinessService(HakuBusinessService businessService) {
+    public void setBusinessService(HakuService businessService) {
         this.hakuBusinessService = businessService;
     }
 
@@ -980,12 +983,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
     }
 
+    
+    private GeneerinenTilaTyyppiToTilaFunction gttToT = new GeneerinenTilaTyyppiToTilaFunction();
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public PaivitaTilaVastausTyyppi paivitaTilat(PaivitaTilaTyyppi tarjontatiedonTila) {
         permissionChecker.checkTilaUpdate(tarjontatiedonTila);
 
-        Tilamuutokset tm = publication.updatePublicationStatus(tarjontatiedonTila.getTilaOids());
+        List<Tila> params = Lists.transform(tarjontatiedonTila.getTilaOids(), gttToT);
+        
+        Tilamuutokset tm = publication.updatePublicationStatus(params);
         indexTilatToSolr(tarjontatiedonTila, tm);
         return new PaivitaTilaVastausTyyppi(Lists.newArrayList(tm.getMuutetutHakukohteet()), Lists.newArrayList(tm.getMuutetutKomotot()));
     }
@@ -1033,7 +1040,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     public boolean testaaTilasiirtyma(GeneerinenTilaTyyppi parameters) {
-        return publication.isValidStatusChange(parameters);
+        return publication.isValidStatusChange(gttToT.apply(parameters));
     }
 
     @Override

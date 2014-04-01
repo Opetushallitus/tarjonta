@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
@@ -52,6 +50,8 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
+import fi.vm.sade.tarjonta.publication.Tila;
+import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
@@ -72,11 +72,10 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 /**
  *
@@ -105,7 +104,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     private PublicationDataService publication;
-
 
     @Autowired(required = true)
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
@@ -449,7 +447,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         wasFound = true;
                     }
                }
-
             }
             return wasFound;
         } else {
@@ -547,58 +544,67 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             Date today = new Date();
         	//LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
-			String hakuOid = hakukohdeRDTO.getHakuOid();
+            String hakuOid = hakukohdeRDTO.getHakuOid();
 
-			List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+            List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator
+                    .validateHakukohde(hakukohdeRDTO);
 
-			if (validationMessagesList.size() > 0 ) {
-			    ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-			    errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-			    for (HakukohdeValidationMessages message: validationMessagesList) {
-			        errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
-			    }
-			    errorResult.setResult(hakukohdeRDTO);
-			    return errorResult;
-			}
+            if (validationMessagesList.size() > 0) {
+                ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
+                errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+                for (HakukohdeValidationMessages message : validationMessagesList) {
+                    errorResult.addError(ErrorV1RDTO.createValidationError(
+                            null, message.name(), null));
+                }
+                errorResult.setResult(hakukohdeRDTO);
+                return errorResult;
+            }
 
-			Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
-			hakukohde.setLastUpdateDate(today);
-			Hakukohde hakukohdeTemp = hakukohdeDao.findHakukohdeByOid(hakukohdeRDTO.getOid());
+            Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
+            hakukohde.setLastUpdateDate(today);
+            Hakukohde hakukohdeTemp = hakukohdeDao
+                    .findHakukohdeByOid(hakukohdeRDTO.getOid());
+
+            // These are updated in a separate resource -> ei enää
+            /*
+             * hakukohde.getValintakoes().clear();
+             * hakukohde.getValintakoes().addAll
+             * (hakukohdeTemp.getValintakoes());
+             * 
+             * hakukohde.getLiites().clear();
+             * hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
+             */
+
+            hakukohde.setId(hakukohdeTemp.getId());
+            hakukohde.setVersion(hakukohdeTemp.getVersion());
+
+            // Just in case remove kuvaukses if tunniste is defined
+            if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
+                hakukohde.setValintaperusteKuvaus(null);
+            }
+
+            if (hakukohde.getSoraKuvausTunniste() != null) {
+                hakukohde.setSoraKuvaus(null);
+            }
+
+            Haku haku = hakuDao.findByOid(hakuOid);
+
+            hakukohde.setHaku(haku);
+
+            if (hakukohdeRDTO.getHakuaikaId() != null) {
+                hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,
+                        haku));
+            }
+
+            LOG.info("Hakukohde.liitteet = {}", hakukohde.getLiites());
+            LOG.info("Hakukohde.kokeet = {}", hakukohde.getValintakoes());
+
+            hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(
+                    hakukohdeRDTO.getHakukohdeKoulutusOids(), hakukohde));
+
+            Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.valueOf(hakukohdeRDTO.getTila()), hakukohde.getOid());
 			
-			//These are updated in a separate resource -> ei enää
-			/*hakukohde.getValintakoes().clear();
-			hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
-
-			hakukohde.getLiites().clear();
-			hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
-			*/
-
-			hakukohde.setId(hakukohdeTemp.getId());
-			hakukohde.setVersion(hakukohdeTemp.getVersion());
-
-			//Just in case remove kuvaukses if tunniste is defined
-			if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
-			    hakukohde.setValintaperusteKuvaus(null);
-			}
-
-			if (hakukohde.getSoraKuvausTunniste() != null) {
-			    hakukohde.setSoraKuvaus(null);
-			}
-
-			Haku haku = hakuDao.findByOid(hakuOid);
-
-			hakukohde.setHaku(haku);
-
-			if (hakukohdeRDTO.getHakuaikaId() != null) {
-			    hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO,haku));
-			}
-			
-			LOG.info("Hakukohde.liitteet = {}", hakukohde.getLiites());
-			LOG.info("Hakukohde.kokeet = {}", hakukohde.getValintakoes());
-
-			hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids(),hakukohde));
-            GeneerinenTilaTyyppi tilaTyyppi = new GeneerinenTilaTyyppi(hakukohde.getOid(), SisaltoTyyppi.HAKUKOHDE, fi.vm.sade.tarjonta.service.types.TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
-            if (publication.isValidStatusChange(tilaTyyppi)) {
+            if (publication.isValidStatusChange(tilamuutos)) {
                 hakukohdeDao.update(hakukohde);
     			LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
     			LOG.info("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());
@@ -1008,17 +1014,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional(readOnly = false)
-    public ResultV1RDTO<String> updateTila(String oid, TarjontaTila tila) {
-        Hakukohde hk = hakukohdeDao.findHakukohdeByOid(oid);
-        Preconditions.checkArgument(hk != null, "Hakukohdetta ei löytynyt: %s",
-                oid);
-        if (!hk.getTila().acceptsTransitionTo(tila)) {
-            return new ResultV1RDTO<String>(hk.getTila().toString());
+    public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila) {
+        
+        Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
+        Tilamuutokset tm = null;
+        try {
+            tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+        } catch (IllegalArgumentException iae) {
+            ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
+            r.addError(ErrorV1RDTO.createValidationError(null,  iae.getMessage()));
+            return r;
         }
-        hk.setTila(tila);
-        hakukohdeDao.update(hk);
-        solrIndexer.indexHakukohteet(Collections.singletonList(hk.getId()));
-        return new ResultV1RDTO<String>(tila.toString());
+
+        return new ResultV1RDTO<Tilamuutokset>(tm);
     }
 
     @Override

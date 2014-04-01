@@ -23,12 +23,20 @@
     height: 200px;
 }
 
+.hidden {
+	display:none;
+}
+
 .wide {
 	width:100%;
 }
 
 .float-left {
     float:left;
+}
+
+.margin-left {
+    margin-left:20px;
 }
 
 .float-right {
