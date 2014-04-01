@@ -1,8 +1,10 @@
 'use strict';
 
-var app = angular.module('KoodistoMultiSelect', ['ngResource']);
+var app = angular.module('KoodistoMultiSelect', ['ngResource', 'Logging']);
 
 app.directive('koodistomultiselect',function(Koodisto,$log){
+
+    $log = $log.getInstance("<koodistomultiselect>");
 
     var filterKoodis = function(koodistoFilterUri,koodisParam) {
         var filteredkoodis = [];
@@ -111,7 +113,7 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                    //Check if 'client' has given uris that need to be selected
                     if ($scope.koodiuris !== undefined && $scope.koodiuris.length > 0) {
                         angular.forEach($scope.koodiuris,function(koodiURI){
-                            console.log('Trying to find koodi with uri: ', koodiURI);
+                            $log.info('Trying to find koodi with uri: ', koodiURI);
                             var foundKoodi = findKoodiWithUri($scope.koodis,koodiURI);
 
                             $scope.selectedkoodiuris.push(foundKoodi);
@@ -158,11 +160,7 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
             });
 
             $scope.removeSelection = function(selectedValue) {
-
-
-
-                  $log.info('Removing object : ');
-                 $log.info(selectedValue);
+                 $log.info('Removing object : ', selectedValue);
 
                  $scope.selectedkoodiuris = _($scope.selectedkoodiuris).select(function(koodi){
                      if (selectedValue.$$hashKey === koodi.$$hashKey) {
@@ -181,8 +179,8 @@ app.directive('koodistomultiselect',function(Koodisto,$log){
                     $scope.removearvocallback(selectedValue.koodiUri);
                 }
 
-                console.log('Removed element : ', selectedValue.koodiUri);
-                console.log('Remaining: ', $scope.koodiuris);
+                $log.info('Removed element : ', selectedValue.koodiUri);
+                $log.info('Remaining: ', $scope.koodiuris);
             };
 
             $scope.itemSelected = function(item){

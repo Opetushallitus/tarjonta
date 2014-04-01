@@ -3,8 +3,10 @@
 var app = angular.module('MonikielinenText', ['Koodisto', 'localisation', 'pasvaz.bindonce']);
 
 app.directive('mkText', function(Koodisto, LocalisationService, $log, $modal) {
+    
+    $log = $log.getInstance("<mkText>");
 	
-	var userLangs = window.CONFIG.app.userLanguages;
+    var userLangs = window.CONFIG.app.userLanguages;
 
     function controller($scope) {
 

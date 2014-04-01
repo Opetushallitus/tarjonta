@@ -1,9 +1,11 @@
 'use strict';
 
-var app = angular.module('MonikielinenTextArea', ['Koodisto', 'localisation', 'RichTextArea']);
+var app = angular.module('MonikielinenTextArea', ['Koodisto', 'localisation', 'RichTextArea', 'Logging']);
 
 app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $modal) {
-	
+
+    $log = $log.getInstance("<mkRichTextarea>");
+    
 	function isEmpty(obj) {
 		for (var i in obj) {
 			return false;
@@ -14,7 +16,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     function controller($scope) {
 
     	if ($scope.model instanceof Array || ((typeof $scope.model)!='object') || $scope.model==null || $scope.model==undefined) {
-        	console.log("MODEL FAIL",$scope.model);
+        	$log.debug("MODEL FAIL",$scope.model);
     		throw new Error("mkRichTextarea.model must be a non-array object");
     	}
     	
@@ -31,7 +33,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     	function updateLangs() {
     		var langs = [];
         	if (isEmpty($scope.model)) {
-        		//console.log("EMPTY -> INIT");
+        		//$log.debug("EMPTY -> INIT");
         		for (var i in window.CONFIG.app.userLanguages) {
         			var lang = window.CONFIG.app.userLanguages[i];
         			langs.push(lang);
@@ -39,7 +41,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         		}
     		} else {
         		for (var i in $scope.model) {
-        			//console.log("INIT "+i+" -> ", $scope.model[i]);
+        			//$log.debug("INIT "+i+" -> ", $scope.model[i]);
         			if ($scope.model[i]!==undefined) { // undefinedit pois
         				langs.push(i);
         			}
@@ -63,9 +65,9 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         	});
         	
     		$scope.selectedLangs = langs;
-        	/*console.log("MODEL = ",$scope.model);
-        	console.log("TABS = ",$scope.selectedTab);
-        	console.log("LANGS = ",$scope.selectedLangs);*/
+        	/*$log.debug("MODEL = ",$scope.model);
+        	$log.debug("TABS = ",$scope.selectedTab);
+        	$log.debug("LANGS = ",$scope.selectedLangs);*/
     	}
     	
     	updateLangs();
@@ -83,12 +85,12 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     	$scope.updateLangs = updateLangs;
     	
     	$scope.$watch("model", function(nv, ov){
-    		//console.log("model = ",$scope.model);
+    		//$log.debug("model = ",$scope.model);
     		updateLangs();
     	},false);
 
     	$scope.$watch("isDisabled", function(nv, ov){
-    		//console.log("disabled = ",$scope.disabled());
+    		//$log.debug("disabled = ",$scope.disabled());
     		updateLangs();
     	});
 
