@@ -34,15 +34,14 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
      */
 
     var getUserOrgs = function() {
-        console.log('AUTH SERVICE : ', AuthService.getUsername());
-        console.log('AUTH SERVICE FIRST NAME : ', AuthService.getFirstName());
+        $log.info('AUTH SERVICE : ', AuthService.getUsername());
+        $log.info('AUTH SERVICE FIRST NAME : ', AuthService.getFirstName());
         if (!AuthService.isUserOph())   {
 
             $log.info('USER IS NOT OPH, GETTING ORGANIZATIONS....');
             $log.info('USER ORGANIZATIONS : ' , AuthService.getOrganisations());
             OrganisaatioService.etsi({oidRestrictionList:AuthService.getOrganisations()})
                 .then(function(data){
-                    $log.info('OID RESTRICTION LIST : ', data);
                   getOppilaitosTyyppis(data.organisaatiot);
 
                 });
@@ -173,16 +172,16 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     var removeHashAndVersion = function(oppilaitosTyyppis) {
 
-        var oppilaitosTyyppisWithOutVersion = [];
+        var oppilaitosTyyppisWithOutVersion = new buckets.Set();
 
         angular.forEach(oppilaitosTyyppis,function(oppilaitosTyyppiUri) {
             angular.forEach(oppilaitosTyyppiUri,function(oppilaitosTyyppiUri){
                 var splitStr = oppilaitosTyyppiUri.split("#");
-                oppilaitosTyyppisWithOutVersion.push(splitStr[0]);
+                oppilaitosTyyppisWithOutVersion.add(splitStr[0]);
             });
 
         });
-       return oppilaitosTyyppisWithOutVersion;
+       return oppilaitosTyyppisWithOutVersion.toArray();
     };
 
     var localizeKuvausNames = function(kuvaukses) {
