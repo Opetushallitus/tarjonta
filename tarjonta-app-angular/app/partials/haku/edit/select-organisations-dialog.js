@@ -57,6 +57,18 @@ app.controller('HakuEditSelectOrganisationsController', [
             $log.info("  X asetetaan org hakutulos modeliin.");
             $scope.lkorganisaatiot = vastaus.organisaatiot;
 
+            // Joss käyttäjällä on OPH oikeuksia, lisätään OPH organisaatio valittavaksi, poistettavaksi
+            if (AuthService.isUserOphInAnyOfRoles(["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE", "APP_HAKUJENHALLINTA_CRUD", "APP_HAKUJENHALLINTA_UPDATE"])) {
+                $log.info("  OPH user, lisätään OPH valittavaksi!");
+                $scope.lkorganisaatiot.push(
+                        {"oid": "1.2.246.562.10.00000000001",
+                            "alkuPvm": 0,
+                            "parentOidPath": "1.2.246.562.10.00000000001",
+                            "match": true,
+                            "nimi": "Opetushallitus"
+                        });
+            }
+                    
             //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
             var buildMapFrom = function(orglist) {
                 for (var i = 0; i < orglist.length; i++) {
