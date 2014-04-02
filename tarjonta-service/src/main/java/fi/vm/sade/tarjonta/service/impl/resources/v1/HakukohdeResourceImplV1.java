@@ -67,6 +67,13 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
+import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
+import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -149,6 +156,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
 
         r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
+
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
     }
@@ -637,6 +645,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             LOG.debug("REMOVING HAKUKOHDE : " + oid);
             Hakukohde hakukohde = hakukohdeDao.findHakukohdeByOid(oid);
 
+            if (hakukohde!=null && !hakukohde.getTila().isRemovable()) {
+            	ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
+                errorResult.addError(ErrorV1RDTO.createValidationError("hakukohde.invalid.transition", HakukohdeValidationMessages.HAKUKOHDE_INVALID_TRANSITION.toString().toLowerCase()));
+                return errorResult;
+            }
             hakukohdeDao.safeDelete(hakukohde.getOid(),contextDataService.getCurrentUserOid());
 
             List<Long> hakukohdeIds = new ArrayList<Long>();

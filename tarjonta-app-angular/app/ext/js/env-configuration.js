@@ -102,8 +102,8 @@ window.CONFIG = {
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+         "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
@@ -117,6 +117,7 @@ window.CONFIG = {
         // Only for development, since production reads "/cas/myroles"
         // "casUrl": "cas_me_akuankka.json",
         "casUrl": "cas_me_ophadmin.json",
+        //"casUrl": "cas_me_juomas.json",
         // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
          "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",

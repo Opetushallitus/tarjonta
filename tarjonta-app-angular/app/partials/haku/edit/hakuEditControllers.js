@@ -286,6 +286,9 @@ app.controller('HakuEditController',
                     resolve : {
                         organisaatioOids : function() {
                             return $scope.model.hakux.result.organisaatioOids;
+                        },
+                        treeId:function(){
+                          return "org1";
                         }
                     }
                     // , scope: $scope
@@ -299,6 +302,60 @@ app.controller('HakuEditController',
                     // dismissed - no changes to oids
                 });
             };
+
+
+            /**
+             * Loop throuh list of selected / preselected tarjoaja organisations, 
+             * fetch them and put them to the scope for display purposes.
+             *
+             * @returns {undefined}
+             */
+            $scope.updateSelectedTarjoajaOrganisationsList = function() {
+                $log.info("updateSelectedTarjoajaOrganisationsList()");
+
+                $scope.model.selectedTarjoajaOrganisations = [];
+
+                angular.forEach($scope.model.hakux.result.tarjoajaOids, function(organisationOid) {
+                    $log.info("  get ", organisationOid);
+                    OrganisaatioService.byOid(organisationOid).then(function(organisation) {
+                        $log.info("    got ", organisation);
+                        $scope.model.selectedTarjoajaOrganisations.push(organisation);
+                    });
+                });
+            };
+
+
+            /**
+             * Opens dialog for selecting tarjoaja organisations.
+             * Updates model for the list of selected tarjoaja organisations.
+             *
+             * @returns {undefined}
+             */
+            $scope.doSelectTarjoajaOrganisations = function() {
+                $log.info("doSelectTarjoajaOrganisations()");
+                var modalInstance = $modal.open({
+                    controller: 'HakuEditSelectOrganisationsController',
+                    templateUrl: "partials/haku/edit/select-organisations-dialog.html",
+                    resolve : {
+                        organisaatioOids : function() {
+                            return $scope.model.hakux.result.tarjoajaOids;
+                        },
+                        treeId:function(){
+                          return "org2";
+                        }
+                    }
+                    // , scope: $scope
+                });
+
+                modalInstance.result.then(function(oids) {
+                    $log.debug("OK - dialog closed with selected tarjoaja organisations: ", oids);
+                    $scope.model.hakux.result.tarjoajaOids = oids;
+                    $scope.updateSelectedTarjoajaOrganisationsList();
+                }, function (oids) {
+                    // dismissed - no changes to oids
+                });
+            };
+
 
 
             /**
@@ -329,6 +386,7 @@ app.controller('HakuEditController',
 
                     },
                     selectedOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
+                    selectedTarjoajaOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
                     config: Config.env
                 };
 
@@ -343,11 +401,14 @@ app.controller('HakuEditController',
                  */
                 if ($scope.isNewHaku()) {
                     $scope.model.hakux.result.organisaatioOids = AuthService.getOrganisations();
-                    $log.info("NEW HAKU: ", $scope.model.hakux.result.organisaatioOids);
+                    $scope.model.hakux.result.tarjoajaOids = AuthService.getOrganisations();
+                    $log.info("NEW HAKU: hakukohde organisationOids: ", $scope.model.hakux.result.organisaatioOids);
+                    $log.info("NEW HAKU: tarjoaja organisationOids: ", $scope.model.hakux.result.organisaatioOids);
                 }
 
                 // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
+                $scope.updateSelectedTarjoajaOrganisationsList();
             };
             $scope.init();
         });

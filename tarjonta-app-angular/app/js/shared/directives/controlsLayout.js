@@ -54,9 +54,11 @@
  *
  */
 
-var app = angular.module('ControlsLayout', ['localisation', 'Yhteyshenkilo']);
+var app = angular.module('ControlsLayout', ['localisation', 'Yhteyshenkilo', 'Logging']);
 
 app.directive('displayControls', function($log, LocalisationService, $filter, YhteyshenkiloService) {
+    
+    $log = $log.getInstance("<displayControls>");
 
     return {
         restrict: 'E',
@@ -84,7 +86,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 if (msg == undefined) {
                     for (var i in msgs) {
                         var ms = msgs[i].show();
-                        //console.log(msgs[i].tt+" -> MS=",ms);
+                        //$log.debug(msgs[i].tt+" -> MS=",ms);
                         if (ms == undefined || ms == null || ms == true) {
                             return true;
                         }
@@ -232,6 +234,8 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
 
 app.directive('controlsModel', function($log) {
 
+    $log = $log.getInstance("<controlsModel>");
+
     return {
         restrict: 'E',
         template: "<div style=\"display:none;\" ng-transclude></div>",
@@ -266,6 +270,8 @@ app.directive('controlsModel', function($log) {
 
 app.directive('controlsButton', function($log) {
 
+    $log = $log.getInstance("<controlsButton>");
+
     return {
         restrict: 'E',
         //replace: true,
@@ -290,6 +296,8 @@ app.directive('controlsButton', function($log) {
 });
 
 app.directive('controlsNotify', function($log) {
+
+    $log = $log.getInstance("<controlsNotify>");
 
     return {
         restrict: 'E',
@@ -334,4 +342,3 @@ app.directive('controlsNotify', function($log) {
         }
     }
 });
-
