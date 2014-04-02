@@ -123,26 +123,28 @@ app.factory('Kuvaus',function($http,Config,$q,$log,PermissionService){
 
             var promise = $q.defer();
 
-            if (kuvaus !== undefined && tyyppi !== undefined) {
+            PermissionService.permissionResource().authorize({}, function(authResponse) {
 
-                var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
-                $http.put(kuvausPostUri,kuvaus,{
-                    withCredentials: true,
-                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+                if (kuvaus !== undefined && tyyppi !== undefined) {
 
-                })
-                    .success(function(data){
-                        promise.resolve(data);
+                    var kuvausPostUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi;
+                    $http.put(kuvausPostUri, kuvaus, {
+                        withCredentials: true,
+                        headers: {'Content-Type': 'application/json; charset=UTF-8'}
+
                     })
-                    .error(function(data){
-                        promise.resolve(data);
-                    });
+                        .success(function (data) {
+                            promise.resolve(data);
+                        })
+                        .error(function (data) {
+                            promise.resolve(data);
+                        });
 
-            } else {
+                } else {
 
-                promise.resolve();
-            }
-
+                    promise.resolve();
+                }
+            });
             return promise.promise;
 
         } ,
