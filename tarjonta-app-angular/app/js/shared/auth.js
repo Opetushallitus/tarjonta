@@ -235,18 +235,68 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         },
 
         isUserOph : function() {
-
             var ophUser = false;
+            ophUser = this.isUserInAnyOfRolesInOneOfOrganisations(undefined, [Config.env['root.organisaatio.oid']]);
 
-            angular.forEach(MyRolesModel.organisaatiot,function(orgOid){
+//            angular.forEach(MyRolesModel.organisaatiot,function(orgOid){
+//
+//                if (orgOid === Config.env['root.organisaatio.oid']) {
+//                    ophUser = true;
+//                }
+//            });
 
-                if (orgOid === Config.env['root.organisaatio.oid']) {
-                    ophUser = true;
-                }
-            });
-
+            $log.debug("isUserOph()", ophUser);
             return ophUser;
+        },
 
+        /**
+         * Returns true IFF organisations of user has in given "roles" contains any of given "organisationOids".
+         * 
+         * @param {type} roles
+         * @param {type} organisationOids
+         * @returns {Boolean}
+         */
+        isUserInAnyOfRolesInOneOfOrganisations : function (roles, organisationOids) {
+            var result = false;
+
+            // Default roles if not defined are
+            roles = roles ? roles : ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"];
+
+            // Force parameter to be array
+            if (!(roles instanceof Array)) {
+                roles = [roles];
+            }
+          
+            // Default org == OPH
+            organisationOids = organisationOids ? organisationOids : [Config.env['root.organisaatio.oid']];
+
+            // Force parameter to be array
+            if (!(organisationOids instanceof Array)) {
+                organisationOids = [organisationOids];
+            }
+
+            // Loop over orgs user has in given roles
+            var organisations = this.getOrganisations(roles);
+            angular.forEach(organisations, function(roleOrg) {
+                angular.forEach(organisationOids, function(requiredOrg) {
+                    if (requiredOrg == roleOrg) {
+                        // OK, user has one of required role in one of required organisation
+                        result = true;
+                    }
+                });
+            });
+            
+            $log.debug("isUserInAnyOfRolesInOneOfOrganisations()", roles, organisationOids, result);
+            
+            return result;            
+        },
+
+        /**
+         * @param {type} roles array of strings, default: tarjonta_crud and tarjonta_update
+         * @returns {Boolean} "true" joss käyttäjällä on OPH organisaatio missään annetussa roolissa
+         */
+        isUserOphInAnyOfRoles : function(roles) {
+            return this.isUserInAnyOfRolesInOneOfOrganisations(roles, [Config.env['root.organisaatio.oid']]);
         },
 
         /**
@@ -274,7 +324,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                 });
             });
 
-            $log.debug("AuthService.getOrganisations()", roles, result);
+            $log.debug("getOrganisations()", roles, result);
 
             return result;
         }
