@@ -286,6 +286,9 @@ app.controller('HakuEditController',
                     resolve : {
                         organisaatioOids : function() {
                             return $scope.model.hakux.result.organisaatioOids;
+                        },
+                        treeId:function(){
+                          return "org1";
                         }
                     }
                     // , scope: $scope
@@ -336,6 +339,9 @@ app.controller('HakuEditController',
                     resolve : {
                         organisaatioOids : function() {
                             return $scope.model.hakux.result.tarjoajaOids;
+                        },
+                        treeId:function(){
+                          return "org2";
                         }
                     }
                     // , scope: $scope
