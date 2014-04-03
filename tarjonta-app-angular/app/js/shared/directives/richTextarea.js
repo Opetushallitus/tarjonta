@@ -6,7 +6,7 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 	
 	function RichTextareaController($scope) {
 		
-		var validElements = "@[class],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div[align],br,table,tbody,thead,tr,td,ul,ol,li,dd,dl,dt,img[src]";
+		var validElements = "@[class],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div[align],br,table,tbody,thead,tr,td,ul,ol,li,dd,dl,dt,img[src],sup,sub,font";
 		
 		$scope.tinymceOptions = {
 			height:"100%",
