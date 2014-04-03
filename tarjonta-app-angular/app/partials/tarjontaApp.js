@@ -533,7 +533,7 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
         $scope.count = 0;
 
         PermissionService.permissionResource().authorize({}, function(response) {
-            $log.debug("Authorization check : " + response.result);
+          $log.debug("Authorization check : " + response.result);
         });
 
         var render = function() {

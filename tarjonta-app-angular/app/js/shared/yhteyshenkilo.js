@@ -14,10 +14,10 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 	var henkilo = $resource(urlHaeTiedot,{},{cache:true,get:{method:"GET", withCredentials:true}});
 	var organisaatioHenkilo = $resource(urlHaeOrganisaatioHenkiloTiedot,{},{cache:true,get:{isArray: true, method:"GET", withCredentials:true}});
 
-        $log.info("XXXXXXXXXXX ", baseUrl);
-        $log.info("XXXXXXXXXXX ", urlEtsi);
-        $log.info("XXXXXXXXXXX ", urlHaeTiedot);
-        $log.info("XXXXXXXXXXX ", urlHaeOrganisaatioHenkiloTiedot);
+//        $log.info("XXXXXXXXXXX ", baseUrl);
+//        $log.info("XXXXXXXXXXX ", urlEtsi);
+//        $log.info("XXXXXXXXXXX ", urlHaeTiedot);
+//        $log.info("XXXXXXXXXXX ", urlHaeOrganisaatioHenkiloTiedot);
 
             /**
              * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
@@ -70,7 +70,7 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 	       }, function(err){
 	    	   $log.error("Error loading data", err);
                    disableSystemErrorDialog();
-                   ret.resolve(undefined);
+                   ret.reject("");
 	       });
 	       return ret.promise;
 	   },
@@ -89,7 +89,7 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 	       }, function(err){
 	    	   $log.error("Error loading data", err);
                    disableSystemErrorDialog();
-                   ret.resolve(undefined);
+                   ret.reject();
 	       });
 	       return ret.promise;
 	   }
