@@ -6,6 +6,8 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 	
 	function RichTextareaController($scope) {
 		
+		var validElements = "@[class],p,h1,h2,h3,h4,h5,h6,a[href|target],strong/b,div[align],br,table,tbody,thead,tr,td,ul,ol,li,dd,dl,dt,img[src]";
+		
 		$scope.tinymceOptions = {
 			height:"100%",
 			statusbar:false,
@@ -14,6 +16,9 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			schema:"html5",
 			language:LocalisationService.getLocale(),
 			plugins:"link table paste",
+			valid_elements: validElements,
+			paste_word_valid_elements: validElements,
+			
 			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
 				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
 			tools:"inserttable"
