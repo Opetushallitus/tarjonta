@@ -18,6 +18,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -104,6 +106,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+
+import scala.reflect.internal.Types.HKTypeVar;
 
 /**
  *
@@ -270,9 +274,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         if (result.getStatus().equals(ResultStatus.OK)) {
             permissionChecker.checkRemoveKoulutusByTarjoaja(komoto.getTarjoaja());
 
-            KoulutuksetKysely ks = new KoulutuksetKysely();
-            ks.getHakukohdeOids().add(komotoOid);
-            final KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
+            Map<String, Integer> hkKoulutusMap = Maps.newHashMap();
+
+            for(Hakukohde hk: komoto.getHakukohdes()){
+                hkKoulutusMap.put(hk.getOid(), hk.getKoulutusmoduuliToteutuses().size());
+            }
+            
             Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
             switch (KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi())) {
@@ -282,7 +289,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     final List<String> parent = koulutusSisaltyvyysDAO.getParents(komo.getOid());
                     final List<String> children = koulutusSisaltyvyysDAO.getChildren(komo.getOid());
 
-                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, kv, result);
+                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, hkKoulutusMap,  result);
 
                     if (!result.hasErrors()) {
                         final String userOid = contextDataService.getCurrentUserOid();
