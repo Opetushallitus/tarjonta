@@ -411,6 +411,10 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
                 mapByLocale = tmp[localisation.locale];
             }
             mapByLocale[localisation.key] = localisation;
+            
+            if (this.isEmpty(localisation.value)) {
+                $log.warn("EMPTY localisation: ", localisation);
+            }
         }
 
         // Use the new map
