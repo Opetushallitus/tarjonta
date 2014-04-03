@@ -15,7 +15,7 @@
 
 'use strict';
 
-var app = angular.module('ShowErrors', ['localisation']);
+var app = angular.module('ShowErrors', ['localisation', 'Logging']);
 
 /**
  * Usage:
@@ -45,6 +45,8 @@ var app = angular.module('ShowErrors', ['localisation']);
  * @author mlyly
  */
 app.directive('showErrors', function($log, LocalisationService) {
+
+    $log = $log.getInstance("<showErrors>");
 
     return {
         restrict: 'EA',

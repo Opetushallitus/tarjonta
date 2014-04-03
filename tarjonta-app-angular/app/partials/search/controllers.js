@@ -37,6 +37,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             }
             setDefaultHakuehdot();
 
+            if (SharedStateService.state.puut && SharedStateService.state.puut["organisaatio"] && SharedStateService.state.puut["organisaatio"].selected) {
+            	$routeParams.oid = SharedStateService.state.puut["organisaatio"].selected;
+            }
+            
             if (SharedStateService.state.puut && SharedStateService.state.puut["organisaatio"].scope !== $scope) {
                 console.log("scope has changed???");
                 SharedStateService.state.puut["organisaatio"].scope = $scope;
@@ -589,9 +593,6 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         }
                     }
                 });
-                modalInstance.result.then(function() {/* close */
-                }, function() { /* dismissed */
-                })
             };
 
         });

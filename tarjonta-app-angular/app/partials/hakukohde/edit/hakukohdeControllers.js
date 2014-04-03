@@ -802,11 +802,16 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     var getTarjoajaParentPaths = function(tarjoajaOids) {
 
+        var orgPromises = [];
+
         angular.forEach(tarjoajaOids,function(tarjoajaOid){
 
             var orgPromise = CommonUtilService.haeOrganisaationTiedot(tarjoajaOid);
+            orgPromises.push(orgPromise);
+        });
 
-            orgPromise.then(function(org){
+        $q.all(orgPromises).then(function(orgs){
+            angular.forEach(orgs,function(org) {
                 if (org.parentOidPath) {
                     angular.forEach(org.parentOidPath.split("|"),function(parentOid) {
                         if (parentOid.length > 1) {
@@ -815,8 +820,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
                     });
                 }
-
             });
+            retrieveHakus();
+
         });
 
     };
@@ -857,7 +863,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         angular.forEach(hakus,function(haku){
 
-            if (haku.organisaatioOids.length > 0) {
+            if (haku.organisaatioOids && haku.organisaatioOids.length > 0) {
 
                 if (checkIfOrgMatches(haku)) {
                     filteredHakuArray.push(haku);
@@ -900,42 +906,44 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         -----> Retrieve all hakus
 
      */
+    var retrieveHakus = function() {
+        var hakuPromise = HakuService.getAllHakus();
 
-    var hakuPromise = HakuService.getAllHakus();
-
-    hakuPromise.then(function(hakuDatas) {
-        $scope.model.hakus = [];
-        angular.forEach(hakuDatas,function(haku){
-
-
-            var userLang = AuthService.getLanguage();
+        hakuPromise.then(function(hakuDatas) {
+            $scope.model.hakus = [];
+            angular.forEach(hakuDatas,function(haku){
 
 
+                var userLang = AuthService.getLanguage();
 
-            var hakuLang = userLang !== undefined ? userLang : $scope.model.defaultLang;
 
-            for (var kieliUri in haku.nimi) {
 
-                if (kieliUri.indexOf(hakuLang) != -1 ) {
-                    haku.lokalisoituNimi = haku.nimi[kieliUri];
+                var hakuLang = userLang !== undefined ? userLang : $scope.model.defaultLang;
+
+                for (var kieliUri in haku.nimi) {
+
+                    if (kieliUri.indexOf(hakuLang) != -1 ) {
+                        haku.lokalisoituNimi = haku.nimi[kieliUri];
+                    }
+
                 }
 
+
+
+            });
+
+            var filteredHakus = filterHakus(hakuDatas);
+
+            angular.forEach(filteredHakus,function(haku){
+                $scope.model.hakus.push(haku);
+            });
+
+            if ($scope.model.hakukohde.hakuOid !== undefined) {
+                $scope.model.hakuChanged();
             }
-
-
-
         });
+    }
 
-        var filteredHakus = filterHakus(hakuDatas);
-
-        angular.forEach(filteredHakus,function(haku){
-            $scope.model.hakus.push(haku);
-        });
-
-        if ($scope.model.hakukohde.hakuOid !== undefined) {
-            $scope.model.hakuChanged();
-        }
-    });
 
 
     //$scope.model.koodiuriPromise = $q.defer();

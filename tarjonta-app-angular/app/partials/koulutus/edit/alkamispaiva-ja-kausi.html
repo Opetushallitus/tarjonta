@@ -26,7 +26,8 @@
             ng-required="ctrl.kausi"
             ng-model="kausiUri"
             ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
-            ng-disabled="!ctrl.kausi">  
+            ng-disabled="!ctrl.kausi">
+                <option value="" tt="koulutus.edit.alkamispaiva.ei-valittua-kautta"></option>
         </select>
         <span tt="koulutus.alkamispvm.vuosi">Alkamisvuosi</span>
         <input 

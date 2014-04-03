@@ -18,14 +18,12 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
                 multi: $scope.pvms.length > 0,
-                koodis: [],
-                emptyOption: {koodiNimi: LocalisationService.t('koulutus.edit.alkamispaiva.ei-valittua-kautta'), koodiUri: ''}
+                koodis: []
             };
             
             $scope.minYear = new Date().getFullYear()-1;
             $scope.maxYear = $scope.minYear+11;
 
-            $scope.ctrl.koodis.push($scope.ctrl.emptyOption);
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
                 $scope.form['kausivuosi'] = valNew;
                 if (valNew && $scope.kausi) {
