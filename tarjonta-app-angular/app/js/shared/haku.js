@@ -114,7 +114,13 @@ app.factory('HakuV1', function($resource, $log, Config) {
                 method: 'DELETE',
                 withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            }
+            },
+            checkStateChange: {
+              url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
+              method: 'GET',
+              withCredentials: true,
+          }
+
         });
 
     });
