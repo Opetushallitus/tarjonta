@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -569,6 +570,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         LOG.info("updateRightsInformation(): {}", result.getAccessRights());
+    }
+
+    @Override
+    public ResultV1RDTO<Boolean> isStateChangePossible(String oid,
+            TarjontaTila tila) {
+        Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
+        return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
     }
 
 }

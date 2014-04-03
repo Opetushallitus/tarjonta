@@ -14,6 +14,7 @@ app.controller('HakuEditSelectOrganisationsController', [
     '$location',
     '$log',
     'organisaatioOids', // injected from  hakuEditControllers.js
+    'treeId',
     function($modalInstance,
             $q,
             $scope,
@@ -22,7 +23,8 @@ app.controller('HakuEditSelectOrganisationsController', [
             PermissionService,
             $location,
             $log,
-            organisaatioOids) {
+            organisaatioOids,
+            treeId) {
 
         $log = $log.getInstance("HakuEditSelectOrganisationsController");
 
@@ -30,15 +32,20 @@ app.controller('HakuEditSelectOrganisationsController', [
 
         $log.info("SCOPE: ", $scope);
         $log.info("injected organisaatioOids: ", organisaatioOids);
+        $log.info("injected treeid: ", treeId);
+        var treeModel = treeId + "m";
+        $log.info("model scopessa: ", treeModel);
 
         $scope.model = {
-            organisaatiot: []
+            organisaatiot: [],
+            treeId:treeId,
+            treeModel:treeModel
         };
-        $scope.lkorganisaatio = $scope.lkorganisaatio || {currentNode: undefined};
+        
+        $scope[treeId] = {currentNode: undefined};
 
-        // Watchi valitulle organisaatiolle
-        $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
-            $log.info("oprganisaatio valittu", organisaatio);
+        $scope.$watch(treeId + '.currentNode', function(organisaatio, oldVal) {
+            $log.info("organisaatio valittu", organisaatio);
             if (!angular.isUndefined(organisaatio) && organisaatio !== null) {
                 lisaaOrganisaatio(organisaatio);
             }
@@ -55,12 +62,12 @@ app.controller('HakuEditSelectOrganisationsController', [
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
         OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
             $log.info("  X asetetaan org hakutulos modeliin.");
-            $scope.lkorganisaatiot = vastaus.organisaatiot;
+            $scope[treeModel] = vastaus.organisaatiot;
 
             // Joss käyttäjällä on OPH oikeuksia, lisätään OPH organisaatio valittavaksi, poistettavaksi
             if (AuthService.isUserOphInAnyOfRoles(["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE", "APP_HAKUJENHALLINTA_CRUD", "APP_HAKUJENHALLINTA_UPDATE"])) {
                 $log.info("  OPH user, lisätään OPH valittavaksi!");
-                $scope.lkorganisaatiot.push(
+                $scope[treeModel].push(
                         {"oid": "1.2.246.562.10.00000000001",
                             "alkuPvm": 0,
                             "parentOidPath": "1.2.246.562.10.00000000001",

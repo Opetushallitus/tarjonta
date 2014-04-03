@@ -25,6 +25,8 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.search.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,6 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -66,7 +67,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
@@ -117,6 +117,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     private PermissionChecker permissionChecker;
 
 
+    @Autowired(required = true)
+    private ContextDataService contextDataService;
+
+
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
@@ -151,9 +155,24 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
 
+        r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
 
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>>(converter.fromHakukohteetVastaus(r));
+    }
+
+    private List<HakukohdePerustieto> filterRemovedHakukohteet(List<HakukohdePerustieto> perustietosParam) {
+
+        List<HakukohdePerustieto> perustiedot = new ArrayList<HakukohdePerustieto>();
+
+        for(HakukohdePerustieto hkp:perustietosParam) {
+            if (hkp.getTila() != fi.vm.sade.tarjonta.service.types.TarjontaTila.POISTETTU) {
+                perustiedot.add(hkp);
+            }
+        }
+
+        return perustiedot;
+
     }
 
     @Override
@@ -464,22 +483,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakukohdeKoulutusOids());
         Date today = new Date();
         List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
-/*
-
-        if(hakukohdeRDTO.getUlkoinenTunniste() != null && hakukohdeRDTO.getUlkoinenTunniste().length() > 0) {
-
-            for(String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
-
-                if (checkForExistingUlkoinenTunniste(hakukohdeRDTO.getUlkoinenTunniste(),tarjoajaOid,null)) {
-                    validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_ULKOINEN_TUNNISTE_EXISTS);
-                }
-
-            }
-
-        }
-*/
-
-
 
         if (validationMessageses.size() > 0) {
             ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
@@ -493,17 +496,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         hakukohdeRDTO.setOid(null);
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
         hakukohde.setLastUpdateDate(today);
-
+        hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
 
         Haku haku = hakuDao.findByOid(hakuOid);
-
-        //NOT NEEDED YET
-       /* if (doesHakukohdeExist(hakukohdeRDTO,haku)) {
-            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
-            result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-            result.addError(ErrorV1RDTO.createValidationError(null, "hakukohde.exists", null));
-            return result;
-        } */
 
         hakukohde.setHaku(haku);
 
@@ -564,6 +559,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             Hakukohde hakukohde = converter.toHakukohde(hakukohdeRDTO);
             hakukohde.setLastUpdateDate(today);
+            hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
             Hakukohde hakukohdeTemp = hakukohdeDao
                     .findHakukohdeByOid(hakukohdeRDTO.getOid());
 
@@ -654,15 +650,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 errorResult.addError(ErrorV1RDTO.createValidationError("hakukohde.invalid.transition", HakukohdeValidationMessages.HAKUKOHDE_INVALID_TRANSITION.toString().toLowerCase()));
                 return errorResult;
             }
+            hakukohdeDao.safeDelete(hakukohde.getOid(),contextDataService.getCurrentUserOid());
 
-            if (hakukohde.getKoulutusmoduuliToteutuses() != null) {
-                for (KoulutusmoduuliToteutus koulutus:hakukohde.getKoulutusmoduuliToteutuses()) {
-                    koulutus.removeHakukohde(hakukohde);
-                }
-            }
-
-            hakukohdeDao.remove(hakukohde);
-            solrIndexer.deleteHakukohde(Lists.newArrayList(hakukohde.getOid()));
+            List<Long> hakukohdeIds = new ArrayList<Long>();
+            hakukohdeIds.add(hakukohde.getId());
+            solrIndexer.indexHakukohteet(hakukohdeIds);
             ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);

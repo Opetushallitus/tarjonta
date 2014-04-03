@@ -24,7 +24,19 @@ var app = angular.module('app.haku.edit.ctrl', []);
  * @param {type} param2
  */
 app.controller('HakuEditController',
-        function HakuEditController($q, $route, $scope, $location, $log, $routeParams, $window, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService, AuthService) {
+        function HakuEditController(
+                $q,
+                $route,
+                $scope,
+                $location,
+                $log,
+                $modal,
+                LocalisationService,
+                HakuV1,
+                ParameterService,
+                Config,
+                OrganisaatioService,
+                AuthService) {
             $log = $log.getInstance("HakuEditController");
             $log.info("initializing", $scope);
 
@@ -39,15 +51,6 @@ app.controller('HakuEditController',
              */
             var reportFormValidationErrors = function(form) {
                 $log.debug("reportFormValidationErrors - form:::::", form);
-
-//                    angular.forEach(form, function(value,name){
-//                      if(value.$invalid===true) {
-//                        var key = "error.validation." + name + "." + name;
-//                        $log.debug("k:" + key);
-//                        $scope.model.validationmsgs.push({errorMessageKey:key});
-//                      }
-//
-//                    });
 
                 $log.debug("form", form);
                 angular.forEach(form.$error, function(v, k) {
@@ -286,6 +289,9 @@ app.controller('HakuEditController',
                     resolve : {
                         organisaatioOids : function() {
                             return $scope.model.hakux.result.organisaatioOids;
+                        },
+                        treeId:function(){
+                          return "org1";
                         }
                     }
                     // , scope: $scope
@@ -336,6 +342,9 @@ app.controller('HakuEditController',
                     resolve : {
                         organisaatioOids : function() {
                             return $scope.model.hakux.result.tarjoajaOids;
+                        },
+                        treeId:function(){
+                          return "org2";
                         }
                     }
                     // , scope: $scope
@@ -387,8 +396,11 @@ app.controller('HakuEditController',
                 $log.info("init... done.");
                 $scope.model = model;
 
-                // lataa nykyiset parametrit model.parameter objektiin
-                ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+                
+                if(!$scope.isNewHaku()){
+                  // lataa nykyiset parametrit model.parameter objektiin
+                  ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+                }
 
                 /**
                  * If this is new haku initialize selected organisations with users list of organisations.

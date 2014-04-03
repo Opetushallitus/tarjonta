@@ -15,10 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.Query;
 
@@ -52,6 +49,9 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     @Value("${tarjonta-alkamiskausi-syksy}")
     private String tarjontaAlkamiskausiSyksyUri;
 
+    private Collection<TarjontaTila> poistettuTila = Arrays.asList(TarjontaTila.POISTETTU);
+
+
     @Override
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid) {
 
@@ -61,7 +61,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         return from(hakukohde).
                 join(hakukohde.koulutusmoduuliToteutuses, toteutus).
-                where(oidEq).
+                where(oidEq.and(hakukohde.tila.notIn(poistettuTila))).
                 list(hakukohde);
 
     }
@@ -74,7 +74,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         return from(qHakukohde)
                 .join(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
-                .where(qHakukohde.ulkoinenTunniste.eq(ulkoinenTunniste).and(qKomoto.tarjoaja.eq(tarjoajaOid)))
+                .where(qHakukohde.ulkoinenTunniste.eq(ulkoinenTunniste).and(qKomoto.tarjoaja.eq(tarjoajaOid)).and(qHakukohde.tila.notIn(poistettuTila)))
                 .singleResult(qHakukohde);
 
     }
@@ -203,6 +203,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
                 .where(qHakukohde.hakukohdeNimi.eq(name)
+                        .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))
                         .and(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
 
     }
@@ -215,7 +216,9 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
-                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);
+                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year)
+                        .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))
+                        .and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);
 
     }
 
@@ -282,6 +285,8 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         if (tila != null) {
             // Convert Enums from API enum to DB enum
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.tila.eq(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(tila.name())));
+        } else {
+            whereExpr = QuerydslUtils.and(whereExpr,hakukohde.tila.notIn(poistettuTila));
         }
         if (lastModifiedBefore != null) {
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.before(lastModifiedBefore));
@@ -318,6 +323,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         // Select by haku OID
         BooleanExpression whereExpr = hakukohde.haku.oid.eq(hakuOid);
+        whereExpr = whereExpr.and(hakukohde.tila.notIn(poistettuTila));
 
         // Result selection
         Expression<?>[] projectionExpr = new Expression<?>[]{hakukohde.oid};
@@ -328,6 +334,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         if (lastModifiedSince != null) {
             whereExpr = whereExpr.and(hakukohde.lastUpdateDate.after(lastModifiedSince));
         }
+
 
         List<Object[]> tmp = findScalars(whereExpr, count, startIndex, projectionExpr);
 
