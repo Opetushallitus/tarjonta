@@ -191,7 +191,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(children);
         expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        expect(tarjontaSearchService.haeKoulutukset(isA(KoulutuksetKysely.class))).andReturn(kv);
 
         /*
          * ERROR IN CHILD
@@ -205,7 +204,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komo.link.childs", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        verify(tarjontaSearchService);
         verify(koulutusSisaltyvyysDAO);
         EasyMock.reset(koulutusSisaltyvyysDAO);
         EasyMock.reset(tarjontaSearchService);
@@ -218,7 +216,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
         expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(parent);
-        expect(tarjontaSearchService.haeKoulutukset(isA(KoulutuksetKysely.class))).andReturn(kv);
 
         replay(koulutusSisaltyvyysDAO);
         replay(tarjontaSearchService);
@@ -229,7 +226,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         assertEquals("komo.link.parents", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        verify(tarjontaSearchService);
         verify(koulutusSisaltyvyysDAO);
         EasyMock.reset(koulutusSisaltyvyysDAO);
         EasyMock.reset(tarjontaSearchService);
@@ -266,7 +262,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals("komo.invalid.transition", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
         //assertEquals("komoto.hakukohdes", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
 
-        verify(tarjontaSearchService);
         verify(koulutusSisaltyvyysDAO);
         EasyMock.reset(koulutusSisaltyvyysDAO);
         EasyMock.reset(tarjontaSearchService);
@@ -285,7 +280,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
         expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
         expect(koulutusSisaltyvyysDAO.getParents(persistedKomoOid)).andReturn(Lists.<String>newArrayList());
-        expect(tarjontaSearchService.haeKoulutukset(isA(KoulutuksetKysely.class))).andReturn(kv);
 
         replay(koulutusSisaltyvyysDAO);
         replay(tarjontaSearchService);
@@ -299,7 +293,6 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         //assertEquals("validation error", ResultV1RDTO.ResultStatus.OK, deleteResult.getStatus());
         //assertEquals("Validation", true, deleteResult.getErrors() != null ? deleteResult.getErrors().isEmpty() : true);
 
-        verify(tarjontaSearchService);
         verify(koulutusSisaltyvyysDAO);
 
     }
