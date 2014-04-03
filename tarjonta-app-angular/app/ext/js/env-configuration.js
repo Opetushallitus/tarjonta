@@ -102,8 +102,8 @@ window.CONFIG = {
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-         "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+        // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",
@@ -121,8 +121,8 @@ window.CONFIG = {
         // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
          "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
-        //henkilöhaku
-        //"authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
+        //henkilöhaku - CORS ongelma, siksi ohjattu tarjontaan - toimii "oikeassa" ympäristössä
+        // "authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
         "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/permission/user?",
         "authentication-service.henkilo.search.params"  : "?count=2000&index=0&ht=VIRKAILIJA",
 
