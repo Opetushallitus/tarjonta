@@ -18,7 +18,14 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			plugins:"link table paste",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
-			
+			paste_postprocess: function(plugin, args) {
+				// tyhjät kappaleet rivinvaihdoiksi <p></p> -> <br/>
+				$("p", $(args)).each(function(i, em){
+					if ($(em).html().trim()=="") {
+						$(em).replaceWith("<br/>");
+					}
+				});
+			},
 			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
 				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
 			tools:"inserttable"
