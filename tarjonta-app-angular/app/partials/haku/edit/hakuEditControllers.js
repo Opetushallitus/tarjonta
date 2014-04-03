@@ -396,8 +396,11 @@ app.controller('HakuEditController',
                 $log.info("init... done.");
                 $scope.model = model;
 
-                // lataa nykyiset parametrit model.parameter objektiin
-                ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+                
+                if(!$scope.isNewHaku()){
+                  // lataa nykyiset parametrit model.parameter objektiin
+                  ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+                }
 
                 /**
                  * If this is new haku initialize selected organisations with users list of organisations.
