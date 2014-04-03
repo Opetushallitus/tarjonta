@@ -17,8 +17,8 @@
 var app = angular.module('app.haku.list.ctrl', []);
 
 app.controller('HakuListController',
-        ['$scope', '$location', '$log', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto', 'PermissionService', 
-            function HakuListController($scope, $location, $log, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto, PermissionService) {
+        ['$q', '$scope', '$location', '$log', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto', 'PermissionService', 'loadingService', 
+            function HakuListController($q, $scope, $location, $log, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto, PermissionService, loadingService) {
 
           $log = $log.getInstance("HakuListController");
 
@@ -56,7 +56,6 @@ app.controller('HakuListController',
                   $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
                 }
 
-
                 $scope.clearSearch = function() {
                   $scope.searchParams=  {
                     HAKUSANA: undefined,
@@ -83,6 +82,16 @@ app.controller('HakuListController',
                   dialogService.showNotImplementedDialog();
                 };
 
+                $scope.doPublish = function(haku) {
+                  Haku.changeState({oid:haku.oid, state:"JULKAISTU"}).$promise.then(function(result){
+                    console.log("result:", result);
+                  });
+                };
+
+                $scope.doCancel = function(haku) {
+                  Haku.changeState({oid:haku.oid, state:"PERUTTU"});
+                };
+
                 $scope.doDeleteSelected = function() {
                   console.log("doDeleteSelected()");
                   var selected=[];
@@ -102,32 +111,46 @@ app.controller('HakuListController',
                 }
 
                 /**
-                 * populoi menu laiskasti
+                 * populoi menu laiskasti (permissiot/tila vaikuttaa)
                  */
                 $scope.initMenu=function(haku) {
                   haku.actions.splice(0);
-                  
-                  
-                  PermissionService.haku.canEdit(haku.oid).then(function(result){
-//                    console.log("muokkaa:", result);
-                    if(!result) return;
-                      //#/haku/{{ haku.oid}}/edit
-                    haku.actions.push({name:LocalisationService.t("haku.menu.muokkaa"), action:function(){
-                      $location.path("/haku/" + haku.oid + "/edit");
+                  //hae permissiot ja testaa tilasiirtymät
+                  $q.all([PermissionService.haku.canEdit(haku.oid), PermissionService.haku.canDelete(haku.oid), Haku.checkStateChange({oid:haku.oid, state: 'JULKAISTU'}), Haku.checkStateChange({oid:haku.oid, state: 'PERUTTU'})]).then(function(results){
+                    if(results[0]) {
+                      //edit
+                      haku.actions.push({name:LocalisationService.t("haku.menu.muokkaa"), action:
+                        function(){
+                          $location.path("/haku/" + haku.oid + "/edit");
+                        }
+                      });
+                    }
+                    
+                    console.log("results", results);
+                    
+                    //review
+                    haku.actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
+                      review(haku);
                     }});
+
+                    //delete
+                    if(results[1]) {
+                      haku.actions.push({name:LocalisationService.t("haku.menu.poista"), action:function(){$scope.doDelete(haku)}});
+                    }
+                    
+                    //publish
+                    if(results[0] && results[2].result && haku.tila!='JULKAISTU') {
+                      haku.actions.push({name:LocalisationService.t("haku.menu.julkaise"), action:function(){$scope.doPublish(haku)}});
+                    }
+                    //cancel
+                    if(results[0] && results[3].result && haku.tila!='PERUTTU') {
+                      haku.actions.push({name:LocalisationService.t("haku.menu.peruuta"), action:function(){$scope.doCancel(haku)}});
+                    }
+
                   });
-
-
-                  haku.actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
-                    review(haku);
-                  }});
-
-                  PermissionService.haku.canDelete(haku.oid).then(function(result){
-//                        console.log("poista:", result);
-                    if(!result) return;
-                    haku.actions.push({name:LocalisationService.t("haku.menu.poista"), action:function(){$scope.doDelete(haku)}});
-                  });
+                  
                 }
+
                 
                 $scope.doSearch = function() {
                     $log.info("doSearch()");
