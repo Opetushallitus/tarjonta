@@ -260,9 +260,8 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             dialogService.showNotImplementedDialog();
         };
         $scope.doPreview = function(event) {
-            $log.info("doPreview()...");
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid;
-            //example : https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640
+            $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid + "?lang=" + $scope.model.koodistoLocale;
+            //example : https://<oppija-env>/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640?lang=fi
         };
 
         $scope.findHakukohdeNimi = function(lang,hakukohde) {
