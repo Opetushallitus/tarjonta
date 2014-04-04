@@ -28,7 +28,6 @@
     <mockito:mock id="oidService" class="fi.vm.sade.tarjonta.service.OidService"/>
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
-    <bean id="tarjontaHakukohdeV1Resource" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
     <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1"/>
     <bean id="tarjontaKoulutusResource" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1"/>
