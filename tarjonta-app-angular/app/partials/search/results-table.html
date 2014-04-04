@@ -8,7 +8,7 @@
 	<table><!-- jquery --></table>
 	
 	<ul class="dropdown-menu">
-		<li ng-repeat="o in menuOptions"><a href="{{o.url}}" ng-click="o.action()">{{o.title}}</a></li>
+		<li ng-repeat="o in menuOptions"><a ng-hide="o.href" href ng-click="o.action()">{{o.title}}</a></li>
 	</ul>
 
  </div>

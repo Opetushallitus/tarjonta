@@ -275,7 +275,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 canCreateHakukohde: false,
                 canCreateKoulutus: false
             };
-
+            
             function rowActions(prefix, oid, tila, nimi, actions) {
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
@@ -285,20 +285,26 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                 // tarkastele
                 if (canRead) {
-                    ret.push({url: "#/" + prefix + "/" + oid, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
+                  var url = "/" + prefix + "/" + oid;
+                    ret.push({action:function(){
+                     $location.path(url); 
+                    }, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
                 }
                 // muokkaa
                 if (tt.mutable) {
                     PermissionService[prefix].canEdit(oid).then(function(result) {
                         console.log("row actions can edit (" + prefix + ")", result);
+                        var url="/" + prefix + "/" + oid + "/edit";
                         if (result) {
-                            ret.push({url: "#/" + prefix + "/" + oid + "/edit", title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
+                            ret.push({action:function(){
+                              $location.path(url);
+                            }, title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
                         }
                     });
                 }
                 // näytä hakukohteet
                 if (canRead) {
-                    ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot." + prefix + ".linkit"),
+                    ret.push({title: LocalisationService.t("tarjonta.toiminnot." + prefix + ".linkit"),
                         action: function(ev) {
                             $scope.openLinksDialog(prefix, oid, nimi);
                         }
@@ -312,10 +318,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                        console.log("row actions can transition (" + prefix + ")", tila, "JULKAISTU", canTransition);
 
                       if (canTransition) {
-                          ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
+                          ret.push({title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
                               action: function() {
                                   TarjontaService.togglePublished(prefix, oid, true).then(function(ns) {
-                                      actions.update(ns);
+                                      actions.update("JULKAISTU");
                                       TarjontaService.evictHakutulokset();
                                   });
                               }
@@ -325,10 +331,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     case "JULKAISTU":
                       PermissionService[prefix].canTransition(oid, tila, "PERUTTU").then(function(canTransition) {
                         if (canTransition) {
-                            ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
+                            ret.push({title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
                                 action: function() {
                                     TarjontaService.togglePublished(prefix, oid, false).then(function(ns) {
-                                        actions.update(ns);
+                                        actions.update("PERUTTU");
                                         TarjontaService.evictHakutulokset();
                                     });
                                 }
@@ -340,7 +346,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 if (tt.removable) {
                     PermissionService[prefix].canDelete(oid).then(function(canDelete) {
                         if (canDelete) {
-                            ret.push({url: "#", title: LocalisationService.t("tarjonta.toiminnot.poista"),
+                            ret.push({title: LocalisationService.t("tarjonta.toiminnot.poista"),
                                 action: function(ev) {
                                     $scope.openDeleteDialog(prefix, oid, nimi, actions.remove);
                                 }
