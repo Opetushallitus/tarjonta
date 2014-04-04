@@ -27,65 +27,57 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.collect.Lists;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.Date;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.SecurityAwareTestBase;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
-import java.util.Date;
-import java.util.List;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * mvn test -Dtest=fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1Test
  *
  * @author mlyly
  */
-@ContextConfiguration(locations = "classpath:spring/test-context.xml")
-@TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class})
-@RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("embedded-solr")
-@Transactional()
-public class HakuResourceImplV1Test extends SecurityAwareTestBase {
+public class HakuResourceImplV1Test {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImplV1Test.class);
 
     @Autowired
-    private HakuV1Resource hakuResource;
+    private HakuV1Resource hakuResource = new HakuResourceImplV1();
 
-    @Autowired
-    private OidService oidService;
+    private OidService oidService = Mockito.mock(OidService.class);
 
-    @Autowired
-    private KoodiService koodiService;
+    private KoodiService koodiService = Mockito.mock(KoodiService.class);
+    
+    private PermissionChecker permissionChecker = Mockito.mock(PermissionChecker.class);
+    
+    private KoodistoValidator koodistoValidator = new KoodistoValidator();
+
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper = new TarjontaKoodistoHelper();
+    private ConverterV1 converterV1 = Mockito.mock(ConverterV1.class);
+    private HakuDAO hakuDAO = Mockito.mock(HakuDAO.class);
 
     @Before
     public void setUp() throws Exception {
@@ -100,6 +92,16 @@ public class HakuResourceImplV1Test extends SecurityAwareTestBase {
         TarjontaSearchServiceTest.stubKoodi(koodiService, "hakutapa_01", "01");
         TarjontaSearchServiceTest.stubKoodi(koodiService, "hakutyyppi_01", "01");
         TarjontaSearchServiceTest.stubKoodi(koodiService, "haunkohdejoukko_12", "12");
+        
+        //wire things up
+        Whitebox.setInternalState(hakuResource, "permissionChecker", permissionChecker);
+        Whitebox.setInternalState(hakuResource, "oidService", oidService);
+        Whitebox.setInternalState(tarjontaKoodistoHelper, "koodiService", koodiService);
+        Whitebox.setInternalState(koodistoValidator, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
+        Whitebox.setInternalState(hakuResource, "koodistoValidator", koodistoValidator);
+        Whitebox.setInternalState(hakuResource, "converterV1", converterV1);
+        Whitebox.setInternalState(hakuResource, "hakuDAO", hakuDAO);
+        
     }
 
     @After
@@ -155,6 +157,7 @@ public class HakuResourceImplV1Test extends SecurityAwareTestBase {
         result = hakuResource.createHaku(dto);
         assertNotNull(result);
         assertNotNull(result.getStatus());
+        System.out.println("S:" + result.getErrors());
         assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
 
         LOG.info("testXXX()... done.");

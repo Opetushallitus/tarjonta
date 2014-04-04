@@ -14,9 +14,25 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import javax.ws.rs.QueryParam;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
+
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -24,8 +40,8 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
-import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
@@ -41,22 +57,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Lists;
 
 /**
  * REST API V1 implementation for Haku.
@@ -76,7 +76,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
-    private ConverterV1 _converter;
+    private ConverterV1 converterV1;
 
     @Autowired
     private OidService oidService;
@@ -165,7 +165,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(hakuDtos);
         for (Haku haku : hakus) {
-            HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku, false);
+            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, false);
             hakuDtos.add(hakuV1RDTO);
         }
 
@@ -188,7 +188,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if (hakus != null && hakus.size() > 0) {
             for (Haku haku : hakus) {
 
-                HakuV1RDTO hakuV1RDTO = _converter.fromHakuToHakuRDTO(haku, false);
+                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, false);
                 hakuDtos.add(hakuV1RDTO);
             }
 
@@ -208,7 +208,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
 
         try {
-            result.setResult(_converter.fromHakuToHakuRDTO(oid));
+            result.setResult(converterV1.fromHakuToHakuRDTO(oid));
 
             updateRightsInformation(result, result.getResult());
 
@@ -277,7 +277,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             LOG.info("updateHaku() - convert");
 
-            hakuToUpdate = _converter.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
+            hakuToUpdate = converterV1.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
 
             if (isNew) {
                 LOG.info("updateHaku() - insert");
@@ -291,7 +291,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             // Convert to DTO - reload to get hakuaika id's for example
             hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
-            result.setResult(_converter.fromHakuToHakuRDTO(hakuToUpdate, false));
+            result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, false));
 
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
         } catch (Throwable ex) {

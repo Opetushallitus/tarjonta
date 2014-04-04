@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 public class KoodistoValidator {
 
     @Autowired
-    private TarjontaKoodistoHelper koodistoHelper;
+    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     /**
      * Validates and adds possible error messages to result if koodisto uris are invalid.
@@ -58,7 +58,7 @@ public class KoodistoValidator {
         }
 
         // URI not empty, check thaty koodi can be found from koodisto
-        if (koodistoHelper.getKoodiByUri(koodiUri) == null) {
+        if (tarjontaKoodistoHelper.getKoodiByUri(koodiUri) == null) {
             if (addErrorsTo != null) {
                 addErrorsTo.addError(ErrorV1RDTO.createValidationError(fieldName, errorKeyPrefix + "." + fieldName + ".invalid"));
             }
