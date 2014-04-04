@@ -16,12 +16,12 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -32,7 +32,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  *
@@ -78,4 +77,17 @@ public interface KomoV1Resource {
             notes = "Operaatio näyttää koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(@QueryParam("koulutuskoodi") String koulutuskoodi, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
+
+    @GET
+    @Path("/search/{koulutusasteTyyppi}/")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+     @ApiOperation(
+            value = "Näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
+            notes = "Operaatio näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
+            response = ResultV1RDTO.class)
+    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
+            @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,          
+            @QueryParam("koulutusmoduuliTyyppi") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            @QueryParam("tila") String tila
+    );
 }

@@ -37,6 +37,8 @@ window.CONFIG = {
         "koodisto-uris.lukiodiplomit": "lukiodiplomit",
         "koodisto-uris.lukiolinja": "lukiolinjat",
         "koodisto-uris.opetusmuotokk": "opetusmuotokk",
+        "koodisto-uris.opetusmuoto": "opetusmuoto",
+        "koodisto-uris.koulutuslaji": "koulutuslaji",
         "koodisto-uris.opetusaika": "opetusaikakk",
         "koodisto-uris.opetuspaikka": "opetuspaikkakk",
         "koodisto-uris.opintoala": "opintoalaoph2002",
@@ -97,12 +99,12 @@ window.CONFIG = {
         // (also check the tarjonta-rest.properties so that the new property will be included to the Angular APP...)
         //
 
-        // "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
+        "tarjontaRestUrlPrefix": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/",
 
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
-        "tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
+        //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
         // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",

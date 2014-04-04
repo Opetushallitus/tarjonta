@@ -150,6 +150,14 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, ors);
         }
 
+        if (criteria.getTila() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.tila.eq(criteria.getTila()));
+        }
+
+        if (criteria.getKoulutusmoduuliTyyppi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.moduuliTyyppi.eq(criteria.getKoulutusmoduuliTyyppi()));
+        }
+
         if (whereExpr == null) {
             return from(moduuli).
                     leftJoin(moduuli.nimi, nimi).fetch().

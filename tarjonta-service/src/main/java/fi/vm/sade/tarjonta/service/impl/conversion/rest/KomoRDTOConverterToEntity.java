@@ -83,10 +83,13 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
                 LOG.error("OIDService failed!", ex);
             }
         }
+        Preconditions.checkNotNull("Komo entity cannot be null.", komo);
+        Preconditions.checkNotNull("KoulutusasteTyyppi enum cannot be null.", dto.getKoulutusasteTyyppi());
 
         /*
          * KOMO data fields:
          */
+        
         switch (dto.getKoulutusasteTyyppi()) {
             case KORKEAKOULUTUS:
             case YLIOPISTOKOULUTUS:

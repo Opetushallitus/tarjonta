@@ -13,6 +13,7 @@ angular.module('app.kk',
             'app.kk.search.valintaperustekuvaus.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
+            'app.edit.ctrl.lukio',
             'app.edit.ctrl.alkamispaiva',
             'app.edit.ctrl.tutkintonimike',
             'app.edit.ctrl.laajuus',
@@ -141,14 +142,13 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-
-                .when('/koulutus/edit/:org/:koulutuskoodi', {
+                .when('/koulutus/:koulutusastetyyppi/edit/:org/:koulutuskoodi', {
                     action: "koulutus.edit",
                     controller: 'KoulutusRoutingController',
                     resolve: {
-                        koulutusModel: function(TarjontaService, $log, $route) {
+                        koulutusModel: function($log, $route) {
                             $log.info("/koulutus/ID/edit", $route);
-                            return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
+                            return {'result': {koulutusasteTyyppi: $route.current.params.koulutusastetyyppi}};
                         }
                     }
                 })
@@ -217,12 +217,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 action: "hakukohde.edit",
                 controller: 'HakukohdeRoutingController',
                 resolve: {
-
                     isCopy : function() {
 
                         return true;
                     },
-
                     canEdit: function(Hakukohde, $log, $route, $q, SharedStateService, PermissionService) {
 
                         if ($route.current.params.id !== "new") {

@@ -32,12 +32,14 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
@@ -63,15 +65,37 @@ public class KoulutusValidator {
         validateNameKoulutusohjelma(validationMessages, dto);
         validateAlkamisPvms(validationMessages, dto);
         validateSuuniteltukesto(validationMessages, dto);
-        ArrayList<ErrorV1RDTO> newArrayList = Lists.<ErrorV1RDTO>newArrayList();
+        List<ErrorV1RDTO> errors = Lists.<ErrorV1RDTO>newArrayList();
 
         for (KoulutusValidationMessages e : validationMessages) {
             ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
             errorV1RDTO.setErrorMessageKey(e.name().toLowerCase());
-            newArrayList.add(errorV1RDTO);
+            errors.add(errorV1RDTO);
         }
 
-        return newArrayList;
+        return errors;
+    }
+
+    public static List<ErrorV1RDTO> validateKoulutus(KoulutusLukioV1RDTO dto) {
+        Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
+        //TODO: validateKoodistoRelations(dto, validationMessages);
+
+        validateKoodiUris(validationMessages, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID);
+        validateKoodiUris(validationMessages, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID);
+        validateKoodiUris(validationMessages, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID);
+        validateKoodiUris(validationMessages, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID);
+
+        validateAlkamisPvms(validationMessages, dto);
+        validateSuuniteltukesto(validationMessages, dto);
+        List<ErrorV1RDTO> erros = Lists.<ErrorV1RDTO>newArrayList();
+
+        for (KoulutusValidationMessages e : validationMessages) {
+            ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
+            errorV1RDTO.setErrorMessageKey(e.name().toLowerCase());
+            erros.add(errorV1RDTO);
+        }
+
+        return erros;
     }
 
     private static void validateNameKoulutusohjelma(Set<KoulutusValidationMessages> validationMessages, KoulutusKorkeakouluV1RDTO dto) {
@@ -217,13 +241,13 @@ public class KoulutusValidator {
         }
     }
 
-    private static void validateAlkamisPvms(Set<KoulutusValidationMessages> validationMessages, KoulutusKorkeakouluV1RDTO dto) {
+    private static void validateAlkamisPvms(Set<KoulutusValidationMessages> validationMessages, KoulutusV1RDTO dto) {
         if (dto.getKoulutuksenAlkamisPvms() == null) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING);
         } else if (!dto.getKoulutuksenAlkamisPvms().isEmpty()) {
 
             final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
-            KoulutusValidationMessages validateDates = KoulutusKorkeakouluDTOConverterToEntity.validateDates(
+            KoulutusValidationMessages validateDates = KoulutusCommonConverter.validateDates(
                     koulutuksenAlkamisPvms.iterator().next(),
                     dto.getKoulutuksenAlkamisPvms());
 
@@ -235,7 +259,7 @@ public class KoulutusValidator {
         }
     }
 
-    private static void validateSuuniteltukesto(Set<KoulutusValidationMessages> validationMessages, KoulutusKorkeakouluV1RDTO dto) {
+    private static void validateSuuniteltukesto(Set<KoulutusValidationMessages> validationMessages, KoulutusV1RDTO dto) {
         if (!notNullStrOrEmpty(dto.getSuunniteltuKestoArvo())) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING);
         }
@@ -326,7 +350,7 @@ public class KoulutusValidator {
         if (!komo.getTila().isRemovable()) {
             dto.addError(ErrorV1RDTO.createValidationError("komo.invalid.transition", KoulutusValidationMessages.KOULUTUS_INVALID_TRANSITION.lower(), parent.toArray(new String[parent.size()])));
         }
-        
+
         /*
          * Ei haukohteita == OK
          * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
