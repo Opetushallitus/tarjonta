@@ -88,7 +88,7 @@
 				 * Organisaatio valitaan
 				 */
 				scope.selectOrg=function(oid){
-					console.log("selecting from puu "+treeId);
+					console.log("selecting from puu "+treeId, SharedStateService.state.puut[treeId]);
 
 					console.log("organisaatio valittu!", treeId);
 					var current = SharedStateService.state.puut[treeId].selected;
@@ -180,9 +180,11 @@
 				
 				
 				//alusta tietorakenne
-				console.log("org-puu.init()" + treeId);
+				console.log("org-puu.init()" + treeId, SharedStateService.state.puut);
 				SharedStateService.state.puut = SharedStateService.state.puut || {};
-				SharedStateService.state.puut[treeId] = {scope:scope};
+				if (!SharedStateService.state.puut[treeId]) {
+					SharedStateService.state.puut[treeId] = {scope:scope};
+				}
 				//SharedStateService.state.puut[treeId].data = SharedStateService.state.puut[treeId].data || [];
 				//SharedStateService.state.puut[treeId].selected = SharedStateService.state.puut[treeId].selected || undefined;
 				//SharedStateService.state.puut[treeId].scope = SharedStateService.state.puut[treeId].scope || scope;

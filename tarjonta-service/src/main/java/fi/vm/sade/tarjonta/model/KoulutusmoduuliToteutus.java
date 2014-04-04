@@ -200,9 +200,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "hinta")
     private BigDecimal hinta;
     
+    /** populoidaan aina **/
     @Column(name = "alkamiskausi")
     private String alkamiskausi;
-    
+
+    /** populoidaan aina **/
     @Column(name = "alkamisvuosi")
     private Integer alkamisVuosi;
     

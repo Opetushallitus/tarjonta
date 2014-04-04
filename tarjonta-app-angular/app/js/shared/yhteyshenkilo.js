@@ -1,7 +1,7 @@
 angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 
 //"henkiloservice"
-.factory('YhteyshenkiloService', function ($resource, $log, $q, Config, CacheService) {
+.factory('YhteyshenkiloService', function ($resource, $log, $q, Config, CacheService, $injector) {
 
     $log = $log.getInstance("YhteyshenkiloService");
 
@@ -13,6 +13,26 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 	var henkHaku = $resource(urlEtsi,{},{cache:true,get:{method:"GET", withCredentials:true}});
 	var henkilo = $resource(urlHaeTiedot,{},{cache:true,get:{method:"GET", withCredentials:true}});
 	var organisaatioHenkilo = $resource(urlHaeOrganisaatioHenkiloTiedot,{},{cache:true,get:{isArray: true, method:"GET", withCredentials:true}});
+
+//        $log.info("XXXXXXXXXXX ", baseUrl);
+//        $log.info("XXXXXXXXXXX ", urlEtsi);
+//        $log.info("XXXXXXXXXXX ", urlHaeTiedot);
+//        $log.info("XXXXXXXXXXX ", urlHaeOrganisaatioHenkiloTiedot);
+
+            /**
+             * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
+             *
+             * @returns {undefined}
+             */
+            function disableSystemErrorDialog() {
+                var loadingService = $injector.get('loadingService');
+                if (loadingService) {
+                    $log.debug("  disable system error dialog.");
+                    loadingService.onErrorHandled();
+                } else {
+                    $log.warn("  FAILED TO disable system error dialog. Sorry about that.");
+                }
+            };
 
 	return {
 
@@ -45,10 +65,12 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 		   var ret = $q.defer();
 	       $log.debug('haetaan henkilon tiedot, q:', hakuehdot);
 	       henkilo.get(hakuehdot, function(result){
+                   $log.info("haeHenkilo() -> ", result);
 	    	   ret.resolve(result);
 	       }, function(err){
-               // TODO add loadingService disable error dialog!
 	    	   $log.error("Error loading data", err);
+                   disableSystemErrorDialog();
+                   ret.reject("");
 	       });
 	       return ret.promise;
 	   },
@@ -62,14 +84,15 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 		   var ret = $q.defer();
 	       $log.info('haetaan organisaatiohenkilon tiedot, q:', hakuehdot);
 	       organisaatioHenkilo.get(hakuehdot, function(result){
+                   $log.info("haeOrganisaatiohenkilo() -> ", hakuehdot, result);
 	    	   ret.resolve(result);
 	       }, function(err){
-               // TODO add loadingService disable error dialog!
 	    	   $log.error("Error loading data", err);
+                   disableSystemErrorDialog();
+                   ret.reject();
 	       });
 	       return ret.promise;
 	   }
-
 
 	};
 });

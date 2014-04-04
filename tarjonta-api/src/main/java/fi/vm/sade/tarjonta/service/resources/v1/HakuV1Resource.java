@@ -115,6 +115,12 @@ public interface HakuV1Resource {
     @ApiOperation(value = "Palautaa haun tilan", notes = "Palauttaa annetun haun oid:n perusteella haun tilan", response = String.class)
     public ResultV1RDTO<String> getHakuState(@PathParam("oid") String oid);
 
+    @GET
+    @Path("/{oid}/stateChangeCheck")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Tutkii onko esitetty tilamuutos mahdollinen", notes = "Palauttaa annetun haun oid:n perusteella haun tilan", response = Boolean.class)
+    public ResultV1RDTO<Boolean> isStateChangePossible(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+
     @PUT
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

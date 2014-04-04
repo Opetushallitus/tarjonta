@@ -1,13 +1,17 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
@@ -25,8 +29,6 @@ public class HakukohdeValidator {
     public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
-        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
-
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
         }
@@ -43,10 +45,6 @@ public class HakukohdeValidator {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
 
-        if (hakukohdeRDTO.getTila() == null) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_MISSING);
-        }
-
         if (hakukohdeRDTO.getValintakokeet() != null && hakukohdeRDTO.getValintakokeet().size() > 0) {
             validationMessages.addAll(validateValintakokees(hakukohdeRDTO.getValintakokeet()));
         }
@@ -56,6 +54,12 @@ public class HakukohdeValidator {
                 validationMessages.addAll(validateLiite(liite));
             }
         }
+        if(hakukohdeRDTO.getTila()==null) {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_MISSING);
+            return validationMessages;
+        }
+
+        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
 
         if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) ||  hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU))  {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
@@ -63,6 +67,27 @@ public class HakukohdeValidator {
 
         return validationMessages;
     }
+    
+    /**
+     * Tarkista että kaikilla koulutuksilla sama vuosi/kausi
+     * @param komotot
+     */
+    public static List<HakukohdeValidationMessages> checkSameVuosiKausi(Set<KoulutusmoduuliToteutus> komotot) {
+        String kausi = null;
+        Integer vuosi = null;
+        for (KoulutusmoduuliToteutus komoto : komotot) {
+            if (kausi == null) {
+                kausi = komoto.getAlkamiskausi();
+                vuosi = komoto.getAlkamisVuosi();
+            } else {
+               if(!(Objects.equal(kausi, komoto.getAlkamiskausi()) && Objects.equal(vuosi, komoto.getAlkamisVuosi()))) {
+                   return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID);
+               } 
+            }
+        }
+        return Collections.EMPTY_LIST;
+    }
+
 
     public static List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite) {
 

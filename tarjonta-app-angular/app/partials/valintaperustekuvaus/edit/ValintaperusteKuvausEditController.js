@@ -292,7 +292,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
                 var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data){
-                    console.log('GOT DATA : ', data);
+
                     if (data.status === "OK") {
                         $scope.model.valintaperustekuvaus.modified  = data.result.modified;
                         $scope.model.showSuccess = true;

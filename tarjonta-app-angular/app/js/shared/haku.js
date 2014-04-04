@@ -80,7 +80,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
 
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
-        return $resource(serviceUrl, {oid: '@oid'}, {
+        return $resource(serviceUrl, {oid: '@oid', state:'@state'}, {
             save: {
                 method: 'POST',
                 withCredentials: true,
@@ -114,7 +114,18 @@ app.factory('HakuV1', function($resource, $log, Config) {
                 method: 'DELETE',
                 withCredentials: true,
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
-            }
+            },
+            checkStateChange: {
+              url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
+              method: 'GET',
+              withCredentials: true,
+            },
+            changeState: {
+              url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
+              method: 'PUT',
+              withCredentials: true,
+          }
+
         });
 
     });
@@ -138,7 +149,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
    * palauttaa promisen hakutulokseen, resolvaa nimen valmiiksi
    */
   var mget = function(oids){
-      $log.debug("mget:", oids);
+      //$log.debug("mget:", oids);
       return HakuV1.mget({oid:oids}).$promise.then(function(haut){
         angular.forEach(haut.result, function(haku, key){
           haku.nimi=resolveNimi(haku);
@@ -147,13 +158,12 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
       });
    };
 
-
   return {
     /**
      * Hae hakuja määritellyillä hakuehdoilla
      */
     search:function(parameters){
-      $log.debug("Searching with: ", parameters);
+      //$log.debug("Searching with: ", parameters);
       return HakuV1.search(parameters).$promise.then(function(data){
         return mget(data.result);
       });
