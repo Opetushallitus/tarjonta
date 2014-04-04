@@ -54,7 +54,7 @@ public class TarjontaKoodistoHelper {
     @Autowired
     private KoodistoService _koodistoService;
     @Autowired
-    private KoodiService _koodiService;
+    private KoodiService koodiService;
 
     public TarjontaKoodistoHelper() {
         LOG.info("*** TarjontaKoodistoHelper ***");
@@ -102,7 +102,7 @@ public class TarjontaKoodistoHelper {
             skct.setKoodiArvo(kieli);
             skct.setKoodiVersioSelection(SearchKoodisVersioSelectionType.LATEST);
 
-            List<KoodiType> koodis = _koodiService.searchKoodis(skct);
+            List<KoodiType> koodis = koodiService.searchKoodis(skct);
             for (KoodiType koodiType : koodis) {
                 if (koodiType.getKoodisto().getKoodistoUri().equals("kieli")) {
                     result = koodiType.getKoodiUri();
@@ -236,7 +236,7 @@ public class TarjontaKoodistoHelper {
                 searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
             }
 
-            List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
+            List<KoodiType> queryResult = koodiService.searchKoodis(searchCriteria);
             if (queryResult != null && queryResult.size() == 1) {
                 result = queryResult.get(0);
             } else {
@@ -274,7 +274,7 @@ public class TarjontaKoodistoHelper {
         Preconditions.checkNotNull(uri, "koodi URI cannot be null");
         SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
 
-        List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
+        List<KoodiType> queryResult = koodiService.searchKoodis(searchCriteria);
         if (queryResult != null && queryResult.size() == 1) {
             return queryResult.get(0);
         } else {
@@ -408,7 +408,7 @@ public class TarjontaKoodistoHelper {
         KoodiUriAndVersioType koodi = getKoodiUriAndVersioTypeByKoodiUriAndVersion(createKoodiUriWithVersion(sourceKoodiType));
 
         // Get relations
-        List<KoodiType> relatedKoodis = _koodiService.listKoodiByRelation(koodi, alasuhde, suhteenTyyppiType);
+        List<KoodiType> relatedKoodis = koodiService.listKoodiByRelation(koodi, alasuhde, suhteenTyyppiType);
         if (targetKoodistoName == null || targetKoodistoName.trim().isEmpty()) {
             result.addAll(relatedKoodis);
         } else {

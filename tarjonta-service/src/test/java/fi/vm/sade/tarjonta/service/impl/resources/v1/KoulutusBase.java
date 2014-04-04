@@ -122,7 +122,7 @@ abstract class KoulutusBase {
     @Autowired
     protected KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    protected IndexerResource solrIndexerMock;
+    protected IndexerResource indexerResourceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     protected KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
     protected KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
@@ -156,7 +156,7 @@ abstract class KoulutusBase {
         //CREATE MOCKS
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
-        solrIndexerMock = createMock(IndexerResource.class);
+        indexerResourceMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
@@ -199,7 +199,7 @@ abstract class KoulutusBase {
         contextDataService = new ContextDataServiceImpl();
 
         organisaatioServiceMock = createMock(OrganisaatioService.class);
-        solrIndexerMock = createMock(IndexerResource.class);
+        indexerResourceMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
         koodistoUri = createMock(KoodistoURI.class);
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
@@ -210,7 +210,7 @@ abstract class KoulutusBase {
 
         //SET VALUES TO INSTANCES
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
-        Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
+        Whitebox.setInternalState(instance, "indexerResource", indexerResourceMock);
         Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
         Whitebox.setInternalState(instance, "contextDataService", contextDataService);
         Whitebox.setInternalState(instance, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);

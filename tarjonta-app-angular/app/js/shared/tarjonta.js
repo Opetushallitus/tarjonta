@@ -155,7 +155,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
         var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"), {}, {
-            update: {method: 'POST'}
+            update: {method: 'POST', withCredentials:true}
         });
 
         tila.update(function(nstate) {
@@ -290,6 +290,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
         return koulutus.get(arg, func);
     };
+
+    //hakee koulutuksen, palauttaa promisen
+    dataFactory.getKoulutusPromise = function(oid) {
+      return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
+  };
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");

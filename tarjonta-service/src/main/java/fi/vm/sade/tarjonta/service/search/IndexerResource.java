@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 @Transactional(readOnly = true)
 @Component
@@ -40,9 +41,9 @@ public class IndexerResource {
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
     @Autowired
-    private HakukohdeDAO hakukohdeDao;
+    private HakukohdeDAO hakukohdeDAO;
     @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusDao;
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private IndexerDAO indexerDao;
     @Autowired
@@ -284,5 +285,15 @@ public class IndexerResource {
         }
         indexKoulutukset(koulutukset);
         return Integer.toString(koulutukset.size());
+    }
+
+    public void indexMuutokset(Tilamuutokset tm) {
+        if(tm.getMuutetutKomotot().size()>0) {
+            indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
+        }
+        if(tm.getMuutetutHakukohteet().size()>0) {
+            indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
+        }
+        
     }
 }

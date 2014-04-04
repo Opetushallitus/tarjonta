@@ -220,19 +220,6 @@
                         <div data-ng-include="'partials/search/search.html'"></div>
                     </div>
 
-                    <!--
-                                        <div data-ng-switch-when="kk">
-                                            <div data-ng-switch on="renderPath[1]">
-                                                <div data-ng-switch-when="edit">
-                                                    <div data-ng-include="'partials/kk/edit/edit.html'" data-ng-controller="KKEditController"></div>
-                                                </div>
-                                                <div data-ng-switch-when="review">
-                                                    <div data-ng-include="'partials/kk/review/review.html'" data-ng-controller="KKReviewController"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                    -->
-
                     <div data-ng-switch-when="koulutus">
                         <h2 tt="koulutus.title">Koulutusten hallinta</h2>
 
@@ -308,34 +295,12 @@
                         <div data-ng-include="'partials/komo/komo.html'" data-ng-controller="KomoController"></div>
                     </div>
                     <div data-ng-switch-default>
-                        <ng-view>
+                        <ng-view/>
                     </div>
-                </div><!-- /renderPath[0] -->
-
-                <!--
-                                <div class="wsidebar-main">
-                                    <hr>
-                                    Footer, route counter = {{count}}<br>
-                                    <a href="#/etusivu">Etusivulle</a>
-                                    <a href="/lokalisointi">Käännösten hallinta</a>
-
-                                    <div>
-                                        <span data-ng-click="showTheSheisse = !showTheSheisse"
-                                              class="collapseHeader"
-                                              data-ng-class="{isOpen : showTheSheisse}">Näytä Config</span>
-                                        <div collapse="!showTheSheisse">
-                                            <pre>
-                                        {{ CONFIG | json }}
-                                            </pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                -->
-
-            </div>
-        </div>
-
+                </div><!-- /renderPath[0] -->                
+            </div><!-- /LocalisationCtrl -->
+        </div><!-- /tarjonta-body  -->
+        
         <div data-ng-controller="LoadingCtrl">
             <div id="ajax-loader" class="pre-init max ng-class: { max:isModal(), min:!isModal(), lowered:isError() }" data-ng-show="loading">
                 <div class="frame">
@@ -358,10 +323,9 @@
 
                     <hr/>
                     <a href onclick="location.reload()" class="btn"> <img src="img/icon16-refresh.png"/> </a>
-
                 </div>
             </div>
-        </div>
+        </div><!-- /LoadingCtrl -->
 
         <script> tarjontaInit();</script>
     </body>

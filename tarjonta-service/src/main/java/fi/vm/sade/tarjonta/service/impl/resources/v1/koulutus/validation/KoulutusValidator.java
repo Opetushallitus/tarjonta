@@ -327,7 +327,7 @@ public class KoulutusValidator {
         }
     }
 
-    public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<String> children, final List<String> parent, KoulutuksetVastaus kv, ResultV1RDTO dto) {
+    public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
         final Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
         if (komo.getKoulutusmoduuliToteutusList().size() > 1) {
@@ -356,22 +356,16 @@ public class KoulutusValidator {
          * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
          */
         if (!komoto.getHakukohdes().isEmpty()) {
-            final String komotoOid = komoto.getOid();
 
-            int includedToHakukohde = 0;
-            for (KoulutusPerustieto kp : kv.getKoulutukset()) {
-                if (komotoOid.equals(kp.getKomotoOid())) {
-                    includedToHakukohde = 1;
-                    break;
+            Set<String> hakukohdeOids = Sets.<String>newHashSet();
+
+            for(Entry<String, Integer> hkKoulutusCount: hkKoulutusMap.entrySet()) {
+                if(hkKoulutusCount.getValue()==1) {
+                    hakukohdeOids.add(hkKoulutusCount.getKey());
                 }
             }
-
-            if ((komoto.getHakukohdes().size() - includedToHakukohde) < 1) {
-                Set<String> hakukohdeOids = Sets.<String>newHashSet();
-                for (Hakukohde hk : komoto.getHakukohdes()) {
-                    hakukohdeOids.add(hk.getOid());
-                }
-
+            
+            if(hakukohdeOids.size()>0) {
                 dto.addError(ErrorV1RDTO.createValidationError("komoto.hakukohdes", KoulutusValidationMessages.KOULUTUS_RELATION_KOMOTO_HAKUKOHDE_REMOVE_LINK.lower(), hakukohdeOids.toArray(new String[hakukohdeOids.size()])));
             }
         }
