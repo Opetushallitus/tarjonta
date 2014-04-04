@@ -1,10 +1,12 @@
 'use strict';
 
-var app = angular.module('MonikielinenTextField', ['Koodisto', 'localisation', 'pasvaz.bindonce']);
+var app = angular.module('MonikielinenTextField', ['Koodisto', 'localisation', 'pasvaz.bindonce', 'Logging']);
 
 app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $modal) {
-	
-	var userLangs = window.CONFIG.app.userLanguages;
+
+    $log = $log.getInstance("<mkTextfield>");
+
+    var userLangs = window.CONFIG.app.userLanguages;
 
     function controller($scope) {
 

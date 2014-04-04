@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Preconditions;
 
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
@@ -663,23 +662,8 @@ public class ConverterV1 {
     }
 
     public Hakukohde toHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
-
         Hakukohde hakukohde = new Hakukohde();
-        String newHakukohdeOid = null;
-        LOG.debug("OIDSERVICE: {}", oidService);
-        try {
-            newHakukohdeOid = oidService.get(TarjontaOidType.HAKUKOHDE);
-            LOG.debug("OID SERVICE NEW OID : {}", newHakukohdeOid);
-        }  catch (OIDCreationException emm) {
-            LOG.warn("UNABLE TO GET OID : {}", emm.toString() );
-        }
-
-        if (hakukohdeRDTO.getOid() != null && hakukohdeRDTO.getOid().trim().length() > 0) {
-            hakukohde.setOid(hakukohdeRDTO.getOid());
-        } else {
-            LOG.debug("NO OID FOUND ADDING NEW ONE : {}", newHakukohdeOid);
-            hakukohde.setOid(newHakukohdeOid);
-        }
+        hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
         if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {

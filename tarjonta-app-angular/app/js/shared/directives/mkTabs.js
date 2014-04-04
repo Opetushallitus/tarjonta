@@ -1,10 +1,12 @@
 'use strict';
 
-var app = angular.module('MonikielinenTabs', ['Koodisto', 'localisation', 'pasvaz.bindonce']);
+var app = angular.module('MonikielinenTabs', ['Koodisto', 'localisation', 'pasvaz.bindonce', 'Logging']);
 
 app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
-	
-	var userLangs = window.CONFIG.app.userLanguages;
+
+    $log = $log.getInstance("<mkTabs>");
+    
+    var userLangs = window.CONFIG.app.userLanguages;
 
     function controller($scope) {
 

@@ -1,6 +1,6 @@
-var app = angular.module('Kuvaus', ['ngResource','config', 'Logging']);
+var app = angular.module('Kuvaus', ['ngResource','config', 'Logging','TarjontaPermissions']);
 
-app.factory('Kuvaus',function($http,Config,$q,$log){
+app.factory('Kuvaus',function($http,Config,$q,$log,PermissionService){
 
     $log = $log.getInstance("Kuvaus");
 
@@ -80,30 +80,40 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
 
         insertKuvaus : function(tyyppi,kuvaus) {
 
+
             var promise = $q.defer();
 
-            if (kuvaus !== undefined && tyyppi !== undefined) {
+            PermissionService.permissionResource().authorize({}, function(authResponse) {
 
-                var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
+                console.log('AUTH RESPONSE : ', authResponse);
+
+                if (kuvaus !== undefined && tyyppi !== undefined) {
+
+                    var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
 
 
-                $http.post(kuvausPostUri,kuvaus,{
-                    withCredentials: true,
-                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
+                    $http.post(kuvausPostUri,kuvaus,{
+                        withCredentials: true,
+                        headers : {'Content-Type': 'application/json; charset=UTF-8'}
 
-                })
-
-                    .success(function(data){
-                       promise.resolve(data);
                     })
-                    .error(function(data){
-                        promise.resolve(data);
-                    });
 
-            } else {
+                        .success(function(data){
+                            promise.resolve(data);
+                        })
+                        .error(function(data){
+                            promise.resolve(data);
+                        });
 
-                promise.resolve();
-            }
+                } else {
+
+                    promise.resolve();
+                }
+
+
+
+
+            });
 
             return promise.promise;
 
@@ -113,26 +123,28 @@ app.factory('Kuvaus',function($http,Config,$q,$log){
 
             var promise = $q.defer();
 
-            if (kuvaus !== undefined && tyyppi !== undefined) {
+            PermissionService.permissionResource().authorize({}, function(authResponse) {
 
-                var kuvausPostUri = Config.env.tarjontaRestUrlPrefix+kuvausUriPrefix+tyyppi;
-                $http.put(kuvausPostUri,kuvaus,{
-                    withCredentials: true,
-                    headers : {'Content-Type': 'application/json; charset=UTF-8'}
+                if (kuvaus !== undefined && tyyppi !== undefined) {
 
-                })
-                    .success(function(data){
-                        promise.resolve(data);
+                    var kuvausPostUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi;
+                    $http.put(kuvausPostUri, kuvaus, {
+                        withCredentials: true,
+                        headers: {'Content-Type': 'application/json; charset=UTF-8'}
+
                     })
-                    .error(function(data){
-                        promise.resolve(data);
-                    });
+                        .success(function (data) {
+                            promise.resolve(data);
+                        })
+                        .error(function (data) {
+                            promise.resolve(data);
+                        });
 
-            } else {
+                } else {
 
-                promise.resolve();
-            }
-
+                    promise.resolve();
+                }
+            });
             return promise.promise;
 
         } ,

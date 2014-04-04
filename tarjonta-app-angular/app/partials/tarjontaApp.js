@@ -95,78 +95,6 @@ angular.module('app',
 
 angular.module('app').value("globalConfig", window.CONFIG);
 
-//angular.module('app').config(["$provide", function($provide) {
-//
-//        console.log("tarjontaApp.config - enhance logging...");
-//
-//        function formatDate(date) {
-//            var result = "";
-//            if (date) {
-//                var d = date; // new Date();
-//
-//                result = result + ((d.getHours() < 10) ? "0" : "") + d.getHours();
-//                result = result + ((d.getMinutes() < 10) ? "0" : "") + d.getMinutes();
-//                result = result + ((d.getSeconds() < 10) ? "0" : "") + d.getSeconds();
-//            }
-//
-//            return result;
-//        }
-//
-//
-//        $provide.decorator('$log', ["$delegate", function($delegate)
-//            {
-//                var _$log = (function($log)
-//                {
-//                    return {
-//                        log: $log.log,
-//                        info: $log.info,
-//                        warn: $log.warn,
-//                        debug: $log.debug,
-//                        error: $log.error
-//                    };
-//                })($delegate);
-//
-//                var prepareLogFn = function(logFn, logLevel, logClass) {
-//                    var enhanced = function() {
-//                        var args = [].slice.call(arguments),
-//                                now = new Date();
-//
-//                        // Prepend timestamp, level, class + actual result
-//                        args[0] = formatDate(now) + " - " + logLevel + " - " + logClass + " :: " + args[0];
-//
-//                        // Call the original with the output prepended with formatted timestamp
-//                        logFn.apply(null, args);
-//                    };
-//
-//                    return enhanced;
-//                };
-//
-//                // Default implementations, no class name
-//                $delegate.log = prepareLogFn(_$log.log, "?", "?");
-//                $delegate.info = prepareLogFn(_$log.info, "I", "?");
-//                $delegate.warn = prepareLogFn(_$log.warn, "W", "?");
-//                $delegate.debug = prepareLogFn(_$log.debug, "D", "?");
-//                $delegate.error = prepareLogFn(_$log.error, "E", "?");
-//
-//                // Class spesific implementations
-//                $delegate.getInstance = function(logClass) {
-//                    return {
-//                        log : prepareLogFn(_$log.log, "?", logClass),
-//                        info : prepareLogFn(_$log.info, "I", logClass),
-//                        warn : prepareLogFn(_$log.warn, "W", logClass),
-//                        debug : prepareLogFn(_$log.debug, "D", logClass),
-//                        error : prepareLogFn(_$log.error, "E", logClass)
-//                    }
-//                };
-//
-//                return $delegate;
-//            }]);
-//
-//        console.log("tarjontaApp.config - enhance logging... done.");
-//
-//}]);
-
-
 angular.module('app').config(['$routeProvider', function($routeProvider) {
 
         $routeProvider
@@ -524,7 +452,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "haku.edit",
                     controller: 'HakuRoutingController',
                     resolve: {
-                        hakux: function($log, $route, HakuV1) {
+                        hakux: function($log, $route, HakuV1, AuthService) {
                             $log.info("/haku/NEW", $route);
                             // Fake the loading of Haku
                             return {
@@ -546,11 +474,11 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                     } ],
                                     "hakukohdeOids" : [ ],
                                     "modified" : new Date().getTime(),
-                                    "modifiedBy" : "NA",
+                                    "modifiedBy" : AuthService.getUserOid(),
                                     "nimi" : {
-                                      "kieli_fi" : "",
-                                      "kieli_sv" : "",
-                                      "kieli_en" : ""
+                                      "kieli_fi" : "Haun nimi",
+                                      "kieli_sv" : "Sökets namn",
+                                      "kieli_en" : "Application system name"
                                     },
                                     "maxHakukohdes" : 0
                                     // "hakulomakeUri" : "http://www.hut.fi",
@@ -605,7 +533,7 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
         $scope.count = 0;
 
         PermissionService.permissionResource().authorize({}, function(response) {
-            $log.debug("Authorization check : " + response.result);
+          $log.debug("Authorization check : " + response.result);
         });
 
         var render = function() {
