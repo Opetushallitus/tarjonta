@@ -35,7 +35,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.oid.service.OIDService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -1063,6 +1062,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             r.addError(ErrorV1RDTO.createValidationError(null,  iae.getMessage()));
             return r;
         }
+        
+        //indeksoi uudelleen muuttunut data
+        indexerResource.indexMuutokset(tm);
 
         return new ResultV1RDTO<Tilamuutokset>(tm);
     }

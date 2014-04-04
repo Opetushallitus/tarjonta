@@ -14,6 +14,31 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
@@ -44,15 +69,12 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -60,18 +82,18 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO.ErrorCode;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyStatusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO1;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliStandardRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -79,35 +101,12 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.ws.rs.core.Response;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.Map;
-import javax.annotation.Nullable;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-
-import scala.reflect.internal.Types.HKTypeVar;
 
 /**
  *
@@ -126,7 +125,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Autowired(required = true)
     private TarjontaSearchService tarjontaSearchService;
     @Autowired(required = true)
-    private IndexerResource solrIndexer;
+    private IndexerResource indexerResource;
     @Autowired(required = true)
     private KoulutuskoodiRelations koulutuskoodiRelations;
     @Autowired(required = true)
@@ -234,7 +233,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
             }
 
-            solrIndexer.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
             result.setResult(converterToRDTO.convert(fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
@@ -297,7 +296,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
                         ArrayList<Long> ids = Lists.<Long>newArrayList();
                         ids.add(komoto.getId());
-                        solrIndexer.indexKoulutukset(ids);
+                        indexerResource.indexKoulutukset(ids);
                     }
                     break;
             }
@@ -477,7 +476,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     public ResultV1RDTO<Tilamuutokset> updateTila(String oid, TarjontaTila tila) {
         permissionChecker.checkUpdateKoulutusByKoulutusOid(oid);
 
-        Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
+        Tila tilamuutos = new Tila(Tyyppi.KOMOTO, tila, oid);
+
         Tilamuutokset tm = null;
         try {
             tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
@@ -486,6 +486,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             r.addError(ErrorV1RDTO.createValidationError(null,  iae.getMessage()));
             return r;
         }
+        
+        //indeksoi uudelleen muuttunut data
+        indexerResource.indexMuutokset(tm);
 
         return new ResultV1RDTO<Tilamuutokset>(tm);
     }
@@ -791,7 +794,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     linkingV1Resource.link(new KomoLink(komoParentOid, newKomoChildOids.toArray(new String[newKomoChildOids.size()])));
                 }
 
-                solrIndexer.indexKoulutukset(newKomotoIds);
+                indexerResource.indexKoulutukset(newKomotoIds);
                 break;
             case MOVE:
                 final String orgOid = koulutusCopy.getOrganisationOids().get(0);
@@ -801,11 +804,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 koulutusmoduuliToteutusDAO.update(komoto);
 
                 result.getResult().getTo().add(new KoulutusCopyStatusV1RDTO(komoto.getOid(), orgOid));
-                solrIndexer.indexKoulutukset(Lists.newArrayList(komoto.getId()));
+                indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                 final List<Hakukohde> hakukohdes = hakukohdeDAO.findByKoulutusOid(komoto.getOid());
 
                 //update all hakukohdes
-                solrIndexer.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), new Function<Hakukohde, Long>() {
+                indexerResource.indexHakukohteet(Lists.newArrayList(Iterators.transform(hakukohdes.iterator(), new Function<Hakukohde, Long>() {
                     @Override
                     public Long apply(@Nullable Hakukohde arg0) {
                         return arg0.getId();
