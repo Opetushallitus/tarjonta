@@ -1,6 +1,8 @@
 
+'use strict';
+
 angular.module('app.search.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTable'])
-        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService, AuthService) {
+        .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService, AuthService, $q, dialogService) {
 
             var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
             var selectOrg;
@@ -68,9 +70,6 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             }
 
-
-
-
             $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
                 //console.log("oppilaitostyypit", koodit);
                 angular.forEach(koodit, function(koodi) {
@@ -81,7 +80,6 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             //valittu organisaatio populoidaan tänne
             $scope.organisaatio = {};
-
 
             //watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
             $scope.$watch('organisaatio.currentNode', function(newObj, oldObj) {
@@ -538,10 +536,45 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
 
             $scope.luoUusiHakukohde = function() {
-
-                SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
-                SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
-                $location.path('/hakukohde/new/edit');
+              console.log("koulutukset:", $scope.selection.koulutukset);
+              
+                if($scope.selection.koulutukset.length>1) {
+                  var promises=[];
+                  angular.forEach($scope.selection.koulutukset, function(koulutusOid){
+                    promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
+                  });
+                  $q.all(promises).then(function(results){
+                    var vuosi,kausi,valid=true;
+                    angular.forEach(results, function(res){
+                      var koulutus = res.result;
+                      console.log("koulutus palvelusta:", koulutus);
+                      if(!vuosi){
+                        vuosi=koulutus.koulutuksenAlkamisvuosi;
+                        kausi=koulutus.koulutuksenAlkamiskausi.uri
+                      } else {
+                        if(vuosi!==koulutus.koulutuksenAlkamisvuosi || kausi!==koulutus.koulutuksenAlkamiskausi.uri) {
+                          valid=false;
+                        }
+                      }
+                    });
+                    
+                    if(valid) {
+                      SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
+                      SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
+                      $location.path('/hakukohde/new/edit');
+                    } else {
+                      //show dialog about mismatch
+                      console.log("vuosi/kausi mismatch!");
+                      dialogService.showDialog({
+                          title: LocalisationService.t("vuosikausi.mismatch.dialog.title"),
+                          description: LocalisationService.t("vuosikausi.mismatch.dialog.description"),
+                          ok: LocalisationService.t("ok"),
+                          cancel: LocalisationService.t("cancel")
+                      });
+                    }
+                  });
+                }
+                  
             };
 
 

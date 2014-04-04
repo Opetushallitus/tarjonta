@@ -291,6 +291,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return koulutus.get(arg, func);
     };
 
+    //hakee koulutuksen, palauttaa promisen
+    dataFactory.getKoulutusPromise = function(oid) {
+      return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
+  };
+
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/Korkeakoulutus?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
