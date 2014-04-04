@@ -155,7 +155,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
         var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"), {}, {
-            update: {method: 'POST'}
+            update: {method: 'POST', withCredentials:true}
         });
 
         tila.update(function(nstate) {
