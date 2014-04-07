@@ -250,9 +250,28 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public Hakukohde findHakukohdeByOid(final String oid) {
         Preconditions.checkNotNull(oid, "Hakukohde OID cannot be null.");
 
-        return (Hakukohde) getEntityManager().createQuery("FROM " + Hakukohde.class.getName() + " WHERE oid=?")
-                .setParameter(1, oid)
-                .getSingleResult();
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+
+        return from(qHakukohde)
+                .where(qHakukohde.oid.eq(oid).and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))).singleResult(qHakukohde);
+
+    }
+
+    @Override
+    public Hakukohde findHakukohdeByOid(final String oid, final boolean showDeleted) {
+
+        Preconditions.checkNotNull(oid, "Hakukohde OID cannot be null.");
+        if (showDeleted) {
+
+            QHakukohde qHakukohde = QHakukohde.hakukohde;
+
+            return from(qHakukohde)
+                    .where(qHakukohde.oid.eq(oid)).singleResult(qHakukohde);
+
+        } else {
+            return findHakukohdeByOid(oid);
+        }
+
     }
 
     @Override
