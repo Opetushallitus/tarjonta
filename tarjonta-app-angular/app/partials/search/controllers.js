@@ -48,10 +48,12 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 SharedStateService.state.puut["organisaatio"].scope = $scope;
             }
 
+            var orgs = AuthService.getOrganisations(["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE", "APP_TARJONTA_READ"]);
+            console.log("user orgs:", orgs);
             //käyttäjän oletusorganisaatio
             function getDefaultOrg() {
-                if (AuthService.getOrganisations() && AuthService.getOrganisations().length >0) {
-                    return AuthService.getOrganisations()[0];
+                if (orgs && orgs.length >0) {
+                    return orgs[0];
                 }
             }
 
@@ -60,10 +62,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
               
                 selectOrg = getDefaultOrg();
 
-                if(AuthService.getOrganisations().indexOf(OPH_ORG_OID)==-1) {
+                if(orgs.indexOf(OPH_ORG_OID)==-1) {
                   //hae orgsit jos ei oph
-                  console.log("orgsit:", AuthService.getOrganisations());
-                  OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
+                  console.log("orgsit:", orgs);
+                  OrganisaatioService.etsi({oidRestrictionList: orgs}).then(function(vastaus) {
                     $scope.$root.tulos = vastaus.organisaatiot;
                   });
                 }
