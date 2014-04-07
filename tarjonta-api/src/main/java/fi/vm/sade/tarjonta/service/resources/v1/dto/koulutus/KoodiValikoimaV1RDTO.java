@@ -13,38 +13,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
+package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import java.util.HashMap;
 
 /**
  *
- * @author jani
+ * @author Jani Wilén
  */
-public enum FieldNames {
+@ApiModel(value = "Kuvastekstien syöttämiseen ja hakemiseen käytettävä rajapintaolio")
+public class KoodiValikoimaV1RDTO extends HashMap<String, KoodiUrisV1RDTO> {
 
-    TUTKINTO,
-    OPINTOJEN_LAAJUUSARVO,
-    OPINTOJEN_LAAJUUSYKSIKKO,
-    KOULUTUSASTE,
-    KOULUTUSALA,
-    OPINTOALA,
-    TUTKINTONIMIKE,
-    EQF,
-    KOULUTUSKOODI,
-    KOULUTUSKOODI_KANDIDAATTI,
-    KOULUTUSOHJELMA,
-    LUKIOLINJA,
-    ALKAMISKAUSI,
-    AIHEES,
-    OPETUSKIELIS,
-    OPETUSMUODOS,
-    OPETUSAIKAS,
-    OPETUSPAIKKAS,
-    AMMATTINIMIKKEET,
-    POHJALKOULUTUSVAATIMUKSET,
-    SUUNNITELTUKESTO, //type & value
-    SUUNNITELTUKESTON_TYYPPI,
-    OPPILAITOSTYYPPI,
-    
-    //Lukio:
-    KOULUTUSLAJI;
+    private static final long serialVersionUID = 1L;
+
+    public KoodiValikoimaV1RDTO() {
+    }
 }

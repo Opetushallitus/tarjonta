@@ -1,0 +1,48 @@
+<table class="tarjontaForm">
+
+    <!-- ammattinimikkeet -->
+    <tr class="info">
+        <th tt="koulutus.edit.ammattinimikkeet.title" />
+        <td><multi-select model="uiModel.tmp"
+                      selection="uiModel.ammattinimikkeet.uris"
+                      promise="uiModel.ammattinimikkeet.promise" display="combobox"
+                      tt-show-all-title="koulutus.edit.ammattinimikkeet.title"/></td>
+<!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
+<td></td>
+</tr>
+</table>
+
+<tabset>
+    <tab ng-repeat="kieliUri in getLisatietoKielet()" heading="{{kieliFromKoodi(kieliUri)}}" select="selectKieli(kieliUri)"></tab>
+    
+    <tab class="addLangTab" select="selectKieli(null)">
+        <tab-heading><span class="icon-plus"></span></tab-heading>
+
+        <multi-select
+            on-change="onLisatietoLangSelection()"
+            model="uiModel.tmp"
+            promise="uiModel.opetuskielis.promise"
+            order-with="userLanguages"
+            selection="uiModel.lisatietoKielet"
+            display="dualpane"></multi-select>
+
+    </tab>
+
+</tabset>
+<div ng-show="uiModel.selectedKieliUri">
+    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+        <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
+        <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
+        <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
+        <rich-textarea max="1500" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
+    </div>
+    <h4 tt="koulutus.edit.kuva.title"></h4>
+    <image-field 
+        btn-name-save="{{t('tallenna')}}" 
+        btn-name-remove="{{t('poista')}}"
+        editable="true" 
+        oid="{{model.oid}}" 
+        uri="uiModel.selectedKieliUri"></image-field>
+</div>
+
+

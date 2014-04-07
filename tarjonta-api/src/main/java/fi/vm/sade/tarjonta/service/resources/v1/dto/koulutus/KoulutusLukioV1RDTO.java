@@ -14,16 +14,194 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 
+ *
  * @author mlyly
  */
 public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
 
+    private String komoParentOid;
+    private String komotoParentOid;
+    private List<String> komoChildOids;
+    private List<String> komotoChildOids;
+
+    @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
+    private KoodiV1RDTO pohjakoulutusvaatimus;
+
+    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
+    private KoodiV1RDTO koulutuslaji;
+
+    @ApiModelProperty(value = "Kielivalikoimat", required = true)
+    private KoodiValikoimaV1RDTO kielivalikoima;
+
+    @ApiModelProperty(value = "Lukiodiplomit", required = true)
+    private KoodiUrisV1RDTO lukiodiplomit;
+
+    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO ammattinimikkeet;
+
+    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan")
+    private String linkkiOpetussuunnitelmaan;
+
     public KoulutusLukioV1RDTO() {
         super(KoulutusasteTyyppi.LUKIOKOULUTUS);
+    }
+
+    /**
+     * @return the pohjakoulutusvaatimus
+     */
+    public KoodiV1RDTO getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
+     */
+    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @return the koulutuslaji
+     */
+    public KoodiV1RDTO getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
+
+    /**
+     * @return the komoChildOids
+     */
+    public List<String> getKomoChildOids() {
+        if (komoChildOids == null) {
+            komoChildOids = new ArrayList<String>();
+        }
+
+        return komoChildOids;
+    }
+
+    /**
+     * @param komoChildOids the komoChildOids to set
+     */
+    public void setKomoChildOids(List<String> komoChildOids) {
+        this.komoChildOids = komoChildOids;
+    }
+
+    /**
+     * @return the komotoChildOids
+     */
+    public List<String> getKomotoChildOids() {
+        if (komotoChildOids == null) {
+            komotoChildOids = new ArrayList<String>();
+        }
+
+        return komotoChildOids;
+    }
+
+    /**
+     * @param komotoChildOids the komotoChildOids to set
+     */
+    public void setKomotoChildOids(List<String> komotoChildOids) {
+        this.komotoChildOids = komotoChildOids;
+    }
+
+    /**
+     * @return the komoParentOid
+     */
+    public String getKomoParentOid() {
+        return komoParentOid;
+    }
+
+    /**
+     * @param komoParentOid the komoParentOid to set
+     */
+    public void setKomoParentOid(String komoParentOid) {
+        this.komoParentOid = komoParentOid;
+    }
+
+    /**
+     * @return the komotoParentOid
+     */
+    public String getKomotoParentOid() {
+        return komotoParentOid;
+    }
+
+    /**
+     * @param komotoParentOid the komotoParentOid to set
+     */
+    public void setKomotoParentOid(String komotoParentOid) {
+        this.komotoParentOid = komotoParentOid;
+    }
+
+    /**
+     * @return the kielivalikoima
+     */
+    public KoodiValikoimaV1RDTO getKielivalikoima() {
+        return kielivalikoima;
+    }
+
+    /**
+     * @param kielivalikoima the kielivalikoima to set
+     */
+    public void setKielivalikoima(KoodiValikoimaV1RDTO kielivalikoima) {
+        this.kielivalikoima = kielivalikoima;
+    }
+
+    /**
+     * @return the lukiodiplomit
+     */
+    public KoodiUrisV1RDTO getLukiodiplomit() {
+        return lukiodiplomit;
+    }
+
+    /**
+     * @param lukiodiplomit the lukiodiplomit to set
+     */
+    public void setLukiodiplomit(KoodiUrisV1RDTO lukiodiplomit) {
+        this.lukiodiplomit = lukiodiplomit;
+    }
+
+    /**
+     * @return the ammattinimikkeet
+     */
+    public KoodiUrisV1RDTO getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = new KoodiUrisV1RDTO();
+        }
+
+        return ammattinimikkeet;
+    }
+
+    /**
+     * @param ammattinimikkeet the ammattinimikkeet to set
+     */
+    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
+        this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    /**
+     * @return the linkkiOpetussuunnitelmaan
+     */
+    public String getLinkkiOpetussuunnitelmaan() {
+        return linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
+     */
+    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
+        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
     }
 
 }

@@ -29,8 +29,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
@@ -64,8 +64,8 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
     private KoulutusmoduuliToteutus komoto;
     private TarjontaFixtures tarjontaFixtures = new TarjontaFixtures();
     private OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
-    private EntityConverterToKoulutusKorkeakouluRDTO converterToRDTO;
-    private KoulutusKorkeakouluDTOConverterToEntity convertToEntity;
+    private EntityConverterToRDTO converterToRDTO;
+    private KoulutusDTOConverterToEntity convertToEntity;
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     @Before
@@ -78,8 +78,8 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         koulutusmoduuliToteutusDAO = createMock(KoulutusmoduuliToteutusDAO.class);
         koulutusmoduuliDAO = createMock(KoulutusmoduuliDAO.class);
         organisaatioServiceMock = createMock(OrganisaatioService.class);
-        converterToRDTO = createMock(EntityConverterToKoulutusKorkeakouluRDTO.class);
-        convertToEntity = createMock(KoulutusKorkeakouluDTOConverterToEntity.class);
+        converterToRDTO = createMock(EntityConverterToRDTO.class);
+        convertToEntity = createMock(KoulutusDTOConverterToEntity.class);
 
         //SET DAO STATES
         initMockInstanceInternalStates();
@@ -225,7 +225,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
 
         //remove all not needed referenses by using convert entity to dto (language can be any)
-        expect(converterToRDTO.convert(komoto, "FI", false)).andReturn(kkDto);
+        expect(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class,komoto, "FI", false)).andReturn(kkDto);
 
         Capture<List> toOrgOids = new Capture<List>();
         permissionChecker.checkCopyKoulutus(capture(toOrgOids));

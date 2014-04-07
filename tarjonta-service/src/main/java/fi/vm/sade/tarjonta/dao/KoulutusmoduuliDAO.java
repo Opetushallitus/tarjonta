@@ -20,6 +20,7 @@ import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -124,6 +125,9 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
         private KoulutusasteTyyppi koulutustyyppi;
+        private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+        private TarjontaTila tila;
+
         private Class<? extends BaseKoulutusmoduuli> type;
         private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
 
@@ -252,6 +256,34 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
          */
         public void setLikeKoulutusKoodiUri(String likeKoulutusKoodiUri) {
             this.likeKoulutusKoodiUri = likeKoulutusKoodiUri;
+        }
+
+        /**
+         * @return the koulutusmoduuliTyyppi
+         */
+        public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+            return koulutusmoduuliTyyppi;
+        }
+
+        /**
+         * @param koulutusmoduuliTyyppi the koulutusmoduuliTyyppi to set
+         */
+        public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+            this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+        }
+
+        /**
+         * @return the tila
+         */
+        public TarjontaTila getTila() {
+            return tila;
+        }
+
+        /**
+         * @param tila the tila to set
+         */
+        public void setTila(TarjontaTila tila) {
+            this.tila = tila;
         }
 
         public enum GroupBy {

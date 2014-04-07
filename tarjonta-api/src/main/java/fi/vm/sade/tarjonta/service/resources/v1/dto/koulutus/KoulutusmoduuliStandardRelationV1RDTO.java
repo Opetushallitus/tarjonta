@@ -40,7 +40,7 @@ public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
     private KoodiV1RDTO eqf;
     @ApiModelProperty(value = "Opintojen laajuuden yksikko", required = true)
     private KoodiV1RDTO opintojenLaajuusyksikko;
-
+    
     /**
      * @return the koulutuskoodi
      */

@@ -36,9 +36,9 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.impl.ContextDataServiceImpl;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKoulutusKorkeakouluRDTO;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonV1RDTO;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKorkeakouluDTOConverterToEntity;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
@@ -114,19 +114,19 @@ abstract class KoulutusBase {
     protected OrganisaatioService organisaatioServiceMock;
     @Autowired
     protected OidService oidService;
-    protected EntityConverterToKoulutusKorkeakouluRDTO converterToRDTO;
-    protected KoulutusKorkeakouluDTOConverterToEntity convertToEntity;
+    protected EntityConverterToRDTO converterToRDTO;
+    protected KoulutusDTOConverterToEntity convertToEntity;
     protected OrganisaatioDTO organisaatioDTO;
     @Autowired
     protected KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     protected KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    protected IndexerResource solrIndexerMock;
+    protected IndexerResource indexerResourceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     protected KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
     protected KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
-    protected KoulutusCommonV1RDTO commonConverter;
+    protected KoulutusCommonConverter commonConverter;
     protected PermissionChecker permissionChecker;
     protected ContextDataService contextDataService;
     protected KoodistoURI koodistoUri;
@@ -152,11 +152,11 @@ abstract class KoulutusBase {
 
         komotoKoulutusConverters = new KoulutusKuvausV1RDTO<KomotoTeksti>();
         komoKoulutusConverters = new KoulutusKuvausV1RDTO<KomoTeksti>();
-        commonConverter = new KoulutusCommonV1RDTO();
+        commonConverter = new KoulutusCommonConverter();
         //CREATE MOCKS
         organisaatioServiceMock = createMock(OrganisaatioService.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
-        solrIndexerMock = createMock(IndexerResource.class);
+        indexerResourceMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
@@ -166,8 +166,8 @@ abstract class KoulutusBase {
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
 
         //INIT DATA CONVERTERS
-        converterToRDTO = new EntityConverterToKoulutusKorkeakouluRDTO();
-        convertToEntity = new KoulutusKorkeakouluDTOConverterToEntity();
+        converterToRDTO = new EntityConverterToRDTO();
+        convertToEntity = new KoulutusDTOConverterToEntity();
         instance = new KoulutusResourceImplV1();
         //SET VALUES TO INSTANCES
 
@@ -187,8 +187,10 @@ abstract class KoulutusBase {
 
         Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
+        Whitebox.setInternalState(convertToEntity, "commonConverter", commonConverter);
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
+
     }
 
     protected void initMockInstanceInternalStates() {
@@ -197,7 +199,7 @@ abstract class KoulutusBase {
         contextDataService = new ContextDataServiceImpl();
 
         organisaatioServiceMock = createMock(OrganisaatioService.class);
-        solrIndexerMock = createMock(IndexerResource.class);
+        indexerResourceMock = createMock(IndexerResource.class);
         permissionChecker = createMock(PermissionChecker.class);
         koodistoUri = createMock(KoodistoURI.class);
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
@@ -208,7 +210,7 @@ abstract class KoulutusBase {
 
         //SET VALUES TO INSTANCES
         Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
-        Whitebox.setInternalState(instance, "solrIndexer", solrIndexerMock);
+        Whitebox.setInternalState(instance, "indexerResource", indexerResourceMock);
         Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
         Whitebox.setInternalState(instance, "contextDataService", contextDataService);
         Whitebox.setInternalState(instance, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);

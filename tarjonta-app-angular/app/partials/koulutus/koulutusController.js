@@ -13,33 +13,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-
 var app = angular.module('app.koulutus.ctrl', []);
 
 app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route',
     function KoulutusRoutingController($scope, $log, $routeParams, $route) {
-
         $log = $log.getInstance("KoulutusRoutingController");
-
         $scope.resultPageUri;
 
         $scope.controlModel = {
             formStatus: {
                 modifiedBy: '',
                 modified: null,
-                tila : ''
+                tila: ''
             },
-            formControls: {reloadDisplayControls: function() {}}
+            formControls: {reloadDisplayControls: function() {
+                }}
         };
-
-//        $log.info("KoulutusRoutingController()", $routeParams);
-//        $log.info("$route: ", $route);
-//        $log.info("SCOPE: ", $scope);
 
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                var patt = new RegExp("(AMMATILLINEN_PERUSKOULUTUS|LUKIOKOULUTUS|KORKEAKOULUTUS|PERUSOPETUKSEN_LISAOPETUS)");
+                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS)");
                 if (patt.test(type)) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
                 } else {
