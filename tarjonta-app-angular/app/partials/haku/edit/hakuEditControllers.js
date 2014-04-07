@@ -40,9 +40,14 @@ app.controller('HakuEditController',
             $log = $log.getInstance("HakuEditController");
             $log.info("initializing", $scope);
 
+            var hakuOid = $route.current.params.id;
+
+            // Reset model to empty
+            $scope.model = null;
+
             var clearErrors = function() {
                 $scope.model.validationmsgs = [];
-                //XXX data model for formControl seems to accumulate errors, clear it here even if the doc says no
+                // NOTE data model for formControl seems to accumulate errors, clear it here even if the doc says no
                 $scope.model.formControls.notifs.errorDetail = [];
             };
 
@@ -68,17 +73,6 @@ app.controller('HakuEditController',
                 $scope.model.showError = true;
                 $scope.model.showSuccess = false;
             }
-
-
-            var hakuOid = $route.current.params.id;
-
-            // TODO preloaded / resolved haku is where?
-            // $route.local.xxx
-            $scope.model = null;
-
-//                $scope.getLocale = function() {
-//                    return 'FI';
-//                };
 
             $scope.doRemoveHakuaika = function(hakuaika, index) {
                 $log.info("doRemoveHakuaika()", hakuaika, index);
@@ -172,19 +166,29 @@ app.controller('HakuEditController',
 
 
             $scope.goToReview = function(event) {
-                $log.info("goToReview()");
+                $log.debug("goToReview()");
+                $location.path("/haku/" + $scope.model.hakux.result.oid);
             };
 
-            $scope.onStartDateChanged = function(element, hakuaika) {
-                $log.info("onStartDateChanged: " + element + " - " + hakuaika);
-            };
+//            $scope.onStartDateChanged = function(element, hakuaika) {
+//                $log.info("onStartDateChanged()", element, hakuaika);
+//            };
+//
+//            $scope.onEndDateChanged = function(element, hakuaika) {
+//                $log.info("onEndDateChanged()", element, hakuaika);
+//            };
 
-            $scope.onEndDateChanged = function(element, hakuaika) {
-                $log.info("onEndDateChanged: " + element + " - " + hakuaika);
-            };
+            $scope.validateAlkuPvmAndLoppuPvm = function(hakuaika) {
+                if (angular.isDefined(hakuaika.alkuPvm) && angular.isDefined(hakuaika.loppuPvm)) {
+                    if (hakuaika.alkuPvm >= hakuaika.loppuPvm) {
+                        return true;
+                    }
+                }
+                return false;                
+            }
 
             $scope.onDateChanged = function(hakuaika) {
-                $log.info("onDateChanged: " + hakuaika);
+                $log.info("onDateChanged()", hakuaika);
             };
 
             /**
@@ -193,7 +197,9 @@ app.controller('HakuEditController',
              * @returns {boolean} true is haku in "model.hakux.result" is NEW (ie. doesn't have OID)
              */
             $scope.isNewHaku = function() {
-                return !angular.isDefined($scope.model.hakux.result.oid);
+                var result = !angular.isDefined($scope.model.hakux.result.oid);
+                $log.debug("isNewHaku()", result);
+                return result;
             };
 
             $scope.checkHaunNimiValidity = function() {
