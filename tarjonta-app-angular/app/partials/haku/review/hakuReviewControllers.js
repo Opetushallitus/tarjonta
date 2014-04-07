@@ -15,8 +15,8 @@
 
 var app = angular.module('app.haku.review.ctrl', []);
 
-app.controller('HakuReviewController', ['$scope', '$route', '$log', '$routeParams', 'ParameterService',
-    function HakuReviewController($scope, $route, $log, $routeParams, ParameterService) {
+app.controller('HakuReviewController', ['$scope', '$route', '$log', '$routeParams', 'ParameterService','$location','HakuV1Service',
+    function HakuReviewController($scope, $route, $log, $routeParams, ParameterService,$location, HakuV1Service) {
 
         $log = $log.getInstance("HakuReviewController");
 
@@ -28,17 +28,14 @@ app.controller('HakuReviewController', ['$scope', '$route', '$log', '$routeParam
 
         $scope.model = null;
 
-        $scope.goBack = function(event) {
-            $log.info("goBack()", event);
+        $scope.goBack = function() {
+          $location.path("/haku");
         };
 
-        $scope.doEdit = function(event, part) {
-            $log.info("goEdit()", event, part);
+        $scope.doEdit = function() {
+          $location.path("/haku/" + hakuOid + "/edit");
         };
-
-        $scope.getHakuNimi = function() {
-            return "TODO: get haku nimi: " + new Date();
-        };
+        
 
         $scope.init = function() {
             $log.info("HakuReviewController.init()...");
@@ -55,6 +52,7 @@ app.controller('HakuReviewController', ['$scope', '$route', '$log', '$routeParam
                 },
                 // Preloaded Haku result
                 hakux: $route.current.locals.hakux,
+                nimi: HakuV1Service.resolveNimi($route.current.locals.hakux.result),
                 koodis: {
                     koodiX: "..."
                 },
