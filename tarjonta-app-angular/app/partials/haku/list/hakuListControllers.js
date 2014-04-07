@@ -82,15 +82,20 @@ app.controller('HakuListController',
                   dialogService.showNotImplementedDialog();
                 };
 
-                $scope.doPublish = function(haku) {
-                  Haku.changeState({oid:haku.oid, state:"JULKAISTU"}).$promise.then(function(result){
-                    console.log("result:", result);
-                  });
-                };
-
-                $scope.doCancel = function(haku) {
-                  Haku.changeState({oid:haku.oid, state:"PERUTTU"});
-                };
+                function changeState(targetState) {
+                  return function(haku) {
+                    Haku.changeState({oid:haku.oid, state:targetState}).$promise.then(function(result){
+                      if("OK"===result.status) {
+                        haku.tila=targetState;
+                      } else {
+                        console.log("state change did not work?", result);
+                      }
+                    });
+                  };
+                }
+                
+                $scope.doPublish = changeState("JULKAISTU");
+                $scope.doCancel = changeState("PERUTTU");
 
                 $scope.doDeleteSelected = function() {
                   console.log("doDeleteSelected()");
