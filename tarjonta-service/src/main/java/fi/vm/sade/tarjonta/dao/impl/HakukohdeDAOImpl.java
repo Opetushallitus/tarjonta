@@ -253,7 +253,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         QHakukohde qHakukohde = QHakukohde.hakukohde;
 
         return from(qHakukohde)
-                .where(qHakukohde.oid.eq(oid).and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))).singleResult(qHakukohde);
+                .where(qHakukohde.oid.eq(oid)).singleResult(qHakukohde);
 
     }
 
@@ -261,15 +261,18 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public Hakukohde findHakukohdeByOid(final String oid, final boolean showDeleted) {
 
         Preconditions.checkNotNull(oid, "Hakukohde OID cannot be null.");
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
         if (showDeleted) {
 
-            QHakukohde qHakukohde = QHakukohde.hakukohde;
+
 
             return from(qHakukohde)
                     .where(qHakukohde.oid.eq(oid)).singleResult(qHakukohde);
 
         } else {
-            return findHakukohdeByOid(oid);
+            return from(qHakukohde)
+                    .where(qHakukohde.oid.eq(oid).and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))).singleResult(qHakukohde);
+
         }
 
     }
