@@ -167,7 +167,9 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
       return HakuV1.search(parameters).$promise.then(function(data){
         return mget(data.result);
       });
-    }
+    },
+  
+    resolveNimi: resolveNimi
   };
 
 });

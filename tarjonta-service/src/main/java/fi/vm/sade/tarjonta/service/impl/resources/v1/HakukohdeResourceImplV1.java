@@ -366,29 +366,36 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         LOG.debug("HAKUKOHDE-REST V1 findByOid : ", oid);
         if (oid != null && oid.trim().length() > 0) {
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+        if (hakukohde != null) {
+            HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde);
 
-        HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde);
-
-        if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
-              hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste(),hakukohdeRDTO.getSoraKuvausKielet()));
-        }
-
-        if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
-            LOG.debug("TRYING TO GET VALINTAPERUSTEKUVAUKSET WITH ID : " + hakukohdeRDTO.getValintaPerusteKuvausTunniste());
-            HashMap<String,String> valintaPerusteKuvaukset = getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(),hakukohdeRDTO.getValintaPerusteKuvausKielet());
-            if (valintaPerusteKuvaukset != null) {
-                LOG.debug("VALINTAPERUSTEKUVAUKSET SIZE : " + valintaPerusteKuvaukset.size());
-            } else {
-                LOG.debug("VALINTAPERUSTEKUVAUKSET WAS NULL!!!!");
+            if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
+                hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste(), hakukohdeRDTO.getSoraKuvausKielet()));
             }
-             hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(),hakukohdeRDTO.getValintaPerusteKuvausKielet()));
+
+            if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
+                LOG.debug("TRYING TO GET VALINTAPERUSTEKUVAUKSET WITH ID : " + hakukohdeRDTO.getValintaPerusteKuvausTunniste());
+                HashMap<String, String> valintaPerusteKuvaukset = getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(), hakukohdeRDTO.getValintaPerusteKuvausKielet());
+                if (valintaPerusteKuvaukset != null) {
+                    LOG.debug("VALINTAPERUSTEKUVAUKSET SIZE : " + valintaPerusteKuvaukset.size());
+                } else {
+                    LOG.debug("VALINTAPERUSTEKUVAUKSET WAS NULL!!!!");
+                }
+                hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(), hakukohdeRDTO.getValintaPerusteKuvausKielet()));
+            }
+
+            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+            result.setResult(hakukohdeRDTO);
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            return result;
+        } else {
+            ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
+
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return result;
+
         }
-
-        ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
-        result.setResult(hakukohdeRDTO);
-        result.setStatus(ResultV1RDTO.ResultStatus.OK);
-
-        return result;
         } else {
             ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
 
@@ -488,7 +495,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Date today = new Date();
         List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
-        
+
+        if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
+            LOG.warn("HAKUKOHDE KOULUTUS OIDS SHOULD NOT BE NULL!!!");
+        }
         
         Set<KoulutusmoduuliToteutus> komotot = findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids());
 
@@ -537,11 +547,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         }
 
-
         hakukohde = hakukohdeDAO.insert(hakukohde);
 
         hakukohde.setKoulutusmoduuliToteutuses(komotot);
-
+        for(KoulutusmoduuliToteutus komoto: komotot) {
+            komoto.addHakukohde(hakukohde);
+        }
 
         hakukohdeDAO.update(hakukohde);
 

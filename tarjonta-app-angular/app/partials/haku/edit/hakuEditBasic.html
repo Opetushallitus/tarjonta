@@ -80,7 +80,8 @@
                 <div class="btn"><i class="icon-minus" ng-click="doRemoveHakuaika(hakuaika, $index)"></i> Poista </div>
 
                 <div show-errors form="hakuaikaForm" field="alkuPvm" tt-prefix="haku.edit" debug="false" custom-check="hakuaikaForm.alkuPvm.$invalid"></div>
-                <div show-errors form="hakuaikaForm" field="loppuPvm" tt-prefix="haku.edit" debug="false" custom-check="hakuaikaForm.loppuPvm.$invalid"></div>
+                <div show-errors form="hakuaikaForm" field="loppuPvm" tt-prefix="haku.edit" debug="false" 
+                     custom-check="hakuaikaForm.loppuPvm.$invalid || validateAlkuPvmAndLoppuPvm(hakuaika)"></div>
             </div>
             <div class="btn" ng-click="doAddNewHakuaika()"><i class="icon-plus"></i> Lisää uusi hakuaika </div>
 
