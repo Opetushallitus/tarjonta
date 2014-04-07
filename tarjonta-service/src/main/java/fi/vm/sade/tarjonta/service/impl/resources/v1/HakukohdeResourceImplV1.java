@@ -547,11 +547,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         }
 
-
         hakukohde = hakukohdeDAO.insert(hakukohde);
 
         hakukohde.setKoulutusmoduuliToteutuses(komotot);
-
+        for(KoulutusmoduuliToteutus komoto: komotot) {
+            komoto.addHakukohde(hakukohde);
+        }
 
         hakukohdeDAO.update(hakukohde);
 
