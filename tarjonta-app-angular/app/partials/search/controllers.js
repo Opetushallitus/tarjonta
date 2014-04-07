@@ -543,7 +543,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.luoUusiHakukohde = function() {
               console.log("koulutukset:", $scope.selection.koulutukset);
-              
+
                 if($scope.selection.koulutukset.length>1) {
                   var promises=[];
                   angular.forEach($scope.selection.koulutukset, function(koulutusOid){
@@ -563,7 +563,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         }
                       }
                     });
-                    
+
                     if(valid) {
                       SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
                       SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
@@ -579,6 +579,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                       });
                     }
                   });
+                } else {
+                    SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
+                    SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
+                    $location.path('/hakukohde/new/edit');
                 }
                   
             };
