@@ -12,6 +12,7 @@ angular.module('Organisaatio', [ 'ngResource', 'config', 'Logging' ])
 		//TODO olettaa että käyttäjä suomenkielinen
 		organisaationimi=organisaatio.nimi.fi||organisaatio.nimi.sv||organisaatio.nimi.en;
 		organisaatio.nimi=organisaationimi;
+		organisaatio.sortNimi = organisaationimi.toLowerCase();
 		if(organisaatio.children){
 			localizeAll(organisaatio.children);
 		}
@@ -20,6 +21,10 @@ angular.module('Organisaatio', [ 'ngResource', 'config', 'Logging' ])
 
 	function localizeAll(organisaatioarray){
 		angular.forEach(organisaatioarray, localize);
+		organisaatioarray.sort(function(a,b){
+		  ret = a.sortNimi.localeCompare(b.sortNimi);
+		  return ret==0?a.nimi.localeCompare(b.nimi):ret;
+		});
 		return organisaatioarray;
         }
 
