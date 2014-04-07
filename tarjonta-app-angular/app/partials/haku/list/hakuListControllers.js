@@ -82,6 +82,10 @@ app.controller('HakuListController',
                   dialogService.showNotImplementedDialog();
                 };
 
+                $scope.review=function(haku){
+                  $location.path("/haku/" + haku.oid);
+                };
+
                 function changeState(targetState) {
                   return function(haku) {
                     Haku.changeState({oid:haku.oid, state:targetState}).$promise.then(function(result){
@@ -135,7 +139,7 @@ app.controller('HakuListController',
                     
                     //review
                     haku.actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
-                      review(haku);
+                      $scope.review(haku);
                     }});
 
                     //delete
@@ -165,10 +169,6 @@ app.controller('HakuListController',
 		    setKausi(params, 'KOULUTUKSEN_ALKAMISKAUSI');
 
                     HakuV1Service.search(params).then(function(haut){
-
-                      $scope.review=function(haku){
-                        $location.path("/haku/" + haku.oid);
-                      };
 
                       for(var i=0;i<haut.length;i++) {
                         var haku = haut[i].actions=[];
