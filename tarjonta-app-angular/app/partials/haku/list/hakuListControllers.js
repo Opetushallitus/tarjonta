@@ -36,7 +36,7 @@ app.controller('HakuListController',
                   var kevat = kaudet[k];
                   var syksy = kaudet[(k+1)%1];
 
-                  console.log(kaudet);
+                  $log.debug(kaudet);
 
                   //vuodet
                   for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++){
@@ -78,7 +78,7 @@ app.controller('HakuListController',
                 };
 
                 $scope.doDelete = function(haku) {
-                  console.log("doDelete()", haku);
+                  $log.debug("doDelete()", haku);
                   dialogService.showNotImplementedDialog();
                 };
 
@@ -88,7 +88,7 @@ app.controller('HakuListController',
                       if("OK"===result.status) {
                         haku.tila=targetState;
                       } else {
-                        console.log("state change did not work?", result);
+                        $log.debug("state change did not work?", result);
                       }
                     });
                   };
@@ -98,13 +98,13 @@ app.controller('HakuListController',
                 $scope.doCancel = changeState("PERUTTU");
 
                 $scope.doDeleteSelected = function() {
-                  console.log("doDeleteSelected()");
+                  $log.debug("doDeleteSelected()");
                   var selected=[];
                   angular.forEach($scope.model.hakus, function(haku){
                     if(haku.selected) selected.push(haku);
                   });
 
-                  console.log("selected:", selected);
+                  $log.debug("selected:", selected);
                   dialogService.showNotImplementedDialog();
                 };
 
@@ -131,7 +131,7 @@ app.controller('HakuListController',
                       });
                     }
                     
-                    console.log("results", results);
+                    $log.debug("results", results);
                     
                     //review
                     haku.actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
