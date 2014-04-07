@@ -63,11 +63,16 @@ app.controller('BaseEditController',
 
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri);
 
-                        /*
+                         /*
+                         * Load data to mltiselect fields
                          * remove version data from the list
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            uiModel[key].uris = _.keys(model[key].uris);
+                            if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {                            
+                                uiModel[key].uris = _.keys(model[key].uris);
+                            }else{
+                                console.error("invalid key mapping : ", key);
+                            }
                         });
 
                         uiModel.tabs.lisatiedot = false; //activate lisatiedot tab

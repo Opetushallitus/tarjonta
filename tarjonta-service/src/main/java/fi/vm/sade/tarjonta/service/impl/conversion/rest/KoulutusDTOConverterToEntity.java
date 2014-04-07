@@ -156,7 +156,7 @@ public class KoulutusDTOConverterToEntity {
             komoto.getOpetusPaikkas().clear();
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
-        komoto.setKkPohjakoulutusvaatimus(commonConverter.convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUKSET));
+        komoto.setKkPohjakoulutusvaatimus(commonConverter.convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
 
         komoto.setHinta(dto.getHinta() != null ? new BigDecimal(dto.getHinta().toString()) : null);
@@ -180,7 +180,7 @@ public class KoulutusDTOConverterToEntity {
             return komoto;
         }
 
-        Koulutusmoduuli komo;
+        Koulutusmoduuli komo = null;
         if (dto.getOid() != null) {
             //update komo & komoto
             komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
@@ -199,6 +199,7 @@ public class KoulutusDTOConverterToEntity {
         }
 
         final String organisationOId = dto.getOrganisaatio().getOid();
+        Preconditions.checkNotNull(komo, "KOMO object cannot be null.");
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
         Preconditions.checkNotNull(komoto.getOid(), "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");

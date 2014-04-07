@@ -71,7 +71,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
@@ -108,7 +108,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
@@ -155,7 +155,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
         var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"), {}, {
-            update: {method: 'POST', withCredentials:true}
+            update: {method: 'POST', withCredentials: true}
         });
 
         tila.update(function(nstate) {
@@ -293,16 +293,23 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     //hakee koulutuksen, palauttaa promisen
     dataFactory.getKoulutusPromise = function(oid) {
-      return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
-  };
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
+    };
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/:koulutusasteTyyppi?meta=false&lang=:languageCode", {koulutusasteTyyppi: '@koulutusasteTyyppi', koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/:koulutusasteTyyppi?meta=false&lang=:languageCode",
+                {
+                    koulutusasteTyyppi: '@koulutusasteTyyppi',
+                    koulutuskoodiUri: '@koulutuskoodiUri',
+                    defaults: '@defaults', //optional data : string like 'object-field1:uri, object-field2:uri, ...';
+                    languageCode: '@languageCode'
+                });
         if (angular.isUndefined(arg.koulutusasteTyyppi)) {
             //todo : remove
             arg.koulutusasteTyyppi = 'Korkeakoulutus';
         }
+
         return koulutus.get(arg, func);
     };
 
@@ -515,6 +522,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 method: 'GET',
                 url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi",
             },
+            tekstis: {
+                method: 'GET',
+                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis",
+            }
         });
     };
 

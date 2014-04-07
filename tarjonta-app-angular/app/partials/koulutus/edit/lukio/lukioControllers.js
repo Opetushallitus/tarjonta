@@ -12,7 +12,7 @@ app.controller('LukioEditController',
                 $scope.isMutable = true;
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
-                $scope.KoodistoLocale = LocalisationService.getLocale();//"FI";
+                $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
                 $scope.model = null;
                 $scope.tmp = {};
                 $scope.langs = {};
@@ -26,8 +26,6 @@ app.controller('LukioEditController',
 
                     uiModel.selectedKieliUri = "" //tab language
                     converter.createUiModels(uiModel);
-
-
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -61,14 +59,21 @@ app.controller('LukioEditController',
                             }
                         });
 
-                        $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri);
-
                         /*
+                         * Load data to mltiselect fields
                          * remove version data from the list
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            uiModel[key].uris = _.keys(model[key].uris);
+                            if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
+                                uiModel[key].uris = _.keys(model[key].uris);
+                            } else {
+                                console.error("invalid key mapping : ", key);
+                            }
                         });
+
+                        $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo);
+                        $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, 'TUTKINTO');
+                        $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, 'TUTKINTO_OHJELMA');
 
                         uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
                     } else if (!angular.isUndefined($routeParams.org)) {
@@ -84,34 +89,34 @@ app.controller('LukioEditController',
                         });
 
                         var resource = TarjontaService.komo();
-                        var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit(['koulutustyyppi_2'], 'koulutus', $scope.KoodistoLocale);
+                        var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit(['koulutustyyppi_2'], 'koulutus', $scope.koodistoLocale);
 
 
                         /*
                          * LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
-                        var tutkintoModules = {};
+                        uiModel['tutkintoModules'] = {};
                         uiModel['koulutusohjelmaModules'] = {};
                         tutkintoPromise.then(function(kRes) {
                             resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: 'TUTKINTO'}, function(tRes) {
                                 for (var i = 0; i < kRes.uris.length; i++) {
                                     for (var c = 0; c < tRes.result.length; c++) {
-                                        if (!angular.isDefined(tutkintoModules[ kRes.uris[i] ]) && kRes.uris[i] === tRes.result[c].koulutuskoodiUri) {
-                                            tutkintoModules[ kRes.uris[i]] = kRes.map[ kRes.uris[i]];
-                                            tutkintoModules[ kRes.uris[i]].oid = tRes.result[c].oid;
+                                        if (!angular.isDefined(uiModel['tutkintoModules'][ kRes.uris[i] ]) && kRes.uris[i] === tRes.result[c].koulutuskoodiUri) {
+                                            uiModel['tutkintoModules'][ kRes.uris[i]] = kRes.map[ kRes.uris[i]];
+                                            uiModel['tutkintoModules'][ kRes.uris[i]].oid = tRes.result[c].oid;
                                         }
                                     }
                                 }
 
-                                var listOfTutkintoModules = _.map(tutkintoModules, function(num, key) {
+                                var listOfTutkintoModules = _.map(uiModel['tutkintoModules'], function(num, key) {
                                     return num.koodiUri;
                                 });
 
-                                uiModel.tutkinto = _.map(tutkintoModules, function(num, key) {
+                                uiModel.tutkinto = _.map(uiModel['tutkintoModules'], function(num, key) {
                                     return num;
                                 });
 
-                                var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.KoodistoLocale);
+                                var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.koodistoLocale);
                                 lukiolinjaPromise.then(function(kRes) {
                                     resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: 'TUTKINTO_OHJELMA'}, function(tRes) {
                                         for (var il = 0; il < kRes.uris.length; il++) {
@@ -263,23 +268,17 @@ app.controller('LukioEditController',
                 }
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi, tutkintoTyyppi) {
-                    TarjontaService.getKoulutuskoodiRelations({koulutusasteTyyppi: 'Lukiokoulutus', koulutuskoodiUri: koulutuskoodi, languageCode: $scope.KoodistoLocale}, function(data) {
+                    TarjontaService.getKoulutuskoodiRelations(
+                            {
+                                koulutusasteTyyppi: 'Lukiokoulutus',
+                                koulutuskoodiUri: koulutuskoodi,
+                                defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1",
+                                languageCode: $scope.koodistoLocale
+                            }, function(data) {
                         var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
                             if (angular.isDefined(value.module) && tutkintoTyyppi === 'TUTKINTO' && tutkintoTyyppi === value.module) {
-
-                                if (angular.isDefined(value.koodisto)) {
-                                    //var p = Koodisto.getKoodi(cfg.env[value.koodisto], cfg.env[value.koodi], $scope.koodistoLocale)
-                                    var p = Koodisto.getKoodi(value.koodisto, value.koodi, $scope.koodistoLocale)
-                                    p.then(function(koodi) {
-                                        apiModel[key].uri = koodi.koodiUri;
-                                        apiModel[key].arvo = koodi.koodiArvo;
-                                        apiModel[key].versio = koodi.koodiVersio;
-                                        apiModel[key].nimi = koodi.koodiNimi;
-                                    });
-                                } else {
-                                    apiModel[key] = restRelationData[key];
-                                }
+                                apiModel[key] = restRelationData[key];
                             } else if (angular.isDefined(value.module) && tutkintoTyyppi === 'TUTKINTO_OHJELMA' && tutkintoTyyppi === value.module) {
                                 apiModel[key] = restRelationData[key];
                             }
@@ -333,6 +332,8 @@ app.controller('LukioEditController',
                             } else {
                                 $scope.controlFormMessages($scope.uiModel, "ERROR", null, saveResponse.errors);
                             }
+                            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, model.koulutuskoodi.uri, 'TUTKINTO');
+                            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, model.koulutusohjelma.uri, 'TUTKINTO_OHJELMA');
                         });
                     });
                 };
@@ -602,6 +603,48 @@ app.controller('LukioEditController',
                     return  !angular.isUndefined($scope.model.oid) && $scope.model.oid !== null && $scope.model.oid.length > 0;
                 };
 
+                $scope.getLang = function(tekstis) {
+                    if (angular.isUndefined(tekstis) || tekstis === null) {
+                        return "";
+                    }
+
+                    var fallbackFi = "";
+
+                    for (var key in tekstis) {
+                        if (key.indexOf($scope.koodistoLocale) != -1) {
+                            return tekstis[key];
+                        }
+
+                        if (key.indexOf("fi") != -1) {
+                            fallbackFi = tekstis[key];
+                        }
+                    }
+
+
+                    return fallbackFi;
+                };
+
+                $scope.loadKomoKuvausTekstis = function(komoOid, uiModel, kuvausKomoto) {
+                    if (angular.isDefined(kuvausKomoto) && komoOid === null && kuvausKomoto) {
+                        if (angular.isDefined(kuvausKomoto['TAVOITTEET'])) {
+                            uiModel.kuvausTavoite = $scope.getLang(kuvausKomoto['TAVOITTEET'].tekstis);
+                        }
+                        if (angular.isDefined(kuvausKomoto['KOULUTUKSEN_RAKENNE'])) {
+                            uiModel.kuvausOpintojenRakenne = $scope.getLang(kuvausKomoto['KOULUTUKSEN_RAKENNE'].tekstis);
+                        }
+                        if (angular.isDefined(kuvausKomoto['JATKOOPINTO_MAHDOLLISUUDET'])) {
+                            uiModel.jatkoOpintomahdollisuudet = $scope.getLang(kuvausKomoto['JATKOOPINTO_MAHDOLLISUUDET'].tekstis);
+                        }
+                    } else {
+                        TarjontaService.komo().tekstis({oid: komoOid}, function(res) {
+                            console.log(res.result);
+                            $scope.uiModel.kuvausTavoite = $scope.getLang(res.result['TAVOITTEET'].tekstis);
+                            $scope.uiModel.kuvausOpintojenRakenne = $scope.getLang(res.result['KOULUTUKSEN_RAKENNE'].tekstis);
+                            $scope.uiModel.jatkoOpintomahdollisuudet = $scope.getLang(res.result['JATKOOPINTO_MAHDOLLISUUDET'].tekstis);
+                        });
+                    }
+                };
+
                 /*
                  * WATCHES
                  */
@@ -609,17 +652,13 @@ app.controller('LukioEditController',
                     if (angular.isDefined(uri) && uri != null && oUri != uri) {
                         $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[ uri].oid;
                         $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri, 'TUTKINTO_OHJELMA');
-
-                        //tutkintonimikkeet_00001
-                        //koulutuslaji_a
-                        //pohjakoulutustoinenaste_1
                     }
                 });
 
-
-                $scope.$watch("model.koulutuskoodi.uri", function(valNew, valOld) {
-                    if (angular.isDefined(valNew) && valNew != null && valOld != valNew) {
-                        $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, valNew, 'TUTKINTO');
+                $scope.$watch("model.koulutuskoodi.uri", function(uriNew, uriOld) {
+                    if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
+                        $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uriNew, 'TUTKINTO');
+                        $scope.loadKomoKuvausTekstis($scope.uiModel.tutkintoModules[uriNew].oid);
                     }
                 });
 

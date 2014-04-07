@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
@@ -49,6 +50,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
     @Autowired(required = true)
     private KoulutusCommonConverter commonConverter;
+    @Autowired
+    private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
     public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final String lang, final boolean showMeta) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
@@ -114,11 +117,15 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             kkDto.setAmmattinimikkeet(commonConverter.convertToKoodiUrisDTO(komoto.getAmmattinimikes(), locale, FieldNames.AMMATTINIMIKKEET, showMeta));
 
-            kkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiUrisDTO(komoto.getKkPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUKSET, showMeta));
+            kkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiUrisDTO(komoto.getKkPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
 
         } else if (dto instanceof KoulutusLukioV1RDTO) {
             KoulutusLukioV1RDTO lukioDto = (KoulutusLukioV1RDTO) dto;
             lukioDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinja(), locale, FieldNames.LUKIOLINJA, false, showMeta));
+            
+            //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
+            final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+            komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(parentKomo.getTekstit(), showMeta));
         } else if (dto instanceof KoulutusAmmatillinenPeruskoulutusV1RDTO) {
             KoulutusAmmatillinenPeruskoulutusV1RDTO ammDto = (KoulutusAmmatillinenPeruskoulutusV1RDTO) dto;
             ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaKoodi(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
