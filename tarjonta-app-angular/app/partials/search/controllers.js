@@ -121,7 +121,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             // Kutsutaan formin submitissa, käynnistää haun
             $scope.submitOrg = function() {
                 //console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
-                hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
+                var hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
                 hakutulos.then(function(vastaus) {
 //			console.log("result returned, hits:", vastaus);
                     $scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
