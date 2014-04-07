@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
@@ -24,17 +25,25 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,20 +51,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Convert entity objects to koulutus rest objects.
+ * Convert entity objects to koulutus rest objects and vise versa.
  *
  * @author jani
  */
 @Component
-public class KoulutusCommonV1RDTO {
+public class KoulutusCommonConverter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KoulutusCommonV1RDTO.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusCommonConverter.class);
 
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Autowired
     private OrganisaatioService organisaatioService;
+
+    private final KoodistoURI koodistoUri = new KoodistoURI();
 
     public NimiV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final Locale langCode, final FieldNames msg, final boolean showMeta) {
         NimiV1RDTO data = new NimiV1RDTO();
@@ -311,4 +322,132 @@ public class KoulutusCommonV1RDTO {
         }
         koodiUris.getMeta().put(type.getKoodiUri(), convertToKoodiDTO(new KoodiUrisV1RDTO(), type, locale, fieldName, showMeta));
     }
+
+    /**
+     * Logic for handling dates.
+     *
+     * @param komoto
+     * @param dto
+     */
+    public void handleDates(KoulutusmoduuliToteutus komoto, KoulutusV1RDTO dto) {
+        final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
+
+        if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
+            //one or many dates   
+            EntityUtils.keepSelectedDates(komoto.getKoulutuksenAlkamisPvms(), koulutuksenAlkamisPvms);
+            final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
+            KoulutusValidationMessages checkDates = validateDates(firstDate, koulutuksenAlkamisPvms, komoto);
+            Preconditions.checkArgument(checkDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS), "Alkamisaika validation error - key : %s.", checkDates);
+
+            komoto.setAlkamisVuosi(IndexDataUtils.parseYearInt(firstDate));
+            komoto.setAlkamiskausi(IndexDataUtils.parseKausiKoodi(firstDate));
+        } else {
+            //allowed only one kausi and year
+            Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
+            Preconditions.checkArgument(!convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI).isEmpty(), "Alkamiskausi cannot be empty string.");
+            Preconditions.checkNotNull(dto.getKoulutuksenAlkamisvuosi(), "Alkamisvuosi cannot be null!");
+
+            komoto.clearKoulutuksenAlkamisPvms();
+            //only kausi + year, no date objects   
+            komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
+            komoto.setAlkamiskausi(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
+        }
+    }
+
+    public static KoulutusValidationMessages validateDates(Date targetDate, Set<Date> dates, KoulutusmoduuliToteutus komoto) {
+        final String baseKausi = IndexDataUtils.parseKausiKoodi(targetDate);
+        final Integer baseVuosi = IndexDataUtils.parseYearInt(targetDate);
+
+        if (baseKausi == null) {
+            return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING;
+        }
+
+        if (baseVuosi == null) {
+            return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID;
+        }
+
+        //pre-check if the dates are within same date range of kausi + vuosi
+        for (Date pvm : dates) {
+            if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
+                return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID;
+            }
+
+            if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
+                return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID;
+            }
+
+            if (komoto != null) {
+                komoto.addKoulutuksenAlkamisPvms(pvm);
+            }
+        }
+
+        return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS;
+    }
+
+    public static KoulutusValidationMessages validateDates(Date targetDate, Set<Date> dates) {
+        return validateDates(targetDate, dates, null);
+    }
+
+    public String convertToUri(final KoodiV1RDTO dto, final FieldNames msg) {
+        return convertToUri(dto, msg, false);
+    }
+
+    public String convertToUri(final KoodiV1RDTO dto, final FieldNames msg, boolean nullable) {
+
+        if (nullable && (dto == null || dto.getUri() == null)) {
+            //nullable koodisto uri
+            return null;
+        }
+
+        Preconditions.checkNotNull(dto, "KoodiV1RDTO object cannot be null! Error in field : %s.", msg);
+        Preconditions.checkNotNull(dto.getUri(), "KoodiV1RDTO's koodisto koodi URI cannot be null! Error in field : %s.", msg);
+        Preconditions.checkNotNull(dto.getVersio(), "KoodiV1RDTO's koodisto koodi version for koodi '%s' cannot be null! Error in field : %s.", dto.getUri(), msg);
+        return convertToKoodiUri(dto.getUri(), dto.getVersio(), msg);
+    }
+
+    public String convertToKoodiUri(final String uri, final Integer version, final FieldNames msg) {
+        //check data
+        Integer checkVersion = version;
+        if (checkVersion == null || checkVersion == -1) {
+            //search latest koodi version for the koodi uri.
+            final KoodiType koodi = tarjontaKoodistoHelper.getKoodiByUri(uri);
+            Preconditions.checkNotNull(koodi, "Koodisto koodi not found! Error in field : " + msg);
+            checkVersion = koodi.getVersio();
+        }
+
+        return new StringBuilder(uri)
+                .append('#')
+                .append(checkVersion).toString();
+    }
+
+    public Set<KoodistoUri> convertToUris(final KoodiUrisV1RDTO dto, Set<KoodistoUri> koodistoUris, final FieldNames msg) {
+        Preconditions.checkNotNull(dto, "DTO object cannot be null! Error field : " + msg);
+
+        Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
+        if (koodistoUris == null) {
+            modifiedUris = Sets.<KoodistoUri>newHashSet();
+        }
+
+        if (dto.getUris() != null) {
+            for (Map.Entry<String, Integer> uriWithVersion : dto.getUris().entrySet()) {
+                modifiedUris.add(new KoodistoUri(convertToKoodiUri(uriWithVersion.getKey(), uriWithVersion.getValue(), msg)));
+            }
+        }
+
+        return modifiedUris;
+    }
+
+    public MonikielinenTeksti convertToTexts(final NimiV1RDTO dto, final FieldNames msg) {
+        Preconditions.checkNotNull(dto, "Language map object cannot be null! Error field : " + msg);
+        Preconditions.checkNotNull(dto.getTekstis(), "Language map objects cannot be null! Error in field : " + msg);
+
+        MonikielinenTeksti mt = new MonikielinenTeksti();
+        for (Map.Entry<String, String> kieliAndText : dto.getTekstis().entrySet()) {
+            koodistoUri.validateKieliUri(kieliAndText.getKey());
+            mt.addTekstiKaannos(kieliAndText.getKey(), kieliAndText.getValue());
+        }
+
+        return mt;
+    }
+
 }

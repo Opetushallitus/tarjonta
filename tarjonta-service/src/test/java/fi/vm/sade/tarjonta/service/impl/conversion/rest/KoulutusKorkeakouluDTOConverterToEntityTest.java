@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 public class KoulutusKorkeakouluDTOConverterToEntityTest {
 
-    private final KoulutusKorkeakouluDTOConverterToEntity instance = new KoulutusKorkeakouluDTOConverterToEntity();
+    private final KoulutusCommonConverter instance = new KoulutusCommonConverter();
 
     @Before
     public void setUp() {

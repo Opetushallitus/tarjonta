@@ -19,9 +19,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -32,41 +29,17 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "Koulutusmoduulin totetuksen yksilöivä tunniste")
-    private String komotoOid;
-
     @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduuliin")
     private String parentKomoOid;
 
     @ApiModelProperty(value = "Suhde hierarkian parent koulutusmoduulin toteutukseen")
     private String parentKomotoOid;
 
-    @ApiModelProperty(value = "Koulutuksen opetuskielet, ainakin yksi kieli pitää olla syötetty (sisältää koodisto koodi uri:a)", required = true)
-    private KoodiUrisV1RDTO opetuskielis;
-
-    @ApiModelProperty(value = "Koulutuksen opetusmuodot (sisältää koodisto koodi uri:a)", required = true)
-    private KoodiUrisV1RDTO opetusmuodos;
-
-    @ApiModelProperty(value = "Koulutuksen opetusajat (esim. Iltaopetus) (sisältää koodisto koodi uri:a)", required = true)
-    private KoodiUrisV1RDTO opetusAikas;
-
-    @ApiModelProperty(value = "Koulutuksen opetuspaikat (sisältää koodisto koodi uri:a)", required = true)
-    private KoodiUrisV1RDTO opetusPaikkas;
-
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
-
-    @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto koodi uri, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
-    private KoodiV1RDTO koulutuksenAlkamiskausi;
-
-    @ApiModelProperty(value = "Koulutuksen alkamisvuosi, jos ei määritetty ainakin yksi alkamispvm pitää olla valittuna")
-    private Integer koulutuksenAlkamisvuosi;
-
-    @ApiModelProperty(value = "Koulutuksen alkamispvm, voi olla tyhjä, jos tyhjä alkamiskausi ja alkamisvuosi pitää olla valittuna")
-    private Set<Date> koulutuksenAlkamisPvms;
 
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
@@ -79,12 +52,10 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
     private KoodiUrisV1RDTO tutkintonimikes;
 
-    @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
-    private KoodiV1RDTO opintojenLaajuusarvo;
-    
+
     @ApiModelProperty(value = "Maisterin koulutukseen (maisteri+kandi) liitettävän kandidaatin koulutuksen koulutuskoodi", required = false)
     private KoodiV1RDTO kandidaatinKoulutuskoodi;
-    
+
     /**
      * @return the tutkintonimike
      */
@@ -105,42 +76,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     public KoulutusKorkeakouluV1RDTO() {
         super(KoulutusasteTyyppi.KORKEAKOULUTUS);
-    }
-
-    /**
-     * @return the opetuskielis
-     */
-    public KoodiUrisV1RDTO getOpetuskielis() {
-        if (opetuskielis == null) {
-            opetuskielis = new KoodiUrisV1RDTO();
-        }
-
-        return opetuskielis;
-    }
-
-    /**
-     * @param opetuskielis the opetuskielis to set
-     */
-    public void setOpetuskielis(KoodiUrisV1RDTO opetuskielis) {
-        this.opetuskielis = opetuskielis;
-    }
-
-    /**
-     * @return the opetusmuodos
-     */
-    public KoodiUrisV1RDTO getOpetusmuodos() {
-        if (opetusmuodos == null) {
-            opetusmuodos = new KoodiUrisV1RDTO();
-        }
-
-        return opetusmuodos;
-    }
-
-    /**
-     * @param opetusmuodos the opetusmuodos to set
-     */
-    public void setOpetusmuodos(KoodiUrisV1RDTO opetusmuodos) {
-        this.opetusmuodos = opetusmuodos;
     }
 
     /**
@@ -207,31 +142,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
         this.hinta = hinta;
     }
 
-    public KoodiUrisV1RDTO getOpetusAikas() {
-
-        if (opetusAikas == null) {
-            opetusAikas = new KoodiUrisV1RDTO();
-        }
-
-        return opetusAikas;
-    }
-
-    public void setOpetusAikas(KoodiUrisV1RDTO opetusAikas) {
-        this.opetusAikas = opetusAikas;
-    }
-
-    public KoodiUrisV1RDTO getOpetusPaikkas() {
-        if (opetusPaikkas == null) {
-            opetusPaikkas = new KoodiUrisV1RDTO();
-        }
-
-        return opetusPaikkas;
-    }
-
-    public void setOpetusPaikkas(KoodiUrisV1RDTO opetusPaikkas) {
-        this.opetusPaikkas = opetusPaikkas;
-    }
-
     public KoodiUrisV1RDTO getAihees() {
         if (aihees == null) {
             aihees = new KoodiUrisV1RDTO();
@@ -242,60 +152,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
 
     public void setAihees(KoodiUrisV1RDTO aihees) {
         this.aihees = aihees;
-    }
-
-    /**
-     * @return the koulutuksenAlkamisPvms
-     */
-    public Set<Date> getKoulutuksenAlkamisPvms() {
-        if (koulutuksenAlkamisPvms == null) {
-            koulutuksenAlkamisPvms = new HashSet<Date>();
-        }
-
-        return koulutuksenAlkamisPvms;
-    }
-
-    /**
-     * @param koulutuksenAlkamisPvms the koulutuksenAlkamisPvms to set
-     */
-    public void setKoulutuksenAlkamisPvms(Set<Date> koulutuksenAlkamisPvms) {
-        this.koulutuksenAlkamisPvms = koulutuksenAlkamisPvms;
-    }
-
-    /**
-     * @return the koulutuksenAlkamiskausi
-     */
-    public KoodiV1RDTO getKoulutuksenAlkamiskausi() {
-        return koulutuksenAlkamiskausi;
-    }
-
-    /**
-     * @param koulutuksenAlkamiskausi the koulutuksenAlkamiskausi to set
-     */
-    public void setKoulutuksenAlkamiskausi(KoodiV1RDTO koulutuksenAlkamiskausi) {
-        this.koulutuksenAlkamiskausi = koulutuksenAlkamiskausi;
-    }
-
-    /**
-     * @return the koulutuksenAlkamisvuosi
-     */
-    public Integer getKoulutuksenAlkamisvuosi() {
-        return koulutuksenAlkamisvuosi;
-    }
-
-    /**
-     * @param koulutuksenAlkamisvuosi the koulutuksenAlkamisvuosi to set
-     */
-    public void setKoulutuksenAlkamisvuosi(Integer koulutuksenAlkamisvuosi) {
-        this.koulutuksenAlkamisvuosi = koulutuksenAlkamisvuosi;
-    }
-
-    public String getKomotoOid() {
-        return komotoOid;
-    }
-
-    public void setKomotoOid(String _komotoOid) {
-        this.komotoOid = _komotoOid;
     }
 
     public String getParentKomoOid() {
@@ -314,19 +170,7 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
         this.parentKomotoOid = _parentKomotoOid;
     }
 
-    /**
-     * @return the opintojenLaajuusarvo
-     */
-    public KoodiV1RDTO getOpintojenLaajuusarvo() {
-        return opintojenLaajuusarvo;
-    }
-
-    /**
-     * @param opintojenLaajuusarvo the opintojenLaajuusarvo to set
-     */
-    public void setOpintojenLaajuusarvo(KoodiV1RDTO opintojenLaajuusarvo) {
-        this.opintojenLaajuusarvo = opintojenLaajuusarvo;
-    }
+ 
 
     /**
      * @return the kandidaatinKoulutuskoodi

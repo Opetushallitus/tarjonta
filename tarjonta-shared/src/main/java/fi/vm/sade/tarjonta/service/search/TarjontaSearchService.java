@@ -184,7 +184,11 @@ public class TarjontaSearchService {
 
         if (tilat.size() > 0) {
             q.addFilterQuery(String.format("%s:(%s)", Hakukohde.TILA, Joiner.on(' ').skipNulls().join(tilat)));
+        }else {
+            //when an empty search, do not show koulutus status of deleted
+            q.addFilterQuery(String.format("%s:%s", "-" + Hakukohde.TILA, TarjontaTila.POISTETTU));
         }
+
 
         if (kysely.getHakuOid() != null) {
             addFilterForHakuOid(kysely.getHakuOid(), q);

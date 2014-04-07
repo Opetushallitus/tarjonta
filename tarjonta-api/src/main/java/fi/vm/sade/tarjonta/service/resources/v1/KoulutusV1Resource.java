@@ -90,7 +90,6 @@ public interface KoulutusV1Resource {
     public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO1 koulutusMultiCopy);
 
     @POST
-    @Path("/KORKEAKOULUTUS") //TODO any koulutus really
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(

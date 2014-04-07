@@ -36,7 +36,7 @@ app.controller('HakuListController',
                   var kevat = kaudet[k];
                   var syksy = kaudet[(k+1)%1];
 
-                  console.log(kaudet);
+                  $log.debug(kaudet);
 
                   //vuodet
                   for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++){
@@ -78,28 +78,37 @@ app.controller('HakuListController',
                 };
 
                 $scope.doDelete = function(haku) {
-                  console.log("doDelete()", haku);
+                  $log.debug("doDelete()", haku);
                   dialogService.showNotImplementedDialog();
                 };
 
-                $scope.doPublish = function(haku) {
-                  Haku.changeState({oid:haku.oid, state:"JULKAISTU"}).$promise.then(function(result){
-                    console.log("result:", result);
-                  });
+                $scope.review=function(haku){
+                  $location.path("/haku/" + haku.oid);
                 };
 
-                $scope.doCancel = function(haku) {
-                  Haku.changeState({oid:haku.oid, state:"PERUTTU"});
-                };
+                function changeState(targetState) {
+                  return function(haku) {
+                    Haku.changeState({oid:haku.oid, state:targetState}).$promise.then(function(result){
+                      if("OK"===result.status) {
+                        haku.tila=targetState;
+                      } else {
+                        $log.debug("state change did not work?", result);
+                      }
+                    });
+                  };
+                }
+                
+                $scope.doPublish = changeState("JULKAISTU");
+                $scope.doCancel = changeState("PERUTTU");
 
                 $scope.doDeleteSelected = function() {
-                  console.log("doDeleteSelected()");
+                  $log.debug("doDeleteSelected()");
                   var selected=[];
                   angular.forEach($scope.model.hakus, function(haku){
                     if(haku.selected) selected.push(haku);
                   });
 
-                  console.log("selected:", selected);
+                  $log.debug("selected:", selected);
                   dialogService.showNotImplementedDialog();
                 };
 
@@ -126,11 +135,11 @@ app.controller('HakuListController',
                       });
                     }
                     
-                    console.log("results", results);
+                    $log.debug("results", results);
                     
                     //review
                     haku.actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
-                      review(haku);
+                      $scope.review(haku);
                     }});
 
                     //delete
@@ -160,10 +169,6 @@ app.controller('HakuListController',
 		    setKausi(params, 'KOULUTUKSEN_ALKAMISKAUSI');
 
                     HakuV1Service.search(params).then(function(haut){
-
-                      $scope.review=function(haku){
-                        $location.path("/haku/" + haku.oid);
-                      };
 
                       for(var i=0;i<haut.length;i++) {
                         var haku = haut[i].actions=[];
