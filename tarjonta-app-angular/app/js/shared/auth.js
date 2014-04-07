@@ -124,10 +124,14 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
     // CRUD ||UPDATE
     var updateAccess = function(service, org) {
+//      $log.debug("checking updateaccess on", service, org);
       if(org) {
-        //$log.info("updateAccess()", service, org, MyRolesModel);
-        return MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
-                MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
+        $log.info("updateAccess()", service, org, MyRolesModel);
+        var updateKey= service + UPDATE + "_" + org;
+        var crudKey= service + CRUD + "_" + org;
+//        console.log("looking for:", updateKey, crudKey)
+        return MyRolesModel.myroles.indexOf(updateKey) > -1 ||
+                MyRolesModel.myroles.indexOf(crudKey) > -1;
       } else {
         return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 ||
         MyRolesModel.myroles.indexOf(service + CRUD) > -1;
@@ -147,28 +151,35 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
         	throw "missing org oid!";
         }
+        
+       
         var deferred = $q.defer();
 //        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
 //       	$log.debug("getting url:", url);
 
-      	$http.get(url,{cache:true}).then(function(result) {
-//        $log.debug("got:", result);
+//      	console.log("helloi!", orgOid, Config.env['root.organisaatio.oid']);
+      	if(orgOid === Config.env['root.organisaatio.oid']) {
+//      	  console.log("oph speciaali");
+      	  deferred.resolve(accessFunction(service, orgOid));
+      	} else {
+      	  $http.get(url,{cache:true}).then(function(result) {
+      	    // $log.debug("got:", result);
+      	  
+      	    var ooids = result.data.split("/");
 
-        var ooids = result.data.split("/");
-
-        for(var i=0;i<ooids.length;i++) {
-            if (accessFunction(service, ooids[i])) {
-                deferred.resolve(true);
-                return;
-            }
-        }
-        deferred.resolve(false);
-        }, function(){ //failure funktio
-//           	$log.debug("could not get url:", url);
-            deferred.resolve(false);
-        });
-
+      	    for(var i=0;i<ooids.length;i++) {
+              if (accessFunction(service, ooids[i])) {
+                  deferred.resolve(true);
+                  return;
+              }
+      	  }
+      	  deferred.resolve(false);
+          }, function(){ //failure funktio
+          //           	$log.debug("could not get url:", url);
+              deferred.resolve(false);
+          });
+      	}
         return deferred.promise;
     };
 

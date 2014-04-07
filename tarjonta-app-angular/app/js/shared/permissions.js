@@ -259,13 +259,14 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
 
     function canUpdateHaku(){
       return function(org){
-        return AuthService.updateOrg("HAKUJENHALLINTA", org);
+        console.log("canUpdateHaku:", org);
+        return AuthService.updateOrg(org, "APP_HAKUJENHALLINTA");
       };
     }
 
     function canCRUDHaku(){
       return function(org){
-        return AuthService.crudOrg("HAKUJENHALLINTA", org);
+        return AuthService.crudOrg(org, "APP_HAKUJENHALLINTA");
       };
     }
 
@@ -277,12 +278,15 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
       HakuV1.get({oid:hakuOid}).$promise.then(function(haku){
 //        console.log("haku:", haku.result);
         var haku = haku.result;
-        var orgs = haku.organisaatioOids;
+        var orgs = haku.tarjoajaOids;
 
         if(orgs.length==0) {
-//          console.log("speciaalikeissi");
+          console.log("speciaalikeissi, ei organisaatioita, assuming oph", ophOid);
           //organisaatiota ei kerrottu, pitää olla oph?
-          defer.resolve(permissionf(ophOid));
+          permissionf(ophOid).then(function(result){
+            console.log("resolving speciaali:", result);
+            defer.resolve(result);
+          });
         } else {
 
           // onko oikeus haun johonkin organisaatioon
