@@ -261,6 +261,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     
     $scope.deleteLiite = function(liite, confirm) {
     	if (confirm) {
+    		var index = $scope.model.hakukohde.hakukohteenLiitteet.indexOf(liite);
             liite.hakukohdeOid = $scope.model.hakukohde.oid;
             $scope.model.hakukohde.hakukohteenLiitteet.splice(index,1);
     	} else {

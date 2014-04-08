@@ -74,14 +74,15 @@
         <td colspan="2">
             <div ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
                 <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
-                <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required ng-change="onDateChanged(hakuaika)"></t-date-time>
-                <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" ng-change="onDateChanged(hakuaika)"></t-date-time>
+                <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required ng-change="onDateChanged(hakuaika)" max="hakuaika.loppuPvm" ></t-date-time>
+                <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" ng-change="onDateChanged(hakuaika)" min="hakuaika.alkuPvm"></t-date-time>
 
                 <div class="btn"><i class="icon-minus" ng-click="doRemoveHakuaika(hakuaika, $index)"></i> Poista </div>
 
-                <div show-errors form="hakuaikaForm" field="alkuPvm" tt-prefix="haku.edit" debug="false" custom-check="hakuaikaForm.alkuPvm.$invalid"></div>
+                <div show-errors form="hakuaikaForm" field="alkuPvm" tt-prefix="haku.edit" debug="false" 
+                     custom-check="hakuaikaForm.alkuPvm.$invalid"></div>
                 <div show-errors form="hakuaikaForm" field="loppuPvm" tt-prefix="haku.edit" debug="false" 
-                     custom-check="hakuaikaForm.loppuPvm.$invalid || validateAlkuPvmAndLoppuPvm(hakuaika)"></div>
+                     custom-check="hakuaikaForm.loppuPvm.$invalid"></div>
             </div>
             <div class="btn" ng-click="doAddNewHakuaika()"><i class="icon-plus"></i> Lisää uusi hakuaika </div>
 

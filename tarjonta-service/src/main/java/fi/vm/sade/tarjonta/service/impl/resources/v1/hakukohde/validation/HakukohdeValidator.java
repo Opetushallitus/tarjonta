@@ -157,20 +157,12 @@ public class HakukohdeValidator {
             if (Strings.isNullOrEmpty(valintakoeV1RDTO.getKieliUri())){
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_KIELI_MISSING);
             }
-            if (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_AIKAS_MISSING);
-            }  else {
-                if (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()) {
-                   validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_MISSING);
-                } else {
-	                for (ValintakoeAjankohtaRDTO ajankohta: valintakoeV1RDTO.getValintakoeAjankohtas()){
-	                    if (ajankohta.getLoppuu().before(ajankohta.getAlkaa())){
-	                        validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
-	                    }
-	                    if (ajankohta.getOsoite() == null) {
-	                        validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
-	                    }
-	                }
+            for (ValintakoeAjankohtaRDTO ajankohta: valintakoeV1RDTO.getValintakoeAjankohtas()){
+                if (ajankohta.getLoppuu().before(ajankohta.getAlkaa())){
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
+                }
+                if (ajankohta.getOsoite() == null) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
                 }
             }
 
