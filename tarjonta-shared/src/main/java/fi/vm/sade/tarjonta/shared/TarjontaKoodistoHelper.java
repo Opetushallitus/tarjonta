@@ -187,7 +187,7 @@ public class TarjontaKoodistoHelper {
             result[0] = koodiUriWithVersion.substring(0, index);
             result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
         } else {
-            LOG.debug("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
+//            LOG.debug("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
             result[0] = koodiUriWithVersion;
             result[1] = "-1";
         }
@@ -215,7 +215,7 @@ public class TarjontaKoodistoHelper {
      * @return
      */
     public KoodiType getKoodiByUri(String koodiUriWithPossibleVersionInformation) {
-        LOG.debug("getKoodiByUri({})", koodiUriWithPossibleVersionInformation);
+        //LOG.debug("getKoodiByUri({})", koodiUriWithPossibleVersionInformation);
 
         KoodiType result = null;
 
@@ -243,7 +243,7 @@ public class TarjontaKoodistoHelper {
                 result = null;
             }
 
-            LOG.debug("  --> result = {}", result);
+            //LOG.debug("  --> result = {}", result);
         } catch (Exception ex) {
             LOG.error("Failed to get KoodiType for koodi: " + koodiUriWithPossibleVersionInformation, ex);
             result = null;
