@@ -43,7 +43,7 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
 
     private final KoodistoURI koodistoUri = new KoodistoURI();
 
-    public KuvausV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit, boolean showMeta) {
+    public KuvausV1RDTO convertMonikielinenTekstiToTekstiDTO(Map<TYPE, MonikielinenTeksti> tekstit, final boolean showMeta) {
         KuvausV1RDTO tekstis = new KuvausV1RDTO();
         for (Map.Entry<TYPE, MonikielinenTeksti> e : tekstit.entrySet()) {
             NimiV1RDTO dto = new NimiV1RDTO();

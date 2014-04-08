@@ -20,15 +20,19 @@ import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKomoRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KomoV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +65,8 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     private EntityConverterToKomoRDTO converterKomoToRDTO;
     @Autowired
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
+    @Autowired(required = true)
+    private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
 
     private Koulutusmoduuli insertKomo(final KomoV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
@@ -273,6 +279,21 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         }
 
         result.setResult(searchResults);
+        return result;
+    }
+
+    @Override
+    public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(String oid) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
+     
+        ResultV1RDTO<KuvausV1RDTO> result = new ResultV1RDTO<KuvausV1RDTO>();
+        if (komo == null) {
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return result;
+        }
+
+        result.setResult(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), true));
         return result;
     }
 }
