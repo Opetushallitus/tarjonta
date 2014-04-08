@@ -41,6 +41,7 @@ import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -77,6 +78,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
     private List<HakukohdePerustieto> children;
 
     public HakukohdeResultRow() {
@@ -123,7 +126,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
         //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
         /*if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
                 || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {*/
-        if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
+
+        if (checkForErillishakuAndRights(context) || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
@@ -133,13 +137,17 @@ public class HakukohdeResultRow extends HorizontalLayout {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
         
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted)) {
+        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted) || checkForErillishakuAndRights(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
         } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
+    }
+
+    private boolean checkForErillishakuAndRights(OrganisaatioContext context) {
+        return hakukohde.getHakutapaKoodi().getUri().contains(hakutapaErillishaku) && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context);
     }
 
     /**

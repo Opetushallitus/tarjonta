@@ -19,6 +19,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
@@ -81,13 +82,22 @@ public interface KomoV1Resource {
     @GET
     @Path("/search/{koulutusasteTyyppi}/")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-     @ApiOperation(
+    @ApiOperation(
             value = "Näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
             notes = "Operaatio näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,          
+            @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
             @QueryParam("koulutusmoduuliTyyppi") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
             @QueryParam("tila") String tila
     );
+
+    @GET
+    @Path("/{oid}/tekstis")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää koulutusmoduulin monikieliset tekstit",
+            notes = "Operaatio näyttää koulutusmoduulin monikieliset tekstit",
+            response = ResultV1RDTO.class)
+    public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
 }

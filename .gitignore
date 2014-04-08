@@ -20,3 +20,6 @@ tarjonta-app-angular/.DS_Store
 tarjonta-app-angular/app/.DS_Store
 
 tarjonta-app-angular/nbproject
+
+/build
+/.gradle

@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
@@ -24,31 +25,36 @@ import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiValikoimaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import static scala.xml.Null.key;
 
 /**
  * Convert entity objects to koulutus rest objects and vise versa.
@@ -434,6 +440,44 @@ public class KoulutusCommonConverter {
             }
         }
 
+        return modifiedUris;
+    }
+
+    public KoodiValikoimaV1RDTO convertToKielivalikoimaDTO(Map<String, Kielivalikoima> tarjotutKielet, Locale locale, boolean showMeta) {
+        KoodiValikoimaV1RDTO result = new KoodiValikoimaV1RDTO();
+        if (tarjotutKielet != null && !tarjotutKielet.isEmpty()) {
+            for (String key : tarjotutKielet.keySet()) {
+                final Kielivalikoima v = tarjotutKielet.get(key);
+                if (v != null && v.getKielet() != null && !v.getKielet().isEmpty()) {
+                    result.put(key, convertToKoodiUrisDTO(v.getKielet(), locale, FieldNames.KIELIVALIKOIMA, showMeta));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void convertToKielivalikoima(KoodiValikoimaV1RDTO tarjotutKielet, KoulutusmoduuliToteutus komoto) {
+        if (tarjotutKielet != null && !tarjotutKielet.isEmpty()) {
+            for (Entry<String, KoodiUrisV1RDTO> e : tarjotutKielet.entrySet()) {
+                if (e.getValue() != null && e.getValue().getUris() != null && !e.getValue().getUris().isEmpty()) {
+                    List<String> uris = Lists.<String>newArrayList();
+                    for (Entry<String, Integer> uriAndVersio : e.getValue().getUris().entrySet()) {
+                        uris.add(new StringBuilder(uriAndVersio.getKey()).append('#').append(uriAndVersio.getValue()).toString());
+                    }
+
+                    komoto.setKieliValikoima(e.getKey(), uris);
+                }
+            }
+        }
+    }
+
+    public Set<WebLinkki> convertToLinkkis(WebLinkki.LinkkiTyyppi type, final String uri, Set<WebLinkki> linkkis) {
+        Set<WebLinkki> modifiedUris = Sets.<WebLinkki>newHashSet(linkkis);
+        if (linkkis == null) {
+            modifiedUris = Sets.<WebLinkki>newHashSet();
+        }
+        modifiedUris.add(new WebLinkki(type, null, uri));
         return modifiedUris;
     }
 

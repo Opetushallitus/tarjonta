@@ -229,13 +229,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     			$scope.model = null;
     		} else {
     			var nd = new Date();
-        		nd.setDate(dd);
-        		nd.setMonth(dm);
+        		// HUOM! asetettava järjestyksessä vuosi-kuukausi-päivä
         		nd.setFullYear(dy);
+        		nd.setMonth(dm);
+        		nd.setDate(dd);
         		nd.setHours(th);
         		nd.setMinutes(tm);
         		
-        		//console.log("ISN dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm);
+        		//console.log("ISN dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm, nd);
 
         		if (!isNaN(nd.getTime())) {
     				omitUpdate = true;

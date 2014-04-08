@@ -26,10 +26,9 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 
             return {
                 getAllHakus: function(locale) {
+                    $log.error("*** HakuService - getAllHakus() - THIS WILL BE REMOVED SHORTLY - USE NEW HakuV1 / HakuV1Services ***");
 
                     var hakuPromise = $q.defer();
-
-
 
                     $http({method: 'GET', url: hakuUri}).success(function(data, status, headers, config) {
                         // this callback will be called asynchronously
@@ -49,6 +48,7 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 
                 },
                 getHakuWithOid: function(oid) {
+                    $log.error("*** HakuService - getHakuWithOid() - THIS WILL BE REMOVED SHORTLY - USE NEW HakuV1 / HakuV1Services ***");
 
                     var hakuPromise = $q.defer();
 
@@ -133,7 +133,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
 /**
  * Haku Service
  */
-app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
+app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, AuthService) {
   $log = $log.getInstance("HakuV1Service");
 
   var userKieliUri = LocalisationService.getKieliUri();
@@ -157,6 +157,43 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
         return haut.result;
       });
    };
+   
+   /**
+    * Luo uusi tyhjä Haku käyttöliittymää varten. Sama formaatti kuin HakuV1 API:sta ladattavilla.
+    */
+    var createNewEmptyHaku = function() {
+        $log.info("createNewEmptyHaku()");
+        // Create new Haku with default values, same format as Haku API's result.
+        return {
+            "status": "OK",
+            "result": {
+                "hakukausiUri": "",
+                "hakutapaUri": "",
+                "hakukausiVuosi": 1900 + new Date().getYear(),
+                "hakutyyppiUri": "",
+                "kohdejoukkoUri": "",
+                "koulutuksenAlkamisVuosi": 1900 + new Date().getYear(),
+                "koulutuksenAlkamiskausiUri": "",
+                "tila": "LUONNOS",
+                "sijoittelu": false,
+                "hakuaikas": [{
+                        "nimi": "",
+                        "alkuPvm": new Date().getTime(),
+                        "loppuPvm": new Date().getTime()
+                    }],
+                "hakukohdeOids": [],
+                "modified": new Date().getTime(),
+                "modifiedBy": AuthService.getUserOid(),
+                "nimi": {
+                    "kieli_fi": "",
+                    "kieli_sv": "",
+                    "kieli_en": ""
+                },
+                "maxHakukohdes": 0
+                        // "hakulomakeUri" : "http://www.hut.fi",
+            }
+        };
+    };
 
   return {
     /**
@@ -169,7 +206,9 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService) {
       });
     },
   
-    resolveNimi: resolveNimi
+    resolveNimi: resolveNimi, 
+    
+    createNewEmptyHaku : createNewEmptyHaku
   };
 
 });

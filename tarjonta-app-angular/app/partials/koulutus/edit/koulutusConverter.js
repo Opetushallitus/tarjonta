@@ -485,8 +485,8 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
         RELATION: {
             koulutusala: {module: 'TUTKINTO'},
             opintoala: {module: 'TUTKINTO'},
-            koulutuslaji: {module: 'TUTKINTO', koodisto: 'koulutuslaji', koodi: 'koulutuslaji_a'},
-            pohjakoulutusvaatimus: {module: 'TUTKINTO', koodisto: 'pohjakoulutustoinenaste', koodi: 'pohjakoulutustoinenaste_1'},
+            koulutuslaji: {module: 'TUTKINTO'},
+            pohjakoulutusvaatimus: {module: 'TUTKINTO'},
             opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
             opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
             tutkintonimike: {module: 'TUTKINTO_OHJELMA'}
@@ -508,6 +508,7 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
             koulutusasteTyyppi: {"default": 'LUKIOKOULUTUS'},
             tila: {'default': 'LUONNOS'},
             tunniste: {"default": ''},
+            linkkiOpetussuunnitelmaan : {"default": ''},
             suunniteltuKestoArvo: {nullable: true, "default": ''}
         }, DATES: {
             koulutuksenAlkamisPvms: {"default": new Date()}

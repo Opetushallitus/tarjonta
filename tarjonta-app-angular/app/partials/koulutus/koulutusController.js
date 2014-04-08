@@ -15,8 +15,8 @@
 
 var app = angular.module('app.koulutus.ctrl', []);
 
-app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route',
-    function KoulutusRoutingController($scope, $log, $routeParams, $route) {
+app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location',
+    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location) {
         $log = $log.getInstance("KoulutusRoutingController");
         $scope.resultPageUri;
 
@@ -33,14 +33,15 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS)");
+                //var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS)");
+                 var patt = new RegExp("(KORKEAKOULUTUS)");
                 if (patt.test(type)) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }
             } else {
-                console.error("Something went wrong?");
+               $location.path("/error");
             }
         };
 

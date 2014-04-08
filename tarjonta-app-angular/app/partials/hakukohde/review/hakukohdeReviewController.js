@@ -1,19 +1,42 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MonikielinenText']);
 
 
-app.controller('HakukohdeReviewController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService,dialogService, HakuService, $modal ,Config,$location,$timeout,TarjontaService,HakukohdeKoulutukses,dialogService, SisaltyvyysUtil, TreeHandlers, PermissionService) {
-
+app.controller('HakukohdeReviewController', 
+    function($scope, 
+             $q, 
+             $log,
+             LocalisationService, 
+             OrganisaatioService, 
+             Koodisto, 
+             Hakukohde, 
+             AuthService, 
+             dialogService, 
+             HakuService, 
+             $modal, 
+             Config, 
+             $location, 
+             $timeout, 
+             TarjontaService, 
+             HakukohdeKoulutukses, 
+             dialogService, 
+             SisaltyvyysUtil, 
+             TreeHandlers, 
+             PermissionService) {
+                 
+      $log = $log.getInstance("HakukohdeReviewController");
+      $log.debug("init...");
+       
       //edit buttons are active when mutable
       $scope.isMutable=false;
       
-      console.log("scope.model:", $scope.model)
+      $log.debug("scope.model:", $scope.model)
       
       //käyttöoikeudet
       PermissionService.hakukohde.canEdit($scope.model.hakukohde.oid).then(function(data){
         $scope.isMutable=data;
       });
   
-      console.log('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
+      $log.debug('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
       /*
 
@@ -79,7 +102,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
       $scope.model.valintakoeKielet = aggregateLangs($scope.model.hakukohde.valintakokeet);
       $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
       
-      console.log('HAKUKOHDE : ' , $scope.model.hakukohde);
+      $log.debug('HAKUKOHDE : ' , $scope.model.hakukohde);
 
       /*
         ----------------------------> Helper functions  < ----------------------------
@@ -279,7 +302,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
 
          var hakuPromise = HakuService.getHakuWithOid($scope.model.hakukohde.hakuOid);
          hakuPromise.then(function(haku){
-            console.log('HAKU: ', haku);
+            $log.debug('HAKU: ', haku);
             for (var kieliUri in haku.nimi) {
                 var upperCaseKieliUri = kieliUri.toUpperCase();
                 var upperUserLang = $scope.model.userLang.toUpperCase();
@@ -406,7 +429,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
      */
 
     $scope.doEdit = function(event, targetPart) {
-        console.log("doEdit()...", event, targetPart);
+        $log.debug("doEdit()...", event, targetPart);
         var navigationUri = "/hakukohde/"+$scope.model.hakukohde.oid+"/edit";
         $location.path(navigationUri);
     };
@@ -440,7 +463,7 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
                 var resultPromise =  hakukohdeResource.$delete();
                 resultPromise.then(function(result){
 
-                    console.log('GOT RESULT : ' , result);
+                    $log.debug('GOT RESULT : ' , result);
 
                     if (result.status === "OK") {
 
@@ -669,10 +692,10 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
              var liitaPromise = HakukohdeKoulutukses.addKoulutuksesToHakukohde($scope.model.hakukohde.oid,koulutuksesToAdd);
              liitaPromise.then(function(data){
                  if (data) {
-                     console.log('RETURN DATA : ', data);
+                     $log.debug('RETURN DATA : ', data);
                      loadKoulutukses();
                  } else{
-                   console.log('UNSUCCESFUL : ',data);
+                   $log.debug('UNSUCCESFUL : ',data);
                  }
              });
         });
@@ -689,7 +712,16 @@ app.controller('HakukohdeReviewController', function($scope,$q, LocalisationServ
  */
 
 
-app.controller('ShowKoulutusHakukohtees',function($scope,$modalInstance,LocalisationService,hakukohtees,selectedLocale) {
+app.controller('ShowKoulutusHakukohtees',
+    function($scope,
+             $log,
+             $modalInstance,
+             LocalisationService,
+             hakukohtees,
+             selectedLocale) {
+                 
+    $log = $log.getInstance("ShowKoulutusHakukohtees");
+    $log.debug("init...");
 
     $scope.model = {};
 
@@ -706,6 +738,7 @@ app.controller('ShowKoulutusHakukohtees',function($scope,$modalInstance,Localisa
 
 
     $scope.model.cancel = function() {
+        $log.debug("cancel");
         $modalInstance.dismiss('cancel');
     };
 
@@ -720,8 +753,19 @@ app.controller('ShowKoulutusHakukohtees',function($scope,$modalInstance,Localisa
 
  */
 
-app.controller('HakukohdeLiitaKoulutusModalCtrl',function($scope,$modalInstance,LocalisationService,Config,TarjontaService,organisaatioOids,selectedLocale,selectedKoulutukses){
+app.controller('HakukohdeLiitaKoulutusModalCtrl',
+    function($scope,
+             $log,
+             $modalInstance,
+             LocalisationService,
+             Config,
+             TarjontaService,
+             organisaatioOids,
+             selectedLocale,
+             selectedKoulutukses) {
 
+    $log = $log.getInstance("HakukohdeLiitaKoulutusModalCtrl");
+    $log.debug("init...");
 
     /*
 
@@ -897,6 +941,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',function($scope,$modalInstance,
     };
 
     $scope.removeItem = function(selectedKoulutus){
+        $log.debug("removeItem()", selectedKoulutus);
 
         var index = $scope.model.selectedKoulutukses.indexOf(selectedKoulutus);
 
@@ -905,11 +950,13 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',function($scope,$modalInstance,
     };
 
     $scope.model.cancel = function() {
+        $log.debug("cancel()");
         $modalInstance.dismiss('cancel');
     };
 
 
     $scope.model.save = function() {
+        $log.debug("save()");
 
         var selectedKoulutusOids = [];
 

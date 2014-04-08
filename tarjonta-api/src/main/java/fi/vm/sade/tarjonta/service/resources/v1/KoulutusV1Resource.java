@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliStandardRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
@@ -35,6 +36,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -114,9 +116,10 @@ public interface KoulutusV1Resource {
             value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
             response = KoulutusmoduuliKorkeakouluRelationV1RDTO.class)
-    public ResultV1RDTO getKoulutusRelation(
+    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoulutusRelation(
             @PathParam("koulutuskoodi") String koulutuskoodi,
             @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
+            @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
             @QueryParam("meta") Boolean meta,
             @QueryParam("lang") String lang);
 

@@ -17,12 +17,12 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import static com.google.common.collect.Maps.newHashMap;
 
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -63,6 +63,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyStatusV1RDTO;
@@ -96,6 +97,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
@@ -106,6 +109,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -331,10 +335,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
             Map<String, Integer> hkKoulutusMap = Maps.newHashMap();
 
-            for(Hakukohde hk: komoto.getHakukohdes()){
+            for (Hakukohde hk : komoto.getHakukohdes()) {
                 hkKoulutusMap.put(hk.getOid(), hk.getKoulutusmoduuliToteutuses().size());
             }
-            
+
             Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
             switch (KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi())) {
@@ -344,7 +348,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     final List<String> parent = koulutusSisaltyvyysDAO.getParents(komo.getOid());
                     final List<String> children = koulutusSisaltyvyysDAO.getChildren(komo.getOid());
 
-                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, hkKoulutusMap,  result);
+                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, hkKoulutusMap, result);
 
                     if (!result.hasErrors()) {
                         final String userOid = contextDataService.getCurrentUserOid();
@@ -474,54 +478,81 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO getKoulutusRelation(String koulutuskoodi, KoulutusasteTyyppi koulutusasteTyyppi, Boolean meta, String lang) {
+    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoulutusRelation(
+            String koulutuskoodi,
+            KoulutusasteTyyppi koulutusasteTyyppi,
+            String defaults, //new String("field:uri, field:uri, ....")
+            Boolean meta,
+            String lang) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
         lang = checkArgsLangCode(lang);
         meta = checkArgsMeta(meta);
+        ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> result = new ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO>();
 
-        Class clazz = KoulutusmoduuliStandardRelationV1RDTO.class;
-
-        switch (koulutusasteTyyppi) {
-            case KORKEAKOULUTUS:
-                clazz = KoulutusmoduuliKorkeakouluRelationV1RDTO.class;
-                break;
-            case LUKIOKOULUTUS:
-                clazz = KoulutusmoduuliLukioRelationV1RDTO.class;
-            default:
-                break;
-        }
-
-        ResultV1RDTO resultRDTO = new ResultV1RDTO();
-        /*
-         * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
-         */
         try {
+            //split params, if any
+
+            KoulutusmoduuliStandardRelationV1RDTO dto = KoulutusmoduuliStandardRelationV1RDTO.class.newInstance();
+            /*
+             * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
+             */
+            switch (koulutusasteTyyppi) {
+                case KORKEAKOULUTUS:
+                    dto = KoulutusmoduuliKorkeakouluRelationV1RDTO.class.newInstance();
+                    break;
+                case LUKIOKOULUTUS:
+                    dto = KoulutusmoduuliLukioRelationV1RDTO.class.newInstance();
+                    break;
+                default:
+                    break;
+            }
+
+            Map<String, String> defaultsMap = Maps.<String, String>newHashMap();
+            if (defaults != null && !defaults.isEmpty()) {
+                for (String fieldAndValue : defaults.split(",")) {
+                    final String[] splitFieldValue = fieldAndValue.split(":");
+                    if (splitFieldValue != null && splitFieldValue.length == 2) {
+                        defaultsMap.put(splitFieldValue[0], splitFieldValue[1]);
+                    }
+                }
+
+                final BeanWrapperImpl beanWrapper = new BeanWrapperImpl(dto);
+                for (Entry<String, String> e : defaultsMap.entrySet()) {
+                    if (e.getValue() != null && !e.getValue().isEmpty() && beanWrapper.isReadableProperty(e.getKey())) {
+                        //only uri is needed, as it will be expanded to koodi object
+                        KoodiV1RDTO koodi = new KoodiV1RDTO();
+                        koodi.setUri(e.getValue());
+                        beanWrapper.setPropertyValue(e.getKey(), koodi);
+                    }
+                }
+            }
+
             if (koulutuskoodi.contains("_")) {
                 //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
-                resultRDTO.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(clazz, koulutuskoodi, new Locale(lang.toUpperCase()), meta));
+                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, koulutuskoodi, new Locale(lang.toUpperCase()), meta));
             } else {
                 SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
                 List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
                 if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                     throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
                 }
-                resultRDTO.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(clazz, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(lang.toUpperCase()), meta));
+                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(lang.toUpperCase()), meta));
             }
         } catch (InstantiationException ex) {
             LOG.error("Relation initialization error.", ex);
-            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         } catch (IllegalAccessException ex) {
             LOG.error("Relation illegal access error.", ex);
-            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         } catch (GenericFault ex) {
             LOG.error("Koodisto relation error.", ex);
-            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         } catch (TarjontaBusinessException ex) {
             LOG.error("Koodisto relation error.", ex);
-            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
         }
 
-        return resultRDTO;
+        return result;
     }
 
     @Override
