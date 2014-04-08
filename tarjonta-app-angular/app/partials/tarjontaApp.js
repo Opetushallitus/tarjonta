@@ -450,39 +450,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "haku.edit",
                     controller: 'HakuRoutingController',
                     resolve: {
-                        hakux: function($log, $route, HakuV1, AuthService) {
-                            $log.info("/haku/NEW", $route);
-                            // Fake the loading of Haku
-                            return {
-                                "status" : "OK",
-                                "result" : {
-                                    "hakukausiUri" : "",
-                                    "hakutapaUri" : "",
-                                    "hakukausiVuosi" : 1900 + new Date().getYear(),
-                                    "hakutyyppiUri" : "",
-                                    "kohdejoukkoUri" : "",
-                                    "koulutuksenAlkamisVuosi" : 1900 + new Date().getYear(),
-                                    "koulutuksenAlkamiskausiUri" : "",
-                                    "tila" : "LUONNOS",
-                                    "sijoittelu" : false,
-                                    "hakuaikas" : [ {
-                                      "nimi" : "",
-                                      "alkuPvm" : new Date().getTime(),
-                                      "loppuPvm" : new Date().getTime()
-                                    } ],
-                                    "hakukohdeOids" : [ ],
-                                    "modified" : new Date().getTime(),
-                                    "modifiedBy" : AuthService.getUserOid(),
-                                    "nimi" : {
-                                      "kieli_fi" : "",
-                                      "kieli_sv" : "",
-                                      "kieli_en" : ""
-                                    },
-                                    "maxHakukohdes" : 0
-                                    // "hakulomakeUri" : "http://www.hut.fi",
-                                }
-                            };
-                        }
+                        hakux: function($log, HakuV1Service) {
+                            $log.debug("/haku/NEW - resolve new haku", HakuV1Service);
+                            return HakuV1Service.createNewEmptyHaku();
+                        }                            
                     }
                 })
 
@@ -518,6 +489,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 })
 
                 .otherwise({redirectTo: "/etusivu"});
+        
+        
     }]);
 
 
@@ -559,7 +532,6 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
                     render();
                 }
         );
-
     }]);
 
 
