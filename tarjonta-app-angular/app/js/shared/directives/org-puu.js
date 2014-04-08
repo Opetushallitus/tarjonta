@@ -182,9 +182,9 @@
 				//alusta tietorakenne
 				console.log("org-puu.init()" + treeId, SharedStateService.state.puut);
 				SharedStateService.state.puut = SharedStateService.state.puut || {};
-				if (!SharedStateService.state.puut[treeId]) {
+				//if (!SharedStateService.state.puut[treeId]) {
 					SharedStateService.state.puut[treeId] = {scope:scope};
-				}
+				///}
 				//SharedStateService.state.puut[treeId].data = SharedStateService.state.puut[treeId].data || [];
 				//SharedStateService.state.puut[treeId].selected = SharedStateService.state.puut[treeId].selected || undefined;
 				//SharedStateService.state.puut[treeId].scope = SharedStateService.state.puut[treeId].scope || scope;
