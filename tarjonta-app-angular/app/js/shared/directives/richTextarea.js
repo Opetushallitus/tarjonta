@@ -6,7 +6,10 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 	
 	function RichTextareaController($scope) {
 		
-		var validElements = "@[style],@[class],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div[align],br,table,tbody,thead,tr,td,ul,ol,li,dd,dl,dt,img[src],sup,sub,font";
+		var fontSizes = [7.5,10,12,14,18,24,36];
+		var validElements = "@[style|class|align|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,dd,dl,dt,img[src],sup,sub,font[face|size|color]";
+		
+		var sizeBase = 1.2;
 		
 		$scope.tinymceOptions = {
 			height:"100%",
@@ -16,15 +19,68 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			schema:"html5",
 			language:LocalisationService.getLocale(),
 			plugins:"link table paste",
+			extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
+			paste_preprocess: function(plugin, args) {
+				console.log("Pasting:",args.content);
+			},
 			paste_postprocess: function(plugin, args) {
 				// tyhjät kappaleet rivinvaihdoiksi <p></p> -> <br/>
-				$("p", $(args)).each(function(i, em){
-					if ($(em).html().trim()=="") {
-						$(em).replaceWith("<br/>");
+				$("p", $(args.node)).each(function(i, em){
+					var e = $(em);
+					if (e.text().trim()=="") {
+						e.replaceWith("<br/>");
 					}
 				});
+				
+				// font-tagit spaneiksi jos tyylejä määritelty
+				$("font", $(args.node)).each(function(i, em){
+					var e = $(em);
+					if (e.text().trim()=="") {
+						e.remove();
+					} else {
+						var span = $("<span></span>");
+						var styled = false;
+						if (e.attr("face")) {
+							span.css("font-family", e.attr("face"));
+							styled = true;
+						}
+						if (e.attr("size")) {
+							span.css("font-size", fontSizes[e.attr("size")-1]+"pt");
+							styled = true;
+						}
+						if (e.attr("color")) {
+							span.css("color", e.attr("color"));
+							styled = true;
+						}
+						
+						if (styled) {
+							e.wrap(span);
+						}
+						
+						e.contents().unwrap();
+						
+					}
+				});
+
+				// align -> css
+				$("[align]", $(args.node)).each(function(i, em){
+					var e = $(em);
+					var align = e.attr("align");
+					e.attr("align", null);
+					e.css("text-align", align);
+				});
+				
+				// bgcolor -> css
+				$("[bgcolor]", $(args.node)).each(function(i, em){
+					var e = $(em);
+					var bgcolor = e.attr("bgcolor");
+					e.attr("bgcolor", null);
+					e.css("background-color", bgcolor);
+				});
+				
+				console.log("Pasted:",args.node);
 			},
 			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
 				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
@@ -32,14 +88,6 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			//toolbar_items_size:"small"
 			//content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
 		};
-		
-		/*
-		 * formats
-		 * bold
-		 * italic
-		 * align l|c|r|j
-		 * ul ol indent r|l		 * 
-		 */
 		
 		$scope.model = $scope.model ? $scope.model : "";
 		

@@ -1,9 +1,19 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
+import com.google.common.base.Preconditions;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * @author: Tuomas Katva 10/3/13
@@ -36,7 +46,5 @@ public class CommonRestConverters {
         }
 
     }
-
-    
 
 }

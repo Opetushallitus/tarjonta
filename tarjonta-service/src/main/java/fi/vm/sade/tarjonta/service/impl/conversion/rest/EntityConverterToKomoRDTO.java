@@ -43,7 +43,7 @@ public class EntityConverterToKomoRDTO {
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired(required = true)
-    private KoulutusCommonV1RDTO commonConverter;
+    private KoulutusCommonConverter commonConverter;
 
     public KomoV1RDTO convert(final Koulutusmoduuli komo, final String lang, final boolean showMeta) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komo);
@@ -88,6 +88,7 @@ public class EntityConverterToKomoRDTO {
                 }
                 break;
         }
+        kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);
         kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusKoodi(), locale, FieldNames.KOULUTUSKOODI, showMeta));
         kkDto.setTutkinto(commonConverter.koodiData(komo.getTutkintoOhjelmanNimi(), locale, FieldNames.TUTKINTO, showMeta)); //correct data mapping?
         kkDto.setOpintojenLaajuusarvo(commonConverter.koodiData(komo.getLaajuusArvo(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));

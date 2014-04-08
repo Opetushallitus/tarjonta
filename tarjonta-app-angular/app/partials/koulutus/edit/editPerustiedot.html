@@ -87,10 +87,6 @@
                 <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
             </td>
         </tr>
-        <!--tr>
-            <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.opintojen-laajuus.help">Opintojen laajuus HELP</td>
-        </tr-->
         
          <tr>
             <th tt="koulutus.edit.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
@@ -144,14 +140,14 @@
         <tr class="required">
             <th tt="koulutus.edit.opetuskielet">Opetuskielet</th>
             <td>
-
+                
         <multi-select
             order-with="userLanguages"
             selection="uiModel.opetuskielis.uris"
             model="uiModel.tmp"
             promise="uiModel.opetuskielis.promise"
             display="combobox"
-            name="opetuskielis" required/>
+            name="opetuskielis" required>
 
         </td>
         <td>

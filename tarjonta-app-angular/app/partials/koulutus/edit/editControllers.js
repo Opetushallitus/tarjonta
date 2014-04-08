@@ -7,10 +7,6 @@ app.controller('BaseEditController',
 
                 $log = $log.getInstance("BaseEditController");
                 $log.debug("init");
-
-                //käyttöoikeudet
-                $scope.isMutable = true;
-
                 $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
                 $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
                 $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
@@ -22,12 +18,11 @@ app.controller('BaseEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable: true};
+                    var uiModel = {isMutable: false};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
                     converter.createUiModels(uiModel);
-
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -48,6 +43,11 @@ app.controller('BaseEditController',
                         if (model.tila === 'POISTETTU') {
                             uiModel.isMutable = false;
                         }
+                        
+                        PermissionService.koulutus.canEdit(model.komotoOid).then(function(data) {
+                            $log.debug("setting mutable to:", data);
+                            $scope.uiModel.isMutable = data;
+                        });
 
                         $scope.updateFormStatusInformation(model);
 
@@ -64,17 +64,24 @@ app.controller('BaseEditController',
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri);
 
                         /*
+                         * Load data to mltiselect fields
                          * remove version data from the list
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            uiModel[key].uris = _.keys(model[key].uris);
+                            if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
+                                uiModel[key].uris = _.keys(model[key].uris);
+                            } else {
+                                console.error("invalid key mapping : ", key);
+                            }
                         });
 
                         uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
                     } else if (!angular.isUndefined($routeParams.org)) {
                         /*
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
+                         * - allow save, no permission check on ui
                          */
+                        uiModel.isMutable = true; 
                         $scope.controlFormMessages(uiModel, "INIT");
                         converter.createAPIModel(model, cfg.app.userLanguages);
                         $scope.loadRelationKoodistoData(model, uiModel, $routeParams.koulutuskoodi);
@@ -133,37 +140,24 @@ app.controller('BaseEditController',
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
-
-                    //käyttöoikeudet
-                    if ($scope.model.komotoOid) {
-                        PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
-                            $log.debug("setting mutable to:", data);
-                            $scope.isMutable = data;
-                        });
-                    }
-
-
                 };
 
                 $scope.canSaveAsLuonnos = function() {
-                    var canSaveAsLuonnos = true;
-                    if (!$scope.isMutable)
-                        canSaveAsLuonnos = false; //permissio
-                    if ($scope.uiModel.isMutable) {
-                        canSaveAsLuonnos = $scope.uiModel.isMutable;
+                    if ($scope.model.tila !== 'LUONNOS') {
+                        return false;
                     }
 
-                    if (canSaveAsLuonnos) {}
-
-                    return canSaveAsLuonnos;
+                    return $scope.uiModel.isMutable;
 
                 }
 
                 $scope.canSaveAsValmis = function() {
-                    return $scope.uiModel.isMutable && $scope.isMutable;
+                    if ($scope.model.tila === 'POISTETTU') {
+                        return false;
+                    }
+
+                    return $scope.uiModel.isMutable;
                 }
-
-
 
                 $scope.getLisatietoKielet = function() {
                     for (var i in $scope.uiModel.opetuskielis.uris) {
@@ -549,18 +543,18 @@ app.controller('BaseEditController',
                 /*
                  * WATCHES
                  */
-                
+
                 $scope.onMaksullisuusChanged = function() {
-                	if (!$scope.model.hinta) {
-                		return;
-                	}
-                	var p = $scope.model.hinta.indexOf(',');
-                	while (p!=-1) {
-                		$scope.model.hinta = $scope.model.hinta.substring(0,p) +"."+ $scope.model.hinta.substring(p+1);
-                		p = $scope.model.hinta.indexOf(',', p);
-                	}
+                    if (!$scope.model.hinta) {
+                        return;
+                    }
+                    var p = $scope.model.hinta.indexOf(',');
+                    while (p != -1) {
+                        $scope.model.hinta = $scope.model.hinta.substring(0, p) + "." + $scope.model.hinta.substring(p + 1);
+                        p = $scope.model.hinta.indexOf(',', p);
+                    }
                 }
-                
+
                 $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
                     if (!valNew && valOld) {
                         //clear price data field

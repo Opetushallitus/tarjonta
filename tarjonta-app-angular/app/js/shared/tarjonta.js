@@ -26,9 +26,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     function compareByName(a, b) {
         var an = a.nimi;
         var bn = b.nimi;
-        if(!an){
-          $log.debug("cannot compare ", a , " with ", b);
-          return -1;
+        if (!an) {
+            $log.debug("cannot compare ", a, " with ", b);
+            return -1;
         }
         /*
          * if a.nimi is null/undefined : 'Cannot call method 'localeCompare' of undefined'
@@ -155,7 +155,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
         var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + "/" + oid + "/tila?state=" + (publish ? "JULKAISTU" : "PERUTTU"), {}, {
-            update: {method: 'POST'}
+            update: {method: 'POST', withCredentials: true}
         });
 
         tila.update(function(nstate) {
@@ -203,7 +203,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * @returns {undefined}
      */
     dataFactory.koulutus = function(oid) {
-        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/KORKEAKOULUTUS/", {}, {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/", {}, {
             update: {
                 method: 'POST',
                 withCredentials: true,
@@ -291,9 +291,25 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return koulutus.get(arg, func);
     };
 
+    //hakee koulutuksen, palauttaa promisen
+    dataFactory.getKoulutusPromise = function(oid) {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
+    };
+
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/Korkeakoulutus?meta=false&lang=:languageCode", {koulutuskoodiUri: '@koulutuskoodiUri', languageCode: '@languageCode'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/:koulutusasteTyyppi?meta=false&lang=:languageCode",
+                {
+                    koulutusasteTyyppi: '@koulutusasteTyyppi',
+                    koulutuskoodiUri: '@koulutuskoodiUri',
+                    defaults: '@defaults', //optional data : string like 'object-field1:uri, object-field2:uri, ...';
+                    languageCode: '@languageCode'
+                });
+        if (angular.isUndefined(arg.koulutusasteTyyppi)) {
+            //todo : remove
+            arg.koulutusasteTyyppi = 'Korkeakoulutus';
+        }
+
         return koulutus.get(arg, func);
     };
 
@@ -502,6 +518,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 method: 'GET',
                 url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi",
             },
+            searchModules: {
+                method: 'GET',
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi",
+            },
+            tekstis: {
+                method: 'GET',
+                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis",
+            }
         });
     };
 

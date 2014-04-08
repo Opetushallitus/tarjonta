@@ -13,6 +13,7 @@ angular.module('app.kk',
             'app.kk.search.valintaperustekuvaus.ctrl',
             'app.kk.services',
             'app.edit.ctrl',
+            'app.edit.ctrl.lukio',
             'app.edit.ctrl.alkamispaiva',
             'app.edit.ctrl.tutkintonimike',
             'app.edit.ctrl.laajuus',
@@ -141,14 +142,13 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-
-                .when('/koulutus/edit/:org/:koulutuskoodi', {
+                .when('/koulutus/:koulutusastetyyppi/edit/:org/:koulutuskoodi', {
                     action: "koulutus.edit",
                     controller: 'KoulutusRoutingController',
                     resolve: {
-                        koulutusModel: function(TarjontaService, $log, $route) {
+                        koulutusModel: function($log, $route) {
                             $log.info("/koulutus/ID/edit", $route);
-                            return {'result': {koulutusasteTyyppi: "KORKEAKOULUTUS"}};
+                            return {'result': {koulutusasteTyyppi: $route.current.params.koulutusastetyyppi}};
                         }
                     }
                 })
@@ -205,11 +205,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     resolve: {
                         hakukohdex: function(Hakukohde, $log, $route) {
                             $log.info("/hakukohde/ID", $route);
-
-                            //return TarjontaService.getHakukohde({oid: $route.current.params.id});
-                            var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
-
-                            return deferredHakukohde.$promise;
+                            return Hakukohde.get({oid: $route.current.params.id}).$promise;
                         }
                     }
                 })
@@ -217,13 +213,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 action: "hakukohde.edit",
                 controller: 'HakukohdeRoutingController',
                 resolve: {
-
                     isCopy : function() {
-
                         return true;
                     },
-
-                    canEdit: function(Hakukohde, $log, $route, $q, SharedStateService, PermissionService) {
+                    canEdit: function(Hakukohde, $log, $route, $q, PermissionService) {
 
                         if ($route.current.params.id !== "new") {
                             var deferredPermission = $q.defer();
@@ -452,39 +445,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "haku.edit",
                     controller: 'HakuRoutingController',
                     resolve: {
-                        hakux: function($log, $route, HakuV1, AuthService) {
-                            $log.info("/haku/NEW", $route);
-                            // Fake the loading of Haku
-                            return {
-                                "status" : "OK",
-                                "result" : {
-                                    "hakukausiUri" : "",
-                                    "hakutapaUri" : "",
-                                    "hakukausiVuosi" : 1900 + new Date().getYear(),
-                                    "hakutyyppiUri" : "",
-                                    "kohdejoukkoUri" : "",
-                                    "koulutuksenAlkamisVuosi" : 1900 + new Date().getYear(),
-                                    "koulutuksenAlkamiskausiUri" : "",
-                                    "tila" : "LUONNOS",
-                                    "sijoittelu" : false,
-                                    "hakuaikas" : [ {
-                                      "nimi" : "",
-                                      "alkuPvm" : new Date().getTime(),
-                                      "loppuPvm" : new Date().getTime()
-                                    } ],
-                                    "hakukohdeOids" : [ ],
-                                    "modified" : new Date().getTime(),
-                                    "modifiedBy" : AuthService.getUserOid(),
-                                    "nimi" : {
-                                      "kieli_fi" : "Haun nimi",
-                                      "kieli_sv" : "Sökets namn",
-                                      "kieli_en" : "Application system name"
-                                    },
-                                    "maxHakukohdes" : 0
-                                    // "hakulomakeUri" : "http://www.hut.fi",
-                                }
-                            };
-                        }
+                        hakux: function($log, HakuV1Service) {
+                            $log.debug("/haku/NEW");
+                            return HakuV1Service.createNewEmptyHaku();
+                        }                            
                     }
                 })
 
@@ -493,7 +457,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     controller: 'HakuRoutingController',
                     resolve: {
                         hakux: function($log, $route, HakuV1) {
-                            $log.info("/haku/ID", $route);
+                            $log.debug("/haku/ID", $route);
                             return HakuV1.get({oid: $route.current.params.id}).$promise;
                         }
                     }
@@ -504,7 +468,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     controller: 'HakuRoutingController',
                     resolve: {
                         hakux: function($log, $route, HakuV1) {
-                            $log.info("/haku/ID/edit", $route);
+                            $log.debug("/haku/ID/edit", $route);
                             return HakuV1.get({oid: $route.current.params.id}).$promise;
                         }
                     }
@@ -520,6 +484,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 })
 
                 .otherwise({redirectTo: "/etusivu"});
+        
+        
     }]);
 
 
@@ -561,7 +527,6 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
                     render();
                 }
         );
-
     }]);
 
 

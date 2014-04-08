@@ -54,7 +54,7 @@ public class TarjontaKoodistoHelper {
     @Autowired
     private KoodistoService _koodistoService;
     @Autowired
-    private KoodiService _koodiService;
+    private KoodiService koodiService;
 
     public TarjontaKoodistoHelper() {
         LOG.info("*** TarjontaKoodistoHelper ***");
@@ -102,7 +102,7 @@ public class TarjontaKoodistoHelper {
             skct.setKoodiArvo(kieli);
             skct.setKoodiVersioSelection(SearchKoodisVersioSelectionType.LATEST);
 
-            List<KoodiType> koodis = _koodiService.searchKoodis(skct);
+            List<KoodiType> koodis = koodiService.searchKoodis(skct);
             for (KoodiType koodiType : koodis) {
                 if (koodiType.getKoodisto().getKoodistoUri().equals("kieli")) {
                     result = koodiType.getKoodiUri();
@@ -187,7 +187,7 @@ public class TarjontaKoodistoHelper {
             result[0] = koodiUriWithVersion.substring(0, index);
             result[1] = koodiUriWithVersion.substring(index + KOODI_URI_AND_VERSION_SEPARATOR.length());
         } else {
-            LOG.debug("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
+//            LOG.debug("splitKoodiURIWithVersion - URI '{}' cannot be parsed to URI and Version array.", koodiUriWithVersion);
             result[0] = koodiUriWithVersion;
             result[1] = "-1";
         }
@@ -215,7 +215,7 @@ public class TarjontaKoodistoHelper {
      * @return
      */
     public KoodiType getKoodiByUri(String koodiUriWithPossibleVersionInformation) {
-        LOG.debug("getKoodiByUri({})", koodiUriWithPossibleVersionInformation);
+        //LOG.debug("getKoodiByUri({})", koodiUriWithPossibleVersionInformation);
 
         KoodiType result = null;
 
@@ -236,14 +236,14 @@ public class TarjontaKoodistoHelper {
                 searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
             }
 
-            List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
+            List<KoodiType> queryResult = koodiService.searchKoodis(searchCriteria);
             if (queryResult != null && queryResult.size() == 1) {
                 result = queryResult.get(0);
             } else {
                 result = null;
             }
 
-            LOG.debug("  --> result = {}", result);
+            //LOG.debug("  --> result = {}", result);
         } catch (Exception ex) {
             LOG.error("Failed to get KoodiType for koodi: " + koodiUriWithPossibleVersionInformation, ex);
             result = null;
@@ -274,7 +274,7 @@ public class TarjontaKoodistoHelper {
         Preconditions.checkNotNull(uri, "koodi URI cannot be null");
         SearchKoodisCriteriaType searchCriteria = KoodiServiceSearchCriteriaBuilder.koodiByUriAndVersion(uri, version);
 
-        List<KoodiType> queryResult = _koodiService.searchKoodis(searchCriteria);
+        List<KoodiType> queryResult = koodiService.searchKoodis(searchCriteria);
         if (queryResult != null && queryResult.size() == 1) {
             return queryResult.get(0);
         } else {
@@ -408,7 +408,7 @@ public class TarjontaKoodistoHelper {
         KoodiUriAndVersioType koodi = getKoodiUriAndVersioTypeByKoodiUriAndVersion(createKoodiUriWithVersion(sourceKoodiType));
 
         // Get relations
-        List<KoodiType> relatedKoodis = _koodiService.listKoodiByRelation(koodi, alasuhde, suhteenTyyppiType);
+        List<KoodiType> relatedKoodis = koodiService.listKoodiByRelation(koodi, alasuhde, suhteenTyyppiType);
         if (targetKoodistoName == null || targetKoodistoName.trim().isEmpty()) {
             result.addAll(relatedKoodis);
         } else {
