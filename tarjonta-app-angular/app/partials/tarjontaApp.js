@@ -205,11 +205,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     resolve: {
                         hakukohdex: function(Hakukohde, $log, $route) {
                             $log.info("/hakukohde/ID", $route);
-
-                            //return TarjontaService.getHakukohde({oid: $route.current.params.id});
-                            var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
-
-                            return deferredHakukohde.$promise;
+                            return Hakukohde.get({oid: $route.current.params.id}).$promise;
                         }
                     }
                 })
@@ -218,10 +214,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 controller: 'HakukohdeRoutingController',
                 resolve: {
                     isCopy : function() {
-
                         return true;
                     },
-                    canEdit: function(Hakukohde, $log, $route, $q, SharedStateService, PermissionService) {
+                    canEdit: function(Hakukohde, $log, $route, $q, PermissionService) {
 
                         if ($route.current.params.id !== "new") {
                             var deferredPermission = $q.defer();
@@ -451,7 +446,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     controller: 'HakuRoutingController',
                     resolve: {
                         hakux: function($log, HakuV1Service) {
-                            $log.debug("/haku/NEW - resolve new haku", HakuV1Service);
+                            $log.debug("/haku/NEW");
                             return HakuV1Service.createNewEmptyHaku();
                         }                            
                     }
@@ -462,7 +457,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     controller: 'HakuRoutingController',
                     resolve: {
                         hakux: function($log, $route, HakuV1) {
-                            $log.info("/haku/ID", $route);
+                            $log.debug("/haku/ID", $route);
                             return HakuV1.get({oid: $route.current.params.id}).$promise;
                         }
                     }
@@ -473,7 +468,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     controller: 'HakuRoutingController',
                     resolve: {
                         hakux: function($log, $route, HakuV1) {
-                            $log.info("/haku/ID/edit", $route);
+                            $log.debug("/haku/ID/edit", $route);
                             return HakuV1.get({oid: $route.current.params.id}).$promise;
                         }
                     }

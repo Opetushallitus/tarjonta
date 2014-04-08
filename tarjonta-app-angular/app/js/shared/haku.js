@@ -26,10 +26,9 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 
             return {
                 getAllHakus: function(locale) {
+                    $log.error("*** HakuService - getAllHakus() - THIS WILL BE REMOVED SHORTLY - USE NEW HakuV1 / HakuV1Services ***");
 
                     var hakuPromise = $q.defer();
-
-
 
                     $http({method: 'GET', url: hakuUri}).success(function(data, status, headers, config) {
                         // this callback will be called asynchronously
@@ -49,6 +48,7 @@ app.factory('HakuService', function($http, $q, Config, $log) {
 
                 },
                 getHakuWithOid: function(oid) {
+                    $log.error("*** HakuService - getHakuWithOid() - THIS WILL BE REMOVED SHORTLY - USE NEW HakuV1 / HakuV1Services ***");
 
                     var hakuPromise = $q.defer();
 
