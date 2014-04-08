@@ -23,7 +23,7 @@
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.valintakoe.modal.kuvaus"></th>
                     <td colspan="2">
-                        <rich-textarea mode="false" model="valintakoe.valintakokeenKuvaus.teksti"></rich-textarea>
+                        <rich-textarea max="5000" mode="false" model="valintakoe.valintakokeenKuvaus.teksti"></rich-textarea>
                     </td>
                 </tr>
 
@@ -51,7 +51,7 @@
                 </tr>
 
                 <!-- ajankohta -->
-                <tr class="required">
+                <tr>
                     <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.aika"></th>
                     <td>
                         <t-date-time timestamp="true" type="long" ng-model="valintakoe.selectedAjankohta.alkaa" max="valintakoe.selectedAjankohta.loppuu"></t-date-time>
@@ -62,7 +62,7 @@
                 </tr>
 
                 <!-- katuosoite -->                            
-                <tr class="required">
+                <tr>
                     <th tt="tarjonta.hakukohde.valintakoe.modal.ajankohta.sijainti"></th>
                     <td><osoite-field model="valintakoe.selectedAjankohta.osoite"></osoite-field></td>
                     <td></td>

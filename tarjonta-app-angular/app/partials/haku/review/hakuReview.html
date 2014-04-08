@@ -218,16 +218,15 @@
             <tr>
                 <th></th>
                 <td colspan="2">
-
-                    <table>
+                    <table class="table">
                         <tr>
-                            <th tt="haku.review.hakukohteet.organisaatio">Organisaatio</th>
-                            <th tt="haku.review.hakukohteet.haunNimi">Haun nimi</th>
-                            <th tt="haku.review.hakukohteet.kausi">Kausi</th>
-                            <th tt="haku.review.hakukohteet.vuosi">Vuosi</th>
-                            <th tt="haku.review.hakukohteet.tila">Tila</th>
-                            <th tt="haku.review.hakukohteet.hakutapa">Hakutapa</th>
-                            <th tt="haku.review.hakukohteet.aloituspaikat">Aloituspaikat</th>
+                            <th data-tt="haku.review.hakukohteet.organisaatio">Organisaatio</th>
+                            <th data-tt="haku.review.hakukohteet.haunNimi">Haun nimi</th>
+                            <th data-tt="haku.review.hakukohteet.kausi">Kausi</th>
+                            <th data-tt="haku.review.hakukohteet.vuosi">Vuosi</th>
+                            <th data-tt="haku.review.hakukohteet.tila">Tila</th>
+                            <th data-tt="haku.review.hakukohteet.hakutapa">Hakutapa</th>
+                            <th data-tt="haku.review.hakukohteet.aloituspaikat">Aloituspaikat</th>
                         </tr>
                         
                         <tr ng-repeat="hakukohde in model.hakukohteet">
@@ -240,7 +239,6 @@
                             <td>{{hakukohde.aloituspaikat}}</td>
                         </tr>
                     </table>
-
                 </td>                
             </tr>
         </tbody>

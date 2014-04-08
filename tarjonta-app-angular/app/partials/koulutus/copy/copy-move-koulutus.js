@@ -10,6 +10,8 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
     function($modalInstance, targetKoulutus, targetOrganisaatio,
             TarjontaService, LocalisationService, $q, $scope,
             OrganisaatioService, AuthService, PermissionService, $location) {
+  
+  console.log("controlleriii!!!");
 
         // Tähän populoidaan formin valinnat:
         console.log("resetting form selections");
@@ -23,9 +25,9 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
             organisaatiot: [],
             mode: 'COPY'
         };
-        $scope.lkorganisaatio = $scope.lkorganisaatio || {currentNode: undefined};
+        $scope.alkorganisaatio = $scope.alkorganisaatio || {currentNode: undefined};
         // Watchi valitulle organisaatiolle
-        $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
+        $scope.$watch('alkorganisaatio.currentNode', function(organisaatio, oldVal) {
             console.log("oprganisaatio valittu", organisaatio);
             //XXX nyt vain yksi organisaatio valittavissa
             $scope.model.organisaatiot = [];
@@ -36,7 +38,7 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
         });
         $scope.valitut = $scope.valitut || [];
         $scope.organisaatiomap = $scope.organisaatiomap || {};
-        $scope.lkorganisaatiot = {};
+        $scope.alkorganisaatiot = {};
 
         var promises = [];
         var deferred = $q.defer();
@@ -95,7 +97,7 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
         OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
             //console.log("asetetaan org hakutulos modeliin.");
-            $scope.lkorganisaatiot = vastaus.organisaatiot;
+            $scope.alkorganisaatiot = vastaus.organisaatiot;
             //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
             var buildMapFrom = function(orglist) {
                 for (var i = 0; i < orglist.length; i++) {
