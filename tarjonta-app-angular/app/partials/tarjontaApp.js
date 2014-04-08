@@ -474,9 +474,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                     "modified" : new Date().getTime(),
                                     "modifiedBy" : AuthService.getUserOid(),
                                     "nimi" : {
-                                      "kieli_fi" : "Haun nimi",
-                                      "kieli_sv" : "Sökets namn",
-                                      "kieli_en" : "Application system name"
+                                      "kieli_fi" : "",
+                                      "kieli_sv" : "",
+                                      "kieli_en" : ""
                                     },
                                     "maxHakukohdes" : 0
                                     // "hakulomakeUri" : "http://www.hut.fi",
