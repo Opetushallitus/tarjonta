@@ -41,6 +41,7 @@ import fi.vm.sade.vaadin.ui.OphRowMenuBar;
 import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -77,6 +78,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
     private List<HakukohdePerustieto> children;
 
     public HakukohdeResultRow() {
@@ -123,6 +126,10 @@ public class HakukohdeResultRow extends HorizontalLayout {
         //jos tila muu ja käynnissä olevassa haussa kiinni -> oph saa muokata
         /*if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
                 || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {*/
+
+        if (hakukohde.getHakutapaKoodi().getUri().contains(hakutapaErillishaku) && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
+        }
         if (tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }

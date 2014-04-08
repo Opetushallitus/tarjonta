@@ -61,6 +61,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
         KoodistoURI.KOODISTO_TUTKINTO_NIMI_URI,
         KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI,
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
+        KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI,
         KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
         KoodistoURI.KOODISTO_EQF_LUOKITUS_URI,
         KoodistoURI.KOODISTO_KOULUTUSALA_URI
@@ -70,6 +71,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
         KoodistoURI.KOODISTO_KOULUTUSALA_URI,
         KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI,
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI,
+        KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI,
         KoodistoURI.KOODISTO_KOULUTUSALA_URI,
         KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI,
         KoodistoURI.KOODISTO_KOULUTUSLAJI_URI
@@ -140,6 +142,9 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                 if (dto instanceof KoulutusmoduuliKorkeakouluRelationV1RDTO) {
                     KoulutusmoduuliKorkeakouluRelationV1RDTO kk = (KoulutusmoduuliKorkeakouluRelationV1RDTO) dto;
                     multipleKoodis(type, kk.getOpintojenLaajuusarvos(), FieldNames.OPINTOJEN_LAAJUUSARVO, locale, showMeta);
+                } else if (dto instanceof KoulutusmoduuliLukioRelationV1RDTO) {
+                    KoulutusmoduuliLukioRelationV1RDTO lk = (KoulutusmoduuliLukioRelationV1RDTO) dto;
+                    lk.setOpintojenLaajuusarvo(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, locale, showMeta));
                 }
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)) {
                 dto.setOpintojenLaajuusyksikko(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, locale, showMeta));

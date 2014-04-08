@@ -4,7 +4,7 @@
         <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
         <td>
             <select class="span5" ng-if="uiModel.tutkinto.length > 0" required name="koulutuskoodi" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'"></select>
-            <span ng-if="uiModel.tutkinto === Undefined || uiModel.tutkinto.length > 0">{{model.koulutuskoodi.arvo}}</span><!-- loaded -->
+            <span ng-if="uiModel.tutkinto === Undefined || uiModel.tutkinto.length > 0">{{model.koulutuskoodi.nimi}} {{model.koulutuskoodi.arvo}}</span><!-- loaded -->
         </td>
         <td>
             <p class="error" ng-show="uiModel.koulutuskoodi && (koulutusForm.koulutuskoodi.$error.required || koulutusForm.koulutuskoodi.$error.required)"
@@ -50,7 +50,7 @@
     <!-- opintojen laajuus -->
     <tr>
         <th tt="koulutus.edit.opintojen-laajuus">Opintojen laajuus</th>
-        <td>{{model.opintojenLaajuusarvo}} {{model.opintojenLaajuusyksikko}}</td>
+        <td>{{model.opintojenLaajuusarvo.arvo}} {{model.opintojenLaajuusyksikko.nimi}}</td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
         </td>
