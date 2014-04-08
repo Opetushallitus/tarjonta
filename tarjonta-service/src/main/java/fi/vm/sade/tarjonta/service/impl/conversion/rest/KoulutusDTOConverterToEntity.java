@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -227,10 +228,29 @@ public class KoulutusDTOConverterToEntity {
             komoto.getOpetusAikas().clear();
             komoto.setOpetusAikas(commonConverter.convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
         }
+
         if (dto.getOpetusPaikkas() != null) {
             komoto.getOpetusPaikkas().clear();
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
+
+        if (dto.getLukiodiplomit() != null) {
+            komoto.getOpetusPaikkas().clear();
+            komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getLukiodiplomit(), komoto.getLukiodiplomit(), FieldNames.LUKIODIPLOMI));
+        }
+
+        if (dto.getLinkkiOpetussuunnitelmaan() != null) {
+            komoto.getLinkkis().clear();
+            komoto.setLinkkis(
+                    commonConverter.convertToLinkkis(WebLinkki.LinkkiTyyppi.OPETUSSUUNNITELMA,
+                            dto.getLinkkiOpetussuunnitelmaan(),
+                            komoto.getLinkkis()));
+        }
+
+        if (dto.getKielivalikoima() != null) {
+            commonConverter.convertToKielivalikoima(dto.getKielivalikoima(), komoto);
+        }
+
         komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();

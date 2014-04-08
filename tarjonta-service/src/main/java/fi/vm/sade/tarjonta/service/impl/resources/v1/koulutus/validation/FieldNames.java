@@ -46,5 +46,7 @@ public enum FieldNames {
     OPPILAITOSTYYPPI,
     
     //Lukio:
-    KOULUTUSLAJI;
+    KOULUTUSLAJI,
+    LUKIODIPLOMI,
+    KIELIVALIKOIMA;
 }

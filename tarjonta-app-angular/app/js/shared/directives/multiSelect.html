@@ -37,6 +37,20 @@
            </li>    
        </ul>
 	</div>
+        
+        <div class="combobox" ng-switch-when="tokenfield">
+	    <select
+                ng-model="combo.selection"
+                ng-options="e.key as e.value for e in items"
+                ng-change="toggle(combo.selection)"
+                ng-enter="onPreselection(preselection)"
+		ng-disabled="disabled()">
+	    </select>
+	
+           <span ng-repeat="k in selection">
+               <a href ng-click="toggle(k)">[x]</a> {{names[k]}}
+           </span>    
+	</div>
 	
 	<!-- checklist -->
 	<table class="checklist" ng-switch-default>
