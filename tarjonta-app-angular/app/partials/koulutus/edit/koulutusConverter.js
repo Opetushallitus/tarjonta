@@ -80,19 +80,19 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     };
 
     factory.KUVAUS_ORDER = [
-        {type: "TAVOITTEET", isKomo: true},
-        {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false},
-        {type: "PAAAINEEN_VALINTA", isKomo: false},
-        {type: "MAKSULLISUUS", isKomo: false},
-        {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false},
-        {type: "PATEVYYS", isKomo: true},
-        {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true},
-        {type: "SISALTO", isKomo: false},
-        {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
-        {type: "LOPPUKOEVAATIMUKSET", isKomo: false}, // leiskassa oli "lopputyön kuvaus"
-        {type: "KANSAINVALISTYMINEN", isKomo: false},
-        {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false},
-        {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false}
+        {type: "TAVOITTEET", isKomo: true, length:2000},
+        {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false, length:2000},
+        {type: "PAAAINEEN_VALINTA", isKomo: false, length:2000},
+        {type: "MAKSULLISUUS", isKomo: false, length:1000},
+        {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length:2000},
+        {type: "PATEVYYS", isKomo: true, length:2000},
+        {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true, length:2000},
+        {type: "SISALTO", isKomo: false, length:2000},
+        {type: "KOULUTUKSEN_RAKENNE", isKomo: true, length:5000},
+        {type: "LOPPUKOEVAATIMUKSET", isKomo: false, length:2000}, // leiskassa oli "lopputyön kuvaus"
+        {type: "KANSAINVALISTYMINEN", isKomo: false, length:2000},
+        {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length:2000},
+        {type: "TUTKIMUKSEN_PAINOPISTEET", isKomo: false, length:2000}
     ];
 
     factory.STRUCTURE = {
@@ -474,8 +474,8 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
     };
 
     factory.KUVAUS_ORDER = [
-        {type: "KANSAINVALISTYMINEN", isKomo: false},
-        {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false}
+        {type: "KANSAINVALISTYMINEN", isKomo: false, length:2000 },
+        {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length:2000}
     ];
 
     factory.STRUCTURE = {
