@@ -442,7 +442,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.openDeleteDialog = function(prefix, oid, nimi, action) {
 
-                ns = {};
+                var ns = {};
                 ns.oid = oid;
                 ns.nimi = nimi;
                 ns.otsikko = LocalisationService.t("tarjonta.poistovahvistus.otsikko." + prefix);
