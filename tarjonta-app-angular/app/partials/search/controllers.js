@@ -545,17 +545,33 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.luoUusiHakukohde = function() {
               console.log("koulutukset:", $scope.selection.koulutukset);
+              var promises=[];
+              angular.forEach($scope.selection.koulutukset, function(koulutusOid){
+                promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
+              });
+              $q.all(promises).then(function(results){
+
+                var valid=true;
+                
+                //tila
+                angular.forEach(results, function(res){
+                  var koulutus = res.result;
+                  if(koulutus.tila=="PERUTTU" || koulutus.tila=="POISTETTU") {
+                    valid=false;
+                    dialogService.showDialog({
+                      title: LocalisationService.t("koulutuksen.tila.error"),
+                      description: LocalisationService.t("koulutuksen.tila.error"),
+                      ok: LocalisationService.t("ok"),
+                      cancel: LocalisationService.t("cancel")
+                    });
+                    return;
+                  }
+                });
 
                 if($scope.selection.koulutukset.length>1) {
-                  var promises=[];
-                  angular.forEach($scope.selection.koulutukset, function(koulutusOid){
-                    promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
-                  });
-                  $q.all(promises).then(function(results){
-                    var vuosi,kausi,valid=true;
+                    var vuosi,kausi;
                     angular.forEach(results, function(res){
                       var koulutus = res.result;
-                      console.log("koulutus palvelusta:", koulutus);
                       if(!vuosi){
                         vuosi=koulutus.koulutuksenAlkamisvuosi;
                         kausi=koulutus.koulutuksenAlkamiskausi.uri
@@ -566,11 +582,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                       }
                     });
 
-                    if(valid) {
-                      SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
-                      SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
-                      $location.path('/hakukohde/new/edit');
-                    } else {
+                    if(!valid) {
                       //show dialog about mismatch
                       console.log("vuosi/kausi mismatch!");
                       dialogService.showDialog({
@@ -580,14 +592,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                           cancel: LocalisationService.t("cancel")
                       });
                     }
-                  });
-                } else {
-                    console.log("KOULUTUS:", $scope.selection.koulutukset);
-                    SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
-                    SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
-                    $location.path('/hakukohde/new/edit');
                 }
-                  
+                
+                if(valid) {
+                  console.log("KOULUTUS:", $scope.selection.koulutukset);
+                  SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
+                  SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
+                  $location.path('/hakukohde/new/edit');
+                }
+
+              });
+
             };
 
 

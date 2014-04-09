@@ -69,10 +69,10 @@ public class HakukohdeValidator {
     }
     
     /**
-     * Tarkista että kaikilla koulutuksilla sama vuosi/kausi
+     * Tarkista että kaikilla koulutuksilla sama vuosi/kausi ja että niiden tila ei ole peruttu, poistettu
      * @param komotot
      */
-    public static List<HakukohdeValidationMessages> checkSameVuosiKausi(Set<KoulutusmoduuliToteutus> komotot) {
+    public static List<HakukohdeValidationMessages> checkKoulutukset(Set<KoulutusmoduuliToteutus> komotot) {
         String kausi = null;
         Integer vuosi = null;
         for (KoulutusmoduuliToteutus komoto : komotot) {
@@ -84,6 +84,11 @@ public class HakukohdeValidator {
                    return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID);
                } 
             }
+            
+            if(komoto.getTila()==TarjontaTila.PERUTTU || komoto.getTila()==TarjontaTila.POISTETTU) {
+                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
+            }
+
         }
         return Collections.EMPTY_LIST;
     }

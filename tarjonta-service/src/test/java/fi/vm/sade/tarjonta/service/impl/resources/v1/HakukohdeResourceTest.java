@@ -62,6 +62,7 @@ public class HakukohdeResourceTest {
     private KoulutusmoduuliToteutus komoto1;
     private KoulutusmoduuliToteutus komoto2;
     private KoulutusmoduuliToteutus komoto3;
+    private KoulutusmoduuliToteutus komotoPeruttu;
     
     @Before
     public void setUp() throws Exception {
@@ -86,9 +87,16 @@ public class HakukohdeResourceTest {
         komoto3 = new KoulutusmoduuliToteutus();
         komoto3.setAlkamiskausi("kausi2");
         komoto3.setAlkamisVuosi(2005);
+        
+        komotoPeruttu = new KoulutusmoduuliToteutus();
+        komotoPeruttu.setTila(TarjontaTila.PERUTTU);
+        komotoPeruttu.setAlkamiskausi("kausi2");
+        komotoPeruttu.setAlkamisVuosi(2005);
+        
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3")).toReturn(komoto3);
         Whitebox.setInternalState(hakukohdeResource, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(hakukohdeResource, "permissionChecker", permissionChecker);
+        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-peruttu")).toReturn(komotoPeruttu);
 
         Mockito.stub(converterV1.toHakukohde(Mockito.any(HakukohdeV1RDTO.class))).toAnswer(new Answer<Hakukohde>() {
             //mockaa convertteria sen mitä tarvii:
@@ -125,6 +133,17 @@ public class HakukohdeResourceTest {
         LOG.info("tearDown()");
     }
 
+    
+    @Test
+    public void testOVT7385(){
+        HakukohdeV1RDTO hk = getHakukohde();
+        hk.getHakukohdeKoulutusOids().clear();
+        hk.getHakukohdeKoulutusOids().add("komoto-peruttu");
+        ResultV1RDTO<HakukohdeV1RDTO>res = hakukohdeResource.createHakukohde(hk);
+        Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
+        Assert.assertEquals("HAKUKOHDE_KOULUTUS_TILA_INVALID", res.getErrors().get(0).getErrorMessageKey());
+    }
+    
     @Test
     public void testCreate(){
         HakukohdeV1RDTO hk;
