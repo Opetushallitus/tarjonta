@@ -69,10 +69,10 @@ public class HakukohdeValidator {
     }
     
     /**
-     * Tarkista että kaikilla koulutuksilla sama vuosi/kausi
+     * Tarkista että kaikilla koulutuksilla sama vuosi/kausi ja että niiden tila ei ole peruttu, poistettu
      * @param komotot
      */
-    public static List<HakukohdeValidationMessages> checkSameVuosiKausi(Set<KoulutusmoduuliToteutus> komotot) {
+    public static List<HakukohdeValidationMessages> checkKoulutukset(Set<KoulutusmoduuliToteutus> komotot) {
         String kausi = null;
         Integer vuosi = null;
         for (KoulutusmoduuliToteutus komoto : komotot) {
@@ -84,6 +84,11 @@ public class HakukohdeValidator {
                    return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID);
                } 
             }
+            
+            if(komoto.getTila()==TarjontaTila.PERUTTU || komoto.getTila()==TarjontaTila.POISTETTU) {
+                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
+            }
+
         }
         return Collections.EMPTY_LIST;
     }
@@ -157,20 +162,12 @@ public class HakukohdeValidator {
             if (Strings.isNullOrEmpty(valintakoeV1RDTO.getKieliUri())){
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_KIELI_MISSING);
             }
-            if (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_AIKAS_MISSING);
-            }  else {
-                if (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()) {
-                   validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_MISSING);
-                } else {
-	                for (ValintakoeAjankohtaRDTO ajankohta: valintakoeV1RDTO.getValintakoeAjankohtas()){
-	                    if (ajankohta.getLoppuu().before(ajankohta.getAlkaa())){
-	                        validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
-	                    }
-	                    if (ajankohta.getOsoite() == null) {
-	                        validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
-	                    }
-	                }
+            for (ValintakoeAjankohtaRDTO ajankohta: valintakoeV1RDTO.getValintakoeAjankohtas()){
+                if (ajankohta.getLoppuu().before(ajankohta.getAlkaa())){
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
+                }
+                if (ajankohta.getOsoite() == null) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
                 }
             }
 

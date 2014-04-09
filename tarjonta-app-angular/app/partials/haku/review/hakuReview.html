@@ -216,12 +216,31 @@
         <tbody ng-show="!model.collapse.haunHakukohteet">
 
             <tr>
-                <th tt="haku.review.haunTiedot.oid">Haun OID</th>
+                <th></th>
                 <td colspan="2">
-                    TODO
-                </td>
+                    <table class="table">
+                        <tr>
+                            <th data-tt="haku.review.hakukohteet.organisaatio">Organisaatio</th>
+                            <th data-tt="haku.review.hakukohteet.haunNimi">Haun nimi</th>
+                            <th data-tt="haku.review.hakukohteet.kausi">Kausi</th>
+                            <th data-tt="haku.review.hakukohteet.vuosi">Vuosi</th>
+                            <th data-tt="haku.review.hakukohteet.tila">Tila</th>
+                            <th data-tt="haku.review.hakukohteet.hakutapa">Hakutapa</th>
+                            <th data-tt="haku.review.hakukohteet.aloituspaikat">Aloituspaikat</th>
+                        </tr>
+                        
+                        <tr ng-repeat="hakukohde in model.hakukohteet">
+                            <td><a href="/organisaatio-ui/html/index.html#/organisaatiot/{{hakukohde.organisaatioOid}}">{{hakukohde.organisaatioNimi}}</a></td>
+                            <td><a href="#/hakukohde/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
+                            <td>{{hakukohde.kausi.fi}}</td>
+                            <td>{{hakukohde.vuosi}}</td>
+                            <td>{{hakukohde.tilaNimi}}</td>
+                            <td>{{hakukohde.hakutapa}}</td>
+                            <td>{{hakukohde.aloituspaikat}}</td>
+                        </tr>
+                    </table>
+                </td>                
             </tr>
-
         </tbody>
 
     </table>

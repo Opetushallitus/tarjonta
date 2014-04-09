@@ -727,3 +727,11 @@ div.tarjontaOsoiteField .postitoimipaikka {
     border-color:#eeeeee;
     box-shadow:none;
 }
+
+button.btn-invisible {
+	border:none;
+	width:0;
+	height:0;
+	margin:0;
+	padding:0;
+}
