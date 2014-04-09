@@ -71,7 +71,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
@@ -108,7 +108,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {

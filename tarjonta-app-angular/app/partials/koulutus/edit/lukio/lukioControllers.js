@@ -64,8 +64,18 @@ app.controller('LukioEditController',
                          * remove version data from the list
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
-                                uiModel[key].uris = _.keys(model[key].uris);
+                            if (angular.isDefined(model[key])) {
+                                if (angular.isDefined(value.types)) {
+                                    uiModel[key] = {};
+                                    angular.forEach(value.types, function(type) {
+                                        uiModel[key][type] = {uris: []};
+                                        if (angular.isDefined(model[key][type])) {
+                                            uiModel[key][type].uris = _.keys(model[key][type].uris);
+                                        }
+                                    });
+                                } else if (angular.isDefined(model[key].uris)) {
+                                    uiModel[key].uris = _.keys(model[key].uris);
+                                }
                             } else {
                                 console.error("invalid key mapping : ", key);
                             }
@@ -140,7 +150,6 @@ app.controller('LukioEditController',
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
 
-
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
@@ -196,8 +205,6 @@ app.controller('LukioEditController',
                             $scope.isMutable = data;
                         });
                     }
-
-
                 };
 
                 $scope.canSaveAsLuonnos = function() {
@@ -212,7 +219,6 @@ app.controller('LukioEditController',
                     }
 
                     return canSaveAsLuonnos;
-
                 }
 
                 $scope.canSaveAsValmis = function() {
@@ -397,17 +403,33 @@ app.controller('LukioEditController',
 
                     //multi-select models, add version to the koodi
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                        apiModel[key] = {'uris': {}};
-                        //search version information for list of uris;
-                        var map = {};
-                        var koodis = $scope.uiModel[key].koodis;
-                        for (var i in koodis) {
-                            map[koodis[i].koodiUri] = koodis[i].koodiVersio;
-                        }
-                        angular.forEach(uiModel[key].uris, function(uri) {
-                            apiModel[key].uris[uri] = map[uri];
-                        });
 
+                        if (angular.isDefined(value.types)) {
+                            apiModel[key] = {};
+                            angular.forEach(value.types, function(type) {
+                                apiModel[key][type] = {'uris': {}};
+                                //search version information for list of uris;
+                                var map = {};
+                                var koodis = $scope.uiModel[key].koodis;
+                                for (var i in koodis) {
+                                    map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                                }
+                                angular.forEach(uiModel[key][type].uris, function(uri) {
+                                    apiModel[key][type].uris[uri] = map[uri];
+                                });
+                            });
+                        } else {
+                            apiModel[key] = {'uris': {}};
+                            //search version information for list of uris;
+                            var map = {};
+                            var koodis = $scope.uiModel[key].koodis;
+                            for (var i in koodis) {
+                                map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                            }
+                            angular.forEach(uiModel[key].uris, function(uri) {
+                                apiModel[key].uris[uri] = map[uri];
+                            });
+                        }
                     });
 
                     $log.debug(JSON.stringify(apiModel));
@@ -619,7 +641,6 @@ app.controller('LukioEditController',
                             fallbackFi = tekstis[key];
                         }
                     }
-
 
                     return fallbackFi;
                 };

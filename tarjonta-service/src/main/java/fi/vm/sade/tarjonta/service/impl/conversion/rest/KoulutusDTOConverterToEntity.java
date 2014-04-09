@@ -185,6 +185,7 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getOid() != null) {
             //update komo & komoto
             komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
+            komo = komoto.getKoulutusmoduuli();
         } else {
             //insert new komo&komoto data to database. 
             Preconditions.checkNotNull("KOMO OID cannot be null.", dto.getKomoOid());
@@ -235,8 +236,8 @@ public class KoulutusDTOConverterToEntity {
         }
 
         if (dto.getLukiodiplomit() != null) {
-            komoto.getOpetusPaikkas().clear();
-            komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getLukiodiplomit(), komoto.getLukiodiplomit(), FieldNames.LUKIODIPLOMI));
+            komoto.getLukiodiplomit().clear();
+            komoto.setLukiodiplomit(commonConverter.convertToUris(dto.getLukiodiplomit(), komoto.getLukiodiplomit(), FieldNames.LUKIODIPLOMI));
         }
 
         if (dto.getLinkkiOpetussuunnitelmaan() != null) {
@@ -251,7 +252,7 @@ public class KoulutusDTOConverterToEntity {
             commonConverter.convertToKielivalikoima(dto.getKielivalikoima(), komoto);
         }
 
-        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
+        komoto.setPohjakoulutusvaatimus(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);

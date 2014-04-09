@@ -1,22 +1,82 @@
 <table class="tarjontaForm">
+    <tr><td colspan="2"><h4 tt="koulutus.edit.kielivalikoima.title">Kielivalikoima</h4></td><td></td></tr>
+    <tr><td colspan="2"><p tt="koulutus.edit.kielivalikoima.help">Kielivalikoiman ohjeteksti puuttuu.</p></td><td></td></tr>
     <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.title" />
+        <th tt="koulutus.edit.kielivalikoima.A1A2KIELI.title"">A1/A2-kieli</th>
+           <td><multi-select required 
+            order-with="userLanguages"
+            selection="uiModel.kielivalikoima.A1A2KIELI.uris"
+            model="uiModel.tmp"
+            promise="uiModel.kielivalikoima.promise"
+            display="tokenfield"
+            name="kielivalikoima" /></td>
+        <td></td>
+    </tr>
+   
+     <tr class="info">
+        <th tt="koulutus.edit.kielivalikoima.B1KIELI.title">B1-kieli</th>
         <td><multi-select required 
             order-with="userLanguages"
-            selection="uiModel.opetuskielis.uris"
+            selection="uiModel.kielivalikoima.B1KIELI.uris"
+            model="uiModel.tmp"
+            promise="uiModel.kielivalikoima.promise"
+            display="tokenfield"
+            name="kielivalikoima" /></td>
+        <td></td>
+    </tr>
+     <tr class="info">
+        <th tt="koulutus.edit.kielivalikoima.B2KIELI.title">B2-kieli</th>
+        <td><multi-select required 
+                    order-with="userLanguages"
+                    selection="uiModel.kielivalikoima.B2KIELI.uris"
+                    model="uiModel.tmp"
+                    promise="uiModel.kielivalikoima.promise"
+                    display="tokenfield"
+                    name="kielivalikoima"/></td>
+        <td></td>
+    </tr>
+    <tr class="info">
+        <th tt="koulutus.edit.kielivalikoima.B3KIELI.title">B3-kieli</th>
+        <td><multi-select required 
+            order-with="userLanguages"
+            selection="uiModel.kielivalikoima.B3KIELI.uris"
             model="uiModel.tmp"
             promise="uiModel.opetuskielis.promise"
             display="tokenfield"
-            name="opetuskielis" 
-            tt-show-all-title="koulutus.edit.kielivalioima.title"/></td>
-    <td></td>
+            name="opetuskielis"/></td>
+        <td></td>
+    </tr>
+     <tr class="info">
+        <th tt="koulutus.edit.kielivalikoima.VALINNAINEN.title">Valinnainen oman äidinkielen opetus</th>
+        <td><multi-select required 
+            order-with="userLanguages"
+            selection="uiModel.kielivalikoima.VALINNAINEN_OMAN_AIDINKIELEN_OPETUS.uris"
+            model="uiModel.tmp"
+            promise="uiModel.opetuskielis.promise"
+            display="tokenfield"
+            name="opetuskielis" /></td>
+        <td></td>
     </tr>
     <tr class="info">
-        <th tt="koulutus.edit.lukiodiplomit.title" />
+        <th tt="koulutus.edit.kielivalikoima.MUUT_KIELET.title">Muut kielet</th>
+        <td><multi-select required 
+            order-with="userLanguages"
+            selection="uiModel.kielivalikoima.MUUT_KIELET.uris"
+            model="uiModel.tmp"
+            promise="uiModel.opetuskielis.promise"
+            display="tokenfield"
+            name="opetuskielis" /></td>
+        <td></td>
+    </tr>
+    <tr><td colspan="2"><h4 tt="koulutus.edit.lukiodiplomit.title">Lukiodiplomit</h4></td><td></td></tr>
+    <tr><td colspan="2"><p tt="koulutus.edit.lukiodiplomit.help">Lukiodiplomien ohjeteksti puuttuu.</p></td><td></td></tr>
+    <tr class="info">
+        <th></th>
         <td><multi-select model="uiModel.tmp"
                       selection="uiModel.lukiodiplomit.uris"
                       promise="uiModel.lukiodiplomit.promise" 
-                      display="combobox"
+                      display="checklist"
+                      columns="3"
                       tt-show-all-title="koulutus.edit.lukiodiplomit.title"/></td>
     <!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
     <td></td>
@@ -28,19 +88,6 @@
 
     <tab class="addLangTab" select="selectKieli(null)">
         <tab-heading><span class="icon-plus"></span></tab-heading>
-
-    
-
-        <multi-select
-            on-change="onLisatietoLangSelection()"
-            model="uiModel.tmp"
-            promise="uiModel.opetuskielis.promise"
-            order-with="userLanguages"
-            selection="uiModel.lisatietoKielet"
-            display="dualpane"></multi-select>
-
-
-
     </tab>
 
 </tabset>

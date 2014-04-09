@@ -474,6 +474,9 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
     };
 
     factory.KUVAUS_ORDER = [
+        {type: "SISALTO", isKomo: false},
+        {type: "KOHDERYHMA", isKomo: false},
+        {type: "OPPIAINEET_JA_KURSSIT", isKomo: false},
         {type: "KANSAINVALISTYMINEN", isKomo: false},
         {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false}
     ];
@@ -491,49 +494,32 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
             opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
             tutkintonimike: {module: 'TUTKINTO_OHJELMA'}
         }, COMBO: {
-            //in correct place
             suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
             koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
-            opintojenLaajuusarvo: {skipUiModel: true}
-            //waiting for missing koodisto relations, when the relations are created, move the fields to RELATION object.
         }, MCOMBO: {
-            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuoto'},
+            kielivalikoima: {
+                koodisto: 'koodisto-uris.kieli', 
+                types: ['A1A2KIELI', 'B1KIELI', 'B2KIELI', 'B3KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
+            },
+            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
             opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
             opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
+            lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
         }, STR: {
             koulutuksenAlkamisvuosi: {"default": ''},
-            koulutusmoduuliTyyppi: {"default": 'TUTKINTO'},
             koulutusasteTyyppi: {"default": 'LUKIOKOULUTUS'},
             tila: {'default': 'LUONNOS'},
             tunniste: {"default": ''},
-            linkkiOpetussuunnitelmaan : {"default": ''},
+            linkkiOpetussuunnitelmaan: {"default": ''},
             suunniteltuKestoArvo: {nullable: true, "default": ''}
         }, DATES: {
             koulutuksenAlkamisPvms: {"default": new Date()}
         }, BOOL: {
         }, DESC: {
             kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
-                    'KOULUTUKSEN_RAKENNE',
-                    'JATKOOPINTO_MAHDOLLISUUDET',
-                    'TAVOITTEET',
-                    'PATEVYYS'
                 ])},
             kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
-                    'MAKSULLISUUS',
-                    'ARVIOINTIKRITEERIT',
-                    'LOPPUKOEVAATIMUKSET',
-                    'PAINOTUS',
-                    'KOULUTUSOHJELMAN_VALINTA',
-                    'KUVAILEVAT_TIEDOT',
-                    'SISALTO',
-                    'SIJOITTUMINEN_TYOELAMAAN',
-                    'KANSAINVALISTYMINEN',
-                    'YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA',
-                    'LISATIETOA_OPETUSKIELISTA',
-                    'TUTKIMUKSEN_PAINOPISTEET',
-                    'PAAAINEEN_VALINTA'
                 ])}
         }
     };
@@ -647,7 +633,16 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
         });
         //multi select models
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
-            uiModel[key] = factory.createUiKoodistoMultiModel();
+
+            if (angular.isDefined(value.types)) {
+                uiModel[key] = {};
+                angular.forEach(value.types, function(valType, keyType) {
+                    uiModel[key][valType] = factory.createUiKoodistoMultiModel();
+                });
+            } else {
+                uiModel[key] = factory.createUiKoodistoMultiModel();
+            }
+
         });
 
         angular.forEach(factory.STRUCTURE.DATES, function(value, key) {
@@ -740,7 +735,14 @@ app.factory('KoulutusConverterFactoryLukio', function(Koodisto, $log) {
         });
 
         angular.forEach(factory.STRUCTURE.MCOMBO, function(value, key) {
-            apiModel[key] = {'uris': {}};
+            if (angular.isDefined(value.types)) {
+                apiModel[key] = {};
+                angular.forEach(value.types, function(valType, keyType) {
+                    apiModel[key][keyType] = {'uris': {}};
+                });
+            } else {
+                apiModel[key] = {'uris': {}};
+            }
         });
 
         angular.forEach(factory.STRUCTURE.DATES, function(value, key) {
