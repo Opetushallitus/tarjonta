@@ -101,8 +101,11 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertFalse(permissionService.userCanDeleteKoulutus(c1));
 
         //non oph user with crud
-        setCurrentUser(userOid, Lists.newArrayList(getAuthority(
-                permissionService.wrapped.ROLE_CRUD, userOrgOid)));
+        List<GrantedAuthority> authorities = Lists.newArrayList(getAuthority(
+                permissionService.wrapped.ROLE_CRUD, userOrgOid));
+        authorities.addAll(getAuthority(
+                        permissionService.hakujenHallintaPermissionServiceWrapped.ROLE_CRUD, userOrgOid));
+        setCurrentUser(userOid, authorities);
 
         Assert.assertTrue(permissionService.userCanPublishKoulutus(c1));
         Assert.assertTrue(permissionService.userCanCancelKoulutusPublish(c1));
@@ -114,7 +117,7 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanCreateKoulutus(c1));
         Assert.assertTrue(permissionService.userCanUpdateKoulutus(c1));
         Assert.assertTrue(permissionService.userCanDeleteKoulutus(c1));
-        Assert.assertFalse(permissionService.userCanCreateHaku());
+        Assert.assertTrue(permissionService.userCanCreateHaku());
         Assert.assertFalse(permissionService.userCanUpdateHaku("NONE"));
         Assert.assertFalse(permissionService.userCanDeleteHaku("NONE"));
         Assert.assertFalse(permissionService.userCanPublishHaku("NONE"));

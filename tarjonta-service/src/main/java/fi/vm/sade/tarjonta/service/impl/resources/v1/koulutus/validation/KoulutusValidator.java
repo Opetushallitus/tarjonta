@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
@@ -42,8 +40,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -55,6 +51,10 @@ public class KoulutusValidator {
     public static List<ErrorV1RDTO> validateKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
         validateKoodistoRelations(dto, validationMessages);
+        
+        if(dto.getTunniste()!=null) {
+            validateStringMaxLength(validationMessages, dto.getTunniste(), 35, KoulutusValidationMessages.KOULUTUS_TUNNISTE_LENGTH);
+        }
 
         validateKoodiUris(validationMessages, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID);
         validateKoodiUris(validationMessages, dto.getAihees(), KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_MISSING, KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_INVALID);
@@ -76,10 +76,19 @@ public class KoulutusValidator {
         return errors;
     }
 
+    /**
+     * Tarkista merkkijonon max pituus
+     */
+    private static void validateStringMaxLength(Set<KoulutusValidationMessages> validationMessages, String tunniste, int maxLength,
+            KoulutusValidationMessages koulutusTunnusteLength) {
+        if(tunniste.length()>maxLength) {
+            validationMessages.add(koulutusTunnusteLength);
+        }
+    }
+
     public static List<ErrorV1RDTO> validateKoulutus(KoulutusLukioV1RDTO dto) {
         Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
         //TODO: validateKoodistoRelations(dto, validationMessages);
-
         validateKoodiUris(validationMessages, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID);

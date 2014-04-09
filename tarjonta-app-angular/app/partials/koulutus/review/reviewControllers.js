@@ -290,7 +290,7 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
                 hakukohdeNimi = hakukohde.nimi[fallbackLang];
 
                 //If even that is not found, just get some name
-                if (hakukohdeNimi === undefined) {
+                if (hakukohdeNimi === undefined || hakukohdeNimi.trim().length < 1) {
 
                     for (var fooLang in hakukohde.nimi) {
                         hakukohdeNimi = hakukohde.nimi[fooLang];

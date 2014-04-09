@@ -21,7 +21,7 @@ app.controller('LukioEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable: true};
+                    var uiModel = {isMutable: false};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -46,6 +46,11 @@ app.controller('LukioEditController',
                         if (model.tila === 'POISTETTU') {
                             uiModel.isMutable = false;
                         }
+
+                        PermissionService.koulutus.canEdit(model.oid).then(function(data) {
+                            $log.debug("setting mutable to:", data);
+                            $scope.uiModel.isMutable = data;
+                        });
 
                         $scope.updateFormStatusInformation(model);
 
@@ -90,6 +95,7 @@ app.controller('LukioEditController',
                         /*
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
                          */
+                        uiModel.isMutable = true;
                         $scope.controlFormMessages(uiModel, "INIT");
                         converter.createAPIModel(model, cfg.app.userLanguages);
 
@@ -197,33 +203,24 @@ app.controller('LukioEditController',
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
-
-                    //käyttöoikeudet
-                    if ($scope.model.komotoOid) {
-                        PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
-                            $log.debug("setting mutable to:", data);
-                            $scope.isMutable = data;
-                        });
-                    }
                 };
 
                 $scope.canSaveAsLuonnos = function() {
-                    var canSaveAsLuonnos = true;
-                    if (!$scope.isMutable)
-                        canSaveAsLuonnos = false; //permissio
-                    if ($scope.uiModel.isMutable) {
-                        canSaveAsLuonnos = $scope.uiModel.isMutable;
+                    if ($scope.model.tila !== 'LUONNOS') {
+                        return false;
                     }
 
-                    if (canSaveAsLuonnos) {
-                    }
+                    return $scope.uiModel.isMutable;
 
-                    return canSaveAsLuonnos;
                 }
 
                 $scope.canSaveAsValmis = function() {
-                    return $scope.uiModel.isMutable && $scope.isMutable;
-                };
+                    if ($scope.model.tila === 'POISTETTU') {
+                        return false;
+                    }
+
+                    return $scope.uiModel.isMutable;
+                }
 
                 $scope.getLisatietoKielet = function() {
                     for (var i in $scope.uiModel.opetuskielis.uris) {

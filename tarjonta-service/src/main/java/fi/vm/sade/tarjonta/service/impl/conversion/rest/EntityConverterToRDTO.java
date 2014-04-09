@@ -19,6 +19,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
@@ -117,9 +118,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             lukioDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinja(), locale, FieldNames.LUKIOLINJA, false, showMeta));
             lukioDto.setKielivalikoima(commonConverter.convertToKielivalikoimaDTO(komoto.getTarjotutKielet(), locale, showMeta));
             lukioDto.setLukiodiplomit(commonConverter.convertToKoodiUrisDTO(komoto.getLukiodiplomit(), locale, FieldNames.LUKIODIPLOMI, showMeta));
-            lukioDto.setTutkintonimike(commonConverter.koodiData(getFirstItemOrNull(komo.getTutkintonimikes()), locale, FieldNames.TUTKINTONIMIKE, showMeta));
+            lukioDto.setTutkintonimike(commonConverter.koodiData(getFirstUriOrNull(komo.getTutkintonimikes()), locale, FieldNames.TUTKINTONIMIKE, showMeta));
             lukioDto.setPohjakoulutusvaatimus(commonConverter.koodiData(komoto.getPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
-
+            lukioDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             convertKomoCommonToRDTO(dto, parentKomo, locale, showMeta);
@@ -129,7 +130,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             convertKomoCommonToRDTO(dto, parentKomo, locale, showMeta);
         }
-       
+
         dto.setOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getTarjoaja(), locale));
         dto.setOpetuskielis(commonConverter.convertToKoodiUrisDTO(komoto.getOpetuskielis(), locale, FieldNames.OPETUSKIELIS, showMeta));
         dto.setOpetusmuodos(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusmuotos(), locale, FieldNames.OPETUSMUODOS, showMeta));
@@ -166,9 +167,16 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setKuvausKomo(komoKuvaus);
     }
 
-    private static String getFirstItemOrNull(Set<KoodistoUri> uris) {
+    private static String getFirstUriOrNull(Set<KoodistoUri> uris) {
         if (uris != null && !uris.isEmpty()) {
             return uris.iterator().next().getKoodiUri();
+        }
+        return null;
+    }
+
+    private static String getFirstUrlOrNull(Set<WebLinkki> uris) {
+        if (uris != null && !uris.isEmpty()) {
+            return uris.iterator().next().getUrl();
         }
         return null;
     }
