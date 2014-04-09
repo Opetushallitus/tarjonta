@@ -566,9 +566,6 @@ app.controller('HakukohdeEditController',
         koulutusSet.clear();
         TarjontaService.haeKoulutukset(spec).then(function(data){
 
-
-            $log.debug('KOULUTUKSET : ', data);
-
             var tarjoajaOidsSet = new buckets.Set();
 
 
