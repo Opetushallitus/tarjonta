@@ -21,7 +21,7 @@ app.controller('LukioEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable: true};
+                    var uiModel = {isMutable: false};
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -47,6 +47,11 @@ app.controller('LukioEditController',
                             uiModel.isMutable = false;
                         }
 
+                        PermissionService.koulutus.canEdit(model.oid).then(function(data) {
+                            $log.debug("setting mutable to:", data);
+                            $scope.uiModel.isMutable = data;
+                        });
+
                         $scope.updateFormStatusInformation(model);
 
                         angular.forEach(model.yhteyshenkilos, function(value, key) {
@@ -64,8 +69,18 @@ app.controller('LukioEditController',
                          * remove version data from the list
                          */
                         angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
-                                uiModel[key].uris = _.keys(model[key].uris);
+                            if (angular.isDefined(model[key])) {
+                                if (angular.isDefined(value.types)) {
+                                    uiModel[key] = {};
+                                    angular.forEach(value.types, function(type) {
+                                        uiModel[key][type] = {uris: []};
+                                        if (angular.isDefined(model[key][type])) {
+                                            uiModel[key][type].uris = _.keys(model[key][type].uris);
+                                        }
+                                    });
+                                } else if (angular.isDefined(model[key].uris)) {
+                                    uiModel[key].uris = _.keys(model[key].uris);
+                                }
                             } else {
                                 console.error("invalid key mapping : ", key);
                             }
@@ -80,6 +95,7 @@ app.controller('LukioEditController',
                         /*
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
                          */
+                        uiModel.isMutable = true;
                         $scope.controlFormMessages(uiModel, "INIT");
                         converter.createAPIModel(model, cfg.app.userLanguages);
 
@@ -140,7 +156,6 @@ app.controller('LukioEditController',
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
 
-
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
@@ -188,36 +203,24 @@ app.controller('LukioEditController',
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
-
-                    //käyttöoikeudet
-                    if ($scope.model.komotoOid) {
-                        PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
-                            $log.debug("setting mutable to:", data);
-                            $scope.isMutable = data;
-                        });
-                    }
-
-
                 };
 
                 $scope.canSaveAsLuonnos = function() {
-                    var canSaveAsLuonnos = true;
-                    if (!$scope.isMutable)
-                        canSaveAsLuonnos = false; //permissio
-                    if ($scope.uiModel.isMutable) {
-                        canSaveAsLuonnos = $scope.uiModel.isMutable;
+                    if ($scope.model.tila !== 'LUONNOS') {
+                        return false;
                     }
 
-                    if (canSaveAsLuonnos) {
-                    }
-
-                    return canSaveAsLuonnos;
+                    return $scope.uiModel.isMutable;
 
                 }
 
                 $scope.canSaveAsValmis = function() {
-                    return $scope.uiModel.isMutable && $scope.isMutable;
-                };
+                    if ($scope.model.tila === 'POISTETTU') {
+                        return false;
+                    }
+
+                    return $scope.uiModel.isMutable;
+                }
 
                 $scope.getLisatietoKielet = function() {
                     for (var i in $scope.uiModel.opetuskielis.uris) {
@@ -397,17 +400,33 @@ app.controller('LukioEditController',
 
                     //multi-select models, add version to the koodi
                     angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                        apiModel[key] = {'uris': {}};
-                        //search version information for list of uris;
-                        var map = {};
-                        var koodis = $scope.uiModel[key].koodis;
-                        for (var i in koodis) {
-                            map[koodis[i].koodiUri] = koodis[i].koodiVersio;
-                        }
-                        angular.forEach(uiModel[key].uris, function(uri) {
-                            apiModel[key].uris[uri] = map[uri];
-                        });
 
+                        if (angular.isDefined(value.types)) {
+                            apiModel[key] = {};
+                            angular.forEach(value.types, function(type) {
+                                apiModel[key][type] = {'uris': {}};
+                                //search version information for list of uris;
+                                var map = {};
+                                var koodis = $scope.uiModel[key].koodis;
+                                for (var i in koodis) {
+                                    map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                                }
+                                angular.forEach(uiModel[key][type].uris, function(uri) {
+                                    apiModel[key][type].uris[uri] = map[uri];
+                                });
+                            });
+                        } else {
+                            apiModel[key] = {'uris': {}};
+                            //search version information for list of uris;
+                            var map = {};
+                            var koodis = $scope.uiModel[key].koodis;
+                            for (var i in koodis) {
+                                map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                            }
+                            angular.forEach(uiModel[key].uris, function(uri) {
+                                apiModel[key].uris[uri] = map[uri];
+                            });
+                        }
                     });
 
                     $log.debug(JSON.stringify(apiModel));
@@ -619,7 +638,6 @@ app.controller('LukioEditController',
                             fallbackFi = tekstis[key];
                         }
                     }
-
 
                     return fallbackFi;
                 };

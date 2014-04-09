@@ -72,7 +72,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"],
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"],
             hakuOid : args.hakuOid
         };
 
@@ -115,7 +115,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
         $log.debug("haeKoulutukset()", params);
