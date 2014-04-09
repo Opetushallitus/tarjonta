@@ -351,7 +351,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
         // Or hakujen hallinta crud then?
         // TODO add organisation check for hakujenhallinta org!
-        userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+        userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.userCanCreateReadUpdateAndDelete();
 
         LOGGER.info("userCanCreateHaku:" + userCanCreateHalku);
         return userCanCreateHalku;
