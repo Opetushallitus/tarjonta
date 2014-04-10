@@ -4,14 +4,10 @@
 /*******************************************************/
 angular.module('app.kk',
         [
-            'app.kk.directives',
-            'app.kk.filters',
-            'app.kk.services',
             'app.kk.edit.hakukohde.ctrl',
             'app.kk.edit.hakukohde.review.ctrl',
             'app.kk.edit.valintaperustekuvaus.ctrl',
             'app.kk.search.valintaperustekuvaus.ctrl',
-            'app.kk.services',
             'app.edit.ctrl',
             'app.edit.ctrl.lukio',
             'app.edit.ctrl.alkamispaiva',
