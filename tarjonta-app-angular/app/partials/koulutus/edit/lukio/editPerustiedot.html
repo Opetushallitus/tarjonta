@@ -16,13 +16,13 @@
     <tr class="required">
         <th tt="koulutus.edit.lukiolinja">Lukiolinja</th>
         <td>
-            <select class="span5" ng-if="uiModel.koulutusohjelma.length > 0"  required name="koulutusohjelma" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'"></select>
-            <span ng-if="uiModel.koulutusohjelma === Undefined || uiModel.koulutusohjelma.length > 0">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
+            <select required class="span5" ng-if="model.koulutusohjelma.nimi == Undefined" name="koulutusohjelma" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'"></select>
+            <span ng-if="model.koulutusohjelma.nimi != Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
 
         </td>
         <td>
-            <p class="error" ng-show="uiModel.koulutusohjelma && (koulutusForm.koulutusohjelma.$error.required || koulutusForm.koulutusohjelma.$error.required)"
-               tt="koulutus.edit.koulutusohjelma.required">Koulutusohjelma</p>
+            <p class="error" ng-show="koulutusForm.koulutusohjelma.$error.required"
+               tt="koulutus.edit.lukiolinja.required">Lukiolinja vaaditaan</p>
         </td>
     </tr>
 
@@ -134,7 +134,7 @@
     name="opetuskielis" required/>
 
 </td>
-<td>
+<td>{{koulutusForm.opetuskielis.$error | json}}
     <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required">
         Opetuskielet vaaditaan
     </p>

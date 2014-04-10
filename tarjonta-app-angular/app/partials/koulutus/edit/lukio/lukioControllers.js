@@ -21,7 +21,11 @@ app.controller('LukioEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable: false};
+                    var uiModel = {isMutable: false,
+                        koulutusohjelma: [],
+                        tutkintoModules: {},
+                        koulutusohjelmaModules: {}
+                    };
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
@@ -111,8 +115,7 @@ app.controller('LukioEditController',
                         /*
                          * LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
-                        uiModel['tutkintoModules'] = {};
-                        uiModel['koulutusohjelmaModules'] = {};
+
                         tutkintoPromise.then(function(kRes) {
                             resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: 'TUTKINTO'}, function(tRes) {
                                 for (var i = 0; i < kRes.uris.length; i++) {
@@ -123,32 +126,8 @@ app.controller('LukioEditController',
                                         }
                                     }
                                 }
-
-                                var listOfTutkintoModules = _.map(uiModel['tutkintoModules'], function(num, key) {
-                                    return num.koodiUri;
-                                });
-
                                 uiModel.tutkinto = _.map(uiModel['tutkintoModules'], function(num, key) {
                                     return num;
-                                });
-
-                                var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.koodistoLocale);
-                                lukiolinjaPromise.then(function(kRes) {
-                                    resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: 'TUTKINTO_OHJELMA'}, function(tRes) {
-                                        for (var il = 0; il < kRes.uris.length; il++) {
-
-                                            for (var cl = 0; cl < tRes.result.length; cl++) {
-                                                if (!angular.isDefined(uiModel.koulutusohjelmaModules [ kRes.uris[il] ]) && kRes.uris[il] === tRes.result[cl].koulutusohjelmaUri) {
-                                                    uiModel.koulutusohjelmaModules [ kRes.uris[il]] = kRes.map[ kRes.uris[il]];
-                                                    uiModel.koulutusohjelmaModules [ kRes.uris[il]].oid = tRes.result[cl].oid;
-                                                    uiModel.koulutusohjelmaModules [ kRes.uris[il]].koulutuskoodi = tRes.result[cl].koulutuskoodiUri;
-                                                }
-                                            }
-                                            uiModel.koulutusohjelma = _.map(uiModel.koulutusohjelmaModules, function(num, key) {
-                                                return num;
-                                            });
-                                        }
-                                    });
                                 });
                             });
                         });
@@ -675,8 +654,45 @@ app.controller('LukioEditController',
 
                 $scope.$watch("model.koulutuskoodi.uri", function(uriNew, uriOld) {
                     if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
+                        $scope.uiModel.koulutusohjelmaModules = {};
+                        $scope.uiModel.koulutusohjelma = [];
+                        $scope.model.koulutusohjelma.uri = null;
+                        
                         $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uriNew, 'TUTKINTO');
                         $scope.loadKomoKuvausTekstis($scope.uiModel.tutkintoModules[uriNew].oid);
+                        var resource = TarjontaService.komo();
+
+                        var listOfTutkintoModules = _.map($scope.uiModel['tutkintoModules'], function(num, key) {
+                            return num.koodiUri;
+                        });
+
+                        $scope.uiModel.tutkinto = _.map($scope.uiModel['tutkintoModules'], function(num, key) {
+                            return num;
+                        });
+
+                        var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.koodistoLocale);
+                        lukiolinjaPromise.then(function(kRes) {
+                            resource.searchModules(
+                                    {
+                                        koulutuskoodiUri: uriNew,
+                                        koulutusasteTyyppi: 'Lukiokoulutus',
+                                        koulutusmoduuliTyyppi: 'TUTKINTO_OHJELMA'
+                                    }, function(tRes) {
+                                for (var il = 0; il < kRes.uris.length; il++) {
+
+                                    for (var cl = 0; cl < tRes.result.length; cl++) {
+                                        if (!angular.isDefined($scope.uiModel.koulutusohjelmaModules [ kRes.uris[il] ]) && kRes.uris[il] === tRes.result[cl].koulutusohjelmaUri) {
+                                            $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]] = kRes.map[ kRes.uris[il]];
+                                            $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]].oid = tRes.result[cl].oid;
+                                            $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]].koulutuskoodi = tRes.result[cl].koulutuskoodiUri;
+                                        }
+                                    }
+                                    $scope.uiModel.koulutusohjelma = _.map($scope.uiModel.koulutusohjelmaModules, function(num, key) {
+                                        return num;
+                                    });
+                                }
+                            });
+                        });
                     }
                 });
 
