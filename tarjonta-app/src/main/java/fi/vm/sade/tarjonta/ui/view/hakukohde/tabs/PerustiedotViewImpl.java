@@ -717,7 +717,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         verticalLayout.addComponent(kaytaHaunPaattymisAikaa);
         liitteidenToimitusPvm = new DateField();
         liitteidenToimitusPvm.setResolution(DateField.RESOLUTION_MIN);
-        liitteidenToimitusPvm.setDateFormat("dd.MM.yyyy hh:mm");
+        liitteidenToimitusPvm.setDateFormat(HakuajatView.DATE_FORMAT);
 
         verticalLayout.addComponent(liitteidenToimitusPvm);
         kaytaHaunPaattymisAikaa.setValue(true);
@@ -1046,7 +1046,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private String getHakuaikaString(Date alkamisPvm, Date paattymisPvm) {
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        SimpleDateFormat df = new SimpleDateFormat(HakuajatView.DATE_FORMAT);
         return df.format(alkamisPvm) + " - " + df.format(paattymisPvm) ;
     }
 
