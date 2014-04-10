@@ -134,7 +134,7 @@
     name="opetuskielis" required/>
 
 </td>
-<td>{{koulutusForm.opetuskielis.$error | json}}
+<td>
     <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required">
         Opetuskielet vaaditaan
     </p>
@@ -191,7 +191,7 @@
 
 <tr>
     <th tt="koulutus.edit.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
-    <td><input name="linkkiOpetussuunnitelmaan" type="text" data-ng-model="model.linkkiOpetussuunnitelmaan" /></td>
+    <td><input class="wide" name="linkkiOpetussuunnitelmaan" type="text" data-ng-model="model.linkkiOpetussuunnitelmaan" /></td>
     <td></td>
 </tr>
 
