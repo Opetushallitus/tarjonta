@@ -96,16 +96,28 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     };
 
-
     var validateForm= function() {
 
         var retVal = true;
         var errorMsgs = [];
 
-        if(!validateNames()) {
+        if(!isNamesValid()) {
 
             errorMsg = {
                 errorMessageKey : "valintaperustekuvaus.validation.name.missing.exception"
+            };
+            errorMsgs.push(errorMsg);
+
+            $scope.model.nimiValidationFailed = true;
+
+            retVal = false;
+
+        }
+
+        if (!isKuvauksesValid()) {
+
+            errorMsg = {
+                errorMessageKey : "valintaperustekuvaus.validation.kuvaus.missing.exception"
             };
             errorMsgs.push(errorMsg);
 
@@ -137,10 +149,35 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     };
 
-    var validateNames  = function() {
-        for(var i in $scope.model.valintaperustekuvaus.kuvauksenNimet){ return true;}
+    var isNamesValid  = function() {
+
+      ;
+
+        for(var i in $scope.model.valintaperustekuvaus.kuvauksenNimet){
+
+            if ($scope.model.valintaperustekuvaus.kuvauksenNimet[i] && $scope.model.valintaperustekuvaus.kuvauksenNimet[i].trim().length > 1) {
+                return true;
+            }
+
+
+        }
         return false;
-    }
+    };
+
+    var isKuvauksesValid = function() {
+
+        for (var langKey in $scope.model.valintaperustekuvaus.kuvaukset) {
+
+            if ($scope.model.valintaperustekuvaus.kuvaukset[langKey] && $scope.model.valintaperustekuvaus.kuvaukset[langKey].trim().length > 1) {
+                return true;
+            }
+
+        }
+
+        return false;
+
+    };
+
 
     var showError = function(errorArray) {
 
@@ -202,46 +239,11 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
              }
 
 
-
-
-             //console.log('VIIM PAIVITYS INFO : ', $scope.model.);
-
-            /* var usrPromise =  YhteyshenkiloService.haeHenkilo($scope.model.valintaperustekuvaus.viimPaivittajaOid);
-
-             usrPromise.then(function(data){
-
-                 if (data !== undefined) {
-
-                     var paivittaja = data.etunimet + " " + data.sukunimi;
-
-                     $scope.model.valintaperustekuvaus.modifiedBy = paivittaja;
-
-                     console.log('GOT DATA FROM HENKILOSERVICE : ', data);
-                 }  else {
-
-                     $scope.model.valintaperustekuvaus.modifiedBy = undefined;
-
-                 }
-
-
-             });  */
          }
 
       }  else {
           console.log('DID NOT GET VALINTAPERUSTEKUVAUS');
       }
-
-     /* if (kuvausId !== undefined && kuvausId !== "NEW") {
-          var kuvausPromise = Kuvaus.findKuvausWithId(kuvausId);
-          kuvausPromise.then(function(kuvausResult){
-              if (kuvausResult.status === "OK" ){
-                  console.log("FOUND KUVAUS : ", kuvausResult.result);
-                  $scope.model.valintaperustekuvaus = kuvausResult.result;
-              }
-
-
-          });
-      }  */
 
   };
 
@@ -328,7 +330,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     $scope.model.canSaveVpk = function() {
 
         if ($scope.valintaPerusteForm !== undefined) {
-            return $scope.valintaPerusteForm.$valid;
+            return $scope.valintaPerusteForm.$valid && validateForm();
         } else {
             return false;
         }
