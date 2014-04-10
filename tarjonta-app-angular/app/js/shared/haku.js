@@ -178,8 +178,8 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 "sijoittelu": false,
                 "hakuaikas": [{
                         "nimi": "",
-                        "alkuPvm": new Date().getTime(),
-                        "loppuPvm": new Date().getTime()
+                        "alkuPvm": null,
+                        "loppuPvm": null
                     }],
                 "hakukohdeOids": [],
                 "modified": new Date().getTime(),
