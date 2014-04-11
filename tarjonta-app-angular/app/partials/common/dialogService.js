@@ -105,8 +105,29 @@ app.service('dialogService', ['$modal', '$log', '$rootScope', 'LocalisationServi
             var texts = {
                 title: LocalisationService.t("notImplemented.title"),
                 description: LocalisationService.t("notImplemented.description"),
-                ok: LocalisationService.t("ok"),
-                cancel: LocalisationService.t("cancel")
+                ok: LocalisationService.t("ok")
+                // cancel: LocalisationService.t("cancel")
+            };
+
+            return this.showDialog(texts);
+        };
+
+
+        /**
+         * Show dialog, show text "as is". If cancel is undefined, only "ok" text will be show.
+         * 
+         * @param {type} title
+         * @param {type} description
+         * @param {type} ok
+         * @param {type} cancel
+         * @returns {unresolved}
+         */
+        this.showSimpleDialog = function(title, description, ok, cancel) {
+            var texts = {
+                title: title,
+                description: description,
+                ok: ok,
+                cancel: cancel
             };
 
             return this.showDialog(texts);
