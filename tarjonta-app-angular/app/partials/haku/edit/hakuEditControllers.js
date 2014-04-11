@@ -38,7 +38,7 @@ app.controller('HakuEditController',
                 OrganisaatioService,
                 AuthService) {
             $log = $log.getInstance("HakuEditController");
-            $log.info("initializing", $scope);
+            $log.debug("initializing (scope, route)", $scope, $route);
 
             var hakuOid = $route.current.params.id;
 
@@ -83,7 +83,7 @@ app.controller('HakuEditController',
 
             $scope.doAddNewHakuaika = function() {
                 $log.info("doAddNewHakuaika()");
-                $scope.model.hakux.result.hakuaikas.push({nimi: "", alkuPvm: new Date().getTime(), loppuPvm: new Date().getTime()});
+                $scope.model.hakux.result.hakuaikas.push({nimi: "", alkuPvm: null, loppuPvm: null});
             };
 
             $scope.goBack = function(event) {
@@ -127,8 +127,7 @@ app.controller('HakuEditController',
 
                 // Save it
                 HakuV1.save(haku, function(result) {
-                    $log.info("doSave() - OK", result);
-                    $log.info("doSave() - OK status = ", result.status);
+                    $log.debug("doSave() - OK", result);
 
                     // Clear validation messages
                     $log.debug("validation messages:", $scope.model.validationmsgs);
@@ -146,10 +145,15 @@ app.controller('HakuEditController',
                         $scope.saveParameters(result.result);
                         $log.info("saveparameters->");
 
-                        // Move broweser to "edit" mode.
-                        if (reload) {
+                        // If this is new haku, then move to edit url
+                        if ($scope.isNewHaku()) {
+                            $log.debug("  change model to be fresh from server AND update browser URL");
+                            // Also update UI model to be fresh from the server
+                            // TODO any other changes to UI model needed?
+                            $scope.model.hakux = result;
+                            // Change url
                             $location.path("/haku/" + result.result.oid + "/edit");
-                        }
+                        }                        
                     } else {
                         // Failed to save Haku... show errors
                         $scope.model.showError = true;
