@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -195,6 +195,27 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
             }
         };
     };
+    
+    var canDelete = function(oids) {
+        $log.warn("canDelete() - NOT IMPLEMENTED", oids);
+        
+        var deferred = $q.defer();
+        
+        deferred.resolve({status: "OK"});
+        
+        return deferred.promise;
+    }
+
+    var doDelete = function(oid) {
+        $log.warn("doDelete() - NOT IMPLEMENTED", oid);
+        
+        var deferred = $q.defer();
+        
+        // deferred.resolve({status: "ERROR", errors : [{ errorMessageKey: "no.permission" }]});
+        deferred.resolve({status: "OK"});
+        
+        return deferred.promise;
+    }
 
   return {
     /**
@@ -209,7 +230,18 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
   
     resolveNimi: resolveNimi, 
     
-    createNewEmptyHaku : createNewEmptyHaku
+    createNewEmptyHaku : createNewEmptyHaku,
+    
+    /**
+     * Tarkista, voiko annettuja hakuja poistaa
+     */
+    canDelete: canDelete,
+    
+    /**
+     * Poista annettu haku (jos oikeuksia)
+     */
+    delete: doDelete
+    
   };
 
 });

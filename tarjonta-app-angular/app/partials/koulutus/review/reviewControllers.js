@@ -15,8 +15,12 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
 
         //käyttöoikeudet
         PermissionService.koulutus.canEdit(koulutusModel.oid).then(function(data) {
-            $scope.isMutable = data;
+        	var tila = TarjontaService.getTilat()[koulutusModel.tila];
+            $scope.isMutable = tila.mutable && data;
+            $scope.isRemovable = tila.removable && data;
         });
+        
+        
         $scope.formControls = {};
         $scope.model = {
             header: {}, //review.html otsikkon tiedot

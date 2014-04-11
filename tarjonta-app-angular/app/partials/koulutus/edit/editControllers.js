@@ -21,7 +21,7 @@ app.controller('BaseEditController',
                     var uiModel = {isMutable: false};
                     var model = {};
 
-                    uiModel.selectedKieliUri = "" //tab language
+                    uiModel.selectedKieliUri = undefined; // valittu tabi; undefined -> ensimmäinen kieli, eli suomi jos on jne..
                     converter.createUiModels(uiModel, 'KORKEAKOULUTUS');
 
                     /*
@@ -184,13 +184,13 @@ app.controller('BaseEditController',
                 }
 
                 $scope.onLisatietoLangSelection = function() {
+                	//console.log("UPDATE ON LANG SELECT", [ $scope.uiModel.selectedKieliUri, $scope.uiModel.lisatietoKielet ]);
                     for (var ki in $scope.model.kuvausKomo) {
                         for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
                             if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1
                                     && $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length > 0) {
                                 // palautetaan listaan jottei angular digestoi ennen dialogia
                                 $scope.uiModel.lisatietoKielet.push(lc);
-                                $scope.uiModel.lisatietoKielet.sort();
 
                                 if ($scope.uiModel.opetuskielis.uris.indexOf(lc) == -1) {
                                     // ei opetuskieli -> varmista poisto dialogilla
@@ -205,6 +205,7 @@ app.controller('BaseEditController',
                             }
                         }
                     }
+                	//console.log("UPDATE AFTER LANG SELECT", [ $scope.uiModel.selectedKieliUri, $scope.uiModel.lisatietoKielet ]);
                 }
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
