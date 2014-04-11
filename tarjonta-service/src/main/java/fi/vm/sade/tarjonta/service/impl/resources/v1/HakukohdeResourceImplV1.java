@@ -502,7 +502,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         
         Set<KoulutusmoduuliToteutus> komotot = findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids());
 
-        validationMessageses.addAll(HakukohdeValidator.checkSameVuosiKausi(komotot));
+        validationMessageses.addAll(HakukohdeValidator.checkKoulutukset(komotot));
         
         if(hakukohdeRDTO.getOid()!=null) { //uudessa hakukohteessa ei saa olla oidia
             validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_OID_SPECIFIED);
@@ -588,7 +588,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             Set<KoulutusmoduuliToteutus> komotot = findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids());
             
-            validationMessagesList.addAll(HakukohdeValidator.checkSameVuosiKausi(komotot));
+            validationMessagesList.addAll(HakukohdeValidator.checkKoulutukset(komotot));
 
             if (validationMessagesList.size() > 0) {
                 ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();

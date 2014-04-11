@@ -8,7 +8,7 @@
        <controls-button disabled="!isMutable" icon="remove" tt-key="koulutus.review.poista" action="doDelete()"></controls-button>
        <controls-button disabled="!isMutable" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
         <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
-        <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenNimi()]"></controls-notify>
+        <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenJaOrganisaationNimi()]"></controls-notify>
 
       <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 

@@ -89,6 +89,7 @@ public interface KomoV1Resource {
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
             @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
             @QueryParam("koulutusmoduuliTyyppi") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            @QueryParam("koulutuskoodiUri") String koulutuskoodiUri,
             @QueryParam("tila") String tila
     );
 

@@ -95,7 +95,13 @@ app.controller('HakukohdeEditController',
 
     $scope.model.hakuaikas = [];
 
-    $scope.model.modifiedObj = {};
+    $scope.model.modifiedObj = {
+
+        modifiedBy : '',
+        modified : '',
+        tila : ''
+
+    };
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
@@ -190,19 +196,19 @@ app.controller('HakukohdeEditController',
 
 
     var updateTilaModel = function(hakukohde) {
-
         if (hakukohde) {
             $scope.model.modifiedObj.modifiedBy = hakukohde.modifiedBy;
             $scope.model.modifiedObj.modified = hakukohde.modified;
             $scope.model.modifiedObj.tila = hakukohde.tila;
         }
 
-    }
+
+    };
 
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
-    }
+    };
 
     var checkCanCreateOrEditHakukohde = function() {
 
@@ -560,9 +566,6 @@ app.controller('HakukohdeEditController',
         koulutusSet.clear();
         TarjontaService.haeKoulutukset(spec).then(function(data){
 
-
-            $log.debug('KOULUTUKSET : ', data);
-
             var tarjoajaOidsSet = new buckets.Set();
 
 
@@ -627,26 +630,6 @@ app.controller('HakukohdeEditController',
 
                     $log.debug('ORGANISAATIO NIMET : ', $scope.model.organisaatioNimet);
                 });
-
-
-
-                /*var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
-                //When organisaatio is loaded set the liitteiden toimitusosoite on the model
-                orgPromise.then(function(data){
-
-                    $log.debug('ORGANISAATIO DATA : ', data);
-                    var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
-
-                    if (wasHakutoimistoFound) {
-                        deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
-                    } else {
-                        tryGetParentsApplicationOffice(data);
-                    }
-
-
-
-                });*/
-
 
 
             }
@@ -1193,6 +1176,7 @@ app.controller('HakukohdeEditController',
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                    console.log('HAKUKOHDE RESULT : ', hakukohde);
                     updateTilaModel($scope.model.hakukohde);
                     showSuccess();
                 } else {
@@ -1234,14 +1218,6 @@ app.controller('HakukohdeEditController',
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
 
-
-           /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-            }
-
-            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.soraKuvaukset = {};
-            }  */
         //Check if hakukohde is copy, then remove oid and save hakukohde as new
         checkIsCopy(luonnosVal);
         if ($scope.model.hakukohde.oid === undefined) {

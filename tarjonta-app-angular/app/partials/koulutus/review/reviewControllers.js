@@ -14,11 +14,12 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
         }
 
         //käyttöoikeudet
-        PermissionService.koulutus.canEdit(koulutusModel.komotoOid).then(function(data) {
+        PermissionService.koulutus.canEdit(koulutusModel.oid).then(function(data) {
             $scope.isMutable = data;
         });
         $scope.formControls = {};
         $scope.model = {
+            header: {}, //review.html otsikkon tiedot
             koodistoLocale: LocalisationService.getLocale(),
             routeParams: $routeParams,
             collapse: {
@@ -98,7 +99,14 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             $scope.parents = parents;
             $log.debug("parents:", parents);
         });
-        $scope.lisatiedot = KoulutusConverterFactory.KUVAUS_ORDER;
+
+        $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.koulutusasteTyyppi].KUVAUS_ORDER;
+        if (koulutusModel.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
+            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
+        } else if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
+            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri];
+        }
+
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
             if (typeof boolIsKomo !== 'boolean') {
@@ -160,28 +168,28 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             checkIsOkToRemoveHakukohde(hakukohde);
             /*
              if (checkIsOkToRemoveHakukohde(hakukohde)) {
-
+             
              var texts = {
              title: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.title"),
              description: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.desc"),
              ok: LocalisationService.t("ok"),
              cancel: LocalisationService.t("cancel")
              };
-
+             
              var d = dialogService.showDialog(texts);
              d.result.then(function(data){
              if (data) {
              reallyRemoveHakukohdeFromKoulutus(hakukohde);
-
+             
              }
              });
-
-
+             
+             
              } else {
-
+             
              $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
              $scope.model.showError = true;
-
+             
              }   */
 
         }
@@ -264,16 +272,16 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             //example : https://<oppija-env>/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640?lang=fi
         };
 
-        $scope.findHakukohdeNimi = function(lang,hakukohde) {
+        $scope.findHakukohdeNimi = function(lang, hakukohde) {
 
-        var hakukohdeNimi;
-        var fallbackLang = "fi";
+            var hakukohdeNimi;
+            var fallbackLang = "fi";
 
             //Try to get hakukohde nimi with tab language
-            for(var language in hakukohde.nimi) {
-                  if (lang.locale.toUpperCase() === language.toUpperCase()) {
-                      hakukohdeNimi = hakukohde.nimi[language];
-                  }
+            for (var language in hakukohde.nimi) {
+                if (lang.locale.toUpperCase() === language.toUpperCase()) {
+                    hakukohdeNimi = hakukohde.nimi[language];
+                }
 
             }
             //If not found then try to find in Finnish
@@ -281,7 +289,7 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
                 hakukohdeNimi = hakukohde.nimi[fallbackLang];
 
                 //If even that is not found, just get some name
-                if (hakukohdeNimi === undefined) {
+                if (hakukohdeNimi === undefined || hakukohdeNimi.trim().length < 1) {
 
                     for (var fooLang in hakukohde.nimi) {
                         hakukohdeNimi = hakukohde.nimi[fooLang];

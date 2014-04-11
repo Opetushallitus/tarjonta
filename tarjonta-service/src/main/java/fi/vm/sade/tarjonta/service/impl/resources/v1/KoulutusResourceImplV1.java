@@ -256,7 +256,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private ResultV1RDTO<KoulutusV1RDTO> postLukioKoulutus(KoulutusLukioV1RDTO dto) {
-        validateRestObjectKorkeakouluDTO(dto);
+        validateRestObjectLukioDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
@@ -388,6 +388,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
+        Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
+        final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
+        Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
+    }
+    
+     private void validateRestObjectLukioDTO(final KoulutusV1RDTO dto) {
+        Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
+        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
         Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());

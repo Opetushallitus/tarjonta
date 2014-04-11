@@ -482,7 +482,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
     
     public Set<WebLinkki> getLinkkis() {
-        return Collections.unmodifiableSet(linkkis);
+        return linkkis;
     }
 
     /**
@@ -797,7 +797,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
     
     public Set<KoodistoUri> getLukiodiplomit() {
-        return Collections.unmodifiableSet(lukiodiplomit);
+        return lukiodiplomit;
     }
     
     public void addLukiodiplomi(KoodistoUri lukiodiplomi) {

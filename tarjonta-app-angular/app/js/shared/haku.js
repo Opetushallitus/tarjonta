@@ -175,11 +175,11 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 "koulutuksenAlkamisVuosi": 1900 + new Date().getYear(),
                 "koulutuksenAlkamiskausiUri": "",
                 "tila": "LUONNOS",
-                "sijoittelu": false,
+                "sijoittelu": true,
                 "hakuaikas": [{
                         "nimi": "",
-                        "alkuPvm": new Date().getTime(),
-                        "loppuPvm": new Date().getTime()
+                        "alkuPvm": null,
+                        "loppuPvm": null
                     }],
                 "hakukohdeOids": [],
                 "modified": new Date().getTime(),
@@ -189,7 +189,8 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                     "kieli_sv": "",
                     "kieli_en": ""
                 },
-                "maxHakukohdes": 0
+                "maxHakukohdes": 0,
+                "usePriority" : true
                         // "hakulomakeUri" : "http://www.hut.fi",
             }
         };

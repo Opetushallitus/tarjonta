@@ -324,7 +324,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
         // Or hakujen hallinta crud then?
         // TODO add organisation check for hakujenhallinta org!
-        userCanDeleteHalku = userCanDeleteHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+        userCanDeleteHalku = userCanDeleteHalku || hakujenHallintaPermissionServiceWrapped.userCanCreateReadUpdateAndDelete();
 
         LOGGER.info("userCanDeleteHaku:" + userCanDeleteHalku);
         return userCanDeleteHalku;
@@ -351,7 +351,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
         // Or hakujen hallinta crud then?
         // TODO add organisation check for hakujenhallinta org!
-        userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+        userCanCreateHalku = userCanCreateHalku || hakujenHallintaPermissionServiceWrapped.userCanCreateReadUpdateAndDelete();
 
         LOGGER.info("userCanCreateHaku:" + userCanCreateHalku);
         return userCanCreateHalku;
@@ -381,7 +381,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
         // Or hakujen hallinta Update access?
         // TODO add organisation check for hakujenhallinta org!
-        userCanUpdateHalku = userCanUpdateHalku || hakujenHallintaPermissionServiceWrapped.checkAccess(hakujenHallintaPermissionServiceWrapped.ROLE_RU);
+        userCanUpdateHalku = userCanUpdateHalku || hakujenHallintaPermissionServiceWrapped.userCanReadAndUpdate();
 
         LOGGER.info("userCanUpdateHaku:" + userCanUpdateHalku);
         return userCanUpdateHalku;
