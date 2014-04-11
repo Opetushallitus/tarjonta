@@ -4,7 +4,7 @@
         dto="model.koulutus">
 
         <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
-        <controls-button disabled="!isMutable" icon="remove" tt-key="koulutus.review.poista" action="doDelete($event)"></controls-button>
+        <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete($event)"></controls-button>
         <controls-button disabled="!isMutable" tt-key="koulutus.review.kopioi" action="doCopy($event)"></controls-button>
         <!--
         <controls-button tt-key="koulutus.review.siirra.osaksi" action="doMoveToBeSubPart($event)"></controls-button>
