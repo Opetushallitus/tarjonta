@@ -6,7 +6,9 @@ angular
 
     .factory(
         'ParameterService',
-        function($q, $resource, $log, Config) {
+        function($q, $resource, $log, Config, $injector) {
+          
+          var loadingService = $injector.get('loadingService')
 
           $log = $log.getInstance("ParameterService");
 
@@ -45,6 +47,7 @@ angular
             templatet.get(hakuehdot, function(result) {
               ret.resolve(result);
             }, function(err) {
+              loadingService.onErrorHandled();
               console.error("Error loading template data", err);
             });
             return ret.promise;
@@ -56,6 +59,7 @@ angular
             parametrit.get(hakuehdot, function(result) {
               ret.resolve(result);
             }, function(err) {
+              loadingService.onErrorHandled();
               console.error("Error loading data", err);
             });
             return ret.promise;

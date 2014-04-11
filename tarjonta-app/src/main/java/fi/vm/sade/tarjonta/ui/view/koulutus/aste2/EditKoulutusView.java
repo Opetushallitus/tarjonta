@@ -179,7 +179,19 @@ public class EditKoulutusView extends AbstractVerticalLayout {
 
             boolean hakuStarted = false;
             for (HakukohdePerustieto hakukohdePerustieto : hakukohteetVastaus.getHakukohteet()) {
-                hakuStarted = checkHakuStarted(hakukohdePerustieto.getHakuAlkamisPvm(),hakukohdePerustieto.getHakutyyppiUri());
+
+                if (hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutapaErillishaku)
+                        || hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutyyppiLisahakuUrl)) {
+
+                    hakuStarted = false;
+
+                } else {
+
+                    hakuStarted = checkHakuStarted(hakukohdePerustieto.getHakuAlkamisPvm(),hakukohdePerustieto.getHakutyyppiUri());
+
+                }
+
+
             }
 
 

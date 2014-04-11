@@ -142,6 +142,13 @@ public class Haku extends TarjontaBaseEntity {
      */
     private String tarjoajaOid;
 
+
+    /**
+     * If this is true, then the hakukohde choises users make should be arranged in priority order.
+     */
+    private boolean usePriority = false;
+    
+    
     public String getOid() {
         return oid;
     }
@@ -441,5 +448,13 @@ public class Haku extends TarjontaBaseEntity {
             this.tarjoajaOid = StringUtils.join(organisationOids, ",");
         }
     }
+
+    public boolean isUsePriority() {
+        return usePriority;
+    }
+
+    public void setUsePriority(boolean usePriority) {
+        this.usePriority = usePriority;
+    }    
 
 }
