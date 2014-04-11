@@ -22,7 +22,7 @@ app.controller('BaseEditController',
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
-                    converter.createUiModels(uiModel);
+                    converter.createUiModels(uiModel, 'KORKEAKOULUTUS');
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -32,7 +32,7 @@ app.controller('BaseEditController',
                          * SHOW KOULUTUS BY GIVEN KOMOTO OID
                          */
                         $scope.controlFormMessages(uiModel, "SHOW");
-                        $scope.lisatiedot = converter.KUVAUS_ORDER;
+                        $scope.lisatiedot = converter.STRUCTURE.KORKEAKOULUTUS.KUVAUS_ORDER;
                         model = $route.current.locals.koulutusModel.result;
 
                         if (angular.isUndefined(model)) {
@@ -46,7 +46,7 @@ app.controller('BaseEditController',
                         
                         PermissionService.koulutus.canEdit(model.komotoOid).then(function(data) {
                             $log.debug("setting mutable to:", data);
-                            $scope.uiModel.isMutable = data;
+                            uiModel.isMutable = data;
                         });
 
                         $scope.updateFormStatusInformation(model);
@@ -67,7 +67,7 @@ app.controller('BaseEditController',
                          * Load data to mltiselect fields
                          * remove version data from the list
                          */
-                        angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                        angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.MCOMBO, function(value, key) {
                             if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
                                 uiModel[key].uris = _.keys(model[key].uris);
                             } else {
@@ -83,7 +83,7 @@ app.controller('BaseEditController',
                          */
                         uiModel.isMutable = true; 
                         $scope.controlFormMessages(uiModel, "INIT");
-                        converter.createAPIModel(model, cfg.app.userLanguages);
+                        converter.createAPIModel(model, cfg.app.userLanguages, "KORKEAKOULUTUS");
                         $scope.loadRelationKoodistoData(model, uiModel, $routeParams.koulutuskoodi);
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
@@ -96,7 +96,7 @@ app.controller('BaseEditController',
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.COMBO, function(value, key) {
                         if (angular.isUndefined(value.skipUiModel)) {
                             var koodisPromise = koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
                             uiModel[key].promise = koodisPromise;
@@ -105,7 +105,7 @@ app.controller('BaseEditController',
                             });
                         }
                     });
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.MCOMBO, function(value, key) {
                         if (angular.isUndefined(cfg.env[value.koodisto])) {
                             throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
                         }
@@ -210,11 +210,11 @@ app.controller('BaseEditController',
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
                     TarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
-                        angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
+                        angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.RELATION, function(value, key) {
                             apiModel[key] = restRelationData[key];
                         });
 
-                        angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                        angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.RELATIONS, function(value, key) {
                             uiModel[key].meta = restRelationData[key].meta;
 
                             if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
@@ -266,7 +266,7 @@ app.controller('BaseEditController',
                                 $scope.updateFormStatusInformation($scope.model);
                                 $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
-                                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                                $scope.lisatiedot = converter.STRUCTURE.KORKEAKOULUTUS.KUVAUS_ORDER;
                                 $scope.$broadcast("onImageUpload", ""); //save images
                             } else {
                                 $scope.controlFormMessages($scope.uiModel, "ERROR", null, saveResponse.errors);
@@ -302,7 +302,7 @@ app.controller('BaseEditController',
                      * Convert koodisto komponent object to back-end object format.
                      */
                     //single select nodels
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.COMBO, function(value, key) {
                         //search version information for list of uris;
 
                         var koodis = $scope.uiModel[key].koodis;
@@ -317,7 +317,7 @@ app.controller('BaseEditController',
                         }
                     });
 
-                    angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.RELATIONS, function(value, key) {
                         if (angular.isUndefined(value.skipApiModel)) {
                             apiModel[key] = {'uris': {}};
                             //search version information for list of uris;
@@ -333,7 +333,7 @@ app.controller('BaseEditController',
                     });
 
                     //multi-select models, add version to the koodi
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS.MCOMBO, function(value, key) {
                         apiModel[key] = {'uris': {}};
                         //search version information for list of uris;
                         var map = {};
@@ -357,7 +357,7 @@ app.controller('BaseEditController',
                     }
 
                     //remove all meta data fields, if any
-                    angular.forEach(converter.STRUCTURE, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.KORKEAKOULUTUS, function(value, key) {
                         if ('MLANG' !== key) {
                             //MLANG objects needs the meta fields
                             angular.forEach(value, function(value, key) {

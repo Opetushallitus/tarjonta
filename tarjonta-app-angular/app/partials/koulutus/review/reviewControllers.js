@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'KoulutusConverterFactoryLukio', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, KoulutusConverterFactoryLukio, HakukohdeKoulutukses, SharedStateService, AuthService) {
+app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
+    function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
 
         $log = $log.getInstance("BaseReviewController");
 
@@ -100,11 +100,10 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             $log.debug("parents:", parents);
         });
 
+        $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.koulutusasteTyyppi].KUVAUS_ORDER;
         if (koulutusModel.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
-            $scope.lisatiedot = KoulutusConverterFactory.KUVAUS_ORDER;
             $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
         } else if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
-            $scope.lisatiedot = KoulutusConverterFactoryLukio.KUVAUS_ORDER;
             $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri];
         }
 

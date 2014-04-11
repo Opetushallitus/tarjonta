@@ -1,7 +1,7 @@
 var app = angular.module('app.edit.ctrl.lukio', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('LukioEditController',
         ['$q', '$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'KoulutusConverterFactoryLukio', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function LukioEditController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, Koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
@@ -29,7 +29,7 @@ app.controller('LukioEditController',
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
-                    converter.createUiModels(uiModel);
+                    converter.createUiModels(uiModel, 'LUKIOKOULUTUS');
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -39,7 +39,7 @@ app.controller('LukioEditController',
                          * SHOW KOULUTUS BY GIVEN KOMOTO OID
                          */
                         $scope.controlFormMessages(uiModel, "SHOW");
-                        $scope.lisatiedot = converter.KUVAUS_ORDER;
+                        $scope.lisatiedot = converter.STRUCTURE.LUKIOKOULUTUS.KUVAUS_ORDER;
                         model = $route.current.locals.koulutusModel.result;
 
                         if (angular.isUndefined(model)) {
@@ -53,7 +53,7 @@ app.controller('LukioEditController',
 
                         PermissionService.koulutus.canEdit(model.oid).then(function(data) {
                             $log.debug("setting mutable to:", data);
-                            $scope.uiModel.isMutable = data;
+                            uiModel.isMutable = data;
                         });
 
                         $scope.updateFormStatusInformation(model);
@@ -72,7 +72,7 @@ app.controller('LukioEditController',
                          * Load data to mltiselect fields
                          * remove version data from the list
                          */
-                        angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                        angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.MCOMBO, function(value, key) {
                             if (angular.isDefined(model[key])) {
                                 if (angular.isDefined(value.types)) {
                                     uiModel[key] = {};
@@ -101,7 +101,7 @@ app.controller('LukioEditController',
                          */
                         uiModel.isMutable = true;
                         $scope.controlFormMessages(uiModel, "INIT");
-                        converter.createAPIModel(model, cfg.app.userLanguages);
+                        converter.createAPIModel(model, cfg.app.userLanguages, "LUKIOKOULUTUS");
 
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
@@ -138,7 +138,7 @@ app.controller('LukioEditController',
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.COMBO, function(value, key) {
                         if (angular.isUndefined(value.skipUiModel)) {
                             var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
                             uiModel[key].promise = koodisPromise;
@@ -147,7 +147,7 @@ app.controller('LukioEditController',
                             });
                         }
                     });
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.MCOMBO, function(value, key) {
                         if (angular.isUndefined(cfg.env[value.koodisto])) {
                             throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
                         }
@@ -258,7 +258,7 @@ app.controller('LukioEditController',
                                 languageCode: $scope.koodistoLocale
                             }, function(data) {
                         var restRelationData = data.result;
-                        angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
+                        angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.RELATION, function(value, key) {
                             if (angular.isDefined(value.module) && tutkintoTyyppi === 'TUTKINTO' && tutkintoTyyppi === value.module) {
                                 apiModel[key] = restRelationData[key];
                             } else if (angular.isDefined(value.module) && tutkintoTyyppi === 'TUTKINTO_OHJELMA' && tutkintoTyyppi === value.module) {
@@ -310,7 +310,7 @@ app.controller('LukioEditController',
                                 $scope.updateFormStatusInformation($scope.model);
                                 $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
-                                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                                $scope.lisatiedot = converter.STRUCTURE.LUKIOKOULUTUS.KUVAUS_ORDER;
                             } else {
                                 $scope.controlFormMessages($scope.uiModel, "ERROR", null, saveResponse.errors);
                             }
@@ -347,7 +347,7 @@ app.controller('LukioEditController',
                      * Convert Koodisto komponent object to back-end object format.
                      */
                     //single select nodels
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.COMBO, function(value, key) {
                         //search version information for list of uris;
 
                         var koodis = $scope.uiModel[key].koodis;
@@ -362,7 +362,7 @@ app.controller('LukioEditController',
                         }
                     });
 
-                    angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.RELATIONS, function(value, key) {
                         if (angular.isUndefined(value.skipApiModel)) {
                             apiModel[key] = {'uris': {}};
                             //search version information for list of uris;
@@ -378,7 +378,7 @@ app.controller('LukioEditController',
                     });
 
                     //multi-select models, add version to the koodi
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.MCOMBO, function(value, key) {
 
                         if (angular.isDefined(value.types)) {
                             apiModel[key] = {};
@@ -418,7 +418,7 @@ app.controller('LukioEditController',
                     }
 
                     //remove all meta data fields, if any
-                    angular.forEach(converter.STRUCTURE, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS, function(value, key) {
                         if ('MLANG' !== key) {
                             //MLANG objects needs the meta fields
                             angular.forEach(value, function(value, key) {
