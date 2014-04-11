@@ -10,14 +10,24 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
 
     function controller($scope) {
 
+    	$scope.userLanguages = userLangs;
     	$scope.langs = [];
-        $scope.codes = {};
+        $scope.codes = null;
+        $scope.codeList = [];
+        
+        $scope.active = {};
+        $scope.active[$scope.selection] = true;
         
         if (!$scope.model) {
             $scope.model = [];
-        }       
+        }
         
         function updateLangs() {
+        	if ($scope.codes==null) {
+        		//console.log("UPDATE -> postpone");
+        		return;
+        	}
+        	//console.log("PRE UPDATE", [$scope.selection, $scope.langs, $scope.model]);
         	var ret = [];
         	
         	for (var i in $scope.model) {
@@ -45,17 +55,37 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
         	
         	$scope.langs = ret;
         	
-        	if (!$scope.selection) {
-        		$scope.selection = $scope.langs[0];
+        	if ($scope.selection===undefined || ($scope.selection===null && !$scope.mutable)) {
+        		$scope.onSelect($scope.langs.length==0 ? null : $scope.langs[0], false);
+        		console.log("Preselected:", [$scope.selection, $scope.langs]);
         	}
+        	//console.log("POST UPDATE", [$scope.selection, $scope.langs, $scope.model]);
         }
         
-        $scope.onSelect = function(kieli) {
+        $scope.onSelect = function(kieli, user) {
+        	if (user && $scope.codes==null) {
+        		return;
+        	}
+        	/*if (user) {
+            	console.log("UPDATE BY USER", kieli); 
+        	}*/
+        	for (var k in $scope.active) {
+        		$scope.active[k] = false;
+        	}
+        	$scope.active[kieli] = true;
         	$scope.selection = kieli;
         }
         
+        $scope.$watch("selection", function(nv, ov) {
+        	if (nv===ov || $scope.codes==null) {
+        		return;
+        	}
+        	$scope.onSelect(nv, false);
+        });
+        
         // kielikoodit koodistosta
         Koodisto.getAllKoodisWithKoodiUri("kieli", LocalisationService.getLocale()).then(function(v) {
+        	$scope.codeList = v;
             var nc = {};
             for (var i in v) {
                 nc[v[i].koodiUri] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
@@ -64,11 +94,15 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
             updateLangs();
         });
         
-        $scope.$watch("model", function(nv, ov){
-        	if (!angular.equals(ov,nv)) {
-                updateLangs();
+        var lastModel;
+        
+        $scope.$watch(function(){
+        	// oma watch-funktio koska muuten ei havaitse sisällöltään muuttunutta arrayta
+        	if (!angular.equals(lastModel, $scope.model)) {
+        		lastModel = angular.copy($scope.model);
         	}
-        });
+        	return lastModel;
+    	}, updateLangs);
         
     }
 
@@ -78,8 +112,11 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
         templateUrl: "js/shared/directives/mkTabs.html",
         controller: controller,
         scope: {
-            model: "=",			// lista kieliureista TAI syöte decode:lle
-            selection: "="		// valittu kieliuri
+            model: "=",			// lista kieliureista
+            selection: "=",		// valittu kieliuri
+            					//  - null == kielivalintatabi (jos mutable), muutoin sama kuin undefined
+            					//  - undefined == ensimmäinen kieli modelissa
+            mutable: "@",		// boolean: jos tosi, näytetään (tyhjä) kielivalintatabi (vakiona ei näytetä) jonka arvo on null
         }
     };
 
