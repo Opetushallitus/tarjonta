@@ -34,6 +34,10 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
             $scope.isCopy = false;
         }
 
+        $scope.formControls = {reloadDisplayControls: function() {
+        }}; // controls-layouttia varten
+
+
         $scope.canCreate = $route.current.locals.canCreate;
         $scope.canEdit =  $route.current.locals.canEdit;
 
