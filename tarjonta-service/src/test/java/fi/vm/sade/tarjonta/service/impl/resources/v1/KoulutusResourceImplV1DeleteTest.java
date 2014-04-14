@@ -49,6 +49,9 @@ import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.Assert;
+
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -183,10 +186,10 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
     private void deleteValidationTests(String persistedKomoOid, String persistedKomotoOid) {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
-        List<KoulutusPerustieto> perustiedot = Lists.<KoulutusPerustieto>newArrayList();
+        List<KoulutusPerustieto> perustiedot = Lists.newArrayList();
         kv.setKoulutukset(perustiedot);
 
-        ArrayList<String> children = Lists.<String>newArrayList();
+        ArrayList<String> children = Lists.newArrayList();
         children.add("komo_oid_children");
 
         expect(koulutusSisaltyvyysDAO.getChildren(persistedKomoOid)).andReturn(children);
@@ -296,4 +299,5 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         verify(koulutusSisaltyvyysDAO);
 
     }
+    
 }
