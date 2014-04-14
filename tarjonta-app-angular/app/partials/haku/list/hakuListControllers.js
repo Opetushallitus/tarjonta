@@ -79,40 +79,29 @@ app.controller('HakuListController',
 
                 $scope.doDelete = function(haku) {
                     $log.debug("doDelete()", haku);
-                    
-                    HakuV1Service.canDelete([haku.oid]).then(function(result) {
-                        $log.info("canDelete result", result);
+
+                    HakuV1Service.delete(haku.oid).then(function(result) {
+                        $log.info("delete result", result);
                         if (result.status == "OK") {
-                            HakuV1Service.delete(haku.oid).then(function(result) {
-                                $log.info("delete result", result);
-                                if (result.status == "OK") {
-                                    $log.info("SHOW DELETE DONE DIALOG");
-                                    dialogService.showSimpleDialog(
-                                            LocalisationService.t("haku.delete.ok"),
-                                            LocalisationService.t("haku.delete.ok.description"),
-                                            LocalisationService.t("ok"),
-                                            undefined);
-                                } else {
-                                    var errorMessage = "<ul>"
-                                    angular.forEach(result.errors, function(error) {
-                                        var msg = LocalisationService.t(error.errorMessageKey, error.errorMessageParameters);
-                                        errorMessage = errorMessage + "<li>" + msg + "</li>";
-                                    });
-                                    errorMessage = errorMessage + "</ul>";
-                                    var desciptionParams = [errorMessage];
-                                                                        
-                                    dialogService.showSimpleDialog(
-                                            LocalisationService.t("haku.delete.failed"),
-                                            LocalisationService.t("haku.delete.failed.description", desciptionParams),
-                                            LocalisationService.t("ok"),
-                                            undefined);
-                                }
-                            });
-                        } else {
-                            $log.info("SHOW CANNOT DELETE DIALOG");
+                            $log.info("SHOW DELETE DONE DIALOG");
                             dialogService.showSimpleDialog(
-                                    LocalisationService.t("haku.delete.canDelete.no"),
-                                    LocalisationService.t("haku.delete.canDelete.no.description"),
+                                    LocalisationService.t("haku.delete.ok"),
+                                    LocalisationService.t("haku.delete.ok.description"),
+                                    LocalisationService.t("ok"),
+                                    undefined);
+                            $scope.doSearch();
+                        } else {
+                            var errorMessage = "<ul>"
+                            angular.forEach(result.errors, function(error) {
+                                var msg = LocalisationService.t(error.errorMessageKey, error.errorMessageParameters);
+                                errorMessage = errorMessage + "<li>" + msg + "</li>";
+                            });
+                            errorMessage = errorMessage + "</ul>";
+                            var desciptionParams = [errorMessage];
+
+                            dialogService.showSimpleDialog(
+                                    LocalisationService.t("haku.delete.failed"),
+                                    LocalisationService.t("haku.delete.failed.description", desciptionParams),
                                     LocalisationService.t("ok"),
                                     undefined);
                         }
