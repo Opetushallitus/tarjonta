@@ -365,7 +365,6 @@ public class KoulutusValidator {
          * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
          */
         if (!komoto.getHakukohdes().isEmpty()) {
-
             Set<String> hakukohdeOids = Sets.<String>newHashSet();
 
             for(Entry<String, Integer> hkKoulutusCount: hkKoulutusMap.entrySet()) {
