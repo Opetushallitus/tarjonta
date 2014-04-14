@@ -189,14 +189,20 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         angular.forEach(kuvaukses,function(kuvaus){
 
             for (var prop in kuvaus.kuvauksenNimet) {
+
                 if (kuvaus.kuvauksenNimet.hasOwnProperty(prop)) {
 
                     if (prop.indexOf($scope.model.userLang)) {
-                        kuvaus.kuvauksenNimi = kuvaus.kuvauksenNimet[prop];
+                        if (kuvaus.kuvauksenNimet[prop] && kuvaus.kuvauksenNimet[prop].trim().length > 1) {
+                            kuvaus.kuvauksenNimi = kuvaus.kuvauksenNimet[prop];
+                        }
+
                     }
 
                 }
             }
+
+
 
         });
 
