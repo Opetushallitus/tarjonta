@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
+var app = angular.module('app.edit.ctrl');
 
 app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', '$routeParams', '$log',
     function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams, $log) {
