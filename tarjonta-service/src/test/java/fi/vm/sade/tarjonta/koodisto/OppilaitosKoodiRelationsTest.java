@@ -15,14 +15,23 @@
  */
 package fi.vm.sade.tarjonta.koodisto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.reflect.Whitebox;
+
 import com.google.common.collect.Lists;
+
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
@@ -31,217 +40,223 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import java.util.List;
-import org.powermock.reflect.Whitebox;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
- *
+ * 
  * @author jani
  */
 public class OppilaitosKoodiRelationsTest {
 
-    private static final String CORRECT_KOODI = "koulutustyyppi_3";
-    private static final String INVALID_KOODI = "koulutustyyppi_1234";
+    private static final String OPPILAITOSTYYPPI_LUKIO = "oppilaitostyyppi_15";
+    private static final String OPPILAITOSTYYPPI_AMK = "oppilaitostyyppi_41";
 
     private static final String OPH_OID = "1.2.246.562.10.00000000001";
     private static final String KOULUTUSTOIMIJA_OID = "1.2.246.562.10.70829532053";
-    private static final String OPPILAITOS_OID = "1.2.246.562.10.33517818648";
+    private static final String LUKIO_OID = "1.2.246.562.10.33517818648";
+    private static final String LUKIO_OPETUSPISTE_OID = "1.2.246.562.10.33517818658";
+    private static final String AMK_OID = "1.2.246.562.10.33517818649";
     private static final String OTHER_OID = "1.2.246.562.10.xxxxxxx1";
+    private static final String KOULUTUSTYYPPI_LUKIOKOULUTUS = "koulutustyyppi_2";
+    private static final String KOULUTUSTYYPPI_KORKEAKOULUTUS = "koulutustyyppi_3";
 
-    private static final String PATH_OPPILAITOS = "|" + OPH_OID + "|" + KOULUTUSTOIMIJA_OID + "|" + OPPILAITOS_OID + "|";
+    private static final String PATH_LUKIO = "|" + OPH_OID + "|"
+            + KOULUTUSTOIMIJA_OID + "|" + LUKIO_OID + "|";
+    private static final String PATH_AMK = "|" + OPH_OID + "|"
+            + KOULUTUSTOIMIJA_OID + "|" + AMK_OID + "|";
     private static final String PATH_OPH = "|" + OPH_OID + "|";
-    private static final String PATH_KOULUTUSTOIMIJA = "|" + OPH_OID + "|" + KOULUTUSTOIMIJA_OID + "|";
-    private static final String PATH_INCORRECT = "|" + OPH_OID + "|" + KOULUTUSTOIMIJA_OID + "|" + OTHER_OID + "|" + "|" + OPPILAITOS_OID + "|";
+    private static final String PATH_KOULUTUSTOIMIJA = "|" + OPH_OID + "|"
+            + KOULUTUSTOIMIJA_OID + "|";
+    private static final String PATH_INCORRECT = "|" + OPH_OID + "|"
+            + KOULUTUSTOIMIJA_OID + "|" + OTHER_OID + "|" + "|" + LUKIO_OID
+            + "|";
+    private static final String PATH_LUKIO_OPETUSPISTE = "|" + OPH_OID + "|"
+            + KOULUTUSTOIMIJA_OID + "|" + LUKIO_OID + "|"
+            + LUKIO_OPETUSPISTE_OID + "|";;
 
     private TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
     private OrganisaatioService organisaatioServiceMock;
     private OppilaitosKoodiRelations instance;
 
-    private OrganisaatioDTO orgOph;
-    private OrganisaatioDTO orgOppilaitos;
-    private OrganisaatioDTO orgKoulutustoimija;
+    private OrganisaatioDTO OPH;
+    private OrganisaatioDTO AMK;
+    private OrganisaatioDTO LUKIO;
+    private OrganisaatioDTO KOULUTUSTOIMIJA;
     private OrganisaatioDTO orgOther;
+    private OrganisaatioDTO LUKIO_OPETUSPISTE;
 
     @Before
     public void setUp() {
         KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI = "koulutustyyppi";
 
-        orgOph = new OrganisaatioDTO();
-        orgOph.setOid(OPH_OID);
-        orgOph.setParentOidPath("");
-        orgOph.getTyypit().add(OrganisaatioTyyppi.MUU_ORGANISAATIO);
-        orgOph.setOppilaitosTyyppi("koulutustyyppi_yy");
+        OPH = new OrganisaatioDTO();
+        OPH.setOid(OPH_OID);
+        OPH.setParentOidPath(PATH_OPH);
+        OPH.getTyypit().add(OrganisaatioTyyppi.MUU_ORGANISAATIO);
+        OPH.setOppilaitosTyyppi("koulutustyyppi_yy");
 
-        orgKoulutustoimija = new OrganisaatioDTO();
-        orgKoulutustoimija.setOid(KOULUTUSTOIMIJA_OID);
-        orgKoulutustoimija.setParentOidPath(PATH_OPH);
-        orgKoulutustoimija.getTyypit().add(OrganisaatioTyyppi.KOULUTUSTOIMIJA);
-        orgKoulutustoimija.setOppilaitosTyyppi("koulutustyyppi_xx");
+        KOULUTUSTOIMIJA = new OrganisaatioDTO();
+        KOULUTUSTOIMIJA.setOid(KOULUTUSTOIMIJA_OID);
+        KOULUTUSTOIMIJA.setParentOidPath(PATH_KOULUTUSTOIMIJA);
+        KOULUTUSTOIMIJA.getTyypit().add(OrganisaatioTyyppi.KOULUTUSTOIMIJA);
+        KOULUTUSTOIMIJA.setOppilaitosTyyppi("koulutustyyppi_xx");
 
-        orgOppilaitos = new OrganisaatioDTO();
-        orgOppilaitos.setOid(OPPILAITOS_OID);
-        orgOppilaitos.setParentOidPath(PATH_KOULUTUSTOIMIJA);
-        orgOppilaitos.getTyypit().add(OrganisaatioTyyppi.OPPILAITOS);
-        orgOppilaitos.setOppilaitosTyyppi(CORRECT_KOODI);
+        // amk
+        AMK = new OrganisaatioDTO();
+        AMK.setOid(AMK_OID);
+        AMK.setParentOidPath(PATH_LUKIO);
+        AMK.getTyypit().add(OrganisaatioTyyppi.OPPILAITOS);
+        AMK.setOppilaitosTyyppi(OPPILAITOSTYYPPI_AMK);
+
+        // lukio
+        LUKIO = new OrganisaatioDTO();
+        LUKIO.setOid(LUKIO_OID);
+        LUKIO.setParentOidPath(PATH_AMK);
+        LUKIO.getTyypit().add(OrganisaatioTyyppi.OPPILAITOS);
+        LUKIO.setOppilaitosTyyppi(OPPILAITOSTYYPPI_LUKIO);
+
+        // lukion opetuspiste
+        LUKIO_OPETUSPISTE = new OrganisaatioDTO();
+        LUKIO_OPETUSPISTE.setOid(LUKIO_OPETUSPISTE_OID);
+        LUKIO_OPETUSPISTE.setParentOidPath(PATH_LUKIO_OPETUSPISTE);
+        LUKIO_OPETUSPISTE.getTyypit().add(OrganisaatioTyyppi.OPETUSPISTE);
 
         orgOther = new OrganisaatioDTO();
         orgOther.setOid(OTHER_OID);
         orgOther.setParentOidPath(PATH_INCORRECT);
         orgOther.getTyypit().add(OrganisaatioTyyppi.MUU_ORGANISAATIO);
-        orgOther.setOppilaitosTyyppi(CORRECT_KOODI);
 
-        organisaatioServiceMock = createMock(OrganisaatioService.class);
-        tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
+        organisaatioServiceMock = Mockito.mock(OrganisaatioService.class);
+        tarjontaKoodistoHelperMock = Mockito.mock(TarjontaKoodistoHelper.class);
 
         instance = new OppilaitosKoodiRelations();
-        Whitebox.setInternalState(instance, "organisaatioService", organisaatioServiceMock);
-        Whitebox.setInternalState(instance, "tarjontaKoodistoHelper", tarjontaKoodistoHelperMock);
+        Whitebox.setInternalState(instance, "organisaatioService",
+                organisaatioServiceMock);
+        Whitebox.setInternalState(instance, "tarjontaKoodistoHelper",
+                tarjontaKoodistoHelperMock);
         Whitebox.setInternalState(instance, "rootOphOid", OPH_OID);
+
+        // stub data
+        Mockito.stub(organisaatioServiceMock.findByOid(LUKIO_OID)).toReturn(LUKIO);
+        Mockito.stub(organisaatioServiceMock.findByOid(LUKIO_OPETUSPISTE_OID)).toReturn(LUKIO_OPETUSPISTE);
+        Mockito.stub(organisaatioServiceMock.findByOid(AMK_OID)).toReturn(AMK);
+        Mockito.stub(organisaatioServiceMock.findByOid(OPH_OID)).toReturn(OPH);
+        Mockito.stub(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID))
+                .toReturn(KOULUTUSTOIMIJA);
+        
+        Mockito.stub(organisaatioServiceMock.findChildrenOidsByOid(Mockito.any(OrganisaatioSearchOidType.class))).toAnswer(new Answer<OrganisaatioOidListType>() {
+            @Override
+            public OrganisaatioOidListType answer(InvocationOnMock invocation)
+                    throws Throwable {
+                Object[] args = invocation.getArguments();
+                OrganisaatioSearchOidType o = (OrganisaatioSearchOidType)args[0];
+                String oid = o.getSearchOid();
+                if(AMK_OID.equals(oid)) {
+                    return oidlist();
+                }
+                if(LUKIO_OID.equals(oid)) {
+                    return oidlist(LUKIO_OPETUSPISTE_OID);
+                }
+                if(KOULUTUSTOIMIJA_OID.equals(oid)) {
+                    return oidlist(AMK_OID, LUKIO_OID);
+                }
+                return oidlist(); //empty list
+            }
+
+            private OrganisaatioOidListType oidlist(String... oids) {
+                OrganisaatioOidListType t = new OrganisaatioOidListType();
+                for(String oid: oids) {
+                    t.getOrganisaatioOidList().add(new OrganisaatioOidType(oid));
+                }
+                return t;
+            }
+        });
+        
+        Mockito.stub(tarjontaKoodistoHelperMock.getKoodistoRelations(
+                        OPPILAITOSTYYPPI_LUKIO,
+                        KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI,
+                        SuhteenTyyppiType.SISALTYY, false)).toReturn(
+                createKoodis(KOULUTUSTYYPPI_LUKIOKOULUTUS));
+        
+        Mockito.stub(
+                tarjontaKoodistoHelperMock.getKoodistoRelations(
+                        OPPILAITOSTYYPPI_AMK,
+                        KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI,
+                        SuhteenTyyppiType.SISALTYY, false)).toReturn(
+                createKoodis(KOULUTUSTYYPPI_KORKEAKOULUTUS));
     }
 
     @Test
     public void testSplitOrganisationPath() {
-        List<String> splitOrganisationPath = OppilaitosKoodiRelations.splitOrganisationPath(PATH_OPPILAITOS);
+        List<String> splitOrganisationPath = OppilaitosKoodiRelations
+                .splitOrganisationPath(PATH_LUKIO);
 
         assertEquals(OPH_OID, splitOrganisationPath.get(0));
         assertEquals(KOULUTUSTOIMIJA_OID, splitOrganisationPath.get(1));
-        assertEquals(OPPILAITOS_OID, splitOrganisationPath.get(2));
+        assertEquals(LUKIO_OID, splitOrganisationPath.get(2));
 
         assertEquals(3, splitOrganisationPath.size());
 
-        splitOrganisationPath = OppilaitosKoodiRelations.splitOrganisationPath("|" + OPH_OID + "|");
+        splitOrganisationPath = OppilaitosKoodiRelations
+                .splitOrganisationPath("|" + OPH_OID + "|");
         assertEquals(1, splitOrganisationPath.size());
     }
 
     @Test
     public void testIsKoulutusAllowedForOrganisationNotFound() {
-        expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(null);
-
-        replay(tarjontaKoodistoHelperMock);
-        replay(organisaatioServiceMock);
-
-        boolean result = instance.isKoulutusAllowedForOrganisation(OPPILAITOS_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-
-        verify(tarjontaKoodistoHelperMock);
-        verify(organisaatioServiceMock);
-
-        assertFalse(result);
-
-        OrganisaatioDTO organisaatioDTO = new OrganisaatioDTO();
-        organisaatioDTO.setOid(OPH_OID);
-    }
-
-    @Test
-    public void testIsKoulutusAllowedForOrganisationSearchSuccessQuick() {
-        expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(2);
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
-
-        replay(tarjontaKoodistoHelperMock);
-        replay(organisaatioServiceMock);
-
-        final boolean result = instance.isKoulutusAllowedForOrganisation(OPPILAITOS_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-
-        verify(tarjontaKoodistoHelperMock);
-        verify(organisaatioServiceMock);
-
-        assertTrue(result);
-    }
-
-    @Test
-    public void testIsKoulutusAllowedForOrganisationSearchFailKoodiUri() {
-        //not correct koodi result
-
-        expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(3);
-        expect(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID)).andReturn(orgKoulutustoimija).times(1);
-        expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(new OrganisaatioOidListType());
-
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(INVALID_KOODI)).times(2);
-
-        replay(tarjontaKoodistoHelperMock);
-        replay(organisaatioServiceMock);
-
-        final boolean result = instance.isKoulutusAllowedForOrganisation(OPPILAITOS_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-
-        verify(tarjontaKoodistoHelperMock);
-        verify(organisaatioServiceMock);
-
+        boolean result = instance.isKoulutusAllowedForOrganisation("FOO",
+                KoulutusasteTyyppi.KORKEAKOULUTUS);
         assertFalse(result);
     }
 
     @Test
-    public void testIsKoulutusAllowedForOrganisationSearchFailInvalidKoulustuasteTyyppi() {
-        //not correct koodi result
+    public void testCorrectTypeOppilaitos() {
+        final boolean result = instance.isKoulutusAllowedForOrganisation(
+                AMK_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
+        assertTrue(result);
+    }
 
-        expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(3);
-        expect(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID)).andReturn(orgKoulutustoimija).times(1);
-        expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(new OrganisaatioOidListType());
-
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI)).times(2);
-
-        replay(tarjontaKoodistoHelperMock);
-        replay(organisaatioServiceMock);
-
-        final boolean result = instance.isKoulutusAllowedForOrganisation(OPPILAITOS_OID, KoulutusasteTyyppi.LUKIOKOULUTUS);
-
-        verify(tarjontaKoodistoHelperMock);
-        verify(organisaatioServiceMock);
-
+    @Test
+    public void testIncorrectTypeOppilaitos() {
+        final boolean result = instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
         assertFalse(result);
     }
 
     @Test
-    public void testIsKoulutusAllowedForOrganisationSearchSuccessKoulutustoimija() {
-        expect(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID)).andReturn(orgKoulutustoimija).times(2);
-        //KOULUTUSTOIMIJA_OID
-        OrganisaatioOidListType oids = new OrganisaatioOidListType();
-        oids.getOrganisaatioOidList().add(new OrganisaatioOidType(OPPILAITOS_OID));
-        expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(oids);
-
-        expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(1);;
-
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
-
-        replay(tarjontaKoodistoHelperMock);
-        replay(organisaatioServiceMock);
-
-        final boolean result = instance.isKoulutusAllowedForOrganisation(KOULUTUSTOIMIJA_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-
-        verify(tarjontaKoodistoHelperMock);
-        verify(organisaatioServiceMock);
-
+    public void testCorrectTypeOpetuspiste() {
+        final boolean result = instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OPETUSPISTE_OID, KoulutusasteTyyppi.LUKIOKOULUTUS);
         assertTrue(result);
     }
 
     @Test
-    public void testIsKoulutusAllowedForOrganisationSearchSuccessKoulutustoimijaOppilaitos() {
-        expect(organisaatioServiceMock.findByOid(OTHER_OID)).andReturn(orgOther).times(3);
-        expect(organisaatioServiceMock.findByOid(KOULUTUSTOIMIJA_OID)).andReturn(orgKoulutustoimija);
+    public void testIncorrectTypeOpetuspiste() {
+        final boolean result = instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OPETUSPISTE_OID, KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS);
+        assertFalse(result);
+    }
 
-        //return empty resault
-        expect(organisaatioServiceMock.findChildrenOidsByOid(isA(OrganisaatioSearchOidType.class))).andReturn(new OrganisaatioOidListType());
-        expect(organisaatioServiceMock.findByOid(OPPILAITOS_OID)).andReturn(orgOppilaitos).times(1);
-
-        expect(tarjontaKoodistoHelperMock.getKoodistoRelations(CORRECT_KOODI, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false)).andReturn(createKoodis(CORRECT_KOODI));
-        replay(tarjontaKoodistoHelperMock);
-        replay(organisaatioServiceMock);
-
-        final boolean result = instance.isKoulutusAllowedForOrganisation(OTHER_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-
-        verify(tarjontaKoodistoHelperMock);
-        verify(organisaatioServiceMock);
-
+    @Test
+    public void testCorrectTypeKoulutustoimija() {
+        boolean result = instance.isKoulutusAllowedForOrganisation(
+                KOULUTUSTOIMIJA_OID, KoulutusasteTyyppi.LUKIOKOULUTUS);
         assertTrue(result);
+        result = instance.isKoulutusAllowedForOrganisation(KOULUTUSTOIMIJA_OID,
+                KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testIncorrectTypeKoulutustoimija() {
+        boolean result = instance.isKoulutusAllowedForOrganisation(
+                KOULUTUSTOIMIJA_OID,
+                KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+        assertFalse(result);
     }
 
     private List<KoodiType> createKoodis(final String koodiUri) {
-        List<KoodiType> koodis = Lists.<KoodiType>newArrayList();
+        List<KoodiType> koodis = Lists.<KoodiType> newArrayList();
         KoodiType koodiType = new KoodiType();
         koodiType.setKoodiUri(koodiUri);
         koodis.add(koodiType);
