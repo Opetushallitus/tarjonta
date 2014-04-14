@@ -268,32 +268,6 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
         },
         /*
-         @param {string} koodistouri from which koodis should be retrieved
-         @param {string} locale in which koodi name should be shown
-         @returns {array} array of koodisto view model objects
-         */
-
-        getKoodistoWithKoodiUri: function(koodiUriParam, locale) {
-
-            var returnKoodi = $q.defer();
-
-
-            var koodiUri = host + ":koodistoUri";
-
-            console.log('Calling getKoodistoWithKoodiUri with : ' + koodiUriParam + ' ' + locale);
-
-            var resource = $resource(koodiUri, {koodistoUri: '@koodistoUri'}, {cache: true}).query({koodistoUri: koodiUriParam}, function(data) {
-                var returnTarjontaKoodi = {
-                    koodistoUri: data.koodistoUri,
-                    tila: data.tila
-                };
-                returnKoodi.resolve(returnTarjontaKoodi);
-
-            });
-            console.log('Returning promise from getKoodistoWithKoodiUri');
-            return returnKoodi.promise;
-        },
-        /*
          @param {string} koodisto URI from which koodis should be retrieved
          @param {string} koodi URI from which koodi should be retrieved
          @param {string} locale in which koodi name should be shown
@@ -311,33 +285,43 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             return returnKoodi.promise;
         },
         searchKoodi: function(koodiUri, locale) {
+        	if (!koodiUri) {
+        		var ret = $q.defer();
+        		ret.resolve(null);
+        		return ret.promise;
+        	}
+        	
             locale = locale || "fi"; // default locale is finnish
-
-            var ret = $q.defer();
-            //          https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/searchKoodis?koodiUris=haunkohdejoukko_11
 
             if (koodiUri.indexOf('#') != -1) {
                 koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
             }
+            
+            return CacheService.lookup("koodi/" + koodiUri + "/" + locale, function(ret) {
 
-            var resourceUrl = host + "searchKoodis";
-            $resource(resourceUrl, {}, {'get': {method: 'GET', isArray: true}, cache: true}).get({koodiUris: koodiUri}, function(result) {
-                for (var i = 0; i < result.length; i++) {
-                    var koodi = result[i];
-                    var metadatas = koodi.metadata;
-                    var nimi = {};
-                    for (var j = 0; j < metadatas.length; j++) {
-                        var metadata = metadatas[j];
-                        nimi[metadata.kieli] = metadata.nimi;
+                //var ret = $q.defer();
+                 //          https://itest-virkailija.oph.ware.fi/koodisto-service/rest/json/searchKoodis?koodiUris=haunkohdejoukko_11
+
+                var resourceUrl = host + "searchKoodis";
+                $resource(resourceUrl, {}, {'get': {method: 'GET', isArray: true}, cache: true}).get({koodiUris: koodiUri}, function(result) {
+                    for (var i = 0; i < result.length; i++) {
+                        var koodi = result[i];
+                        var metadatas = koodi.metadata;
+                        var nimi = {};
+                        for (var j = 0; j < metadatas.length; j++) {
+                            var metadata = metadatas[j];
+                            nimi[metadata.kieli] = metadata.nimi;
+                        }
+                        ret.resolve(nimi[locale.toUpperCase()] || nimi.FI || nimi.EN || nimi.SV); //fallback
+
                     }
-                    ret.resolve(nimi[locale.toUpperCase()] || nimi.FI || nimi.EN || nimi.SV); //fallback
 
-                }
+                });
 
             });
 
 
-            return ret.promise;
+            //return ret.promise;
         }
 
     };
