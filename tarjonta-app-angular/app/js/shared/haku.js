@@ -17,7 +17,6 @@
 
 var app = angular.module('Haku', ['ngResource', 'config', 'Logging']);
 
-
 app.factory('HakuService', function($http, $q, Config, $log) {
 
         $log = $log.getInstance("HakuService");
@@ -199,11 +198,11 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
     var doDelete = function(oid) {
         $log.debug("doDelete(), oid = ", oid);
         
-        HakuV1.remove({oid : oid}).$promise.then(function(result) {
+        return HakuV1.remove({oid : oid}).$promise.then(function(result) {
             $log.info("doDelete() result = ", result);
             return result;
         });
-    }
+    };
 
   return {
     /**

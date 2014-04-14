@@ -77,38 +77,49 @@ app.controller('HakuListController',
                     $location.path("/haku/NEW");
                 };
 
+
                 $scope.doDelete = function(haku) {
-                    $log.debug("doDelete()", haku);
+                    $log.info("doDelete()", haku);
 
-                    HakuV1Service.delete(haku.oid).then(function(result) {
-                        $log.info("delete result", result);
-                        if (result.status == "OK") {
-                            $log.info("SHOW DELETE DONE DIALOG");
-                            dialogService.showSimpleDialog(
-                                    LocalisationService.t("haku.delete.ok"),
-                                    LocalisationService.t("haku.delete.ok.description"),
-                                    LocalisationService.t("ok"),
-                                    undefined);
-                            $scope.doSearch();
-                        } else {
-                            var errorMessage = "<ul>"
-                            angular.forEach(result.errors, function(error) {
-                                var msg = LocalisationService.t(error.errorMessageKey, error.errorMessageParameters);
-                                errorMessage = errorMessage + "<li>" + msg + "</li>";
-                            });
-                            errorMessage = errorMessage + "</ul>";
-                            var desciptionParams = [errorMessage];
-
-                            dialogService.showSimpleDialog(
-                                    LocalisationService.t("haku.delete.failed"),
-                                    LocalisationService.t("haku.delete.failed.description", desciptionParams),
-                                    LocalisationService.t("ok"),
-                                    undefined);
-                        }
+                    // Defined: "hakuControllers.js"
+                    $scope.doDeleteHaku(haku).then(function(result) {
+                        $scope.doSearch();
                     });
                     
-                    // dialogService.showNotImplementedDialog();
                 };
+
+//                $scope.doDelete = function(haku) {
+//                    $log.debug("doDelete()", haku);
+//
+//                    HakuV1Service.delete(haku.oid).then(function(result) {
+//                        $log.info("delete result", result);
+//                        if (result.status == "OK") {
+//                            $log.info("SHOW DELETE DONE DIALOG");
+//                            dialogService.showSimpleDialog(
+//                                    LocalisationService.t("haku.delete.ok"),
+//                                    LocalisationService.t("haku.delete.ok.description"),
+//                                    LocalisationService.t("ok"),
+//                                    undefined);
+//                            $scope.doSearch();
+//                        } else {
+//                            var errorMessage = "<ul>"
+//                            angular.forEach(result.errors, function(error) {
+//                                var msg = LocalisationService.t(error.errorMessageKey, error.errorMessageParameters);
+//                                errorMessage = errorMessage + "<li>" + msg + "</li>";
+//                            });
+//                            errorMessage = errorMessage + "</ul>";
+//                            var desciptionParams = [errorMessage];
+//
+//                            dialogService.showSimpleDialog(
+//                                    LocalisationService.t("haku.delete.failed"),
+//                                    LocalisationService.t("haku.delete.failed.description", desciptionParams),
+//                                    LocalisationService.t("ok"),
+//                                    undefined);
+//                        }
+//                    });
+//                    
+//                    // dialogService.showNotImplementedDialog();
+//                };
 
                 $scope.review = function(haku) {
                     $location.path("/haku/" + haku.oid);
