@@ -462,7 +462,103 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
                     ])}
             }
-        }};
+        }
+    };
+
+    factory.validateOutputData = function(m, koulutusasteTyyppi) {
+        if (factory.isNull(m.organisaatio) || factory.isNull(m.organisaatio.oid)) {
+            factory.throwError("Organisation OID is missing.");
+        }
+
+        //remove all meta data fields, if any
+        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi], function(value, key) {
+            if ('MLANG' !== key) {
+                //MLANG objects needs the meta fields
+                angular.forEach(value, function(value, key) {
+                    factory.deleteMetaField(m[key]);
+                });
+            }
+        });
+    };
+
+    factory.saveModelConverter = function(tila, pmodel, uiModel, koulutusasteTyyppi) {
+        var apiModel = angular.copy(pmodel);
+        apiModel.tila = tila;
+        factory.validateOutputData(apiModel, koulutusasteTyyppi);
+        /*
+         * DATA CONVERSIONS FROM UI MODEL TO API MODEL
+         * Convert person object to back-end object format.
+         */
+
+        apiModel.yhteyshenkilos = factory.convertPersonsUiModelToDto([uiModel.contactPerson, uiModel.ectsCoordinator]);
+        /*
+         * Convert Koodisto komponent object to back-end object format.
+         */
+        //single select nodels
+        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].COMBO, function(value, key) {
+            //search version information for list of uris;
+
+            var koodis = uiModel[key].koodis;
+            for (var i in koodis) {
+                if (koodis[i].koodiUri === apiModel[key].uri) {
+                    apiModel[key] = {
+                        uri: koodis[i].koodiUri,
+                        versio: koodis[i].koodiVersio
+                    };
+                    break;
+                }
+            }
+        });
+
+        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].RELATIONS, function(value, key) {
+            if (angular.isUndefined(value.skipApiModel)) {
+                apiModel[key] = {'uris': {}};
+                //search version information for list of uris;
+                var map = {};
+                var meta = uiModel[key].meta;
+                for (var i in meta) {
+                    map[meta[i].uri] = meta[i].versio;
+                }
+                angular.forEach(uiModel[key].uris, function(uri) {
+                    apiModel[key].uris[uri] = map[uri];
+                });
+            }
+        });
+
+        //multi-select models, add version to the koodi
+        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].MCOMBO, function(value, key) {
+
+            if (angular.isDefined(value.types)) {
+                apiModel[key] = {};
+                angular.forEach(value.types, function(type) {
+                    apiModel[key][type] = {'uris': {}};
+                    //search version information for list of uris;
+                    var map = {};
+                    var koodis = uiModel[key].koodis;
+                    for (var i in koodis) {
+                        map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                    }
+                    angular.forEach(uiModel[key][type].uris, function(uri) {
+                        apiModel[key][type].uris[uri] = map[uri];
+                    });
+                });
+            } else {
+                apiModel[key] = {'uris': {}};
+                //search version information for list of uris;
+                var map = {};
+                var koodis = uiModel[key].koodis;
+                for (var i in koodis) {
+                    map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                }
+                angular.forEach(uiModel[key].uris, function(uri) {
+                    apiModel[key].uris[uri] = map[uri];
+                });
+            }
+        });
+
+        $log.debug(JSON.stringify(apiModel));
+        return apiModel;
+    };
 
 
 

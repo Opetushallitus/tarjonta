@@ -228,10 +228,10 @@ app.controller('BaseEditController',
                  * TODO: strict data validation, exception handling and optimistic locking
                  */
                 $scope.saveLuonnos = function(tila) {
-                    $scope.saveByStatus('LUONNOS');
+                    $scope.saveByStatus('LUONNOS', 'LUKIOKOULUTUS');
                 };
                 $scope.saveValmis = function(tila) {
-                    $scope.saveByStatus('VALMIS');
+                    $scope.saveByStatus('VALMIS', 'LUKIOKOULUTUS');
                 };
                 $scope.saveByStatus = function(tila) {
                     $scope.controlFormMessages($scope.uiModel, "CLEAR");
