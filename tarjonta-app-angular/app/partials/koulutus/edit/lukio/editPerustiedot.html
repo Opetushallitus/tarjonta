@@ -1,10 +1,10 @@
-<table class="tarjontaForm"><!--pre>{{model| json }}</pre-->
+<table class="tarjontaForm"><!--pre>{{model.koulutuskoodi| json }}</pre-->
     <!-- koulutuskoodi -->
     <tr class="required">
         <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
         <td>
-            <select class="span5" ng-if="uiModel.tutkinto.length > 0" required name="koulutuskoodi" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'"></select>
-            <span ng-if="uiModel.tutkinto === Undefined || uiModel.tutkinto.length > 0">{{model.koulutuskoodi.nimi}} {{model.koulutuskoodi.arvo}}</span><!-- loaded -->
+            <select required class="span5" name="koulutuskoodi" ng-if="model.koulutuskoodi === Undefined || model.koulutuskoodi.arvo === Undefined" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'"></select>
+            <span ng-if="model.koulutuskoodi !== Undefined && model.koulutuskoodi.arvo !== Undefined">{{model.koulutuskoodi.nimi}} {{model.koulutuskoodi.arvo}}</span><!-- loaded -->
         </td>
         <td>
             <p class="error" ng-show="uiModel.koulutuskoodi && (koulutusForm.koulutuskoodi.$error.required || koulutusForm.koulutuskoodi.$error.required)"
@@ -16,7 +16,7 @@
     <tr class="required">
         <th tt="koulutus.edit.lukiolinja">Lukiolinja</th>
         <td>
-            <select required class="span5" ng-if="model.koulutusohjelma.nimi == Undefined" name="koulutusohjelma" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'"></select>
+            <select required class="span5" name="koulutusohjelma" ng-if="model.koulutusohjelma.nimi == Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'"></select>
             <span ng-if="model.koulutusohjelma.nimi != Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
 
         </td>

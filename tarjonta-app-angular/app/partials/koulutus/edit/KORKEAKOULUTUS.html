@@ -1,4 +1,4 @@
-<div id="editKoulutus" ng-controller="BaseEditController">
+<div id="editKoulutus" ng-controller="EditKorkeakouluController">
     <controls-model
         model="controlModel.formControls"
         tt-create="koulutus.edit.header.title"
@@ -29,10 +29,10 @@
         <button ng-click="" class="btn-invisible"></button>
         <tabset>
             <tab heading="{{t('koulutus.edit.perustiedot')}}">
-                <div ng-include="'partials/koulutus/edit/editPerustiedot.html'"></div>
+                <div ng-include="'partials/koulutus/edit/korkeakoulu/editPerustiedot.html'"></div>
             </tab>
             <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
-                <div ng-include="'partials/koulutus/edit/editLisatiedot.html'"></div>
+                <div ng-include="'partials/koulutus/edit/korkeakoulu/editLisatiedot.html'"></div>
             </tab>
         </tabset>
     </form>

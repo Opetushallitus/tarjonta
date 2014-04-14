@@ -1,8 +1,8 @@
 var app = angular.module('app.edit.ctrl.lukio', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
-app.controller('LukioEditController',
+app.controller('EditLukioController',
         ['$q', '$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
             '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
-            function LukioEditController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
+            function EditLukioController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, Koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
                 var ENUM_LUKIOKOULUTUS = 'LUKIOKOULUTUS';
