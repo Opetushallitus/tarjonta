@@ -17,7 +17,6 @@
 
 var app = angular.module('Haku', ['ngResource', 'config', 'Logging']);
 
-
 app.factory('HakuService', function($http, $q, Config, $log) {
 
         $log = $log.getInstance("HakuService");
@@ -196,26 +195,14 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
         };
     };
     
-    var canDelete = function(oids) {
-        $log.warn("canDelete() - NOT IMPLEMENTED", oids);
-        
-        var deferred = $q.defer();
-        
-        deferred.resolve({status: "OK"});
-        
-        return deferred.promise;
-    }
-
     var doDelete = function(oid) {
-        $log.warn("doDelete() - NOT IMPLEMENTED", oid);
+        $log.debug("doDelete(), oid = ", oid);
         
-        var deferred = $q.defer();
-        
-        // deferred.resolve({status: "ERROR", errors : [{ errorMessageKey: "no.permission" }]});
-        deferred.resolve({status: "OK"});
-        
-        return deferred.promise;
-    }
+        return HakuV1.remove({oid : oid}).$promise.then(function(result) {
+            $log.info("doDelete() result = ", result);
+            return result;
+        });
+    };
 
   return {
     /**
@@ -231,11 +218,6 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
     resolveNimi: resolveNimi, 
     
     createNewEmptyHaku : createNewEmptyHaku,
-    
-    /**
-     * Tarkista, voiko annettuja hakuja poistaa
-     */
-    canDelete: canDelete,
     
     /**
      * Poista annettu haku (jos oikeuksia)
