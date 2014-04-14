@@ -1,5 +1,8 @@
-<div ng-show="langs.length>0" class="mkTabs">
+<div ng-show="langs.length>0" class="mkTabs" ng-show="langs.length>0 || mutable">
 	<tabset>
-		<tab ng-repeat="kieli in langs" heading="{{codes[kieli].nimi}}" select="onSelect(kieli)"></tab>
+		<tab ng-repeat="kieli in langs" heading="{{codes[kieli].nimi}}" select="onSelect(kieli, true)" active="active[kieli]"></tab>
+	    <tab x-class="addLangTab" select="onSelect(null, true)" active="active[null]" ng-show="mutable">
+	        <tab-heading><span class="icon-plus"></span></tab-heading>
+	    </tab>
 	</tabset>
 </div>

@@ -15,13 +15,26 @@
 
 var app = angular.module('app.koulutus.ctrl', []);
 
-app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto',
-    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto) {
+app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService',
+    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         $log = $log.getInstance("KoulutusRoutingController");
+
+        /*
+         * Page routing data
+         */
         $scope.resultPageUri;
+
+        /*
+         * Edit page common data
+         */
+        $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
+        $scope.userLanguages = window.CONFIG.app.userLanguages; // opetuskielien esijärjestystä varten
+        $scope.opetuskieli = window.CONFIG.app.userLanguages[0]; //index 0 = fi uri
+        $scope.tmp = {};
         $scope.langs = {};
         $scope.model = {};
         $scope.uiModel = {};
+        $scope.lisatiedot = null;
         $scope.controlModel = {
             formStatus: {
                 modifiedBy: '',
@@ -72,10 +85,27 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
          * ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
          */
 
+        $scope.canSaveAsLuonnos = function() {
+            if ($scope.getModel().tila !== 'LUONNOS') {
+                return false;
+            }
+
+            return $scope.getUiModel().isMutable;
+        };
+
+        $scope.canSaveAsValmis = function() {
+            if ($scope.getModel().tila === 'POISTETTU') {
+                return false;
+            }
+
+            return $scope.getUiModel().isMutable;
+        };
+
         $scope.goBack = function(event) {
             $log.info("goBack()...");
             $location.path("/");
         };
+
         $scope.goToReview = function(event, boolInvalid, validationmsgs) {
             if (!angular.isUndefined(boolInvalid) && boolInvalid) {
                 //ui errors
@@ -325,6 +355,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
 
             uiModel.isMutable = false;
             uiModel.selectedKieliUri = "";
+            $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
 
             converter.createUiModels(uiModel, koulutusasteTyyppi);
             uiModel.isMutable = true;
@@ -357,6 +388,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
 
             uiModel.isMutable = false;
             uiModel.selectedKieliUri = "";
+            $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
 
             converter.createUiModels(uiModel, koulutusasteTyyppi);
             $scope.controlFormMessages(form, uiModel, "SHOW");
@@ -409,6 +441,69 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
                     console.error("invalid key mapping : ", key);
                 }
             });
+        };
+
+        /*
+         * LISATIEDOT PAGE FUNCTIONS
+         */
+        $scope.setTabLang = function(langUri) {
+            if (angular.isUndefined(langUri) || langUri === null) {
+                $scope.uiModel.tabLang = window.CONFIG.app.userLanguages[0]; //fi uri I guess;
+            } else {
+                $scope.uiModel.tabLang = langUri;
+            }
+        };
+
+        $scope.selectKieli = function(kieliUri) {
+            $scope.uiModel.selectedKieliUri = kieliUri;
+        }
+
+        $scope.getLisatietoKielet = function() {
+            for (var i in $scope.uiModel.opetuskielis.uris) {
+                var lc = $scope.uiModel.opetuskielis.uris[i];
+                if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
+                    $scope.uiModel.lisatietoKielet.push(lc);
+                }
+            }
+            return $scope.uiModel.lisatietoKielet;
+        };
+
+        function deleteLisatiedot(lc) {
+            var lcp = $scope.uiModel.lisatietoKielet.indexOf(lc);
+            if (lcp == -1) {
+                return;
+            }
+            $scope.uiModel.lisatietoKielet.splice(lcp, 1);
+
+            for (var ki in $scope.model.kuvausKomo) {
+                for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
+                    $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
+                }
+            }
+        }
+        ;
+
+        $scope.onLisatietoLangSelection = function() {
+            for (var ki in $scope.model.kuvausKomo) {
+                for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
+                    if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1
+                            && $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length > 0) {
+                        // palautetaan listaan jottei angular digestoi ennen dialogia
+                        $scope.uiModel.lisatietoKielet.push(lc);
+
+                        if ($scope.uiModel.opetuskielis.uris.indexOf(lc) == -1) {
+                            // ei opetuskieli -> varmista poisto dialogilla
+                            dialogService.showDialog({
+                                ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
+                                title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
+                                description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[lc]])
+                            }).result.then(function(ret) {
+                                deleteLisatiedot(lc);
+                            });
+                        }
+                    }
+                }
+            }
         };
 
         return $scope;

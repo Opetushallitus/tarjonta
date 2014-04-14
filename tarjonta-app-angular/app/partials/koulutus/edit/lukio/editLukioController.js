@@ -8,22 +8,10 @@ app.controller('EditLukioController',
                 var ENUM_LUKIOKOULUTUS = 'LUKIOKOULUTUS';
                 var ENUM_KOMO_MODULE_TUTKINTO = 'TUTKINTO';
                 var ENUM_KOMO_MODULE_TUTKINTO_OHJELMA = 'TUTKINTO_OHJELMA';
-
                 $log = $log.getInstance("LukioEditController");
-                $log.debug("init");
-
-                //käyttöoikeudet
-                $scope.isMutable = true;
-                $scope.userLanguages = cfg.app.userLanguages; // opetuskielien esijärjestystä varten
-                $scope.opetuskieli = cfg.app.userLanguages[0]; //index 0 = fi uri
-                $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
-                $scope.tmp = {};
-
-
-                // TODO servicestä joka palauttaa KomoTeksti- ja KomotoTeksti -enumien arvot
-                $scope.lisatiedot = [];
 
                 $scope.init = function() {
+                    $log.debug("init");
                     var model = {};
                     var uiModel = {
                         //custom stuff
@@ -46,7 +34,7 @@ app.controller('EditLukioController',
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
-                        $scope.lisatiedot = converter.STRUCTURE.LUKIOKOULUTUS.KUVAUS_ORDER;
+                        $scope.lisatiedot = converter.STRUCTURE[ENUM_LUKIOKOULUTUS].KUVAUS_ORDER;
                         $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
@@ -107,71 +95,7 @@ app.controller('EditLukioController',
                     $scope.setUiModel(uiModel);
                     $scope.setModel(model);
                 };
-
-                $scope.canSaveAsLuonnos = function() {
-                    if ($scope.getModel().tila !== 'LUONNOS') {
-                        return false;
-                    }
-
-                    return $scope.getUiModel().isMutable;
-                };
-
-                $scope.canSaveAsValmis = function() {
-                    if ($scope.getModel().tila === 'POISTETTU') {
-                        return false;
-                    }
-
-                    return $scope.getUiModel().isMutable;
-                };
-
-                $scope.getLisatietoKielet = function() {
-                    for (var i in  $scope.uiModel.opetuskielis.uris) {
-                        var lc = $scope.uiModel.opetuskielis.uris[i];
-                        if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
-                            $scope.uiModel.lisatietoKielet.push(lc);
-                        }
-                    }
-                    return  $scope.uiModel.lisatietoKielet;
-                }
-
-                function deleteLisatiedot(lc) {
-                    var lcp = $scope.uiModel.lisatietoKielet.indexOf(lc);
-                    if (lcp == -1) {
-                        return;
-                    }
-                    $scope.uiModel.lisatietoKielet.splice(lcp, 1);
-
-                    for (var ki in  $scope.model.kuvausKomo) {
-                        for (var lc in  $scope.model.kuvausKomo[ki].tekstis) {
-                            $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
-                        }
-                    }
-                }
-
-                $scope.onLisatietoLangSelection = function() {
-                    for (var ki in  $scope.model.kuvausKomo) {
-                        for (var lc in  $scope.model.kuvausKomo[ki].tekstis) {
-                            if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1
-                                    && $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length > 0) {
-                                // palautetaan listaan jottei angular digestoi ennen dialogia
-                                $scope.uiModel.lisatietoKielet.push(lc);
-                                $scope.uiModel.lisatietoKielet.sort();
-
-                                if ($scope.uiModel.opetuskielis.uris.indexOf(lc) == -1) {
-                                    // ei opetuskieli -> varmista poisto dialogilla
-                                    dialogService.showDialog({
-                                        ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
-                                        title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
-                                        description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[lc]])
-                                    }).result.then(function(ret) {
-                                        deleteLisatiedot(lc);
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-
+                
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi, tutkintoTyyppi) {
                     TarjontaService.getKoulutuskoodiRelations(
                             {
@@ -181,7 +105,7 @@ app.controller('EditLukioController',
                                 languageCode: $scope.koodistoLocale
                             }, function(data) {
                         var restRelationData = data.result;
-                        angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.RELATION, function(value, key) {
+                        angular.forEach(converter.STRUCTURE[ENUM_LUKIOKOULUTUS].RELATION, function(value, key) {
                             if (angular.isDefined(value.module) && tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO && tutkintoTyyppi === value.module) {
                                 apiModel[key] = restRelationData[key];
                             } else if (angular.isDefined(value.module) && tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && tutkintoTyyppi === value.module) {
@@ -207,7 +131,7 @@ app.controller('EditLukioController',
 
                     var modalInstance = $modal.open({
                         scope: $scope,
-                        templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+                        templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
                         controller: 'SelectTutkintoOhjelmaController'
                     });
                     modalInstance.result.then(function(selectedItem) {

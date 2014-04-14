@@ -4,7 +4,7 @@
 
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 
-app.controller('editYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', '$routeParams', '$log',
+app.controller('EditYhteyshenkiloCtrl', ['$scope', '$compile', 'YhteyshenkiloService', 'KoulutusConverterFactory', 'debounce', '$routeParams', '$log',
     function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams, $log) {
 
         $log = $log.getInstance("EditYhteyshenkiloCtrl");

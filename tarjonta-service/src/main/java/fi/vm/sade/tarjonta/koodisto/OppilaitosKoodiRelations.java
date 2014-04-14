@@ -68,67 +68,71 @@ public class OppilaitosKoodiRelations {
         final OrganisaatioDTO orgDto = organisaatioService.findByOid(organisaatioOid);
 
         if (orgDto == null) {
+            LOG.info("org not found: {}", organisaatioOid);
             return false;
         }
 
         List<String> oids = splitOrganisationPath(orgDto.getParentOidPath());
-
         oids.remove(rootOphOid); //remove OPH OID from the list
-        oids.add(orgDto.getOid()); //add selected to end of the list
 
-        LOG.debug("OIDS FOUND : {}", oids.size());
-
-        if (oids.size() > 1) {
-            //a quick search of the OPPILAITOS
-            if (isCorrectOppilaitostyyppis(oids.get(1), tyyppi)) {
+        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
+            if (isCorrectOppilaitostyyppis(organisaatioOid, tyyppi)) {
                 return true;
+            } else {
+                return false;
             }
         }
 
-        //not found, then loop all oids
-        for (String oid : oids) {
-            final OrganisaatioDTO pathOrgDto = organisaatioService.findByOid(oid);
-            if (pathOrgDto == null) {
-                LOG.error("Data error - organisation with OID {} not found!", oid);
-                continue;
+        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
+          //search all children organisations, one of them must be OPPILAITOS
+            final OrganisaatioOidListType childrenOids = organisaatioService.findChildrenOidsByOid(new OrganisaatioSearchOidType(organisaatioOid));
+            List<String> oppilaitostyyppiUris = Lists.newArrayList();
+            for (OrganisaatioOidType oidType : childrenOids.getOrganisaatioOidList()) {
+                oppilaitostyyppiUris.addAll(getAllOppilaitosTyyppisByOrganisaatioOid(oidType.getOrganisaatioOid()));
             }
 
-            if (isCorrectOrganisaatioTyyppi(pathOrgDto, OrganisaatioTyyppi.KOULUTUSTOIMIJA)) {
-                //search all children organisations, one of them must be OPPILAITOS
-                final OrganisaatioOidListType childrenOids = organisaatioService.findChildrenOidsByOid(new OrganisaatioSearchOidType(pathOrgDto.getOid()));
-                List<String> oppilaitostyyppiUris = Lists.newArrayList();
-                for (OrganisaatioOidType oidType : childrenOids.getOrganisaatioOidList()) {
-                    oppilaitostyyppiUris.addAll(getAllOppilaitosTyyppisByOrganisaatioOid(oidType.getOrganisaatioOid()));
-                }
-
-                if (!oppilaitostyyppiUris.isEmpty()) {
-                    for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                        if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
-                            LOG.debug("Found : {} KOULUTUSTOIMIJA parent of OPPILAITOS with correct oppilaitostyyppiUri {}", oid, oppilaitostyyppiUri);
-                            return true;
-                        }
+            if (!oppilaitostyyppiUris.isEmpty()) {
+                for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
+                    if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                        LOG.debug("Found : {} KOULUTUSTOIMIJA parent of OPPILAITOS with correct oppilaitostyyppiUri {}", organisaatioOid, oppilaitostyyppiUri);
+                        return true;
                     }
                 }
-            } else if (isCorrectOrganisaatioTyyppi(pathOrgDto, OrganisaatioTyyppi.OPPILAITOS)) {
-                //search one organisation
+            }
+            
+            return false;
+        }
+        
+        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+            String oid = oids.get(1); // oppilaitos (oph/kt/ol/op)
+            final OrganisaatioDTO pathOrgDto = organisaatioService
+                    .findByOid(oid);
+            if (pathOrgDto == null) {
+                LOG.error("Data error - organisation with OID {} not found!",
+                        oid);
+            } else {
+                // search one organisation
                 final List<String> oppilaitostyyppiUris = getAllOppilaitosTyyppisByOrganisaatioOid(pathOrgDto);
 
                 if (!oppilaitostyyppiUris.isEmpty()) {
                     for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
                         if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
-                            LOG.debug("Found : {} OPPILAITOS with correct oppilaitostyyppi {}", oid, oppilaitostyyppiUri);
+                            LOG.debug(
+                                    "Found : {} OPPILAITOS with correct oppilaitostyyppi {}",
+                                    oid, oppilaitostyyppiUri);
                             return true;
                         }
                     }
                 }
             }
         }
+
         return false;
     }
 
     private boolean isCorrectOppilaitostyyppis(String orgOid, KoulutusasteTyyppi tyyppi) {
         List<String> oppilaitostyyppiUris = getAllOppilaitosTyyppisByOrganisaatioOid(orgOid);
-
+        
         if (!oppilaitostyyppiUris.isEmpty()) {
             for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
                 if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
@@ -141,7 +145,7 @@ public class OppilaitosKoodiRelations {
         return false;
     }
 
-    public static List splitOrganisationPath(String parentOidPath) {
+    public static List<String> splitOrganisationPath(String parentOidPath) {
         Preconditions.checkNotNull(parentOidPath, "Organisation OID path cannot be null");
         final List<String> list = Lists.<String>newArrayList(parentOidPath.split("[|]"));
         list.removeAll(Arrays.asList("")); //remove empty strings
@@ -194,12 +198,25 @@ public class OppilaitosKoodiRelations {
             return false;
         }
 
+        
         Collection<KoodiType> koulutustyyppis = searchKoulutustyyppiFromKoodisto(oppilaitosTyyppiUri);
+        
         for (KoodiType koulutustyyppi : koulutustyyppis) {
+            //XX hardcoded urls
 
             switch (tyyppi) {
                 case KORKEAKOULUTUS:
                     if (koulutustyyppi.getKoodiUri().equals("koulutustyyppi_3")) {
+                        return true;
+                    }
+                    break;
+                case AMMATTIKORKEAKOULUTUS:
+                    if (koulutustyyppi.getKoodiUri().equals("koulutustyyppi_3")) {
+                        return true;
+                    }
+                    break;
+                case LUKIOKOULUTUS:
+                    if (koulutustyyppi.getKoodiUri().equals("koulutustyyppi_2")) {
                         return true;
                     }
                     break;

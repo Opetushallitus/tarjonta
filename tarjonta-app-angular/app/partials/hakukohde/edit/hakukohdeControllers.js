@@ -52,7 +52,8 @@ app.controller('HakukohdeEditController',
     $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden ja valintakokeiden kielien esijärjestystä varten
     $scope.model.defaultLang = 'kieli_fi';
     
-	$scope.formControls = {}; // controls-layouttia varten
+
+
 
     //All kieles is received from koodistomultiselect
     $scope.model.allkieles = [];
@@ -98,7 +99,7 @@ app.controller('HakukohdeEditController',
     $scope.model.modifiedObj = {
 
         modifiedBy : '',
-        modified : '',
+        modified : 0,
         tila : ''
 
     };
@@ -196,10 +197,16 @@ app.controller('HakukohdeEditController',
 
 
     var updateTilaModel = function(hakukohde) {
+
         if (hakukohde) {
             $scope.model.modifiedObj.modifiedBy = hakukohde.modifiedBy;
             $scope.model.modifiedObj.modified = hakukohde.modified;
             $scope.model.modifiedObj.tila = hakukohde.tila;
+        }
+        console.log('FORM CONTROLS : ', $scope.formControls);
+        if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
+            $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
+            $scope.formControls.reloadDisplayControls();
         }
 
 
@@ -1130,13 +1137,6 @@ app.controller('HakukohdeEditController',
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
 
-            /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-            }
-
-            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.soraKuvaukset = {};
-            }*/
         if ($scope.model.hakukohde.oid === undefined) {
 
              $log.debug('SAVE VALMIS MODEL : ', $scope.model.hakukohde);
@@ -1176,7 +1176,7 @@ app.controller('HakukohdeEditController',
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                    console.log('HAKUKOHDE RESULT : ', hakukohde);
+
                     updateTilaModel($scope.model.hakukohde);
                     showSuccess();
                 } else {

@@ -59,7 +59,7 @@ describe('Edit koulutus testeja', function() {
         $scope = $rootScope.$new();
         $modalInstance = {
             $scope : $scope,
-            templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+            templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
             controller: 'SelectTutkintoOhjelmaController',
             targetFilters: function() {
                 return [];
