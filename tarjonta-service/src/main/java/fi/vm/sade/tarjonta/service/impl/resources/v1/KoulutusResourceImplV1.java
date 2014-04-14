@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import static com.google.common.collect.Maps.newHashMap;
 
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -98,7 +97,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
@@ -142,7 +140,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
     @Autowired(required = true)
-    private ConverterV1 converter;
+    private ConverterV1 converterV1;
     @Autowired(required = true)
     private PermissionChecker permissionChecker;
 
@@ -168,7 +166,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private OppilaitosKoodiRelations oppilaitosKoodiRelations;
 
     @Autowired(required = true)
-    private PublicationDataService publication;
+    private PublicationDataService publicationDataService;
 
     @Override
     public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta, String lang) {
@@ -336,8 +334,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             Map<String, Integer> hkKoulutusMap = Maps.newHashMap();
 
             for (Hakukohde hk : komoto.getHakukohdes()) {
-                hkKoulutusMap.put(hk.getOid(), hk.getKoulutusmoduuliToteutuses().size());
+                if(hk.getTila()!=TarjontaTila.POISTETTU) { //skippaa poistetut OVT-7518
+                    hkKoulutusMap.put(hk.getOid(), hk.getKoulutusmoduuliToteutuses().size());
+                }
             }
+
 
             Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
 
@@ -578,7 +579,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         Tilamuutokset tm = null;
         try {
-            tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
+            tm = publicationDataService.updatePublicationStatus(Lists.newArrayList(tilamuutos));
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
             r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
@@ -615,7 +616,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
 
-        return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converter.fromKoulutuksetVastaus(r));
+        return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));
     }
 
     @Override

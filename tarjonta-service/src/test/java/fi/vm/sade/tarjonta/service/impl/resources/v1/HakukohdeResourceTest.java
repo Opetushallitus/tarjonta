@@ -37,7 +37,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class HakukohdeResourceTest {
 
     private static final Logger LOG = LoggerFactory
-            .getLogger(HakuResourceImplV1Test.class);
+            .getLogger(HakukohdeResourceTest.class);
 
     private HakukohdeResourceImplV1 hakukohdeResource = new HakukohdeResourceImplV1();
 
