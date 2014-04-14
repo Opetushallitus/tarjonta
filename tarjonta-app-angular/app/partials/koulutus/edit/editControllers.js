@@ -232,7 +232,12 @@ app.controller('BaseEditController',
                     $scope.saveByStatus('LUONNOS');
                 };
                 $scope.saveValmis = function(tila) {
-                    $scope.saveByStatus('VALMIS');
+                    if ($scope.model.tila !== 'JULKAISTU') {
+                        $scope.saveByStatus('VALMIS');
+                    } else {
+                        $scope.saveByStatus($scope.model.tila);
+                    }
+
                 };
                 $scope.saveByStatus = function(tila) {
                     $scope.controlFormMessages($scope.uiModel, "CLEAR");
