@@ -78,7 +78,9 @@ public enum KoulutusValidationMessages {
     KOULUTUS_RELATION_KOMO_CHILD_REMOVE_LINK,
     KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK,
     KOULUTUS_RELATION_KOMO_REMOVE_KOMOTO,
-    KOULUTUS_DELETED;
+    KOULUTUS_DELETED, 
+    //tunniste
+    KOULUTUS_TUNNISTE_LENGTH;
 
     @Override
     public String toString() {

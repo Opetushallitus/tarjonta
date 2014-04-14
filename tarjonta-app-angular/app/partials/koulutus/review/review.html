@@ -1,21 +1,21 @@
 <div ng-controller="BaseReviewController" ng-init="getKoulutusPartialName('review')">
-   <controls-model
+    <controls-model
         model="formControls"
         dto="model.koulutus">
 
         <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
-        <controls-button disabled="!isMutable" icon="remove" tt-key="koulutus.review.poista" action="doDelete($event)"></controls-button>
+        <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete($event)"></controls-button>
         <controls-button disabled="!isMutable" tt-key="koulutus.review.kopioi" action="doCopy($event)"></controls-button>
         <!--
         <controls-button tt-key="koulutus.review.siirra.osaksi" action="doMoveToBeSubPart($event)"></controls-button>
         <controls-button tt-key="koulutus.review.lisaa.rinnakkainen" action="doAddParallel($event)"></controls-button>
-         -->
+        -->
         <controls-button icon="eye-open" tt-key="koulutus.review.esikatsele" action="doPreview($event)"></controls-button>
 
-       <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
         <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
-        <controls-notify type="message" tt-expr="'koulutus.review.murupolku'" tt-params="[model.koulutus.koulutusohjelma.tekstis[model.userLangUri], model.koulutus.organisaatio.nimi ]"></controls-notify>
+        <controls-notify type="message" tt-expr="'koulutus.review.murupolku'" tt-params="[model.header.nimi, model.koulutus.organisaatio.nimi ]"></controls-notify>
 
     </controls-model>
 

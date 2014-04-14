@@ -1,3 +1,7 @@
 div.mkTabs ul {
 	margin-bottom:-1px;
 }
+
+div.mkTabs + .mkTabsContent, .mkTabsContent + .mkTabsContent {
+	margin-top:21px;
+}

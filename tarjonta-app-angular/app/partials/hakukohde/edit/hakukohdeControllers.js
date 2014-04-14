@@ -22,8 +22,27 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
 
 
-app.controller('HakukohdeEditController', function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,AuthService, HakuService,$route , $modal ,Config,$location,$timeout,TarjontaService,Kuvaus,CommonUtilService, PermissionService) {
+app.controller('HakukohdeEditController', 
+    function($scope,
+             $q, 
+             $log,
+             LocalisationService, 
+             OrganisaatioService,
+             Koodisto,
+             Hakukohde,
+             AuthService, 
+             HakuService,
+             $route , 
+             $modal ,
+             Config,
+             $location,
+             $timeout,
+             TarjontaService,
+             Kuvaus,
+             CommonUtilService, 
+             PermissionService) {
 
+    $log = $log.getInstance("HakukohdeEditController");
 
     var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
 
@@ -33,7 +52,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden ja valintakokeiden kielien esijärjestystä varten
     $scope.model.defaultLang = 'kieli_fi';
     
-	$scope.formControls = {}; // controls-layouttia varten
+
+
 
     //All kieles is received from koodistomultiselect
     $scope.model.allkieles = [];
@@ -76,7 +96,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
     $scope.model.hakuaikas = [];
 
-    $scope.model.modifiedObj = {};
+    $scope.model.modifiedObj = {
+
+        modifiedBy : '',
+        modified : 0,
+        tila : ''
+
+    };
 
     $scope.model.liitteidenToimitusPvm = new Date();
 
@@ -131,16 +157,16 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         //If scope or route has isCopy parameter defined as true remove oid,
         //so that new hakukohde will be created
-        console.log('IS THIS COPY ROUTE : ',$route.current.locals.isCopy);
+        $log.debug('IS THIS COPY ROUTE : ',$route.current.locals.isCopy);
 
         if ($route.current.locals.isCopy) {
-            console.log('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
+            $log.debug('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
             $scope.model.hakukohde.oid = undefined;
             $scope.model.hakukohde.tila = tilaParam;
 
         }
 
-        console.log('IS COPY : ' , $scope.isCopy);
+        $log.debug('IS COPY : ' , $scope.isCopy);
         if ($scope.isCopy !== undefined && $scope.isCopy) {
             $scope.model.hakukohde.oid = undefined;
             $scope.model.hakukohde.tila = tilaParam;
@@ -177,13 +203,19 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
             $scope.model.modifiedObj.modified = hakukohde.modified;
             $scope.model.modifiedObj.tila = hakukohde.tila;
         }
+        console.log('FORM CONTROLS : ', $scope.formControls);
+        if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
+            $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
+            $scope.formControls.reloadDisplayControls();
+        }
 
-    }
+
+    };
 
     var validateNames  = function() {
         for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
         return false;
-    }
+    };
 
     var checkCanCreateOrEditHakukohde = function() {
 
@@ -221,7 +253,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
     var checkJatkaBtn =   function() {
 
         if ($scope.model.hakukohde === undefined || $scope.model.hakukohde.oid === undefined) {
-            console.log('HAKUKOHDE OR HAKUKOHDE OID UNDEFINED');
+            $log.debug('HAKUKOHDE OR HAKUKOHDE OID UNDEFINED');
 
             $scope.model.continueToReviewEnabled = false;
         } else {
@@ -331,7 +363,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         modalInstance.result.then(function(kuvaukset){
 
-            console.log('GOT KUVAUKSET : ', kuvaukset);
+            $log.debug('GOT KUVAUKSET : ', kuvaukset);
             if ($scope.model.hakukohde.valintaPerusteKuvausKielet === undefined) {
                 $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
 
@@ -541,9 +573,6 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         koulutusSet.clear();
         TarjontaService.haeKoulutukset(spec).then(function(data){
 
-
-            console.log('KOULUTUKSET : ', data);
-
             var tarjoajaOidsSet = new buckets.Set();
 
 
@@ -606,28 +635,8 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     });
                     $scope.model.organisaatioNimet = orgSet.toArray();
 
-                    console.log('ORGANISAATIO NIMET : ', $scope.model.organisaatioNimet);
+                    $log.debug('ORGANISAATIO NIMET : ', $scope.model.organisaatioNimet);
                 });
-
-
-
-                /*var orgPromise =  OrganisaatioService.byOid($scope.model.hakukohde.tarjoajaOids[0]);
-                //When organisaatio is loaded set the liitteiden toimitusosoite on the model
-                orgPromise.then(function(data){
-
-                    console.log('ORGANISAATIO DATA : ', data);
-                    var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
-
-                    if (wasHakutoimistoFound) {
-                        deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
-                    } else {
-                        tryGetParentsApplicationOffice(data);
-                    }
-
-
-
-                });*/
-
 
 
             }
@@ -772,7 +781,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         //Resolve all promises and filter oppilaitostyyppis with user types
         $q.all(oppilaitosTyyppiPromises).then(function(data){
-            console.log('RESOLVED OPPILAITOSTYYPPI : ', data);
+            $log.debug('RESOLVED OPPILAITOSTYYPPI : ', data);
             $scope.model.hakukohdeOppilaitosTyyppis = removeHashAndVersion(data);
 
         });
@@ -1094,7 +1103,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                     $scope.model.hakuaikas.push(hakuaika);
                 });
 
-                console.log('HAKUAIKAS : '  ,$scope.model.hakuaikas);
+                $log.debug('HAKUAIKAS : '  ,$scope.model.hakuaikas);
 
                 $scope.model.showHakuaikas = true;
 
@@ -1128,16 +1137,9 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
 
-            /*if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-            }
-
-            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.soraKuvaukset = {};
-            }*/
         if ($scope.model.hakukohde.oid === undefined) {
 
-             console.log('SAVE VALMIS MODEL : ', $scope.model.hakukohde);
+             $log.debug('SAVE VALMIS MODEL : ', $scope.model.hakukohde);
            var returnResource =   $scope.model.hakukohde.$save();
            returnResource.then(function(hakukohde){
 
@@ -1168,12 +1170,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
         } else {
 
-            console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+            $log.debug('UPDATE MODEL : ', $scope.model.hakukohde);
 
             var returnResource = $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+
                     updateTilaModel($scope.model.hakukohde);
                     showSuccess();
                 } else {
@@ -1203,7 +1206,7 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.showError = false;
         PermissionService.permissionResource().authorize({}, function(authResponse) {
 
-        console.log('GOT AUTH RESPONSE : ' , authResponse);
+        $log.debug('GOT AUTH RESPONSE : ' , authResponse);
         emptyErrorMessages();
 
         if ($scope.model.canSaveHakukohde() && validateHakukohde()) {
@@ -1215,21 +1218,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
         $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
         removeEmptyKuvaukses();
 
-
-           /* if ($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-            }
-
-            if ($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
-                $scope.model.hakukohde.soraKuvaukset = {};
-            }  */
         //Check if hakukohde is copy, then remove oid and save hakukohde as new
         checkIsCopy(luonnosVal);
         if ($scope.model.hakukohde.oid === undefined) {
 
-            console.log('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
+            $log.debug('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
 
-            console.log('INSERTING MODEL: ', $scope.model.hakukohde);
+            $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
            var returnResource =  $scope.model.hakukohde.$save();
             returnResource.then(function(hakukohde) {
                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
@@ -1250,15 +1245,15 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 }
                 $scope.canEdit = true;
                 $scope.model.continueToReviewEnabled = true;
-                console.log('SAVED MODEL : ', $scope.model.hakukohde);
+                $log.debug('SAVED MODEL : ', $scope.model.hakukohde);
             },function(error) {
-                console.log('ERROR INSERTING HAKUKOHDE : ', error);
+                $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
                 showCommonUnknownErrorMsg();
 
             });
 
         } else {
-            console.log('UPDATE MODEL : ', $scope.model.hakukohde);
+            $log.debug('UPDATE MODEL : ', $scope.model.hakukohde);
             var returnResource =  $scope.model.hakukohde.$update();
             returnResource.then(function(hakukohde){
                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
@@ -1278,13 +1273,13 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
                 }
             }, function(error) {
 
-                console.log('EXCEPTION UPDATING HAKUKOHDE AS LUONNOS : ', error);
+                $log.debug('EXCEPTION UPDATING HAKUKOHDE AS LUONNOS : ', error);
                 showCommonUnknownErrorMsg();
             });
         }
         } else {
             $scope.model.showError = true;
-            console.log('WHAAT : ' , $scope.model.showError && $scope.editHakukohdeForm.aloituspaikatlkm.$invalid)
+            $log.debug('WHAAT : ' , $scope.model.showError && $scope.editHakukohdeForm.aloituspaikatlkm.$invalid)
 
         }
     })
@@ -1368,7 +1363,20 @@ app.controller('HakukohdeEditController', function($scope,$q, LocalisationServic
 
 });
 
-app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$modalInstance,LocalisationService,Kuvaus,Koodisto,oppilaitosTyypit,tyyppi,koulutusVuosi,AuthService){
+app.controller('ValitseValintaPerusteKuvausDialog',
+    function($scope,
+             $q,
+             $log,
+             $modalInstance,
+             LocalisationService,
+             Kuvaus,
+             Koodisto,
+             oppilaitosTyypit,
+             tyyppi,
+             koulutusVuosi,
+             AuthService) {
+
+    $log = $log.getInstance("ValitseValintaPerusteKuvausDialog");
 
     var koodistoKieliUri = "kieli";
 
@@ -1475,7 +1483,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
                 //Loop through valintaperusteet and get all different kieli promises
                 angular.forEach(valintaperusteet.result,function(valintaPeruste){
 
-                    console.log('VALINTAPERUSTE : ', valintaPeruste);
+                    $log.debug('VALINTAPERUSTE : ', valintaPeruste);
 
                     kaikkiKuvaukset[valintaPeruste.kuvauksenTunniste] = valintaPeruste;
 
@@ -1574,7 +1582,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
     }
 
     $scope.selectKuvaus = function(kuvaus) {
-        console.log("SELECT ",kuvaus);
+        $log.debug("SELECT ",kuvaus);
 
         $scope.showKieliSelectionCheckboxDisabled = false;
 
@@ -1648,7 +1656,7 @@ app.controller('ValitseValintaPerusteKuvausDialog',function($scope,$q,$log,$moda
         angular.forEach($scope.dialog.valitutKuvauksenKielet,function(valittuKieli){
 
             if ($scope.valittuKuvaus !== undefined) {
-               console.log('VALITTU KUVAUS: ' , $scope.valittuKuvaus);
+               $log.debug('VALITTU KUVAUS: ' , $scope.valittuKuvaus);
 
                 var valittuKokoKuvaus = kaikkiKuvaukset[$scope.valittuKuvaus.tunniste];
 

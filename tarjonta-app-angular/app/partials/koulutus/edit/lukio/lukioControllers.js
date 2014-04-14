@@ -1,7 +1,7 @@
 var app = angular.module('app.edit.ctrl.lukio', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('LukioEditController',
         ['$q', '$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-            '$window', 'KoulutusConverterFactoryLukio', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
+            '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function LukioEditController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, Koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
@@ -21,11 +21,15 @@ app.controller('LukioEditController',
                 $scope.lisatiedot = [];
 
                 $scope.init = function() {
-                    var uiModel = {isMutable: true};
+                    var uiModel = {isMutable: false,
+                        koulutusohjelma: [],
+                        tutkintoModules: {},
+                        koulutusohjelmaModules: {}
+                    };
                     var model = {};
 
                     uiModel.selectedKieliUri = "" //tab language
-                    converter.createUiModels(uiModel);
+                    converter.createUiModels(uiModel, 'LUKIOKOULUTUS');
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -35,7 +39,7 @@ app.controller('LukioEditController',
                          * SHOW KOULUTUS BY GIVEN KOMOTO OID
                          */
                         $scope.controlFormMessages(uiModel, "SHOW");
-                        $scope.lisatiedot = converter.KUVAUS_ORDER;
+                        $scope.lisatiedot = converter.STRUCTURE.LUKIOKOULUTUS.KUVAUS_ORDER;
                         model = $route.current.locals.koulutusModel.result;
 
                         if (angular.isUndefined(model)) {
@@ -46,6 +50,11 @@ app.controller('LukioEditController',
                         if (model.tila === 'POISTETTU') {
                             uiModel.isMutable = false;
                         }
+
+                        PermissionService.koulutus.canEdit(model.oid).then(function(data) {
+                            $log.debug("setting mutable to:", data);
+                            uiModel.isMutable = data;
+                        });
 
                         $scope.updateFormStatusInformation(model);
 
@@ -63,9 +72,19 @@ app.controller('LukioEditController',
                          * Load data to mltiselect fields
                          * remove version data from the list
                          */
-                        angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                            if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
-                                uiModel[key].uris = _.keys(model[key].uris);
+                        angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.MCOMBO, function(value, key) {
+                            if (angular.isDefined(model[key])) {
+                                if (angular.isDefined(value.types)) {
+                                    uiModel[key] = {};
+                                    angular.forEach(value.types, function(type) {
+                                        uiModel[key][type] = {uris: []};
+                                        if (angular.isDefined(model[key][type])) {
+                                            uiModel[key][type].uris = _.keys(model[key][type].uris);
+                                        }
+                                    });
+                                } else if (angular.isDefined(model[key].uris)) {
+                                    uiModel[key].uris = _.keys(model[key].uris);
+                                }
                             } else {
                                 console.error("invalid key mapping : ", key);
                             }
@@ -80,8 +99,9 @@ app.controller('LukioEditController',
                         /*
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
                          */
+                        uiModel.isMutable = true;
                         $scope.controlFormMessages(uiModel, "INIT");
-                        converter.createAPIModel(model, cfg.app.userLanguages);
+                        converter.createAPIModel(model, cfg.app.userLanguages, "LUKIOKOULUTUS");
 
                         var promiseOrg = organisaatioService.nimi($routeParams.org);
                         promiseOrg.then(function(vastaus) {
@@ -95,8 +115,7 @@ app.controller('LukioEditController',
                         /*
                          * LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
-                        uiModel['tutkintoModules'] = {};
-                        uiModel['koulutusohjelmaModules'] = {};
+
                         tutkintoPromise.then(function(kRes) {
                             resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: 'TUTKINTO'}, function(tRes) {
                                 for (var i = 0; i < kRes.uris.length; i++) {
@@ -107,32 +126,8 @@ app.controller('LukioEditController',
                                         }
                                     }
                                 }
-
-                                var listOfTutkintoModules = _.map(uiModel['tutkintoModules'], function(num, key) {
-                                    return num.koodiUri;
-                                });
-
                                 uiModel.tutkinto = _.map(uiModel['tutkintoModules'], function(num, key) {
                                     return num;
-                                });
-
-                                var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.koodistoLocale);
-                                lukiolinjaPromise.then(function(kRes) {
-                                    resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: 'TUTKINTO_OHJELMA'}, function(tRes) {
-                                        for (var il = 0; il < kRes.uris.length; il++) {
-
-                                            for (var cl = 0; cl < tRes.result.length; cl++) {
-                                                if (!angular.isDefined(uiModel.koulutusohjelmaModules [ kRes.uris[il] ]) && kRes.uris[il] === tRes.result[cl].koulutusohjelmaUri) {
-                                                    uiModel.koulutusohjelmaModules [ kRes.uris[il]] = kRes.map[ kRes.uris[il]];
-                                                    uiModel.koulutusohjelmaModules [ kRes.uris[il]].oid = tRes.result[cl].oid;
-                                                    uiModel.koulutusohjelmaModules [ kRes.uris[il]].koulutuskoodi = tRes.result[cl].koulutuskoodiUri;
-                                                }
-                                            }
-                                            uiModel.koulutusohjelma = _.map(uiModel.koulutusohjelmaModules, function(num, key) {
-                                                return num;
-                                            });
-                                        }
-                                    });
                                 });
                             });
                         });
@@ -140,11 +135,10 @@ app.controller('LukioEditController',
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                     }
 
-
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.COMBO, function(value, key) {
                         if (angular.isUndefined(value.skipUiModel)) {
                             var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(cfg.env[value.koodisto], $scope.koodistoLocale);
                             uiModel[key].promise = koodisPromise;
@@ -153,7 +147,7 @@ app.controller('LukioEditController',
                             });
                         }
                     });
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.MCOMBO, function(value, key) {
                         if (angular.isUndefined(cfg.env[value.koodisto])) {
                             throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
                         }
@@ -188,36 +182,24 @@ app.controller('LukioEditController',
                      */
                     $scope.uiModel = uiModel;
                     $scope.model = model;
-
-                    //käyttöoikeudet
-                    if ($scope.model.komotoOid) {
-                        PermissionService.koulutus.canEdit($scope.model.komotoOid).then(function(data) {
-                            $log.debug("setting mutable to:", data);
-                            $scope.isMutable = data;
-                        });
-                    }
-
-
                 };
 
                 $scope.canSaveAsLuonnos = function() {
-                    var canSaveAsLuonnos = true;
-                    if (!$scope.isMutable)
-                        canSaveAsLuonnos = false; //permissio
-                    if ($scope.uiModel.isMutable) {
-                        canSaveAsLuonnos = $scope.uiModel.isMutable;
+                    if ($scope.model.tila !== 'LUONNOS') {
+                        return false;
                     }
 
-                    if (canSaveAsLuonnos) {
-                    }
-
-                    return canSaveAsLuonnos;
+                    return $scope.uiModel.isMutable;
 
                 }
 
                 $scope.canSaveAsValmis = function() {
-                    return $scope.uiModel.isMutable && $scope.isMutable;
-                };
+                    if ($scope.model.tila === 'POISTETTU') {
+                        return false;
+                    }
+
+                    return $scope.uiModel.isMutable;
+                }
 
                 $scope.getLisatietoKielet = function() {
                     for (var i in $scope.uiModel.opetuskielis.uris) {
@@ -276,7 +258,7 @@ app.controller('LukioEditController',
                                 languageCode: $scope.koodistoLocale
                             }, function(data) {
                         var restRelationData = data.result;
-                        angular.forEach(converter.STRUCTURE.RELATION, function(value, key) {
+                        angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.RELATION, function(value, key) {
                             if (angular.isDefined(value.module) && tutkintoTyyppi === 'TUTKINTO' && tutkintoTyyppi === value.module) {
                                 apiModel[key] = restRelationData[key];
                             } else if (angular.isDefined(value.module) && tutkintoTyyppi === 'TUTKINTO_OHJELMA' && tutkintoTyyppi === value.module) {
@@ -328,7 +310,7 @@ app.controller('LukioEditController',
                                 $scope.updateFormStatusInformation($scope.model);
                                 $scope.controlFormMessages($scope.uiModel, "SAVED");
                                 $scope.uiModel.tabs.lisatiedot = false;
-                                $scope.lisatiedot = converter.KUVAUS_ORDER;
+                                $scope.lisatiedot = converter.STRUCTURE.LUKIOKOULUTUS.KUVAUS_ORDER;
                             } else {
                                 $scope.controlFormMessages($scope.uiModel, "ERROR", null, saveResponse.errors);
                             }
@@ -365,7 +347,7 @@ app.controller('LukioEditController',
                      * Convert Koodisto komponent object to back-end object format.
                      */
                     //single select nodels
-                    angular.forEach(converter.STRUCTURE.COMBO, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.COMBO, function(value, key) {
                         //search version information for list of uris;
 
                         var koodis = $scope.uiModel[key].koodis;
@@ -380,7 +362,7 @@ app.controller('LukioEditController',
                         }
                     });
 
-                    angular.forEach(converter.STRUCTURE.RELATIONS, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.RELATIONS, function(value, key) {
                         if (angular.isUndefined(value.skipApiModel)) {
                             apiModel[key] = {'uris': {}};
                             //search version information for list of uris;
@@ -396,18 +378,34 @@ app.controller('LukioEditController',
                     });
 
                     //multi-select models, add version to the koodi
-                    angular.forEach(converter.STRUCTURE.MCOMBO, function(value, key) {
-                        apiModel[key] = {'uris': {}};
-                        //search version information for list of uris;
-                        var map = {};
-                        var koodis = $scope.uiModel[key].koodis;
-                        for (var i in koodis) {
-                            map[koodis[i].koodiUri] = koodis[i].koodiVersio;
-                        }
-                        angular.forEach(uiModel[key].uris, function(uri) {
-                            apiModel[key].uris[uri] = map[uri];
-                        });
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS.MCOMBO, function(value, key) {
 
+                        if (angular.isDefined(value.types)) {
+                            apiModel[key] = {};
+                            angular.forEach(value.types, function(type) {
+                                apiModel[key][type] = {'uris': {}};
+                                //search version information for list of uris;
+                                var map = {};
+                                var koodis = $scope.uiModel[key].koodis;
+                                for (var i in koodis) {
+                                    map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                                }
+                                angular.forEach(uiModel[key][type].uris, function(uri) {
+                                    apiModel[key][type].uris[uri] = map[uri];
+                                });
+                            });
+                        } else {
+                            apiModel[key] = {'uris': {}};
+                            //search version information for list of uris;
+                            var map = {};
+                            var koodis = $scope.uiModel[key].koodis;
+                            for (var i in koodis) {
+                                map[koodis[i].koodiUri] = koodis[i].koodiVersio;
+                            }
+                            angular.forEach(uiModel[key].uris, function(uri) {
+                                apiModel[key].uris[uri] = map[uri];
+                            });
+                        }
                     });
 
                     $log.debug(JSON.stringify(apiModel));
@@ -420,7 +418,7 @@ app.controller('LukioEditController',
                     }
 
                     //remove all meta data fields, if any
-                    angular.forEach(converter.STRUCTURE, function(value, key) {
+                    angular.forEach(converter.STRUCTURE.LUKIOKOULUTUS, function(value, key) {
                         if ('MLANG' !== key) {
                             //MLANG objects needs the meta fields
                             angular.forEach(value, function(value, key) {
@@ -620,7 +618,6 @@ app.controller('LukioEditController',
                         }
                     }
 
-
                     return fallbackFi;
                 };
 
@@ -657,8 +654,45 @@ app.controller('LukioEditController',
 
                 $scope.$watch("model.koulutuskoodi.uri", function(uriNew, uriOld) {
                     if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
+                        $scope.uiModel.koulutusohjelmaModules = {};
+                        $scope.uiModel.koulutusohjelma = [];
+                        $scope.model.koulutusohjelma.uri = null;
+                        
                         $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uriNew, 'TUTKINTO');
                         $scope.loadKomoKuvausTekstis($scope.uiModel.tutkintoModules[uriNew].oid);
+                        var resource = TarjontaService.komo();
+
+                        var listOfTutkintoModules = _.map($scope.uiModel['tutkintoModules'], function(num, key) {
+                            return num.koodiUri;
+                        });
+
+                        $scope.uiModel.tutkinto = _.map($scope.uiModel['tutkintoModules'], function(num, key) {
+                            return num;
+                        });
+
+                        var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.koodistoLocale);
+                        lukiolinjaPromise.then(function(kRes) {
+                            resource.searchModules(
+                                    {
+                                        koulutuskoodiUri: uriNew,
+                                        koulutusasteTyyppi: 'Lukiokoulutus',
+                                        koulutusmoduuliTyyppi: 'TUTKINTO_OHJELMA'
+                                    }, function(tRes) {
+                                for (var il = 0; il < kRes.uris.length; il++) {
+
+                                    for (var cl = 0; cl < tRes.result.length; cl++) {
+                                        if (!angular.isDefined($scope.uiModel.koulutusohjelmaModules [ kRes.uris[il] ]) && kRes.uris[il] === tRes.result[cl].koulutusohjelmaUri) {
+                                            $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]] = kRes.map[ kRes.uris[il]];
+                                            $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]].oid = tRes.result[cl].oid;
+                                            $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]].koulutuskoodi = tRes.result[cl].koulutuskoodiUri;
+                                        }
+                                    }
+                                    $scope.uiModel.koulutusohjelma = _.map($scope.uiModel.koulutusohjelmaModules, function(num, key) {
+                                        return num;
+                                    });
+                                }
+                            });
+                        });
                     }
                 });
 

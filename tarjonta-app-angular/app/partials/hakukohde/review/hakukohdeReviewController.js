@@ -68,23 +68,83 @@ app.controller('HakukohdeReviewController',
 
       $scope.model.showError = false;
 
+      $scope.model.organisaatioNimet = [];
+
+
+      var orgSet = new buckets.Set();
+
       $scope.goBack = function(event) {
           window.history.back();
       };
+
+
+     $scope.getHakukohteenJaOrganisaationNimi = function() {
+
+
+         console.log('ORGANISAATION NIMET : ', $scope.model.organisaatioNimet);
+
+         var ret = "";
+         var ja = LocalisationService.t("tarjonta.yleiset.ja");
+
+         for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+             if (i>0) {
+                 ret = ret + ((i==$scope.model.hakukohde.hakukohteenNimet.length-1) ? " "+ja+" " : ", ");
+             }
+             ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
+         }
+
+         if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0)  {
+
+             var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
+
+             ret  = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
+
+         } else {
+             var counter = 0;
+             var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
+             angular.forEach($scope.model.organisaatioNimet,function(organisaatioNimi) {
+
+
+                 if (counter === 0) {
+
+
+                     ret  = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
+
+
+                 } else {
+
+
+//                    ret = ret + ((counter===$scope.model.organisaatioNimet.length-1) ? " " : ", ");
+
+                     ret = ret + ", <b>" + organisaatioNimi + "</b>";
+
+                 }
+                 counter++;
+
+             });
+
+         }
+
+         return ret;
+
+     };
       
       $scope.getHakukohteenNimi = function() {
-    	  if ($scope.model==undefined || $scope.model.hakukohde==undefined || $scope.model.hakukohde.hakukohteenNimet==undefined) {
-    		  return null;
-    	  }
-    	  var lc = $scope.model.hakukohde.hakukohteenNimet[kieliKoodistoUri+"_"+$scope.model.userLang.toLowerCase()];
-    	  if (lc) {
-    		  return lc;
-    	  }
-    	  
-    	 for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-    		 return $scope.model.hakukohde.hakukohteenNimet[i];
-    	 }
-    	  return null;
+
+
+          if ($scope.model==undefined || $scope.model.hakukohde==undefined || $scope.model.hakukohde.hakukohteenNimet==undefined) {
+              return null;
+          }
+          var lc = $scope.model.hakukohde.hakukohteenNimet[kieliKoodistoUri+"_"+$scope.model.userLang.toLowerCase()];
+          if (lc) {
+              return lc;
+          }
+
+          for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+              return $scope.model.hakukohde.hakukohteenNimet[i];
+          }
+          return null;
+
       }
       
       // liitteiden / valintakokeiden kielet
@@ -387,10 +447,12 @@ app.controller('HakukohdeReviewController',
 
               TarjontaService.haeKoulutukset(spec).then(function(data){
 
+                  var tarjoajaOidsSet = new buckets.Set();
+
                   if(data.tulokset !== undefined) {
                       $scope.model.koulutukses.splice(0,$scope.model.koulutukses.length);
                       angular.forEach(data.tulokset,function(tulos){
-
+                          tarjoajaOidsSet.add(tulos.oid);
                           if (tulos.tulokset !== undefined) {
                               angular.forEach(tulos.tulokset,function(lopullinenTulos){
                                   var koulutus = {
@@ -402,6 +464,35 @@ app.controller('HakukohdeReviewController',
                           }
 
                       });
+
+                      $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+
+                      var orgQueryPromises = [];
+
+                      angular.forEach($scope.model.hakukohde.tarjoajaOids,function(tarjoajaOid){
+
+                          orgQueryPromises.push(OrganisaatioService.byOid(tarjoajaOid));
+
+                      });
+
+
+
+
+                      $q.all(orgQueryPromises).then(function(orgs){
+
+                          angular.forEach(orgs,function(data){
+
+                              orgSet.add(data.nimi);
+
+                          });
+
+
+                          $scope.model.organisaatioNimet = orgSet.toArray();
+
+                      });
+
+
                   }
 
               });

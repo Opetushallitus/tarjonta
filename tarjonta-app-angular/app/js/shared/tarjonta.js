@@ -46,6 +46,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     "komoOid=" + escape(args.komoOid) + "&" +
                     "kooulutusOid=" + escape(args.koulutusOid) + "&" +
                     "hakukohdeOid=" + escape(args.hakukohdeOid) + "&" +
+                    "hakuOid=" + escape(args.hakuOid) + "&" +
                     "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"
@@ -71,8 +72,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"],
+            hakuOid : args.hakuOid
         };
+
+        $log.debug("haeHakukohteet()", params);
 
         return CacheService.lookupResource(searchCacheKey("hakukohde", args), hakukohdeHaku, params, function(result) {
             result = result.result; // unwrap v1
@@ -95,6 +99,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
+            
+            $log.info("haeHakukohteet() params, result", params, result);
+            
             return result;
         });
     };
@@ -108,9 +115,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
+        $log.debug("haeKoulutukset()", params);
+        
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
             result = result.result;  //unwrap v1
             for (var i in result.tulokset) {

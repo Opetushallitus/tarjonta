@@ -24,9 +24,9 @@
 
     <display-controls model="controlModel.formControls" display="header"></display-controls>
 
-    <form name="koulutusForm">
+    <form name="koulutusForm" novalidate>
         <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
-        <button ng-click="" class="hidden"></button>
+        <button ng-click="" class="btn-invisible"></button>
         <tabset>
             <tab heading="{{t('koulutus.edit.perustiedot')}}">
                 <div ng-include="'partials/koulutus/edit/editPerustiedot.html'"></div>

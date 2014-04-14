@@ -231,7 +231,11 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(KoulutusasteTyyppi koulutusastetyyppi, KoulutusmoduuliTyyppi koulutusmoduuliTyyppi, String tila) {
+    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
+            KoulutusasteTyyppi koulutusastetyyppi,
+            KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            String koulutuskoodiUri,
+            String tila) {
         Preconditions.checkNotNull(koulutusastetyyppi, "Koulutusastetyyppi enum cannot be null.");
 
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
@@ -243,6 +247,10 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
         if (tila != null) {
             criteria.setTila(criteria.getTila());
+        }
+
+        if (koulutuskoodiUri != null) {
+            criteria.setLikeKoulutusKoodiUri(koulutuskoodiUri);
         }
 
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
@@ -286,7 +294,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-     
+
         ResultV1RDTO<KuvausV1RDTO> result = new ResultV1RDTO<KuvausV1RDTO>();
         if (komo == null) {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
