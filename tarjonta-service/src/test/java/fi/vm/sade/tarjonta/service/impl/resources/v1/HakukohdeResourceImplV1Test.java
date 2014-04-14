@@ -125,10 +125,12 @@ public class HakukohdeResourceImplV1Test extends Assert {
         Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("1.2.3.4.5");
         stubKoodi("kieli_fi", "suomi");
         stubKoodi("posti_12345", "posti_12345");
+        permissionChecker.setOverridePermissionChecks(true);
 	}
 	
 	@After
 	public void doAfter() {
+        permissionChecker.setOverridePermissionChecks(false);
 	}
 	
 	protected HakukohdeV1RDTO createTestHakukukohde1() {
