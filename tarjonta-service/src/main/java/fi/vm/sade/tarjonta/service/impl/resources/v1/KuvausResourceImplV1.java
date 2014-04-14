@@ -363,7 +363,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                     kuvaus.getOrganisaatioTyyppi(),kuvaus.getKausi(),kuvaus.getVuosi());
 
         } catch (Exception exp) {
-
+          retVal = false;
         }
 
 
@@ -414,13 +414,18 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             oldVps.setViimPaivittajaOid(valintaperusteSoraKuvaus.getViimPaivittajaOid());
             oldVps.setViimPaivitysPvm(new Date());
 
+
             kuvausDAO.update(oldVps);
 
+            LOG.debug("UPDATED KUVAUS : ", kuvausRDTO.getOid());
 
             resultV1RDTO.setResult(kuvausRDTO);
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         } catch (Exception exp) {
+
+            LOG.debug("EXCEPTION UPDATING KUVAUS: "+ kuvausRDTO.getOid() + " : ", exp.toString());
+
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
