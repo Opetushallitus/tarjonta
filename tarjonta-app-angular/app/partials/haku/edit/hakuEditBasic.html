@@ -100,6 +100,17 @@
         </td>
     </tr>
 
+<!--
+    <tr>
+        <th></th>
+        <td>
+            <input type="checkbox" ng-model="model.hakux.result.usePriority"> <span data-tt="haku.edit.kaytetaanPriorisointia">Haussa käytetään hakukohteiden priorisointia</span>
+        </td>
+        <td>
+        </td>
+    </tr>
+-->
+
     <tr class="required">
         <th data-tt='haku.edit.hakulomake'>Hakulomake</th>
         <td>
@@ -115,6 +126,8 @@
                 <span data-tt="haku.edit.maxHakukohdes.label">Hakukohteiden enimmäismäärä:</span>
                 <input type="number" ng-model="model.hakux.result.maxHakukohdes"
                        name="maxHakukohdes" ng-required="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                <br/>
+                <input type="checkbox" ng-model="model.hakux.result.usePriority"> <span data-tt="haku.edit.kaytetaanPriorisointia">Haussa käytetään hakukohteiden priorisointia</span>
             </p>
 
         </td>
