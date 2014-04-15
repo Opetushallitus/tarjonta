@@ -32,7 +32,7 @@
         	<form name="editHakukohdeForm" novalidate>
 		        <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
 		        <button ng-click="" class="btn-invisible"></button>
-	            <div data-ng-include="'partials/hakukohde/edit/editPerustiedot.html'"></div>
+	            <div data-ng-include="getHakukohdePartialUri()"></div>
 			</form>
         </tab>
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">

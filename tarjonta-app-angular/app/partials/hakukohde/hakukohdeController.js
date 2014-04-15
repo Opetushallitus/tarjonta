@@ -16,8 +16,8 @@
 
 var app = angular.module('app.hakukohde.ctrl', []);
 
-app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','Hakukohde' ,
-    function HakukohdeRoutingController($scope, $log, $routeParams, $route,Hakukohde) {
+app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','Hakukohde' , 'SharedStateService',
+    function HakukohdeRoutingController($scope, $log, $routeParams, $route,Hakukohde,SharedStateService) {
         $log.info("HakukohdeRoutingController()", $routeParams);
         $log.info("$route: ", $route);
         $log.info("$route action: ", $route.current.$$route.action);
@@ -106,5 +106,26 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
 
         $scope.hakukohdex = $route.current.locals.hakukohdex;
         $log.info("  --> hakukohdex == ", $scope.hakukohdex);
+
+        $scope.getHakukohdePartialUri = function() {
+
+            var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/editPerustiedot.html";
+            var korkeakouluTyyppi = "KORKEAKOULUTUS";
+            //If hakukohdex is defined then we are updating it
+            //otherwise try to get selected koulutustyyppi from shared state
+            if($route.current.locals.hakukohdex.result) {
+
+                    if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
+                        return korkeakoulutusHakukohdePartialUri;
+                    }   //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
+
+            } else {
+                var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+                if (koulutusTyyppi.trim() === korkeakouluTyyppi) {
+                    return korkeakoulutusHakukohdePartialUri;
+                } //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
+            }
+
+        };
     }
 ]);
