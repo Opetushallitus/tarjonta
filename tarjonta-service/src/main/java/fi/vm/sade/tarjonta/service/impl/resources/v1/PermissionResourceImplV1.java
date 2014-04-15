@@ -19,7 +19,9 @@ import static fi.vm.sade.tarjonta.service.impl.resources.v1.Roles.*;
 import fi.vm.sade.tarjonta.service.resources.v1.PermissionV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.UserV1RDTO;
+import java.util.Map;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +55,21 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         ResultV1RDTO<UserV1RDTO> dto = new ResultV1RDTO<UserV1RDTO>();
         dto.setResult(new UserV1RDTO(contextDataService.getCurrentUserOid(), contextDataService.getCurrentUserLang()));
         return dto;
+    }
+
+    @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
+    @Override
+    public void recordUiStacktrace(String stacktrace) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map map = mapper.readValue(stacktrace, Map.class);
+
+            LOG.error("recordUiStacktrace");
+            for (Object key : map.keySet()) {
+                LOG.error("{} - {}", key, map.get(key));
+            }
+        } catch (Throwable ex) {
+            LOG.error("recordUiStacktrace\n{}", stacktrace);
+        }
     }
 }

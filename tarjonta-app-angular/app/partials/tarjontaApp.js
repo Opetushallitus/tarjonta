@@ -93,6 +93,66 @@ angular.module('app',
 
 angular.module('app').value("globalConfig", window.CONFIG);
 
+
+angular.module('app').factory(
+        "errorLogService",
+        function($log, $window, Config) {
+            
+            var serviceUrl = Config.env["tarjontaRestUrlPrefix"] + "permission/recordUiStacktrace";
+
+            $log.info("*** errorLogService ***", serviceUrl);
+
+            // Log error to console (as normal) AND to the remote server
+            function log(exception, cause) {
+                // Default behaviour, log to console
+                $log.error.apply($log, arguments);
+
+                // Try to send stacktrace event to server
+                try {
+                    $log.debug("logging error to server side...");
+                    
+                    var errorMessage = exception.toString();
+                    var stackTrace = exception.stack.toString();
+                    
+//                    // Log the JavaScript error to the server.
+                    $.ajax({
+                        type: "POST",
+                        url: serviceUrl,
+                        contentType: "application/json",
+                        xhrFields: {
+                           withCredentials: true
+                        },
+                        data: angular.toJson({
+                            errorUrl: $window.location.href,
+                            errorMessage: errorMessage,
+                            stackTrace: stackTrace,
+                            cause: (cause || "")
+                        })
+                    });
+
+                } catch (loggingError) {
+                    // For Developers - log the log-failure.
+                    $log.warn("Error logging to server side failed");
+                    $log.log(loggingError);
+                }
+            }
+
+            // Return the logging function.
+            return(log);
+        }
+);
+
+angular.module('app').provider(
+        "$exceptionHandler",
+        {
+            $get: function(errorLogService) {
+                return(errorLogService);
+            }
+        }
+);
+ 
+
+
 angular.module('app').config(['$routeProvider', function($routeProvider) {
 
        /**
