@@ -10,11 +10,8 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
     function($modalInstance, targetKoulutus, targetOrganisaatio,
             TarjontaService, LocalisationService, $q, $scope,
             OrganisaatioService, AuthService, PermissionService, $location) {
-  
-  console.log("controlleriii!!!");
 
         // Tähän populoidaan formin valinnat:
-        console.log("resetting form selections");
         $scope.model = {
             text: {
                 help: LocalisationService.t("koulutus.copy.help", [targetKoulutus[0].nimi])
