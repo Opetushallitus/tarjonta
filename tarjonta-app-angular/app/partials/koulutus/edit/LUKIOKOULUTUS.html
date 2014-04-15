@@ -1,41 +1,43 @@
-<div id="editKoulutus" ng-controller="LukioEditController">
-    <controls-model
-        model="controlModel.formControls"
-        tt-create="koulutus.edit.header.title"
-        title="model.koulutusohjelma.tekstis"
-        dto="controlModel.formStatus">
+<div id="edit" ng-controller="BaseEditController">
+    <div id="editKoulutus" ng-controller="EditLukioController">
+        <controls-model
+            model="controlModel.formControls"
+            tt-create="koulutus.edit.header.title"
+            title="model.koulutusohjelma.tekstis"
+            dto="controlModel.formStatus">
 
-        <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" disabled="!canSaveAsLuonnos()" primary="true"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)"  disabled="!canSaveAsValmis()" primary="true"></controls-button>
-        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
+            <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
+            <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos()" disabled="!canSaveAsLuonnos()" primary="true"></controls-button>
+            <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis()"  disabled="!canSaveAsValmis(s)" primary="true"></controls-button>
+            <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
 
-        <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
-        <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.koulutusasteTyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
+            <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
+            <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.koulutusasteTyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
 
-        <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
-        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
-        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify> 
+            <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
+            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
+            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify> 
 
-        <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
-        <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
+            <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
+            <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
 
-    </controls-model>
+        </controls-model>
 
-    <display-controls model="controlModel.formControls" display="header"></display-controls>
+        <display-controls model="controlModel.formControls" display="header"></display-controls>
 
-    <form name="koulutusForm">
-        <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
-        <button ng-click="" class="hidden"></button>
-        <tabset>
-            <tab heading="{{t('koulutus.edit.perustiedot')}}">
-                <div ng-include="'partials/koulutus/edit/lukio/editPerustiedot.html'"></div>
-            </tab>
-            <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
-                <div ng-include="'partials/koulutus/edit/lukio/editLisatiedot.html'"></div>
-            </tab>
-        </tabset>
-    </form>
+        <form name="koulutusForm">
+            <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
+            <button ng-click="" class="hidden"></button>
+            <tabset>
+                <tab heading="{{t('koulutus.edit.perustiedot')}}">
+                    <div ng-include="'partials/koulutus/edit/lukio/editPerustiedot.html'"></div>
+                </tab>
+                <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
+                    <div ng-include="'partials/koulutus/edit/lukio/editLisatiedot.html'"></div>
+                </tab>
+            </tabset>
+        </form>
 
-    <display-controls model="controlModel.formControls" display="footer"></display-controls>
+        <display-controls model="controlModel.formControls" display="footer"></display-controls>
+    </div>
 </div>

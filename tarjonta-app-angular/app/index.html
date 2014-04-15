@@ -133,10 +133,11 @@
 
         <script src="partials/komo/komo-ctrl.js"></script>
 
-        <script src="partials/koulutus/edit/editControllers.js"></script>
-        <script src="partials/koulutus/edit/lukio/lukioControllers.js"></script>
-        
-        <script src="partials/koulutus/edit/selectTutkintoControllers.js"></script>
+        <script src="partials/koulutus/edit/editController.js"></script>
+        <script src="partials/koulutus/edit/korkeakoulu/editKorkeakouluController.js"></script>
+        <script src="partials/koulutus/edit/korkeakoulu/selectTutkintoController.js"></script>
+        <script src="partials/koulutus/edit/lukio/editLukioController.js"></script>
+
         <script src="partials/koulutus/edit/editYhteyshenkiloController.js"></script>
         <script src="partials/koulutus/edit/aiheet-teemat.js"></script>
         <script src="partials/koulutus/edit/koulutusConverter.js"></script>
@@ -293,7 +294,7 @@
                 </div><!-- /renderPath[0] -->                
             </div><!-- /LocalisationCtrl -->
         </div><!-- /tarjonta-body  -->
-        
+
         <div data-ng-controller="LoadingCtrl">
             <div id="ajax-loader" class="pre-init max ng-class: { max:isModal(), min:!isModal(), lowered:isError() }" data-ng-show="loading">
                 <div class="frame">

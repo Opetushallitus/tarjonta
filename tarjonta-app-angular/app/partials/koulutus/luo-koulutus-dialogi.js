@@ -221,7 +221,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                                 $log.debug("koulutusastekoodit:", koulutusasteKoodit.uris);
 
                                 var modalInstance = $modal.open({
-                                    templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+                                    templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
                                     controller: 'SelectTutkintoOhjelmaController',
                                     resolve: {
                                         targetFilters: function() {

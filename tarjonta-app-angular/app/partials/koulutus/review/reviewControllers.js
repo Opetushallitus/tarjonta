@@ -252,11 +252,7 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             });
 
             copyModalDialog.result.then(function() {
-                //not working:
-                // $route.reload();
-                //$location.path("/koulutus/" + $scope.model.koulutus.oid);
-                // force page reload, at least it works:
-                window.location.reload();
+                /* ok */
             }, function() {
                 /* dismissed */
             })

@@ -251,10 +251,6 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanUpdateHaku(oid));
     }
 
-    public void setOverridePermissionChecks(boolean overridePermissionChecks) {
-		this.overridePermissionChecks = overridePermissionChecks;
-	}
-
     public boolean isOverridePermissionChecks() {
         return overridePermissionChecks;
     }
