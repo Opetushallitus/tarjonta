@@ -27,8 +27,12 @@
 	display:none;
 }
 
-.wide {
-	width:100%;
+input.wide, select.wide {
+    width:100%;
+}
+
+input.thin, select.thin {
+    width:101px;
 }
 
 .float-left {
@@ -214,6 +218,7 @@ footer {
 #tarjonta-body {
 	position:relative;
 	margin-top:20px;
+	min-width:920px;
 }
 
 .wsidebar-left {
@@ -260,7 +265,6 @@ div#orgSearchResults span {
 div#searchSpec {
 	height:96px;
 	position:relative;
-	min-width:960px;
 }
 
 div#searchSpec > div.title {
@@ -735,3 +739,7 @@ button.btn-invisible {
 	margin:0;
 	padding:0;
 }
+
+/* hakujen etusivu */
+
+
