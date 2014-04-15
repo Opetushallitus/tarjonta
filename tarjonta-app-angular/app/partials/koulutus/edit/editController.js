@@ -15,8 +15,17 @@
 
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 
-app.controller('BaseEditController', ['$scope', '$log', 'Config', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService',
-    function BaseEditController($scope, $log, Config, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
+app.controller('BaseEditController', [
+    '$scope', '$log', 'Config', 
+    '$routeParams', '$route', '$location', 
+    'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 
+    'OrganisaatioService', 'Koodisto', 'LocalisationService', 
+    'dialogService',
+    function BaseEditController($scope, $log, Config, 
+        $routeParams, $route, $location, 
+        converter, TarjontaService, PermissionService, 
+        organisaatioService, Koodisto, LocalisationService, 
+        dialogService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -79,22 +88,56 @@ app.controller('BaseEditController', ['$scope', '$log', 'Config', '$routeParams'
             return $scope.getUiModel().isMutable;
         };
 
-        $scope.goBack = function(event) {
-            $log.info("goBack()...");
+        $scope.goBack = function(event, form) {
+            var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
+            $log.debug("goBack(), dirty?", dirty);
+
+            if (dirty) {
+                dialogService.showModifedDialog().result.then(function(result) {
+                    if (result) {
+                        $scope.navigateBack();
+                    }
+                });
+            } else {
+                $scope.navigateBack();
+            }
+        };
+        
+        $scope.navigateBack = function() {
+            $log.debug("navigateBack()...");
             $location.path("/");
         };
+        
 
-        $scope.goToReview = function(event, boolInvalid, validationmsgs) {
-            if (!angular.isUndefined(boolInvalid) && boolInvalid) {
+        $scope.goToReview = function(event, boolInvalid, validationmsgs, form) {
+            $log.debug("goToReview()");
+            
+            if (angular.isDefined(boolInvalid) && boolInvalid) {
                 //ui errors
                 return;
             }
 
-            if (!angular.isUndefined(validationmsgs) && validationmsgs > 0) {
+            if (angular.isDefined(validationmsgs) && validationmsgs > 0) {
                 //server errors
                 return;
             }
+            
+            var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
+            $log.debug("  dirty?", dirty);
 
+            if (dirty) {
+                dialogService.showModifedDialog().result.then(function(result) {
+                    if (result) {
+                        $scope.navigateReview();
+                    }
+                });
+            } else {
+                $scope.navigateReview();
+            }
+        };
+        
+        $scope.navigateReview = function() {
+            $log.debug("navigateReview()");
             $location.path("/koulutus/" + $scope.model.oid);
         };
 
