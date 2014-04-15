@@ -137,7 +137,14 @@ public class KoulutusIndexEntityToSolrDocument implements
                 case AMMATTIKORKEAKOULUTUS:
                 case YLIOPISTOKOULUTUS:
                     //vapaavalintainen nimi
-                    MonikielinenTeksti nimi = indexerDao.getKomoNimi(koulutus.getKoulutusId());
+                    
+                    //primary name location : komoto OVT-7531
+                    MonikielinenTeksti nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
+                    if (nimi == null) {
+                        //secondary name location : komo
+                        nimi = indexerDao.getKomoNimi(koulutus.getKoulutusId());
+                    }
+                    
                     if (nimi == null) {
                         nimi = new MonikielinenTeksti();
                     }
@@ -153,9 +160,11 @@ public class KoulutusIndexEntityToSolrDocument implements
                     }
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+
                     nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
 
                     if (nimi == null) {
+
                         nimi = new MonikielinenTeksti();
                     }
 

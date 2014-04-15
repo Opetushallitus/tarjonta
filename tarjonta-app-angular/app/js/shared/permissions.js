@@ -259,7 +259,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
 
     function canUpdateHaku(){
       return function(org){
-        console.log("canUpdateHaku:", org);
+//        console.log("canUpdateHaku:", org);
         return AuthService.updateOrg(org, "APP_HAKUJENHALLINTA");
       };
     }
@@ -281,10 +281,10 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
         var orgs = haku.tarjoajaOids;
 
         if(orgs.length==0) {
-          console.log("speciaalikeissi, ei organisaatioita, assuming oph", ophOid);
+//          console.log("speciaalikeissi, ei organisaatioita, assuming oph", ophOid);
           //organisaatiota ei kerrottu, pitää olla oph?
           permissionf(ophOid).then(function(result){
-            console.log("resolving speciaali:", result);
+//            console.log("resolving speciaali:", result);
             defer.resolve(result);
           });
         } else {
@@ -294,14 +294,16 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
           var hasAccess = {access:false};
 
           function orAccess(result){
-//            console.log("oraccess");
-            hasAccess.sccess=hasAccess.access || result;
+//            console.log("or access result:", result);
+            hasAccess.access=hasAccess.access || result;
           }
 
           for(var i=0;i<orgs.length;i++){
             promises.push(permissionf(orgs[i]).then(orAccess));
           }
-        defer.resolve($q.all(promises).then($q.when(hasAccess.access)));
+          $q.all(promises).then(function(){
+            defer.resolve(hasAccess.access);
+          });
         }
 
       });
@@ -428,7 +430,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
         haku: {
           canCreate:function(){
             //tarkista rooli
-            console.log("can create haku");
+//            console.log("can create haku");
             return $q.when(true);
           },
 
@@ -436,7 +438,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
            * Onko käyttäjällä oikeus muokata hakua.
            */
           canEdit:function(hakuOid){
-            console.log("canEdit", hakuOid);
+//            console.log("canEdit", hakuOid);
             return hasHakuPermission(hakuOid, canUpdateHaku());
           },
 

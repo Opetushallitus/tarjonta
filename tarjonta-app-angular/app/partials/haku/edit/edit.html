@@ -8,10 +8,10 @@
             title="model.koulutusohjelma.tekstis"
             dto="model.hakux.result">
 
-            <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event)"></controls-button>
+            <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event, hakuForm)"></controls-button>
             <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" disabled="hakuForm.$invalid" primary="true"></controls-button>
             <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)" disabled="hakuForm.$invalid" primary="true"></controls-button>
-            <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="hakuForm.$invalid || isNewHaku()"></controls-button>
+            <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, hakuForm)" disabled="hakuForm.$invalid || isNewHaku()"></controls-button>
 
             <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
             <controls-notify type="message" tt-expr="'haku.edit.header'" tt-params="[ getHaunNimi() ]"></controls-notify>

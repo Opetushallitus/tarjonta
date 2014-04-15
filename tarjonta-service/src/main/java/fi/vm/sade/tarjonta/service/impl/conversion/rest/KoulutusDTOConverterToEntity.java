@@ -154,8 +154,9 @@ public class KoulutusDTOConverterToEntity {
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);
         komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
-
         komoto.setLastUpdatedByOid(userOid);
+        komoto.setNimi(commonConverter.convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA)); //OVT-7531
+
         return komoto;
     }
 
@@ -273,7 +274,6 @@ public class KoulutusDTOConverterToEntity {
         //Kandidaatti can be null object:
         komo.setKandidaatinKoulutuskoodi(commonConverter.convertToUri(dto.getKandidaatinKoulutuskoodi(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, true));
 
-        komo.setNimi(commonConverter.convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
