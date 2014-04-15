@@ -74,8 +74,8 @@
         <td colspan="2">
             <div ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
                 <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
-                <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required ng-change="onDateChanged(hakuaika)" max="hakuaika.loppuPvm" ></t-date-time>
-                <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" ng-change="onDateChanged(hakuaika)" min="hakuaika.alkuPvm"></t-date-time>
+                <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>
+                <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
 
                 <div class="btn"><i class="icon-minus" ng-click="doRemoveHakuaika(hakuaika, $index)"></i> Poista </div>
 
