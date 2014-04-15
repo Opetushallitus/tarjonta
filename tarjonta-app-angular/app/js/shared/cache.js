@@ -73,7 +73,7 @@ angular.module('TarjontaCache', ['ngResource', 'config', 'Logging']).factory('Ca
 		key = prepare(key);
 		var rv = cacheData[key.key];
 		if (rv==undefined) {
-			$log.debug("Cache miss",key);
+			//$log.debug("Cache miss",key);
 			return null;
 		}
 
@@ -84,7 +84,7 @@ angular.module('TarjontaCache', ['ngResource', 'config', 'Logging']).factory('Ca
 			return null;
 		}
 
-		$log.debug("Cache hit", key);
+		//$log.debug("Cache hit", key);
 
 		return rv.value;
 	}
