@@ -15,8 +15,8 @@
 
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 
-app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService',
-    function BaseEditController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
+app.controller('BaseEditController', ['$scope', '$log', 'Config', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService',
+    function BaseEditController($scope, $log, Config, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -25,8 +25,8 @@ app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route'
          */
 
         $scope.koodistoLocale = LocalisationService.getLocale();//"FI";
-        $scope.userLanguages = window.CONFIG.app.userLanguages; // opetuskielien esijärjestystä varten
-        $scope.opetuskieli = window.CONFIG.app.userLanguages[0]; //index 0 = fi uri
+        $scope.userLanguages = Config.app.userLanguages; // opetuskielien esijärjestystä varten
+        $scope.opetuskieli = Config.app.userLanguages[0]; //index 0 = fi uri
         $scope.tmp = {};
         $scope.langs = {};
         $scope.model = {};
@@ -100,7 +100,7 @@ app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route'
 
         $scope.setTabLang = function(langUri) {
             if (angular.isUndefined(langUri) || langUri === null) {
-                $scope.uiModel.tabLang = window.CONFIG.app.userLanguages[0]; //fi uri I guess;
+                $scope.uiModel.tabLang = Config.app.userLanguages[0]; //fi uri I guess;
             } else {
                 $scope.uiModel.tabLang = langUri;
             }
@@ -286,7 +286,7 @@ app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route'
         $scope.commonKoodistoLoadHandler = function(uiModel, koulutusasteTyyppi) {
             angular.forEach(converter.STRUCTURE[koulutusasteTyyppi].COMBO, function(value, key) {
                 if (angular.isUndefined(value.skipUiModel)) {
-                    var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(window.CONFIG.env[value.koodisto], $scope.koodistoLocale);
+                    var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.koodistoLocale);
                     uiModel[key].promise = koodisPromise;
                     koodisPromise.then(function(result) {
                         uiModel[key].koodis = result;
@@ -294,11 +294,11 @@ app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route'
                 }
             });
             angular.forEach(converter.STRUCTURE[koulutusasteTyyppi].MCOMBO, function(value, key) {
-                if (angular.isUndefined(window.CONFIG.env[value.koodisto])) {
+                if (angular.isUndefined(Config.env[value.koodisto])) {
                     throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
                 }
 
-                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(window.CONFIG.env[value.koodisto], $scope.koodistoLocale);
+                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.koodistoLocale);
                 uiModel[key].promise = koodisPromise;
 
                 koodisPromise.then(function(result) {
@@ -338,7 +338,7 @@ app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route'
             converter.createUiModels(uiModel, koulutusasteTyyppi);
             uiModel.isMutable = true;
             $scope.controlFormMessages(form, uiModel, "INIT");
-            converter.createAPIModel(model, window.CONFIG.app.userLanguages, koulutusasteTyyppi);
+            converter.createAPIModel(model, Config.app.userLanguages, koulutusasteTyyppi);
 
             var promiseOrg = organisaatioService.nimi($routeParams.org);
             promiseOrg.then(function(vastaus) {
@@ -426,7 +426,7 @@ app.controller('BaseEditController', ['$scope', '$log', '$routeParams', '$route'
          */
         $scope.setTabLang = function(langUri) {
             if (angular.isUndefined(langUri) || langUri === null) {
-                $scope.uiModel.tabLang = window.CONFIG.app.userLanguages[0]; //fi uri I guess;
+                $scope.uiModel.tabLang = Config.app.userLanguages[0]; //fi uri I guess;
             } else {
                 $scope.uiModel.tabLang = langUri;
             }

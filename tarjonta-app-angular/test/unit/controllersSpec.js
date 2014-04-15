@@ -39,6 +39,7 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('imageupload'));
     beforeEach(module('TarjontaCache'));
+    beforeEach(module('app.edit.ctrl.kk'));
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('debounce'));
     beforeEach(module('ngRoute'));
@@ -58,7 +59,7 @@ describe('Edit koulutus testeja', function() {
     beforeEach(inject(function($rootScope) {
         $scope = $rootScope.$new();
         $modalInstance = {
-            $scope : $scope,
+            $scope: $scope,
             templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
             controller: 'SelectTutkintoOhjelmaController',
             targetFilters: function() {
@@ -69,7 +70,7 @@ describe('Edit koulutus testeja', function() {
 
     it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
-             $scope : $scope,
+            $scope: $scope,
             $modalInstance: $modalInstance,
             resolve: {
                 targetFilters: function() {
@@ -86,7 +87,7 @@ describe('Edit koulutus testeja', function() {
 
     it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
-            $scope : $scope,
+            $scope: $scope,
             $modalInstance: $modalInstance,
             targetFilters: function() {
                 return [];
@@ -103,7 +104,7 @@ describe('Edit koulutus testeja', function() {
      $controller('EditYhteyshenkiloCtrl', {
      $scope: $scope
      });
-
+     
      $scope.uiModel = {};
      $scope.uiModel.contactPerson = {};
      $scope.uiModel.contactPerson.nimet = 'Testi nimi';
@@ -112,7 +113,7 @@ describe('Edit koulutus testeja', function() {
      $scope.uiModel.contactPerson.puhelin = '050432134534';
      $scope.uiModel.contactPerson.etunimet = 'Testi';
      $scope.uiModel.contactPerson.sukunimi = 'nimi';
-
+     
      $scope.editYhModel.clearYh();
      expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
      }));
@@ -285,6 +286,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('app.edit.ctrl.kk'));
     beforeEach(module('TarjontaPermissions'));
 
 
@@ -310,8 +312,14 @@ describe('Edit koulutus insert/edit/load', function() {
             kieli_sv: '',
             kieli_en: ''}};
 
+
+
     it('Testing the BaseEditController.init', inject(function($controller) {
-        $controller('BaseEditController', {
+        var a = $controller('BaseEditController', {
+            $scope: scope
+        });
+
+        $controller('EditKorkeakouluController', {
             "$scope": scope,
             "tarjontaService": tarjontaService,
             "cfg": cfg,
