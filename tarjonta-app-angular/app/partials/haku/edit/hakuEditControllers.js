@@ -134,8 +134,6 @@ app.controller('HakuEditController',
                     return;
                 }
 
-
-
                 $log.info("doSave()", tila, haku);
                 // Update haku's tila (state)
                 haku.tila = tila;
@@ -155,6 +153,9 @@ app.controller('HakuEditController',
                     if (result.status == "OK") {
                         $scope.model.showError = false;
                         $scope.model.showSuccess = true;
+                        
+                        // Reset form to "pristine" ($dirty = false)
+                        form.$setPristine();
 
                         $log.info("->saveparameters");
                         $scope.saveParameters(result.result);
@@ -183,11 +184,10 @@ app.controller('HakuEditController',
                 });
             };
 
-
             $scope.goToReview = function(event, hakuForm) {                
                 var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
                 $log.debug("goToReview(), dirty?", dirty);
-                
+
                 if (dirty) {
                     dialogService.showModifedDialog().result.then(function(result) {
                         if (result) {
