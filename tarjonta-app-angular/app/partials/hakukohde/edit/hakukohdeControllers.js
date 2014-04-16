@@ -795,6 +795,7 @@ app.controller('HakukohdeEditController',
         checkJatkaBtn();
         checkIsCopy();
         updateTilaModel($scope.model.hakukohde);
+        console.log('HAKUKOHDE CONTROLLER INITIALIZED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     };
 
     init();

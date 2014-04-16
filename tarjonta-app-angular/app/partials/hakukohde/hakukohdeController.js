@@ -109,8 +109,11 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
 
         $scope.getHakukohdePartialUri = function() {
 
-            var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/editPerustiedot.html";
+            //var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
+            var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
+            var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
             var korkeakouluTyyppi = "KORKEAKOULUTUS";
+            var lukioTyyppi = "LUKIOKOULUTUS";
             //If hakukohdex is defined then we are updating it
             //otherwise try to get selected koulutustyyppi from shared state
             if($route.current.locals.hakukohdex.result) {
@@ -123,7 +126,13 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
                 var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
                 if (koulutusTyyppi.trim() === korkeakouluTyyppi) {
                     return korkeakoulutusHakukohdePartialUri;
-                } //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
+                } else if (koulutusTyyppi.trim() === lukioTyyppi) {
+                    return aikuLukioHakukohdePartialUri;
+                } else {
+                    $log.info('KOULUTUSTYYPPI WAS: ' , koulutusTyyppi);
+                }
+
+                //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
             }
 
         };
