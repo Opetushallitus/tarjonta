@@ -60,10 +60,9 @@ app.controller('HakuListController',
                     $scope.searchParams = {
                         HAKUSANA: undefined,
                         TILA: undefined,
-                        HAKUKAUSI: undefined,
-                        HAKUVUOSI: undefined,
-                        KOULUTUKSEN_ALKAMISKAUSI: undefined,
-                        KOULUTUKSEN_ALKAMISVUOSI: undefined,
+                        KAUSI: undefined,
+                        VUOSI: undefined,
+                        KAUSIVUOSI: "HAKU",
                         HAKUTAPA: undefined,
                         HAKUTYYPPI: undefined,
                         KOHDEJOUKKO: undefined
@@ -76,6 +75,11 @@ app.controller('HakuListController',
                     $log.info("doCreateNew()");
                     $location.path("/haku/NEW");
                 };
+                
+                $scope.canCreateNew = function() {
+                	// TODO käyttöoikeustarkistus
+                	return true;
+                }
 
 
                 $scope.doDelete = function(haku) {
@@ -151,13 +155,23 @@ app.controller('HakuListController',
                     $log.debug("selected:", selected);
                     dialogService.showNotImplementedDialog();
                 };
+                
+                $scope.canDeleteSelected = function() {
+                	// TODO käyttöoikeustarkistus -> jos ei saa poistaa mitään, palauta false
+                	for (var i in $scope.model.hakus) {
+                		if ($scope.model.hakus[i].selected) {
+                			return true;
+                		}
+                	}
+                	return false;
+                }
 
-                function setKausi(params, parameterName) {
+                /*function setKausi(params, parameterName) {
                     if (params[parameterName]) {
                         var hKausi = params[parameterName];
                         params[parameterName] = hKausi.kausi;
                     }
-                }
+                }*/
 
                 /**
                  * populoi menu laiskasti (permissiot/tila vaikuttaa)
@@ -211,9 +225,18 @@ app.controller('HakuListController',
                     $log.info("doSearch()");
                     var params = angular.copy($scope.searchParams);
 
-                    setKausi(params, 'HAKUKAUSI');
-                    setKausi(params, 'KOULUTUKSEN_ALKAMISKAUSI');
-
+                    if (params.KAUSIVUOSI && params.KAUSI) {
+                    	params[params.KAUSIVUOSI+"KAUSI"] = params.KAUSI.kausi;
+                    }
+                    if (params.KAUSIVUOSI && params.VUOSI) {
+                    	params[params.KAUSIVUOSI+"VUOSI"] = params.VUOSI;
+                    }
+                    
+                    // pois turhat parametrit
+                    params.KAUSIVUOSI = undefined;
+                    params.KAUSI = undefined;
+                    params.VUOSI = undefined;
+                    
                     HakuV1Service.search(params).then(function(haut) {
 
                         for (var i = 0; i < haut.length; i++) {

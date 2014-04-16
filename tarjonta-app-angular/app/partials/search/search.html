@@ -81,17 +81,18 @@
     </div>
 
 	<div id="searchResults">
+	   <!-- 
         <div class="tools">
-            <!-- <a href class="btn" ng-click="report()" disabled="true"><span tt="tarjonta.haku.tulosta_raportti"/> <span class="icon-print"></span></a> -->
+            <a href class="btn" ng-click="report()" disabled="true"><span tt="tarjonta.haku.tulosta_raportti"/> <span class="icon-print"></span></a>
         </div>
+        -->
 	    <tabset>
 	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
 
 	        	<div class="controls">
-
-                    <a href class="btn" ng-click="koulutusActions.canMoveOrCopy ? siirraTaiKopioi() : function()" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi">Siirrä tai kopioi</span></a>
-                    <a href class="btn" ng-click="luoHakukohdeEnabled() ? luoUusiHakukohde() : function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde">Luo uusi hakukohde</span> <span class="icon-plus-sign"></span></a>
-                    <a href class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus">Luo uusi koulutus</span> <span class="icon-plus-sign"></span></a>
+                    <button class="btn" ng-click="koulutusActions.canMoveOrCopy ? siirraTaiKopioi() : function()" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi">Siirrä tai kopioi</span></button>
+                    <button class="btn" ng-click="luoHakukohdeEnabled() ? luoUusiHakukohde() : function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde">Luo uusi hakukohde</span> <span class="icon-plus-sign"></span></button>
+                    <button class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus">Luo uusi koulutus</span> <span class="icon-plus-sign"></span></button>
                 </div>
 
 	        	<results-table
