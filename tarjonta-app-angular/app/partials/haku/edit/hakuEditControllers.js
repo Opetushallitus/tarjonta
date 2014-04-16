@@ -36,7 +36,8 @@ app.controller('HakuEditController',
                 ParameterService,
                 Config,
                 OrganisaatioService,
-                AuthService) {
+                AuthService,
+                dialogService) {
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
@@ -86,8 +87,22 @@ app.controller('HakuEditController',
                 $scope.model.hakux.result.hakuaikas.push({nimi: "", alkuPvm: null, loppuPvm: null});
             };
 
-            $scope.goBack = function(event) {
-                $log.info("goBack()");
+            $scope.goBack = function(event, hakuForm) {
+                var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
+                $log.info("goBack(), dirty?", dirty);
+                
+                if (dirty) {
+                    dialogService.showModifedDialog().result.then(function(result) {
+                        if (result) {
+                            $scope.navigateBack();
+                        }
+                    });
+                } else {
+                    $scope.navigateBack();
+                }
+            };
+            
+            $scope.navigateBack = function() {
                 // TODO old query parameters?
                 $location.path("/haku");
             };
@@ -169,10 +184,25 @@ app.controller('HakuEditController',
             };
 
 
-            $scope.goToReview = function(event) {
-                $log.debug("goToReview()");
-                $location.path("/haku/" + $scope.model.hakux.result.oid);
+            $scope.goToReview = function(event, hakuForm) {                
+                var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
+                $log.debug("goToReview(), dirty?", dirty);
+                
+                if (dirty) {
+                    dialogService.showModifedDialog().result.then(function(result) {
+                        if (result) {
+                            $scope.navigateToReview();
+                        }
+                    });
+                } else {
+                    $scope.navigateToReview();
+                }
             };
+
+            $scope.navigateToReview = function(event) {
+                $location.path("/haku/" + $scope.model.hakux.result.oid);                
+            };
+
 
             /**
              * Check if Haku is "new".
