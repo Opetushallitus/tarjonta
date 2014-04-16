@@ -1,14 +1,14 @@
 <table class="tarjontaForm"><!--pre>{{model.koulutuskoodi| json }}</pre-->
     <!-- koulutuskoodi -->
     <tr class="required">
-        <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
+        <th tt="koulutus.edit.koulutuskoodi">Koulutus</th>
         <td>
             <select required class="span5" name="koulutuskoodi" ng-if="model.koulutuskoodi === Undefined || model.koulutuskoodi.arvo === Undefined" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'"></select>
             <span ng-if="model.koulutuskoodi !== Undefined && model.koulutuskoodi.arvo !== Undefined">{{model.koulutuskoodi.nimi}} {{model.koulutuskoodi.arvo}}</span><!-- loaded -->
         </td>
         <td>
             <p class="error" ng-show="uiModel.koulutuskoodi && (koulutusForm.koulutuskoodi.$error.required || koulutusForm.koulutuskoodi.$error.required)"
-               tt="koulutus.edit.koulutuskoodi.required">Suunniteltu kesto vaaditaan</p>
+               tt="koulutus.edit.koulutuskoodi.required">Koulutus vaaditaan</p>
         </td>
     </tr>
 
@@ -21,7 +21,7 @@
 
         </td>
         <td>
-            <p class="error" ng-show="koulutusForm.koulutusohjelma.$error.required"
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
                tt="koulutus.edit.lukiolinja.required">Lukiolinja vaaditaan</p>
         </td>
     </tr>

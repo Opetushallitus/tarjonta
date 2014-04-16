@@ -45,34 +45,34 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutusValidator {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusValidator.class);
-
+    
     public static List<ErrorV1RDTO> validateKoulutus(KoulutusKorkeakouluV1RDTO dto) {
         Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
         validateKoodistoRelations(dto, validationMessages);
         
-        if(dto.getTunniste()!=null) {
+        if (dto.getTunniste() != null) {
             validateStringMaxLength(validationMessages, dto.getTunniste(), 35, KoulutusValidationMessages.KOULUTUS_TUNNISTE_LENGTH);
         }
-
+        
         validateKoodiUris(validationMessages, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID);
         validateKoodiUris(validationMessages, dto.getAihees(), KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_MISSING, KoulutusValidationMessages.KOULUTUS_TEEMAT_AIHEET_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID);
-
+        
         validateNameKoulutusohjelma(validationMessages, dto);
         validateAlkamisPvms(validationMessages, dto);
         validateSuuniteltukesto(validationMessages, dto);
         List<ErrorV1RDTO> errors = Lists.<ErrorV1RDTO>newArrayList();
-
+        
         for (KoulutusValidationMessages e : validationMessages) {
             ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
             errorV1RDTO.setErrorMessageKey(e.name().toLowerCase());
             errors.add(errorV1RDTO);
         }
-
+        
         return errors;
     }
 
@@ -81,11 +81,11 @@ public class KoulutusValidator {
      */
     private static void validateStringMaxLength(Set<KoulutusValidationMessages> validationMessages, String tunniste, int maxLength,
             KoulutusValidationMessages koulutusTunnusteLength) {
-        if(tunniste.length()>maxLength) {
+        if (tunniste.length() > maxLength) {
             validationMessages.add(koulutusTunnusteLength);
         }
     }
-
+    
     public static List<ErrorV1RDTO> validateKoulutus(KoulutusLukioV1RDTO dto) {
         Set<KoulutusValidationMessages> validationMessages = Sets.<KoulutusValidationMessages>newHashSet();
         //TODO: validateKoodistoRelations(dto, validationMessages);
@@ -93,27 +93,27 @@ public class KoulutusValidator {
         validateKoodiUris(validationMessages, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID);
         validateKoodiUris(validationMessages, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID);
-
+        
         validateAlkamisPvms(validationMessages, dto);
         validateSuuniteltukesto(validationMessages, dto);
         List<ErrorV1RDTO> erros = Lists.<ErrorV1RDTO>newArrayList();
-
+        
         for (KoulutusValidationMessages e : validationMessages) {
             ErrorV1RDTO errorV1RDTO = new ErrorV1RDTO();
             errorV1RDTO.setErrorMessageKey(e.name().toLowerCase());
             erros.add(errorV1RDTO);
         }
-
+        
         return erros;
     }
-
+    
     private static void validateNameKoulutusohjelma(Set<KoulutusValidationMessages> validationMessages, KoulutusKorkeakouluV1RDTO dto) {
         validateTextOneOrMany(validationMessages, dto.getKoulutusohjelma(),
                 KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING,
                 KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID,
                 KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE);
     }
-
+    
     private static void validateKoodistoRelations(KoulutusKorkeakouluV1RDTO dto, Set<KoulutusValidationMessages> validationMessages) {
         validateKoodi(validationMessages, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
         validateKoodi(validationMessages, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
@@ -122,56 +122,56 @@ public class KoulutusValidator {
         validateKoodi(validationMessages, dto.getOpintoala(), KoulutusValidationMessages.KOULUTUS_OPINTOALA_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOALA_INVALID);
         validateKoodi(validationMessages, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
         validateKoodi(validationMessages, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
-
+        
         validateKoodi(validationMessages, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTO_INVALID);
         validateKoodiUris(validationMessages, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID);
     }
-
+    
     private static boolean notNullOrEmpty(final List list) {
         return notNull(list) && !list.isEmpty();
     }
-
+    
     private static boolean notNull(final List list) {
         return list != null;
     }
-
+    
     private static boolean notNullStr(final String str) {
         return str != null;
     }
-
+    
     private static boolean notNullStrOrEmpty(final String str) {
         return notNullStr(str) && !str.isEmpty();
     }
-
+    
     private static boolean isInteger(final Integer val) {
         return val == null;
     }
-
+    
     private static boolean isDouble(final Double val) {
         return val == null;
     }
-
+    
     private static boolean requireKoodiUriWithVersion(final KoodiV1RDTO koodi) {
         return !notNullStrOrEmpty(koodi.getUri());
     }
-
+    
     private static boolean requireKoodiUrisWithVersion(Map<String, Integer> map) {
         if (map == null) {
             return false;
         }
-
+        
         for (Entry<String, Integer> e : map.entrySet()) {
             if (!notNullStrOrEmpty(e.getKey())) {
                 return false;
             }
-
+            
             if (!isInteger(e.getValue())) {
                 return false;
             }
         }
         return true;
     }
-
+    
     private static boolean validateKoodi(Set<KoulutusValidationMessages> validationMessages, KoodiV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid) {
         if (dto == null) {
             validationMessages.add(missing);
@@ -181,21 +181,21 @@ public class KoulutusValidator {
             validationMessages.add(missing);
             return false;
         }
-
+        
         return true;
     }
-
+    
     private static boolean validateKoodiUris(Set<KoulutusValidationMessages> validationMessages, KoodiUrisV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid) {
         if (dto == null) {
             validationMessages.add(missing);
             return false;
         }
-
+        
         if (requireKoodiUrisWithVersion(dto.getUris())) {
             validationMessages.add(missing);
             return false;
         }
-
+        
         return true;
     }
 
@@ -214,7 +214,7 @@ public class KoulutusValidator {
             KoulutusValidationMessages invalid,
             KoulutusValidationMessages invalidTextValue) {
         Set<KoulutusValidationMessages> tempError = Sets.<KoulutusValidationMessages>newHashSet();
-
+        
         if (dto.getTekstis().isEmpty()) {
             //no items
             validationMessages.add(invalid);
@@ -234,32 +234,32 @@ public class KoulutusValidator {
             validationMessages.addAll(tempError);
         }
     }
-
+    
     private static void checkKausiVuosi(Set<KoulutusValidationMessages> validationMessages, KoodiV1RDTO kausi, Integer year) {
-
+        
         if (kausi == null || isEmpty(kausi.getUri())) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_MISSING);
         } else if (!KoodistoURI.isValidKausiUri(kausi.getUri())) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID);
         }
-
+        
         if (year == null) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_MISSING);
         } else if (year < 2000) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
         }
     }
-
+    
     private static void validateAlkamisPvms(Set<KoulutusValidationMessages> validationMessages, KoulutusV1RDTO dto) {
         if (dto.getKoulutuksenAlkamisPvms() == null) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_MISSING);
         } else if (!dto.getKoulutuksenAlkamisPvms().isEmpty()) {
-
+            
             final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
             KoulutusValidationMessages validateDates = KoulutusCommonConverter.validateDates(
                     koulutuksenAlkamisPvms.iterator().next(),
                     dto.getKoulutuksenAlkamisPvms());
-
+            
             if (!validateDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS)) {
                 validationMessages.add(validateDates);
             }
@@ -267,15 +267,15 @@ public class KoulutusValidator {
             checkKausiVuosi(validationMessages, dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
         }
     }
-
+    
     private static void validateSuuniteltukesto(Set<KoulutusValidationMessages> validationMessages, KoulutusV1RDTO dto) {
         if (!notNullStrOrEmpty(dto.getSuunniteltuKestoArvo())) {
             validationMessages.add(KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING);
         }
-
+        
         validateKoodi(validationMessages, dto.getSuunniteltuKestoTyyppi(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING, KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_INVALID);
     }
-
+    
     public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO<KuvaV1RDTO> result) {
         validateKieliUri(kuva.getKieliUri(), "kieliUri", result);
         String raw = kuva.getBase64data();
@@ -286,10 +286,10 @@ public class KoulutusValidator {
         if (getValidBase64Image(raw) == null) {
             result.addError(ErrorV1RDTO.createValidationError("base64data", "error_invalid_base64_data"));
         }
-
+        
         validateMimeType(kuva.getMimeType(), "mimeType", result);
     }
-
+    
     public static void validateMimeType(String mimeType, final String errorInObjectfieldname, ResultV1RDTO result) {
         if (mimeType == null || mimeType.isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_mime_type"));
@@ -297,7 +297,7 @@ public class KoulutusValidator {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_unrecognized_mime_type"));
         }
     }
-
+    
     public static void validateKieliUri(final String kieliUri, final String errorInObjectfieldname, ResultV1RDTO result) {
         if (kieliUri == null || kieliUri.isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_uri"));
@@ -305,24 +305,24 @@ public class KoulutusValidator {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_invalid_uri"));
         }
     }
-
+    
     public static String getValidBase64Image(final String rawbase64) {
         String modifiedBase64 = rawbase64;
         final boolean isBase64 = Base64.isBase64(rawbase64);
         if (!isBase64) {
             LOG.debug("Not valid base64 - try to clean received raw data. Data : '{}'", rawbase64);
             modifiedBase64 = rawbase64.replaceFirst("^data:image/[^;]*;base64,?", "");
-
+            
             if (Base64.isBase64(modifiedBase64)) {
                 return modifiedBase64;
             }
         } else {
             return rawbase64;
         }
-
+        
         return null;
     }
-
+    
     public static void validateKoulutusUpdate(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
         if (komoto == null) {
             dto.addError(ErrorV1RDTO.createValidationError("oid", KoulutusValidationMessages.KOULUTUS_KOMOTO_MISSING.lower()));
@@ -335,29 +335,38 @@ public class KoulutusValidator {
             checkIsDeleted(komoto, dto);
         }
     }
+    
+    public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<KoulutusmoduuliToteutus> relatedKomotos, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
+        Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
+        Preconditions.checkNotNull(relatedKomotos, "List of related KOMOTO objects cannot be null.");
+        Preconditions.checkNotNull(children, "List of child links cannot be null.");
+        Preconditions.checkNotNull(parent, "List of parent links cannot be null.");
+        Preconditions.checkNotNull(hkKoulutusMap, "Map of hakukohde objects cannot be null.");
+        Preconditions.checkNotNull(dto, "Result RDTO cannot be null.");
+        
+        LOG.debug("related komotos size : {}", relatedKomotos.size());
+        
+        if (relatedKomotos.size() == 1) {
+            //Removed (safe delete) items must be excluded from the list!    
+            //if the last komoto, then we will need to check if the komo is allowed to be removed (safe delete)
+//            Set<String> komotoOids = Sets.<String>newHashSet();
+//            for (KoulutusmoduuliToteutus t : relatedKomotos) {
+//                komotoOids.add(t.getOid());
+//            }
+//
+//            dto.addError(ErrorV1RDTO.createValidationError("komo.komotos", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_REMOVE_KOMOTO.lower(), komotoOids.toArray(new String[komotoOids.size()])));
 
-    public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
-        final Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
-
-        if (komo.getKoulutusmoduuliToteutusList().size() > 1) {
-            Set<String> komotoOids = Sets.<String>newHashSet();
-            for (KoulutusmoduuliToteutus t : komo.getKoulutusmoduuliToteutusList()) {
-                komotoOids.add(t.getOid());
+            if (!children.isEmpty()) {
+                dto.addError(ErrorV1RDTO.createValidationError("komo.link.childs", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_CHILD_REMOVE_LINK.lower(), children.toArray(new String[children.size()])));
             }
-
-            dto.addError(ErrorV1RDTO.createValidationError("komo.komotos", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_REMOVE_KOMOTO.lower(), komotoOids.toArray(new String[komotoOids.size()])));
-        }
-
-        if (!children.isEmpty()) {
-            dto.addError(ErrorV1RDTO.createValidationError("komo.link.childs", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_CHILD_REMOVE_LINK.lower(), children.toArray(new String[children.size()])));
-        }
-
-        if (!parent.isEmpty()) {
-            dto.addError(ErrorV1RDTO.createValidationError("komo.link.parents", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK.lower(), parent.toArray(new String[parent.size()])));
-        }
-
-        if (!komo.getTila().isRemovable()) {
-            dto.addError(ErrorV1RDTO.createValidationError("komo.invalid.transition", KoulutusValidationMessages.KOULUTUS_INVALID_TRANSITION.lower(), parent.toArray(new String[parent.size()])));
+            
+            if (!parent.isEmpty()) {
+                dto.addError(ErrorV1RDTO.createValidationError("komo.link.parents", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK.lower(), parent.toArray(new String[parent.size()])));
+            }
+            
+            if (!komoto.getKoulutusmoduuli().getTila().isRemovable()) {
+                dto.addError(ErrorV1RDTO.createValidationError("komo.invalid.transition", KoulutusValidationMessages.KOULUTUS_INVALID_TRANSITION.lower(), parent.toArray(new String[parent.size()])));
+            }
         }
 
         /*
@@ -366,19 +375,19 @@ public class KoulutusValidator {
          */
         if (!komoto.getHakukohdes().isEmpty()) {
             Set<String> hakukohdeOids = Sets.<String>newHashSet();
-
-            for(Entry<String, Integer> hkKoulutusCount: hkKoulutusMap.entrySet()) {
-                if(hkKoulutusCount.getValue()==1) {
+            
+            for (Entry<String, Integer> hkKoulutusCount : hkKoulutusMap.entrySet()) {
+                if (hkKoulutusCount.getValue() == 1) {
                     hakukohdeOids.add(hkKoulutusCount.getKey());
                 }
             }
             
-            if(hakukohdeOids.size()>0) {
+            if (hakukohdeOids.size() > 0) {
                 dto.addError(ErrorV1RDTO.createValidationError("komoto.hakukohdes", KoulutusValidationMessages.KOULUTUS_RELATION_KOMOTO_HAKUKOHDE_REMOVE_LINK.lower(), hakukohdeOids.toArray(new String[hakukohdeOids.size()])));
             }
         }
     }
-
+    
     private static void checkIsDeleted(final KoulutusmoduuliToteutus komoto, ResultV1RDTO dto) {
         Preconditions.checkNotNull(komoto, "Koulutusmoduulin toteutus cannot be null!");
         Preconditions.checkNotNull(komoto.getTila(), "Status cannot be null!");

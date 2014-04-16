@@ -350,7 +350,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     final List<String> parent = koulutusSisaltyvyysDAO.getParents(komoOid);
                     final List<String> children = koulutusSisaltyvyysDAO.getChildren(komoOid);
 
-                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, hkKoulutusMap, result);
+                    KoulutusValidator.validateKoulutusDelete(komoto, koulutusmoduuliDAO.findActiveKomotosByKomoOid(komoOid), children, parent, hkKoulutusMap, result);
 
                     if (!result.hasErrors()) {
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
@@ -367,7 +367,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     break;
                 default:
                     //for lukio
-                    KoulutusValidator.validateKoulutusDelete(komoto, Lists.<String>newLinkedList(), Lists.<String>newLinkedList(), hkKoulutusMap, result);
+                    KoulutusValidator.validateKoulutusDelete(komoto, Lists.<KoulutusmoduuliToteutus>newArrayList(), Lists.<String>newArrayList(), Lists.<String>newArrayList(), hkKoulutusMap, result);
                     if (!result.hasErrors()) {
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
                     }
