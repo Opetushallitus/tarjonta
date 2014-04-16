@@ -801,3 +801,7 @@ div#searchResults.haku table td input[type=checkbox] {
     margin-left:0;
 }
 
+div#searchResults.haku ul a {
+	font-weight:normal;
+}
+
