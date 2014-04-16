@@ -102,6 +102,24 @@ angular.module('app').factory(
 
             $log.info("*** errorLogService ***", serviceUrl);
 
+            function get_browser() {
+                var N = navigator.appName, ua = navigator.userAgent, tem;
+                var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+                if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null)
+                    M[2] = tem[1];
+                M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
+                return M[0];
+            }
+            
+            function get_browser_version() {
+                var N = navigator.appName, ua = navigator.userAgent, tem;
+                var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+                if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null)
+                    M[2] = tem[1];
+                M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
+                return M[1];
+            }
+
             // Log error to console (as normal) AND to the remote server
             function log(exception, cause) {
                 // Default behaviour, log to console
@@ -113,8 +131,12 @@ angular.module('app').factory(
                     
                     var errorMessage = exception.toString();
                     var stackTrace = exception.stack.toString();
+                    var browserInfo = {
+                        browser: get_browser(),
+                        browserVersion: get_browser_version()
+                    };
                     
-//                    // Log the JavaScript error to the server.
+                    // Log the JavaScript error to the server.
                     $.ajax({
                         type: "POST",
                         url: serviceUrl,
@@ -126,7 +148,8 @@ angular.module('app').factory(
                             errorUrl: $window.location.href,
                             errorMessage: errorMessage,
                             stackTrace: stackTrace,
-                            cause: (cause || "")
+                            cause: (cause || ""),
+                            browserInfo: browserInfo
                         })
                     });
 
