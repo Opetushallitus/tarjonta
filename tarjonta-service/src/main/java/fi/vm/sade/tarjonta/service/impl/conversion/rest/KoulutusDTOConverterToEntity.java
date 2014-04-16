@@ -239,6 +239,11 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getKielivalikoima() != null) {
             commonConverter.convertToKielivalikoima(dto.getKielivalikoima(), komoto);
         }
+        
+        if (dto.getKoulutuslaji() != null) {
+            komoto.getKoulutuslajis().clear();
+            komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
+        }
 
         komoto.setPohjakoulutusvaatimus(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO), dto.getSuunniteltuKestoArvo());

@@ -15,12 +15,11 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
 
         //käyttöoikeudet
         PermissionService.koulutus.canEdit(koulutusModel.oid).then(function(data) {
-        	var tila = TarjontaService.getTilat()[koulutusModel.tila];
+            var tila = TarjontaService.getTilat()[koulutusModel.tila];
             $scope.isMutable = tila.mutable && data;
             $scope.isRemovable = tila.removable && data;
         });
-        
-        
+
         $scope.formControls = {};
         $scope.model = {
             header: {}, //review.html otsikkon tiedot
@@ -40,11 +39,7 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
         $scope.model.userLangUri;
-        for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
-            if (kieliUri.indexOf(kieliUri) != -1) {
-                $scope.model.userLangUri = kieliUri;
-            }
-        }
+
 
         var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
         hakukohdePromise.then(function(hakukohteet) {
@@ -106,9 +101,19 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
 
         $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.koulutusasteTyyppi].KUVAUS_ORDER;
         if (koulutusModel.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
+            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
+                if (kieliUri.indexOf(kieliUri) != -1) {
+                    $scope.model.userLangUri = kieliUri;
+                }
+            }
             $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
         } else if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
-            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri];
+            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
+                if (kieliUri.indexOf(kieliUri) != -1) {
+                    $scope.model.userLangUri = kieliUri;
+                }
+            }
+            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri].nimi;
         }
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {

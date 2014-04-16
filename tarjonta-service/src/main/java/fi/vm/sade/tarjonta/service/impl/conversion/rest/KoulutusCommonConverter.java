@@ -446,6 +446,22 @@ public class KoulutusCommonConverter {
         return modifiedUris;
     }
 
+    
+    public Set<KoodistoUri> convertToUris(final KoodiV1RDTO dto, Set<KoodistoUri> koodistoUris, final FieldNames msg) {
+        Preconditions.checkNotNull(dto, "DTO object cannot be null! Error field : " + msg);
+
+        Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
+        if (koodistoUris == null) {
+            modifiedUris = Sets.<KoodistoUri>newHashSet();
+        }
+
+        if (dto != null) {
+            modifiedUris.add(new KoodistoUri(convertToKoodiUri(dto.getUri(), dto.getVersio(), msg)));
+        }
+
+        return modifiedUris;
+    }
+
     public KoodiValikoimaV1RDTO convertToKielivalikoimaDTO(Map<String, Kielivalikoima> tarjotutKielet, Locale locale, boolean showMeta) {
         KoodiValikoimaV1RDTO result = new KoodiValikoimaV1RDTO();
         if (tarjotutKielet != null && !tarjotutKielet.isEmpty()) {

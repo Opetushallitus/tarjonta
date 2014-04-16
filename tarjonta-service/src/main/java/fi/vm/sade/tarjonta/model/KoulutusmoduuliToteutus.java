@@ -301,7 +301,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the koulutusLajiUri
      */
     public Set<KoodistoUri> getKoulutuslajis() {
-        return Collections.unmodifiableSet(koulutuslajis);
+        return koulutuslajis;
     }
 
     /**
