@@ -44,6 +44,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String valintaperustekuvausKoodiUri;
     private Date liitteidenToimitusPvm;
     private String ulkoinenTunniste;
+    private String koulutusAsteTyyppi;
+    private String koulutuslaji;
     private Map<String,String> lisatiedot;
     private Map<String,String> valintaperusteKuvaukset;
     private Map<String,String> soraKuvaukset;
@@ -418,5 +420,21 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this.ulkoinenTunniste = ulkoinenTunniste;
+    }
+
+    public String getKoulutusAsteTyyppi() {
+        return koulutusAsteTyyppi;
+    }
+
+    public void setKoulutusAsteTyyppi(String koulutusAsteTyyppi) {
+        this.koulutusAsteTyyppi = koulutusAsteTyyppi;
+    }
+
+    public String getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    public void setKoulutuslaji(String koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
     }
 }

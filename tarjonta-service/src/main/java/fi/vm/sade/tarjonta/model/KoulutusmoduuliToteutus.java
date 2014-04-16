@@ -90,7 +90,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * Example display values 'Nuorten koulutus, Aikuisten koulutus'.
      */
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> koulutuslajis = new HashSet<KoodistoUri>();
