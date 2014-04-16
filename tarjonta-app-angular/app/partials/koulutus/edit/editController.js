@@ -312,6 +312,10 @@ app.controller('BaseEditController', [
                     var model = saveResponse.result;
 
                     if (saveResponse.status === 'OK') {
+                        
+                        // Reset form to "pristine" ($dirty = false)
+                        form.$setPristine();
+                        
                         $scope.model = model;
                         $scope.updateFormStatusInformation($scope.model);
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
