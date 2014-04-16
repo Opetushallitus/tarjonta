@@ -44,7 +44,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToRDTO.class);
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
@@ -54,11 +54,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private KoulutusCommonConverter commonConverter;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-
+    
     public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final String lang, final boolean showMeta) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
         final Locale locale = new Locale(lang);
-
+        
         TYPE dto = null;
         try {
             dto = clazz.newInstance();
@@ -67,11 +67,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         } catch (IllegalAccessException ex) {
             LOG.error("Converter initialization failed.", ex);
         }
-
+        
         if (komoto == null) {
             return dto;
         }
-
+        
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         dto.setOid(komoto.getOid());
         dto.setKomoOid(komo.getOid());
@@ -79,11 +79,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setModified(komoto.getUpdated());
         dto.setModifiedBy(komoto.getLastUpdatedByOid());
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
-
+        
         dto.setKoulutuksenAlkamiskausi(commonConverter.convertToKoodiDTO(komoto.getAlkamiskausi(), locale, FieldNames.ALKAMISKAUSI, true, showMeta));
         dto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
         dto.getKoulutuksenAlkamisPvms().addAll(komoto.getKoulutuksenAlkamisPvms());
-
+        
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), showMeta));
         dto.setKuvausKomoto(komotoKuvaus);
@@ -95,25 +95,25 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             
             final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstis().isEmpty(); //OVT-7531
             kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(useKomotoName ? komoto.getNimi() : komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
-
+            
             kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
             if (komo.getKandidaatinKoulutuskoodi() != null) {
                 kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutuskoodi(), locale, FieldNames.KOULUTUSKOODI_KANDIDAATTI, showMeta));
             }
-
+            
             if (komoto.getAihees() != null) {
                 kkDto.setAihees(commonConverter.convertToKoodiUrisDTO(komoto.getAihees(), locale, FieldNames.AIHEES, showMeta));
             }
-
+            
             final String maksullisuus = komoto.getMaksullisuus();
             kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
-
+            
             if (komoto.getHinta() != null) {
                 kkDto.setHinta(komoto.getHinta().doubleValue());
             }
-
+            
             kkDto.setAmmattinimikkeet(commonConverter.convertToKoodiUrisDTO(komoto.getAmmattinimikes(), locale, FieldNames.AMMATTINIMIKKEET, showMeta));
-
+            
             kkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiUrisDTO(komoto.getKkPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
             convertKomoCommonToRDTO(dto, komo, locale, showMeta);
         } else if (dto instanceof KoulutusLukioV1RDTO) {
@@ -124,6 +124,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             lukioDto.setTutkintonimike(commonConverter.koodiData(getFirstUriOrNull(komo.getTutkintonimikes()), locale, FieldNames.TUTKINTONIMIKE, showMeta));
             lukioDto.setPohjakoulutusvaatimus(commonConverter.koodiData(komoto.getPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
             lukioDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+            lukioDto.setKoulutuslaji(commonConverter.koodiData(getFirstUriOrNull(komoto.getKoulutuslajis()), locale, FieldNames.KOULUTUSLAJI, showMeta));
             //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             convertKomoCommonToRDTO(dto, parentKomo, locale, showMeta);
@@ -133,11 +134,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             convertKomoCommonToRDTO(dto, parentKomo, locale, showMeta);
         }
-
+        
         dto.setOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getTarjoaja(), locale));
         dto.setOpetuskielis(commonConverter.convertToKoodiUrisDTO(komoto.getOpetuskielis(), locale, FieldNames.OPETUSKIELIS, showMeta));
         dto.setOpetusmuodos(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusmuotos(), locale, FieldNames.OPETUSMUODOS, showMeta));
-
+        
         if (komoto.getOpetusAikas() != null) {
             dto.setOpetusAikas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusAikas(), locale, FieldNames.OPETUSAIKAS, showMeta));
         }
@@ -146,13 +147,13 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         }
         dto.setSuunniteltuKestoTyyppi(commonConverter.koodiData(komoto.getSuunniteltuKestoYksikko(), locale, FieldNames.SUUNNITELTUKESTON_TYYPPI, showMeta));
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltuKestoArvo());
-
+        
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
-
+        
         return dto;
     }
-
+    
     private void convertKomoCommonToRDTO(TYPE dto, Koulutusmoduuli komo, Locale locale, boolean showMeta) {
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
         dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusKoodi(), locale, FieldNames.KOULUTUSKOODI, showMeta));
@@ -164,19 +165,19 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setKoulutusala(commonConverter.koodiData(komo.getKoulutusala(), locale, FieldNames.KOULUTUSALA, showMeta));
         dto.setOpintoala(commonConverter.koodiData(komo.getOpintoala(), locale, FieldNames.OPINTOALA, showMeta));
         dto.setEqf(commonConverter.komoData(komo.getEqfLuokitus(), locale, FieldNames.EQF, showMeta));
-
+        
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
         komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), showMeta));
         dto.setKuvausKomo(komoKuvaus);
     }
-
+    
     private static String getFirstUriOrNull(Set<KoodistoUri> uris) {
         if (uris != null && !uris.isEmpty()) {
             return uris.iterator().next().getKoodiUri();
         }
         return null;
     }
-
+    
     private static String getFirstUrlOrNull(Set<WebLinkki> uris) {
         if (uris != null && !uris.isEmpty()) {
             return uris.iterator().next().getUrl();

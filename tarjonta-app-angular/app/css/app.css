@@ -27,8 +27,12 @@
 	display:none;
 }
 
-input.wide, select.wide {
+.wide {
     width:100%;
+}
+
+.thin {
+	width:50%;
 }
 
 input.thin, select.thin {
@@ -740,6 +744,64 @@ button.btn-invisible {
 	padding:0;
 }
 
+/* yleinen hakuehtonäkymä */
+
+table.seachSpecLayout {
+	width:100%;
+}
+
+table.seachSpecLayout td, table.seachSpecLayout th {
+    width:200px;
+    vertical-align: top;
+}
+
+table.seachSpecLayout th {
+	text-align:left;
+	font-weight:normal;
+}
+
+table.seachSpecLayout td {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+table.seachSpecLayout td.query {
+	min-width:200px;
+	width:100%;
+}
+
+table.seachSpecLayout td.query input {
+	min-width:75%;
+	max-width:400px;
+    top:-1px;
+
+    background-image: url('../img/icon20-search.png');
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right:22px;
+}
+
+table.seachSpecLayout td.controls {
+    text-align:right;
+}
+
+table.seachSpecLayout td.mode ul {
+    margin:0;
+	list-style:none;
+}
+
+table.seachSpecLayout td.mode ul span {
+	position:relative;
+	top:3px;
+}
+
 /* hakujen etusivu */
 
+div#searchResults.haku table td input[type=checkbox] {
+    margin-left:0;
+}
+
+div#searchResults.haku ul a {
+	font-weight:normal;
+}
 
