@@ -286,7 +286,15 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 					
 					$scope.updateCalendar = function(){
 						$scope.select.m = $scope.model.getMonth();
-						$scope.select.y = $scope.model.getFullYear();
+						$scope.select.y = 0;
+						
+						// OVT-7423 / IE10-kikka: 
+						// - vuoden valinnan ja vaihtoehtojen samanaikainen muuttaminen ei toimi,
+						//   joten vuosi on nollattava ja palautettava uudestaan seuraavassa digest-syklissä
+						setTimeout(function(){
+							$scope.select.y = $scope.model.getFullYear();
+							$scope.$digest();
+						},0);
 
 						var ret = [];
 
@@ -322,14 +330,17 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 						$scope.calendar = ret;
 						$scope.ctrl.years = [];
 						
+						var nyears = [];
+						
 						var y = $scope.model.getFullYear();
 						for (var i = y-2; i<=y+2; i++) {
 							var nd = new Date($scope.model.getTime());
 							nd.setFullYear(i);
 							if (!violatesConstraints(nd)) {
-								$scope.ctrl.years.push(i);
+								nyears.push(i);
 							}
 						}
+						$scope.ctrl.years = nyears;
                                               
 						return ret;
 					}
