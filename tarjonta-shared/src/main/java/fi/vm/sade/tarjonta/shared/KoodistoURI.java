@@ -132,6 +132,105 @@ public class KoodistoURI {
     public static final String PATTERN_KIELI_URI = "^%s_[a-z]{2}$";
     public static final String PATTERN_KAUSI_URI = "^kausi_(k|s)$";
 
+    
+    /**
+     * True if <code>koodi1</code> EXACTLY matches <code>koodi2</code>.
+     * 
+     * If preconfigured code does not have version information then prefix match is used.
+     * 
+     * Examples:
+     * <pre>
+     * null == null - true
+     * null == kieli_fi - false
+     * kieli_fi#1 == null - false
+     * 
+     * kieli_fi == kieli_fi - true
+     * kieli_fi == kieli_sv - false
+     * kieli_fi#1 == kieli_fi#1 - true
+     * kieli_fi#1 == kieli_fi#2 - false
+     * kieli_fi == kieli_fi#1 - true
+     * kieli_fi == kieli_fi#2 - true
+     * kieli_fi == kieli_sv#2 - false
+     * </pre>
+     * 
+     * @param sourceKoodi this code is assumed to be "preconfigured" - with or without version information
+     * @param targetKoodi this code is assumed to be selected / fetched koodi - with or without version information
+     * @return boolean
+     */
+    public static boolean compareKoodi(final String sourceKoodi, final String targetKoodi) {
+        return compareKoodi(sourceKoodi, targetKoodi, false);
+    }
+    
+    public static boolean compareKoodi(final String sourceKoodi, final String targetKoodi, boolean ignoreVersions) {
+        if (sourceKoodi == null && targetKoodi == null) {
+            return true;
+        }
+        if (sourceKoodi == null || targetKoodi == null) {
+            return false;
+        }
+
+        // Use version comparison IFF requested AND sourceKoodi has version information
+        boolean useVersions = koodiHasVersion(sourceKoodi) && !ignoreVersions;
+        
+        String source = new String(sourceKoodi);
+        String target = new String(targetKoodi);
+
+        if (!useVersions) {
+            // Use only koodi part, no version information used
+            source = splitKoodiToKoodiAndVersion(source)[0];
+            target = splitKoodiToKoodiAndVersion(target)[0];
+        }
+
+        return source.equals(target);
+    }
+
+    /**
+     * @param koodi
+     * @return true if koodi is not null and has version information (contains "#" character).
+     */
+    public static boolean koodiHasVersion(String koodi) {
+        return (koodi != null && koodi.indexOf("#") > 0);
+    }
+
+    /**
+     * Split koodi to "koodi" and version strings
+     * 
+     * <pre>
+     * null -- "", ""
+     * kieli_fi -- "kieli_fi", ""
+     * kieli_fi#123 -- "kieli_fi", "123"
+     * </pre>
+     * 
+     * @param koodi
+     * @return 
+     */
+    public static String[] splitKoodiToKoodiAndVersion(final String koodi) {
+        String[] result = new String[2];
+        result[0] = "";
+        result[1] = "";
+        
+        if (koodi == null) {
+            return result;
+        }   
+
+        String[] tmp = koodi.split("#");
+        
+        if (tmp != null && tmp.length >= 1) {
+            result[0] = tmp[0];
+        }
+
+        if (tmp != null && tmp.length >= 2) {
+            result[1] = tmp[1];
+        }
+
+        return result;
+    }
+    
+
+    /*
+     * Injected from spring.
+     */
+    
     @Value("${koodisto-uris.vapaaSivistys:haunkohdejoukko_18#1}")
     public void setKoodiKohdejoukkoVapaaSivistysUri(String uri) {
         KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI = uri;
