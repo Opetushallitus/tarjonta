@@ -49,6 +49,70 @@ describe('koodistoServiceTest', function() {
         }));
     });
 
+
+    describe('Test koodi comparisons',function(){
+
+        var testData = [
+            // [sourceUri, targetUri, compareVersioned, compareNonVersioned],
+            [null, null, true, true],
+            ["", null, true, true],
+            [null, "", true, true],
+            ["", "", true, true],
+            [null, "kieli_fi", false, false],
+            [null, "kieli_fi#1", false, false],
+            [null, "kieli_fi#2", false, false],
+
+            ["kieli_fi", null, false, false],
+            ["kieli_fi#1", null, false, false],
+            ["kieli_fi#2", null, false, false],
+            ["kieli_fi", "kieli_fi", true, true],
+            ["kieli_fi", "kieli_fi#1", true, true],
+            ["kieli_fi", "kieli_fi#1234", true, true],
+            ["kieli_fi", "hakutapa_03", false, false],
+            ["kieli_fi", "hakutapa_03#1", false, false],
+            ["kieli_fi#1", "kieli_fi", false, true],
+            ["kieli_fi#1", "kieli_fi#1", true, true],
+            ["kieli_fi#1", "kieli_fi#1234", false, true],
+            ["kieli_fi", "kieli_sv", false, false],
+            ["kieli_fi", "kieli_sv#1", false, false],
+            ["kieli_fi", "hakutapa_03", false, false],
+            ["kieli_fi", "hakutapa_03#1", false, false],
+            ["kieli_fi#1", "kieli_sv", false, false],
+            ["kieli_fi#1", "kieli_sv#1", false, false],
+            ["kieli_fi#1", "hakutapa_03", false, false],
+            ["kieli_fi#1", "hakutapa_03#112", false, false]
+        ];
+
+        it('koodi comparison should match expected',inject(function(KoodistoURI) {
+        
+            for (var i = 0; i < testData.length; i++) {
+                var testDataRow = testData[i];
+            
+                var source = testDataRow[0];
+                var target = testDataRow[1];
+                var shouldEqual = testDataRow[2];
+                var shouldEqualNoVersion = testDataRow[3];
+
+                var result = KoodistoURI.compareKoodi(source, target);
+                var resultNoVersion = KoodistoURI.compareKoodi(source, target, true);
+                
+                // console.log("XXX", source, target, shouldEqual, shouldEqualNoVersion, result, resultNoVersion);
+                
+                if (shouldEqual != result) {
+                    console.log("THIS COMPARISON FAILS (versioned): ", source, target);
+                }
+                if (shouldEqualNoVersion != resultNoVersion) {
+                    console.log("THIS COMPARISON FAILS (non versioned): ", source, target);
+                }
+                
+                expect(result).toBe(shouldEqual);
+                expect(resultNoVersion).toBe(shouldEqualNoVersion);
+            }
+        }));
+        
+    });
+
+
 });
 
 
