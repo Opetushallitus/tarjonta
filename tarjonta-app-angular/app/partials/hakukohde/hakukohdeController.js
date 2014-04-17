@@ -22,8 +22,8 @@
 
 var app = angular.module('app.hakukohde.ctrl', []);
 
-app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','$q', 'Hakukohde' , 'SharedStateService', 'TarjontaService',
-    function HakukohdeRoutingController($scope, $log, $routeParams, $route,$q, Hakukohde,SharedStateService,TarjontaService) {
+app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','$q', 'Hakukohde' , '$location' , 'SharedStateService', 'TarjontaService',
+    function HakukohdeRoutingController($scope, $log, $routeParams, $route,$q, Hakukohde, $location, SharedStateService,TarjontaService) {
 
 
 
