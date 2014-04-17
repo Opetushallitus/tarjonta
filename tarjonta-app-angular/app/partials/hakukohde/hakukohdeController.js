@@ -13,11 +13,21 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
+/**
+ *
+ * This controller acts as routing and parent controller of all hakukohdes,
+ * it contains all common controller variables and functions
+ * @type {module|*}
+ */
 
 var app = angular.module('app.hakukohde.ctrl', []);
 
-app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','Hakukohde' , 'SharedStateService',
-    function HakukohdeRoutingController($scope, $log, $routeParams, $route,Hakukohde,SharedStateService) {
+app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', '$route','$q', 'Hakukohde' , 'SharedStateService', 'TarjontaService',
+    function HakukohdeRoutingController($scope, $log, $routeParams, $route,$q, Hakukohde,SharedStateService,TarjontaService) {
+
+
+
+
         $log.info("HakukohdeRoutingController()", $routeParams);
         $log.info("$route: ", $route);
         $log.info("$route action: ", $route.current.$$route.action);
@@ -107,6 +117,80 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
         $scope.hakukohdex = $route.current.locals.hakukohdex;
         $log.info("  --> hakukohdex == ", $scope.hakukohdex);
 
+        /*
+         *
+         * Common hakukohde controller variables
+         *
+         */
+
+
+        $scope.modifiedObj = {
+
+            modifiedBy : '',
+            modified : 0,
+            tila : ''
+
+        };
+
+        $scope.model.showSuccess = false;
+        $scope.model.showError = false;
+        $scope.model.validationmsgs = [];
+        $scope.model.hakukohdeTabsDisabled = false;
+        $scope.model.koulutusnimet = [];
+        $scope.model.continueToReviewEnabled = false;
+        $scope.model.organisaatioNimet = [];
+        $scope.model.hakukohdeOppilaitosTyyppis = [];
+        $scope.model.nimiValidationFailed = false;
+        $scope.model.hakukelpoisuusValidationErrMsg = false;
+        $scope.model.tallennaValmiinaEnabled = true;
+        $scope.model.tallennaLuonnoksenaEnabled = true;
+        $scope.model.liitteidenToimitusOsoite = {};
+        var deferredOsoite = $q.defer();
+        $scope.model.liitteenToimitusOsoitePromise = deferredOsoite.promise;
+        $scope.model.liitteidenToimitusPvm = new Date();
+        $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden ja valintakokeiden kielien esijärjestystä varten
+        $scope.model.defaultLang = 'kieli_fi';
+
+        //All kieles is received from koodistomultiselect
+        $scope.model.allkieles = [];
+        $scope.model.selectedKieliUris = [];
+        var koulutusKausiUri;
+        $scope.model.koulutusVuosi;
+        $scope.model.integerval=/^\d*$/;
+
+        $scope.koulutusKausiUri;
+
+        $scope.julkaistuVal = "JULKAISTU";
+
+        $scope.luonnosVal = "LUONNOS";
+
+        $scope.valmisVal = "VALMIS";
+
+        $scope.peruttuVal = "PERUTTU";
+
+        $scope.showSuccess = function() {
+            $scope.model.showSuccess = true;
+            $scope.model.showError = false;
+            $scope.model.validationmsgs = [];
+            $scope.model.hakukohdeTabsDisabled = false;
+        };
+
+        $scope.showError = function(errorArray) {
+
+            $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+            angular.forEach(errorArray,function(error) {
+
+
+                $scope.model.validationmsgs.push(error.errorMessageKey);
+
+
+            });
+            $scope.model.showError = true;
+            $scope.model.showSuccess = false;
+        };
+
+
         $scope.getHakukohdePartialUri = function() {
 
             //var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
@@ -136,5 +220,159 @@ app.controller('HakukohdeRoutingController', ['$scope', '$log', '$routeParams', 
             }
 
         };
+
+
+        $scope.validateNameLengths = function(hakukohteenNimet) {
+
+            var retval = true;
+
+            angular.forEach(hakukohteenNimet, function(hakukohdeNimi){
+
+                if (hakukohdeNimi.length > 225) {
+                    retval = false;
+                }
+
+            });
+
+            return retval;
+
+        };
+
+        $scope.checkJatkaBtn =   function(hakukohde) {
+
+            if (hakukohde === undefined || hakukohde.oid === undefined) {
+                $log.debug('HAKUKOHDE OR HAKUKOHDE OID UNDEFINED');
+
+                return false;
+            } else {
+                return true;
+            }
+
+        };
+
+        $scope.updateTilaModel = function(hakukohde) {
+
+            if (hakukohde) {
+                $scope.modifiedObj.modifiedBy = hakukohde.modifiedBy;
+                $scope.modifiedObj.modified = hakukohde.modified;
+                $scope.modifiedObj.tila = hakukohde.tila;
+            }
+            console.log('FORM CONTROLS : ', $scope.formControls);
+            if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
+                $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
+                $scope.formControls.reloadDisplayControls();
+            }
+
+
+        };
+
+        $scope.emptyErrorMessages = function() {
+
+            $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+
+            $scope.model.showError = false;
+
+        };
+
+        $scope.checkCanCreateOrEditHakukohde = function(hakukohde) {
+
+            if (hakukohde.oid !== undefined) {
+
+                if ($scope.canEdit !== undefined) {
+                    return $scope.canEdit;
+                } else {
+                    return true;
+                }
+
+
+            } else {
+
+                if ($scope.canCreate !== undefined) {
+
+                    return $scope.canCreate;
+
+                } else {
+
+                    return true;
+
+                }
+
+
+
+            }
+
+
+
+        };
+
+
+        $scope.checkIfSavingCopy = function(hakukohde) {
+
+            if ($scope.model.isCopy) {
+
+                if (hakukohde.oid !== undefined) {
+
+                    $scope.model.isCopy = false;
+
+                    $location.path('/hakukohde/'+hakukohde.oid +'/edit');
+                }
+
+
+
+
+            }
+
+        };
+
+        $scope.showCommonUnknownErrorMsg = function() {
+
+            var errors = [];
+
+            var error = {};
+
+            error.errorMessageKey =  commonExceptionMsgKey;
+
+            errors.push(error);
+
+            $scope.showError(errors);
+
+        };
+
+        $scope.checkIsCopy = function(tilaParam) {
+
+            //If scope or route has isCopy parameter defined as true remove oid,
+            //so that new hakukohde will be created
+            $log.debug('IS THIS COPY ROUTE : ',$route.current.locals.isCopy);
+
+            if ($route.current.locals.isCopy) {
+                $log.debug('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
+                $scope.model.hakukohde.oid = undefined;
+                $scope.model.hakukohde.tila = tilaParam;
+
+            }
+
+            $log.debug('IS COPY : ' , $scope.isCopy);
+            if ($scope.isCopy !== undefined && $scope.isCopy) {
+                $scope.model.hakukohde.oid = undefined;
+                $scope.model.hakukohde.tila = tilaParam;
+
+            }
+
+
+            $scope.model.isCopy = true;
+
+        };
+
+        $scope.createFormattedDateString = function(date) {
+
+            return moment(date).format('DD.MM.YYYY HH:mm');
+
+        };
+
+
+
+
+
+
     }
 ]);
