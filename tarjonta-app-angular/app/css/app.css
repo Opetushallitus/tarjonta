@@ -805,3 +805,15 @@ div#searchResults.haku ul a {
 	font-weight:normal;
 }
 
+
+/* taulukon oikeanpuoleisen sarakkeen nappi*/
+
+table td.controls {
+	text-align:right;
+	padding-left:20px;
+}
+
+table td.controls button {
+	position:relative;
+	top: -5px;
+}

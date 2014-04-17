@@ -8,9 +8,6 @@
             <th tt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
             <td>
             <t-date-time type="long" name="PH_TJT" timestamp="true" ng-model="model.parameter.PH_TJT"></t-date-time>
-                <p class="help-block" tt='haku.edit.aikataulu.PH_TJT.help'>
-                    Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.
-                </p>
             </td>
             <td>
                 <div>
@@ -18,14 +15,15 @@
                 </div>
             </td>
         </tr>
-
+	    <tr>
+	        <th></th>
+	        <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_TJT.help">Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.</td>
+	    </tr>
+    
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKLPT'>Hakukohteen lisäämisen ja perumisen takaraja</th>
             <td>
             <t-date-time type="long" name="PH_HKLPT" timestamp="true" ng-model="model.parameter.PH_HKLPT"></t-date-time>
-                <p class="help-block" tt='haku.edit.aikataulu.PH_HKLPT.help'>
-                    Annetun ajan jälkeen hakukohteita ei voi lisätä tai perua.
-                </p>
             </td>
             <td>
                 <div>
@@ -33,14 +31,15 @@
                 </div>
             </td>
         </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_HKLPT.help">Annetun ajan jälkeen hakukohteita ei voi lisätä tai perua.</td>
+        </tr>
 
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKMT'>Hakukohteen muokkauksen takaraja</th>
             <td>
             <t-date-time type="long" name="PH_HKMT" timestamp="true" ng-model="model.parameter.PH_HKMT"></t-date-time>
-                <p class="help-block" tt='haku.edit.aikataulu.PH_HKMT.help'>
-                    Annetun ajan jälkeen hakukohteita ei voi muokata.
-                </p>
             </td>
             <td>
                 <div>
@@ -48,10 +47,14 @@
                 </div>
             </td>
         </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_HKMT.help">Annetun ajan jälkeen hakukohteita ei voi muokata.</td>
+        </tr>
 
         <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th tt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2"><t-show-date value="hakuaika.alkuPvm"></t-show-date> --- <t-show-date value="hakuaika.loppuPvm"></t-show-date></td>
+            <td colspan="2"><t-show-date value="hakuaika.alkuPvm"></t-show-date> &rarr; <t-show-date value="hakuaika.loppuPvm"></t-show-date></td>
         </tr>
 
     </table>
@@ -80,7 +83,7 @@
     <table class="tarjontaForm">
         <tr>
             <th tt='haku.edit.aikataulu.hakuaika'>Hakuaika</th>
-            <td colspan="2"><t-show-date value="hakuaika.loppuPvm"></t-showdate> --- <t-show-date value="hakuaika.loppuPvm"></t-showdate></td>
+            <td colspan="2"><t-show-date value="hakuaika.loppuPvm"></t-showdate> &rarr; <t-show-date value="hakuaika.loppuPvm"></t-showdate></td>
         </tr>
 
         <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
