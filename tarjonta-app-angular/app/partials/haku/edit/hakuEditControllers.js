@@ -37,7 +37,8 @@ app.controller('HakuEditController',
                 Config,
                 OrganisaatioService,
                 AuthService,
-                dialogService) {
+                dialogService,
+                KoodistoURI) {
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
@@ -263,8 +264,11 @@ app.controller('HakuEditController',
              * @returns true if current haku is JATKUVA_HAKU
              */
             $scope.isJatkuvaHaku = function() {
-                var result = $scope.model.hakux.result.hakutapaUri == Config.env["koodisto.hakutapa.jatkuvaHaku.uri"];
-                // $log.info("isJatkuvaHaku()", result);
+                // Ignore koodisto versions in comparison
+                var result = KoodistoURI.compareKoodi(KoodistoURI.HAKUTAPA_JATKUVAHAKU, $scope.model.hakux.result.hakutapaUri, true);
+                // $scope.model.hakux.result.hakutapaUri == Config.env["koodisto.hakutapa.jatkuvaHaku.uri"];
+                
+                $log.info("isJatkuvaHaku()", result);
                 return result;
             };
 

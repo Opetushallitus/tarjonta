@@ -31,7 +31,7 @@
             <th tt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
             <td>
                 <t-date-time type="long" name="PH_SS_S" ng-model="model.parameter.PH_SS_S" required></t-date-time>
-                --
+                &rarr;
                 <t-date-time type="long" name="PH_SS_E" ng-model="model.parameter.PH_SS_E" required></t-date-time>
             </td>
             <td>
@@ -58,15 +58,16 @@
             <th tt='haku.edit.aikataulu.PH_SST'>Sijoittelun suorittamistiheys</th>
             <td>
                 <input type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span tt="haku.tuntia">tuntia</span>
-                <p class="help-block" tt='haku.edit.aikataulu.PH_SST.help'>
-                    Tiheys määritetään kokonaistunteina välillä 1 - 336 (14 vuorokautta)
-                </p>
             </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_SST" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_SST.help">Tiheys määritetään kokonaistunteina välillä 1 - 336 (14 vuorokautta)</td>
         </tr>
 
 <!--
@@ -75,15 +76,16 @@
             <td>
                 <span tt="haku.klo">klo</span>
                 <input type="text" ng-model="model.parameter.PH_SSKA" name="PH_SSKA" placeholder="23:59" ng-pattern="/[012][0-9]:[0-5][0-9]/">
-                <p class="help-block" tt='haku.edit.aikataulu.PH_SSKA.help'>
-                    Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen.
-                </p>
             </td>
             <td>
                 <div>
                     <show-errors form="hakuForm" field="PH_SSKA" tt-prefix="haku.edit.aikataulu"></show-errors>
                 </div>
             </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_SSKA.help">Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen.</td>
         </tr>
 -->
     </table>
@@ -95,7 +97,7 @@
             <th tt='haku.edit.aikataulu.PH_VTJH'>Valintatulosten julkaiseminen hakijoille</th>
             <td>
                 <t-date-time type="long" name="PH_VTJH_S" ng-model="model.parameter.PH_VTJH_S" required></t-date-time>
-                --
+                &rarr;
                 <t-date-time type="long" name="PH_VTJH_E" ng-model="model.parameter.PH_VTJH_E" required></t-date-time>
             </td>
             <td>

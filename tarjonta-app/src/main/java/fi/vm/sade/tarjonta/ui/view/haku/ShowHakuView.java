@@ -131,11 +131,12 @@ public class ShowHakuView extends AbstractVerticalInfoLayout {
             }
         });
 
+        addLayoutSplit();
+        buildLayoutMiddleTop(layout);  //loads the model!!
+
         //permissions
         poista.setVisible(hakuPresenter.getPermission().userCanDeleteHaku(model.getHakuOid()));
 
-        addLayoutSplit();
-        buildLayoutMiddleTop(layout);
         //addLayoutSplit();
         //buildLayoutMiddleMid2(layout);
         //addLayoutSplit();
