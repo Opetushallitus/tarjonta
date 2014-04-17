@@ -16,16 +16,16 @@
 var app = angular.module('app.edit.ctrl', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 
 app.controller('BaseEditController', [
-    '$scope', '$log', 'Config', 
-    '$routeParams', '$route', '$location', 
-    'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 
-    'OrganisaatioService', 'Koodisto', 'LocalisationService', 
+    '$scope', '$log', 'Config',
+    '$routeParams', '$route', '$location',
+    'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
+    'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
     'dialogService',
-    function BaseEditController($scope, $log, Config, 
-        $routeParams, $route, $location, 
-        converter, TarjontaService, PermissionService, 
-        organisaatioService, Koodisto, LocalisationService, 
-        dialogService) {
+    function BaseEditController($scope, $log, Config,
+            $routeParams, $route, $location,
+            converter, TarjontaService, PermissionService,
+            organisaatioService, Koodisto, KoodistoURI, LocalisationService,
+            dialogService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -73,11 +73,11 @@ app.controller('BaseEditController', [
 
 
         $scope.canSaveAsLuonnos = function() {
-            if ($scope.getModel().tila !== 'LUONNOS') {
+            if ($scope.getModel().tila !== 'LUONNOS' || $scope.getModel().tila === 'POISTETTU') {
                 return false;
             }
 
-            return $scope.getUiModel().isMutable;
+            return $scope.uiModel.isMutable;
         };
 
         $scope.canSaveAsValmis = function() {
@@ -85,7 +85,7 @@ app.controller('BaseEditController', [
                 return false;
             }
 
-            return $scope.getUiModel().isMutable;
+            return $scope.uiModel.isMutable;
         };
 
         $scope.goBack = function(event, form) {
@@ -102,16 +102,16 @@ app.controller('BaseEditController', [
                 $scope.navigateBack();
             }
         };
-        
+
         $scope.navigateBack = function() {
             $log.debug("navigateBack()...");
             $location.path("/");
         };
-        
+
 
         $scope.goToReview = function(event, boolInvalid, validationmsgs, form) {
             $log.debug("goToReview()");
-            
+
             if (angular.isDefined(boolInvalid) && boolInvalid) {
                 //ui errors
                 return;
@@ -121,7 +121,7 @@ app.controller('BaseEditController', [
                 //server errors
                 return;
             }
-            
+
             var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
             $log.debug("  dirty?", dirty);
 
@@ -135,7 +135,7 @@ app.controller('BaseEditController', [
                 $scope.navigateReview();
             }
         };
-        
+
         $scope.navigateReview = function() {
             $log.debug("navigateReview()");
             $location.path("/koulutus/" + $scope.model.oid);
@@ -312,10 +312,10 @@ app.controller('BaseEditController', [
                     var model = saveResponse.result;
 
                     if (saveResponse.status === 'OK') {
-                        
+
                         // Reset form to "pristine" ($dirty = false)
                         form.$setPristine();
-                        
+
                         $scope.model = model;
                         $scope.updateFormStatusInformation($scope.model);
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
@@ -430,6 +430,18 @@ app.controller('BaseEditController', [
             PermissionService.koulutus.canEdit(model.oid).then(function(data) {
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;
+
+                if (model.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
+                    //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+                    if (angular.isDefined(uiModel.loadedKoulutuslaji) &&
+                            KoodistoURI.compareKoodi(
+                                    uiModel.loadedKoulutuslaji.uri,
+                                    Config.env['koodi-uri.koulutuslaji.nuortenKoulutus'], true)) {
+
+                        uiModel.isMutable = false;
+                        uiModel.isRemovable = false;
+                    }
+                }
             });
 
             uiModel.tabs.lisatiedot = false; //activate lisatiedot tab

@@ -14,6 +14,7 @@ app.controller('EditLukioController',
                     $log.debug("init");
                     var model = {};
                     var uiModel = {
+                        loadedKoulutuslaji : null, //a hack : esta nuorten lukiokoulutuksen tallennus
                         //custom stuff
                         koulutusohjelma: [],
                         tutkintoModules: {},
@@ -29,6 +30,7 @@ app.controller('EditLukioController',
                          *  Look more info from koulutusController.js.
                          */
                         model = $route.current.locals.koulutusModel.result;
+                        uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                         $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, ENUM_LUKIOKOULUTUS);
 
                         /*
