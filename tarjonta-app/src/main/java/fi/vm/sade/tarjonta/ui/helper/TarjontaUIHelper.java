@@ -490,6 +490,9 @@ public class TarjontaUIHelper {
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         // LOG.debug("getKoodiNimi('{}', {}) ...", new Object[]{koodiUriWithPossibleVersionInformation, locale});
 
+        if(koodiUriWithPossibleVersionInformation==null || koodiUriWithPossibleVersionInformation.trim().length()==0){
+            return "";
+        }
         String result = koodiUriWithPossibleVersionInformation;
 
         try {
