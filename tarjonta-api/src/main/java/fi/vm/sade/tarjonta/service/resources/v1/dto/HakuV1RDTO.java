@@ -92,6 +92,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
 	@ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required=false)
     private String[] tarjoajaOids;
 
+	@ApiModelProperty(value = "Hakukohteet järjestettävä prioriteettijärjestykseen.", required=false)
+    private boolean usePriority;
+        
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -254,4 +257,12 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.tarjoajaOids = tarjoajaOids;
     }
 
+    public boolean isUsePriority() {
+        return usePriority;
+    }
+
+    public void setUsePriority(boolean usePriority) {
+        this.usePriority = usePriority;
+    }
+    
 }

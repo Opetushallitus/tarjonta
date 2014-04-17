@@ -29,9 +29,11 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -86,6 +88,18 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         return from(qHakukohde, qKomoto)
                 .join(qKomoto.hakukohdes, qHakukohde)
                 .where(qHakukohde.oid.eq(hakukohde.getOid()))
+                .list(qKomoto);
+    }
+
+    private BooleanBuilder bb(Predicate initial) {
+        return new BooleanBuilder(initial);
+    }
+
+    @Override
+    public List<KoulutusmoduuliToteutus> findActiveKomotosByKomoOid(String komoOid) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        return from(qKomoto)
+                .where(qKomoto.koulutusmoduuli.oid.eq(komoOid).and(bb(qKomoto.tila.notIn(TarjontaTila.POISTETTU))))
                 .list(qKomoto);
     }
 

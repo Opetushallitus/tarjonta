@@ -316,12 +316,20 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         Haku hakuToRemove = hakuDAO.findByOid(oid);
 
         if (hakuToRemove != null) {
-            hakuDAO.remove(hakuToRemove);
-            result.setResult(true);
-            result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            if (hakuToRemove.getHakukohdes().size() > 0) {
+                // Cannot delete HAKU with hakukohdes!
+                result.setResult(false);
+                result.setStatus(ResultStatus.ERROR);
+                result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.hasExistingHakukohdes"));
+            } else {
+                hakuDAO.remove(hakuToRemove);
+                result.setResult(true);
+                result.setStatus(ResultV1RDTO.ResultStatus.OK);
+            }
         } else {
             result.setResult(false);
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.notFound"));
         }
 
         return result;

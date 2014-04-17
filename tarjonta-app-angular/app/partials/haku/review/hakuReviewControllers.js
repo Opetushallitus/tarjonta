@@ -18,10 +18,12 @@ var app = angular.module('app.haku.review.ctrl', []);
 app.controller('HakuReviewController',
         ['$scope', '$route', '$log',
             '$routeParams', 'ParameterService', '$location',
-            'HakuV1Service', 'TarjontaService',
+            'HakuV1Service', 'TarjontaService', 'dialogService',
+            'LocalisationService',
             function HakuReviewController($scope, $route, $log,
                     $routeParams, ParameterService, $location,
-                    HakuV1Service, TarjontaService) {
+                    HakuV1Service, TarjontaService, dialogService,
+                    LocalisationService) {
 
                 $log = $log.getInstance("HakuReviewController");
 
@@ -29,7 +31,7 @@ app.controller('HakuReviewController',
 
                 var hakuOid = $route.current.params.id;
 
-                // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve
+                // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve for "/haku/:id"
 
                 $scope.model = null;
 
@@ -39,6 +41,29 @@ app.controller('HakuReviewController',
 
                 $scope.doEdit = function() {
                     $location.path("/haku/" + hakuOid + "/edit");
+                };
+
+                $scope.doDelete = function(event) {
+                    $log.info("doDelete()", event);
+                    
+                    dialogService.showSimpleDialog(
+                            LocalisationService.t("haku.delete.confirmation"),
+                            LocalisationService.t("haku.delete.confirmation.description"),
+                            LocalisationService.t("ok"),
+                            LocalisationService.t("cancel")).result.then(function(result) {
+                        $log.info("Dialog result = ", result);
+                        if (result) {
+                            // In "hakuControllers.js"
+                            $scope.doDeleteHaku($scope.model.hakux.result).then(function(result) {
+                                if (result) {
+                                    // OK, delete - go away
+                                    $scope.goBack();
+                                } else {
+                                    $log.info("delete failed - stay here.");
+                                }
+                            });
+                        }
+                    });
                 };
 
 

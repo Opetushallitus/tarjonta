@@ -552,10 +552,14 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
               $q.all(promises).then(function(results){
 
                 var valid=true;
-                
+                var koulutusTyyppi;
                 //tila
                 angular.forEach(results, function(res){
                   var koulutus = res.result;
+
+                    //Hakukohde should not have more than one kind of koulutustyyppi
+                    //so we can get any value from the array.
+                    koulutusTyyppi = koulutus.koulutusasteTyyppi;
                   if(koulutus.tila=="PERUTTU" || koulutus.tila=="POISTETTU") {
                     valid=false;
                     dialogService.showDialog({
@@ -597,6 +601,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 if(valid) {
                   console.log("KOULUTUS:", $scope.selection.koulutukset);
                   SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
+                  SharedStateService.addToState('SelectedKoulutusTyyppi',koulutusTyyppi);
                   SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
                   $location.path('/hakukohde/new/edit');
                 }
@@ -615,7 +620,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 $scope.luoKoulutusDialog = $modal.open({
                     scope: $scope,
                     templateUrl: 'partials/koulutus/luo-koulutus-dialogi.html',
-                    controller: 'LuoKoulutusDialogiController',
+                    controller: 'LuoKoulutusDialogiController'
                 });
             };
 

@@ -36,7 +36,8 @@ app.controller('HakuEditController',
                 ParameterService,
                 Config,
                 OrganisaatioService,
-                AuthService) {
+                AuthService,
+                dialogService) {
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
@@ -86,8 +87,22 @@ app.controller('HakuEditController',
                 $scope.model.hakux.result.hakuaikas.push({nimi: "", alkuPvm: null, loppuPvm: null});
             };
 
-            $scope.goBack = function(event) {
-                $log.info("goBack()");
+            $scope.goBack = function(event, hakuForm) {
+                var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
+                $log.info("goBack(), dirty?", dirty);
+                
+                if (dirty) {
+                    dialogService.showModifedDialog().result.then(function(result) {
+                        if (result) {
+                            $scope.navigateBack();
+                        }
+                    });
+                } else {
+                    $scope.navigateBack();
+                }
+            };
+            
+            $scope.navigateBack = function() {
                 // TODO old query parameters?
                 $location.path("/haku");
             };
@@ -119,8 +134,6 @@ app.controller('HakuEditController',
                     return;
                 }
 
-
-
                 $log.info("doSave()", tila, haku);
                 // Update haku's tila (state)
                 haku.tila = tila;
@@ -140,6 +153,9 @@ app.controller('HakuEditController',
                     if (result.status == "OK") {
                         $scope.model.showError = false;
                         $scope.model.showSuccess = true;
+                        
+                        // Reset form to "pristine" ($dirty = false)
+                        form.$setPristine();
 
                         $log.info("->saveparameters");
                         $scope.saveParameters(result.result);
@@ -168,32 +184,25 @@ app.controller('HakuEditController',
                 });
             };
 
+            $scope.goToReview = function(event, hakuForm) {                
+                var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
+                $log.debug("goToReview(), dirty?", dirty);
 
-            $scope.goToReview = function(event) {
-                $log.debug("goToReview()");
-                $location.path("/haku/" + $scope.model.hakux.result.oid);
-            };
-
-//            $scope.onStartDateChanged = function(element, hakuaika) {
-//                $log.info("onStartDateChanged()", element, hakuaika);
-//            };
-//
-//            $scope.onEndDateChanged = function(element, hakuaika) {
-//                $log.info("onEndDateChanged()", element, hakuaika);
-//            };
-
-            $scope.validateAlkuPvmAndLoppuPvm = function(hakuaika) {
-                if (angular.isDefined(hakuaika.alkuPvm) && angular.isDefined(hakuaika.loppuPvm)) {
-                    if (hakuaika.alkuPvm >= hakuaika.loppuPvm) {
-                        return true;
-                    }
+                if (dirty) {
+                    dialogService.showModifedDialog().result.then(function(result) {
+                        if (result) {
+                            $scope.navigateToReview();
+                        }
+                    });
+                } else {
+                    $scope.navigateToReview();
                 }
-                return false;                
-            }
-
-            $scope.onDateChanged = function(hakuaika) {
-                $log.info("onDateChanged()", hakuaika);
             };
+
+            $scope.navigateToReview = function(event) {
+                $location.path("/haku/" + $scope.model.hakux.result.oid);                
+            };
+
 
             /**
              * Check if Haku is "new".
@@ -202,7 +211,7 @@ app.controller('HakuEditController',
              */
             $scope.isNewHaku = function() {
                 var result = !angular.isDefined($scope.model.hakux.result.oid);
-                $log.debug("isNewHaku()", result);
+                // $log.debug("isNewHaku()", result);
                 return result;
             };
 
@@ -230,13 +239,11 @@ app.controller('HakuEditController',
              */
             $scope.getHaunNimi = function() {
                 var nimi = $scope.model.hakux.result.nimi;
-                var kieliUri = LocalisationService.getKieliUri();
-
                 var kielet = [LocalisationService.getKieliUri(), "kieli_fi", "kieli_sv", "kieli_en"];
 
                 var result;
 
-                // Take first matching name
+                // Take first matching name in sequence: [current locale, fi, sv, en]
                 angular.forEach(kielet, function(kieli) {
                     if (!angular.isDefined(result) && angular.isDefined(nimi[kieli])) {
                         result = nimi[kieli];
@@ -244,7 +251,7 @@ app.controller('HakuEditController',
                 });
 
                 if (!angular.isDefined(result)) {
-                    result = "EI TIEDOSSA";
+                    result = "HAUN NIMI EI TIEDOSSA";
                 }
 
                 return result;
@@ -256,7 +263,9 @@ app.controller('HakuEditController',
              * @returns true if current haku is JATKUVA_HAKU
              */
             $scope.isJatkuvaHaku = function() {
-                return $scope.model.hakux.result.hakutapaUri == Config.env["koodisto.hakutapa.jatkuvaHaku.uri"];
+                var result = $scope.model.hakux.result.hakutapaUri == Config.env["koodisto.hakutapa.jatkuvaHaku.uri"];
+                // $log.info("isJatkuvaHaku()", result);
+                return result;
             };
 
 

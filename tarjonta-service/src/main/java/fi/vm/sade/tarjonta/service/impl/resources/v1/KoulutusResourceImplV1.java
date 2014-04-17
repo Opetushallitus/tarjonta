@@ -238,7 +238,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);
             } else {
                 //create korkeakoulu koulutus
-                fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto);
+                fullKomotoWithKomo = insertKoulutusKorkeakoulu(dto, false);
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
@@ -254,7 +254,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private ResultV1RDTO<KoulutusV1RDTO> postLukioKoulutus(KoulutusLukioV1RDTO dto) {
-        validateRestObjectKorkeakouluDTO(dto);
+        validateRestObjectLukioDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
@@ -286,11 +286,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto) {
+    private KoulutusmoduuliToteutus insertKoulutusKorkeakoulu(final KoulutusKorkeakouluV1RDTO dto, final boolean addKomotoToKomo) {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
-        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
+        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), addKomotoToKomo);
         Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
@@ -313,7 +313,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(KoulutusmoduuliToteutus komoto, final KoulutusKorkeakouluV1RDTO dto) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
-        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
+        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), false);
     }
 
     private KoulutusmoduuliToteutus updateLukiokoulu(KoulutusmoduuliToteutus komoto, final KoulutusLukioV1RDTO dto) {
@@ -334,33 +334,46 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             Map<String, Integer> hkKoulutusMap = Maps.newHashMap();
 
             for (Hakukohde hk : komoto.getHakukohdes()) {
-                if(hk.getTila()!=TarjontaTila.POISTETTU) { //skippaa poistetut OVT-7518
+                if (hk.getTila() != TarjontaTila.POISTETTU) { //skippaa poistetut OVT-7518
                     hkKoulutusMap.put(hk.getOid(), hk.getKoulutusmoduuliToteutuses().size());
                 }
             }
 
 
             Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
+            final String komoOid = komo.getOid();
+            final String userOid = contextDataService.getCurrentUserOid();
 
             switch (KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi())) {
                 case KORKEAKOULUTUS:
-                    //delete komo + komoto
+                    //safe delete komoto, if 'sister' komoto search gives an empty result, then safe delete the komo.
 
-                    final List<String> parent = koulutusSisaltyvyysDAO.getParents(komo.getOid());
-                    final List<String> children = koulutusSisaltyvyysDAO.getChildren(komo.getOid());
+                    final List<String> parent = koulutusSisaltyvyysDAO.getParents(komoOid);
+                    final List<String> children = koulutusSisaltyvyysDAO.getChildren(komoOid);
 
-                    KoulutusValidator.validateKoulutusDelete(komoto, children, parent, hkKoulutusMap, result);
+                    KoulutusValidator.validateKoulutusDelete(komoto, koulutusmoduuliDAO.findActiveKomotosByKomoOid(komoOid), children, parent, hkKoulutusMap, result);
 
                     if (!result.hasErrors()) {
-                        final String userOid = contextDataService.getCurrentUserOid();
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
+
+                        final List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findActiveKomotosByKomoOid(komoOid);
+                        if (komotos.isEmpty()) {
+                            //no komotos found, I quess it's also ok to remove the komo.
                         koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
+                        }
                         ArrayList<Long> ids = Lists.<Long>newArrayList();
                         ids.add(komoto.getId());
                         indexerResource.indexKoulutukset(ids);
                     }
                     break;
+                default:
+                    //for lukio
+                    KoulutusValidator.validateKoulutusDelete(komoto, Lists.<KoulutusmoduuliToteutus>newArrayList(), Lists.<String>newArrayList(), Lists.<String>newArrayList(), hkKoulutusMap, result);
+                    if (!result.hasErrors()) {
+                        koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
             }
+                    break;
+        }
         }
 
         return result;
@@ -389,6 +402,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
+        Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
+        final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
+        Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
+    }
+
+    private void validateRestObjectLukioDTO(final KoulutusV1RDTO dto) {
+        Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
+        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
         Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
         Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
         final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
@@ -858,10 +880,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     KoulutusmoduuliToteutus persisted = null;
                     switch (getType(komoto)) {
                         case KORKEAKOULUTUS:
-                            persisted = insertKoulutusKorkeakoulu((KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid));
+                            //TODO : in a distant future, copy also komo
+                            //currenlty this will only add new 'sister' komoto, and create a link to previously created komo.
+                            persisted = insertKoulutusKorkeakoulu((KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid), true);
                             break;
                         case LUKIOKOULUTUS:
-                            persisted = insertKoulutusLukiokoulu((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid));
+                            //create copy of komoto
+                            persisted = insertKoulutusLukiokoulu((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSKOULUTUS:
                         default:
@@ -898,8 +923,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 break;
             case MOVE:
                 final String orgOid = koulutusCopy.getOrganisationOids().get(0);
-                Koulutusmoduuli koulutusmoduuli = komoto.getKoulutusmoduuli();
-                koulutusmoduuli.setOmistajaOrganisaatioOid(orgOid);
+                //currently no need to change organisation oid in komo
+                //Koulutusmoduuli koulutusmoduuli = komoto.getKoulutusmoduuli();
+                //koulutusmoduuli.setOmistajaOrganisaatioOid(orgOid);
                 komoto.setTarjoaja(orgOid);
                 koulutusmoduuliToteutusDAO.update(komoto);
 
@@ -946,10 +972,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {
+        //convert entity to dto
         KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, "FI", false);
+        //keep the komo oid, we do need it to search correct komo for the komoto
         copy.setOid(null);
         copy.setKomotoOid(null);
-        copy.setKomoOid(null);
         copy.setTila(TarjontaTila.LUONNOS);
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
         return copy;

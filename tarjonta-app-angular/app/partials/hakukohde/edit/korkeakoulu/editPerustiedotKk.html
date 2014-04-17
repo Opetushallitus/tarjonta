@@ -1,15 +1,15 @@
 <table class="tarjontaForm">
 
-	<!-- hakukohteen nimi -->
-	<tr class="required">
+    <!-- hakukohteen nimi -->
+    <tr class="required">
         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
-		<td>
-			<mk-textfield model="model.hakukohde.hakukohteenNimet"></mk-textfield>
-		</td>
-		<td>
+        <td>
+            <mk-textfield model="model.hakukohde.hakukohteenNimet"></mk-textfield>
+        </td>
+        <td>
             <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>
-		</td>
-	</tr>
+        </td>
+    </tr>
 
     <tr>
         <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
@@ -19,16 +19,16 @@
         </td>
     </tr>
 
-	<!-- haku -->
-	<tr class="required">
+    <!-- haku -->
+    <tr class="required">
         <th tt="kk.hakukohde.haut">Haut</th>
-		<td>
-			<select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
-		</td>
-		<td>
+        <td>
+            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+        </td>
+        <td>
             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
-		</td>
-	</tr>
+        </td>
+    </tr>
 
     <tr data-ng-show="model.showHakuaikas">
         <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
@@ -40,39 +40,39 @@
         </td>
     </tr>
 
-	<!-- hakukelpoisuusvaatimukset -->
-	<tr class="required">
+    <!-- hakukelpoisuusvaatimukset -->
+    <tr class="required">
         <th tt="kk.hakukohde.hakukelpoisuusvaatimukset">Hakukelpoisuusvaatimukset</th>
-		<td>
+        <td>
             <multi-select
                     required
                     model="temp"
                     selection="model.hakukohde.hakukelpoisuusvaatimusUris"
                     promise="model.hakukelpoisuusVaatimusPromise"
                     display="dualpane"/>
-			<!-- TODO multiselect -->
-			<!--<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>-->
-		</td>
-		<td>
+            <!-- TODO multiselect -->
+            <!--<koodistomultiselect koodiuris="model.hakukohde.hakukelpoisuusvaatimusUris" koodistouri="'hakukelpoisuusvaatimusta'" locale="'FI'"></koodistomultiselect>-->
+        </td>
+        <td>
             <p class="error" ng-show="model.showError && model.hakukelpoisuusValidationErrMsg" tt="tarjonta.hakukohde.hakukelpoisuusvaatimus.missing">Hakukelpoisuusvaatimus puuttuu</p>
-		</td>
-	</tr>
+        </td>
+    </tr>
 
-	<!-- aloituspaikat -->
-	<tr class="required">
+    <!-- aloituspaikat -->
+    <tr class="required">
         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
-		<td>
-			<input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
-		</td>
-		<td>
+        <td>
+            <input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
+        </td>
+        <td>
             <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
-		</td>
-	</tr>
+        </td>
+    </tr>
 
-	<!-- valintapalvelu -->
-	<tr>
+    <!-- valintapalvelu -->
+    <tr>
         <th tt="kk.hakukohde.valintapalvelu">Valintapalvelu</th>
-		<td>
+        <td>
             <p tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua">Käytetään järjestelmän valintapalvelua</p>
 
             <input type="radio" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="true"/>
@@ -81,11 +81,11 @@
             <input type="radio" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="false"/>
             <span tt="no">Ei</span>
 
-		</td>
-		<td>
-			<!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
-		</td>
-	</tr>
+        </td>
+        <td>
+            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
+        </td>
+    </tr>
 
 
 

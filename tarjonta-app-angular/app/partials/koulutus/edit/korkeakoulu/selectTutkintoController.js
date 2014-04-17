@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var app = angular.module('app.edit.ctrl');
+var app = angular.module('app.edit.ctrl.kk');
 
 app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$modalInstance', 'Koodisto', '$q', 'Config', 'TarjontaService', 'LocalisationService',
     function($scope, targetFilters, $modalInstance, Koodisto, $q, config, TarjontaService, LocalisationService) {
@@ -153,7 +153,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
 
                 $scope.open = function() {
                     var modalInstance = $modal.open({
-                        templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+                        templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
                         controller: 'SelectTutkintoOhjelmaController',
                         resolve: {
                             targetFilters: function() {

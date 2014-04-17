@@ -12,24 +12,23 @@
 </tr>
 </table>
 
-<tabset>
-    <tab ng-repeat="kieliUri in getLisatietoKielet()" heading="{{kieliFromKoodi(kieliUri)}}" select="selectKieli(kieliUri)"></tab>
-    
-    <tab class="addLangTab" select="selectKieli(null)">
-        <tab-heading><span class="icon-plus"></span></tab-heading>
-
-        <multi-select
-            on-change="onLisatietoLangSelection()"
-            model="uiModel.tmp"
-            promise="uiModel.opetuskielis.promise"
-            order-with="userLanguages"
-            selection="uiModel.lisatietoKielet"
-            display="dualpane"></multi-select>
-
-    </tab>
-
-</tabset>
-<div ng-show="uiModel.selectedKieliUri">
+<mk-tabs
+    model="getLisatietoKielet()"
+    selection="uiModel.selectedKieliUri"
+    mutable="true"
+    ></mk-tabs>
+ 
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
+    <multi-select
+        on-change="onLisatietoLangSelection()"
+        model="uiModel.tmp"
+        promise="uiModel.opetuskielis.promise"
+        order-with="userLanguages"
+        selection="uiModel.lisatietoKielet"
+        display="dualpane"></multi-select>
+</div>
+ 
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
     <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>

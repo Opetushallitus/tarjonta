@@ -90,7 +90,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * Example display values 'Nuorten koulutus, Aikuisten koulutus'.
      */
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_koulutuslaji", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> koulutuslajis = new HashSet<KoodistoUri>();
@@ -301,7 +301,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the koulutusLajiUri
      */
     public Set<KoodistoUri> getKoulutuslajis() {
-        return Collections.unmodifiableSet(koulutuslajis);
+        return koulutuslajis;
     }
 
     /**
@@ -482,7 +482,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
     
     public Set<WebLinkki> getLinkkis() {
-        return Collections.unmodifiableSet(linkkis);
+        return linkkis;
     }
 
     /**
@@ -797,7 +797,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
     
     public Set<KoodistoUri> getLukiodiplomit() {
-        return Collections.unmodifiableSet(lukiodiplomit);
+        return lukiodiplomit;
     }
     
     public void addLukiodiplomi(KoodistoUri lukiodiplomi) {

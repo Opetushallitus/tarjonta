@@ -23,7 +23,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
@@ -41,9 +40,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiValikoimaV1RDT
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import static scala.xml.Null.key;
 
 /**
  * Convert entity objects to koulutus rest objects and vise versa.
@@ -289,34 +287,39 @@ public class KoulutusCommonConverter {
     }
 
     public OrganisaatioV1RDTO searchOrganisaationNimi(String tarjoajaOid, Locale locale) {
-        final OrganisaatioDTO organisaatioDto = organisaatioService.findByOid(tarjoajaOid);
-
-        Preconditions.checkNotNull(organisaatioDto, "OrganisaatioDTO object cannot be null.");
-        Preconditions.checkNotNull(organisaatioDto.getOid(), "OrganisaatioDTO OID cannot be null.");
-        Preconditions.checkNotNull(organisaatioDto.getNimi(), "OrganisaatioDTO name object cannot be null.");
-
-        List<MonikielinenTekstiTyyppi.Teksti> tekstis = organisaatioDto.getNimi().getTeksti();
-
-        String nimi = null;
-
-        for (MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
-            Preconditions.checkNotNull(teksti.getKieliKoodi(), "Locale language code cannot be null.");
-            if (teksti.getKieliKoodi().toLowerCase().equals(locale.getLanguage())) {
-                nimi = teksti.getValue();
-                break;
-            }
-        }
-
-        //fallback
-        if (nimi == null && tekstis.size() > 0) {
-            nimi = tekstis.get(0).getValue();
-        } else if (nimi == null) {
-            nimi = "No name";
-        }
-
         OrganisaatioV1RDTO organisaatioRDTO = new OrganisaatioV1RDTO();
-        organisaatioRDTO.setOid(organisaatioDto.getOid());
-        organisaatioRDTO.setNimi(nimi);
+
+        try {
+            final OrganisaatioDTO organisaatioDto = organisaatioService.findByOid(tarjoajaOid);
+            Preconditions.checkNotNull(organisaatioDto, "OrganisaatioDTO object cannot be null.");
+            Preconditions.checkNotNull(organisaatioDto.getOid(), "OrganisaatioDTO OID cannot be null.");
+            Preconditions.checkNotNull(organisaatioDto.getNimi(), "OrganisaatioDTO name object cannot be null.");
+            organisaatioRDTO.setOid(organisaatioDto.getOid());
+            final List<fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti> tekstis = organisaatioDto.getNimi().getTeksti();
+
+            String nimi = null;
+
+            for (fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti teksti : tekstis) {
+                Preconditions.checkNotNull(teksti.getKieliKoodi(), "Locale language code cannot be null.");
+                if (teksti.getKieliKoodi().toLowerCase().equals(locale.getLanguage())) {
+                    nimi = teksti.getValue();
+                    break;
+                }
+            }
+
+            //fallback
+            if (nimi == null && tekstis.size() > 0) {
+                nimi = tekstis.get(0).getValue();
+            } else if (nimi == null) {
+                nimi = "No name";
+            }
+
+            organisaatioRDTO.setNimi(nimi);
+        } catch (Exception e) {
+            organisaatioRDTO.setOid(tarjoajaOid);
+            LOG.error("Organisation service call failed!", e);
+        }
+
         return organisaatioRDTO;
     }
 
@@ -438,6 +441,22 @@ public class KoulutusCommonConverter {
             for (Map.Entry<String, Integer> uriWithVersion : dto.getUris().entrySet()) {
                 modifiedUris.add(new KoodistoUri(convertToKoodiUri(uriWithVersion.getKey(), uriWithVersion.getValue(), msg)));
             }
+        }
+
+        return modifiedUris;
+    }
+
+    
+    public Set<KoodistoUri> convertToUris(final KoodiV1RDTO dto, Set<KoodistoUri> koodistoUris, final FieldNames msg) {
+        Preconditions.checkNotNull(dto, "DTO object cannot be null! Error field : " + msg);
+
+        Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
+        if (koodistoUris == null) {
+            modifiedUris = Sets.<KoodistoUri>newHashSet();
+        }
+
+        if (dto != null) {
+            modifiedUris.add(new KoodistoUri(convertToKoodiUri(dto.getUri(), dto.getVersio(), msg)));
         }
 
         return modifiedUris;
