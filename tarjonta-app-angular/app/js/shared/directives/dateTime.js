@@ -252,10 +252,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     	}
     	
     	$scope.openChooser = function() {
+    		
     		var modalInstance = $modal.open({
 				scope: $scope,
 				templateUrl: 'js/shared/directives/dateTime-chooser.html',
 				controller: function($scope) {
+					$scope.isRequired = ctrl.isRequired;
 					$scope.ctrl = {years : []};
 					$scope.months = [];
 					for (var i=0; i<12; i++) {
@@ -274,6 +276,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 					}
 					
 					$scope.cancel = function() {
+						modalInstance.dismiss();
+					}
+					
+					$scope.clear = function() {
+						ctrl.model = null;
 						modalInstance.dismiss();
 					}
 					
