@@ -314,7 +314,9 @@ app.controller('BaseEditController', [
                     if (saveResponse.status === 'OK') {
 
                         // Reset form to "pristine" ($dirty = false)
-                        form.$setPristine();
+                        // WTF? where have all the "form.$setPristine()"s gone?
+                        form.$dirty = false;
+                        form.$pristine = true;
 
                         $scope.model = model;
                         $scope.updateFormStatusInformation($scope.model);

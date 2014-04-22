@@ -17,7 +17,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
 
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
-                multi: $scope.pvms.length > 0,
+                multi: $scope.pvms.length > 1,
                 koodis: []
             };
             
