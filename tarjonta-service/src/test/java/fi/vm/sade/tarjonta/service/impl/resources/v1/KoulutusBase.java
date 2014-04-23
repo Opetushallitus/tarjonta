@@ -26,11 +26,18 @@ import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.security.SadeUserDetailsWrapper;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import static fi.vm.sade.tarjonta.TarjontaFixtures.createText;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -48,6 +55,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -55,8 +63,10 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import org.joda.time.DateTime;
@@ -79,7 +89,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 abstract class KoulutusBase {
 
     protected static final String USER_OID = "mock_test_user";
-    protected static final String KOULUTUSOHELMA = "koulutusohjelma";
+    protected static final String KOULUTUSOHJELMA = "koulutusohjelma";
     protected static final Integer VUOSI = 2013;
     protected static final String KAUSI_KOODI_URI = "kausi_k";
     protected static final String LAAJUUSYKSIKKO = "laajuusyksikko";
@@ -88,9 +98,12 @@ abstract class KoulutusBase {
     protected static final String LOCALE_FI = "FI";
     protected static final String KOULUTUSKOODI = "koulutuskoodi";
     protected static final String KOULUTUSASTE = "koulutusaste";
+    protected static final String KOULUTUSLAJI = "koulutuslaji";
+    protected static final String TUTKINTONIMIKE = "tutkintonimike";
     protected static final String KOULUTUSALA = "koulutusala";
     protected static final String OPINTOALA = "opintoala";
     protected static final String TUTKINTO = "tutkinto";
+    protected static final String POHJAKOULUTUSVAATIMUS = "pohjakoulutusvaatimus";
     protected static final String MAP_TUTKINTONIMIKE = "tutkintonimike";
     protected static final String MAP_OPETUSAIHEES = "aihees";
     protected static final String MAP_OPETUSKIELI = "opetuskieli";
@@ -100,6 +113,9 @@ abstract class KoulutusBase {
     protected static final String MAP_OPETUSAIKAS = "opetusaikas";
     protected static final String MAP_OPETUSPAIKKAS = "opetuspaikkas";
     protected static final String EQF = "EQF";
+    protected static final String NQF = "NQF";
+    protected static final String KOMO_PARENT_OID = "komo_parent_oid";
+    protected static final String KOMO_CHILD_OID = "komo_child_oid";
     protected static final String KOMO_OID = "komo_oid";
     protected static final String KOMOTO_OID = "komoto_oid";
     protected static final String ORGANISATION_OID = "organisaatio_oid";
@@ -121,6 +137,12 @@ abstract class KoulutusBase {
     protected KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     protected KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired(required = true)
+    private TarjontaFixtures fixtures;
+
+    @Autowired(required = true)
+    private KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;
 
     protected IndexerResource indexerResourceMock;
     protected TarjontaKoodistoHelper tarjontaKoodistoHelperMock;
@@ -184,13 +206,79 @@ abstract class KoulutusBase {
 
         Whitebox.setInternalState(converterToRDTO, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(converterToRDTO, "komotoKuvausConverters", komotoKoulutusConverters);
+        Whitebox.setInternalState(converterToRDTO, "koulutusmoduuliDAO", koulutusmoduuliDAO);
 
         Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "commonConverter", commonConverter);
+        Whitebox.setInternalState(convertToEntity, "koulutusmoduuliDAO", koulutusmoduuliDAO);
+
         Whitebox.setInternalState(instance, "converterToRDTO", converterToRDTO);
         Whitebox.setInternalState(instance, "convertToEntity", convertToEntity);
 
+    }
+
+    protected void createJoinedParentAndChildKomos(KoulutusasteTyyppi tyyppi) {
+        // Create almost a real life version of the parent komo:
+        // - The parent komo should have all the same fields set as in production env. 
+        // - Update the data to match data model in production env!!!
+        //
+        final Koulutusmoduuli parent = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO, KOMO_PARENT_OID, tyyppi);
+        parent.setEqfLuokitus(null);
+        parent.setKoulutusAste(toKoodiUriStrVersion(KOULUTUSASTE));
+        parent.setKoulutusKoodi(toKoodiUriStrVersion(KOULUTUSKOODI));
+        parent.setKoulutusala(toKoodiUriStrVersion(KOULUTUSALA));
+        parent.setOpintoala(toKoodiUriStrVersion(OPINTOALA));
+        parent.setKoulutusohjelmaKoodi(null);
+        parent.setLaajuus(toKoodiUriStrVersion(LAAJUUSYKSIKKO), toKoodiUriStrVersion(LAAJUUSARVO));
+        parent.setNqfLuokitus(null);
+        parent.setOmistajaOrganisaatioOid(null);
+        parent.setTutkintoOhjelmanNimi(null);
+        parent.setUlkoinenTunniste(null);
+        parent.setNimi(null);
+        parent.setTila(TarjontaTila.JULKAISTU);
+        parent.setKandidaatinKoulutuskoodi(null);
+        parent.setOppilaitostyyppi("|oppilaitostyypp_xxx#1|");
+        Map<KomoTeksti, MonikielinenTeksti> map = Maps.<KomoTeksti, MonikielinenTeksti>newHashMap();
+        addKuvaus(map, KomoTeksti.TAVOITTEET);
+        addKuvaus(map, KomoTeksti.KOULUTUKSEN_RAKENNE);
+        addKuvaus(map, KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET);
+        koulutusmoduuliDAO.insert(parent);
+
+        // Create almost a real life version of the child komo:
+        // - The child komo should have all the same fields set as in production env. 
+        // - Update the data to match data model in production env!!!
+        //
+        final Koulutusmoduuli child = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOMO_CHILD_OID, tyyppi);
+        child.setEqfLuokitus(toKoodiUriStrVersion(EQF));
+        child.setKoulutusAste(null);
+        child.setKoulutusKoodi(toKoodiUriStrVersion(KOULUTUSKOODI));
+        child.setKoulutusala(null);
+
+        switch (tyyppi) {
+            case LUKIOKOULUTUS:
+                child.setKoulutusohjelmaKoodi(null);
+                child.setLukiolinja(toKoodiUriStrVersion(KOULUTUSOHJELMA));
+                break;
+            default:
+                child.setLukiolinja(null);
+                child.setKoulutusohjelmaKoodi(toKoodiUriStrVersion(KOULUTUSOHJELMA));
+                break;
+        }
+        child.setLaajuus(null, null);
+        child.setNqfLuokitus(toKoodiUriStrVersion(NQF));
+        child.setOmistajaOrganisaatioOid(null);
+        child.setTutkintoOhjelmanNimi(null);
+        child.setUlkoinenTunniste(null);
+        child.setNimi(null);
+        child.setTila(TarjontaTila.JULKAISTU);
+        child.setKandidaatinKoulutuskoodi(null);
+        child.setOppilaitostyyppi(null);
+        koulutusmoduuliDAO.insert(child);
+
+        final KoulutusSisaltyvyys s = new KoulutusSisaltyvyys(parent, child, KoulutusSisaltyvyys.ValintaTyyppi.ALL_OFF);
+        parent.addSisaltyvyys(s);
+        KoulutusSisaltyvyysDAO.insert(s);
     }
 
     protected void initMockInstanceInternalStates() {
@@ -278,7 +366,7 @@ abstract class KoulutusBase {
         /*
          * KOMO data fields:
          */
-        teksti(dto.getKoulutusohjelma(), KOULUTUSOHELMA, URI_KIELI_FI);
+        teksti(dto.getKoulutusohjelma(), KOULUTUSOHJELMA, URI_KIELI_FI);
         dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
@@ -384,6 +472,10 @@ abstract class KoulutusBase {
         return type + "_uri";
     }
 
+    protected static String toKoodiUriStrVersion(final String type) {
+        return type + "_uri#1";
+    }
+
     protected static KoodiV1RDTO toKoodiUri(final String type) {
         return new KoodiV1RDTO(type + "_uri", 1, null);
     }
@@ -400,6 +492,7 @@ abstract class KoulutusBase {
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+
         expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiLanguageFi, new Locale(LOCALE_FI))).andReturn(KAUSI_KOODI_URI).times(1);
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(URI_KIELI_FI)).andReturn(koodiLanguageFi);
 
@@ -416,7 +509,6 @@ abstract class KoulutusBase {
 
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
-
     }
 
     protected void expectMetaMapUris(final String field) {
@@ -452,6 +544,12 @@ abstract class KoulutusBase {
         assertEquals(null, dto.getArvo());
         assertEquals(field + "_uri", get.getUri());
         assertEquals(new Integer(1), get.getVersio());
+    }
+
+    private void addKuvaus(Map<KomoTeksti, MonikielinenTeksti> map, KomoTeksti komoTeksti) {
+        MonikielinenTeksti teksti = new MonikielinenTeksti();
+        teksti.addTekstiKaannos(URI_KIELI_FI, komoTeksti + "_" + URI_KIELI_FI);
+        map.put(komoTeksti, teksti);
     }
 
 }

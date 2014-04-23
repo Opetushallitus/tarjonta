@@ -130,6 +130,26 @@ public class TarjontaFixtures {
         return m;
     }
 
+    /**
+     * Only base data, missing all koodisto relations.
+     * 
+     * @param tyyppi
+     * @param oid
+     * @param koulutustyyppi
+     * @return 
+     */
+    public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi, String oid, KoulutusasteTyyppi koulutustyyppi) {
+        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi enum cannot be null.");
+        Preconditions.checkNotNull(oid, "KOMO OID cannot be null.");
+        Preconditions.checkNotNull(koulutustyyppi, "KoulutusasteTyyppi enum cannot be null.");
+     
+        Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
+        m.setOid(oid);
+        m.setKoulutustyyppi(koulutustyyppi.value());
+
+        return m;
+    }
+
     public Koulutusmoduuli createTutkintoOhjelma(KoulutusmoduuliTyyppi tyyppi) {
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi object cannot be null.");
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
@@ -297,10 +317,10 @@ public class TarjontaFixtures {
         haku.setLastUpdatedByOid("TEST");
         return haku;
     }
-    
-      public BinaryData createBinaryData() {
-          return createBinaryData("filename", "mimetype");
-      }
+
+    public BinaryData createBinaryData() {
+        return createBinaryData("filename", "mimetype");
+    }
 
     public BinaryData createBinaryData(String name, String type) {
         BinaryData image = new BinaryData();
@@ -311,7 +331,7 @@ public class TarjontaFixtures {
         image.setData(bytes);
         image.setFilename(name);
         image.setMimeType(type);
-        
+
         return image;
     }
 
@@ -387,7 +407,7 @@ public class TarjontaFixtures {
     /**
      * Creates structure like (not tree):
      *
-     *<pre>
+     * <pre>
      *    0
      *   / \
      *   1 2

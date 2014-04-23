@@ -60,7 +60,7 @@ import static org.junit.Assert.assertEquals;
 @ActiveProfiles("embedded-solr")
 @Transactional()
 public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
-
+    
     private static final Integer VUOSI = 2013;
     private static final String OPETUSAIKAS = "opetusaikas";
     private static final String OPETUSPAIKKAS = "opetuspaikkas";
@@ -92,48 +92,48 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
     private static final String[] PERSON = {"henkilo_oid", "firstanames",
         "lastname", "Mr.", "oph@oph.fi", "12345678"};
     private final DateTime DATE = new DateTime(VUOSI, 1, 1, 1, 1);
-
+    
     private static String toKoodiUriStr(final String type) {
         return type + "_uri";
     }
-
+    
     private static KoodiV1RDTO toKoodiUri(final String type) {
         return new KoodiV1RDTO(type + "_uri", 1, null);
     }
-
+    
     private static KoodiV1RDTO toMetaValue(final String value, String lang) {
         return new KoodiV1RDTO(lang, 1, value);
     }
-
+    
     private static String toNimiValue(final String value, String lang) {
         return value + "_" + lang;
     }
-
+    
     @Autowired
     TarjontaFixtures tarjontaFixtures;
-
+    
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAO;
-
+    
     @Autowired
     KoulutusSisaltyvyysDAOImpl koulutusSisaltyvyysDao;
-
+    
     @Autowired
     KoulutusV1Resource koulutusResource;
-
+    
     @Autowired
     OrganisaatioService organisaatioService;
-
+    
     @Autowired
     KoodiService koodiService;
-
+    
     @Autowired
     OidService oidService;
-
+    
     @Before
     public void setup() throws OIDCreationException {
         KoodistoURI.KOODISTO_KIELI_URI = "kieli";
-
+        
         Mockito.stub(organisaatioService.findByOid(ORGANISAATIO_OID)).toReturn(
                 getOrganisaatio(ORGANISAATIO_OID));
         stubKoodi(koodiService, "kieli_fi", "FI");
@@ -157,7 +157,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("komo-oid");
         Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("komoto-oid");
     }
-
+    
     private OrganisaatioDTO getOrganisaatio(String organisaatioOid) {
         OrganisaatioDTO dto = new OrganisaatioDTO();
         dto.setOid(organisaatioOid);
@@ -167,7 +167,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         dto.setNimi(mkt);
         return dto;
     }
-
+    
     private void stubKoodi(KoodiService koodiService, String uri, String arvo) {
         List<KoodiType> vastaus = Lists.newArrayList(getKoodiType(uri, arvo));
         Mockito.stub(
@@ -175,33 +175,34 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
                         .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
                         vastaus);
     }
-
+    
     private KoodiType getKoodiType(String uri, String arvo) {
         KoodiType kt = new KoodiType();
         kt.setKoodiArvo(arvo);
         kt.setKoodiUri(uri);
+        kt.setVersio(1);
         kt.getMetadata().add(getKoodiMeta(arvo, KieliType.FI));
         kt.getMetadata().add(getKoodiMeta(arvo, KieliType.SV));
         kt.getMetadata().add(getKoodiMeta(arvo, KieliType.EN));
         return kt;
     }
-
+    
     private KoodiMetadataType getKoodiMeta(String arvo, KieliType kieli) {
         KoodiMetadataType type = new KoodiMetadataType();
         type.setKieli(kieli);
         type.setNimi(arvo + "-nimi-" + kieli.toString());
         return type;
     }
-
+    
     @Test
     public void testAPI() {
         super.printCurrentUser();
-
+        
         KoulutusKorkeakouluV1RDTO dto = new KoulutusKorkeakouluV1RDTO();
         /*
          * KOMO data fields:
          */
-
+        
         meta(dto.getKoulutusohjelma(), URI_KIELI_FI, toMetaValue("koulutusohjelma", URI_KIELI_FI));
         dto.getKoulutusohjelma()
                 .getTekstis()
@@ -219,71 +220,72 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
-
+        
         koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, OPETUSAIKAS);
         koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, OPETUSPAIKKAS);
-
+        
         koodiUrisMap(dto.getTutkintonimikes(), URI_KIELI_FI, TUTKINTONIMIKE);
         koodiUrisMap(dto.getAihees(), URI_KIELI_FI, AIHEES);
         koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, OPETUSKIELI);
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, OPETUMUOTO);
         koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, AMMATTINIMIKE);
         koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, POHJAKOULUTUS);
-
+        
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
-
+        
         dto.getYhteyshenkilos().add(
                 new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2],
                         PERSON[3], PERSON[4], PERSON[5], null,
                         HenkiloTyyppi.YHTEYSHENKILO));
         dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
-
+        
         ResultV1RDTO<KoulutusV1RDTO> v = koulutusResource
                 .postKoulutus(dto);
-
+        
         KoulutusKorkeakouluV1RDTO result = (KoulutusKorkeakouluV1RDTO) v.getResult();
         String oid = result.getKomotoOid();
-
+        
         String strErrorKeys = "";
         if (v.getErrors() != null && !v.getErrors().isEmpty()) {
-
+            
             for (ErrorV1RDTO d : v.getErrors()) {
                 strErrorKeys += d.getErrorMessageKey() + " ";
             }
         }
-
+        
         assertEquals("Validation errors keys : " + strErrorKeys, true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
-
+        
         assertNotNull("missing komoto oid", oid);
-
+        
         ResultV1RDTO v1 = koulutusResource.findByOid(oid, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(1, result.getYhteyshenkilos().size());
 
         // poista yht henkilö
         result.getYhteyshenkilos().clear();
-
-        koulutusResource.postKoulutus(result);
+        ResultV1RDTO<KoulutusV1RDTO> postKoulutus = koulutusResource.postKoulutus(result);
+        Assert.assertEquals("koulutus update failed", false, postKoulutus.hasErrors());
+        
         v1 = koulutusResource.findByOid(oid, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(0, result.getYhteyshenkilos().size());
-
+        
     }
-
+    
     private static KoodiV1RDTO meta(final KoodiV1RDTO dto, final String kieli, final KoodiV1RDTO metaValue) {
         dto.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
         return dto.getMeta().put(kieli, metaValue);
     }
-
+    
     private void koodiUrisMap(final KoodiUrisV1RDTO dto, final String kieliUri, final String fieldName) {
         meta(dto, URI_KIELI_FI, toKoodiUri(fieldName));
-
+        
         if (dto.getUris() == null) {
             dto.setUris(Maps.<String, Integer>newHashMap());
         }
-
+        
         dto.getUris().put(toKoodiUriStr(fieldName), 1);
     }
 }

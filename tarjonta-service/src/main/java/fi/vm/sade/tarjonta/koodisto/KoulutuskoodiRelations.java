@@ -166,8 +166,6 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                 dto.setKoulutusaste(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUSASTE, locale, showMeta));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_EQF_LUOKITUS_URI)) {
                 dto.setEqf(singleKoodi(type.getKoodiUri(), FieldNames.EQF, locale, showMeta));
-            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_EQF_LUOKITUS_URI)) {
-                dto.setEqf(singleKoodi(type.getKoodiUri(), FieldNames.EQF, locale, showMeta));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI)) {
                 if (dto instanceof KoulutusmoduuliLukioRelationV1RDTO) {
                     KoulutusmoduuliLukioRelationV1RDTO lk = (KoulutusmoduuliLukioRelationV1RDTO) dto;

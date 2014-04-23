@@ -176,9 +176,9 @@ public class KoulutusDTOConverterToEntity {
             komo = komoto.getKoulutusmoduuli();
         } else {
             //insert only new komoto data to database, do not change or update komo. 
-            Preconditions.checkNotNull("KOMO OID cannot be null.", dto.getKomoOid());
+            Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
             komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
-            Preconditions.checkNotNull("KOMO object not found.", komo);
+            Preconditions.checkNotNull(komo, "KOMO object not found.");
             komoto.setKoulutusmoduuli(komo);
             try {
                 komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
@@ -199,6 +199,9 @@ public class KoulutusDTOConverterToEntity {
         komoto.setTila(dto.getTila());
 
         komoto.setTarjoaja(organisationOId);
+       
+        //TODO:
+        //komoto.setTutkintonimike( dto.getTutkintonimike());
 
         //set dates
         commonConverter.handleDates(komoto, dto);
@@ -239,7 +242,7 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getKielivalikoima() != null) {
             commonConverter.convertToKielivalikoima(dto.getKielivalikoima(), komoto);
         }
-        
+
         if (dto.getKoulutuslaji() != null) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));

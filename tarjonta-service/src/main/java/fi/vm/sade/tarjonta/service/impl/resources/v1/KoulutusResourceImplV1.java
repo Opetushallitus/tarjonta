@@ -221,11 +221,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
      * @return
      */
     private ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus(KoulutusKorkeakouluV1RDTO dto) {
-        validateRestObjectKorkeakouluDTO(dto);
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
-        List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        if (validateKoulutus.isEmpty()) {
+        KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
+
+        if (!result.hasErrors() && validateOrganisation(dto, result)) {
 
             if (dto.getOid() != null && dto.getOid().length() > 0) {
                 //update korkeakoulu koulutus
@@ -245,21 +245,45 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-
-            result.setErrors(validateKoulutus);
             result.setResult(dto);
         }
 
         return result;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postLukioKoulutus(KoulutusLukioV1RDTO dto) {
-        validateRestObjectLukioDTO(dto);
-        KoulutusmoduuliToteutus fullKomotoWithKomo = null;
-        List<ErrorV1RDTO> validateKoulutus = KoulutusValidator.validateKoulutus(dto);
-        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        if (validateKoulutus.isEmpty()) {
+    /**
+     * Call only after organisation oid validation check.
+     *
+     * @param dto
+     * @param result
+     */
+    private boolean validateOrganisation(KoulutusV1RDTO dto, ResultV1RDTO result) {
+        Preconditions.checkNotNull(dto, "Koulutus object cannot be null.");
+        Preconditions.checkNotNull(dto.getOrganisaatio(), "Organisation object cannot be null");
+        Preconditions.checkNotNull(dto.getOrganisaatio().getOid(), "Organisation OID object cannot be null");
 
+        try {
+            final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
+            if (org == null || org.getOid() == null || org.getOid().isEmpty()) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.getFieldName(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower()));
+                return false;
+            }
+        } catch (Exception e) {
+            LOG.error("Organisation service call failed", e);
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.getFieldName(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower()));
+            return false;
+        }
+
+        return true;
+    }
+
+    private ResultV1RDTO<KoulutusV1RDTO> postLukioKoulutus(KoulutusLukioV1RDTO dto) {
+        KoulutusmoduuliToteutus fullKomotoWithKomo = null;
+
+        ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
+        KoulutusValidator.validateKoulutusLukio(dto, result);
+
+        if (!result.hasErrors() && validateOrganisation(dto, result)) {
             if (dto.getOid() != null && dto.getOid().length() > 0) {
                 //update korkeakoulu koulutus
                 final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
@@ -278,8 +302,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-
-            result.setErrors(validateKoulutus);
             result.setResult(dto);
         }
 
@@ -397,25 +419,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 //        }
 //        return result;
 //    }
-    private void validateRestObjectKorkeakouluDTO(final KoulutusV1RDTO dto) {
-        Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
-        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
-        Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
-        final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
-        Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
-    }
-
-    private void validateRestObjectLukioDTO(final KoulutusV1RDTO dto) {
-        Preconditions.checkNotNull(dto, "An invalid data exception - KorkeakouluDTO object cannot be null.");
-        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getTila(), "Tila enum cannot be null.");
-        Preconditions.checkNotNull(dto.getOrganisaatio() == null || dto.getOrganisaatio().getOid() == null, "Organisation OID was missing.");
-        final OrganisaatioDTO org = organisaatioService.findByOid(dto.getOrganisaatio().getOid());
-        Preconditions.checkNotNull(org, "No organisation found by OID : %s.", dto.getOrganisaatio().getOid());
-    }
-
     @Override
     public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(String oid) {
         HakukohteetKysely ks = new HakukohteetKysely();

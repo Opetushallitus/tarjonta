@@ -34,6 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -56,9 +57,12 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -71,6 +75,8 @@ import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import java.util.HashMap;
+import java.util.Map;
 import org.joda.time.DateTime;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
@@ -192,13 +198,13 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     @Override
     @After
     public void after() {
-    	super.after();
-    	executeInTransaction(new Runnable() {
-			@Override
-			public void run() {
-		    	tarjontaFixtures.deleteAll();
-			}
-		});
+        super.after();
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                tarjontaFixtures.deleteAll();
+            }
+        });
     }
 
     private OrganisaatioDTO getOrgDTO(String string) {
@@ -356,16 +362,15 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
             @Override
             public void run() {
                 KoulutusKorkeakouluV1RDTO kkKoulutus = getKKKoulutus();
-                koulutusResource.postKoulutus(kkKoulutus);
-                // HakukohdeRDTO hakukohde = getHakukohde();
-                // hakukohdeResource.insertHakukohde(hakukohde);
+                ResultV1RDTO<KoulutusV1RDTO> result = koulutusResource.postKoulutus(kkKoulutus);
+                assertEquals("errors in koulutus insert", false, result.hasErrors());
             }
         });
 
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.setNimi("otsikko");
-        KoulutuksetVastaus vastaus = tarjontaSearchService
-                .haeKoulutukset(kysely);
+        KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
+
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getKoulutukset().size());
     }
@@ -397,8 +402,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
         kk.getKoulutusohjelma().getTekstis().put("kieli_fi", "Otsikko suomeksi");
-
-//        kk.setKoulutusasteTyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS);
         kk.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         kk.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS);
         kk.setOrganisaatio(new OrganisaatioV1RDTO("1.2.3.4.555", null, null));
@@ -408,7 +411,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutusaste(new KoodiV1RDTO("koulutusaste-uri", 1, null));
         kk.setKoulutusala(new KoodiV1RDTO("koulutusala-uri", 1, null));
         kk.setOpintoala(new KoodiV1RDTO("opintoala-uri", 1, null));
-        //kk.setTutkintonimike(new KoodiV1RDTO("tutkintonimike-uri", 1, null));
+
         kk.setEqf(new KoodiV1RDTO("EQF-uri", 1, null));
         kk.setKoulutuskoodi(new KoodiV1RDTO("koulutus-uri", 1, null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
@@ -417,38 +420,61 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("uri_kausi", 1, null));
         kk.setSuunniteltuKestoArvo("1");
 
+        Map<String, Integer> tutkintoNimikes = Maps.<String, Integer>newHashMap();
+        tutkintoNimikes.put("tutkintonimike-uri", 1);
+        kk.getTutkintonimikes().setUris(tutkintoNimikes);
+
+        Map<String, Integer> opetuskieli = Maps.<String, Integer>newHashMap();
+        opetuskieli.put("opetuskieli-uri", 1);
+        kk.getOpetuskielis().setUris(opetuskieli);
+
+        Map<String, Integer> opetusaika = Maps.<String, Integer>newHashMap();
+        opetusaika.put("opetusaika-uri", 1);
+        kk.getOpetusAikas().setUris(opetusaika);
+
+        Map<String, Integer> opetuspaikka = Maps.<String, Integer>newHashMap();
+        opetuspaikka.put("opetuspaikka-uri", 1);
+        kk.getOpetusPaikkas().setUris(opetuspaikka);
+
+        Map<String, Integer> opetusmuoto = Maps.<String, Integer>newHashMap();
+        opetusmuoto.put("opetusmuoto-uri", 1);
+        kk.getOpetusmuodos().setUris(opetusmuoto);
+        
+        Map<String, Integer> teema = Maps.<String, Integer>newHashMap();
+        teema.put("teema-uri", 1);
+        kk.getAihees().setUris(teema);
+
         return kk;
     }
 
     /*
-    private HakukohdeV1RDTO getHakukohde(String koulutusOid) {
-        HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
-        hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
-                .getOid());
+     private HakukohdeV1RDTO getHakukohde(String koulutusOid) {
+     HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
+     hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
+     .getOid());
 
-        //TekstiRDTO nimi = new TekstiRDTO();
-        HashMap<String, String> nimet = new HashMap<String, String>();
-        nimet.put("kieli_fi", "kkhakukohdenimi");
-        //nimi.setUri("kieli_fi");
-        //nimi.setTeksti("kkhakukohdenimi");
-        //ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
-        //nimet.add(nimi);
+     //TekstiRDTO nimi = new TekstiRDTO();
+     HashMap<String, String> nimet = new HashMap<String, String>();
+     nimet.put("kieli_fi", "kkhakukohdenimi");
+     //nimi.setUri("kieli_fi");
+     //nimi.setTeksti("kkhakukohdenimi");
+     //ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
+     //nimet.add(nimi);
 
-        hakukohde.setHakukohteenNimet(nimet);
-        hakukohde.setTila(TarjontaTila.JULKAISTU.toString());
+     hakukohde.setHakukohteenNimet(nimet);
+     hakukohde.setTila(TarjontaTila.JULKAISTU.toString());
 
-        ArrayList<String> koulutusOidit = new ArrayList();
-        koulutusOidit.add(koulutusOid);
-        // oidit
-        hakukohde.setHakukohdeKoulutusOids(koulutusOidit);
-        OsoiteRDTO osoite = new OsoiteRDTO();
-        osoite.setCreated(new Date());
-        osoite.setModified(new Date());
-        hakukohde.setLiitteidenToimitusOsoite(osoite);
-        return hakukohde;
-    }
-    */
-
+     ArrayList<String> koulutusOidit = new ArrayList();
+     koulutusOidit.add(koulutusOid);
+     // oidit
+     hakukohde.setHakukohdeKoulutusOids(koulutusOidit);
+     OsoiteRDTO osoite = new OsoiteRDTO();
+     osoite.setCreated(new Date());
+     osoite.setModified(new Date());
+     hakukohde.setLiitteidenToimitusOsoite(osoite);
+     return hakukohde;
+     }
+     */
     /**
      * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on
      * hookattu nyt transaktion onnistumiseen.
