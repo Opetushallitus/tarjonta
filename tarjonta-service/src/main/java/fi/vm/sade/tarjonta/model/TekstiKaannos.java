@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -15,11 +15,9 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -55,11 +53,6 @@ public class TekstiKaannos extends TarjontaBaseEntity {
     protected TekstiKaannos() {}
 
     public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
-        
-        if (arvo != null) {
-            LOG.info("-------------> TekstiKaannos() arvo length = {}", arvo.length());
-        }
-        
         this.teksti = teksti;
         this.kieliKoodi = formatKieliKoodi(kieliKoodi);
         this.arvo = arvo;
@@ -74,9 +67,6 @@ public class TekstiKaannos extends TarjontaBaseEntity {
     }
 
     public void setArvo(String arvo) {
-        if (arvo != null) {
-            LOG.info("setArvo() len = {}", arvo.length());
-        }
 		this.arvo = arvo;
 	}
 
