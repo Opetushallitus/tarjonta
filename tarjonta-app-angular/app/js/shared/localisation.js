@@ -495,13 +495,13 @@ app.controller('LocalisationCtrl', function($scope, LocalisationService, $log, $
     };
 
     /**
-     * Updates used translations every five minutes.
+     * Updates used translations every ten minutes.
      *
      * @type @call;$interval
      */
     var timer = $interval(function () {
         LocalisationService.updateAccessInformation();
-    }, 5 * 60 * 1000);
+    }, 10 * 60 * 1000);
 
     $scope.$on("$destroy", function() {
         $log.info("LocalisationCtrl() -  $destroy");
