@@ -886,6 +886,69 @@ app.controller('HakukohdeRoutingController', ['$scope',
         };
 
 
+        $scope.model.isSoraEditable = function() {
+
+            var retval = true;
+
+            if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+                retval = false;
+            }
+
+
+            return retval;
+
+        };
+
+        $scope.model.isValintaPerusteEditable = function() {
+
+            var retval = true;
+
+            if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+                retval = false;
+            }
+
+
+            return retval;
+        };
+
+        $scope.loadHakukelpoisuusVaatimukset = function () {
+            $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut',AuthService.getLanguage());
+        };
+
+        $scope.enableOrDisableTabs = function () {
+
+            if ($scope.model.hakukohde !== undefined && $scope.model.hakukohde.oid !== undefined) {
+                $scope.model.hakukohdeTabsDisabled = false;
+            } else {
+                $scope.model.hakukohdeTabsDisabled = true;
+            }
+
+
+
+        };
+
+        $scope.model.takaisin = function() {
+            $location.path('/etusivu');
+        };
+
+        $scope.model.tarkastele = function() {
+
+            $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
+
+
+        }
+
+        $scope.haeValintaPerusteKuvaus = function(){
+
+            $scope.naytaHaeValintaperusteKuvaus('valintaperustekuvaus');
+
+        };
+
+        $scope.haeSora = function() {
+
+            $scope.naytaHaeValintaperusteKuvaus('SORA');
+
+        };
 
         /*
          ----->  Helper functions
