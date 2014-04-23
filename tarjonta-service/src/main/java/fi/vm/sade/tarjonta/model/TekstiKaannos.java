@@ -15,12 +15,16 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -32,12 +36,14 @@ import javax.persistence.UniqueConstraint;
 )
 public class TekstiKaannos extends TarjontaBaseEntity {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);
+    
     private static final long serialVersionUID = 8949181662473812771L;
 
     @Column(name = "kieli_koodi")
     private String kieliKoodi;
 
-    @Column(name = "arvo", length = 16384)
+    @Column(name = "arvo")
     private String arvo;
 
     @ManyToOne(optional = false, fetch=FetchType.LAZY)
@@ -49,6 +55,11 @@ public class TekstiKaannos extends TarjontaBaseEntity {
     protected TekstiKaannos() {}
 
     public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
+        
+        if (arvo != null) {
+            LOG.info("-------------> TekstiKaannos() arvo length = {}", arvo.length());
+        }
+        
         this.teksti = teksti;
         this.kieliKoodi = formatKieliKoodi(kieliKoodi);
         this.arvo = arvo;
@@ -63,6 +74,9 @@ public class TekstiKaannos extends TarjontaBaseEntity {
     }
 
     public void setArvo(String arvo) {
+        if (arvo != null) {
+            LOG.info("setArvo() len = {}", arvo.length());
+        }
 		this.arvo = arvo;
 	}
 
