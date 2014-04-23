@@ -20,12 +20,12 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService',
+    'dialogService','CacheService',
     function BaseEditController($scope, $log, Config,
             $routeParams, $route, $location,
             converter, TarjontaService, PermissionService,
             organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-            dialogService) {
+            dialogService, CacheService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -323,6 +323,9 @@ app.controller('BaseEditController', [
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
                         $scope.uiModel.tabs.lisatiedot = false;
                         $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
+                        // OVT-7421 / etusivun hakutuloskakun tyhjentäminen jotta muutokset näkyvät varmasti hakutuloslissa
+                        // - parempi ratkaisu olisi toki tallentaa muutokset kakutettuihin hakutuloksiin, jos sellaisia on
+                        CacheService.evict(new RegExp("/koulutus/.*"));
                     } else {
                         $scope.controlFormMessages(form, $scope.uiModel, "ERROR", null, saveResponse.errors);
                     }

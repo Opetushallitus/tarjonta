@@ -228,7 +228,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
         LOG.info("createHaku() - {}", haku);
-        permissionChecker.checkCreateHaku();
+        if(haku.getOid()!=null) {
+            ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
+            createSystemErrorFromException(new RuntimeException("cannot create with predefeined oid"), result);
+            return result;
+        }
 
         return updateHaku(haku);
     }
@@ -252,20 +256,23 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             if (isNew) {
                 // Generate new OID for haku to be created
+                permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
+
                 hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
                 LOG.info("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
-            }
-
-            if (!isNew) {
+            } else {
                 LOG.info("updateHaku() - OLD haku - find by oid");
 
-                // Check is haku exists
+                // Check haku exists
                 hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
+                
                 if (hakuToUpdate == null) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
                     return result;
                 }
+                //check permissions
+                permissionChecker.checkCreateHakuWithOrgs(hakuToUpdate.getTarjoajaOids());
             }
 
             LOG.info("updateHaku() - validate");
@@ -308,13 +315,14 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<Boolean> deleteHaku(String oid) {
         LOG.info("deleteHaku() oid={}", oid);
 
-        permissionChecker.checkRemoveHaku(oid);
 
         ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
         updateRightsInformation(result, null);
 
         Haku hakuToRemove = hakuDAO.findByOid(oid);
 
+        permissionChecker.checkRemoveHakuWithOrgs(hakuToRemove.getTarjoajaOids());
+        
         if (hakuToRemove != null) {
             if (hakuToRemove.getHakukohdes().size() > 0) {
                 // Cannot delete HAKU with hakukohdes!

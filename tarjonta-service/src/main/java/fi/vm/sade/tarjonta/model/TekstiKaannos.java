@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -21,6 +21,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -32,12 +34,14 @@ import javax.persistence.UniqueConstraint;
 )
 public class TekstiKaannos extends TarjontaBaseEntity {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);
+    
     private static final long serialVersionUID = 8949181662473812771L;
 
     @Column(name = "kieli_koodi")
     private String kieliKoodi;
 
-    @Column(name = "arvo", length = 16384)
+    @Column(name = "arvo")
     private String arvo;
 
     @ManyToOne(optional = false, fetch=FetchType.LAZY)
