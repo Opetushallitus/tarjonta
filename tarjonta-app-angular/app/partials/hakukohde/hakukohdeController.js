@@ -233,6 +233,11 @@ app.controller('HakukohdeRoutingController', ['$scope',
             $scope.model.showSuccess = false;
         };
 
+        /**
+         *
+         * This is the routing function which determines which hakukohde page to render
+         *
+         */
 
         $scope.getHakukohdePartialUri = function() {
 
@@ -244,13 +249,18 @@ app.controller('HakukohdeRoutingController', ['$scope',
             //If hakukohdex is defined then we are updating it
             //otherwise try to get selected koulutustyyppi from shared state
             if($route.current.locals.hakukohdex.result) {
-
+                    $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
+                    $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
                     if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
                         return korkeakoulutusHakukohdePartialUri;
-                    }   //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
+                        //TODO : This is commented out on testing remove comments after testing
+                    }  else if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === "LUKIOKOULUTUS"/*&& $route.current.locals.hakukohdex.result.koulutuslaji === "A"*/ ) {
+                        return aikuLukioHakukohdePartialUri;
+                    }
 
             } else {
                 var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+                $log.info('KOULUTUSTYYPPI IS: ' , koulutusTyyppi);
                 if (koulutusTyyppi.trim() === korkeakouluTyyppi) {
                     return korkeakoulutusHakukohdePartialUri;
                 } else if (koulutusTyyppi.trim() === lukioTyyppi) {
