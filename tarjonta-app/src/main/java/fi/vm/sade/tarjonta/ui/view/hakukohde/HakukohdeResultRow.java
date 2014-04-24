@@ -133,7 +133,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
 
-        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted)) {
+        if (checkForErillishakuAndRights(context) ||  (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted))) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
         
