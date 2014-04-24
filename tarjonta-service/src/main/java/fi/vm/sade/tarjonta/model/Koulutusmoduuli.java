@@ -81,39 +81,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     private Set<KoulutusmoduuliToteutus> toteutusList = new HashSet<KoulutusmoduuliToteutus>();
     @Column(name = "organisaatio")
     private String omistajaOrganisaatioOid;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusala")
-    private String koulutusala;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "eqfluokitus")
-    private String eqfLuokitus;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "nqfluokitus")
-    private String nqfLuokitus;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusaste")
-    private String koulutusAste;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "moduulityyppi")
-    private KoulutusmoduuliTyyppi moduuliTyyppi;
-    @Column(name = "koulutusluokitus_koodi")
-    private String koulutusKoodi;
-    @Column(name = "koulutusohjelmakoodi")
-    private String koulutusohjelmaKoodi;
-    @Column(name = "tutkintoohjelmanimi")
-    private String tutkintoOhjelmanNimi;
-    @Column(name = "laajuusarvo")
-    private String laajuusArvo;
-    @Column(name = "laajuusyksikko")
-    private String laajuusYksikko;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
@@ -121,13 +88,11 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
-    @Column(name = "opintoala")
-    private String opintoala;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "koulutustyyppi")
     private String koulutustyyppi;
-    @Column(name = "lukiolinja")
-    private String lukiolinja;
+
     @Column(name = "oppilaitostyyppi", length = 500)
     private String oppilaitostyyppi;
 
@@ -141,7 +106,83 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @MapKeyColumn(name = "teksti", nullable = false)
     private Map<KomoTeksti, MonikielinenTeksti> tekstit = new HashMap<KomoTeksti, MonikielinenTeksti>();
 
-    @Column(name = "kandi_koulutuskoodi")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moduulityyppi")
+    private KoulutusmoduuliTyyppi moduuliTyyppi;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "koulutusala_uri")
+    private String koulutusala;
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "eqf_uri")
+    private String eqfLuokitus;
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "nqf_uri")
+    private String nqfLuokitus;
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "koulutusaste_uri")
+    private String koulutusAste;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "koulutus_uri")
+    private String koulutusKoodi;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "koulutusohjelma_uri")
+    private String koulutusohjelmaKoodi;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "tutkinto_uri")
+    private String tutkintoOhjelmanNimi;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "opintojen_laajuusarvo_uri")
+    private String laajuusArvo;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "opintojen_laajuusyksikko_uri")
+    private String laajuusYksikko;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "lukiolinja_uri")
+    private String lukiolinja;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "koulutustyyppi_uri")
+    private String koulutustyyppiUri;
+
+    /**
+     * Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "opintoala_uri")
+    private String opintoala;
+
+    /**
+     * Optional Koodisto uri. See accessors for more info.
+     */
+    @Column(name = "kandi_koulutus_uri")
     private String kandidaatinKoulutuskoodi;
 
     /**
@@ -670,5 +711,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setKandidaatinKoulutuskoodi(String kandidaatinKoulutuskoodi) {
         this.kandidaatinKoulutuskoodi = kandidaatinKoulutuskoodi;
+    }
+
+    /**
+     * @return the koulutustyyppiUri
+     */
+    public String getKoulutustyyppiUri() {
+        return koulutustyyppiUri;
+    }
+
+    /**
+     * @param koulutustyyppiUri the koulutustyyppiUri to set
+     */
+    public void setKoulutustyyppiUri(String koulutustyyppiUri) {
+        this.koulutustyyppiUri = koulutustyyppiUri;
     }
 }
