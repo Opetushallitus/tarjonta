@@ -151,7 +151,7 @@ app.controller('BaseEditController', [
 
         $scope.selectKieli = function(kieliUri) {
             $scope.uiModel.selectedKieliUri = kieliUri;
-        }
+        };
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
             if (!kieliUri) {
@@ -498,7 +498,7 @@ app.controller('BaseEditController', [
 
         $scope.selectKieli = function(kieliUri) {
             $scope.uiModel.selectedKieliUri = kieliUri;
-        }
+        };
 
         $scope.getLisatietoKielet = function() {
             for (var i in $scope.uiModel.opetuskielis.uris) {
@@ -522,8 +522,7 @@ app.controller('BaseEditController', [
                     $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
                 }
             }
-        }
-        ;
+        };
 
         $scope.onLisatietoLangSelection = function() {
             for (var ki in $scope.model.kuvausKomo) {

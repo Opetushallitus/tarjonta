@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 /**
  *
  * @author Jani Wilén
+ * @param <TYPE> custom relation object
  */
 @Component
 public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelationV1RDTO> {
@@ -74,7 +75,8 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI,
         KoodistoURI.KOODISTO_KOULUTUSALA_URI,
         KoodistoURI.KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI,
-        KoodistoURI.KOODISTO_KOULUTUSLAJI_URI
+        KoodistoURI.KOODISTO_KOULUTUSLAJI_URI,
+        KoodistoURI.KOODISTO_EQF_LUOKITUS_URI
     };
 
     @Autowired(required = true)
@@ -82,8 +84,8 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
     @Autowired(required = true)
     private KoulutusCommonConverter commonConverter;
 
-    public TYPE getKomoRelationByKoulutuskoodiUri(Class<TYPE> clazz, final KoulutusmoduuliStandardRelationV1RDTO defaults, final String koulutuskoodiUri, final Locale locale, final boolean showMeta) throws InstantiationException, IllegalAccessException {
-        Preconditions.checkNotNull(koulutuskoodiUri, "Koodisto koulutuskoodi URI cannot be null.");
+    public TYPE getKomoRelationByKoulutuskoodiUri(Class<TYPE> clazz, final KoulutusmoduuliStandardRelationV1RDTO defaults, final String koodiUri, final Locale locale, final boolean showMeta) throws InstantiationException, IllegalAccessException {
+        Preconditions.checkNotNull(koodiUri, "Koodisto koulutuskoodi URI cannot be null.");
         TYPE dto = clazz.newInstance();
 
         if (defaults != null) {
@@ -130,14 +132,23 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
             }
         }
 
-        Collection<KoodiType> koodistoRelations = getKoulutusRelations(koulutuskoodiUri, dto);
+        final Collection<KoodiType> koodistoRelations = getKoulutusRelations(koodiUri, dto);
 
-        dto.setKoulutuskoodi(singleKoodi(koulutuskoodiUri, FieldNames.KOULUTUSKOODI, locale, showMeta));
-
+        //Set koodisto data to correct dto fields.
         for (KoodiType type : koodistoRelations) {
-            //LOG.trace("KOODISTO : " + type.getKoodisto().getKoodistoUri());
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
                 dto.setKoulutusala(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUSALA, locale, showMeta));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTO_URI)) {
+                //KOULUTUS-koodisto!
+                dto.setKoulutuskoodi(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUSKOODI, locale, showMeta));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_LUKIOLINJA_URI)) {
+                //KOULUTUS-koodisto!
+                if (dto instanceof KoulutusmoduuliLukioRelationV1RDTO) {
+                    KoulutusmoduuliLukioRelationV1RDTO lk = (KoulutusmoduuliLukioRelationV1RDTO) dto;
+                    //in lukio : 'koulutusohjelma' == 'lukiolinja'
+                    lk.setKoulutusohjelma(singleKoodi(type.getKoodiUri(), FieldNames.LUKIOLINJA, locale, showMeta));
+                    lk.setLukiolinja(singleKoodi(type.getKoodiUri(), FieldNames.LUKIOLINJA, locale, showMeta));
+                }
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI)) {
                 if (dto instanceof KoulutusmoduuliKorkeakouluRelationV1RDTO) {
                     KoulutusmoduuliKorkeakouluRelationV1RDTO kk = (KoulutusmoduuliKorkeakouluRelationV1RDTO) dto;
@@ -189,12 +200,16 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
         commonConverter.addToKoodiUrisMap(koodiUris, uriAndVersion, locale, fieldNames, showMeta);
     }
 
-    private Collection<KoodiType> getKoulutusRelations(final String koulutuskoodiUri, final TYPE obj) {
-        Preconditions.checkNotNull(koulutuskoodiUri, "Koulutuskoodi URI cannot be null");
+    private Collection<KoodiType> getKoulutusRelations(final String koodiUri, final TYPE obj) {
+        Preconditions.checkNotNull(koodiUri, "Koulutuskoodi URI cannot be null");
         Collection<KoodiType> koodiTypes = Lists.<KoodiType>newArrayList();
 
+        //add target koodi item to the list
+        koodiTypes.add(tarjontaKoodistoHelper.getKoodiByUri(koodiUri));
+
+        //search relations for the target uri
         for (String koodistoUri : koodisByAste(obj)) {
-            koodiTypes.addAll(tarjontaKoodistoHelper.getKoodistoRelations(koulutuskoodiUri, koodistoUri, SuhteenTyyppiType.SISALTYY, false));
+            koodiTypes.addAll(tarjontaKoodistoHelper.getKoodistoRelations(koodiUri, koodistoUri, SuhteenTyyppiType.SISALTYY, false));
         }
 
         return koodiTypes;

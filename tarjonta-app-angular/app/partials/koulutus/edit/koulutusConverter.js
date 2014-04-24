@@ -422,10 +422,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
                 {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
             ],
-            MLANG: {
-                koulutusohjelma: {'defaultLangs': true, "default": {tekstis: []}}
-            },
+            MLANG: {},
             RELATION: {
+                koulutuskoodi: {module: 'TUTKINTO'},
+                koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
                 koulutusala: {module: 'TUTKINTO'},
                 opintoala: {module: 'TUTKINTO'},
                 koulutuslaji: {module: 'TUTKINTO'},
@@ -494,7 +494,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*
          * Convert Koodisto komponent object to back-end object format.
          */
-        //single select nodels
+
+
+        //for single select models
         angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].COMBO, function(value, key) {
             //search version information for list of uris;
 

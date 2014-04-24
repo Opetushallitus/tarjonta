@@ -149,8 +149,10 @@ public class KoulutusValidator {
     }
 
     private static void validateKoodistoRelationsLukio(KoulutusLukioV1RDTO dto, ResultV1RDTO result) {
-        //TODO :validateKoodi(result, dto.getNqf(), KoulutusValidationMessages.KOULUTUS_NQF_MISSING, KoulutusValidationMessages.KOULUTUS_NQF_INVALID);
-        validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
+        // TODO:  kun relaatiot on tehty koodistoon
+        // alidateKoodi(result, dto.getNqf(), KoulutusValidationMessages.KOULUTUS_NQF_MISSING, KoulutusValidationMessages.KOULUTUS_NQF_INVALID);
+        // validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
+        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID); 
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(result, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
@@ -175,8 +177,7 @@ public class KoulutusValidator {
     }
 
     /**
-     * True when valid uri and version. TODO: koodi uri pattern
-     * validation.
+     * True when valid uri and version. TODO: koodi uri pattern validation.
      */
     public static boolean isValidKoodiUriWithVersion(final KoodiV1RDTO koodi) {
         if (koodi == null) {

@@ -39,6 +39,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -156,6 +157,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
         assertNotNull(null, result.getKoulutusohjelma().getTekstis().isEmpty());
         assertNotNull(KOULUTUSOHJELMA, result.getKoulutusohjelma().getMeta().get(key));
+        assertEqualDtoKoodi(KOULUTUSOHJELMA, result.getKoulutusohjelma());
         assertEqualDtoKoodi(KOULUTUSASTE, result.getKoulutusaste());
         assertEqualDtoKoodi(KOULUTUSALA, result.getKoulutusala());
         assertEqualDtoKoodi(OPINTOALA, result.getOpintoala());
@@ -234,6 +236,8 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         dto.setPohjakoulutusvaatimus(toKoodiUri(POHJAKOULUTUSVAATIMUS));
 
         dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
+
+        dto.setKoulutusohjelma(toNimiKoodiUri(KOULUTUSOHJELMA));
 
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
 

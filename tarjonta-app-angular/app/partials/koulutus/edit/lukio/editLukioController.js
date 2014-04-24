@@ -14,7 +14,7 @@ app.controller('EditLukioController',
                     $log.debug("init");
                     var model = {};
                     var uiModel = {
-                        loadedKoulutuslaji : null, //a hack : esta nuorten lukiokoulutuksen tallennus
+                        loadedKoulutuslaji: null, //a hack : esta nuorten lukiokoulutuksen tallennus
                         //custom stuff
                         koulutusohjelma: [],
                         tutkintoModules: {},
@@ -97,7 +97,7 @@ app.controller('EditLukioController',
                     $scope.setUiModel(uiModel);
                     $scope.setModel(model);
                 };
-                
+
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi, tutkintoTyyppi) {
                     TarjontaService.getKoulutuskoodiRelations(
                             {
@@ -174,8 +174,13 @@ app.controller('EditLukioController',
                  */
                 $scope.$watch("model.koulutusohjelma.uri", function(uri, oUri) {
                     if (angular.isDefined(uri) && uri != null && oUri != uri) {
-                        $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[ uri].oid;
-                        $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+
+                        if (angular.isDefined($scope.uiModel.koulutusohjelmaModules[uri])) {
+                            $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[uri].oid;
+                            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+                        } else {
+                            $log.error("missing koulutus by " + uri);
+                        }
                     }
                 });
 
