@@ -62,6 +62,7 @@ public enum KoulutusValidationMessages {
     KOULUTUS_KOULUTUSASTE_MISSING("koulutusaste"),
     KOULUTUS_KOULUTUSASTE_INVALID("koulutusaste"),
     //name
+    KOULUTUS_KOULUTUSOHJELMA_MISSING("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_INVALID("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING("koulutusohjelma"),

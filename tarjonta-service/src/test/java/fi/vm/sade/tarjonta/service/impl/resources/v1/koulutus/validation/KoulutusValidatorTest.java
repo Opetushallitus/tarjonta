@@ -17,6 +17,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Map;
 
@@ -99,6 +100,7 @@ public class KoulutusValidatorTest {
         dto.setEqf(new KoodiV1RDTO());
         dto.setKoulutusala(new KoodiV1RDTO());
         dto.setKoulutuskoodi(new KoodiV1RDTO());
+        dto.setKoulutusohjelma(new NimiV1RDTO());
         dto.setOpintojenLaajuusarvo(new KoodiV1RDTO());
         dto.setOpintojenLaajuusyksikko(new KoodiV1RDTO());
         dto.setKoulutuslaji(new KoodiV1RDTO());
@@ -131,6 +133,8 @@ public class KoulutusValidatorTest {
         dto.setEqf(new KoodiV1RDTO("", 0, null));
         dto.setKoulutusala(new KoodiV1RDTO("", 0, null));
         dto.setKoulutuskoodi(new KoodiV1RDTO("", 0, null));
+        dto.getKoulutusohjelma().setUri("");
+        dto.getKoulutusohjelma().setVersio(0);
         dto.setOpintojenLaajuusarvo(new KoodiV1RDTO("", 0, null));
         dto.setOpintojenLaajuusyksikko(new KoodiV1RDTO("", 0, null));
         dto.setKoulutuslaji(new KoodiV1RDTO("", 0, null));
@@ -161,6 +165,8 @@ public class KoulutusValidatorTest {
         dto.setEqf(new KoodiV1RDTO("1", 1, null));
         dto.setKoulutusala(new KoodiV1RDTO("1", 1, null));
         dto.setKoulutuskoodi(new KoodiV1RDTO("1", 1, null));
+        dto.getKoulutusohjelma().setUri("1");
+        dto.getKoulutusohjelma().setVersio(1);
         dto.setOpintojenLaajuusarvo(new KoodiV1RDTO("1", 1, null));
         dto.setOpintojenLaajuusyksikko(new KoodiV1RDTO("1", 1, null));
         dto.setKoulutuslaji(new KoodiV1RDTO("1", 1, null));
@@ -205,6 +211,7 @@ public class KoulutusValidatorTest {
 
     @Test
     public void validateKoodiUris() {
+        //use any error message, this test do not care the error message types.
         final KoulutusValidationMessages missing = KoulutusValidationMessages.KOULUTUS_NQF_MISSING;
         final KoulutusValidationMessages invalid = KoulutusValidationMessages.KOULUTUS_NQF_INVALID;
         Assert.assertFalse(KoulutusValidator.validateKoodiUris(new ResultV1RDTO(), null, missing, invalid, null));
@@ -270,7 +277,8 @@ public class KoulutusValidatorTest {
 //        }
 //        System.out.println("--------------- : " + eCount);
         org.junit.Assert.assertEquals("errors count", eCount, v.getErrors().size());
-        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING);
+        //assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING);
+        assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING);

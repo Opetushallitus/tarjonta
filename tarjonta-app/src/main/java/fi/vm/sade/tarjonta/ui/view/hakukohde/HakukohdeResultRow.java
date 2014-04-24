@@ -137,7 +137,7 @@ public class HakukohdeResultRow extends HorizontalLayout {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
         
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted) || checkForErillishakuAndRights(context)) {
+        if (tila.equals(TarjontaTila.VALMIS) && (tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted) || checkForErillishakuAndRights(context))) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);

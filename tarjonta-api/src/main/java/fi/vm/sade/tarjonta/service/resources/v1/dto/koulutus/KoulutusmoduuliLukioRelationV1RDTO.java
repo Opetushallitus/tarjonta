@@ -28,6 +28,7 @@ public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardR
     //KOODISTO KOMO DATA OBJECTS:
     @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
     private KoodiV1RDTO tutkintonimike;
+
     @ApiModelProperty(value = "Opintojen laajuuden arvot", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
 
@@ -36,6 +37,12 @@ public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardR
 
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
+
+    @ApiModelProperty(value = "Lukiolinja-koodi", required = true)
+    private KoodiV1RDTO lukiolinja;
+
+    @ApiModelProperty(value = "Lukiolinja-koodi, REST-rajapinnan selkeyttämisen vuoksi lukiolinja-koodiston tietoa kuljetetaan myös koulutusohjelma-kentässä")
+    private KoodiV1RDTO koulutusohjelma;
 
     /**
      * @return the tutkintonimike
@@ -91,6 +98,34 @@ public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardR
      */
     public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
+    }
+
+    /**
+     * @return the koulutusohjelma
+     */
+    public KoodiV1RDTO getKoulutusohjelma() {
+        return koulutusohjelma;
+    }
+
+    /**
+     * @param koulutusohjelma the koulutusohjelma to set
+     */
+    public void setKoulutusohjelma(KoodiV1RDTO koulutusohjelma) {
+        this.koulutusohjelma = koulutusohjelma;
+    }
+
+    /**
+     * @return the lukiolinja
+     */
+    public KoodiV1RDTO getLukiolinja() {
+        return lukiolinja;
+    }
+
+    /**
+     * @param lukiolinja the lukiolinja to set
+     */
+    public void setLukiolinja(KoodiV1RDTO lukiolinja) {
+        this.lukiolinja = lukiolinja;
     }
 
 }
