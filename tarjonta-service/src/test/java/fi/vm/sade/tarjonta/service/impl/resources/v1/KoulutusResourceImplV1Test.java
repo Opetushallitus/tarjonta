@@ -74,7 +74,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         /*
          * KOMO data fields:
          */
-        teksti(dto.getKoulutusohjelma(), KOULUTUSOHELMA, URI_KIELI_FI);
+        teksti(dto.getKoulutusohjelma(), KOULUTUSOHJELMA, URI_KIELI_FI);
         dto.getKoulutusohjelma().getTekstis().put(URI_KIELI_FI, toNimiValue("koulutusohjelma", URI_KIELI_FI));
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
@@ -192,7 +192,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
 
         final String key = URI_KIELI_FI + "_uri";
 
-        assertNotNull(KOULUTUSOHELMA, result.getKoulutusohjelma().getTekstis().get(key));
+        assertNotNull(KOULUTUSOHJELMA, result.getKoulutusohjelma().getTekstis().get(key));
         assertEqualDtoKoodi(KOULUTUSASTE, result.getKoulutusaste());
         assertEqualDtoKoodi(KOULUTUSALA, result.getKoulutusala());
         assertEqualDtoKoodi(OPINTOALA, result.getOpintoala());

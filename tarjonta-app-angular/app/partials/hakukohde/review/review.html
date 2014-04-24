@@ -101,20 +101,25 @@
 	                    <th>{{t('hakukohde.review.valintakokeet.lisatiedot')}}</th>
 	                </tr>
 	                <tbody data-ng-repeat="valintakoe in getLocalizedValintakoe(model.selectedValintakoeKieli)">
-	                <tr data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
-	                    <td ng-show="!$first" colspan="2"></td>
-	                    <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
-	                    <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
-	                    <td>
-	                        {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
-	                    </td>
-	                    <td>
-	                        {{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}
-	                    </td>
-	                    <td>
-	                        {{ valintakoeaika.lisatiedot }}
-	                    </td>
-	                </tr>
+                    <tr ng-show="valintakoe.valintakoeAjankohtas" data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+                        <td ng-show="!$first" colspan="2"></td>
+                        <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
+                        <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
+                        <td>
+                            {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
+                        </td>
+                        <td>
+                            {{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}
+                        </td>
+                        <td>
+                            {{ valintakoeaika.lisatiedot }}
+                        </td>
+                    </tr>
+                    <tr ng-show="!valintakoe.valintakoeAjankohtas.length">
+                        <td>{{valintakoe.valintakoeNimi}}</td>
+                        <td data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
 	                </tbody>
 	             </table>
 	        </td>

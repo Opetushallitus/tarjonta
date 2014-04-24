@@ -15,6 +15,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private String kausiUri;
     private Integer vuosi;
     private Map<String, String> koulutusLaji;
+    private String koulutuslajiUri;
     private TarjontaTila tila;
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private Map<String, String> pohjakoulutusvaatimus;
@@ -90,6 +91,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
             Map<String, String> pohjakoulutusvaatimus) {
         this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
+
     public void setKomoOid(String koulutusmoduuliOid) {
         this.komoOid = koulutusmoduuliOid;
     }
@@ -115,4 +117,20 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     public void setKausiUri(String kausiUri) {
         this.kausiUri = kausiUri;
     }
+
+    /**
+     * @return the koulutuslajiUri
+     */
+    public String getKoulutuslajiUri() {
+        return koulutuslajiUri;
+    }
+
+    /**
+     * @param koulutuslajiUri the koulutuslajiUri to set
+     */
+    public void setKoulutuslajiUri(String koulutuslajiUri) {
+        this.koulutuslajiUri = koulutuslajiUri;
+    }
+
+  
 }

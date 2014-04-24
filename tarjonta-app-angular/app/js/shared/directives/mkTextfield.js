@@ -77,7 +77,9 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         			return 1;
         		}
         		
-        		return $scope.codes[a.uri].nimi.localeCompare($scope.codes[b.uri].nimi);
+        		var an = $scope.codes[a.uri] ? $scope.codes[a.uri].nimi : a.uri;
+        		var bn = $scope.codes[b.uri] ? $scope.codes[b.uri].nimi : b.uri;
+        		return an.localeCompare(bn);
         	});
         }
 

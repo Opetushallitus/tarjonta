@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -160,7 +159,7 @@ public class ConverterV1 {
         t.setTarjoajaOids(haku.getTarjoajaOids());
 
         t.setUsePriority(haku.isUsePriority());
-        
+
         // Koodistos as (not) pre-resolved, who needs this?
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
@@ -169,7 +168,6 @@ public class ConverterV1 {
 //        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
         return t;
     }
-
 
     public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku) throws OIDCreationException {
         if (hakuV1RDTO == null) {
@@ -242,7 +240,7 @@ public class ConverterV1 {
 
         haku.setOrganisationOids(hakuV1RDTO.getOrganisaatioOids());
         haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
-        
+
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
 
         return haku;
@@ -352,9 +350,7 @@ public class ConverterV1 {
 //            valintaperusteSoraKuvaus.setMonikielinenNimi(nimet);
         }
 
-
         valintaperusteSoraKuvaus.setViimPaivittajaOid(contextDataService.getCurrentUserOid());
-
 
         if (kuvausV1RDTO.getModified() != null) {
             valintaperusteSoraKuvaus.setViimPaivitysPvm(kuvausV1RDTO.getModified());
@@ -599,8 +595,8 @@ public class ConverterV1 {
             for (String tarjoajaOid : hakukohdeRDTO.getTarjoajaOids()) {
                 OrganisaatioDTO org = organisaatioService.findByOid(tarjoajaOid);
 
-                if (org==null) {
-                	continue;
+                if (org == null) {
+                    continue;
                 }
 
                 for (fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi.Teksti text : org.getNimi().getTeksti()) {
@@ -731,7 +727,7 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getValintaPerusteKuvausKielet() != null) {
 
-           hakukohde.setValintaPerusteKuvausKielet(hakukohdeRDTO.getValintaPerusteKuvausKielet());
+            hakukohde.setValintaPerusteKuvausKielet(hakukohdeRDTO.getValintaPerusteKuvausKielet());
 
         }
 
@@ -748,13 +744,12 @@ public class ConverterV1 {
             hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
         }
 
-
         for (ValintakoeV1RDTO valintakoeV1RDTO : hakukohdeRDTO.getValintakokeet()) {
-        	hakukohde.addValintakoe(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));
+            hakukohde.addValintakoe(convertValintakoeRDTOToValintakoe(valintakoeV1RDTO));
         }
 
         for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
-        	hakukohde.addLiite(toHakukohdeLiite(liite));
+            hakukohde.addLiite(toHakukohdeLiite(liite));
         }
 
         return hakukohde;
@@ -889,10 +884,10 @@ public class ConverterV1 {
         MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
 
         for (TekstiRDTO tekstiRDTO : tekstis) {
-        	if (tekstiRDTO!=null) {
+            if (tekstiRDTO != null) {
                 monikielinenTeksti.addTekstiKaannos(tekstiRDTO.getUri(), tekstiRDTO.getTeksti());
                 LOG.debug("MONIKIELINEN TEKSTI : {}", tekstiRDTO.getTeksti());
-        	}
+            }
         }
 
         return monikielinenTeksti;
@@ -915,7 +910,6 @@ public class ConverterV1 {
         return osoiteRDTO;
 
     }
-
 
     private ValintakoeV1RDTO convertValintakoeToValintakoeV1RDTO(Valintakoe valintakoe) {
         ValintakoeV1RDTO valintakoeV1RDTO = new ValintakoeV1RDTO();
@@ -1158,6 +1152,7 @@ public class ConverterV1 {
         }
         if (ht.getKoulutuslaji() != null) {
             ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
+            ret.setKoulutuslajiUri(ht.getKoulutuslaji().getUri());
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
         ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());

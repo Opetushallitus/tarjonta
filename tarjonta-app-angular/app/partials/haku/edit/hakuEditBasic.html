@@ -61,34 +61,47 @@
     <tr class="required">
         <th data-tt='haku.edit.haunNimi'>Haun nimi</th>
         <td>
-            <div mk-textfield model="model.hakux.result.nimi" required="true" name="haunNimi"></div>
-            <p class="help-block" data-tt="haku.edit.haunNimi.help">help</p>
+            <mk-textfield model="model.hakux.result.nimi" required="true" name="haunNimi"></mk-textfield>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunNimi" tt-prefix="haku.edit" field-check="false" custom-check="checkHaunNimiValidity()"></div>
         </td>
     </tr>
+    <tr>
+        <th></th>
+        <td colspan="2" class="help" tt="haku.edit.haunNimi.help"></td>
+    </tr>
 
     <tr class="required">
         <th data-tt='haku.edit.hakuaika'>Hakuaika</th>
         <td colspan="2">
-            <div ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
-                <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi">
-                <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>
-                <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
-
-                <div class="btn"><i class="icon-minus" ng-click="doRemoveHakuaika(hakuaika, $index)"></i> Poista </div>
-
-                <div show-errors form="hakuaikaForm" field="alkuPvm" tt-prefix="haku.edit" debug="false" 
-                     custom-check="hakuaikaForm.alkuPvm.$invalid"></div>
-                <div show-errors form="hakuaikaForm" field="loppuPvm" tt-prefix="haku.edit" debug="false" 
-                     custom-check="hakuaikaForm.loppuPvm.$invalid"></div>
-            </div>
-            <div class="btn" ng-click="doAddNewHakuaika()"><i class="icon-plus"></i> Lisää uusi hakuaika </div>
-
-            <p class="help-block" data-tt="haku.edit.hakuaika.help">help</p>
+            <table>
+            <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
+                <td>
+                    <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi"/>
+                </td>
+                <td>
+                    <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>
+                </td>
+                <td>
+                    <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
+                </td>
+                <td class="controls">
+                    <button class="btn" ng-click="doRemoveHakuaika(hakuaika, $index)"><!-- <span tt="tarjonta.toiminnot.poista">Poista</span> --> <span class="icon-remove"></span></button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5" class="controls">
+                    <button class="btn btn-primary" ng-click="doAddNewHakuaika()"><!-- <span tt="haku.edit.lisää_hakuaika">Lisää uusi hakuaika</span> --> <span class="icon-plus"></span></button>
+                </td>
+            </tr>
+            </table>
         </td>
         <!-- TODO check for errors here! -->
+    </tr>
+    <tr>
+        <th></th>
+        <td colspan="2" class="help" tt="haku.edit.hakuaika.help"></td>
     </tr>
 
     <tr>
@@ -151,9 +164,9 @@
                 <li ng-repeat="org in model.selectedTarjoajaOrganisations">{{ org.nimi }}</li>
             </ul>
 
-            <div class="btn" ng-click="doSelectTarjoajaOrganisations()" data-tt="haku.edit.valitse.organisaatio">
-                 <i class="icon-plus"></i> Muokkaa valittuja organisaatioita
-            </div>
+            <button class="btn" ng-click="doSelectTarjoajaOrganisations()">
+                 <span tt="haku.edit.valitse.organisaatio">Muokkaa valittuja organisaatioita</span> <span class="icon-plus"></span>
+            </button>
         </td>
     </tr>
     
@@ -168,9 +181,9 @@
                 <li ng-repeat="org in model.selectedOrganisations">{{ org.nimi }}</li>
             </ul>
 
-            <div class="btn" ng-click="doSelectOrganisations()" data-tt="haku.edit.valitse.organisaatio">
-                 <i class="icon-plus"></i> Muokkaa valittuja organisaatioita
-            </div>
+            <button class="btn" ng-click="doSelectOrganisations()">
+                 <span tt="haku.edit.valitse.organisaatio">Muokkaa valittuja organisaatioita</span> <span class="icon-plus"></span>
+            </button>
         </td>
     </tr>
 

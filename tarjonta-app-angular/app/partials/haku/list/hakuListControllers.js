@@ -197,7 +197,7 @@ app.controller('HakuListController',
                             }});
 
                         //delete
-                        if (results[1]) {
+                        if (results[1] && haku.tila != 'JULKAISTU') {
                             haku.actions.push({name: LocalisationService.t("haku.menu.poista"), action: function() {
                                     $scope.doDelete(haku)
                                 }});

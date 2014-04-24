@@ -34,6 +34,11 @@ app.controller('HakukohdeReviewController',
       //käyttöoikeudet
       PermissionService.hakukohde.canEdit($scope.model.hakukohde.oid).then(function(data){
         $scope.isMutable=data;
+         if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
+                //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+                $scope.isMutable = false;
+                
+            }
       });
   
       $log.debug('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);

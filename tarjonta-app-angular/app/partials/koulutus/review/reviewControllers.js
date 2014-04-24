@@ -1,8 +1,8 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', 'KoodistoURI', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
+    function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
 
         $log = $log.getInstance("BaseReviewController");
 
@@ -18,6 +18,18 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
             var tila = TarjontaService.getTilat()[koulutusModel.tila];
             $scope.isMutable = tila.mutable && data;
             $scope.isRemovable = tila.removable && data;
+
+            if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
+                //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+                if (angular.isDefined(koulutusModel.koulutuslaji) &&
+                        KoodistoURI.compareKoodi(
+                                koulutusModel.koulutuslaji.uri,
+                                window.CONFIG.env['koodi-uri.koulutuslaji.nuortenKoulutus'],
+                                true)) {
+                    $scope.isMutable = false;
+                    $scope.isRemovable = false;
+                }
+            }
         });
 
         $scope.formControls = {};
@@ -142,10 +154,17 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
                     controller: 'LiitaSisaltyvyysCtrl',
                     resolve: {
                         targetKomo: function() {
-                            return {oid: $scope.model.koulutus.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
+                            return {
+                              vuosi: $scope.model.koulutus.koulutuksenAlkamisvuosi, 
+                              kausi: $scope.model.koulutus.koulutuksenAlkamiskausi,
+                              oid: $scope.model.koulutus.komoOid, 
+                              nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
-                            return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                            return  {
+                              oid: $scope.model.koulutus.organisaatio.oid, 
+                              nimi: $scope.model.koulutus.organisaatio.nimi
+                              };
                         }
                     }
                 });

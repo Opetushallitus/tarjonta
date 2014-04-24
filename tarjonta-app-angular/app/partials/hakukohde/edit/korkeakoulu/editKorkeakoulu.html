@@ -5,7 +5,7 @@
         tt-create="hakukohde.create.header.title"
         tt-edit="hakukohde.edit.header.title"
         title="model.hakukohde.tekstis"
-        dto="model.modifiedObj">
+        dto="modifiedObj">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
@@ -27,7 +27,7 @@
 
     <display-controls model="formControls" display="header"></display-controls>
 
-    <h1>KK Hakukohde</h1>
+
 
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">

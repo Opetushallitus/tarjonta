@@ -18,11 +18,19 @@ package fi.vm.sade.tarjonta.dao.impl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+
 import java.util.List;
 import javax.persistence.EntityManager;
+
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -171,6 +179,26 @@ public class KoulutusmoduuliDAOImplTest {
         criteria.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
         result = instance.search(criteria);
         assertEquals(0, result.size());
+    }
+
+    
+    @Test
+    public void testXSSFiltering(){
+        //TODO test more fields...
+        komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
+        komo1.setOid("xss-1");
+        komo1.setOppilaitostyyppi("zz");
+        komo1.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        komo1.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+        komo1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
+        komo1.getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, new MonikielinenTeksti("fi", "jatko-opinto"));
+        komo1.getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
+        persist(komo1);
+
+        komo1 = instance.findBy("oid", "xss-1").get(0);
+        Assert.assertEquals("ei saa muuttaa & merkkiä!", komo1.getNimi().asMap().get("fi"));
+        Assert.assertEquals("<table>foo</table>", komo1.getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getTekstiForKieliKoodi("fi"));
+        Assert.assertEquals("jatko-opinto", komo1.getTekstit().get(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET).getTekstiForKieliKoodi("fi"));
     }
 
 
