@@ -122,6 +122,10 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
             return false;
         }
 
+
+        HakuViewModel refreshHakuViewModel =  tarjontaPresenterPresenter.findHakuByOid(hakuViewModel.getHakuOid());
+
+        hakuViewModel.setHakutapa(refreshHakuViewModel.getHakuDto().getHakutapaUri());
         Date minHakuAlkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
 
         if (isErillishakuOrLisahaku(hakuViewModel)) {
@@ -137,6 +141,14 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
             }*/
 
 
+    }
+
+    private boolean isErillisOrJatkuvaHaku() {
+        HakuViewModel hakuViewModel = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel();
+        HakuViewModel refreshHakuViewModel =  tarjontaPresenterPresenter.findHakuByOid(hakuViewModel.getHakuOid());
+
+        hakuViewModel.setHakutapa(refreshHakuViewModel.getHakuDto().getHakutapaUri());
+        return isErillishakuOrLisahaku(hakuViewModel);
     }
 
     private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
@@ -183,7 +195,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if (!hakuStarted) {
+                if (isErillisOrJatkuvaHaku() || !hakuStarted) {
                     showConfirmationDialog();
                 } else {
                     getWindow().showNotification(T("hakukohdePoistoEpaonnistui"), Window.Notification.TYPE_ERROR_MESSAGE);
@@ -202,7 +214,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
          }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //permissions
-        poista.setVisible(tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted));
+        poista.setVisible(isErillisOrJatkuvaHaku() || tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted));
         /*kopioiUudeksi.setVisible(tarjontaPresenterPresenter.getPermission().userCanCopyHakukohdAsNew(context));*/
     }
 

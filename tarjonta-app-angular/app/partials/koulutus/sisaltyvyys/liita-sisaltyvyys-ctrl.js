@@ -146,8 +146,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
                 oid: organisaatio.oid,
                 terms: '', //search words
                 state: null,
-                year: null,
-                season: null
+                year: targetKomo.vuosi,
+                season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio 
             },
             html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
         };

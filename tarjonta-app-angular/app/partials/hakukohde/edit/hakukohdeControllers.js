@@ -50,14 +50,6 @@ app.controller('HakukohdeEditController',
     var postinumero = undefined;
 
 
-
-    $scope.model.userLang  =  AuthService.getLanguage();
-
-    if ($scope.model.userLang === undefined) {
-        $scope.model.userLang = "FI";
-    }
-
-
     /*
 
         ----> Scope function to express whether hakukohde can be saved or not
@@ -94,6 +86,13 @@ app.controller('HakukohdeEditController',
     $scope.model.temp = {};
 
     var init = function() {
+
+        $scope.model.userLang  =  AuthService.getLanguage();
+
+        if ($scope.model.userLang === undefined) {
+            $scope.model.userLang = "FI";
+        }
+
         $scope.loadHakukelpoisuusVaatimukset();
         $scope.loadKoulutukses();
         $scope.haeTarjoajaOppilaitosTyypit();

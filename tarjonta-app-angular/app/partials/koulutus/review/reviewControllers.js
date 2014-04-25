@@ -154,10 +154,17 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
                     controller: 'LiitaSisaltyvyysCtrl',
                     resolve: {
                         targetKomo: function() {
-                            return {oid: $scope.model.koulutus.komoOid, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
+                            return {
+                              vuosi: $scope.model.koulutus.koulutuksenAlkamisvuosi, 
+                              kausi: $scope.model.koulutus.koulutuksenAlkamiskausi,
+                              oid: $scope.model.koulutus.komoOid, 
+                              nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]};
                         },
                         organisaatioOid: function() {
-                            return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
+                            return  {
+                              oid: $scope.model.koulutus.organisaatio.oid, 
+                              nimi: $scope.model.koulutus.organisaatio.nimi
+                              };
                         }
                     }
                 });

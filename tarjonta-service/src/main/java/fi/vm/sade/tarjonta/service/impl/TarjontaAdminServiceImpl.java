@@ -150,6 +150,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private OidService oidService;
 
+    private final String ERILLISHAKU_URI = "hakutapa_02";
+    private final String JATKUVAHAKU_URI = "hakutapa_03";
+
     @Override
     @Transactional(readOnly = false)
     public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
@@ -717,12 +720,35 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private boolean hakuAlkanut(Hakukohde hakukohde) {
+        if (isHakukohdeHakuErillisOrJatkuvaHaku(hakukohde)) {
+            return false;
+        }
+
         for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
             if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean isHakukohdeHakuErillisOrJatkuvaHaku(Hakukohde hakukohde) {
+
+        if (hakukohde.getHaku() != null) {
+            if (hakukohde.getHaku().getHakutapaUri().contains(ERILLISHAKU_URI) || hakukohde.getHaku().getHakutapaUri().contains(JATKUVAHAKU_URI)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+             Hakukohde tempHakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
+            if (tempHakukohde.getHaku().getHakutapaUri().contains(ERILLISHAKU_URI) || tempHakukohde.getHaku().getHakutapaUri().contains(JATKUVAHAKU_URI)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
     }
 
     /**
