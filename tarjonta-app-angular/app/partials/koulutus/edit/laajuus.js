@@ -12,6 +12,15 @@ app.directive('laajuus', ['$log', function($log) {
                 isMulti: false
             };
 
+            $scope.$watch("arvoModel.uri", function(newUri, oUri) {
+                //change listener
+                if (angular.isDefined(newUri) && newUri !== null && newUri.length > 0) {
+                    if ($scope.ctrl.isMulti) {
+                        $scope.arvoModel.versio = $scope.arvoUiModel.meta[newUri].versio;
+                    }
+                }
+            });
+
             $scope.$watch("arvoUiModel.meta", function(valNew, valOld) {
                 if (angular.isDefined(valNew) && angular.isObject(valNew)) {
                     var length = Object.keys(valNew).length;
@@ -23,7 +32,8 @@ app.directive('laajuus', ['$log', function($log) {
                         $scope.arvoModel.versio = valNew[key].versio;
                     }
                 }
-            });
+            }
+            );
         }
 
         return {
