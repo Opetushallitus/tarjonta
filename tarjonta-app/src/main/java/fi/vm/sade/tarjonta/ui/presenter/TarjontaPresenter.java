@@ -959,7 +959,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
             getModel().getKoulutusPerustiedotModel().setOid("-1");
             getModel().getKoulutusPerustiedotModel().setTila(TarjontaTila.LUONNOS);
-            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
+            getModel().getKoulutusPerustiedotModel()
+                    .setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
 
         }
@@ -1671,7 +1672,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         checkKoulutusmoduuli();
         //OVT-6477 valmentava ja kuntouttava saa olla useita
         //OVT-6676 vapaan sivistystyön koulutuksia saa olla useita
-        if (Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodistoUri()) || checkExistingKomoto(lisaa)) {
+        if (lisaa.getKoulutustyyppi()==KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || lisaa.getKoulutustyyppi()==KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS || checkExistingKomoto(lisaa)) {
+            
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
