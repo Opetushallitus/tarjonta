@@ -91,20 +91,20 @@ public class KoulutusmoduuliDAOImplTest {
         em = instance.getEntityManager();
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOppilaitostyyppi(sep + "uri_1" + sep + SEARCH_BY_URI_B + sep + SEARCH_BY_URI_A + sep);
-        komo1.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
         komo1.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
 
         persist(komo1);
 
         komo2 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo2.setOppilaitostyyppi(sep + SEARCH_BY_URI_C + sep);
-        komo2.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        komo2.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
         komo2.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
         persist(komo2);
 
         komo3 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo3.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
-        komo3.setLukiolinja(LUKIOLINJA_URI);
+        komo3.setLukiolinjaUri(LUKIOLINJA_URI);
         komo1.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
         persist(komo3);
     }
@@ -188,7 +188,7 @@ public class KoulutusmoduuliDAOImplTest {
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOid("xss-1");
         komo1.setOppilaitostyyppi("zz");
-        komo1.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
         komo1.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
         komo1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
         komo1.getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, new MonikielinenTeksti("fi", "jatko-opinto"));

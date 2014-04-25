@@ -109,76 +109,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Enumerated(EnumType.STRING)
     @Column(name = "moduulityyppi")
     private KoulutusmoduuliTyyppi moduuliTyyppi;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusala_uri")
-    private String koulutusala;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "eqf_uri")
-    private String eqfLuokitus;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "nqf_uri")
-    private String nqfLuokitus;
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusaste_uri")
-    private String koulutusAste;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutus_uri")
-    private String koulutusKoodi;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutusohjelma_uri")
-    private String koulutusohjelmaKoodi;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "tutkinto_uri")
-    private String tutkintoOhjelmanNimi;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "opintojen_laajuusarvo_uri")
-    private String laajuusArvo;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "opintojen_laajuusyksikko_uri")
-    private String laajuusYksikko;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "lukiolinja_uri")
-    private String lukiolinja;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "koulutustyyppi_uri")
-    private String koulutustyyppiUri;
-
-    /**
-     * Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "opintoala_uri")
-    private String opintoala;
-
     /**
      * Optional Koodisto uri. See accessors for more info.
      */
@@ -217,101 +147,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setOmistajaOrganisaatioOid(String organisaatioOid) {
         omistajaOrganisaatioOid = organisaatioOid;
-    }
-
-    /**
-     * <p>
-     * Koulutusjärjestelmän mukaisia koulutuksia koskeva luokittelu, joka kuvaa
-     * koulutusten sijoittumista tieteen, yhteiskunnan tai työelämän aloille ja
-     * jota käytetään koulutusten suunnitteluun, seurantaan ja säätelyyn
-     * Opetushallinnon Koulutusala 2002 -luokittelun mukaisia koulutusaloja ovat
-     * esimerkiksi kulttuuriala sekä tekniikan ja liikenteen ala.
-     * Koulutusalaluokitteluja on tällä hetkellä (kesäkuu 2012) neljä:
-     * opetushallinnon Koulutusala 2002- ja Koulutusala 1995 -luokittelut,
-     * ISCED-luokittelu sekä Tilastokeskuksen koulutusalaluokittelu.
-     * <br/>
-     * Lähde: OKSA sanasto:
-     * https://confluence.csc.fi/pages/viewpage.action?pageId=8688189
-     * </p>
-     *
-     * @return uri koodistoon
-     */
-    public String getKoulutusala() {
-        return koulutusala;
-    }
-
-    /**
-     * @param koulutusAla the koulutusAla to set
-     */
-    public void setKoulutusala(String koulutusAla) {
-        this.koulutusala = koulutusAla;
-    }
-
-    /**
-     * EU classification
-     *
-     * @see https://confluence.csc.fi/display/oppija/EQF-luokitus
-     * @see http://en.wikipedia.org/wiki/European_Qualifications_Framework
-     *
-     * @return the eqfLuokitus
-     */
-    public String getEqfLuokitus() {
-        return eqfLuokitus;
-    }
-
-    /**
-     * @param eqfLuokitus the eqfLuokitus to set
-     */
-    public void setEqfLuokitus(String eqfLuokitus) {
-        this.eqfLuokitus = eqfLuokitus;
-    }
-
-    /**
-     * National Qualification Framework. Describes how Finnish qualification
-     * system connects with EQF.
-     *
-     * @see http://www.oph.fi/mobility/qualifications_frameworks
-     *
-     * @return the nqfLuokitus
-     */
-    public String getNqfLuokitus() {
-        return nqfLuokitus;
-    }
-
-    /**
-     * @param nqfLuokitus the nqfLuokitus to set
-     */
-    public void setNqfLuokitus(String nqfLuokitus) {
-        this.nqfLuokitus = nqfLuokitus;
-    }
-
-    /**
-     * Sample content of the actual data:
-     * <pre>
-     * 0	Esiaste
-     * 1	Alempi perusaste
-     * 2	Ylempi perusaste
-     * 3	Keskiaste
-     * 5	Alin korkea-aste
-     * 6	Alempi korkeakouluaste
-     * 7	Ylempi korkeakouluaste
-     * 8	Tutkijakoulutusaste
-     * 9	Koulutusaste tuntematon
-     * </pre>
-     *
-     * @see http://www.stat.fi/meta/luokitukset/koulutusaste/versio.html
-     *
-     * @return uri to koodisto
-     */
-    public String getKoulutusAste() {
-        return koulutusAste;
-    }
-
-    /**
-     * @param koulutusAste the koulutusAste to set
-     */
-    public void setKoulutusAste(String koulutusAste) {
-        this.koulutusAste = koulutusAste;
     }
 
     /**
@@ -409,51 +244,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     *
-     * @see #setKoulutusKoodi(java.lang.String)
-     * @return
-     */
-    public String getKoulutusKoodi() {
-        return koulutusKoodi;
-    }
-
-    /**
-     * Tilastokeskuksen maarittelema koulutus luokitus koodi. Arvona on uri
-     * koodistoon joka esittää kyseistä luokitus koodia.
-     *
-     *
-     * @see http://www.stat.fi/meta/luokitukset/koulutus/001-2010/index.html
-     * @param koulutusKoodiUri
-     */
-    public void setKoulutusKoodi(String koulutusKoodiUri) {
-        this.koulutusKoodi = koulutusKoodiUri;
-    }
-
-    /**
-     * <p>
-     * Pääaineen koulutusohjelman tai vastaavan nimi. Tämä attribuutti on pätevä
-     * silloin kun {@link Koulutusmoduuli#moduuliTyyppi} on
-     * {@link KoulutusmoduuliTyyppi#TUTKINTO_OHJELMA}.
-     * </p>
-     *
-     * <p>
-     * KV vastaavuus: ects:DegreeProgrammeTitle.
-     * </p>
-     *
-     * @return the tutkintoOhjelmanNimi
-     */
-    public String getTutkintoOhjelmanNimi() {
-        return tutkintoOhjelmanNimi;
-    }
-
-    /**
-     * @param tutkintoOhjelmanNimi the tutkintoOhjelmanNimi to set
-     */
-    public void setTutkintoOhjelmanNimi(String tutkintoOhjelmanNimi) {
-        this.tutkintoOhjelmanNimi = tutkintoOhjelmanNimi;
-    }
-
-    /**
      * Palautttaa moduulin tyypin joka osaltaa kertoo mikä joukko attribuutteja
      * on päteviä tällä koulutusmoduulilla.
      *
@@ -467,52 +257,12 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         this.moduuliTyyppi = moduuliTyyppi;
     }
 
-    /**
-     * Palauttaa koodisto uri:n joka viittaa valittuun koulutusohjelmaan.
-     *
-     * Esimerkki koulutusohjelmasta: "Ympäristön suunnittelun ja rakentamisen
-     * koulutusohjelma (1603)"
-     *
-     * @return
-     */
-    public String getKoulutusohjelmaKoodi() {
-        return koulutusohjelmaKoodi;
+    public String getKoulutustyyppi() {
+        return koulutustyyppi;
     }
 
-    public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
-        this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
-    }
-
-    /**
-     * Laajuuden arvo. Esim. 30.
-     *
-     * @return
-     */
-    public String getLaajuusArvo() {
-        return laajuusArvo;
-    }
-
-    /**
-     * Laajuuden yksikko. Sisalto ilmeisesti koodisto uri mutta esitetty tieto
-     * esim. "opintoviikko"
-     *
-     * @return
-     */
-    public String getLaajuusYksikko() {
-        return laajuusYksikko;
-    }
-
-    /**
-     * Koulutuksen laajuus. yksikkoUri on Koodisto uri joka kertoo laajuuden
-     * yksikon kuten "vuosi", "kuukausi" "opintojakso". Arvo on arvo
-     * edellämainitussa yksikössä.
-     *
-     * @param yksikkoUri
-     * @param arvo
-     */
-    public void setLaajuus(String yksikkoUri, String arvo) {
-        laajuusYksikko = yksikkoUri;
-        laajuusArvo = arvo;
+    public void setKoulutustyyppi(String koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
     }
 
     /**
@@ -644,36 +394,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     * @return the opintoala
-     */
-    public String getOpintoala() {
-        return opintoala;
-    }
-
-    /**
-     * @param opintoala the opintoala to set
-     */
-    public void setOpintoala(String opintoala) {
-        this.opintoala = opintoala;
-    }
-
-    public String getKoulutustyyppi() {
-        return koulutustyyppi;
-    }
-
-    public void setKoulutustyyppi(String koulutustyyppi) {
-        this.koulutustyyppi = koulutustyyppi;
-    }
-
-    public String getLukiolinja() {
-        return lukiolinja;
-    }
-
-    public void setLukiolinja(String lukiolinja) {
-        this.lukiolinja = lukiolinja;
-    }
-
-    /**
      * @return the oppilaitostyyppi
      */
     public String getOppilaitostyyppi() {
@@ -711,19 +431,5 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      */
     public void setKandidaatinKoulutuskoodi(String kandidaatinKoulutuskoodi) {
         this.kandidaatinKoulutuskoodi = kandidaatinKoulutuskoodi;
-    }
-
-    /**
-     * @return the koulutustyyppiUri
-     */
-    public String getKoulutustyyppiUri() {
-        return koulutustyyppiUri;
-    }
-
-    /**
-     * @param koulutustyyppiUri the koulutustyyppiUri to set
-     */
-    public void setKoulutustyyppiUri(String koulutustyyppiUri) {
-        this.koulutustyyppiUri = koulutustyyppiUri;
     }
 }

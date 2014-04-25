@@ -141,7 +141,7 @@ public class KoulutusmoduuliDAOTest {
         Thread.sleep(50L);
 
         // change something and update
-        newTutkintoOhjelma.setKoulutusala("new koulutusala");
+        newTutkintoOhjelma.setKoulutusalaUri("new koulutusala");
         newTutkintoOhjelma = update(newTutkintoOhjelma);
 
         Date timeUpdated = newTutkintoOhjelma.getUpdated();
@@ -195,8 +195,8 @@ public class KoulutusmoduuliDAOTest {
         
         //Create tutkinto (parent)
         Koulutusmoduuli tutkinto = fixtures.createTutkintoOhjelma(KoulutusmoduuliTyyppi.TUTKINTO);
-        tutkinto.setKoulutusKoodi(KOULUTUSKOODI);
-        tutkinto.setKoulutusohjelmaKoodi(null);
+        tutkinto.setKoulutusUri(KOULUTUSKOODI);
+        tutkinto.setKoulutusohjelmaUri(null);
         
         tutkinto = this.koulutusmoduuliDAO.insert(tutkinto);
         
@@ -204,8 +204,8 @@ public class KoulutusmoduuliDAOTest {
         
         //Create koulutusohjelma (child)
         Koulutusmoduuli koulutusohjelma = fixtures.createTutkintoOhjelma(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        koulutusohjelma.setKoulutusKoodi(KOULUTUSKOODI);
-        koulutusohjelma.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
+        koulutusohjelma.setKoulutusUri(KOULUTUSKOODI);
+        koulutusohjelma.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI1);
         
         koulutusohjelma = this.koulutusmoduuliDAO.insert(koulutusohjelma);
         
@@ -233,14 +233,14 @@ public class KoulutusmoduuliDAOTest {
 
     	//KOMO1
     	Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
-    	koulutus.setKoulutusKoodi(KOULUTUSKOODI);
-    	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
+    	koulutus.setKoulutusUri(KOULUTUSKOODI);
+    	koulutus.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI1);
         koulutusmoduuliDAO.insert(koulutus);
 
         //KOMO2
         koulutus = fixtures.createTutkintoOhjelma();
-        koulutus.setKoulutusKoodi(KOULUTUSKOODI);
-    	koulutus.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI2);
+        koulutus.setKoulutusUri(KOULUTUSKOODI);
+    	koulutus.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI2);
         koulutusmoduuliDAO.insert(koulutus);
 
     	//KOMO3o
@@ -258,7 +258,7 @@ public class KoulutusmoduuliDAOTest {
         komos = this.koulutusmoduuliDAO.search(criteria);
 
         assertEquals(1, komos.size());
-        assertEquals(KOULUTUSOHJELMAKOODI1, komos.get(0).getKoulutusohjelmaKoodi());
+        assertEquals(KOULUTUSOHJELMAKOODI1, komos.get(0).getKoulutusohjelmaUri());
 
         criteria = new SearchCriteria();
         komos = this.koulutusmoduuliDAO.search(criteria);
@@ -276,24 +276,24 @@ public class KoulutusmoduuliDAOTest {
         //KOMO1
         Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
         koulutus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
-        koulutus.setKoulutusKoodi(KOULUTUSKOODI);
-        koulutus.setLukiolinja(LUKIOLINJA1);
-        koulutus.setKoulutusohjelmaKoodi(null);
+        koulutus.setKoulutusUri(KOULUTUSKOODI);
+        koulutus.setLukiolinjaUri(LUKIOLINJA1);
+        koulutus.setKoulutusohjelmaUri(null);
         koulutusmoduuliDAO.insert(koulutus);
         
         //KOMO2
         Koulutusmoduuli koulutus1 = fixtures.createTutkintoOhjelma();
         koulutus1.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
-        koulutus1.setKoulutusKoodi(KOULUTUSKOODI);
-        koulutus1.setLukiolinja(LUKIOLINJA2);
-        koulutus1.setKoulutusohjelmaKoodi(null);
+        koulutus1.setKoulutusUri(KOULUTUSKOODI);
+        koulutus1.setLukiolinjaUri(LUKIOLINJA2);
+        koulutus1.setKoulutusohjelmaUri(null);
         koulutusmoduuliDAO.insert(koulutus1);
         
         Koulutusmoduuli res = koulutusmoduuliDAO.findLukiolinja(KOULUTUSKOODI, LUKIOLINJA1);
-        assertTrue(res.getLukiolinja().equals(LUKIOLINJA1));
+        assertTrue(res.getLukiolinjaUri().equals(LUKIOLINJA1));
         
         res = koulutusmoduuliDAO.findLukiolinja(KOULUTUSKOODI, LUKIOLINJA2);
-        assertTrue(res.getLukiolinja().equals(LUKIOLINJA2)); 
+        assertTrue(res.getLukiolinjaUri().equals(LUKIOLINJA2)); 
     }
 
     private void flush() {
@@ -316,8 +316,8 @@ public class KoulutusmoduuliDAOTest {
     private Koulutusmoduuli createTutkintoOhjelma() {
 
         Koulutusmoduuli m = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        m.setKoulutusKoodi("123456");
-        m.setTutkintoOhjelmanNimi("JUnit Tutkinto");
+        m.setKoulutusUri("123456");
+        m.setTutkintoUri("JUnit Tutkinto");
         m.setOid("http://oid/12345");
         return m;
 

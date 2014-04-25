@@ -268,18 +268,18 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
             ModuuliTuloksetV1RDTO dto = new ModuuliTuloksetV1RDTO(m.getOid(),
                     fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(m.getModuuliTyyppi().name()),
-                    m.getKoulutusKoodi().substring(0, m.getKoulutusKoodi().indexOf("#")),
+                    m.getKoulutusUri().substring(0, m.getKoulutusUri().indexOf("#")),
                     null);
 
             switch (koulutusastetyyppi) {
                 case LUKIOKOULUTUS:
-                    if (m.getLukiolinja() != null && !m.getLukiolinja().isEmpty()) {
-                        dto.setKoulutusohjelmaUri(m.getLukiolinja().substring(0, m.getLukiolinja().indexOf("#")));
+                    if (m.getLukiolinjaUri() != null && !m.getLukiolinjaUri().isEmpty()) {
+                        dto.setKoulutusohjelmaUri(m.getLukiolinjaUri().substring(0, m.getLukiolinjaUri().indexOf("#")));
                     }
                     break;
                 default:
-                    if (m.getKoulutusohjelmaKoodi() != null && !m.getKoulutusohjelmaKoodi().isEmpty()) {
-                        dto.setKoulutusohjelmaUri(m.getKoulutusohjelmaKoodi().substring(0, m.getKoulutusohjelmaKoodi().indexOf("#")));
+                    if (m.getKoulutusohjelmaUri() != null && !m.getKoulutusohjelmaUri().isEmpty()) {
+                        dto.setKoulutusohjelmaUri(m.getKoulutusohjelmaUri().substring(0, m.getKoulutusohjelmaUri().indexOf("#")));
                     }
                     break;
             }

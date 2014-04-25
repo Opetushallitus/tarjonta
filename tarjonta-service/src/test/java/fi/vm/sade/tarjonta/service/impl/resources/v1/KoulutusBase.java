@@ -224,16 +224,16 @@ abstract class KoulutusBase {
         // - Update the data to match data model in production env!!!
         //
         final Koulutusmoduuli parent = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO, KOMO_PARENT_OID, tyyppi);
-        parent.setEqfLuokitus(null);
-        parent.setKoulutusAste(toKoodiUriStrVersion(KOULUTUSASTE));
-        parent.setKoulutusKoodi(toKoodiUriStrVersion(KOULUTUSKOODI));
-        parent.setKoulutusala(toKoodiUriStrVersion(KOULUTUSALA));
-        parent.setOpintoala(toKoodiUriStrVersion(OPINTOALA));
-        parent.setKoulutusohjelmaKoodi(null);
-        parent.setLaajuus(toKoodiUriStrVersion(LAAJUUSYKSIKKO), toKoodiUriStrVersion(LAAJUUSARVO));
-        parent.setNqfLuokitus(null);
+        parent.setEqfUri(null);
+        parent.setKoulutusasteUri(toKoodiUriStrVersion(KOULUTUSASTE));
+        parent.setKoulutusUri(toKoodiUriStrVersion(KOULUTUSKOODI));
+        parent.setKoulutusalaUri(toKoodiUriStrVersion(KOULUTUSALA));
+        parent.setOpintoalaUri(toKoodiUriStrVersion(OPINTOALA));
+        parent.setKoulutusohjelmaUri(null);
+        parent.setOpintojenLaajuus(toKoodiUriStrVersion(LAAJUUSYKSIKKO), toKoodiUriStrVersion(LAAJUUSARVO));
+        parent.setNqfUri(null);
         parent.setOmistajaOrganisaatioOid(null);
-        parent.setTutkintoOhjelmanNimi(null);
+        parent.setTutkintoUri(null);
         parent.setUlkoinenTunniste(null);
         parent.setNimi(null);
         parent.setTila(TarjontaTila.JULKAISTU);
@@ -250,25 +250,25 @@ abstract class KoulutusBase {
         // - Update the data to match data model in production env!!!
         //
         final Koulutusmoduuli child = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOMO_CHILD_OID, tyyppi);
-        child.setEqfLuokitus(toKoodiUriStrVersion(EQF));
-        child.setKoulutusAste(null);
-        child.setKoulutusKoodi(toKoodiUriStrVersion(KOULUTUSKOODI));
-        child.setKoulutusala(null);
+        child.setEqfUri(toKoodiUriStrVersion(EQF));
+        child.setKoulutusasteUri(null);
+        child.setKoulutusUri(toKoodiUriStrVersion(KOULUTUSKOODI));
+        child.setKoulutusalaUri(null);
         
         switch (tyyppi) {
             case LUKIOKOULUTUS:
-                child.setKoulutusohjelmaKoodi(null);
-                child.setLukiolinja(toKoodiUriStrVersion(KOULUTUSOHJELMA));
+                child.setKoulutusohjelmaUri(null);
+                child.setLukiolinjaUri(toKoodiUriStrVersion(KOULUTUSOHJELMA));
                 break;
             default:
-                child.setLukiolinja(null);
-                child.setKoulutusohjelmaKoodi(toKoodiUriStrVersion(KOULUTUSOHJELMA));
+                child.setLukiolinjaUri(null);
+                child.setKoulutusohjelmaUri(toKoodiUriStrVersion(KOULUTUSOHJELMA));
                 break;
         }
-        child.setLaajuus(null, null);
-        child.setNqfLuokitus(toKoodiUriStrVersion(NQF));
+        child.setOpintojenLaajuus(null, null);
+        child.setNqfUri(toKoodiUriStrVersion(NQF));
         child.setOmistajaOrganisaatioOid(null);
-        child.setTutkintoOhjelmanNimi(null);
+        child.setTutkintoUri(null);
         child.setUlkoinenTunniste(null);
         child.setNimi(null);
         child.setTila(TarjontaTila.JULKAISTU);

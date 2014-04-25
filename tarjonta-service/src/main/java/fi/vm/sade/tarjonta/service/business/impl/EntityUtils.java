@@ -155,7 +155,7 @@ public final class EntityUtils {
         to.setSuunniteltuKesto(kesto.getYksikko(), kesto.getArvo());
         if (from.getLaajuus() != null) {
             to.setOpintojenLaajuusArvo(from.getLaajuus().getArvo());
-            to.setOpintojenLaajuusYksikko(from.getLaajuus().getYksikko());
+            to.setOpintojenLaajuusyksikkoUri(from.getLaajuus().getYksikko());
         }
 
         to.setOpetuskieli(toKoodistoUriSet(from.getOpetuskieli()));
@@ -167,7 +167,7 @@ public final class EntityUtils {
         }
 
         if (from.getPohjakoulutusvaatimus() != null) {
-            to.setPohjakoulutusvaatimus(from.getPohjakoulutusvaatimus().getUri());
+            to.setPohjakoulutusvaatimusUri(from.getPohjakoulutusvaatimus().getUri());
         }
 
         to.setTarjoaja(from.getTarjoaja());
@@ -216,7 +216,7 @@ public final class EntityUtils {
         }
         if (fromKoulutus.getLaajuus() != null) {
             toKoulutus.setOpintojenLaajuusArvo(fromKoulutus.getLaajuus().getArvo());
-            toKoulutus.setOpintojenLaajuusYksikko(fromKoulutus.getLaajuus().getYksikko());
+            toKoulutus.setOpintojenLaajuusyksikkoUri(fromKoulutus.getLaajuus().getYksikko());
         }
         toKoulutus.setOpetuskieli(toKoodistoUriSet(fromKoulutus.getOpetuskieli()));
         toKoulutus.setKoulutuslajis(toKoodistoUriSet(fromKoulutus.getKoulutuslaji()));
@@ -234,11 +234,11 @@ public final class EntityUtils {
         copyLisatiedotFields(fromKoulutus, toKoulutus);
 
         if (fromKoulutus.getKoulutusaste() != null) {
-            toKoulutus.setKoulutusaste(fromKoulutus.getKoulutusaste().getUri());
+            toKoulutus.setKoulutusasteUri(fromKoulutus.getKoulutusaste().getUri());
         }
 
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
-            toKoulutus.setPohjakoulutusvaatimus(fromKoulutus.getPohjakoulutusvaatimus().getUri());
+            toKoulutus.setPohjakoulutusvaatimusUri(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
 
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkiloTyyppi()) {
@@ -362,7 +362,7 @@ public final class EntityUtils {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null.");
         Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "Koulutusaste string object cannot be null.");
-        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
         /*
@@ -376,23 +376,23 @@ public final class EntityUtils {
          * No parent OID convesion.
          */
         tyyppi.setOid(komo.getOid());
-        tyyppi.setKoulutuskoodiUri(komo.getKoulutusKoodi());
-        tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
-        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
+        tyyppi.setKoulutuskoodiUri(komo.getKoulutusUri());
+        tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaUri());
+        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinjaUri());
 
         /*
          * Optional data
          */
-        tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo());
-        tyyppi.setLaajuusyksikkoUri(komo.getLaajuusYksikko());
+        tyyppi.setLaajuusarvoUri(komo.getOpintojenLaajuusarvoUri());
+        tyyppi.setLaajuusyksikkoUri(komo.getOpintojenLaajuusyksikkoUri());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
-        tyyppi.setKoulutusasteUri(komo.getKoulutusAste());
-        tyyppi.setKoulutusalaUri(komo.getKoulutusala());
-        tyyppi.setOpintoalaUri(komo.getOpintoala());
+        tyyppi.setKoulutusasteUri(komo.getKoulutusasteUri());
+        tyyppi.setKoulutusalaUri(komo.getKoulutusalaUri());
+        tyyppi.setOpintoalaUri(komo.getOpintoalaUri());
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(komo.getOppilaitostyyppi()));
-        tyyppi.setEqfLuokitus(komo.getEqfLuokitus());
-        tyyppi.setNqfLuokitus(komo.getNqfLuokitus());
+        tyyppi.setEqfLuokitus(komo.getEqfUri());
+        tyyppi.setNqfLuokitus(komo.getNqfUri());
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(komo.getOppilaitostyyppi()));
 
         copyFields(tyyppi.getTekstit(), komo.getTekstit(), KomoTeksti.KOULUTUKSEN_RAKENNE, KomoTeksti.TAVOITTEET); // rajaus turha?
@@ -439,7 +439,7 @@ public final class EntityUtils {
         Preconditions.checkNotNull(parentKomo, "Koulutusmoduuli parent object cannot be null.");
         Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "Koulutusaste string object cannot be null.");
-        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
         //tyyppi.setVersion(1L); //TODO: missing.
@@ -453,22 +453,22 @@ public final class EntityUtils {
          */
         tyyppi.setOid(komo.getOid());
         tyyppi.setParentOid(parentKomo.getOid());
-        tyyppi.setKoulutuskoodiUri(parentKomo.getKoulutusKoodi());
-        tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaKoodi());
-        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinja());
+        tyyppi.setKoulutuskoodiUri(parentKomo.getKoulutusUri());
+        tyyppi.setKoulutusohjelmakoodiUri(komo.getKoulutusohjelmaUri());
+        tyyppi.setLukiolinjakoodiUri(komo.getLukiolinjaUri());
 
         /*
          * Optional data
          */
-        tyyppi.setLaajuusarvoUri(komo.getLaajuusArvo() != null && !komo.getLaajuusArvo().isEmpty() ? komo.getLaajuusArvo() : parentKomo.getLaajuusArvo());
-        tyyppi.setLaajuusyksikkoUri(parentKomo.getLaajuusYksikko());
+        tyyppi.setLaajuusarvoUri(komo.getOpintojenLaajuusarvoUri() != null && !komo.getOpintojenLaajuusarvoUri().isEmpty() ? komo.getOpintojenLaajuusarvoUri() : parentKomo.getOpintojenLaajuusarvoUri());
+        tyyppi.setLaajuusyksikkoUri(parentKomo.getOpintojenLaajuusyksikkoUri());
         tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
-        tyyppi.setKoulutusasteUri(parentKomo.getKoulutusAste());
-        tyyppi.setKoulutusalaUri(parentKomo.getKoulutusala());
-        tyyppi.setOpintoalaUri(parentKomo.getOpintoala());
-        tyyppi.setEqfLuokitus(parentKomo.getEqfLuokitus());
-        tyyppi.setNqfLuokitus(parentKomo.getNqfLuokitus());
+        tyyppi.setKoulutusasteUri(parentKomo.getKoulutusasteUri());
+        tyyppi.setKoulutusalaUri(parentKomo.getKoulutusalaUri());
+        tyyppi.setOpintoalaUri(parentKomo.getOpintoalaUri());
+        tyyppi.setEqfLuokitus(parentKomo.getEqfUri());
+        tyyppi.setNqfLuokitus(parentKomo.getNqfUri());
         tyyppi.getOppilaitostyyppi().addAll(splitStringToList(parentKomo.getOppilaitostyyppi()));
         /*
          * Description data
@@ -503,22 +503,22 @@ public final class EntityUtils {
          * OID and other keys:
          */
         target.setOid(source.getOid());
-        target.setKoulutusKoodi(source.getKoulutuskoodiUri());
-        target.setKoulutusohjelmaKoodi(source.getKoulutusohjelmakoodiUri());
-        target.setLukiolinja(source.getLukiolinjakoodiUri());
+        target.setKoulutusUri(source.getKoulutuskoodiUri());
+        target.setKoulutusohjelmaUri(source.getKoulutusohjelmakoodiUri());
+        target.setLukiolinjaUri(source.getLukiolinjakoodiUri());
 
         /*
          * Optional data
          */
-        target.setLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
+        target.setOpintojenLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
         target.setTutkintonimike(source.getTutkintonimikeUri());
         target.setUlkoinenTunniste(source.getUlkoinenTunniste());
-        target.setKoulutusAste(source.getKoulutusasteUri());
-        target.setKoulutusala(source.getKoulutusalaUri());
-        target.setOpintoala(source.getOpintoalaUri());
-        target.setLukiolinja(source.getLukiolinjakoodiUri());
-        target.setEqfLuokitus(source.getEqfLuokitus());
-        target.setNqfLuokitus(source.getNqfLuokitus());
+        target.setKoulutusasteUri(source.getKoulutusasteUri());
+        target.setKoulutusalaUri(source.getKoulutusalaUri());
+        target.setOpintoalaUri(source.getOpintoalaUri());
+        target.setLukiolinjaUri(source.getLukiolinjakoodiUri());
+        target.setEqfUri(source.getEqfLuokitus());
+        target.setNqfUri(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
         target.setNimi(copyFields(source.getNimi(), target.getNimi()));
         target.setKoulutustyyppi(source.getKoulutustyyppi().value());

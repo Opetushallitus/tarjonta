@@ -349,7 +349,7 @@ public class KoulutusCommonConverter {
             Preconditions.checkArgument(checkDates.equals(KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_SUCCESS), "Alkamisaika validation error - key : %s.", checkDates);
 
             komoto.setAlkamisVuosi(IndexDataUtils.parseYearInt(firstDate));
-            komoto.setAlkamiskausi(IndexDataUtils.parseKausiKoodi(firstDate));
+            komoto.setAlkamiskausiUri(IndexDataUtils.parseKausiKoodi(firstDate));
         } else {
             //allowed only one kausi and year
             Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
@@ -359,7 +359,7 @@ public class KoulutusCommonConverter {
             komoto.clearKoulutuksenAlkamisPvms();
             //only kausi + year, no date objects   
             komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
-            komoto.setAlkamiskausi(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
+            komoto.setAlkamiskausiUri(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
         }
     }
 

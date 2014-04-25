@@ -170,21 +170,21 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
     }
 
     private Koulutusmoduuli toinenAste(Koulutusmoduuli komo, KomoV1RDTO dto) {
-        komo.setTutkintoOhjelmanNimi(convertToUri(dto.getTutkinto(), FieldNames.TUTKINTO, true)); //correct data mapping?
-        komo.setLaajuus(
+        komo.setTutkintoUri(convertToUri(dto.getTutkinto(), FieldNames.TUTKINTO, true)); //correct data mapping?
+        komo.setOpintojenLaajuus(
                 convertToUri(dto.getOpintojenLaajuusyksikko(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, true),
                 convertToUri(dto.getOpintojenLaajuusarvo(), FieldNames.OPINTOJEN_LAAJUUSARVO, true));
-        komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), FieldNames.KOULUTUSASTE, true));
-        komo.setKoulutusala(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA, true));
-        komo.setOpintoala(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA, true));
-        komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF, true));
-        komo.setKoulutusohjelmaKoodi(convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA, true));
+        komo.setKoulutusasteUri(convertToUri(dto.getKoulutusaste(), FieldNames.KOULUTUSASTE, true));
+        komo.setKoulutusalaUri(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA, true));
+        komo.setOpintoalaUri(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA, true));
+        komo.setEqfUri(convertToUri(dto.getEqf(), FieldNames.EQF, true));
+        komo.setKoulutusohjelmaUri(convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA, true));
         komo.setTila(dto.getTila());
         komo.setOmistajaOrganisaatioOid(rootOrgOid); //is this correct?
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
-        komo.setKoulutusKoodi(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
+        komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
@@ -202,20 +202,20 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
     private Koulutusmoduuli korkeakoulu(Koulutusmoduuli komo, KomoV1RDTO dto) {
         final String organisationOId = dto.getOrganisaatio().getOid();
 
-        komo.setTutkintoOhjelmanNimi(convertToUri(dto.getTutkinto(), FieldNames.TUTKINTO)); //correct data mapping?
-        komo.setLaajuus(
+        komo.setTutkintoUri(convertToUri(dto.getTutkinto(), FieldNames.TUTKINTO)); //correct data mapping?
+        komo.setOpintojenLaajuus(
                 convertToUri(dto.getOpintojenLaajuusyksikko(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO),
                 convertToUri(dto.getOpintojenLaajuusarvo(), FieldNames.OPINTOJEN_LAAJUUSARVO));
         komo.setOmistajaOrganisaatioOid(organisationOId); //is this correct?
-        komo.setKoulutusAste(convertToUri(dto.getKoulutusaste(), FieldNames.KOULUTUSASTE));
-        komo.setKoulutusala(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA));
-        komo.setOpintoala(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
-        komo.setEqfLuokitus(convertToUri(dto.getEqf(), FieldNames.EQF));
+        komo.setKoulutusasteUri(convertToUri(dto.getKoulutusaste(), FieldNames.KOULUTUSASTE));
+        komo.setKoulutusalaUri(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA));
+        komo.setOpintoalaUri(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
+        komo.setEqfUri(convertToUri(dto.getEqf(), FieldNames.EQF));
         komo.setTila(TarjontaTila.JULKAISTU); //is this correct state for a new komo?
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
-        komo.setKoulutusKoodi(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
+        komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
 
         komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
         komo.setUlkoinenTunniste(dto.getTunniste());

@@ -29,10 +29,7 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.support.Expressions;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
-import com.mysema.query.types.expr.DateTimeExpression;
-import com.mysema.query.types.path.DatePath;
 import com.mysema.query.types.path.DateTimePath;
-
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QHaku;
@@ -75,7 +72,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
 
-        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).join(komoto.koulutusmoduuli, komo).leftJoin(komoto.koulutuslajis, koodistoUri).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja, koodistoUri.koodiUri, komoto.pohjakoulutusvaatimus, komo.koulutustyyppi));
+        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).join(komoto.koulutusmoduuli, komo).leftJoin(komoto.koulutuslajis, koodistoUri).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja, koodistoUri.koodiUri, komoto.pohjakoulutusvaatimusUri, komo.koulutustyyppi));
     }
 
     @Override
@@ -122,15 +119,15 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
-                        koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                        koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
-                        komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi
+                        koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                        koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                        komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi
                 )
                 .list(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
-                                koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                                koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi)));
+                                koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                                koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
     }
 
     @Override
@@ -142,16 +139,16 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
-                        koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                        koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
-                        komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi
+                        koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                        koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                        komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi
                 )
                 .where(komoto.id.eq(koulutusmoduuliToteutusId))
                 .singleResult(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
-                                koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusKoodi,
-                                koulutusmoduuli.lukiolinja, koulutusmoduuli.koulutusohjelmaKoodi, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimus, komoto.alkamiskausi, komoto.alkamisVuosi)));
+                                koulutusmoduuli.koulutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                                koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
     }
 
     private BooleanBuilder bb(Predicate initial) {
@@ -166,7 +163,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     public List<Long> findAllKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(komo.lukiolinja.isNotNull()).or(komo.koulutusohjelmaKoodi.isNotNull().or(komo.nimi.isNotNull())).getValue();
+        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komo.nimi.isNotNull())).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
     }
 
@@ -225,7 +222,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate time = bb(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated)));
-        final Predicate where = bb(komo.lukiolinja.isNotNull()).or(komo.koulutusohjelmaKoodi.isNotNull().or(komo.nimi.isNotNull())).and(time).getValue();
+        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komo.nimi.isNotNull())).and(time).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).limit(100).list(komoto.id);
     }
 

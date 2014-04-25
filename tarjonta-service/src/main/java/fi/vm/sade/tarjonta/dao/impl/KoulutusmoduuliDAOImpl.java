@@ -135,15 +135,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         }
 
         if (criteria.getLikeKoulutusKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
         if (criteria.getKoulutustyyppi() != null) {
@@ -151,7 +151,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getLukiolinjaKoodiUri()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
         }
 
         if (criteria.getOppilaitostyyppis() != null && !criteria.getOppilaitostyyppis().isEmpty()) {
@@ -195,15 +195,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.isEmpty().or(moduuli.koulutusohjelmaKoodi.isNull()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.isEmpty().or(moduuli.koulutusohjelmaUri.isNull()));
         }
 
         return from(moduuli).
@@ -247,24 +247,24 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     }
 
     @Override
-    public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUri) {
+    public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUriUri) {
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
         BooleanExpression whereExpr = null;
 
         SearchCriteria criteria = new SearchCriteria();
         criteria.setKoulutusKoodi(koulutusLuokitusUri);
-        criteria.setLukiolinjaKoodiUri(lukiolinjaUri);
+        criteria.setLukiolinjaKoodiUri(lukiolinjaUriUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
         }
 
         if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getLukiolinjaKoodiUri()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.isEmpty().or(moduuli.lukiolinja.isNull()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
         }
 
         return from(moduuli).

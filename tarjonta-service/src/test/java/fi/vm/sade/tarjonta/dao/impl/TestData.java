@@ -272,14 +272,14 @@ public class TestData {
         t3.setOid(oid);
         t3.setKoulutuksenAlkamisPvm(cal1.getTime());
         t3.setAlkamisVuosi(YEAR);
-        t3.setAlkamiskausi(KAUSI);
+        t3.setAlkamiskausiUri(KAUSI);
         t3.setMaksullisuus(null);
         t3.addOpetuskieli(new KoodistoUri("kieli_uri"));
         t3.addOpetusmuoto(new KoodistoUri("opetusmuoto_uri"));
         t3.addKoulutuslaji("koulutuslaji_uri");
         t3.setTila(TarjontaTila.VALMIS);
         t3.setTarjoaja(ORG_OID_1);
-        t3.setPohjakoulutusvaatimus("pohjakoulutusvaatimus_uri");
+        t3.setPohjakoulutusvaatimusUri("pohjakoulutusvaatimus_uri");
 
         return t3;
     }

@@ -389,7 +389,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         if (komoto != null )  {
 
-        final String term = komoto.getAlkamiskausi();
+        final String term = komoto.getAlkamiskausiUri();
         final Integer year = komoto.getAlkamisVuosi();
         final String providerOid = komoto.getTarjoaja();
 
@@ -814,7 +814,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
         }
 
-        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         return EntityUtils.convertToKoulutusmoduuliKoosteTyyppi(komo, komoParent);
     }
 
@@ -890,7 +890,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             this.koulutusSisaltyvyysDAO.update(sisaltyvyys);
         }
         koulutusmoduuliDAO.update(parent);
-        komo.setKoulutusKoodi(parent.getKoulutusKoodi());
+        komo.setKoulutusUri(parent.getKoulutusUri());
         koulutusmoduuliDAO.update(komo);
 
         return parent;

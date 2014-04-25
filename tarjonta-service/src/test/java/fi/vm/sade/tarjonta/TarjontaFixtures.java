@@ -117,13 +117,13 @@ public class TarjontaFixtures {
     public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
-        m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
-        m.setEqfLuokitus(randomUri("eqf"));
-        m.setNqfLuokitus(randomUri("nqf"));
-        m.setKoulutusAste(randomUri("koulutusaste"));
-        m.setKoulutusala(randomUri("koulutusala"));
-        m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
-        m.setKoulutusKoodi(randomUri("koulutusluokitus"));
+        m.setTutkintoUri("Simple Tutkinto-Ohjelma");
+        m.setEqfUri(randomUri("eqf"));
+        m.setNqfUri(randomUri("nqf"));
+        m.setKoulutusasteUri(randomUri("koulutusaste"));
+        m.setKoulutusalaUri(randomUri("koulutusala"));
+        m.setKoulutusohjelmaUri(randomUri("koulutusohjelma"));
+        m.setKoulutusUri(randomUri("koulutusluokitus"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
         m.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
 
@@ -154,13 +154,13 @@ public class TarjontaFixtures {
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi object cannot be null.");
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
-        m.setTutkintoOhjelmanNimi("Simple Tutkinto-Ohjelma");
-        m.setEqfLuokitus(randomUri("eqf"));
-        m.setNqfLuokitus(randomUri("nqf"));
-        m.setKoulutusAste(randomUri("koulutusaste"));
-        m.setKoulutusala(randomUri("koulutusala"));
-        m.setKoulutusohjelmaKoodi(randomUri("koulutusohjelma"));
-        m.setKoulutusKoodi(randomUri("koulutusluokitus"));
+        m.setTutkintoUri("Simple Tutkinto-Ohjelma");
+        m.setEqfUri(randomUri("eqf"));
+        m.setNqfUri(randomUri("nqf"));
+        m.setKoulutusasteUri(randomUri("koulutusaste"));
+        m.setKoulutusalaUri(randomUri("koulutusala"));
+        m.setKoulutusohjelmaUri(randomUri("koulutusohjelma"));
+        m.setKoulutusUri(randomUri("koulutusluokitus"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
 
         return m;

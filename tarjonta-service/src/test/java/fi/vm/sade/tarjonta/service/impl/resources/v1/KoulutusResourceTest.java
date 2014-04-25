@@ -81,7 +81,7 @@ public class KoulutusResourceTest {
 
         // stub komotodao
         komoto1 = new KoulutusmoduuliToteutus();
-        komoto1.setAlkamiskausi("kausi");
+        komoto1.setAlkamiskausiUri("kausi");
         komoto1.setAlkamisVuosi(2005);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);

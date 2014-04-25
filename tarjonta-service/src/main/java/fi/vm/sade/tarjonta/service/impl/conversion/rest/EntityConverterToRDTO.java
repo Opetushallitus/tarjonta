@@ -80,7 +80,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setModifiedBy(komoto.getLastUpdatedByOid());
         dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
 
-        dto.setKoulutuksenAlkamiskausi(commonConverter.convertToKoodiDTO(komoto.getAlkamiskausi(), locale, FieldNames.ALKAMISKAUSI, true, showMeta));
+        dto.setKoulutuksenAlkamiskausi(commonConverter.convertToKoodiDTO(komoto.getAlkamiskausiUri(), locale, FieldNames.ALKAMISKAUSI, true, showMeta));
         dto.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
         dto.getKoulutuksenAlkamisPvms().addAll(komoto.getKoulutuksenAlkamisPvms());
 
@@ -124,11 +124,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              * 2ASTE : LUKIO
              */
             KoulutusLukioV1RDTO lukioDto = (KoulutusLukioV1RDTO) dto;
-            lukioDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinja(), locale, FieldNames.LUKIOLINJA, false, showMeta));
+            lukioDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, false, showMeta));
             lukioDto.setKielivalikoima(commonConverter.convertToKielivalikoimaDTO(komoto.getTarjotutKielet(), locale, showMeta));
             lukioDto.setLukiodiplomit(commonConverter.convertToKoodiUrisDTO(komoto.getLukiodiplomit(), locale, FieldNames.LUKIODIPLOMI, showMeta));
             lukioDto.setTutkintonimike(commonConverter.koodiData(getFirstUriOrNull(komo.getTutkintonimikes()), locale, FieldNames.TUTKINTONIMIKE, showMeta));
-            lukioDto.setPohjakoulutusvaatimus(commonConverter.koodiData(komoto.getPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
+            lukioDto.setPohjakoulutusvaatimus(commonConverter.koodiData(komoto.getPohjakoulutusvaatimusUri(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
             lukioDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             lukioDto.setKoulutuslaji(commonConverter.koodiData(getFirstUriOrNull(komoto.getKoulutuslajis()), locale, FieldNames.KOULUTUSLAJI, showMeta));
             //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
@@ -142,7 +142,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              * 2ASTE : AMMATILLINEN
              */
             KoulutusAmmatillinenPeruskoulutusV1RDTO ammDto = (KoulutusAmmatillinenPeruskoulutusV1RDTO) dto;
-            ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaKoodi(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
+            ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //convert parent komo data to RDTO
             convertKomoCommonToRDTO(dto, parentKomo, locale, showMeta);
@@ -160,8 +160,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         if (komoto.getOpetusPaikkas() != null) {
             dto.setOpetusPaikkas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusPaikkas(), locale, FieldNames.OPETUSPAIKKAS, showMeta));
         }
-        dto.setSuunniteltuKestoTyyppi(commonConverter.koodiData(komoto.getSuunniteltuKestoYksikko(), locale, FieldNames.SUUNNITELTUKESTON_TYYPPI, showMeta));
-        dto.setSuunniteltuKestoArvo(komoto.getSuunniteltuKestoArvo());
+        dto.setSuunniteltuKestoTyyppi(commonConverter.koodiData(komoto.getSuunniteltukestoYksikkoUri(), locale, FieldNames.SUUNNITELTUKESTON_TYYPPI, showMeta));
+        dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
 
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
@@ -172,20 +172,20 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private void convertKomoCommonToRDTO(TYPE dto, Koulutusmoduuli komo, Locale locale, boolean showMeta) {
         Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
 
-        dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusKoodi(), locale, FieldNames.KOULUTUSKOODI, showMeta));
-        dto.setTutkinto(commonConverter.koodiData(komo.getTutkintoOhjelmanNimi(), locale, FieldNames.TUTKINTO, showMeta)); //correct data mapping?
-        dto.setOpintojenLaajuusarvo(commonConverter.koodiData(komo.getLaajuusArvo(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));
-        dto.setOpintojenLaajuusyksikko(commonConverter.koodiData(komo.getLaajuusYksikko(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, showMeta));
-        dto.setKoulutusaste(commonConverter.koodiData(komo.getKoulutusAste(), locale, FieldNames.KOULUTUSASTE, showMeta));
-        dto.setKoulutusala(commonConverter.koodiData(komo.getKoulutusala(), locale, FieldNames.KOULUTUSALA, showMeta));
-        dto.setOpintoala(commonConverter.koodiData(komo.getOpintoala(), locale, FieldNames.OPINTOALA, showMeta));
+        dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), locale, FieldNames.KOULUTUSKOODI, showMeta));
+        dto.setTutkinto(commonConverter.koodiData(komo.getTutkintoUri(), locale, FieldNames.TUTKINTO, showMeta)); //correct data mapping?
+        dto.setOpintojenLaajuusarvo(commonConverter.koodiData(komo.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));
+        dto.setOpintojenLaajuusyksikko(commonConverter.koodiData(komo.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, showMeta));
+        dto.setKoulutusaste(commonConverter.koodiData(komo.getKoulutusasteUri(), locale, FieldNames.KOULUTUSASTE, showMeta));
+        dto.setKoulutusala(commonConverter.koodiData(komo.getKoulutusalaUri(), locale, FieldNames.KOULUTUSALA, showMeta));
+        dto.setOpintoala(commonConverter.koodiData(komo.getOpintoalaUri(), locale, FieldNames.OPINTOALA, showMeta));
 
-        if (komo.getEqfLuokitus() != null && !komo.getEqfLuokitus().isEmpty()) {
-            dto.setEqf(commonConverter.komoData(komo.getEqfLuokitus(), locale, FieldNames.EQF, showMeta));
+        if (komo.getEqfUri() != null && !komo.getEqfUri().isEmpty()) {
+            dto.setEqf(commonConverter.komoData(komo.getEqfUri(), locale, FieldNames.EQF, showMeta));
         }
 
-        if (komo.getNqfLuokitus() != null && !komo.getNqfLuokitus().isEmpty()) {
-            dto.setNqf(commonConverter.komoData(komo.getNqfLuokitus(), locale, FieldNames.NQF, showMeta));
+        if (komo.getNqfUri() != null && !komo.getNqfUri().isEmpty()) {
+            dto.setNqf(commonConverter.komoData(komo.getNqfUri(), locale, FieldNames.NQF, showMeta));
         }
 
         dto.setTunniste(komo.getUlkoinenTunniste());
@@ -197,12 +197,12 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private void handleLukioKomoInheritance(TYPE dto, Koulutusmoduuli komoParent, Koulutusmoduuli komoChild, Locale locale, boolean showMeta) {
         //when komo data is null, override by child komo data,
 
-        if (komoParent.getEqfLuokitus() == null && komoChild.getEqfLuokitus() != null && !komoChild.getEqfLuokitus().isEmpty()) {
-            dto.setEqf(commonConverter.komoData(komoChild.getEqfLuokitus(), locale, FieldNames.EQF, showMeta));
+        if (komoParent.getEqfUri() == null && komoChild.getEqfUri() != null && !komoChild.getEqfUri().isEmpty()) {
+            dto.setEqf(commonConverter.komoData(komoChild.getEqfUri(), locale, FieldNames.EQF, showMeta));
         }
 
-        if (komoParent.getNqfLuokitus() == null && komoChild.getNqfLuokitus() != null && !komoChild.getNqfLuokitus().isEmpty()) {
-            dto.setNqf(commonConverter.komoData(komoChild.getNqfLuokitus(), locale, FieldNames.NQF, showMeta));
+        if (komoParent.getNqfUri() == null && komoChild.getNqfUri() != null && !komoChild.getNqfUri().isEmpty()) {
+            dto.setNqf(commonConverter.komoData(komoChild.getNqfUri(), locale, FieldNames.NQF, showMeta));
         }
     }
 
