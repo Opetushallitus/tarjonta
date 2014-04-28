@@ -82,6 +82,36 @@ app.controller('HakukohdeEditController',
         });
     }
 
+    var filterHakuWithAikaAndKohdejoukko = function(hakus) {
+
+        var filteredHakus = [];
+        angular.forEach(hakus,function(haku){
+            // rajaus kk-hakukohteisiin; ks. OVT-6452
+            // TODO selvitä uri valitun koulutuksen perusteella
+
+            var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
+
+            if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
+
+                //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
+                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                    filteredHakus.push(haku);
+                }
+
+
+            }
+        });
+        return filteredHakus;
+
+    };
+
+        var filterHakus = function(hakus) {
+            return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
+
+        };
+
+
+
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
 
@@ -94,7 +124,7 @@ app.controller('HakukohdeEditController',
         }
 
         $scope.loadHakukelpoisuusVaatimukset();
-        $scope.loadKoulutukses();
+        $scope.loadKoulutukses(filterHakus);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
         $scope.checkIsCopy();

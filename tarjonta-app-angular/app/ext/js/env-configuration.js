@@ -78,6 +78,7 @@ window.CONFIG = {
         "haku.uri": "/tarjonta-service/rest/haku",
         "haku.uri.findall": "/tarjonta-service/rest/haku/findAll",
         "haku.kohdejoukko.kk.uri": "haunkohdejoukko_12#1",
+        "haku.kohdejoukko.aiku.uri" : "haunkohdejoukko_10#1",
         "root.organisaatio.oid":"1.2.246.562.10.00000000001",
         "ui.timeout.short": 10000,
         "ui.timeout.long": 60000,
@@ -105,7 +106,7 @@ window.CONFIG = {
         // "tarjontaRestUrlPrefix": "http://luokka.hard.ware.fi:8302/tarjonta-service/rest/v1/",
         //"tarjontaRestUrlPrefix": "http://localhost:8585/tarjonta-service/rest/v1/",
         //"tarjontaRestUrlPrefix" : "http://localhost:8084/tarjonta-service/rest/v1/",
-        // "tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
+         //"tarjontaRestUrlPrefix": "http://localhost:9090/tarjonta-service/rest/v1/",
 
         "tarjontaLocalisationRestUrl": "https://itest-virkailija.oph.ware.fi/lokalisointi/cxf/rest/v1/localisation",
         // "tarjontaLocalisationRestUrl": "http://localhost:8319/lokalisointi/cxf/rest/v1/localisation",

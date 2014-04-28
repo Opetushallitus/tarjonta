@@ -26,6 +26,37 @@ app.controller('HakukohdeAikuLukioEditController',
         $log = $log.getInstance("HakukohdeAikuLukioEditController");
 
 
+
+
+        var filterHakuWithAikaAndKohdejoukko = function(hakus) {
+            console.log('FILTERING HAKUS : ', hakus);
+            var filteredHakus = [];
+            angular.forEach(hakus,function(haku){
+                // rajaus kk-hakukohteisiin; ks. OVT-6452
+                // TODO selvitä uri valitun koulutuksen perusteella
+
+                var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
+
+                if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.aiku.uri']) {
+
+                        filteredHakus.push(haku);
+
+
+
+                }
+            });
+
+            console.log('FILTERED HAKUS : ', filteredHakus);
+            return filteredHakus;
+
+        };
+
+        var filterHakus = function(hakus) {
+            return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
+
+        };
+
+
         /**
 
             Controller initialization function which is called when controller loads
@@ -38,7 +69,7 @@ app.controller('HakukohdeAikuLukioEditController',
             if ($scope.model.userLang === undefined) {
                 $scope.model.userLang = "FI";
             }
-            $scope.loadKoulutukses();
+            $scope.loadKoulutukses(filterHakus);
             $scope.haeTarjoajaOppilaitosTyypit();
             $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
             $scope.checkIsCopy();
