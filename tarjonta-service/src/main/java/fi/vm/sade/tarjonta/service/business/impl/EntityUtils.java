@@ -42,7 +42,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -499,7 +499,7 @@ public final class EntityUtils {
          * Required type data:
          */
         target.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
-        target.setRowType(KoulutusmoduuliRowType.fromEnum(source.getKoulutustyyppi()));
+        target.setRowType(ModuleRowType.fromEnum(source.getKoulutustyyppi()));
         /*
          * OID and other keys:
          */
@@ -522,7 +522,7 @@ public final class EntityUtils {
         target.setNqfUri(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
         target.setNimi(copyFields(source.getNimi(), target.getNimi()));
-        target.setRowType(KoulutusmoduuliRowType.fromEnum(source.getKoulutustyyppi()));
+        target.setRowType(ModuleRowType.fromEnum(source.getKoulutustyyppi()));
 
         return target;
     }

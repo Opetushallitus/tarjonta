@@ -49,7 +49,7 @@ import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -287,11 +287,11 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
-        List<KoulutusmoduuliRowType> rowTypes = new ArrayList<KoulutusmoduuliRowType>();
+        List<ModuleRowType> rowTypes = new ArrayList<ModuleRowType>();
 
-        rowTypes.add(KoulutusmoduuliRowType.KORKEAKOULUTUS);
-        rowTypes.add(KoulutusmoduuliRowType.AMMATTIKORKEAKOULUTUS);
-        rowTypes.add(KoulutusmoduuliRowType.YLIOPISTOKOULUTUS);
+        rowTypes.add(ModuleRowType.KORKEAKOULUTUS);
+        rowTypes.add(ModuleRowType.AMMATTIKORKEAKOULUTUS);
+        rowTypes.add(ModuleRowType.YLIOPISTOKOULUTUS);
 
         whereExpr = QuerydslUtils.and(whereExpr, komo.rowType.notIn(rowTypes));
 

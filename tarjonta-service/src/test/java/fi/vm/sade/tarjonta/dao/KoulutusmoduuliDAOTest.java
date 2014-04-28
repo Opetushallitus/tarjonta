@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.Date;
@@ -271,7 +271,7 @@ public class KoulutusmoduuliDAOTest {
 
         //KOMO1
         Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
-        koulutus.setRowType(KoulutusmoduuliRowType.LUKIOKOULUTUS);
+        koulutus.setRowType(ModuleRowType.LUKIOKOULUTUS);
         koulutus.setKoulutusUri(KOULUTUSKOODI);
         koulutus.setLukiolinjaUri(LUKIOLINJA1);
         koulutus.setKoulutusohjelmaUri(null);
@@ -279,7 +279,7 @@ public class KoulutusmoduuliDAOTest {
 
         //KOMO2
         Koulutusmoduuli koulutus1 = fixtures.createTutkintoOhjelma();
-        koulutus1.setRowType(KoulutusmoduuliRowType.LUKIOKOULUTUS);
+        koulutus1.setRowType(ModuleRowType.LUKIOKOULUTUS);
         koulutus1.setKoulutusUri(KOULUTUSKOODI);
         koulutus1.setLukiolinjaUri(LUKIOLINJA2);
         koulutus1.setKoulutusohjelmaUri(null);

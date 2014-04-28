@@ -146,21 +146,34 @@ public class KoulutusCommonConverter {
         }
     }
 
-    public KoodiV1RDTO komoData(String koodistoKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
-        if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
-            return convertToKoodiDTO(koodistoKoodiUri, locale, fieldName, showMeta);
-        }
-        return new KoodiV1RDTO();
-    }
-
-    public KoodiV1RDTO koodiData(String koodistoKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
-        return komoData(koodistoKoodiUri, locale, fieldName, showMeta);
-    }
-
+//    private KoodiV1RDTO koodiData(String koodistoKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
+//        if (koodistoKoodiUri != null && !koodistoKoodiUri.isEmpty()) {
+//            return convertToKoodiDTO(koodistoKoodiUri, locale, fieldName, showMeta);
+//        }
+//        return new KoodiV1RDTO();
+//    }
+//
+//    public KoodiV1RDTO convertKoodiAllowNull(String koodistoKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
+//        return koodiData(koodistoKoodiUri, locale, fieldName, showMeta);
+//    }
+//
+//    public KoodiV1RDTO convertKoodiAllowNull(String fromKoodiUri, String fromOverrideKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
+//        return koodiData(fromOverrideKoodiUri != null ? fromOverrideKoodiUri : fromKoodiUri, locale, fieldName, showMeta);
+//    }
+    /**
+     * Convert koodisto service URI with hashtag version to DTO.
+     *
+     * @param fromKoodiUri
+     * @param locale
+     * @param fieldName
+     * @param allowNullKoodi
+     * @param showMeta
+     * @return
+     */
     public KoodiV1RDTO convertToKoodiDTO(final String fromKoodiUri, final Locale locale, final FieldNames fieldName, final boolean allowNullKoodi, final boolean showMeta) {
         KoodiV1RDTO koodiUriDto = new KoodiV1RDTO();
 
-        if (allowNullKoodi && fromKoodiUri == null) {
+        if (allowNullKoodi && (fromKoodiUri == null || fromKoodiUri.isEmpty())) {
             //use empty string arg to return empty data object
             convertKoodistoMetaData(koodiUriDto, null, "", locale, false);
         } else {
@@ -171,6 +184,25 @@ public class KoulutusCommonConverter {
 
     public KoodiV1RDTO convertToKoodiDTO(final String fromKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
         return convertToKoodiDTO(fromKoodiUri, locale, fieldName, false, showMeta);
+    }
+
+    /**
+     * Convert koodisto service URI with hashtag version to DTO. Optional
+     * override URI.
+     *
+     * @param fromKoodiUri base URI
+     * @param fromOverrideKoodiUri base URI override
+     * @param locale
+     * @param fieldName
+     * @param showMeta
+     * @return
+     */
+    public KoodiV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String fromOverrideKoodiUri, final Locale locale, final FieldNames fieldName, final boolean showMeta) {
+        return convertToKoodiDTO(fromOverrideKoodiUri != null ? fromOverrideKoodiUri : fromKoodiUri, locale, fieldName, false, showMeta);
+    }
+
+    public KoodiV1RDTO convertToKoodiDTO(final String fromKoodiUri, final String fromOverrideKoodiUri, final Locale locale, final FieldNames fieldName, final boolean allowNullKoodi, final boolean showMeta) {
+        return convertToKoodiDTO(fromOverrideKoodiUri != null ? fromOverrideKoodiUri : fromKoodiUri, locale, fieldName, allowNullKoodi, showMeta);
     }
 
     public NimiV1RDTO convertToNimiDTO(final String fromKoodiUri, final Locale locale, final FieldNames fieldName, final boolean allowNullKoodi, final boolean showMeta) {
@@ -401,9 +433,11 @@ public class KoulutusCommonConverter {
         return convertToUri(dto, msg, false);
     }
 
+    /**
+     * TODO: missing koodi uri validation check.
+     */
     public String convertToUri(final KoodiV1RDTO dto, final FieldNames msg, boolean nullable) {
-
-        if (nullable && (dto == null || dto.getUri() == null)) {
+        if (nullable && (dto == null || dto.getUri() == null || dto.getUri().isEmpty())) {
             //nullable koodisto uri
             return null;
         }
@@ -420,7 +454,7 @@ public class KoulutusCommonConverter {
         if (checkVersion == null || checkVersion == -1) {
             //search latest koodi version for the koodi uri.
             final KoodiType koodi = tarjontaKoodistoHelper.getKoodiByUri(uri);
-            Preconditions.checkNotNull(koodi, "Koodisto koodi not found! Error in field : " + msg);
+            Preconditions.checkNotNull(koodi, "Koodisto koodi not found! Error in field : %s by koodi URI : '%s' ", msg, uri);
             checkVersion = koodi.getVersio();
         }
 
@@ -446,7 +480,6 @@ public class KoulutusCommonConverter {
         return modifiedUris;
     }
 
-    
     public Set<KoodistoUri> convertToUris(final KoodiV1RDTO dto, Set<KoodistoUri> koodistoUris, final FieldNames msg) {
         Preconditions.checkNotNull(dto, "DTO object cannot be null! Error field : " + msg);
 

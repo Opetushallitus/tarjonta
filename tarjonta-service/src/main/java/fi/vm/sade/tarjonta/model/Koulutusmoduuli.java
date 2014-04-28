@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import javax.persistence.CollectionTable;
@@ -94,7 +94,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
 
     @Enumerated(EnumType.STRING)
     @Column(name = "row_type")
-    private fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType rowType;
+    private fi.vm.sade.tarjonta.service.enums.ModuleRowType rowType;
 
     @Column(name = "oppilaitostyyppi", length = 500)
     private String oppilaitostyyppi;
@@ -260,11 +260,11 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         this.moduuliTyyppi = moduuliTyyppi;
     }
 
-    public KoulutusmoduuliRowType getRowType() {
+    public ModuleRowType getRowType() {
         return rowType;
     }
 
-    public void setRowType(KoulutusmoduuliRowType rowType) {
+    public void setRowType(ModuleRowType rowType) {
         this.rowType = rowType;
     }
 

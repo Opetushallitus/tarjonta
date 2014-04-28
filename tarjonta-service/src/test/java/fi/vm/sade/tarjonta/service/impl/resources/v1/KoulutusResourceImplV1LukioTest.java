@@ -35,16 +35,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusBase.KAUSI_KOODI_URI;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 
 import java.util.Calendar;
 import java.util.Locale;
 import org.apache.commons.lang.time.DateUtils;
-import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.*;
 import org.junit.Test;
 
@@ -132,7 +129,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expectMetaUri(KOULUTUSASTE);
         expectMetaUri(KOULUTUSALA);
         expectMetaUri(OPINTOALA);
-        //expectMetaUri(TUTKINTONIMIKE);
+        expectMetaUri(TUTKINTONIMIKE);
         expectMetaUri(KOULUTUSLAJI);
         expectMetaUri(EQF);
         expectMetaUri(NQF);
@@ -141,6 +138,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUSAIKAS);
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
         expectMetaUri(SUUNNITELTU_KESTO);
+        expectMetaUri(TUTKINTO);
     }
 
     private void assertLoadData(final KoulutusLukioV1RDTO result) {
@@ -166,13 +164,13 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEqualDtoKoodi(KOULUTUSKOODI, result.getKoulutuskoodi());
         assertEqualDtoKoodi(LAAJUUSARVO, result.getOpintojenLaajuusarvo());
         assertEqualDtoKoodi(LAAJUUSYKSIKKO, result.getOpintojenLaajuusyksikko());
-        //assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
+        assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(KOULUTUSLAJI, result.getKoulutuslaji());
-        assertEquals(null, result.getTutkinto().getUri()); //we do not need 
+        assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());  
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, result.getKoulutusmoduuliTyyppi());
-        assertEquals(null, result.getTunniste());
+        assertEquals(TUNNISTE, result.getTunniste());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());

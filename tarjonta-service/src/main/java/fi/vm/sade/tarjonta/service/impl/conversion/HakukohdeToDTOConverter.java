@@ -31,7 +31,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
@@ -80,7 +80,7 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
 
         if (s.getKoulutusmoduuliToteutuses() != null && !s.getKoulutusmoduuliToteutuses().isEmpty()) {
-            KoulutusmoduuliRowType rowType = s.getKoulutusmoduuliToteutuses().iterator().next().getKoulutusmoduuli().getRowType();
+            ModuleRowType rowType = s.getKoulutusmoduuliToteutuses().iterator().next().getKoulutusmoduuli().getRowType();
             hakukohde.setHakukohteenKoulutusaste(rowType.getKoulutusasteTyyppi());
         }
 

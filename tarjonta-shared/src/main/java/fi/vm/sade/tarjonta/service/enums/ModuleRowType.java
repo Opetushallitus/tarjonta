@@ -2,7 +2,7 @@ package fi.vm.sade.tarjonta.service.enums;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
-public enum KoulutusmoduuliRowType {
+public enum ModuleRowType {
 
     AMMATILLINEN_PERUSKOULUTUS(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS),
     LUKIOKOULUTUS(KoulutusasteTyyppi.LUKIOKOULUTUS),
@@ -17,7 +17,7 @@ public enum KoulutusmoduuliRowType {
 
     final private KoulutusasteTyyppi koulutusasteTyyppi;
 
-    private KoulutusmoduuliRowType(KoulutusasteTyyppi koulutusasteTyyppi) {
+    private ModuleRowType(KoulutusasteTyyppi koulutusasteTyyppi) {
         this.koulutusasteTyyppi = koulutusasteTyyppi;
     }
 
@@ -28,8 +28,8 @@ public enum KoulutusmoduuliRowType {
         return koulutusasteTyyppi;
     }
 
-    public static KoulutusmoduuliRowType fromEnum(KoulutusasteTyyppi v) {
-        for (KoulutusmoduuliRowType c : KoulutusmoduuliRowType.values()) {
+    public static ModuleRowType fromEnum(KoulutusasteTyyppi v) {
+        for (ModuleRowType c : ModuleRowType.values()) {
             if (c.koulutusasteTyyppi.equals(v)) {
                 return c;
             }

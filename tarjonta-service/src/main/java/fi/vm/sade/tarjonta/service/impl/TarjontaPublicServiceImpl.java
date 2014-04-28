@@ -52,7 +52,7 @@ import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.business.impl.HakuService;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -664,7 +664,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
 
         if (kysely.getKoulutustyyppi() != null) {
-            criteria.setKoulutustyyppi(KoulutusmoduuliRowType.fromEnum(kysely.getKoulutustyyppi()));
+            criteria.setKoulutustyyppi(ModuleRowType.fromEnum(kysely.getKoulutustyyppi()));
         }
 
         if (kysely.getHakusana() != null) {
@@ -708,7 +708,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
         if (kysely.getKoulutustyyppi() != null) {
-            criteria.setKoulutustyyppi(KoulutusmoduuliRowType.fromEnum(kysely.getKoulutustyyppi()));
+            criteria.setKoulutustyyppi(ModuleRowType.fromEnum(kysely.getKoulutustyyppi()));
         }
         criteria.setOppilaitostyyppis(kysely.getOppilaitostyyppiUris());
 

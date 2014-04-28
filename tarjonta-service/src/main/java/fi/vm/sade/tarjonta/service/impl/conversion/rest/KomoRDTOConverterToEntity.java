@@ -28,7 +28,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
@@ -190,7 +190,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
-        komo.setRowType(KoulutusmoduuliRowType.fromEnum(dto.getKoulutusasteTyyppi()));
+        komo.setRowType(ModuleRowType.fromEnum(dto.getKoulutusasteTyyppi()));
         komo.setTutkintonimikes(convertToUris(dto.getTutkintonimikes(), komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE));
 
         komoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
@@ -223,7 +223,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
-        komo.setRowType(KoulutusmoduuliRowType.fromEnum(dto.getKoulutusasteTyyppi()));
+        komo.setRowType(ModuleRowType.fromEnum(dto.getKoulutusasteTyyppi()));
 
         komo.setTutkintonimikes(convertToUris(dto.getTutkintonimikes(), komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE));
 

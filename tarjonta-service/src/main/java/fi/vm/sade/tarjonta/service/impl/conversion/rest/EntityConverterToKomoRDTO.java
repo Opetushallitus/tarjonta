@@ -40,6 +40,8 @@ import org.springframework.stereotype.Component;
 public class EntityConverterToKomoRDTO {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToKomoRDTO.class);
+    private static final boolean KOODI_URI_NULLABLE = true;
+
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired(required = true)
@@ -64,9 +66,8 @@ public class EntityConverterToKomoRDTO {
         kkDto.setKuvausKomo(komoKuvaus);
 
         //KOMO
-        Preconditions.checkNotNull(komo.getRowType(), "KoulutusasteTyyppi cannot be null!");
-        KoulutusasteTyyppi koulutusasteTyyppi = komo.getRowType().getKoulutusasteTyyppi();
-        switch (koulutusasteTyyppi) {
+        Preconditions.checkNotNull(komo.getRowType(), "RowType cannot be null!");
+        switch (komo.getRowType()) {
             case KORKEAKOULUTUS:
             case YLIOPISTOKOULUTUS:
             case AMMATTIKORKEAKOULUTUS:
@@ -88,18 +89,22 @@ public class EntityConverterToKomoRDTO {
                 }
                 break;
         }
-        kkDto.setKoulutusasteTyyppi(koulutusasteTyyppi);
+        kkDto.setKoulutusasteTyyppi(komo.getRowType().getKoulutusasteTyyppi());
         kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), locale, FieldNames.KOULUTUSKOODI, showMeta));
-        kkDto.setTutkinto(commonConverter.koodiData(komo.getTutkintoUri(), locale, FieldNames.TUTKINTO, showMeta)); //correct data mapping?
-        kkDto.setOpintojenLaajuusarvo(commonConverter.koodiData(komo.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));
-        kkDto.setOpintojenLaajuusyksikko(commonConverter.koodiData(komo.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, showMeta));
+        kkDto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), locale, FieldNames.TUTKINTO, showMeta)); //correct data mapping?
+        kkDto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));
+        kkDto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, showMeta));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
-        kkDto.setKoulutusaste(commonConverter.koodiData(komo.getKoulutusasteUri(), locale, FieldNames.KOULUTUSASTE, showMeta));
-        kkDto.setKoulutusala(commonConverter.koodiData(komo.getKoulutusalaUri(), locale, FieldNames.KOULUTUSALA, showMeta));
-        kkDto.setOpintoala(commonConverter.koodiData(komo.getOpintoalaUri(), locale, FieldNames.OPINTOALA, showMeta));
+        kkDto.setKoulutusaste(commonConverter.convertToKoodiDTO(komo.getKoulutusasteUri(), locale, FieldNames.KOULUTUSASTE, showMeta));
+        kkDto.setKoulutusala(commonConverter.convertToKoodiDTO(komo.getKoulutusalaUri(), locale, FieldNames.KOULUTUSALA, showMeta));
+        kkDto.setOpintoala(commonConverter.convertToKoodiDTO(komo.getOpintoalaUri(), locale, FieldNames.OPINTOALA, showMeta));
         kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
-        kkDto.setEqf(commonConverter.komoData(komo.getEqfUri(), locale, FieldNames.EQF, showMeta));
-        kkDto.setOppilaitostyyppis(splitLegacyData(komo.getOppilaitostyyppi(), locale, FieldNames.TUTKINTO, showMeta));       
+        kkDto.setOppilaitostyyppis(splitLegacyData(komo.getOppilaitostyyppi(), locale, FieldNames.TUTKINTO, showMeta));
+
+        //NULLABLE URIS
+        kkDto.setEqf(commonConverter.convertToKoodiDTO(komo.getEqfUri(), locale, FieldNames.EQF, KOODI_URI_NULLABLE, showMeta));
+        kkDto.setKoulutustyyppi(commonConverter.convertToKoodiDTO(komo.getKoulutustyyppiUri(), locale, FieldNames.KOULUTUSTYYPPI, KOODI_URI_NULLABLE, showMeta));
+
         kkDto.setVersion(komo.getVersion());
         LOG.debug("in EntityConverterToKomoRDTO : {}", kkDto);
         return kkDto;

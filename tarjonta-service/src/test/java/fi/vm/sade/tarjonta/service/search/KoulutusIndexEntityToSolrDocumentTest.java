@@ -25,7 +25,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.impl.IndexerDaoImpl;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutusIndexEntityToSolrDocumentTest {
@@ -33,7 +33,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private static final String KOMO_OID = "komo-oid";
     private static final String OID = "oid";
     private static final String TUTKINTONIMIKEKOODI = "tutkintonimikekoodi";
-    private static final KoulutusmoduuliRowType KOULUTUSTYYPPIKOODI = KoulutusmoduuliRowType.AMMATILLINEN_PERUSKOULUTUS;
+    private static final ModuleRowType KOULUTUSTYYPPIKOODI = ModuleRowType.AMMATILLINEN_PERUSKOULUTUS;
     private static final String LUKIOLINJAKOODI = "lukiolinjakoodi";
     private static final String KOULUTUSOHJELMAKOODI = "koulutusohjelmakoodi";
     private static final String KOULUTUSKOODI = "koulutuskoodi";

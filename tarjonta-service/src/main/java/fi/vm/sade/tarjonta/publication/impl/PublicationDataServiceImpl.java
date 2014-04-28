@@ -66,7 +66,7 @@ import fi.vm.sade.tarjonta.model.QValintakoe;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
-import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -536,7 +536,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
             final List<String> komoOids = from(komoto).where(komoto.oid.in(komotoOIDs)
-                    .and(komoto.koulutusmoduuli.rowType.eq(KoulutusmoduuliRowType.KORKEAKOULUTUS)))
+                    .and(komoto.koulutusmoduuli.rowType.eq(ModuleRowType.KORKEAKOULUTUS)))
                     .list(komoto.koulutusmoduuli.oid);
 
             if (komoOids != null && !komoOids.isEmpty()) {
