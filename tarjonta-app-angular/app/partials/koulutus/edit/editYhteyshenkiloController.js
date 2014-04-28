@@ -55,8 +55,7 @@ app.controller(
                * Sets the contact person to be the one that the user selected
                * from the autocomplete field.
                */
-              $scope.editYhModel.selectHenkilo = function SelectHenkilo(
-                  selectedUser) {
+              $scope.editYhModel.selectHenkilo = function (selectedUser) {
                 var to = $scope.uiModel.contactPerson;
                 $scope.setValues(to, selectedUser);
               };
