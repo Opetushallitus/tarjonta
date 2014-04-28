@@ -18,7 +18,10 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -27,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 
 /*
  * Author: Tuomas Katva
@@ -36,6 +40,8 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     private static final long serialVersionUID = -5600126973923997354L;
 
     private SimpleHakukohdeViewModel hakukohdeViewModel;
+    //this is quick fix because must check hakukohdes hakutapa for enabling poista-button
+    private HakukohteetVastaus moreComplexHakukohdeViewModel;
     private transient I18NHelper i18n = new I18NHelper(this);
     private Button nimiBtn;
     private Button poistaBtn;
@@ -44,6 +50,11 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     private OrganisaatioContext context;
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusHakukohdeRow.class);
     private boolean lukioKoulutus = false;
+
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishaku;
+    @Value("${koodisto-uris.jatkuvahaku}")
+    private String hakutapaJatkuvaHaku;
 
     public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, OrganisaatioContext context) {
         super();
@@ -80,9 +91,24 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
                 }
             }
         });
-        
-        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(context, hakukohdeViewModel.isHakuStarted()));
+
+        moreComplexHakukohdeViewModel = tarjontaPresenter.findHakukohdeByHakukohdeOid(hakukohdeViewModel.getHakukohdeOid());
+
+        boolean isHakuStarted = checkIsHakuStartedOrErillisJatkuvaHaku(moreComplexHakukohdeViewModel.getHakukohteet().get(0),hakukohdeViewModel);
+
+        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(context, isHakuStarted));
+
         poistaBtn.setStyleName("link-row");
+    }
+
+    private boolean checkIsHakuStartedOrErillisJatkuvaHaku(HakukohdePerustieto hakukohdePerustieto, SimpleHakukohdeViewModel hakukohdeViewModel) {
+
+       if (hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutapaErillishaku) || hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutapaJatkuvaHaku)) {
+            return false;
+       } else {
+           return hakukohdeViewModel.isHakuStarted();
+       }
+
     }
 
     protected String T(String key) {
