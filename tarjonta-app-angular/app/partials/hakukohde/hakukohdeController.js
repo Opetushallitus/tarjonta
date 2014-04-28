@@ -478,7 +478,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
          */
 
-        $scope.loadKoulutukses = function(){
+        $scope.loadKoulutukses = function(hakuFilterFunction){
 
 
 
@@ -519,7 +519,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
 
-                    $scope.getTarjoajaParentPaths($scope.model.hakukohde.tarjoajaOids);
+                    $scope.getTarjoajaParentPaths($scope.model.hakukohde.tarjoajaOids,hakuFilterFunction);
 
                     var orgQueryPromises = [];
 
@@ -615,7 +615,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
          -----> Retrieve all hakus
 
          */
-        $scope.retrieveHakus = function() {
+        $scope.retrieveHakus = function(filterHakuFunction) {
             var hakuPromise = HakuService.getAllHakus();
 
             hakuPromise.then(function(hakuDatas) {
@@ -641,7 +641,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                 });
 
-                var filteredHakus = filterHakus(hakuDatas);
+                var filteredHakus = filterHakuFunction(hakuDatas);
 
                 angular.forEach(filteredHakus,function(haku){
                     $scope.model.hakus.push(haku);
@@ -676,36 +676,13 @@ app.controller('HakukohdeRoutingController', ['$scope',
             return filteredHakuArray;
         };
 
-        $scope.filterHakusWithAika = function(hakus) {
-
-            var filteredHakus = [];
-            angular.forEach(hakus,function(haku){
-                // rajaus kk-hakukohteisiin; ks. OVT-6452
-                // TODO selvitä uri valitun koulutuksen perusteella
-
-                var kohdeJoukkoUriNoVersion = splitUri(haku.kohdejoukkoUri);
-
-                if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
-
-                    //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
-                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                        filteredHakus.push(haku);
-                    }
 
 
-                }
-            });
-            return filteredHakus;
-        };
 
 
-        var filterHakus = function(hakus) {
-            return  $scope.filterHakusWithAika($scope.filterHakusWithOrgs(hakus));
-
-        };
 
 
-        $scope.getTarjoajaParentPaths = function(tarjoajaOids) {
+        $scope.getTarjoajaParentPaths = function(tarjoajaOids,hakufilterFunction) {
 
             var orgPromises = [];
 
@@ -726,7 +703,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
                         });
                     }
                 });
-                $scope.retrieveHakus();
+                $scope.retrieveHakus(hakufilterFunction);
 
             });
 
@@ -1070,7 +1047,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             return oppilaitosTyyppisWithOutVersion;
         };
 
-        var splitUri = function(uri) {
+        $scope.splitUri = function(uri) {
 
             var tokenizedArray = uri.split("#");
             return tokenizedArray[0];
