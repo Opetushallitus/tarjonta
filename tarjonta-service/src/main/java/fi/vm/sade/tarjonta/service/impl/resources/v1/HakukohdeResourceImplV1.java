@@ -421,8 +421,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
 
-        koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getKoulutustyyppi() != null)
-                ? komoto.getKoulutusmoduuli().getKoulutustyyppi().toUpperCase() : null );
+        koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getRowType() != null)
+                ? komoto.getKoulutusmoduuli().getRowType().getKoulutusasteTyyppi().name() : null );
 
         //TKatva, just get the first koulutuslaji because koulutus cannot have many koulutuslajis (aikuisten,nuorten)
         //or can it ?

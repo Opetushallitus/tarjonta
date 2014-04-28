@@ -1,18 +1,18 @@
 /*
-* Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
-*
-* This program is free software: Licensed under the EUPL, Version 1.1 or - as
-* soon as they will be approved by the European Commission - subsequent versions
-* of the EUPL (the "Licence");
-*
-* You may not use this work except in compliance with the Licence.
-* You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* European Union Public Licence for more details.
-*/
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -47,9 +48,9 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 /**
-*
-* @author jani
-*/
+ *
+ * @author jani
+ */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
     DependencyInjectionTestExecutionListener.class,
@@ -83,7 +84,7 @@ public class KoulutusmoduuliDAOImplTest {
         remove(komo3);
         if (em != null) {
             em.clear();
-    }
+        }
 
         //RE-INITIALIZE ENITMANAGER:
         final String sep = EntityUtils.STR_ARRAY_SEPARATOR;
@@ -92,26 +93,27 @@ public class KoulutusmoduuliDAOImplTest {
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOppilaitostyyppi(sep + "uri_1" + sep + SEARCH_BY_URI_B + sep + SEARCH_BY_URI_A + sep);
         komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
-        komo1.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+        komo1.setRowType(KoulutusmoduuliRowType.AMMATILLINEN_PERUSKOULUTUS);
 
         persist(komo1);
 
         komo2 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo2.setOppilaitostyyppi(sep + SEARCH_BY_URI_C + sep);
         komo2.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
-        komo2.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+        komo2.setRowType(KoulutusmoduuliRowType.AMMATILLINEN_PERUSKOULUTUS);
         persist(komo2);
 
         komo3 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo3.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
         komo3.setLukiolinjaUri(LUKIOLINJA_URI);
-        komo1.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        komo3.setRowType(KoulutusmoduuliRowType.LUKIOKOULUTUS);
+
         persist(komo3);
     }
 
     /**
-* Test of search method, of class KoulutusmoduuliDAOImpl.
-*/
+     * Test of search method, of class KoulutusmoduuliDAOImpl.
+     */
     @Test
     public void testSearchByOppilaitostyyppiByUri() {
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
@@ -169,27 +171,28 @@ public class KoulutusmoduuliDAOImplTest {
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
-        criteria.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        criteria.setKoulutustyyppi(KoulutusmoduuliRowType.AMMATILLINEN_PERUSKOULUTUS);
         result = instance.search(criteria);
         assertEquals(1, result.size());
 
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
-        criteria.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        criteria.setKoulutustyyppi(KoulutusmoduuliRowType.LUKIOKOULUTUS);
+
         result = instance.search(criteria);
         assertEquals(0, result.size());
     }
 
-    
     @Test
-    public void testXSSFiltering(){
+    public void testXSSFiltering() {
         //TODO test more fields...
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOid("xss-1");
         komo1.setOppilaitostyyppi("zz");
         komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
-        komo1.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+        komo1.setRowType(KoulutusmoduuliRowType.AMMATILLINEN_PERUSKOULUTUS);
+        
         komo1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
         komo1.getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, new MonikielinenTeksti("fi", "jatko-opinto"));
         komo1.getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
@@ -203,10 +206,10 @@ public class KoulutusmoduuliDAOImplTest {
 
 
     /*
-*
-* Private helpper methods
-*
-*/
+     *
+     * Private helpper methods
+     *
+     */
     private void persist(Object o) {
         em.persist(o);
         em.flush();

@@ -170,7 +170,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     }
 
     private void convertKomoCommonToRDTO(TYPE dto, Koulutusmoduuli komo, Locale locale, boolean showMeta) {
-        Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
+        Preconditions.checkNotNull(komo.getRowType(), "KoulutusasteTyyppi cannot be null!");
 
         dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), locale, FieldNames.KOULUTUSKOODI, showMeta));
         dto.setTutkinto(commonConverter.koodiData(komo.getTutkintoUri(), locale, FieldNames.TUTKINTO, showMeta)); //correct data mapping?

@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -361,7 +362,7 @@ public final class EntityUtils {
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppiSimple(final Koulutusmoduuli komo) {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null.");
         Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(komo.getKoulutustyyppi(), "Koulutusaste string object cannot be null.");
+        Preconditions.checkNotNull(komo.getRowType(), "Koulutusaste string object cannot be null.");
         Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
@@ -369,7 +370,7 @@ public final class EntityUtils {
          * Required type data:
          */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
-        tyyppi.setKoulutustyyppi(KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi()));
+        tyyppi.setKoulutustyyppi(komo.getRowType().getKoulutusasteTyyppi());
 
         /*
          * OID and other keys:
@@ -385,7 +386,7 @@ public final class EntityUtils {
          */
         tyyppi.setLaajuusarvoUri(komo.getOpintojenLaajuusarvoUri());
         tyyppi.setLaajuusyksikkoUri(komo.getOpintojenLaajuusyksikkoUri());
-        tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
+        tyyppi.setTutkintonimikeUri(komo.getTutkintonimikeUri());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
         tyyppi.setKoulutusasteUri(komo.getKoulutusasteUri());
         tyyppi.setKoulutusalaUri(komo.getKoulutusalaUri());
@@ -438,7 +439,7 @@ public final class EntityUtils {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli child object cannot be null.");
         Preconditions.checkNotNull(parentKomo, "Koulutusmoduuli parent object cannot be null.");
         Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(komo.getKoulutustyyppi(), "Koulutusaste string object cannot be null.");
+        Preconditions.checkNotNull(komo.getRowType(), "Koulutusaste string object cannot be null.");
         Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
@@ -447,7 +448,7 @@ public final class EntityUtils {
          * Required type data:
          */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
-        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.fromValue(parentKomo.getKoulutustyyppi()));
+        tyyppi.setKoulutustyyppi(parentKomo.getRowType().getKoulutusasteTyyppi());
         /*
          * OID and other keys:
          */
@@ -462,7 +463,7 @@ public final class EntityUtils {
          */
         tyyppi.setLaajuusarvoUri(komo.getOpintojenLaajuusarvoUri() != null && !komo.getOpintojenLaajuusarvoUri().isEmpty() ? komo.getOpintojenLaajuusarvoUri() : parentKomo.getOpintojenLaajuusarvoUri());
         tyyppi.setLaajuusyksikkoUri(parentKomo.getOpintojenLaajuusyksikkoUri());
-        tyyppi.setTutkintonimikeUri(komo.getTutkintonimike());
+        tyyppi.setTutkintonimikeUri(komo.getTutkintonimikeUri());
         tyyppi.setUlkoinenTunniste(komo.getUlkoinenTunniste());
         tyyppi.setKoulutusasteUri(parentKomo.getKoulutusasteUri());
         tyyppi.setKoulutusalaUri(parentKomo.getKoulutusalaUri());
@@ -498,7 +499,7 @@ public final class EntityUtils {
          * Required type data:
          */
         target.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
-        target.setKoulutustyyppi(source.getKoulutustyyppi().value());
+        target.setRowType(KoulutusmoduuliRowType.fromEnum(source.getKoulutustyyppi()));
         /*
          * OID and other keys:
          */
@@ -511,7 +512,7 @@ public final class EntityUtils {
          * Optional data
          */
         target.setOpintojenLaajuus(source.getLaajuusyksikkoUri(), source.getLaajuusarvoUri());
-        target.setTutkintonimike(source.getTutkintonimikeUri());
+        target.setTutkintonimikeUri(source.getTutkintonimikeUri());
         target.setUlkoinenTunniste(source.getUlkoinenTunniste());
         target.setKoulutusasteUri(source.getKoulutusasteUri());
         target.setKoulutusalaUri(source.getKoulutusalaUri());
@@ -521,7 +522,7 @@ public final class EntityUtils {
         target.setNqfUri(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
         target.setNimi(copyFields(source.getNimi(), target.getNimi()));
-        target.setKoulutustyyppi(source.getKoulutustyyppi().value());
+        target.setRowType(KoulutusmoduuliRowType.fromEnum(source.getKoulutustyyppi()));
 
         return target;
     }
@@ -759,12 +760,13 @@ public final class EntityUtils {
         return KoulutusasteTyyppi.fromValue(koulutustyyppi);
     }
 
-     public static void keepSelectedKoodistoUri(Set<KoodistoUri> allDates, KoodistoUri keepDates) {
+    public static void keepSelectedKoodistoUri(Set<KoodistoUri> allDates, KoodistoUri keepDates) {
         keepSelectedKoodistoUris(allDates, Sets.<KoodistoUri>newHashSet(keepDates));
     }
-    
+
     /**
-     * Remove all orphaned koodisto uri objects from a set of koodisto uri objects.
+     * Remove all orphaned koodisto uri objects from a set of koodisto uri
+     * objects.
      *
      * @param allUris
      * @param keepUris

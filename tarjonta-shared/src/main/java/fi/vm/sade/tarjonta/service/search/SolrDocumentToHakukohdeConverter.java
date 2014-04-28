@@ -132,7 +132,7 @@ public class SolrDocumentToHakukohdeConverter {
     
     private KoulutusasteTyyppi createKoulutusastetyyppi(SolrDocument hakukohdeDoc) {
         if(hakukohdeDoc.getFieldValue(KOULUTUSASTETYYPPI)!=null){
-            return KoulutusasteTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSASTETYYPPI));
+            return KoulutusasteTyyppi.valueOf("" + hakukohdeDoc.getFieldValue(KOULUTUSASTETYYPPI));
         } else return null;
     }
 

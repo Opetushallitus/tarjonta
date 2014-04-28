@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class IndexerResourceTest {
@@ -44,31 +45,31 @@ public class IndexerResourceTest {
         indexer.setSolrServerFactory(factory);
         HakukohdeIndexEntityToSolrDocument hakukohdeToSolr = new HakukohdeIndexEntityToSolrDocument();
         ReflectionTestUtils.setField(indexer, "hakukohdeConverter", hakukohdeToSolr);
-        
+
         organisaatioSearchService = Mockito.mock(OrganisaatioSearchService.class);
         stub(organisaatioSearchService.findByOidSet(anySet())).toReturn(Lists.newArrayList(getOrg("o-oid-12345")));
         ReflectionTestUtils.setField(hakukohdeToSolr, "organisaatioSearchService", organisaatioSearchService);
 
         koodiService = Mockito.mock(KoodiService.class);
         ReflectionTestUtils.setField(hakukohdeToSolr, "koodiService", koodiService);
-        
+
         IndexerDAO indexerDao = Mockito.mock(IndexerDAO.class);
         ReflectionTestUtils.setField(indexer, "indexerDao", indexerDao);
         ReflectionTestUtils.setField(hakukohdeToSolr, "indexerDao", indexerDao);
-        
+
         stub(indexerDao.findHakukohdeById(1l)).toReturn(getHakukohdeIndexEntity(1l));
         stub(indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(1l)).toReturn(getHakukohdeKoulutukset(1l));
     }
 
     private List<KoulutusIndexEntity> getHakukohdeKoulutukset(long id) {
         List<KoulutusIndexEntity> hakukohteenKoulutukset = Lists.newArrayList();
-        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus", "tyyppendaahl");
+        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus", KoulutusmoduuliRowType.KORKEAKOULUTUS);
         hakukohteenKoulutukset.add(koulutus);
         return hakukohteenKoulutukset;
     }
 
     private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
-        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU,"hakutapaUri", Integer.valueOf(5), 2l, "hakuoid", "hakutyyppiUri");
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU, "hakutapaUri", Integer.valueOf(5), 2l, "hakuoid", "hakutyyppiUri");
         return hie;
     }
 
@@ -92,7 +93,7 @@ public class IndexerResourceTest {
     }
 
     private Hakukohde getHakukohde() {
-        
+
         Haku haku = new Haku();
         haku.setOid("oid");
         Hakukohde hakukohde = new Hakukohde();

@@ -19,6 +19,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -117,35 +118,43 @@ public class TarjontaFixtures {
     public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi) {
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
-        m.setTutkintoUri("Simple Tutkinto-Ohjelma");
+        m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
+        m.setRowType(KoulutusmoduuliRowType.AMMATILLINEN_PERUSKOULUTUS);
+
+        //KJOH-764 renamed fields
+        m.setKoulutusalaUri(randomUri("koulutusala"));
         m.setEqfUri(randomUri("eqf"));
         m.setNqfUri(randomUri("nqf"));
         m.setKoulutusasteUri(randomUri("koulutusaste"));
-        m.setKoulutusalaUri(randomUri("koulutusala"));
+        m.setKoulutusUri(randomUri("koulutus"));
         m.setKoulutusohjelmaUri(randomUri("koulutusohjelma"));
-        m.setKoulutusUri(randomUri("koulutusluokitus"));
-        m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
-        m.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value());
+        m.setTutkintoUri(randomUri("tutkinto"));
+        m.setOpintojenLaajuusarvoUri(randomUri("laajuus_arvo"));
+        m.setOpintojenLaajuusyksikkoUri(randomUri("laajuus_yksikko"));
+        m.setLukiolinjaUri(randomUri("lukiolinja"));
+        m.setKoulutustyyppiUri(randomUri("koulutustyyppi"));
+        m.setOpintoalaUri(randomUri("opintoala"));
+        m.setTutkintonimikeUri(randomUri("tutkintonimike"));
 
         return m;
     }
 
     /**
      * Only base data, missing all koodisto relations.
-     * 
+     *
      * @param tyyppi
      * @param oid
      * @param koulutustyyppi
-     * @return 
+     * @return
      */
     public Koulutusmoduuli createKoulutusmoduuli(KoulutusmoduuliTyyppi tyyppi, String oid, KoulutusasteTyyppi koulutustyyppi) {
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi enum cannot be null.");
         Preconditions.checkNotNull(oid, "KOMO OID cannot be null.");
         Preconditions.checkNotNull(koulutustyyppi, "KoulutusasteTyyppi enum cannot be null.");
-     
+
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(oid);
-        m.setKoulutustyyppi(koulutustyyppi.value());
+        m.setRowType(KoulutusmoduuliRowType.fromEnum(koulutustyyppi));
 
         return m;
     }
@@ -154,14 +163,22 @@ public class TarjontaFixtures {
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi object cannot be null.");
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
-        m.setTutkintoUri("Simple Tutkinto-Ohjelma");
+        m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
+
+        //KJOH-764 renamed fields
+        m.setKoulutusalaUri(randomUri("koulutusala"));
         m.setEqfUri(randomUri("eqf"));
         m.setNqfUri(randomUri("nqf"));
         m.setKoulutusasteUri(randomUri("koulutusaste"));
-        m.setKoulutusalaUri(randomUri("koulutusala"));
+        m.setKoulutusUri(randomUri("koulutus"));
         m.setKoulutusohjelmaUri(randomUri("koulutusohjelma"));
-        m.setKoulutusUri(randomUri("koulutusluokitus"));
-        m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
+        m.setTutkintoUri(randomUri("tutkinto"));
+        m.setOpintojenLaajuusarvoUri(randomUri("laajuus_arvo"));
+        m.setOpintojenLaajuusyksikkoUri(randomUri("laajuus_yksikko"));
+        m.setLukiolinjaUri(randomUri("lukiolinja"));
+        m.setKoulutustyyppiUri(randomUri("koulutustyyppi"));
+        m.setOpintoalaUri(randomUri("opintoala"));
+        m.setTutkintonimikeUri(randomUri("tutkintonimike"));
 
         return m;
 

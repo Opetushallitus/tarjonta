@@ -988,7 +988,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.tutkintonimikes = tutkintonimikes;
     }
 
-    public String getTutkintonimike() {
+    public String getTutkintonimikeUri() {
         if (this.tutkintonimikes.size() > 1) {
             throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
         } else if (tutkintonimikes.isEmpty()) {
@@ -999,7 +999,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return tutkintonimikes.iterator().next().getKoodiUri();
     }
 
-    public void setTutkintonimike(String tutkintonimike) {
+    public void setTutkintonimikeUri(String tutkintonimike) {
         if (tutkintonimike == null) {
             this.tutkintonimikes.clear();
         } else {

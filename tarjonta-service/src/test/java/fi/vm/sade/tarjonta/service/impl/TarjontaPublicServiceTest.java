@@ -256,43 +256,6 @@ public class TarjontaPublicServiceTest {
 
     }
 
-    /*
-    @Test
-    public void testEtsiKoulutukset() {
-
-        KoulutusTulos rivi;
-        KoulutusKoosteTyyppi koulutus;
-
-        // precondition for the query
-        assertEquals(3, koulutusmoduuliToteutusDAO.findAll().size());
-
-        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        HaeKoulutuksetVastausTyyppi vastaus = service.haeKoulutukset(kysely);
-
-        assertNotNull(vastaus);
-
-        List<KoulutusTulos> rivit = vastaus.getKoulutusTulos();
-
-        // vastauksessa pitäisi olla kolme riviä, yksi kullekin koulutukselle
-
-        assertEquals(3, rivit.size());
-
-        rivi = rivit.get(0);
-
-        koulutus = rivi.getKoulutus();
-
-        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
-
-        rivi = rivit.get(1);
-        koulutus = rivi.getKoulutus();
-        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
-
-        rivi = rivit.get(2);
-        koulutus = rivi.getKoulutus();
-        assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
-
-    }*/
-
     @Test
     public void testEtsiKoulutusmoduulit() {
 

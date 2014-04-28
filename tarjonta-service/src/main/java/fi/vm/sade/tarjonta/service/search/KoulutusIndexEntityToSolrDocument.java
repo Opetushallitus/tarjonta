@@ -68,7 +68,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.KoodiService;
-import fi.vm.sade.koodisto.service.KoodistoService;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
@@ -90,8 +89,6 @@ public class KoulutusIndexEntityToSolrDocument implements
 
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
-    @Autowired
-    private KoodistoService koodistoPublicService;
     @Autowired
     private KoodiService koodiService;
     @Autowired
@@ -126,8 +123,8 @@ public class KoulutusIndexEntityToSolrDocument implements
             }
         }
 
-        if (koulutus.getKoulutusTyyppi() != null) {
-            final KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.fromValue(koulutus.getKoulutusTyyppi());
+        if (koulutus.getRowType() != null) {
+            final KoulutusasteTyyppi tyyppi = koulutus.getRowType().getKoulutusasteTyyppi();
             switch (tyyppi) {
                 case LUKIOKOULUTUS:
                     //koulutusohjelma ilman pohjakoulutusta
@@ -186,7 +183,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         }
 
-        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())
+        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getRowType().equals(KoulutusasteTyyppi.LUKIOKOULUTUS.value())
                 ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
         addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
 
@@ -200,7 +197,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         add(komotoDoc, TILA, koulutus.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
-        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutusTyyppi());
+        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getRowType());
         IndexDataUtils.addKoodiLyhytnimiTiedot(komotoDoc, koulutus.getPohjakoulutusvaatimus(), koodiService, POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN);
 
         //XXX in DAO find koulutuslajiuris for koulutusmoduulitoteutus

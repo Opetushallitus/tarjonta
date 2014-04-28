@@ -396,8 +396,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.debug("HAKUKOHDE KOULUTUS TERM : " + term);
         log.debug("HAKUKOHDE KOULUTUS YEAR : " + year);
         log.debug("HAKUKOHDE KOULUTUS PROVIDER : " + providerOid);
-        log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppi());
-        if (komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
+        log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getRowType());
+        if (komoto.getKoulutusmoduuli().getRowType().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
             return false;
         }
 

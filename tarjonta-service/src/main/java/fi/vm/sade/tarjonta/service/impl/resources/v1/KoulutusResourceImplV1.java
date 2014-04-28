@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 
 import com.google.common.base.Function;
@@ -47,6 +46,7 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import static fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType.KORKEAKOULUTUS;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
@@ -365,7 +365,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             final String komoOid = komo.getOid();
             final String userOid = contextDataService.getCurrentUserOid();
 
-            switch (KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi())) {
+            switch (komo.getRowType()) {
                 case KORKEAKOULUTUS:
                     //safe delete komoto, if 'sister' komoto search gives an empty result, then safe delete the komo.
 
@@ -856,7 +856,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(
                         orgOid,
-                        EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi(komoto.getKoulutusmoduuli().getKoulutustyyppi()))) {
+                        komoto.getKoulutusmoduuli().getRowType().getKoulutusasteTyyppi())) {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 }
             }
@@ -970,7 +970,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private static KoulutusasteTyyppi getType(KoulutusmoduuliToteutus komoto) {
-        return KoulutusasteTyyppi.fromValue(komoto.getKoulutusmoduuli().getKoulutustyyppi());
+        return komoto.getKoulutusmoduuli().getRowType().getKoulutusasteTyyppi();
     }
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {

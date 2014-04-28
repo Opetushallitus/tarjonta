@@ -64,8 +64,8 @@ public class EntityConverterToKomoRDTO {
         kkDto.setKuvausKomo(komoKuvaus);
 
         //KOMO
-        Preconditions.checkNotNull(komo.getKoulutustyyppi(), "KoulutusasteTyyppi cannot be null!");
-        KoulutusasteTyyppi koulutusasteTyyppi = EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi());
+        Preconditions.checkNotNull(komo.getRowType(), "KoulutusasteTyyppi cannot be null!");
+        KoulutusasteTyyppi koulutusasteTyyppi = komo.getRowType().getKoulutusasteTyyppi();
         switch (koulutusasteTyyppi) {
             case KORKEAKOULUTUS:
             case YLIOPISTOKOULUTUS:

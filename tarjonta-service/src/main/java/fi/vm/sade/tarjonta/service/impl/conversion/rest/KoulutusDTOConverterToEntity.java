@@ -27,6 +27,7 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
@@ -199,10 +200,9 @@ public class KoulutusDTOConverterToEntity {
         komoto.setTila(dto.getTila());
 
         komoto.setTarjoaja(organisationOId);
-       
+
         //TODO:
         //komoto.setTutkintonimike( dto.getTutkintonimike());
-
         //set dates
         commonConverter.handleDates(komoto, dto);
 
@@ -285,7 +285,7 @@ public class KoulutusDTOConverterToEntity {
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
-        komo.setKoulutustyyppi(dto.getKoulutusasteTyyppi().value());
+        komo.setRowType(KoulutusmoduuliRowType.fromEnum(dto.getKoulutusasteTyyppi()));
 
         komo.setTutkintonimikes(commonConverter.convertToUris(dto.getTutkintonimikes(), komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE));
         //Preconditions.checkArgument(dto.getTutkintonimikes().getUris().isEmpty(), "Set of Tutkintonimike objects cannot be empty.");

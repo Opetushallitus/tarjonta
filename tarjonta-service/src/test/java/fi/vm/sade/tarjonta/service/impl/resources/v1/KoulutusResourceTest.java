@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
@@ -64,7 +65,7 @@ public class KoulutusResourceTest {
             .mock(PublicationDataService.class);
 
     private KoulutusmoduuliToteutus komoto1;
-    
+
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO = Mockito.mock(KoulutusSisaltyvyysDAO.class);
     private KoulutusmoduuliDAO koulutusmoduuliDAO = Mockito.mock(KoulutusmoduuliDAO.class);
 
@@ -86,7 +87,7 @@ public class KoulutusResourceTest {
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
         Koulutusmoduuli komo = new Koulutusmoduuli();
-        komo.setKoulutustyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
+        komo.setRowType(KoulutusmoduuliRowType.KORKEAKOULUTUS);
         komoto1.setKoulutusmoduuli(komo);
         Hakukohde hk = getHakukohde();
         komoto1.addHakukohde(hk);
@@ -105,7 +106,7 @@ public class KoulutusResourceTest {
                     // palauta sama olio
                     @Override
                     public Hakukohde answer(InvocationOnMock invocation)
-                            throws Throwable {
+                    throws Throwable {
                         Hakukohde hk = (Hakukohde) invocation.getArguments()[0];
                         return hk;
                     }
@@ -117,16 +118,16 @@ public class KoulutusResourceTest {
                 indexerResource);
         Whitebox.setInternalState(koulutusResource, "publicationDataService",
                 publicationDataService);
-        Whitebox.setInternalState(koulutusResource,  "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
-        Whitebox.setInternalState(koulutusResource,  "koulutusmoduuliDAO", koulutusmoduuliDAO);
+        Whitebox.setInternalState(koulutusResource, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
+        Whitebox.setInternalState(koulutusResource, "koulutusmoduuliDAO", koulutusmoduuliDAO);
     }
 
     @After
     public void tearDown() {
         LOG.info("tearDown()");
     }
-    
-    private Hakukohde getHakukohde(){
+
+    private Hakukohde getHakukohde() {
         Hakukohde hk = new Hakukohde();
         hk.setOid("hakukohde-1");
         hk.setHakukohdeNimi("hk");
@@ -136,7 +137,7 @@ public class KoulutusResourceTest {
 
     @Test
     public void testOVT7518() {
-        
+
         //hakukohde kiinni
         ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());

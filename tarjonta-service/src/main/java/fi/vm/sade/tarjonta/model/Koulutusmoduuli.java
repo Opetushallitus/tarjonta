@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
@@ -86,13 +88,13 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
-   
+
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "koulutustyyppi")
-    private String koulutustyyppi;
+    @Column(name = "row_type")
+    private fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType rowType;
 
     @Column(name = "oppilaitostyyppi", length = 500)
     private String oppilaitostyyppi;
@@ -258,12 +260,12 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         this.moduuliTyyppi = moduuliTyyppi;
     }
 
-    public String getKoulutustyyppi() {
-        return koulutustyyppi;
+    public KoulutusmoduuliRowType getRowType() {
+        return rowType;
     }
 
-    public void setKoulutustyyppi(String koulutustyyppi) {
-        this.koulutustyyppi = koulutustyyppi;
+    public void setRowType(KoulutusmoduuliRowType rowType) {
+        this.rowType = rowType;
     }
 
     /**
@@ -271,7 +273,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
      *
      * @return
      */
-    public String getTutkintonimike() {
+    public String getTutkintonimikeUri() {
         if (this.tutkintonimikes.size() > 1) {
             throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
         } else if (tutkintonimikes.isEmpty()) {
@@ -282,11 +284,11 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         return tutkintonimikes.iterator().next().getKoodiUri();
     }
 
-    public void setTutkintonimike(String tutkintonimike) {
-        if (tutkintonimike == null) {
+    public void setTutkintonimikeUri(String tutkintonimikeUri) {
+        if (tutkintonimikeUri == null) {
             this.tutkintonimikes.clear();
         } else {
-            final KoodistoUri koodistoUri = new KoodistoUri(tutkintonimike);
+            final KoodistoUri koodistoUri = new KoodistoUri(tutkintonimikeUri);
             EntityUtils.keepSelectedKoodistoUri(this.tutkintonimikes, koodistoUri);
             tutkintonimikes.add(koodistoUri);
         }
@@ -299,7 +301,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     /**
      * Tutkintonimike Koodisto uri:na.
      *
-     * @see #getTutkintonimike()
+     * @see #getTutkintonimikeUri()
      * @param koodistoUris
      */
     public void setTutkintonimikes(Set<KoodistoUri> koodistoUris) {

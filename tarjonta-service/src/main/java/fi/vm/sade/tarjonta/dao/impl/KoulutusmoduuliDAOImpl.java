@@ -31,7 +31,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -43,7 +42,6 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
@@ -51,6 +49,7 @@ import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -147,7 +146,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (criteria.getKoulutustyyppi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppi.eq(criteria.getKoulutustyyppi().value()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.rowType.eq(criteria.getKoulutustyyppi()));
         }
 
         if (criteria.getLukiolinjaKoodiUri() != null) {
@@ -288,13 +287,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
-        List<String> kkKoulutusAstes = new ArrayList<String>();
+        List<KoulutusmoduuliRowType> rowTypes = new ArrayList<KoulutusmoduuliRowType>();
 
-        kkKoulutusAstes.add(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
-        kkKoulutusAstes.add(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value());
-        kkKoulutusAstes.add(KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value());
+        rowTypes.add(KoulutusmoduuliRowType.KORKEAKOULUTUS);
+        rowTypes.add(KoulutusmoduuliRowType.AMMATTIKORKEAKOULUTUS);
+        rowTypes.add(KoulutusmoduuliRowType.YLIOPISTOKOULUTUS);
 
-        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppi.notIn(kkKoulutusAstes));
+        whereExpr = QuerydslUtils.and(whereExpr, komo.rowType.notIn(rowTypes));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {

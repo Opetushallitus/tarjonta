@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys.ValintaTyyppi;
+import fi.vm.sade.tarjonta.service.enums.KoulutusmoduuliRowType;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import java.util.Date;
@@ -37,7 +38,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under test is KoulutusDAO. TOOD: merge tests too.
+ * KoulutusmoduuliDAO and KoulutusmoduuliTotetusDAO were merged hence dao under
+ * test is KoulutusDAO. TOOD: merge tests too.
  */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -184,32 +186,29 @@ public class KoulutusmoduuliDAOTest {
 
         // this should be the case
         //assertEquals(originalOid, loaded.getOid());
-        
-
     }
-    
+
     @Test
     public void testFindParentKomo() {
         String KOULUTUSKOODI = "uri:koulutuskoodi";
         String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
-        
+
         //Create tutkinto (parent)
         Koulutusmoduuli tutkinto = fixtures.createTutkintoOhjelma(KoulutusmoduuliTyyppi.TUTKINTO);
         tutkinto.setKoulutusUri(KOULUTUSKOODI);
         tutkinto.setKoulutusohjelmaUri(null);
-        
+
         tutkinto = this.koulutusmoduuliDAO.insert(tutkinto);
-        
+
         String parentOid = tutkinto.getOid();
-        
+
         //Create koulutusohjelma (child)
         Koulutusmoduuli koulutusohjelma = fixtures.createTutkintoOhjelma(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         koulutusohjelma.setKoulutusUri(KOULUTUSKOODI);
         koulutusohjelma.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI1);
-        
+
         koulutusohjelma = this.koulutusmoduuliDAO.insert(koulutusohjelma);
-        
-        
+
         //Create hierarchy between the above too komos
         KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys();
         sisaltyvyys.setYlamoduuli(tutkinto);
@@ -218,35 +217,32 @@ public class KoulutusmoduuliDAOTest {
         this.sisaltyvyysDAO.insert(sisaltyvyys);
         tutkinto.addSisaltyvyys(sisaltyvyys);
         this.koulutusmoduuliDAO.update(tutkinto);
-        
-        
+
         Koulutusmoduuli resultKomo = this.koulutusmoduuliDAO.findParentKomo(koulutusohjelma);
         assertTrue(resultKomo.getOid().equals(parentOid));
     }
-    
 
     @Test
     public void testSearchKoulutusmoduulit() {
-    	String KOULUTUSKOODI = "uri:koulutuskoodi";
-    	String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
-    	String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
+        String KOULUTUSKOODI = "uri:koulutuskoodi";
+        String KOULUTUSOHJELMAKOODI1 = "uri:koulutusohjelmakoodi1";
+        String KOULUTUSOHJELMAKOODI2 = "uri:koulutusohjelmakoodi2";
 
-    	//KOMO1
-    	Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
-    	koulutus.setKoulutusUri(KOULUTUSKOODI);
-    	koulutus.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI1);
+        //KOMO1
+        Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
+        koulutus.setKoulutusUri(KOULUTUSKOODI);
+        koulutus.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI1);
         koulutusmoduuliDAO.insert(koulutus);
 
         //KOMO2
         koulutus = fixtures.createTutkintoOhjelma();
         koulutus.setKoulutusUri(KOULUTUSKOODI);
-    	koulutus.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI2);
+        koulutus.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI2);
         koulutusmoduuliDAO.insert(koulutus);
 
-    	//KOMO3o
-    	koulutus = fixtures.createTutkintoOhjelma();
+        //KOMO3o
+        koulutus = fixtures.createTutkintoOhjelma();
         koulutusmoduuliDAO.insert(koulutus);
-
 
         SearchCriteria criteria = new SearchCriteria();
         criteria.setKoulutusKoodi(KOULUTUSKOODI);
@@ -266,34 +262,34 @@ public class KoulutusmoduuliDAOTest {
         assertTrue(komos.size() > 2);
 
     }
-    
+
     @Test
     public void testFindLukiolinja() {
         String KOULUTUSKOODI = "uri:yotutkinto";
         String LUKIOLINJA1 = "uri:lukiolinja1";
         String LUKIOLINJA2 = "uri:lukiolinja2";
-        
+
         //KOMO1
         Koulutusmoduuli koulutus = fixtures.createTutkintoOhjelma();
-        koulutus.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        koulutus.setRowType(KoulutusmoduuliRowType.LUKIOKOULUTUS);
         koulutus.setKoulutusUri(KOULUTUSKOODI);
         koulutus.setLukiolinjaUri(LUKIOLINJA1);
         koulutus.setKoulutusohjelmaUri(null);
         koulutusmoduuliDAO.insert(koulutus);
-        
+
         //KOMO2
         Koulutusmoduuli koulutus1 = fixtures.createTutkintoOhjelma();
-        koulutus1.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        koulutus1.setRowType(KoulutusmoduuliRowType.LUKIOKOULUTUS);
         koulutus1.setKoulutusUri(KOULUTUSKOODI);
         koulutus1.setLukiolinjaUri(LUKIOLINJA2);
         koulutus1.setKoulutusohjelmaUri(null);
         koulutusmoduuliDAO.insert(koulutus1);
-        
+
         Koulutusmoduuli res = koulutusmoduuliDAO.findLukiolinja(KOULUTUSKOODI, LUKIOLINJA1);
         assertTrue(res.getLukiolinjaUri().equals(LUKIOLINJA1));
-        
+
         res = koulutusmoduuliDAO.findLukiolinja(KOULUTUSKOODI, LUKIOLINJA2);
-        assertTrue(res.getLukiolinjaUri().equals(LUKIOLINJA2)); 
+        assertTrue(res.getLukiolinjaUri().equals(LUKIOLINJA2));
     }
 
     private void flush() {
@@ -352,4 +348,3 @@ public class KoulutusmoduuliDAOTest {
     }
 
 }
-
