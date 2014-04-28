@@ -86,6 +86,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
+   
     @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
 

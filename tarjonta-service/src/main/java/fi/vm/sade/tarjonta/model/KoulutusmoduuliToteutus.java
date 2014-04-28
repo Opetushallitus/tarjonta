@@ -51,6 +51,7 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import static fi.vm.sade.tarjonta.model.Koulutusmoduuli.TABLE_NAME;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
@@ -200,8 +201,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Integer alkamisVuosi;
 
     /**
-     * Koodisto uri. See accessors for more info.
-     * Populoidaan aina.
+     * Koodisto uri. See accessors for more info. Populoidaan aina.
      */
     @Column(name = "alkamiskausi_uri")
     private String alkamiskausiUri;
@@ -229,6 +229,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     @Column(name = "suunniteltukesto_arvo")
     private String suunniteltukestoArvo;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
@@ -966,6 +971,41 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void filterHTMLFields() {
         for (MonikielinenTeksti teksti : tekstit.values()) {
             filter(teksti);
+        }
+    }
+
+    /**
+     * @return the tutkintonimikes
+     */
+    public Set<KoodistoUri> getTutkintonimikes() {
+        return tutkintonimikes;
+    }
+
+    /**
+     * @param tutkintonimikes the tutkintonimikes to set
+     */
+    public void setTutkintonimikes(Set<KoodistoUri> tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
+    }
+
+    public String getTutkintonimike() {
+        if (this.tutkintonimikes.size() > 1) {
+            throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
+        } else if (tutkintonimikes.isEmpty()) {
+            //at least parent komo's tutkintonimike can be null. 
+            return null;
+        }
+
+        return tutkintonimikes.iterator().next().getKoodiUri();
+    }
+
+    public void setTutkintonimike(String tutkintonimike) {
+        if (tutkintonimike == null) {
+            this.tutkintonimikes.clear();
+        } else {
+            final KoodistoUri koodistoUri = new KoodistoUri(tutkintonimike);
+            EntityUtils.keepSelectedKoodistoUri(this.tutkintonimikes, koodistoUri);
+            tutkintonimikes.add(koodistoUri);
         }
     }
 

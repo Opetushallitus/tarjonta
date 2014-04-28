@@ -54,6 +54,18 @@ ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN lukiolinja_uri varchar(255);
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN opintoala_uri varchar(255);
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutustyyppi_uri varchar(255); --for future use
 
+create table koulutusmoduuli_toteutus_tutkintonimike (
+	koulutusmoduuli_toteutus_id int8 not null,
+	koodi_uri varchar(255) not null,
+	primary key (koulutusmoduuli_toteutus_id, koodi_uri)
+);
+
+alter table koulutusmoduuli_toteutus_tutkintonimike 
+        add constraint FK1FE24A872566EBFA 
+        foreign key (koulutusmoduuli_toteutus_id) 
+        references koulutusmoduuli_toteutus;
+
+
 --KOMOTO ROLLBACK
 --ALTER TABLE koulutusmoduuli_toteutus RENAME COLUMN opintojen_laajuusyksikko_uri TO opintojen_laajuus_yksikko;
 --ALTER TABLE koulutusmoduuli_toteutus RENAME COLUMN opintojen_laajuusarvo TO opintojen_laajuus_arvo;
@@ -74,3 +86,5 @@ ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutustyyppi_uri varchar(255);
 --ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN lukiolinja_uri;
 --ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN opintoala_uri;
 --ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN koulutustyyppi_uri;
+
+--DROP TABLE koulutusmoduuli_toteutus_tutkintonimike CASCADE;
