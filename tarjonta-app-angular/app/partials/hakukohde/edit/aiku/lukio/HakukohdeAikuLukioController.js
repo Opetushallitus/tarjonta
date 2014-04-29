@@ -1,6 +1,6 @@
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
+//var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
 
-
+var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('HakukohdeAikuLukioEditController',
     function($scope,
              $q,
@@ -28,7 +28,7 @@ app.controller('HakukohdeAikuLukioEditController',
 
 
 
-        var filterHakuWithAikaAndKohdejoukko = function(hakus) {
+        var filterHakuWithKohdejoukko = function(hakus) {
             console.log('FILTERING HAKUS : ', hakus);
             var filteredHakus = [];
             angular.forEach(hakus,function(haku){
@@ -51,8 +51,32 @@ app.controller('HakukohdeAikuLukioEditController',
 
         };
 
+        var filterHakuWithHakutapa = function(hakus) {
+
+            var filteredHakus = [];
+
+            angular.forEach(hakus,function(haku) {
+
+                 if (haku.hakutapaUri.indexOf(window.CONFIG.app['haku.hakutapa.erillishaku.uri']) != -1) {
+
+                     if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                         filteredHakus.push(haku);
+                     }
+
+                 } else {
+                     filteredHakus.push(haku);
+                 }
+
+            });
+
+            return filteredHakus;
+
+        };
+
+
+
         var filterHakus = function(hakus) {
-            return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
+            return  $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
 
         };
 

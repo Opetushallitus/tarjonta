@@ -610,6 +610,29 @@ app.controller('HakukohdeRoutingController', ['$scope',
         };
 
 
+        $scope.checkIfFirstArraysOneElementExistsInSecond = function(array1,array2) {
+
+            angular.forEach(array1,function(element){
+               if (array2.indexOf(element) != -1) {
+                   return true;
+               }
+            });
+
+        };
+
+
+        var checkForOph = function(hakuOrgs) {
+
+            angular.forEach(hakuOrgs,function(hakuOrg){
+
+               if (hakuOrg === window.CONFIG.app['haku.hakutapa.erillishaku.uri']) {
+                   return true;
+               }
+
+            });
+
+        }
+
         /*
 
          -----> Retrieve all hakus
