@@ -14,11 +14,6 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 	var henkilo = $resource(urlHaeTiedot,{},{cache:true,get:{method:"GET", withCredentials:true}});
 	var organisaatioHenkilo = $resource(urlHaeOrganisaatioHenkiloTiedot,{},{cache:true,get:{isArray: true, method:"GET", withCredentials:true}});
 
-//        $log.info("XXXXXXXXXXX ", baseUrl);
-//        $log.info("XXXXXXXXXXX ", urlEtsi);
-//        $log.info("XXXXXXXXXXX ", urlHaeTiedot);
-//        $log.info("XXXXXXXXXXX ", urlHaeOrganisaatioHenkiloTiedot);
-
             /**
              * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
              *
@@ -42,17 +37,14 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
 	    */
 	   etsi: function(hakuehdot){
 		   var ret = $q.defer();
-
-           $log.warn("etsi() - DISABLED", hakuehdot);
-
-		   //, XXX disabloitu koska henkilöhakupalvelu ei kerkiä mukaan
-//	       $log.debug('haetaan yhteyshenkiot, q:', hakuehdot);
-//	       henkHaku.get(hakuehdot, function(result){
-//	    	   ret.resolve(result);
-//	       }, function(err){
-//	    	   $log.debug("Error loading data", err);
-//	       });
-		   ret.resolve({});
+	       henkHaku.get(hakuehdot, function(result){
+	    	   ret.resolve(result.results);
+	       }, function(err){
+	         disableSystemErrorDialog();
+	         $log.debug("Error loading data", err);
+	    	 ret.resolve([]);
+	       });
+		   
 	       return ret.promise;
 	   },
 

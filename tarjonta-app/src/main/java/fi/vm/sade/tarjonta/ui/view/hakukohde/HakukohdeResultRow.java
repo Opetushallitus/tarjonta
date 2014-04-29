@@ -289,8 +289,8 @@ public class HakukohdeResultRow extends HorizontalLayout {
                         .equals(hakukohde.getHakutapaKoodi().getUri())))) {
             hakuStarted = true;
             
-            System.out.println("" + hakukohde.getHakutyyppiUri());
-            System.out.println("" + hakukohde.getHakutapaKoodi().getUri());
+//            System.out.println("" + hakukohde.getHakutyyppiUri());
+//            System.out.println("" + hakukohde.getHakutapaKoodi().getUri());
             
         }
 
