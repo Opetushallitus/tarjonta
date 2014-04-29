@@ -4,7 +4,9 @@
 
 var app = angular.module('app.edit.ctrl');
 
-app.controller(
+// Yhteyshenkilö
+app
+    .controller(
         'EditYhteyshenkiloCtrl',
         [
             '$scope',
@@ -18,29 +20,31 @@ app.controller(
             function($scope, $compile, YhteyshenkiloService, converter,
                 debounce, $routeParams, $log, $route) {
 
-              $scope.editYhModel={};
-              var orgOid=$route.current.locals.koulutusModel.result.organisaatio!=undefined?$route.current.locals.koulutusModel.result.organisaatio.oid: $routeParams.org;
+              $scope.editYhModel = {};
+              var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ? $route.current.locals.koulutusModel.result.organisaatio.oid
+                  : $routeParams.org;
 
-              if(!orgOid) {
+              if (!orgOid) {
                 $log.error("organisaatio Oid is unknown!!");
               }
-              
+
               $log = $log.getInstance("EditYhteyshenkiloCtrl");
               $log.debug("init");
-              
-              $scope.yhteyshenkilot=[];
-              
-              
+
+              $scope.yhteyshenkilot = [];
+
               YhteyshenkiloService.etsi({
                 org : [ orgOid ]
-              }).then(function(yhteyshenkilot) {
-                if (yhteyshenkilot !== undefined) {
-                  for(var i=0;i<yhteyshenkilot.length;i++){
-                    yhteyshenkilot[i].nimi = yhteyshenkilot[i].etunimet + " " + yhteyshenkilot[i].sukunimi;  
-                  }
-                  $scope.yhteyshenkilot = yhteyshenkilot;
-                }
-              });
+              }).then(
+                  function(yhteyshenkilot) {
+                    if (yhteyshenkilot !== undefined) {
+                      for ( var i = 0; i < yhteyshenkilot.length; i++) {
+                        yhteyshenkilot[i].nimi = yhteyshenkilot[i].etunimet
+                            + " " + yhteyshenkilot[i].sukunimi;
+                      }
+                      $scope.yhteyshenkilot = yhteyshenkilot;
+                    }
+                  });
 
               /*
                * Clearing of the contact person data.
@@ -55,11 +59,10 @@ app.controller(
                * Sets the contact person to be the one that the user selected
                * from the autocomplete field.
                */
-              $scope.editYhModel.selectHenkilo = function (selectedUser) {
+              $scope.editYhModel.selectHenkilo = function(selectedUser) {
                 var to = $scope.uiModel.contactPerson;
                 $scope.setValues(to, selectedUser);
               };
-
 
               /**
                * kopioi data modeliin
@@ -75,16 +78,18 @@ app.controller(
                           // console.log("henkilo data", data);
                           var yhteystiedotRyhma = data.yhteystiedotRyhma;
                           if (yhteystiedotRyhma.length > 0) {
-                            for(var r=0;r<yhteystiedotRyhma.length;r++) {
-                            for ( var i = 0; i < yhteystiedotRyhma[r].yhteystiedot.length; i++) {
-                              var yt = yhteystiedotRyhma[r].yhteystiedot[i];
-                              if ("YHTEYSTIETO_PUHELINNUMERO" == yt.yhteystietoTyyppi && yt.yhteystietoArvo) {
-                                to.puhelin = yt.yhteystietoArvo;
-                              } else if ("YHTEYSTIETO_SAHKOPOSTI" == yt.yhteystietoTyyppi && yt.yhteystietoArvo) {
-                                to.sahkoposti = yt.yhteystietoArvo;
+                            for ( var r = 0; r < yhteystiedotRyhma.length; r++) {
+                              for ( var i = 0; i < yhteystiedotRyhma[r].yhteystiedot.length; i++) {
+                                var yt = yhteystiedotRyhma[r].yhteystiedot[i];
+                                if ("YHTEYSTIETO_PUHELINNUMERO" == yt.yhteystietoTyyppi
+                                    && yt.yhteystietoArvo) {
+                                  to.puhelin = yt.yhteystietoArvo;
+                                } else if ("YHTEYSTIETO_SAHKOPOSTI" == yt.yhteystietoTyyppi
+                                    && yt.yhteystietoArvo) {
+                                  to.sahkoposti = yt.yhteystietoArvo;
+                                }
                               }
                             }
-                          }
                           }
 
                         });
@@ -105,53 +110,45 @@ app.controller(
 
             } ]);
 
-app.controller(
+// ECTS
+app
+    .controller(
         'EditYhteyshenkiloECTSCtrl',
         [
             '$scope',
             '$compile',
             'OrganisaatioService',
             'KoulutusConverterFactory',
-            'debounce',
             '$routeParams',
             '$log',
-            function($scope, $compile, YhteyshenkiloService, converter,
-                debounce, $routeParams, $log) {
+            '$route',
+            function($scope, $compile, OrganisaatioService, converter,
+                $routeParams, $log, $route) {
+
+              $scope.editECTSModel = {};
+              var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ? $route.current.locals.koulutusModel.result.organisaatio.oid
+                  : $routeParams.org;
 
               $log = $log.getInstance("EditYhteyshenkiloECTSCtrl");
               $log.debug("init");
 
-              $scope.editYhModel = {
-                data : []
-              };
-
-              $scope.getOrgOid = function() {
-                var orgOid = !angular.isUndefined($scope.koulutusModel)
-                    && !angular.isUndefined($scope.koulutusModel.result)
-                    && !angular
-                        .isUndefined($scope.koulutusModel.result.organisaatio) ? $scope.koulutusModel.result.organisaatio.oid
-                    : $routeParams.org;
-                console.log("orgOid", orgOid);
-                return orgOid;
-              };
-
-              var orgOid = $scope.getOrgOid();
-
-              console.log("searching...");
-              // TODO ORG servicestä
-              YhteyshenkiloService.etsi({
-                org : [ orgOid ]
-              }).then(function(data) {
+//              console.log("haetaan ects...");
+              OrganisaatioService.getECTS(orgOid).then(function(data) {
+                console.log("ects-data:", data);
                 if (data !== undefined) {
-                  $scope.editYhModel.data = data.results;
-                  $scope.editYhModel.henkilotFetched = true;
+                  $scope.ects = {
+                    nimet : data.metadata.hakutoimistoEctsNimi,
+                    sahkoposti : data.metadata.hakutoimistoEctsEmail,
+                    puhelin : data.metadata.hakutoimistoEctsPuhelin,
+                    titteli : data.metadata.hakutoimistoEctsTehtavanimike
+                  };
                 }
               });
 
               /*
                * Clearing of the ects coordinator data.
                */
-              $scope.editYhModel.clearEctsYh = function() {
+              $scope.editECTSModel.clearEctsYh = function() {
                 $scope.uiModel.ectsCoordinator = {
                   henkiloTyyppi : 'ECTS_KOORDINAATTORI'
                 };
@@ -161,51 +158,11 @@ app.controller(
                * Sets the ects coordinator to be the one that the user selected
                * from the autocomplete field.
                */
-              $scope.editYhModel.selectEctsHenkilo = function(selectedUser) {
+              $scope.editECTSModel.selectEctsHenkilo = function(selectedUser) {
                 console.log("selecting ectshenkilö");
                 var to = $scope.uiModel.ectsCoordinator;
-                $scope.setValues(to, selectedUser);
-              };
-
-              /**
-               * kopioi data modeliin
-               */
-              $scope.setValues = function(to, selectedUser) {
-                var orgOid = $scope.getOrgOid();
-
-                var henkiloOid = selectedUser.oidHenkilo;
-
-                YhteyshenkiloService
-                    .haeHenkilo(henkiloOid)
-                    .then(
-                        function(data) {
-                          // console.log("henkilo data", data);
-                          var yhteystiedotRyhma = data.yhteystiedotRyhma;
-                          if (yhteystiedotRyhma.length > 0) {
-                            for ( var i = 0; i < yhteystiedotRyhma[0].yhteystiedot.length; i++) {
-                              var yt = yhteystiedotRyhma[0].yhteystiedot[i];
-                              if ("YHTEYSTIETO_PUHELINNUMERO" == yt.yhteystietoTyyppi) {
-                                to.puhelin = yt.yhteystietoArvo;
-                              } else if ("YHTEYSTIETO_SAHKOPOSTI" == yt.yhteystietoTyyppi) {
-                                to.sahkoposti = yt.yhteystietoArvo;
-                              }
-                            }
-                          }
-
-                        });
-
-                // tehtavanimike
-                YhteyshenkiloService.haeOrganisaatiohenkilo(henkiloOid).then(
-                    function(data) {
-                      for ( var i = 0; i < data.length; i++) {
-                        if (data[i].organisaatioOid == orgOid) {
-                          to.titteli = data[i].tehtavanimike;
-                        }
-                      }
-                    });
-
-                to.etunimet = selectedUser.etunimet;
-                to.sukunimi = selectedUser.sukunimi;
+                angular.copy($scope.ects, to);
+                to.henkiloTyyppi ='ECTS_KOORDINAATTORI';
               };
 
             } ]);
