@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
@@ -87,7 +87,7 @@ public class KoulutusResourceTest {
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
         Koulutusmoduuli komo = new Koulutusmoduuli();
-        komo.setRowType(ModuleRowType.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
         komoto1.setKoulutusmoduuli(komo);
         Hakukohde hk = getHakukohde();
         komoto1.addHakukohde(hk);

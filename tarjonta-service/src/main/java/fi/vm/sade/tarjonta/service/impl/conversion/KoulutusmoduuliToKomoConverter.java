@@ -61,7 +61,7 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setKoulutusAsteUri(s.getKoulutusasteUri());
         // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
         t.setKoulutusOhjelmaKoodiUri(s.getKoulutusohjelmaUri());
-        t.setKoulutusTyyppiUri(s.getRowType().name()); // TODO onko uri?
+        t.setKoulutusTyyppiUri(s.getKoulutustyyppiEnum().name()); // TODO onko uri?
         t.setLaajuusArvoUri(s.getOpintojenLaajuusarvoUri()); //koodi uri
         if (s.getOpintojenLaajuusarvoUri() != null) {
             final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(s.getOpintojenLaajuusarvoUri());

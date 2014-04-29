@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.tarjonta.model.util.KoulutusTreeWalker;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import javax.persistence.CollectionTable;
@@ -89,12 +89,10 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
 
-    @Column(name = "ulkoinentunniste")
-    private String ulkoinenTunniste;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "row_type")
-    private fi.vm.sade.tarjonta.service.enums.ModuleRowType rowType;
+    @Column(name = "koulutustyyppi")
+    private fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum koulutustyyppiEnum;
 
     @Column(name = "oppilaitostyyppi", length = 500)
     private String oppilaitostyyppi;
@@ -112,7 +110,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Enumerated(EnumType.STRING)
     @Column(name = "moduulityyppi")
     private KoulutusmoduuliTyyppi moduuliTyyppi;
-    /**
+    /**ulkoinenTunniste
      * Optional Koodisto uri. See accessors for more info.
      */
     @Column(name = "kandi_koulutus_uri")
@@ -260,12 +258,12 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         this.moduuliTyyppi = moduuliTyyppi;
     }
 
-    public ModuleRowType getRowType() {
-        return rowType;
+    public KoulutustyyppiEnum getKoulutustyyppiEnum() {
+        return koulutustyyppiEnum;
     }
 
-    public void setRowType(ModuleRowType rowType) {
-        this.rowType = rowType;
+    public void setKoulutustyyppiEnum(KoulutustyyppiEnum koulutustyyppiEnum) {
+        this.koulutustyyppiEnum = koulutustyyppiEnum;
     }
 
     /**
@@ -308,24 +306,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         this.tutkintonimikes = koodistoUris;
     }
 
-    /**
-     * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa
-     * jarjestelmassa. Esim. jos tama koulutusmoduuli on tuoto era-ajona
-     * toisesta jarjestelmasta. Sisallon muotoon ei oteta kantaa.
-     *
-     * @return
-     */
-    public String getUlkoinenTunniste() {
-        return ulkoinenTunniste;
-    }
-
-    /**
-     * @see #getUlkoinenTunniste()
-     * @param ulkoinenTunniste
-     */
-    public void setUlkoinenTunniste(String ulkoinenTunniste) {
-        this.ulkoinenTunniste = ulkoinenTunniste;
-    }
 
     /**
      * Koulutuksen rakenteen kuvaus tekstina mikali rakenteellista tieto ei ole.

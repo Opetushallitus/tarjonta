@@ -29,7 +29,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
@@ -315,7 +315,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
     private KoulutusmoduuliToteutus createKomotoKomo(String komotoOid, String orgOid) {
         Koulutusmoduuli komo = tarjontaFixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo.setOid("komo_oid_of_" + komotoOid);
-        komo.setRowType(ModuleRowType.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
         KoulutusmoduuliToteutus kt = tarjontaFixtures.createTutkintoOhjelmaToteutusWithTarjoajaOid(orgOid);
         kt.setId(1l);
         kt.setOid(komotoOid);

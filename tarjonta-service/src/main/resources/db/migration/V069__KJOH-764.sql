@@ -11,23 +11,23 @@ ALTER TABLE koulutusmoduuli RENAME COLUMN laajuusarvo TO opintojen_laajuusarvo_u
 ALTER TABLE koulutusmoduuli RENAME COLUMN laajuusyksikko TO opintojen_laajuusyksikko_uri;
 ALTER TABLE koulutusmoduuli RENAME COLUMN opintoala TO opintoala_uri;
 ALTER TABLE koulutusmoduuli RENAME COLUMN kandi_koulutuskoodi TO kandi_koulutus_uri;
-ALTER TABLE koulutusmoduuli ADD COLUMN row_type varchar(64);
 
 --KOMO other stuff
 ALTER TABLE koulutusmoduuli ADD COLUMN koulutustyyppi_uri varchar(255); --for future use
 ALTER TABLE koulutusmoduuli DROP COLUMN tutkintonimike; --unused field
+ALTER TABLE koulutusmoduuli ALTER COLUMN koulutustyyppi TYPE varchar(64);
 
-UPDATE koulutusmoduuli SET row_type='AMMATILLINEN_PERUSKOULUTUS' WHERE koulutustyyppi='AmmatillinenPeruskoulutus';
-UPDATE koulutusmoduuli SET row_type='LUKIOKOULUTUS' WHERE koulutustyyppi='Lukiokoulutus';
-UPDATE koulutusmoduuli SET row_type='KORKEAKOULUTUS' WHERE koulutustyyppi='Korkeakoulutus';
-UPDATE koulutusmoduuli SET row_type='KORKEAKOULUTUS' WHERE koulutustyyppi='Ammattikorkeakoulutus';
-UPDATE koulutusmoduuli SET row_type='KORKEAKOULUTUS' WHERE koulutustyyppi='Yliopistokoulutus';
-UPDATE koulutusmoduuli SET row_type='PERUSOPETUKSEN_LISAOPETUS' WHERE koulutustyyppi='PerusopetuksenLisaopetus';
-UPDATE koulutusmoduuli SET row_type='VALMENTAVA_JA_KUNTOUTTAVA_OPETUS' WHERE koulutustyyppi='ValmentavaJaKuntouttavaOpetus';
-UPDATE koulutusmoduuli SET row_type='AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='AmmOhjaavaJaValmistavaKoulutus';
-UPDATE koulutusmoduuli SET row_type='MAAHANM_AMM_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='MaahanmAmmValmistavaKoulutus';
-UPDATE koulutusmoduuli SET row_type='MAAHANM_LUKIO_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='MaahanmLukioValmistavaKoulutus';
-UPDATE koulutusmoduuli SET row_type='VAPAAN_SIVISTYSTYON_KOULUTUS' WHERE koulutustyyppi='VapaanSivistystyonKoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='AMMATILLINEN_PERUSKOULUTUS' WHERE koulutustyyppi='AmmatillinenPeruskoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='LUKIOKOULUTUS' WHERE koulutustyyppi='Lukiokoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='KORKEAKOULUTUS' WHERE koulutustyyppi='Korkeakoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='KORKEAKOULUTUS' WHERE koulutustyyppi='Ammattikorkeakoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='KORKEAKOULUTUS' WHERE koulutustyyppi='Yliopistokoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='PERUSOPETUKSEN_LISAOPETUS' WHERE koulutustyyppi='PerusopetuksenLisaopetus';
+UPDATE koulutusmoduuli SET koulutustyyppi='VALMENTAVA_JA_KUNTOUTTAVA_OPETUS' WHERE koulutustyyppi='ValmentavaJaKuntouttavaOpetus';
+UPDATE koulutusmoduuli SET koulutustyyppi='AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='AmmOhjaavaJaValmistavaKoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='MAAHANM_AMM_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='MaahanmAmmValmistavaKoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='MAAHANM_LUKIO_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='MaahanmLukioValmistavaKoulutus';
+UPDATE koulutusmoduuli SET koulutustyyppi='VAPAAN_SIVISTYSTYON_KOULUTUS' WHERE koulutustyyppi='VapaanSivistystyonKoulutus';
 
 --KOMO ROLLBACK
 --ALTER TABLE koulutusmoduuli DROP COLUMN koulutustyyppi_uri;

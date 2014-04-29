@@ -22,7 +22,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -93,20 +93,20 @@ public class KoulutusmoduuliDAOImplTest {
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOppilaitostyyppi(sep + "uri_1" + sep + SEARCH_BY_URI_B + sep + SEARCH_BY_URI_A + sep);
         komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
-        komo1.setRowType(ModuleRowType.AMMATILLINEN_PERUSKOULUTUS);
+        komo1.setKoulutustyyppiEnum(KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
 
         persist(komo1);
 
         komo2 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo2.setOppilaitostyyppi(sep + SEARCH_BY_URI_C + sep);
         komo2.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
-        komo2.setRowType(ModuleRowType.AMMATILLINEN_PERUSKOULUTUS);
+        komo2.setKoulutustyyppiEnum(KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
         persist(komo2);
 
         komo3 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo3.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
         komo3.setLukiolinjaUri(LUKIOLINJA_URI);
-        komo3.setRowType(ModuleRowType.LUKIOKOULUTUS);
+        komo3.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
 
         persist(komo3);
     }
@@ -171,14 +171,14 @@ public class KoulutusmoduuliDAOImplTest {
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
-        criteria.setKoulutustyyppi(ModuleRowType.AMMATILLINEN_PERUSKOULUTUS);
+        criteria.setKoulutustyyppi(KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
         result = instance.search(criteria);
         assertEquals(1, result.size());
 
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
-        criteria.setKoulutustyyppi(ModuleRowType.LUKIOKOULUTUS);
+        criteria.setKoulutustyyppi(KoulutustyyppiEnum.LUKIOKOULUTUS);
 
         result = instance.search(criteria);
         assertEquals(0, result.size());
@@ -191,7 +191,7 @@ public class KoulutusmoduuliDAOImplTest {
         komo1.setOid("xss-1");
         komo1.setOppilaitostyyppi("zz");
         komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
-        komo1.setRowType(ModuleRowType.AMMATILLINEN_PERUSKOULUTUS);
+        komo1.setKoulutustyyppiEnum(KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
         
         komo1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
         komo1.getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, new MonikielinenTeksti("fi", "jatko-opinto"));

@@ -191,9 +191,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "hinta")
     private BigDecimal hinta;
 
-    @Column(name = "ulkoinentunniste")
-    private String ulkoinenTunniste;
-
     /**
      * Populoidaan aina.
      */
@@ -589,22 +586,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return suunniteltukestoYksikkoUri;
     }
 
-    /**
-     * Tunniste jolla koulutuksen tarjoaja yksiloi kyseisen koulutuksen.
-     *
-     * @return
-     */
-    public String getUlkoinenTunniste() {
-        return ulkoinenTunniste;
-    }
-
-    /**
-     * @see #getUlkoinenTunniste()
-     * @param ulkoinenTunniste
-     */
-    public void setUlkoinenTunniste(String ulkoinenTunniste) {
-        this.ulkoinenTunniste = ulkoinenTunniste;
-    }
+ 
 
     /**
      * Sanallinen kuvaus arviointikriteereistä.

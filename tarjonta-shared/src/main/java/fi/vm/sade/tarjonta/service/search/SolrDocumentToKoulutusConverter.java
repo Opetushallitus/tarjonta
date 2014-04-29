@@ -103,7 +103,13 @@ public class SolrDocumentToKoulutusConverter {
 
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
         if (koulutusDoc.getFieldValue(KOULUTUSTYYPPI) != null) {
-            return KoulutusasteTyyppi.valueOf("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+            try {
+                //1st, also catch the conversion failed exception.
+                return KoulutusasteTyyppi.valueOf("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+            } catch (IllegalArgumentException e) {
+                //2nd try. Throw an exception if not found .
+                return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+            }
         } else {
             return null;
         }

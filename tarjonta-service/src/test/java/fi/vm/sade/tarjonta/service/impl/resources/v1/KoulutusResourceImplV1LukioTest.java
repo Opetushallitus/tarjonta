@@ -166,7 +166,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEqualDtoKoodi(LAAJUUSYKSIKKO, result.getOpintojenLaajuusyksikko());
         assertEqualDtoKoodi(TUTKINTONIMIKE, result.getTutkintonimike());
         assertEqualDtoKoodi(KOULUTUSLAJI, result.getKoulutuslaji());
-        assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());  
+        assertEqualDtoKoodi(TUTKINTO, result.getTutkinto());
 
         assertEquals(TarjontaTila.JULKAISTU, result.getTila());
         assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, result.getKoulutusmoduuliTyyppi());

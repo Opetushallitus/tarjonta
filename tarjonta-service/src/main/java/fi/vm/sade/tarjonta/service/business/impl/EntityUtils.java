@@ -42,7 +42,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -362,7 +362,7 @@ public final class EntityUtils {
     public static KoulutusmoduuliKoosteTyyppi copyFieldsToKoulutusmoduuliKoosteTyyppiSimple(final Koulutusmoduuli komo) {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null.");
         Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(komo.getRowType(), "Koulutusaste string object cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "Koulutusaste string object cannot be null.");
         Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
@@ -370,7 +370,7 @@ public final class EntityUtils {
          * Required type data:
          */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
-        tyyppi.setKoulutustyyppi(komo.getRowType().getKoulutusasteTyyppi());
+        tyyppi.setKoulutustyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
 
         /*
          * OID and other keys:
@@ -439,7 +439,7 @@ public final class EntityUtils {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli child object cannot be null.");
         Preconditions.checkNotNull(parentKomo, "Koulutusmoduuli parent object cannot be null.");
         Preconditions.checkNotNull(komo.getModuuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(komo.getRowType(), "Koulutusaste string object cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "Koulutusaste string object cannot be null.");
         Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         KoulutusmoduuliKoosteTyyppi tyyppi = new KoulutusmoduuliKoosteTyyppi();
 
@@ -448,7 +448,7 @@ public final class EntityUtils {
          * Required type data:
          */
         tyyppi.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(komo.getModuuliTyyppi().name()));
-        tyyppi.setKoulutustyyppi(parentKomo.getRowType().getKoulutusasteTyyppi());
+        tyyppi.setKoulutustyyppi(parentKomo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
         /*
          * OID and other keys:
          */
@@ -499,7 +499,7 @@ public final class EntityUtils {
          * Required type data:
          */
         target.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
-        target.setRowType(ModuleRowType.fromEnum(source.getKoulutustyyppi()));
+        target.setKoulutustyyppiEnum(KoulutustyyppiEnum.fromEnum(source.getKoulutustyyppi()));
         /*
          * OID and other keys:
          */
@@ -522,7 +522,7 @@ public final class EntityUtils {
         target.setNqfUri(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
         target.setNimi(copyFields(source.getNimi(), target.getNimi()));
-        target.setRowType(ModuleRowType.fromEnum(source.getKoulutustyyppi()));
+        target.setKoulutustyyppiEnum(KoulutustyyppiEnum.fromEnum(source.getKoulutustyyppi()));
 
         return target;
     }

@@ -116,6 +116,9 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     @Column(name = "opintoala_uri")
     private String opintoalaUri;
 
+    @Column(name = "ulkoinentunniste")
+    private String ulkoinenTunniste;
+
     @PreUpdate
     protected void beforeUpdate() {
         updated = new Date();
@@ -410,6 +413,25 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
      */
     public void setOpintojenLaajuusarvoUri(String opintojenLaajuusarvoUri) {
         this.opintojenLaajuusarvoUri = opintojenLaajuusarvoUri;
+    }
+
+    /**
+     * Ulkoinen tunniste on koulutusmoduulin yksiloiva tunniste toisessa
+     * jarjestelmassa. Esim. jos tama koulutusmoduuli on tuoto era-ajona
+     * toisesta jarjestelmasta. Sisallon muotoon ei oteta kantaa.
+     *
+     * @return
+     */
+    public String getUlkoinenTunniste() {
+        return ulkoinenTunniste;
+    }
+
+    /**
+     * @see #getUlkoinenTunniste()
+     * @param ulkoinenTunniste
+     */
+    public void setUlkoinenTunniste(String ulkoinenTunniste) {
+        this.ulkoinenTunniste = ulkoinenTunniste;
     }
 
 }

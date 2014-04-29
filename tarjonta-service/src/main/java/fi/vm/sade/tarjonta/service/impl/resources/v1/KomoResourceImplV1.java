@@ -22,7 +22,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKomoRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KomoV1Resource;
@@ -240,7 +240,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         Preconditions.checkNotNull(koulutusastetyyppi, "Koulutusastetyyppi enum cannot be null.");
 
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setKoulutustyyppi(ModuleRowType.fromEnum(koulutusastetyyppi));
+        criteria.setKoulutustyyppi(KoulutustyyppiEnum.fromEnum(koulutusastetyyppi));
 
         if (koulutusmoduuliTyyppi != null) {
             criteria.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(koulutusmoduuliTyyppi.name()));

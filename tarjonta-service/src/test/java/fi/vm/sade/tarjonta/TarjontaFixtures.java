@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.enums.ModuleRowType;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -119,7 +119,7 @@ public class TarjontaFixtures {
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
-        m.setRowType(ModuleRowType.AMMATILLINEN_PERUSKOULUTUS);
+        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
 
         //KJOH-764 renamed fields
         m.setKoulutusalaUri(randomUri("koulutusala"));
@@ -154,7 +154,7 @@ public class TarjontaFixtures {
 
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(oid);
-        m.setRowType(ModuleRowType.fromEnum(koulutustyyppi));
+        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.fromEnum(koulutustyyppi));
 
         return m;
     }

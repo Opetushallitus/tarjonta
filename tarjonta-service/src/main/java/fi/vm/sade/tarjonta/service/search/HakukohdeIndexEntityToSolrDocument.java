@@ -123,7 +123,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,
             List<KoulutusIndexEntity> koulutuses) {
         if(koulutuses!=null && koulutuses.size()>0) {
-            String koulutusastetyyppi = koulutuses.get(0).getRowType().getKoulutusasteTyyppi().name();
+            String koulutusastetyyppi = koulutuses.get(0).getKoulutustyyppiEnum().getKoulutusasteTyyppi().name();
             hakukohdeDoc.addField(KOULUTUSASTETYYPPI, koulutusastetyyppi);
         }
     }
@@ -191,7 +191,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
        
         //Vapaan sivistyon koulutus has an edited name, not a koodiuri
         if (!koulutuses.isEmpty() 
-                && !koulutuses.get(0).getRowType().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.value())) {
+                && !koulutuses.get(0).getKoulutustyyppiEnum().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.value())) {
             
             KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
             
