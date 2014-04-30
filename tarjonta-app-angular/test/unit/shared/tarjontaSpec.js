@@ -38,7 +38,6 @@ describe('Tarjonta', function() {
 
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
-    beforeEach(module('localisation'));
     beforeEach(module('Koodisto'));
     beforeEach(module('TarjontaCache'));
     beforeEach(module('Logging'));
@@ -58,13 +57,17 @@ describe('Tarjonta', function() {
         $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
     };
 
-    describe('TarjontaService', function($injector) {
+    beforeEach(function(){
+      module(function ($provide) {
+          $provide.value('Config', CONFIG_ENV_MOCK);
 
-        beforeEach(function(){
-            module(function ($provide) {
-                $provide.value('Config', CONFIG_ENV_MOCK);
-            });
-        });
+          //mock localisation service
+          var noop = function(){};
+          $provide.value('LocalisationService', {getLocale:noop,t:noop});
+      });
+  });
+    
+    describe('TarjontaService', function($injector) {
 
         it('should declare resourcelink service with known api', inject(function($httpBackend, TarjontaService) {
         	var resourceLink = TarjontaService.resourceLink;
