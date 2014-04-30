@@ -241,7 +241,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO hakuDto) {
         LOG.info("updateHaku() - {}", hakuDto);
-        permissionChecker.checkUpdateHaku(hakuDto != null ? hakuDto.getOid() : null);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
 
