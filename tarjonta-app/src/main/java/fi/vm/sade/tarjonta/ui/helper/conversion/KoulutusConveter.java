@@ -42,6 +42,7 @@ import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
@@ -55,9 +56,11 @@ import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.KoulutusLinkkiViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutuskoodiModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.MonikielinenTekstiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusRelaatioModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.LukiolinjaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.YhteyshenkiloModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 
@@ -481,6 +484,81 @@ public class KoulutusConveter {
 
         }
         return hashMap;
+
+    }
+
+    /**
+     * Data in KoulutusmoduuliKoosteTyyppi object will be store in komoto -table
+     * in DB.
+     */
+    public static void convertCommonModelToKoulutusmoduuliKoosteTyyppi(KoulutuskoodiModel km, MonikielinenTekstiModel mtk, KoulutusTyyppi toTyyppi) {
+        Preconditions.checkNotNull(km, "KoulutuskoodiModel object cannot be null.");
+        Preconditions.checkNotNull(toTyyppi, "KoulutusTyyppi object cannot be null.");
+        KoulutusmoduuliKoosteTyyppi kooste = toTyyppi.getKoulutusmoduuli();
+
+        if (kooste == null) {
+            kooste = new KoulutusmoduuliKoosteTyyppi();
+            toTyyppi.setKoulutusmoduuli(kooste);
+        }
+
+        /*
+         * KoulutuskoodiModel to KoulutusmoduuliKoosteTyyppi
+         */
+        if (mtk != null) {
+            if (mtk instanceof LukiolinjaModel) {
+                final LukiolinjaModel lm = (LukiolinjaModel) mtk;
+
+                if (lm.getKoodistoUriVersio() != null) {
+                    kooste.setLukiolinjakoodiUri(lm.getKoodistoUriVersio());
+                }
+
+                if (lm.getKoulutuslaji() != null) {
+                    //TODO : add field name Koulutuslaji to KoulutusmoduuliKoosteTyyppi 
+                }
+
+            } else if (mtk instanceof KoulutusohjelmaModel) {
+                final KoulutusohjelmaModel ko = (KoulutusohjelmaModel) mtk;
+
+                if (ko.getKoodistoUriVersio() != null) {
+                    kooste.setKoulutusohjelmakoodiUri(ko.getKoodistoUriVersio());
+                }
+
+                if (ko.getTutkintonimike() != null && ko.getTutkintonimike().getKoodistoUriVersio() != null) {
+                    kooste.setTutkintonimikeUri(ko.getTutkintonimike().getKoodistoUriVersio());
+                }
+            }
+        }
+
+        if (km != null) {
+
+            if (km.getKoodistoUriVersio() != null) {
+                kooste.setKoulutuskoodiUri(km.getKoodistoUriVersio());
+            }
+
+            if (km.getKoulutusala() != null) {
+                kooste.setKoulutusalaUri(km.getKoulutusala().getKoodistoUriVersio());
+            }
+
+            if (km.getOpintoala() != null) {
+                kooste.setOpintoalaUri(km.getOpintoala().getKoodistoUriVersio());
+            }
+
+            if (km.getTutkintonimike() != null) {
+                kooste.setTutkintonimikeUri(km.getTutkintonimike().getKoodistoUriVersio());
+            }
+
+            if (km.getOpintojenLaajuusyksikko() != null) {
+                kooste.setLaajuusyksikkoUri(km.getOpintojenLaajuusyksikko().getKoodistoUriVersio());
+            }
+
+            if (km.getOpintojenLaajuus() != null) {
+                kooste.setLaajuusarvoUri(km.getOpintojenLaajuus().getKoodistoUriVersio());
+            }
+
+            if (km.getKoulutusaste() != null) {
+                kooste.setKoulutusasteUri(km.getKoulutusaste().getKoodistoUriVersio());
+            }
+        }
 
     }
 }

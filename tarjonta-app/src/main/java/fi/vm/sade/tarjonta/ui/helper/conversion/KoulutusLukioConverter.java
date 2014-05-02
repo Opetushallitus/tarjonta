@@ -139,7 +139,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
     private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi, List<HakukohdePerustieto> hakukohteetDTO) {
         List<SimpleHakukohdeViewModel> hakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
-        
+
         if (koulutusVastausTyyppi.getHakukohteet() != null) {
             for (HakukohdePerustieto hakukohde : hakukohteetDTO) {//HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
                 SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
@@ -191,27 +191,27 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         model.setKieliB3(Lists.newArrayList(Iterables.transform(input.getB3Kieli(), fromKoodistoKoodiTyyppi)));
         model.setKieletMuu(Lists.newArrayList(Iterables.transform(input.getMuutKielet(), fromKoodistoKoodiTyyppi)));
         model.setDiplomit(Lists.newArrayList(Iterables.transform(input.getLukiodiplomit(), fromKoodistoKoodiTyyppi)));
-        
+
         for (NimettyMonikielinenTekstiTyyppi nmt : input.getTekstit()) {
-        	KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
-        	for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
-        		KoulutusLisatietoModel lisatieto = model.getLisatiedot(t.getKieliKoodi());
-        		switch (kt) {
-        		case SISALTO:
-        			lisatieto.setSisalto(t.getValue());
-        			break;
-        		case KANSAINVALISTYMINEN:
-        			lisatieto.setKansainvalistyminen(t.getValue());
-        			break;
-        		case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
-        			lisatieto.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
-        			break;
-    			default:
-    				LOG.debug("Ignored: {} {}",nmt.getTunniste(), t.getKieliKoodi());
-    				// ignore
-    				break;
-        		}
-        	}
+            KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
+            for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
+                KoulutusLisatietoModel lisatieto = model.getLisatiedot(t.getKieliKoodi());
+                switch (kt) {
+                    case SISALTO:
+                        lisatieto.setSisalto(t.getValue());
+                        break;
+                    case KANSAINVALISTYMINEN:
+                        lisatieto.setKansainvalistyminen(t.getValue());
+                        break;
+                    case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
+                        lisatieto.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
+                        break;
+                    default:
+                        LOG.debug("Ignored: {} {}", nmt.getTunniste(), t.getKieliKoodi());
+                        // ignore
+                        break;
+                }
+            }
         }
 
         return model;
@@ -243,7 +243,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         //TODO: create a different form model for every level of education: 
         //The datatypes on bottom must be list types as in future we need to have 
         //an option to select multiple languages etc. (lukio, AMK etc...)
-
         for (String opetusmuoto : model.getOpetusmuoto()) {
             tyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto, true, "opetusmuoto"));
         }
@@ -267,6 +266,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         } else {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
+
+        //update latest komoto uris to database
+        convertCommonModelToKoulutusmoduuliKoosteTyyppi(model.getKoulutuskoodiModel(), model.getLukiolinja(), tyyppi);
 
         return tyyppi;
     }

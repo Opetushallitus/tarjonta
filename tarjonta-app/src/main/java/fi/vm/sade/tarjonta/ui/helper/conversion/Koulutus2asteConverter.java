@@ -116,14 +116,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
         //convert yhteyshenkilo model objects to yhteyshenkilo type objects.
         //addToYhteyshenkiloTyyppiList(model.getYhteyshenkilot(), lisaa.getYhteyshenkilo());
-
         if (model.getYhtHenkKokoNimi() != null && !model.getYhtHenkKokoNimi().isEmpty()) {
             lisaa.getYhteyshenkiloTyyppi().add(mapYhteyshenkiloToTyyppi(model));
         }
 
         //convert linkki model objects to linkki type objects.
         //addToWebLinkkiTyyppiList(model.getKoulutusLinkit(), lisaa.getLinkki());
-
         if (model.getOpsuLinkki() != null && !model.getOpsuLinkki().isEmpty()) {
             lisaa.getLinkki().add(mapOpetussuunnitelmaLinkkiToTyyppi(model.getOpsuLinkki()));
         }
@@ -157,11 +155,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             model2Aste.setOpsuLinkki(tyyppi.getLinkki().get(0).getUri());
         }
 
-        if(tyyppi.getNimi()!=null && tyyppi.getNimi().getTeksti().size()==1) {
+        if (tyyppi.getNimi() != null && tyyppi.getNimi().getTeksti().size() == 1) {
             //aseta nimi jos on (valmentava ka kuntouttava)
             model2Aste.setNimi(tyyppi.getNimi().getTeksti().get(0).getValue());
         }
-        
+
         return model2Aste;
     }
 
@@ -172,7 +170,6 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         Preconditions.checkNotNull(komotoOid, INVALID_DATA + "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisation DTO cannot be null.");
         Preconditions.checkNotNull(organisatio.getOid(), INVALID_DATA + "Organisation OID cannot be null.");
-
 
         tyyppi.setTarjoaja(organisatio.getOid());
         tyyppi.setOid(komotoOid);
@@ -186,7 +183,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         KoulutuksenKestoTyyppi koulutuksenKestoTyyppi = new KoulutuksenKestoTyyppi();
         koulutuksenKestoTyyppi.setArvo(model.getSuunniteltuKesto());
         koulutuksenKestoTyyppi.setYksikko(model.getSuunniteltuKestoTyyppi());
-        
+
         ConversionUtils.setTeksti(tyyppi.getTekstit(), KomotoTeksti.PAINOTUS, mapToMonikielinenTekstiTyyppi(model.getPainotus()));
         tyyppi.setKesto(koulutuksenKestoTyyppi);
         tyyppi.setPohjakoulutusvaatimus(createKoodi(model.getPohjakoulutusvaatimus(), true, "pohjakoulutusvaatimus"));
@@ -203,18 +200,21 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         } else {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
-       
+
         if (model.getOpintojenLaajuusTot() != null && !model.getOpintojenLaajuusTot().isEmpty()) {
             KoulutuksenKestoTyyppi laajuus = new KoulutuksenKestoTyyppi();
             laajuus.setArvo(model.getOpintojenLaajuusTot());
             laajuus.setYksikko(model.getOpintojenLaajuusyksikkoTot());
             tyyppi.setLaajuus(laajuus);
         }
-        
-        if(model.getNimi()!=null) {
+
+        if (model.getNimi() != null) {
             String lang = model.getOpetuskieli();
             tyyppi.setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti(model.getNimi(), lang))));
         }
+
+        //update latest komoto uris to database
+        convertCommonModelToKoulutusmoduuliKoosteTyyppi(model.getKoulutuskoodiModel(), model.getKoulutusohjelmaModel(), tyyppi);
 
         return tyyppi;
     }
@@ -235,7 +235,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         model2Aste.setKoulutuskoodiModel(mapToKoulutuskoodiModel(koulutus.getKoulutusKoodi(), locale));
         model2Aste.setKoulutusohjelmaModel(mapToKoulutusohjelmaModel(koulutus.getKoulutusohjelmaKoodi(), locale));
         model2Aste.setPainotus(mapToKielikaannosViewModel(ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.PAINOTUS)));
-        
+
         if (koulutus.getViimeisinPaivitysPvm() != null) {
             model2Aste.setViimeisinPaivitysPvm(koulutus.getViimeisinPaivitysPvm());
         }
@@ -247,7 +247,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             model2Aste.setSuunniteltuKesto(koulutus.getKesto().getArvo());
             model2Aste.setSuunniteltuKestoTyyppi(koulutus.getKesto().getYksikko());
         }
-        
+
         if (koulutus.getLaajuus() != null) {
             model2Aste.setOpintojenLaajuusTot(koulutus.getLaajuus().getArvo());
             model2Aste.setOpintojenLaajuusyksikkoTot(koulutus.getLaajuus().getYksikko());
@@ -281,16 +281,15 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         /*
          * Create real visible name, the name is also used in koulutus search.  
          */
-
         koulutus.getNimi();
 
         return model2Aste;
     }
 
     private KoodiModel convert(KoodistoKoodiTyyppi koodistoKoodiTyyppi) {
-    	if (koodistoKoodiTyyppi==null) {
-    		return null;
-    	}
+        if (koodistoKoodiTyyppi == null) {
+            return null;
+        }
         KoodiModel koulutusAste = new KoodiModel();
         koulutusAste.setKoodistoUri(koodistoKoodiTyyppi.getUri());
         return koulutusAste;
@@ -301,36 +300,35 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
         result.setAmmattinimikkeet(mapToKoodistoKoodis(lueKoulutus.getAmmattinimikkeet()));
 
-
         for (NimettyMonikielinenTekstiTyyppi nmt : lueKoulutus.getTekstit()) {
-        	KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
-        	for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
-        		KoulutusLisatietoModel klm = result.getLisatiedot(t.getKieliKoodi());
-            	switch (kt) {
-            	case KUVAILEVAT_TIEDOT:
-            		klm.setKuvailevatTiedot(t.getValue());
-            		break;
-            	case KANSAINVALISTYMINEN:
-            		klm.setKansainvalistyminen(t.getValue());
-            		break;
-            	case SIJOITTUMINEN_TYOELAMAAN:
-            		klm.setSijoittuminenTyoelamaan(t.getValue());
-            		break;
-            	case SISALTO:
-            		klm.setSisalto(t.getValue());
-            		break;
-            	case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
-            		klm.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
-            		break;
-            	case KOULUTUSOHJELMAN_VALINTA:
-            		klm.setKoulutusohjelmanValinta(t.getValue());
-            		break;
-        		default:
-        			break; //ignore
-            	}
-        	}
+            KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
+            for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
+                KoulutusLisatietoModel klm = result.getLisatiedot(t.getKieliKoodi());
+                switch (kt) {
+                    case KUVAILEVAT_TIEDOT:
+                        klm.setKuvailevatTiedot(t.getValue());
+                        break;
+                    case KANSAINVALISTYMINEN:
+                        klm.setKansainvalistyminen(t.getValue());
+                        break;
+                    case SIJOITTUMINEN_TYOELAMAAN:
+                        klm.setSijoittuminenTyoelamaan(t.getValue());
+                        break;
+                    case SISALTO:
+                        klm.setSisalto(t.getValue());
+                        break;
+                    case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
+                        klm.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
+                        break;
+                    case KOULUTUSOHJELMAN_VALINTA:
+                        klm.setKoulutusohjelmanValinta(t.getValue());
+                        break;
+                    default:
+                        break; //ignore
+                }
+            }
         }
-        
+
         return result;
     }
 
@@ -377,14 +375,13 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
         Preconditions.checkNotNull(koulutusaste, "Data validation failed - koulutustyyppi is required!");
 
-        
-        if ((koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste()) 
+        if ((koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste())
                 || koulutusaste.equals(KoulutusasteType.TUNTEMATON.getKoulutusaste())
                 || koulutusaste.equals(KoulutusasteType.PERUSOPETUKSEN_LISAOPETUS)
-                || koulutusastetyyppi == KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS) 
-             && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
+                || koulutusastetyyppi == KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
             throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
-        } else if (koulutusastetyyppi !=KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS 
+        } else if (koulutusastetyyppi != KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS
                 && koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_LUKIO.getKoulutusaste())) {
             //Lukio tutkinto do not have koulutusohjema data.
             lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());

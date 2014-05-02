@@ -145,7 +145,7 @@ public class TarjontaLukioPresenter {
 
     /**
      * Tries to find KoulutusModuuli ("KOMO") for given koulutus (tutkinto ==
-     * KoulutudKoodiUri AND koulutusohjelma == KoulutusOhjelmsKoodiUri)
+     * KoulutudKoodiUri AND koulutusohjelma == KoulutusOhjelmakoodiUri)
      */
     private void checkKoulutusmoduuli() {
         HaeKoulutusmoduulitKyselyTyyppi kysely =
@@ -273,11 +273,6 @@ public class TarjontaLukioPresenter {
             }
 
             kolutusKoodistoConverter.listaaLukioSisalto(koulutuskoodi, lukiolinja, tyyppi, I18N.getLocale());
-
-            //TODO: do we need the setters on bottom?
-            perustiedotModel.setKoulutusaste(koulutuskoodi.getKoulutusaste());
-            perustiedotModel.setKoulutusala(koulutuskoodi.getKoulutusala());
-            //perustiedotModel.setKoulutuslaji(null);//TODO!!!!!!!!!!!
         }
     }
 

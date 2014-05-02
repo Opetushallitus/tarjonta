@@ -489,6 +489,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             handleParentKomoto(parentKomo, komoto, result);
         }
 
+        //override komo relation data with the latest koodi uris.
+        EntityUtils.copyKomoRelationsToKomotoDto(komoto, result);
+
         return result;
     }
 
@@ -622,6 +625,8 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             TekstiKaannos tk = nimi.getKaannoksetAsList().get(0);
             toKoulutus.setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()))));
         }
+
+        EntityUtils.copyKomoRelationsToKomotoDto(fromKoulutus, toKoulutus);
 
         return toKoulutus;
     }
