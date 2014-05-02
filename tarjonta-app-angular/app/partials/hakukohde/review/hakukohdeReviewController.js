@@ -26,21 +26,25 @@ app.controller('HakukohdeReviewController',
       $log = $log.getInstance("HakukohdeReviewController");
       $log.debug("init...");
        
-      //edit buttons are active when mutable
+      //by default disable
       $scope.isMutable=false;
+      $scope.isRemovable=false;
       
-      $log.debug("scope.model:", $scope.model)
+//      $log.debug("scope.model:", $scope.model);
+
+      var hakukohdeOid = $scope.model.hakukohde.oid;
       
-      //käyttöoikeudet
-      PermissionService.hakukohde.canEdit($scope.model.hakukohde.oid).then(function(data){
-        $scope.isMutable=data;
-         if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
-                //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-                $scope.isMutable = false;
-                
-            }
+      //permissiot
+      $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({oid: hakukohdeOid, state: 'POISTETTU'}).$promise.then(function(r){return r.$resolved; })]).then(function(results) {
+        $scope.isMutable=results[0]===true;
+        if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
+          //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+          $scope.isMutable = false;
+          
+        }
+        $scope.isRemovable=results[1]===true && results[2]===true;
       });
-  
+
       $log.debug('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
 
       /*

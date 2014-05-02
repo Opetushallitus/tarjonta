@@ -255,4 +255,10 @@ public interface HakukohdeV1Resource {
                                                                   @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<String> koulutukses);
 
 
+    @GET
+    @Path("/{oid}/stateChangeCheck")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Tutkii onko esitetty tilamuutos mahdollinen", response = Boolean.class)
+    public ResultV1RDTO<Boolean> isStateChangePossible(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+
 }
