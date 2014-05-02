@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
@@ -37,6 +38,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -387,6 +389,9 @@ public class KoulutusValidator {
             checkIsDeleted(komoto, dto);
         }
     }
+    
+    
+    private static final Set<String> allowDeletingPublishedKomoForTypes = new ImmutableSet.Builder<String>().add(KoulutusasteTyyppi.KORKEAKOULUTUS.value(), KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value(), KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value()).build();
 
     public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<KoulutusmoduuliToteutus> relatedKomotos, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
@@ -416,16 +421,17 @@ public class KoulutusValidator {
                 dto.addError(ErrorV1RDTO.createValidationError("komo.link.parents", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK.lower(), parent.toArray(new String[parent.size()])));
             }
 
-            if (!komoto.getKoulutusmoduuli().getTila().isRemovable()) {
+            if (!allowDeletingPublishedKomoForTypes.contains(komoto.getKoulutusmoduuli().getKoulutustyyppi()) && !komoto.getKoulutusmoduuli().getTila().isRemovable()) {
                 dto.addError(ErrorV1RDTO.createValidationError("komo.invalid.transition", KoulutusValidationMessages.KOULUTUS_INVALID_TRANSITION.lower(), parent.toArray(new String[parent.size()])));
             }
         }
 
         /*
-         * Ei haukohteita == OK
+         * Ei haukohteita (tai kaikki poistettu) == OK
          * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
          */
-        if (!komoto.getHakukohdes().isEmpty()) {
+        if (hkKoulutusMap.size()>=0) {
+            
             Set<String> hakukohdeOids = Sets.<String>newHashSet();
 
             for (Entry<String, Integer> hkKoulutusCount : hkKoulutusMap.entrySet()) {
