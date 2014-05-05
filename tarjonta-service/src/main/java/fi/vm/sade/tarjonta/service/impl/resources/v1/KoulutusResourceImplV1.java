@@ -357,7 +357,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
             for (Hakukohde hk : komoto.getHakukohdes()) {
                 if (hk.getTila() != TarjontaTila.POISTETTU) { //skippaa poistetut OVT-7518
-                    hkKoulutusMap.put(hk.getOid(), hk.getKoulutusmoduuliToteutuses().size());
+                    //laske kuinka monta aktiivista (ei poistettua) koulutusta hakukohteessa on kiinni
+                    int koulutusCount = 0; 
+
+                    for(KoulutusmoduuliToteutus hkKomoto: hk.getKoulutusmoduuliToteutuses()){
+                        if(hkKomoto.getTila()!=TarjontaTila.POISTETTU) {
+                            koulutusCount++;
+                        }
+                    }
+                    hkKoulutusMap.put(hk.getOid(), koulutusCount);
                 }
             }
 

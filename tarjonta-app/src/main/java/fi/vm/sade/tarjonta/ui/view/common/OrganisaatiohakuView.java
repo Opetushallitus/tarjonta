@@ -60,7 +60,6 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
-import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -280,7 +279,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
                     Object propertyId) {
                 if (itemId instanceof OrganisaatioPerustieto) {
                     OrganisaatioPerustieto tooltipOrg = (OrganisaatioPerustieto) itemId;
-                    return OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), tooltipOrg);
+                    final String name = getClosestBasic(tooltipOrg);
+                    return name;
                 }
 
                 return null;
@@ -309,6 +309,23 @@ public class OrganisaatiohakuView extends VerticalLayout {
         return hl;
     }
 
+    private String getClosestBasic(OrganisaatioPerustieto org) {
+        final String lang = I18N.getLocale().getLanguage().toLowerCase();
+        if (org.getNimi(lang) != null && org.getNimi(lang).trim().length() > 0) {
+            return org.getNimi(lang);
+        }
+        return getAvailableNameBasic(org);
+    }
+    
+    public static String getAvailableNameBasic(final OrganisaatioPerustieto org) {
+        for(String lang:new String[]{"fi","sv","en"}){
+            if(org.getNimi(lang)!=null && org.getNimi(lang).trim().length()>0) {
+                return org.getNimi(lang);
+            }
+        }
+        return "???" + org.getOid();
+    }
+    
     private VerticalLayout buildPanelLayout() {
         VerticalLayout hl = UiUtil.verticalLayout(true, UiMarginEnum.ALL);
         hl.setSizeUndefined();
@@ -353,7 +370,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         //Setting the items to the tree.
         Ordering<OrganisaatioPerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<OrganisaatioPerustieto, Comparable>() {
             public Comparable apply(OrganisaatioPerustieto input) {
-                return OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), input);
+                return getClosestBasic(input);
 
             }
         ;
@@ -375,7 +392,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         List<String> parentOids = new ArrayList<String>();
         for (OrganisaatioPerustieto curOrg : organisaatios) {
                 hc.addItem(curOrg);
-                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(String.format("%s%s", OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(), curOrg), getTilaStr(curOrg)));
+                hc.getContainerProperty(curOrg, COLUMN_KEY).setValue(String.format("%s%s", getClosestBasic(curOrg), getTilaStr(curOrg)));
                 oidToOrgMap.put(curOrg.getOid(), curOrg);
                 parentOids.add(curOrg.getParentOid());
             
@@ -422,7 +439,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     private void organisaatioSelected(final OrganisaatioPerustieto item) {
         LOG.info("Event fired: " + item.getOid());
         if (!item.getOid().equals(presenter.getNavigationOrganisation().getOrganisationOid())) {
-            presenter.selectOrganisaatio(item.getOid(), OrganisaatioDisplayHelper.getClosestBasic(I18N.getLocale(),item),
+            presenter.selectOrganisaatio(item.getOid(), getClosestBasic(item),
                     item.getLakkautusPvm() == null || item.getLakkautusPvm().after(new Date()));
         } else {
             presenter.unSelectOrganisaatio();

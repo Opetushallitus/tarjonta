@@ -38,12 +38,20 @@ app.controller('HakuEditController',
                 OrganisaatioService,
                 AuthService,
                 dialogService,
-                KoodistoURI) {
+                KoodistoURI, PermissionService, HakuV1Service) {
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
             var hakuOid = $route.current.params.id;
 
+            
+            //permissiot
+            $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+              $scope.isMutable=results[0];
+              $scope.isRemovable=results[1] && results[2];
+            });
+
+            
             // Reset model to empty
             $scope.model = null;
 

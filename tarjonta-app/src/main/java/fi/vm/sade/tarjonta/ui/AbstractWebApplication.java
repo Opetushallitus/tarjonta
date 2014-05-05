@@ -57,10 +57,10 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication {
     public static Component createRefersh(final String id) {
         LOG.info("createRefresh() - id = {}", id);
         final Refresher refresher = new Refresher();
-        refresher.setRefreshInterval(1000L * 30L);
+        refresher.setRefreshInterval(1000L * 60L * 5L);
         refresher.addListener(new RefreshListener() {
             public void refresh(Refresher source) {
-                LOG.info("refresher() - id = {}", id);
+                LOG.debug("refresher() - id = {}", id);
             }
         });
 

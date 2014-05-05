@@ -78,7 +78,7 @@
             <table>
             <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
                 <td>
-                    <input type="text" placeholder="Hakuajan nimi" ng-model="hakuaika.nimi"/>
+                    <input type="text" placeholder="{{ t('haku.edit.hakuaika.nimi.placeholder') }}" ng-model="hakuaika.nimi"/>
                 </td>
                 <td>
                     <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>

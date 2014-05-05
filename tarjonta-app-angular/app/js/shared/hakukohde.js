@@ -26,7 +26,6 @@ app.factory('Hakukohde',function($resource, Config){
             withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
-
         remove : {
           method: 'DELETE',
           withCredentials: true,
@@ -37,11 +36,17 @@ app.factory('Hakukohde',function($resource, Config){
             withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         },
+        checkStateChange: {
+          url:Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid/stateChangeCheck',
+          method: 'GET',
+          withCredentials: true,
+        },
         get : {
             method: 'GET',
             withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
+        
     });
 
 });
