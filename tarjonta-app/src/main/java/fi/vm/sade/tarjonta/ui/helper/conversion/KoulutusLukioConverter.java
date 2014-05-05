@@ -118,11 +118,11 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdePerustieto> hakukohteet) {
+    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdePerustieto> hakukohteet, final boolean searchLatestKoodistoUris) {
         //set tarjoaja data to UI model
         tarjontaModel.getTarjoajaModel().setSelectedOrganisation(searchOrganisationByOid(koulutus.getTarjoaja()));
 
-        KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
+        KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale, searchLatestKoodistoUris);
         perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         perustiedot.setKoulutuksenHakukohteet(getKoulutusHakukohdes(koulutus, hakukohteet));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
@@ -284,7 +284,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return hashMap;
     }
 
-    private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, Locale locale) {
+    private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, Locale locale, final boolean searchLatestKoodistoUris) {
         Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedot = new KoulutusLukioPerustiedotViewModel();
@@ -340,7 +340,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
          * convert koodisto uris to UI models
          */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
-        koulutusKoodisto.listaaLukioSisalto(perustiedot.getKoulutuskoodiModel(), perustiedot.getLukiolinja(), koulutusmoduuliTyyppi, locale);
+        koulutusKoodisto.listaaLukioSisalto(perustiedot.getKoulutuskoodiModel(), perustiedot.getLukiolinja(), koulutusmoduuliTyyppi, locale, searchLatestKoodistoUris);
         KoulutusLukioConverter.copySelectedKoodiDataToModel(perustiedot);
         /*
          * Data fields used on UI only as extra information:

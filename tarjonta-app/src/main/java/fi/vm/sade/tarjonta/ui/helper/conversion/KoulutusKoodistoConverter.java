@@ -148,26 +148,39 @@ public class KoulutusKoodistoConverter {
         return list;
     }
 
-    public void listaaLukioSisalto(final KoulutuskoodiModel tutkinto, final LukiolinjaModel lukiolinja, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
+    public void listaaLukioSisalto(final KoulutuskoodiModel tutkinto, final LukiolinjaModel lukiolinja, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale, final boolean searchLatestKoodiUris) {
         if (tyyppi == null) {
             LOG.error("An invalid data error - KoulutusmoduuliKoosteTyyppi object was null?");
             return;
         }
-
         //load text data
         komoBaseDataFromTarjontaService(tutkinto, tyyppi, koulutusKoodiToKoodiModel, locale);
 
-        //search koodisto relations
-        komoBaseDataFromKoodistoService(tutkinto, koulutusKoodiToKoodiModel, locale);
+        if (searchLatestKoodiUris) {
+            //For edit pages - get koodi data from koodisto service
+            komoBaseDataFromKoodistoService(tutkinto, koulutusKoodiToKoodiModel, locale);
 
-        //TODO:  Fix this after koodisto data and koodi relations are fixed.
+            if (lukiolinja != null) {
+                //update or override tutkinto relations by lukiolinja relations
+                komoLukiolinjaData(lukiolinja.getKoodistoUri(), tutkinto, koulutusKoodiToKoodiModel, locale);
+            }
+        } else {
+            //For review page - get koodi data from tarjonta service
+            tutkinto.setOpintojenLaajuus(listaaKoodi(tyyppi.getLaajuusarvoUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setOpintojenLaajuusyksikko(listaaKoodi(tyyppi.getLaajuusyksikkoUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setOpintoala(listaaKoodi(tyyppi.getOpintoalaUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setKoulutusaste(listaaKoodi(tyyppi.getKoulutusasteUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setKoulutusala(listaaKoodi(tyyppi.getKoulutusalaUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
+        }
+
         if (lukiolinja != null) {
+            //TODO: add the missing fields to tarjonta soap API and store to tarjonta service
             lukiolinja.setKoulutuslaji(listaaKoodi(KoodistoURI.KOODI_KOULUTUSLAJI_NUORTEN_KOULUTUS_URI, koulutusKoodiToKoodiModel, locale));
             lukiolinja.setPohjakoulutusvaatimus(listaaKoodi(KoodistoURI.LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI, koulutusKoodiToKoodiModel, locale));
-
-            //update or override tutkinto relations by lukiolinja relations
-            komoLukiolinjaData(lukiolinja.getKoodistoUri(), tutkinto, koulutusKoodiToKoodiModel, locale);
         }
+
+        //TODO:  Fix this after koodisto data and koodi relations are fixed.
     }
 
     public void listaa2asteSisalto(final KoulutuskoodiModel tutkinto, final KoulutusohjelmaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
@@ -356,7 +369,7 @@ public class KoulutusKoodistoConverter {
      */
     private void komoBaseDataFromKoodistoService(final KoulutuskoodiModel koulutuskoodi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         Preconditions.checkNotNull(koulutuskoodi, "KoulutuskoodiModel object cannot be null.");
-        
+
         for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(koulutuskoodi.getKoodistoUri())) {
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
                 koulutuskoodi.setKoulutusala(listaaKoodi(toUriVersion(type), kc, locale));
@@ -380,7 +393,7 @@ public class KoulutusKoodistoConverter {
 
     private void komoLukiolinjaData(final String lukiolinjaUri, final KoulutuskoodiModel koulutuskoodi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         Preconditions.checkNotNull(lukiolinjaUri, "Lukiolinja URI without version object cannot be null.");
-   
+
         for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(lukiolinjaUri)) {
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI)) {
                 koulutuskoodi.setTutkintonimike(listaaKoodi(toUriVersion(type), kc, locale));
