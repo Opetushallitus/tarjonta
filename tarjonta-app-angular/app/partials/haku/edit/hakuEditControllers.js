@@ -389,7 +389,17 @@ app.controller('HakuEditController',
                 });
             };
 
-
+            $scope.checkPriorisointi = function () {
+                $log.info("checkPriorisointi()");
+                
+                if ($scope.model.haku.hakulomakeKaytaJarjestemlmanOmaa && $scope.model.hakux.result.sijoittelu) {
+                    $scope.model.hakux.result.usePriority = true;
+                }
+                
+                if (!$scope.model.haku.hakulomakeKaytaJarjestemlmanOmaa) {
+                    $scope.model.hakux.result.usePriority = false;
+                }                
+            };
 
             /**
              * Initialize controller and ui state.
