@@ -65,7 +65,14 @@ public class KoulutusResourceTest {
             .mock(PublicationDataService.class);
 
     private KoulutusmoduuliToteutus komoto1;
+    private KoulutusmoduuliToteutus komoto2;
+    private KoulutusmoduuliToteutus komoto3;
 
+    private Hakukohde hk1;
+    private Hakukohde hk2;
+    
+    private Koulutusmoduuli komo;
+    
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO = Mockito.mock(KoulutusSisaltyvyysDAO.class);
     private KoulutusmoduuliDAO koulutusmoduuliDAO = Mockito.mock(KoulutusmoduuliDAO.class);
 
@@ -80,18 +87,49 @@ public class KoulutusResourceTest {
         // Stub koodisto values
         TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
 
-        // stub komotodao
+        
+        komo = new Koulutusmoduuli();
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
+
+        // stub komotodao, one hakukohde with two koulutuses
+        hk1 = getHakukohde();
+
         komoto1 = new KoulutusmoduuliToteutus();
         komoto1.setAlkamiskausiUri("kausi");
         komoto1.setAlkamisVuosi(2005);
+        komoto1.setKoulutusmoduuli(komo);
+        komoto1.addHakukohde(hk1);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
-        Koulutusmoduuli komo = new Koulutusmoduuli();
         komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
-        komoto1.setKoulutusmoduuli(komo);
-        Hakukohde hk = getHakukohde();
-        komoto1.addHakukohde(hk);
-        hk.addKoulutusmoduuliToteutus(komoto1);
+        
+        komoto2 = new KoulutusmoduuliToteutus();
+        komoto2.setAlkamiskausiUri("kausi");
+        komoto2.setAlkamisVuosi(2006);
+        komoto2.setKoulutusmoduuli(komo);
+        komoto2.addHakukohde(hk1);
+        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2"))
+                .toReturn(komoto2);
+        
+        hk1.addKoulutusmoduuliToteutus(komoto1);
+        hk1.addKoulutusmoduuliToteutus(komoto2);
+
+        
+        // another hakukohde with single koulutus
+        hk2 = getHakukohde();
+
+        komoto3 = new KoulutusmoduuliToteutus();
+        komoto3.setAlkamiskausiUri("kausi");
+        komoto3.setAlkamisVuosi(2005);
+        komoto3.setKoulutusmoduuli(komo);
+        komoto3.addHakukohde(hk2);
+        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3"))
+                .toReturn(komoto3);
+
+        
+        hk2.addKoulutusmoduuliToteutus(komoto3);
+        
+        
         Whitebox.setInternalState(koulutusResource,
                 "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(koulutusResource, "permissionChecker",
@@ -101,6 +139,7 @@ public class KoulutusResourceTest {
         Whitebox.setInternalState(koulutusResource, "contextDataService",
                 contextDataService);
 
+        
         Mockito.stub(hakukohdeDAO.insert(Mockito.any(Hakukohde.class)))
                 .toAnswer(new Answer<Hakukohde>() {
                     // palauta sama olio
@@ -137,15 +176,37 @@ public class KoulutusResourceTest {
 
     @Test
     public void testOVT7518() {
-
         //hakukohde kiinni
-        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
+        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-3");
+        System.out.println("result" + result);
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
 
+        //poistettu hakukohde kiinni, koulutuksen tila PERUTTU
+        hk2.setTila(TarjontaTila.POISTETTU);
+        komoto3.setTila(TarjontaTila.PERUTTU);
+        result = koulutusResource.deleteByOid("komoto-3");
+        Assert.assertEquals(result.toString(), ResultV1RDTO.ResultStatus.OK, result.getStatus());
+
         //poistettu hakukohde kiinni
-        komoto1.getHakukohdes().iterator().next().setTila(TarjontaTila.POISTETTU);
-        result = koulutusResource.deleteByOid("komoto-1");
+        komoto3.getHakukohdes().iterator().next().setTila(TarjontaTila.POISTETTU);
+        result = koulutusResource.deleteByOid("komoto-3");
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
     }
+
+    @Test
+    public void testOVT7543() {
+        //kaksi koulutusta kiinni hakukohteessa, ensimmäisen voi poistaa
+        komo.setTila(TarjontaTila.JULKAISTU);
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
+        Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        komoto1.setTila(TarjontaTila.POISTETTU);
+
+        
+        //kaksi koulutusta kiinni hakukohteessa, jälkimmäistä ei voi poistaa
+        result = koulutusResource.deleteByOid("komoto-2");
+        Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
+}
 
 }

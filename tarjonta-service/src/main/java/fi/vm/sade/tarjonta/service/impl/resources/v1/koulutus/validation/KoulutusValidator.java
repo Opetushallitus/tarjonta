@@ -25,8 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -37,6 +39,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.ImageMimeValidator;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -152,7 +155,7 @@ public class KoulutusValidator {
         // TODO:  kun relaatiot on tehty koodistoon
         // alidateKoodi(result, dto.getNqf(), KoulutusValidationMessages.KOULUTUS_NQF_MISSING, KoulutusValidationMessages.KOULUTUS_NQF_INVALID);
         // validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
-        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID); 
+        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(result, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
@@ -388,6 +391,8 @@ public class KoulutusValidator {
         }
     }
 
+    private static final Set<KoulutustyyppiEnum> allowDeletingPublishedKomoForTypes = new ImmutableSet.Builder<KoulutustyyppiEnum>().add(KoulutustyyppiEnum.KORKEAKOULUTUS, KoulutustyyppiEnum.AMMATTIKORKEAKOULUTUS, KoulutustyyppiEnum.YLIOPISTOKOULUTUS).build();
+
     public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<KoulutusmoduuliToteutus> relatedKomotos, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
         Preconditions.checkNotNull(relatedKomotos, "List of related KOMOTO objects cannot be null.");
@@ -416,16 +421,17 @@ public class KoulutusValidator {
                 dto.addError(ErrorV1RDTO.createValidationError("komo.link.parents", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK.lower(), parent.toArray(new String[parent.size()])));
             }
 
-            if (!komoto.getKoulutusmoduuli().getTila().isRemovable()) {
+            if (!allowDeletingPublishedKomoForTypes.contains(komoto.getKoulutusmoduuli().getKoulutustyyppiEnum()) && !komoto.getKoulutusmoduuli().getTila().isRemovable()) {
                 dto.addError(ErrorV1RDTO.createValidationError("komo.invalid.transition", KoulutusValidationMessages.KOULUTUS_INVALID_TRANSITION.lower(), parent.toArray(new String[parent.size()])));
             }
         }
 
         /*
-         * Ei haukohteita == OK
+         * Ei haukohteita (tai kaikki poistettu) == OK
          * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
          */
-        if (!komoto.getHakukohdes().isEmpty()) {
+        if (hkKoulutusMap.size() >= 0) {
+
             Set<String> hakukohdeOids = Sets.<String>newHashSet();
 
             for (Entry<String, Integer> hkKoulutusCount : hkKoulutusMap.entrySet()) {

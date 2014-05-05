@@ -5,7 +5,7 @@
 
         <tr class="collapse" ng-class="model.collapse.haunTiedot ? '' : 'open'">
             <th colspan="2" tt="haku.review.haunTiedot.otsikko" ng-click="model.collapse.haunTiedot = !model.collapse.haunTiedot">Haun tiedot</th>
-            <td><a class="btn" href data-ng-click="doEdit($event, 'haunTiedot')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+            <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'haunTiedot')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
         </tr>
 
         <tbody ng-show="!model.collapse.haunTiedot">
@@ -70,7 +70,7 @@
 
         <tr class="collapse" ng-class="model.collapse.haunAikataulut ? '' : 'open'">
             <th colspan="2" tt="haku.review.haunAikataulut.otsikko" ng-click="model.collapse.haunAikataulut = !model.collapse.haunAikataulut">Haun aikataulut</th>
-            <td><a class="btn" href data-ng-click="doEdit($event, 'haunAikataulut')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+            <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'haunAikataulut')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
         </tr>
 
         <tbody ng-show="!model.collapse.haunAikataulut">
@@ -173,7 +173,7 @@
 
         <tr class="collapse" ng-class="model.collapse.haunMuistutusviestit ? '' : 'open'">
             <th colspan="2" tt="haku.review.haunMuistutusviestit.otsikko" ng-click="model.collapse.haunMuistutusviestit = !model.collapse.haunMuistutusviestit">Muistutusviestien aikataulut</th>
-            <td><a class="btn" href data-ng-click="doEdit($event, 'haunMuistutusviestit')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+            <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'haunMuistutusviestit')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
         </tr>
 
         <tbody ng-show="!model.collapse.haunMuistutusviestit">
@@ -190,7 +190,7 @@
 
         <tr class="collapse" ng-class="model.collapse.haunSisaisetHaut ? '' : 'open'">
             <th colspan="2" tt="haku.review.haunSisaisetHaut.otsikko" ng-click="model.collapse.haunSisaisetHaut = !model.collapse.haunSisaisetHaut">Haun sisäiset haut</th>
-            <td><a class="btn" href data-ng-click="doEdit($event, 'haunSisaisetHaut')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+            <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'haunSisaisetHaut')"><span tt="haku.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
         </tr>
 
         <tbody ng-show="!model.collapse.haunSisaisetHaut">

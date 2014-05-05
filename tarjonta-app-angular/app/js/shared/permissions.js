@@ -285,7 +285,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                 HakuV1.get({oid: hakuOid}).$promise.then(function(haku) {
 //        console.log("haku:", haku.result);
                     var haku = haku.result;
-                    var orgs = haku.tarjoajaOids;
+                    var orgs = haku.tarjoajaOids ? haku.tarjoajaOids : [];
 
                     if (orgs.length == 0) {
 //          console.log("speciaalikeissi, ei organisaatioita, assuming oph", ophOid);

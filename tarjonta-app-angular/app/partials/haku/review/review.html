@@ -8,7 +8,7 @@
             dto="model.hakux.result">
 
             <controls-button icon="arrow-left" tt-key="haku.review.takaisin" action="goBack($event)">Takaisin</controls-button>
-            <controls-button tt-key="haku.review.poista" action="doDelete($event)">Poista</controls-button>
+            <controls-button disabled="!isRemovable" tt-key="haku.review.poista" action="doDelete($event)">Poista</controls-button>
 
             <controls-notify type="message" tt-expr="'haku.review.murupolku'" tt-params="[model.nimi]"></controls-notify>
 

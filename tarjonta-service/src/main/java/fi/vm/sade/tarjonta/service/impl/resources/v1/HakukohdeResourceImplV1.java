@@ -82,6 +82,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImplV1.class);
 
+    @Autowired(required = true)
+    private PublicationDataService publication;
+
     @Autowired
     private HakuDAO hakuDAO;
     @Autowired
@@ -1246,4 +1249,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return resultV1RDTO;
 
     }
+    
+    @Override
+    public ResultV1RDTO<Boolean> isStateChangePossible(String oid,
+            TarjontaTila tila) {
+        Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
+        return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
+    }
+
 }
