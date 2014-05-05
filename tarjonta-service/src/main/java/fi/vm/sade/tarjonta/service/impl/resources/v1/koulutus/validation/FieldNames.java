@@ -46,6 +46,7 @@ public enum FieldNames {
     SUUNNITELTUKESTON_TYYPPI,
     OPPILAITOSTYYPPI,
     KOULUTUSTYYPPI,
+    TUNNISTE,
     
     //Lukio:
     KOULUTUSLAJI,
