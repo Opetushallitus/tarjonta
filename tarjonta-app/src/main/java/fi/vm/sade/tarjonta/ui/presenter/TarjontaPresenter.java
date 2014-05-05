@@ -156,6 +156,8 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
 public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     private static Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
+    private static final boolean KOODISTO_URIS_FROM_KOODISTO = true;
+    private static final boolean LOAD_URIS_FROM_DB = false;
 
     private static final String LIITE_DATE_PATTERNS = "dd.MM.yyyy HH:mm";
     private static final String NAME_OPH = "OPH";
@@ -898,7 +900,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     public void showShowKoulutusView(String koulutusOid) {
-        readKoulutusToModel(koulutusOid);
+        readKoulutusToModel(koulutusOid, LOAD_URIS_FROM_DB);
 
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         String title;
@@ -976,7 +978,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
             LOG.info("readeing koulutus:" + koulutusOid);
-            readKoulutusToModel(koulutusOid);
+            readKoulutusToModel(koulutusOid,KOODISTO_URIS_FROM_KOODISTO);
         } else {
             Preconditions.checkNotNull(getTarjoaja().getSelectedOrganisationOid(), "Missing organisation OID.");
             getTarjoaja().setSelectedResultRowOrganisationOid(null);
@@ -989,7 +991,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     public void showLisaaRinnakkainenToteutusEditView(final String koulutusOid, String pohjakoulutusVaatimus) {
         if (koulutusOid != null) {
-            readKoulutusToModel(koulutusOid);
+            readKoulutusToModel(koulutusOid, KOODISTO_URIS_FROM_KOODISTO);
             readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
 
 
@@ -1056,7 +1058,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
 
 
-            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale());
+            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
             readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
             getModel().setKoulutusPerustiedotModel(koulutus);
             getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
@@ -1083,13 +1085,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
     }
 
-    private void readKoulutusToModel(final String koulutusOid) {
+    private void readKoulutusToModel(final String koulutusOid, final boolean searchLatestKoodistoUris) {
 
         LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
             
-            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale());
+            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale(), searchLatestKoodistoUris);
             
             
             
@@ -2278,7 +2280,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 LOG.error("No tutkinto & koulutusohjelma, result was null. Search by '{}'" + " and '{}'", koulutuskoodi.getKoodistoUriVersio(), ohjelma.getKoodistoUriVersio());
             }
 
-            kolutusKoodistoConverter.listaa2asteSisalto(koulutuskoodi, ohjelma, tyyppi, I18N.getLocale());
+            kolutusKoodistoConverter.listaa2asteSisalto(koulutuskoodi, ohjelma, tyyppi, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
         }
     }
 

@@ -141,13 +141,17 @@ public class Koulutus2asteConverter extends KoulutusConveter {
      * @return
      * @throws ExceptionMessage
      */
-    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(TarjontaModel model, final LueKoulutusVastausTyyppi tyyppi, Locale locale) throws OidCreationException {
+    public KoulutusToisenAsteenPerustiedotViewModel createKoulutusPerustiedotViewModel(
+            TarjontaModel model,
+            final LueKoulutusVastausTyyppi tyyppi,
+            Locale locale,
+            final boolean searchLatestKoodistoUris) throws OidCreationException {
         //set selected tarjoaja to UI model
         final OrganisationOidNamePair pair = new OrganisationOidNamePair();
         final OrganisaatioPerustieto organisaatio = searchOrganisationByOid(tyyppi.getTarjoaja(), pair);
         model.getTarjoajaModel().setSelectedOrganisation(pair);
 
-        KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, DocumentStatus.NEW, organisaatio, locale);
+        KoulutusToisenAsteenPerustiedotViewModel model2Aste = mapToKoulutusToisenAsteenPerustiedotViewModel(tyyppi, DocumentStatus.NEW, organisaatio, locale, searchLatestKoodistoUris);
         //addToKoulutusYhteyshenkiloViewModel(tyyppi.getYhteyshenkilo(), model2Aste.getYhteyshenkilot());
         mapYhteyshenkiloToViewModel(model2Aste, tyyppi);
         //addToKoulutusLinkkiViewModel(tyyppi.getLinkki(), model2Aste.getKoulutusLinkit());
@@ -219,8 +223,12 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         return tyyppi;
     }
 
-    private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, DocumentStatus status,
-            OrganisaatioPerustieto organisatio, Locale locale) {
+    private KoulutusToisenAsteenPerustiedotViewModel mapToKoulutusToisenAsteenPerustiedotViewModel(
+            LueKoulutusVastausTyyppi koulutus,
+            DocumentStatus status,
+            OrganisaatioPerustieto organisatio, Locale locale,
+            final boolean searchLatestKoodistoUris
+    ) {
         Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
         Preconditions.checkNotNull(status, INVALID_DATA + "DocumentStatus enum cannot be null.");
         Preconditions.checkNotNull(organisatio, INVALID_DATA + "Organisation DTO cannot be null.");
@@ -276,7 +284,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
          */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
 
-        koulutusKoodisto.listaa2asteSisalto(model2Aste.getKoulutuskoodiModel(), model2Aste.getKoulutusohjelmaModel(), koulutusmoduuliTyyppi, locale);
+        koulutusKoodisto.listaa2asteSisalto(model2Aste.getKoulutuskoodiModel(), model2Aste.getKoulutusohjelmaModel(), koulutusmoduuliTyyppi, locale, searchLatestKoodistoUris);
 
         /*
          * Create real visible name, the name is also used in koulutus search.  

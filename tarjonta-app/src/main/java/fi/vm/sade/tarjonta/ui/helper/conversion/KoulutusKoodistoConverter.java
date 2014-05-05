@@ -183,7 +183,7 @@ public class KoulutusKoodistoConverter {
         //TODO:  Fix this after koodisto data and koodi relations are fixed.
     }
 
-    public void listaa2asteSisalto(final KoulutuskoodiModel tutkinto, final KoulutusohjelmaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale) {
+    public void listaa2asteSisalto(final KoulutuskoodiModel tutkinto, final KoulutusohjelmaModel ohjelma, final KoulutusmoduuliKoosteTyyppi tyyppi, final Locale locale, final boolean searchLatestKoodiUris) {
 
         if (tyyppi == null) {
             LOG.error("An invalid data error - KoulutusmoduuliKoosteTyyppi object was null?");
@@ -193,13 +193,30 @@ public class KoulutusKoodistoConverter {
         //load text data
         komoBaseDataFromTarjontaService(tutkinto, tyyppi, koulutusKoodiToKoodiModel, locale);
 
-        //search koodisto relations
-        komoBaseDataFromKoodistoService(tutkinto, koulutusKoodiToKoodiModel, locale);
+        if (searchLatestKoodiUris) {
+            //search koodisto relations
+            komoBaseDataFromKoodistoService(tutkinto, koulutusKoodiToKoodiModel, locale);
+
+            //For edit pages - get koodi data from koodisto service
+            if (ohjelma != null) {
+                //update or override tutkinto relations by lukiolinja relations
+                komo2asteKoulutusohjelmaData(ohjelma.getKoodistoUri(), ohjelma, tutkinto, koulutusKoodiToKoodiModel, locale);
+            }
+        } else {
+            //For review page - get koodi data from tarjonta service
+            tutkinto.setOpintojenLaajuus(listaaKoodi(tyyppi.getLaajuusarvoUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setOpintojenLaajuusyksikko(listaaKoodi(tyyppi.getLaajuusyksikkoUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setOpintoala(listaaKoodi(tyyppi.getOpintoalaUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setKoulutusaste(listaaKoodi(tyyppi.getKoulutusasteUri(), koulutusKoodiToKoodiModel, locale));
+            tutkinto.setKoulutusala(listaaKoodi(tyyppi.getKoulutusalaUri(), koulutusKoodiToKoodiModel, locale));
+
+            //review page uses one of the objects, not sure which one
+            tutkinto.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
+            ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
+        }
 
         if (ohjelma != null) {
             UiModelBuilder UiModelBuilder = new UiModelBuilder(MonikielinenTekstiModel.class, tarjontaKoodistoHelper);
-
-            ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
             ohjelma.setTavoitteet(UiModelBuilder.build(ConversionUtils.getTeksti(tyyppi.getTekstit(), KomoTeksti.TAVOITTEET), locale));
         }
     }
@@ -401,6 +418,19 @@ public class KoulutusKoodistoConverter {
                 koulutuskoodi.setOpintojenLaajuusyksikko(listaaKoodi(toUriVersion(type), kc, locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI)) {
                 koulutuskoodi.setOpintojenLaajuus(listaaKoodi(toUriVersion(type), kc, locale));
+            } else {
+                LOG.warn("Unmapped koodi value. koodi : {} koodisto : {}", type.getKoodiUri(), type.getKoodisto().getKoodistoUri());
+            }
+        }
+    }
+
+    private void komo2asteKoulutusohjelmaData(final String koulutusohjelmaUri, final KoulutusohjelmaModel ohjelma, final KoulutuskoodiModel koulutuskoodi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
+        Preconditions.checkNotNull(koulutusohjelmaUri, "koulutusohjelmaUri URI without version object cannot be null.");
+
+        for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(koulutusohjelmaUri)) {
+            if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI)) {
+                koulutuskoodi.setTutkintonimike(listaaKoodi(toUriVersion(type), kc, locale));
+                ohjelma.setTutkintonimike(listaaKoodi(toUriVersion(type), kc, locale));
             } else {
                 LOG.warn("Unmapped koodi value. koodi : {} koodisto : {}", type.getKoodiUri(), type.getKoodisto().getKoodistoUri());
             }
