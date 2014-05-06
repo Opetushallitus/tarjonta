@@ -59,8 +59,8 @@
                 <td colspan="2">
                     <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
                         <i>{{ hakuaika.nimi || t("haku.review.noname") }}</i> -
-                        <div t-show-date value="hakuaika.alkuPvm" timestamp>alkuPvm</div> -
-                        <div t-show-date value="hakuaika.loppuPvm" timestamp>loppuPvm</div>
+                        <div t-show-date value="hakuaika.alkuPvm" timestamp /> -
+                        <div t-show-date value="hakuaika.loppuPvm" timestamp />
                     </div>
                 </td>
             </tr>
