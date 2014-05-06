@@ -15,11 +15,8 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -29,8 +26,6 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiValikoimaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
@@ -39,9 +34,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -54,26 +47,12 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 
 /**
+ * SIMPLE DATA MAPPING TEST CLASS: 
  * Test komo and komoto koodi uri override.
  *
  * @author jani
  */
-public class EntityConverterToRDTOTest {
-
-    private static final String NOT_TESTED = "this test will ingnore this data field";
-    private static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
-    private static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
-
-    private enum Type {
-
-        KOMO,
-        KOMO_CHILD,
-        KOMOTO,
-        NOT_TESTED
-
-    };
-
-    private static final Locale FI = new Locale("FI");
+public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
     private EntityConverterToRDTO<KoulutusKorkeakouluV1RDTO> instanceKk;
 
@@ -425,87 +404,4 @@ public class EntityConverterToRDTOTest {
         expect(commonConverterMock.convertToKoodiDTO(null, FI, FieldNames.SUUNNITELTUKESTON_TYYPPI, false)).andReturn(toKoodiUri(NOT_TESTED));
     }
 
-    /**
-     * Test of convert method, of class EntityConverterToRDTO.
-     */
-    private static String testKey(final Type prefix, final FieldNames field) {
-        Preconditions.checkNotNull(prefix, "prefix value cannot be null.");
-        Preconditions.checkNotNull(field, "field enum cannot be null.");
-        return new StringBuilder(prefix.name()).append("_").append(field).toString();
-    }
-
-    private static void korkeakouluPopulateBaseValues(Type type, BaseKoulutusmoduuli m) {
-        Preconditions.checkNotNull(type, "Type value cannot be null.");
-        Preconditions.checkNotNull(m, "BaseKoulutusmoduuli object cannot be null.");
-
-        m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
-        m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
-        m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI));
-        m.setKoulutusohjelmaUri(testKey(type, FieldNames.KOULUTUSOHJELMA));
-        m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
-        m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
-
-        m.setTutkintoUri(testKey(type, FieldNames.TUTKINTO));
-        m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
-        m.setNqfUri(testKey(type, FieldNames.NQF));
-        m.setEqfUri(testKey(type, FieldNames.EQF));
-        m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
-    }
-
-    private static void lukioPopulateBaseValues(Type type, BaseKoulutusmoduuli m) {
-        Preconditions.checkNotNull(type, "Type value cannot be null.");
-        Preconditions.checkNotNull(m, "BaseKoulutusmoduuli object cannot be null.");
-
-        m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
-        m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
-        m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI));
-        m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
-        m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
-        m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
-        m.setNqfUri(testKey(type, FieldNames.NQF));
-        m.setEqfUri(testKey(type, FieldNames.EQF));
-        m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
-    }
-
-    private static void lukioPopulateChildKomoBaseValues(Koulutusmoduuli m) {
-        Preconditions.checkNotNull(m, "Koulutusmoduuli object cannot be null.");
-        m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        m.setOid(Type.KOMO_CHILD.name());
-        m.setKoulutusUri(testKey(Type.KOMO_CHILD, FieldNames.KOULUTUSKOODI));
-        m.setNqfUri(testKey(Type.KOMO_CHILD, FieldNames.NQF));
-        m.setEqfUri(testKey(Type.KOMO_CHILD, FieldNames.EQF));
-        m.setLukiolinjaUri(testKey(Type.KOMO_CHILD, FieldNames.LUKIOLINJA));
-        m.setTutkintonimikeUri(testKey(Type.KOMO_CHILD, FieldNames.TUTKINTONIMIKE));
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
-    }
-
-    private static KoodiV1RDTO toKoodiUri(final String type) {
-        return new KoodiV1RDTO(type, 1, null);
-    }
-
-    private static KoodiV1RDTO toKoodiUri(final Type type, final FieldNames field) {
-        return new KoodiV1RDTO(testKey(type, field), 1, null);
-    }
-
-    private static NimiV1RDTO toKoodiUriNimi(final Type type, final FieldNames field) {
-        NimiV1RDTO dto = new NimiV1RDTO();
-        dto.setUri(testKey(type, field));
-        return dto;
-    }
-
-    private static KoodiUrisV1RDTO toKoodiUris(final Type type, final FieldNames field) {
-        KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
-        uris.setUris(Maps.<String, Integer>newHashMap());
-        uris.getUris().put(testKey(type, field), 1);
-        return uris;
-    }
-
-    private static KoodiUrisV1RDTO toKoodiUris(final Type type) {
-        KoodiUrisV1RDTO uris = new KoodiUrisV1RDTO();
-        uris.setUris(Maps.<String, Integer>newHashMap());
-        uris.getUris().put(type.name(), 1);
-        return uris;
-    }
 }

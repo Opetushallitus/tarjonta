@@ -195,6 +195,7 @@ public class KoulutusDTOConverterToEntity {
         /*
          * KOMOTO custom data conversion
          */
+        komoto.setLukiolinjaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.LUKIOLINJA));
         komoto.setTutkintonimikeUri(commonConverter.convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
         komoto.setPohjakoulutusvaatimusUri(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
 
