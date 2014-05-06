@@ -1,0 +1,14 @@
+<div class="resultsTreeTable">
+
+	<div class="controls">
+	    	<input type="checkbox" class="selectAll" ng-click="doSelectAll()" ng-disabled="!canSelectAll()"/>
+			<label tt="tarjonta.toiminnot.valitse_kaikki"></label>
+	</div>
+	
+	<table><!-- jquery --></table>
+	
+	<ul class="dropdown-menu">
+        <li ng-repeat="o in menuOptions"><a ng-hide="o.href" href ng-click="o.action()">{{o.title}}</a></li>
+	</ul>
+
+</div>

@@ -94,6 +94,21 @@
                     <button class="btn" ng-click="luoHakukohdeEnabled() ? luoUusiHakukohde() : function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde">Luo uusi hakukohde</span> <span class="icon-plus-sign"></span></button>
                     <button class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus">Luo uusi koulutus</span> <span class="icon-plus-sign"></span></button>
                 </div>
+                
+                <results-tree-table
+                    columns="['kausi', 'koulutuslaji', 'tila']"
+                    column-titles="{kausi:'tarjonta.hakutulokset.kausi', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
+                    model="koulutusResults.tulokset"
+                    selection="selection.koulutukset"
+                    get-content="koulutusGetContent"
+                    get-children="koulutusGetChildren"
+                    get-identifier="koulutusGetIdentifier"
+                    get-link="koulutusGetLink"
+                    get-options="koulutusGetOptions"
+                    ></results-tree-table>
+                    
+                <!-- 
+                <hr/>
 
 	        	<results-table
 	        		id="nkoulutuksetResults"
@@ -102,10 +117,11 @@
 	        		columns="koulutusColumns"
 	        		options="koulutusOptions"
 	        		selection="selection.koulutukset"/>
-
+                 -->
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
 
+                <!-- 
 	        	<results-table
 	        		id="nhakukohteetResults"
 	        		prefix="hakukohde"
@@ -113,7 +129,7 @@
 	        		columns="hakukohdeColumns"
 	        		options="hakukohdeOptions"
 	        		selection="selection.hakukohteet"/>
-
+                 -->
 	        </tab>
 
 	    </tabset>

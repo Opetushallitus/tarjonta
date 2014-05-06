@@ -1,0 +1,63 @@
+/* YLEISET */
+
+div.resultsTreeTable table {
+	width:100%;
+}
+
+div.resultsTreeTable span.indent {
+	display:inline-block;
+	width:40px;
+}
+
+div.resultsTreeTable table th {
+    cursor:default;
+}
+
+div.resultsTreeTable table th.main {
+	min-width:300px;
+	width:50%;
+}
+
+div.resultsTreeTable table td {
+    cursor:pointer;
+}
+
+div.resultsTreeTable table tr:hover td {
+    background-color:#f0f0f0;
+}
+
+div.resultsTreeTable table td + td {
+    border-left: 1px solid #d0d0d0;
+    padding-left:0.5em;
+}
+
+/* sisältörivi */
+
+div.resultsTreeTable table tr td a {
+    font-weight:bold;
+}
+
+/* otsikkorivi */
+
+div.resultsTreeTable table th {
+    font-weight: normal;
+    text-align: left;	
+}
+
+/* RIVIN FOLDAUS */
+
+
+/* avoin taulukkorivi */
+div.resultsTreeTable table tr a.fold > img.folded {
+    display:none;
+}
+
+/* suljettu taulukkorivi */
+div.resultsTreeTable table tr.unfolded a.fold > img.unfolded {
+    display:none;
+}
+
+div.resultsTreeTable table tr.unfolded a.fold > img.folded {
+    display:inline-block;
+}
+
