@@ -256,14 +256,29 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (isNew) {
                 // Generate new OID for haku to be created
                 permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
+                
 
                 hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
                 LOG.info("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
             } else {
                 LOG.info("updateHaku() - OLD haku - find by oid");
+                
+                final String oid = hakuDto.getOid();
 
                 // Check haku exists
-                hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
+                hakuToUpdate = hakuDAO.findByOid(oid);
+                
+                final TarjontaTila toTila = TarjontaTila.valueOf(hakuDto.getTila());
+
+                
+                //tilan muutos/testaus tilapalvelun kautta
+                final Tila tila = new Tila(Tyyppi.HAKU, toTila, oid);
+                if(!publication.isValidStatusChange(tila)){
+                    result.addError(ErrorV1RDTO.createValidationError("haku", "haku.tilamuutos.not.allowed", hakuDto.getOid()));
+                    result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+                    return result;
+                }
+                publication.updatePublicationStatus(Lists.newArrayList(tila));
                 
                 if (hakuToUpdate == null) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));
