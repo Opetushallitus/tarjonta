@@ -61,7 +61,7 @@
             </td>
             <td class="controls">
                 <button class="btn" ng-click="clearSearch()"><span tt="tarjonta.haku.tyhjenna">Tyhjennä</span></button>
-                <button class="btn btn-primary" ng-disabled="!searchParams.KAUSIVUOSI" ng-click="doSearch()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></button>
+                <button class="btn btn-primary" ng-disabled="!searchParams.KAUSIVUOSI || unloadedKoodis>0" ng-click="doSearch()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></button>
             </td>
         </tr>
     </table>
@@ -78,42 +78,19 @@
 	        <select class="float-right"><option data-tt="haku.list.sorttaa.tila">Tilan mukainen järjestys</option></select>
 	         -->
 	    </div>
-	    
-	    <table class="wide" ng-hide="model.hakus == 0">
-	        <tr>
-	            <th class="align-left align-top"><!-- <span data-tt="haku.list.nimi">Nimi</span> -->&nbsp;</th>
-	            <th class="align-left align-top"><span
-	                data-tt="haku.list.hakutyyppi">Hakutyyppi</span></th>
-	            <th class="align-left align-top"><span
-	                data-tt="haku.list.hakukausi">Hakukausi</span></th>
-	            <th class="align-left align-top"><span
-	                data-tt="haku.list.koulutuksen">Koulutuksen</span><br>
-	            <span data-tt="haku.list.alkamiskausi">alkamiskausi</span></th>
-	            <th class="align-left align-top"><span
-	                data-tt="haku.list.hauntila">Haun tila</span></th>
-	        </tr>
-	
-	        <tr ng-repeat="haku in model.hakus| orderBy:predicate:reverse" class="tresult">
-	            <td>
-	               <input type="checkbox" ng-model="haku.selected" class="selectRow"/>
-	               <span class="dropdown">
-	                   <a class="dropdown-toggle" ng-click="initMenu(haku)">
-	                       <img src="img/icon-treetable-button.png"/>
-                       </a>
-	                   <ul class="dropdown-menu">
-	                        <li ng-repeat="action in haku.actions"><a
-	                            ng-click="action.action()">{{action.name}}</a></li>
-	                   </ul>
-	               </span>
-	               <a href ng-click="review(haku)">{{haku.nimi}}</a>
-                </td>
-	            <td><koodi uri="haku.hakutyyppiUri" /></td>
-	            <td><koodi uri="haku.hakukausiUri" /> {{haku.hakukausiVuosi}}</td>
-	            <td><koodi uri="haku.koulutuksenAlkamiskausiUri" />
-	                {{haku.koulutuksenAlkamisVuosi}}</td>
-	            <td>{{t("tarjonta.tila."+haku.tila)}}</td>
-	        </tr>
-	    </table>
+
+
+        <results-tree-table
+            columns="['hakutyyppi', 'hakukausi', 'alkamiskausi', 'tila']"
+            column-titles="{hakutyyppi:'haku.list.hakutyyppi', hakukausi:'haku.list.hakukausi', alkamiskausi:'haku.list.alkamiskausi', tila:'haku.list.hauntila'}"
+            model="model.hakus"
+            selection="selection"
+            get-content="hakuGetContent"
+            get-identifier="hakuGetIdentifier"
+            get-link="hakuGetLink"
+            get-options="hakuGetOptions"
+            ></results-tree-table>
+
     </div>
     
 

@@ -1,6 +1,9 @@
 
 var app = angular.module('ResultsTreeTable', ['ngResource','localisation']);
 
+/**
+ * !!! DOKUMENTAATIO LÖYTYY TIEDOSTON LOPUSTA !!!
+ */
 app.directive('resultsTreeTable',function(LocalisationService, loadingService, $log) {
 
     function forceClear(em) {
@@ -526,14 +529,20 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 			
 			getOptions: "&",		// function(row,actions): hakee valikkotoiminnot riville (ei kutsuta jos getIdentifier(...)==null)
 									//  arrayna, joissa olioita, joilla kullakin propertyt:
+									//
 									//    title: otsikko (localisoitu), joka näytetään
 									//    href:	linkin url, johon siirrytään klikkauksella
 									//	  action: js-funktio, joka suoritetaan klikattaessa
-									// actions -parametri sisältää callback-funktiot joilla voidaan muuttaa taulukossa jo näkyvää riviä:
-									//    update():	päivittää rivin sisällön (oletuksena on, että sisältö säilyy samassa olioreferenssissä)
+									//
+									// - actions -parametri sisältää callback-funktiot joilla voidaan muuttaa taulukossa jo näkyvää riviä:
+									//    update():	päivittää rivin sisällön (oletuksena on, että sisältö säilyy samassa olioreferenssissä!)
 									//    delete(): poistaa rivin
+									//
+									// - Valikon sisältö voidaan hakea asynkronisesti siten, että palautetaan tyhjä array, jota
+									//   promiset valmistuessaan täydentävät; valikko täydentyy tällöin automaattisesti angularin
+									//   logiikan mukaan; esim. hakujen hallinta
 			// ulkoasu
-			columnTitles: "&",		// (map) sarakkeiden otsikot lokalisaatioavaimina
+			columnTitles: "&",		// (map) sarakkeiden otsikot muodossa tunniste -> lokalisaatioavain
 			getCssClass: "&",		// function(row, col): palauttaa css-luokan/luokat sarakkeelle (kun col===undefined),
 									//   pääsolulle (col===null) tai nimetylle solulle (col!=null|undefined)
 
