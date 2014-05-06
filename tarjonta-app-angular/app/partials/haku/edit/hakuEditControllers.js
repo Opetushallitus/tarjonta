@@ -390,13 +390,13 @@ app.controller('HakuEditController',
             };
 
             $scope.checkPriorisointi = function () {
-                $log.info("checkPriorisointi()");
+                $log.debug("checkPriorisointi()");
                 
-                if ($scope.model.haku.hakulomakeKaytaJarjestemlmanOmaa && $scope.model.hakux.result.sijoittelu) {
+                if ($scope.model.hakux.result.jarjestelmanHakulomake && $scope.model.hakux.result.sijoittelu) {
                     $scope.model.hakux.result.usePriority = true;
                 }
                 
-                if (!$scope.model.haku.hakulomakeKaytaJarjestemlmanOmaa) {
+                if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
                     $scope.model.hakux.result.usePriority = false;
                 }                
             };
@@ -421,12 +421,10 @@ app.controller('HakuEditController',
                     // Preloaded Haku result
                     hakux: $route.current.locals.hakux,
                     haku: {
-                        // State of the checkbox for "oma hakulomake" - if uri is given the use it
-                        hakulomakeKaytaJarjestemlmanOmaa: !angular.isDefined($route.current.locals.hakux.result.hakulomakeUri)
+                        // Possible UI state for Haku
                     },
                     parameter: {
                         //parametrit populoituu tänne... ks. haeHaunParametrit(...)
-
                     },
                     selectedOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
                     selectedTarjoajaOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()

@@ -117,21 +117,21 @@
     <tr class="required">
         <th data-tt='haku.edit.hakulomake'>Hakulomake</th>
         <td>
-            <input type="checkbox" ng-model="model.haku.hakulomakeKaytaJarjestemlmanOmaa" ng-change="checkPriorisointi()">
+            <input type="checkbox" ng-model="model.hakux.result.jarjestelmanHakulomake" ng-change="checkPriorisointi()">
             <span data-tt="haku.edit.hakulomake.kaytaJarjestelmanOmaa">Käytetään järjestelmän omaa hakulomaketta</span>
 
-            <p ng-show="!model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
+            <p ng-show="!model.hakux.result.jarjestelmanHakulomake" class="animate-hide">
                 <span data-tt="haku.edit.hakulomake.kaytaMuuta">Käytetään muuta hakulomaketta, mitä:</span>
                 <input type="url" ng-model="model.hakux.result.hakulomakeUri"
                        placeholder="http://haku.lomake.uri.com" name="hakulomakeUrl">
             </p>
-            <p ng-show="model.haku.hakulomakeKaytaJarjestemlmanOmaa" class="animate-hide">
+            <p ng-show="model.hakux.result.jarjestelmanHakulomake" class="animate-hide">
                 <span data-tt="haku.edit.maxHakukohdes.label">Hakukohteiden enimmäismäärä:</span>
                 <input type="number" ng-model="model.hakux.result.maxHakukohdes"
-                       name="maxHakukohdes" ng-required="model.haku.hakulomakeKaytaJarjestemlmanOmaa">
+                       name="maxHakukohdes" ng-required="model.hakux.result.jarjestelmanHakulomake">
                 <br/>
                 <input type="checkbox" ng-model="model.hakux.result.usePriority"
-                       ng-disabled="model.haku.hakulomakeKaytaJarjestemlmanOmaa && model.hakux.result.sijoittelu">
+                       ng-disabled="model.hakux.result.jarjestelmanHakulomake && model.hakux.result.sijoittelu">
                 <span data-tt="haku.edit.kaytetaanPriorisointia">Haussa käytetään hakukohteiden priorisointia</span>
             </p>
 
@@ -139,7 +139,7 @@
         <td>
             <div>
                 <div show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit"
-                     field-check="model.showError && !model.haku.hakulomakeKaytaJarjestemlmanOmaa"></div>
+                     field-check="model.showError && !model.hakux.result.jarjestelmanHakulomake"></div>
                 <div show-errors form="hakuForm" field="maxHakukohdes" tt-prefix="haku.edit"  field-check="model.showError"></div>
             </div>
         </td>

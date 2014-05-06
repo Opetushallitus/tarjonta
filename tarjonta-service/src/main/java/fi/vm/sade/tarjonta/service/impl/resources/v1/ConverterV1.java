@@ -159,6 +159,8 @@ public class ConverterV1 {
         t.setTarjoajaOids(haku.getTarjoajaOids());
 
         t.setUsePriority(haku.isUsePriority());
+        t.setSijoittelu(haku.isSijoittelu());
+        t.setJarjestelmanHakulomake(haku.isJarjestelmanHakulomake());
 
         // Koodistos as (not) pre-resolved, who needs this?
 //        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
@@ -242,6 +244,8 @@ public class ConverterV1 {
         haku.setTarjoajaOids(hakuV1RDTO.getTarjoajaOids());
 
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
+        haku.setSijoittelu(hakuV1RDTO.isSijoittelu());
+        haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
 
         return haku;
     }
