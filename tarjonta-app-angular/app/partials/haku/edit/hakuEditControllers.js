@@ -45,11 +45,16 @@ app.controller('HakuEditController',
             var hakuOid = $route.current.params.id;
 
             
-            //permissiot
-            $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
-              $scope.isMutable=results[0];
-              $scope.isRemovable=results[1] && results[2];
-            });
+            if(hakuOid) {
+              //permissiot
+              $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+                $scope.isMutable=results[0];
+                $scope.isRemovable=results[1] && results[2];
+              });
+            } else {
+              //uusi haku
+              $scope.isMutable=true;
+            }
 
             
             // Reset model to empty
