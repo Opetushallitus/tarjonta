@@ -210,6 +210,12 @@ public class KoulutusCommonConverter {
         return koodiUriDto;
     }
 
+    public NimiV1RDTO convertToNimiDTO(final String uri, final String overrideUri, final Locale locale, final FieldNames fieldName, final boolean allowNullKoodi, final boolean showMeta) {
+        NimiV1RDTO koodiUriDto = new NimiV1RDTO();
+        convertKoodiUriToKoodiDTO(overrideUri != null ? overrideUri : uri, koodiUriDto, locale, fieldName, allowNullKoodi, showMeta);
+        return koodiUriDto;
+    }
+
     public KoodiUrisV1RDTO convertToKoodiUrisDTO(final Set<KoodistoUri> uris, final Locale Locale, final FieldNames fieldName, final boolean showMeta) {
         KoodiUrisV1RDTO koodiMapDto = new KoodiUrisV1RDTO();
         if (koodiMapDto.getUris() == null) {

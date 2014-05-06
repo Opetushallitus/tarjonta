@@ -136,9 +136,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              * 2ASTE : LUKIO
              */
             KoulutusLukioV1RDTO lukioDto = (KoulutusLukioV1RDTO) dto;
-            lukioDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, ALLOW_NULL_KOODI_URI, showMeta));
+            lukioDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), komoto.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, ALLOW_NULL_KOODI_URI, showMeta));
             lukioDto.setKielivalikoima(commonConverter.convertToKielivalikoimaDTO(komoto.getTarjotutKielet(), locale, showMeta));
             lukioDto.setLukiodiplomit(commonConverter.convertToKoodiUrisDTO(komoto.getLukiodiplomit(), locale, FieldNames.LUKIODIPLOMI, showMeta));
+
+            //tutkintonimike is on child komo object 'koulutusohjelma', not parent
             lukioDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
             lukioDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
             lukioDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
@@ -225,7 +227,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private void convertParentChildKomoHierarchyToRDTO(TYPE dto, Koulutusmoduuli komoParent, Koulutusmoduuli komoChild, KoulutusmoduuliToteutus komoto, Locale locale, boolean showMeta) {
         Preconditions.checkNotNull(komoParent, "Koulutusmoduuli parent object cannot be null!");
         Preconditions.checkNotNull(komoChild, "Koulutusmoduuli child object cannot be null!");
-        Preconditions.checkNotNull(komoChild.getKoulutustyyppiEnum(), "ModuleRowType cannot be null!");
+        Preconditions.checkNotNull(komoChild.getKoulutustyyppiEnum(), "Koulutustyyppi enum cannot be null!");
 
         //1. return komoto uri
         //2. fallback : return parent (tutkinto) komo uri, when no komoto uri
