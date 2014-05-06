@@ -4,9 +4,16 @@ div.resultsTreeTable table {
 	width:100%;
 }
 
+/* sisennys */
 div.resultsTreeTable span.indent {
-	display:inline-block;
-	width:40px;
+    display:inline-block;
+    width:14px;
+}
+
+/* näytetään foldausnuolen sijaan jos ei lapsia */
+div.resultsTreeTable span.leaf {
+    display:inline-block;
+    width:26px;
 }
 
 /* otsikkorivi */

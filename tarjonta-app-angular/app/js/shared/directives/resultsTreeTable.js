@@ -367,6 +367,8 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 					+"<img src=\"img/triangle_down.png\" class=\"folded\"/>"
 					+"<img src=\"img/triangle_right.png\" class=\"unfolded\"/>"
 					+"</a> ";
+			} else {
+				html = html + "<span class=\"leaf\">&nbsp;</span>";
 			}
 			
 			var selected = id && $scope.selection.indexOf(id)!=-1;
