@@ -251,7 +251,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             if($route.current.locals.hakukohdex.result) {
                     $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
                     $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
-                    if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
+                    if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
                         return korkeakoulutusHakukohdePartialUri;
                         //TODO : This is commented out on testing remove comments after testing
                     }  else if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === "LUKIOKOULUTUS"/*&& $route.current.locals.hakukohdex.result.koulutuslaji === "A"*/ ) {
@@ -312,7 +312,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             }
             console.log('FORM CONTROLS : ', $scope.formControls);
             if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
-                $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
+                $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
                 $scope.formControls.reloadDisplayControls();
             }
 
