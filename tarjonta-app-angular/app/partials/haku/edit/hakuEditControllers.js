@@ -135,7 +135,9 @@ app.controller('HakuEditController',
                 }
 
                 // Update haku's tila (state)
-                haku.tila = tila;
+                if(haku.tila!="JULKAISTU") { //älä muuta julkaistun tilaa
+                  haku.tila = tila;
+                }
 
                 // Save it
                 HakuV1.save(haku, function(result) {
