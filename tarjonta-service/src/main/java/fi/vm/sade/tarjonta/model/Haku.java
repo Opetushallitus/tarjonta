@@ -100,6 +100,9 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "sijoittelu")
     private boolean sijoittelu;
 
+    @Column(name = "jarjestelmanHakulomake")
+    private boolean jarjestelmanHakulomake;
+
     @Pattern(regexp = WWW_PATTERN)
     @Column(name = "hakulomake_url")
     private String hakulomakeUrl;
@@ -455,6 +458,14 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setUsePriority(boolean usePriority) {
         this.usePriority = usePriority;
-    }    
+    }
+
+    public boolean isJarjestelmanHakulomake() {
+        return jarjestelmanHakulomake;
+    }
+
+    public void setJarjestelmanHakulomake(boolean jarjestelmanHakulomake) {
+        this.jarjestelmanHakulomake = jarjestelmanHakulomake;
+    }
 
 }

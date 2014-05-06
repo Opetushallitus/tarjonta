@@ -74,10 +74,6 @@
         <aop:scoped-proxy/>
     </bean>
 
-    <bean id="hakuPresenter" class="fi.vm.sade.tarjonta.ui.presenter.HakuPresenter" scope="session">
-        <aop:scoped-proxy/>
-    </bean>
-    
     <bean id="searchPresenter" class="fi.vm.sade.tarjonta.ui.presenter.SearchPresenter" scope="session">
         <aop:scoped-proxy/>
     </bean>

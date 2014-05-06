@@ -241,7 +241,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<HakuV1RDTO> updateHaku(HakuV1RDTO hakuDto) {
         LOG.info("updateHaku() - {}", hakuDto);
-        permissionChecker.checkUpdateHaku(hakuDto != null ? hakuDto.getOid() : null);
 
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
 
@@ -449,25 +448,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.addError(ErrorV1RDTO.createValidationError("nimi", "haku.validation.nimi.empty"));
         }
 
-        // Hakulomake URI  -OR- maxHakukohdes
-        if (isEmpty(haku.getHakulomakeUri())) {
-            // max hakuaikas cannot be empty
+        // If we are using systems application form - make sure the "maxHakukohdes" is set
+        if (haku.isJarjestelmanHakulomake()) {
             if (haku.getMaxHakukohdes() <= 0) {
                 result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
-            }
-        } else {
-//            // Cannot have this since we have hakulomakeUri
-//            if (haku.getMaxHakukohdes() > 0) {
-//                result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
-//            }
-
+            }            
+        }
+        
+        // Own hakulomake url? Verify it.
+        if (!isEmpty(haku.getHakulomakeUri())) {
             try {
                 URL url = new URL(haku.getHakulomakeUri());
             } catch (MalformedURLException ex) {
                 result.addError(ErrorV1RDTO.createValidationError("hakulomakeUri", "haku.validation.hakulomakeUri.invalid"));
             }
         }
-
+        
         // Must have at least one hakuaika
         if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
@@ -497,6 +493,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
 
+        // Sijoittelu + system application form -> priority = true
+        if (haku.isSijoittelu() && isEmpty(haku.getHakulomakeUri())) {
+            haku.setUsePriority(true);
+        }        
+        
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 

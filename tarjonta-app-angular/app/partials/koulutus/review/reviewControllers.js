@@ -1,8 +1,19 @@
 
 var app = angular.module('app.review.ctrl', []);
 
-app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$window', '$location', '$route', '$log', 'TarjontaService', '$routeParams', 'LocalisationService', 'dialogService', 'Koodisto', 'KoodistoURI', '$modal', 'KoulutusConverterFactory', 'HakukohdeKoulutukses', 'SharedStateService',
-    function BaseReviewController(PermissionService, $q, $scope, $window, $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, koodisto, KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+app.controller('BaseReviewController', [
+        'PermissionService', '$q', '$scope', 
+        '$window', '$location', '$route', 
+        '$log', 'TarjontaService', '$routeParams', 
+        'LocalisationService', 'dialogService', 'Koodisto', 
+        'KoodistoURI', '$modal', 'KoulutusConverterFactory', 
+        'HakukohdeKoulutukses', 'SharedStateService', 'AuthService',
+    function BaseReviewController(PermissionService, $q, $scope, 
+            $window, $location, $route, 
+            $log, TarjontaService, $routeParams, 
+            LocalisationService, dialogService, koodisto, 
+            KoodistoURI, $modal, KoulutusConverterFactory, 
+            HakukohdeKoulutukses, SharedStateService, AuthService) {
 
         $log = $log.getInstance("BaseReviewController");
 
@@ -50,8 +61,7 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
         };
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
-        $scope.model.userLangUri;
-
+        $scope.model.userLangUri = "kieli_" + AuthService.getLanguage();
 
         var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
         hakukohdePromise.then(function(hakukohteet) {
@@ -112,21 +122,21 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
         });
 
         $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.koulutusasteTyyppi].KUVAUS_ORDER;
-        if (koulutusModel.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
-            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
-                if (kieliUri.indexOf(kieliUri) != -1) {
-                    $scope.model.userLangUri = kieliUri;
-                }
-            }
-            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
-        } else if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
-            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
-                if (kieliUri.indexOf(kieliUri) != -1) {
-                    $scope.model.userLangUri = kieliUri;
-                }
-            }
-            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri].nimi;
-        }
+//        if (koulutusModel.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
+//            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
+//                if (kieliUri.indexOf(kieliUri) != -1) {
+//                    $scope.model.userLangUri = kieliUri;
+//                }
+//            }
+//            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
+//        } else if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
+//            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
+//                if (kieliUri.indexOf(kieliUri) != -1) {
+//                    $scope.model.userLangUri = kieliUri;
+//                }
+//            }
+//            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri].nimi;
+//        }
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
@@ -359,5 +369,51 @@ app.controller('BaseReviewController', ['PermissionService', '$q', '$scope', '$w
 //                $route.reload();
 //            });
         };
+
+        $scope.getKoulutusohjelmaNimi = function() {            
+            // Get user's language and update scope with it
+            var userLangUri = "kieli_" + AuthService.getLanguage();
+            $scope.model.userLangUri = userLangUri;
+
+            var result = "XXX";
+
+            if (koulutusModel.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
+                if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {
+                    // Just take first value for language
+                    userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
+                }
+                result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
+            } 
+            else if (koulutusModel.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
+                if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.meta[userLangUri])) {
+                    // Just take first value for language
+                    userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.meta)[0];
+                }
+                result = $scope.model.koulutus.koulutusohjelma.meta[userLangUri].nimi;;
+            }
+
+            $scope.model.header.nimi = result;
+
+            // $log.info("getKoulutusohjelmaNimi() lang, value", userLangUri, result);
+            
+            return result;
+        };
+        
+        $scope.getKoulutuskoodiNimi = function() {
+            // Get user's language and update scope with it
+            var userLangUri = "kieli_" + AuthService.getLanguage();
+            $scope.model.userLangUri = userLangUri;
+            
+            if (!angular.isDefined($scope.model.koulutus.koulutuskoodi.meta[userLangUri])) {
+                result = $scope.model.koulutus.koulutuskoodi.meta.nimi;
+            } else {
+                result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
+            }
+            
+            // $log.info("getKoulutuskoodiNimi() lang, value", userLangUri, result);
+
+            return result;
+        };
+        
     }]);
 

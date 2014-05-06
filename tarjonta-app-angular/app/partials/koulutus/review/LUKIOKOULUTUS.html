@@ -1,13 +1,13 @@
 <div id="koulutusReview"">
 
-    <h2>{{model.koulutus.koulutusohjelma.tekstis[model.userLangUri]}}</h2>
+    <h2>{{ getKoulutusohjelmaNimi() }}</h2>
                
-    <h3>{{ model.koulutus.koulutuskoodi.kaannos }}</h3>
-
+    <h3>{{ getKoulutuskoodiNimi() }}</h3>
+    
     <tabset>
         <tab data-ng-repeat="lang in model.languages" heading="{{lang.name}}">
             <div data-ng-include="'partials/koulutus/review/LUKIOKOULUTUS_reviewLanguage.html'"></div>
         </tab>
     </tabset>
-
+    
 </div>

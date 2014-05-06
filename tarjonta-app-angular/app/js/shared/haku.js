@@ -72,6 +72,9 @@ app.factory('HakuService', function($http, $q, Config, $log) {
         });
 
 
+/**
+ * Haku resource
+ */
 app.factory('HakuV1', function($resource, $log, Config) {
         $log = $log.getInstance("HakuV1");
 
@@ -175,6 +178,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 "koulutuksenAlkamiskausiUri": "",
                 "tila": "LUONNOS",
                 "sijoittelu": true,
+                "jarjestelmanHakulomake" : true,
                 "hakuaikas": [{
                         "nimi": "",
                         "alkuPvm": null,
@@ -190,7 +194,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 },
                 "maxHakukohdes": 0,
                 "usePriority" : true
-                        // "hakulomakeUri" : "http://www.hut.fi",
+                // "hakulomakeUri" : "http://www.hut.fi",
             }
         };
     };
@@ -205,6 +209,19 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
     };
 
   return {
+    
+    
+    /**
+     * Tarkista että tilasiirtymä on sallittu
+     * oidstate esim: {oid: '123.456.789', state: 'JULKAISTU'}
+     * jossa oid on haun oid, state tila johon ollaan siirtymässä.
+     * 
+     * Palauttaa promisen.
+     */
+    checkStateChange: function(oidstate){
+      return HakuV1.checkStateChange(oidstate).$promise;
+      
+    },
     /**
      * Hae hakuja määritellyillä hakuehdoilla
      */

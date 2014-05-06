@@ -19,17 +19,26 @@ app.controller('HakuReviewController',
         ['$scope', '$route', '$log',
             '$routeParams', 'ParameterService', '$location',
             'HakuV1Service', 'TarjontaService', 'dialogService',
-            'LocalisationService',
+            'LocalisationService', '$q', "PermissionService",
             function HakuReviewController($scope, $route, $log,
                     $routeParams, ParameterService, $location,
                     HakuV1Service, TarjontaService, dialogService,
-                    LocalisationService) {
+                    LocalisationService, $q, PermissionService) {
 
                 $log = $log.getInstance("HakuReviewController");
-
-                $log.info("  init, args =", $scope, $route, $routeParams);
+                $scope.isMutable=false;
+                $scope.isRemovable=false;
 
                 var hakuOid = $route.current.params.id;
+
+                
+                //permissiot
+                $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+                  $scope.isMutable=results[0];
+                  $scope.isRemovable=results[1] && results[2];
+                });
+                
+                $log.info("  init, args =", $scope, $route, $routeParams);
 
                 // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve for "/haku/:id"
 
@@ -40,10 +49,16 @@ app.controller('HakuReviewController',
                 };
 
                 $scope.doEdit = function() {
-                    $location.path("/haku/" + hakuOid + "/edit");
+                  if(!$scope.isMutable) {
+                    return;
+                  }
+                  $location.path("/haku/" + hakuOid + "/edit");
                 };
 
                 $scope.doDelete = function(event) {
+                  if(!$scope.isRemovable) {
+                    return;
+                  }
                     $log.info("doDelete()", event);
                     
                     dialogService.showSimpleDialog(
@@ -65,7 +80,6 @@ app.controller('HakuReviewController',
                         }
                     });
                 };
-
 
                 $scope.init = function() {
                     $log.info("HakuReviewController.init()...");
