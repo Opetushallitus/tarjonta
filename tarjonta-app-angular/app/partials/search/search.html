@@ -100,36 +100,30 @@
                     column-titles="{kausi:'tarjonta.hakutulokset.kausi', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
                     model="koulutusResults.tulokset"
                     selection="selection.koulutukset"
-                    get-content="koulutusGetContent"
-                    get-children="koulutusGetChildren"
-                    get-identifier="koulutusGetIdentifier"
+                    get-content="tuloksetGetContent"
+                    get-children="tuloksetGetChildren"
+                    get-identifier="tuloksetGetIdentifier"
                     get-link="koulutusGetLink"
                     get-options="koulutusGetOptions"
                     ></results-tree-table>
                     
-                <!-- 
-                <hr/>
-
-	        	<results-table
-	        		id="nkoulutuksetResults"
-	        		prefix="koulutus"
-	        		content="koulutusResults"
-	        		columns="koulutusColumns"
-	        		options="koulutusOptions"
-	        		selection="selection.koulutukset"/>
-                 -->
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
+	        
+                <results-tree-table
+                    columns="['kausi', 'hakutapa', 'aloituspaikat', 'koulutuslaji', 'tila']"
+                    column-titles="{kausi:'tarjonta.hakutulokset.kausi', hakutapa:'tarjonta.hakutulokset.hakutapa', aloituspaikat:'tarjonta.hakutulokset.aloituspaikat', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
+                    model="hakukohdeResults.tulokset"
+                    selection="selection.hakukohteet"
+                    
+                    get-content="tuloksetGetContent"
+                    get-children="tuloksetGetChildren"
+                    get-identifier="tuloksetGetIdentifier"
+                    
+                    get-link="hakukohdeGetLink"
+                    get-options="hakukohdeGetOptions"
+                    ></results-tree-table>
 
-                <!-- 
-	        	<results-table
-	        		id="nhakukohteetResults"
-	        		prefix="hakukohde"
-	        		content="hakukohdeResults"
-	        		columns="hakukohdeColumns"
-	        		options="hakukohdeOptions"
-	        		selection="selection.hakukohteet"/>
-                 -->
 	        </tab>
 
 	    </tabset>

@@ -9,6 +9,8 @@ div.resultsTreeTable span.indent {
 	width:40px;
 }
 
+/* otsikkorivi */
+
 div.resultsTreeTable table th {
     cursor:default;
 }
@@ -17,6 +19,8 @@ div.resultsTreeTable table th.main {
 	min-width:300px;
 	width:50%;
 }
+
+/* sisältörivi */
 
 div.resultsTreeTable table td {
     cursor:pointer;
@@ -30,8 +34,6 @@ div.resultsTreeTable table td + td {
     border-left: 1px solid #d0d0d0;
     padding-left:0.5em;
 }
-
-/* sisältörivi */
 
 div.resultsTreeTable table tr td a {
     font-weight:bold;
@@ -59,5 +61,22 @@ div.resultsTreeTable table tr.unfolded a.fold > img.unfolded {
 
 div.resultsTreeTable table tr.unfolded a.fold > img.folded {
     display:inline-block;
+}
+
+/* checkboxit */
+
+div.resultsTreeTable input.selectAll {
+    margin-left:27px;
+}
+
+div.resultsTreeTable input.selectAll + label {
+    position:relative;
+    top:0.25em;
+    margin-left:0.25em;
+}
+
+div.resultsTreeTable table input[type=checkbox] {
+    position:relative;
+    top:-0.25em;
 }
 
