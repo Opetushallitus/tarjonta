@@ -59,9 +59,11 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setEqfLuokitusUri(s.getEqfUri());
         t.setKoulutusAlaUri(s.getKoulutusalaUri());
         t.setKoulutusAsteUri(s.getKoulutusasteUri());
-        // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
         t.setKoulutusOhjelmaKoodiUri(s.getKoulutusohjelmaUri());
-        t.setKoulutusTyyppiUri(s.getKoulutustyyppiEnum().name()); // TODO onko uri?
+
+        // not koodisto uri, return enum value like : 'AmmatillinenPeruskoulutus' 
+        t.setKoulutusTyyppiUri(s.getKoulutustyyppiEnum().getKoulutusasteTyyppi().value());
+        t.setKoulutustyyppi(s.getKoulutustyyppiEnum().name());
         t.setLaajuusArvoUri(s.getOpintojenLaajuusarvoUri()); //koodi uri
         if (s.getOpintojenLaajuusarvoUri() != null) {
             final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(s.getOpintojenLaajuusarvoUri());
@@ -114,5 +116,7 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         // LOG.debug("  --> {}", t);
         return t;
     }
+    
+    
 
 }
