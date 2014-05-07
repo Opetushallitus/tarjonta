@@ -123,7 +123,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,
             List<KoulutusIndexEntity> koulutuses) {
         if(koulutuses!=null && koulutuses.size()>0) {
-            String koulutusastetyyppi = koulutuses.get(0).getKoulutustyyppiEnum().getKoulutusasteTyyppi().name();
+            String koulutusastetyyppi = koulutuses.get(0).getKoulutustyyppiEnum().getKoulutusasteTyyppi().value();
             hakukohdeDoc.addField(KOULUTUSASTETYYPPI, koulutusastetyyppi);
         }
     }

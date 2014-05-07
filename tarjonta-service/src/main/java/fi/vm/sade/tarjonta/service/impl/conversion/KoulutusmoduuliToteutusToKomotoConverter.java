@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
@@ -41,7 +42,6 @@ import java.util.Map;
 public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<KoulutusmoduuliToteutus, KomotoDTO> {
 
 // extends AbstractFromDomainConverter<KoulutusmoduuliToteutus, KomotoDTO>{
-
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusmoduuliToKomoConverter.class);
 
     @Autowired
@@ -63,7 +63,6 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setAvainsanatUris(convertKoodistoUrisToList(s.getAvainsanas()));
 
         // t.set(s.getHakukohdes()); TODO list OIDs
-
         t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
         t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
         t.setModified(s.getUpdated());
@@ -80,18 +79,28 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setSuunniteltuKestoArvo(s.getSuunniteltukestoArvo());
         t.setSuunniteltuKestoYksikkoUri(s.getSuunniteltukestoYksikkoUri());
         t.setTarjoajaOid(s.getTarjoaja());
-        // t.setTarjotutKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getTarjotutKielet())); // KieliValikoima?
         t.setTeematUris(convertKoodistoUrisToList(s.getTeemas()));
         t.setTila(s.getTila());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
-        // t.setUpdated(s.getUpdated()); // TODO POISTA "lastUpdateDate"
         t.setVersion((s.getVersion() != null) ? s.getVersion().intValue() : -1);
+
+        //OVT-7513 REAL KOODISTO FROM KOMOTO URIs (null if empty):
+        t.setTutkintonimikeUri(s.getTutkintonimikeUri());
+        t.setOpintoalaUri(s.getOpintoalaUri());
+        t.setKoulutusAlaUri(s.getKoulutusalaUri());
+        t.setKoulutusAsteUri(s.getKoulutusasteUri());
+        t.setKoulutusKoodiUri(s.getKoulutusUri());
+        t.setLukiolinjaUri(s.getLukiolinjaUri());
+        t.setOpintojenLaajuusarvoUri(s.getOpintojenLaajuusarvoUri());
+        t.setKoulutustyyppiUri(s.getKoulutustyyppiUri());
+        t.setTutkintoUri(s.getTutkintoUri());
+        t.setNqfLuokitusUri(s.getNqfUri());
+        t.setEqfLuokitusUri(s.getEqfUri());
+        t.setKoulutusohjelmaUri(s.getKoulutusohjelmaUri());
 
         convertTekstit(t.getTekstit(), s.getTekstit());
 
-
         // TODO t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));
-
         //
         // Relations
         //
@@ -114,8 +123,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
                     LOG.debug("  2. parent parent komo = {}", parentParentKomo.getOid());
 
                     // Get komotos with same pohjakoulutus and tarjoaja
-                    List<KoulutusmoduuliToteutus> parentKomotos =
-                            koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentParentKomo, s.getTarjoaja(), s.getPohjakoulutusvaatimusUri());
+                    List<KoulutusmoduuliToteutus> parentKomotos
+                            = koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentParentKomo, s.getTarjoaja(), s.getPohjakoulutusvaatimusUri());
                     LOG.debug("  3. parent komotos = {}", parentKomotos);
 
                     if (parentKomotos == null || parentKomotos.isEmpty()) {
@@ -136,8 +145,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         }
 
         // OVT-6619 Add koulutusohjelman nimi, free text
-        if(s.getNimi()!=null && s.getNimi().getTekstis()!=null) {
-            for(TekstiKaannos kaannos:s.getNimi().getTekstis()){
+        if (s.getNimi() != null && s.getNimi().getTekstis() != null) {
+            for (TekstiKaannos kaannos : s.getNimi().getTekstis()) {
                 t.setKoulutusohjelmanNimi(kaannos.getArvo());  //stored under "fi"
             }
         }
