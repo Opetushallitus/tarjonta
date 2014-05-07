@@ -1,4 +1,3 @@
-//var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
 
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('HakukohdeAikuLukioEditController',
@@ -73,7 +72,41 @@ app.controller('HakukohdeAikuLukioEditController',
 
         };
 
+        var validateAikuHakukohde = function() {
 
+            var errors = [];
+
+            console.log('AIKU HAKUKOHDE : ' , $scope.model.hakukohde);
+            if (!$scope.model.hakukohde.hakukohteenNimiUri || $scope.model.hakukohde.hakukohteenNimiUri.trim().length <1 ) {
+                var err = {};
+                err.errorMessageKey = 'hakukohde.edit.nimi.missing';
+                $scope.model.nimiValidationFailed = true;
+                errors.push(err);
+            }
+
+            if (!$scope.model.hakukohde.hakuOid || $scope.model.hakukohde.hakuOid.trim().length < 1) {
+                var err = {};
+                err.errorMessageKey = 'hakukohde.edit.haku.missing';
+
+                errors.push(err);
+            }
+
+            if(!$scope.model.hakukohde.aloituspaikatLkm || $scope.model.hakukohde.aloituspaikatLkm < 1) {
+                var err = {};
+                err.errorMessageKey = 'hakukohde.edit.aloituspaikat.missing';
+
+                errors.push(err);
+            }
+
+            if (errors.length < 1 ) {
+                return true;
+            } else {
+                $scope.showError(errors);
+
+                return false;
+            }
+
+        };
 
         var filterHakus = function(hakus) {
             return  $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
@@ -113,5 +146,19 @@ app.controller('HakukohdeAikuLukioEditController',
 
 
         init();
+
+
+        $scope.saveAikuLukioAsLuonnos = function() {
+
+
+            $scope.model.saveLuonnosParent(validateAikuHakukohde);
+
+        };
+
+        $scope.saveAikuLukioAsValmis = function () {
+
+            $scope.model.saveValmisParent(validateAikuHakukohde);
+
+        };
 
     });

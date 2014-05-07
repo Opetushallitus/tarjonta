@@ -8,8 +8,8 @@
             dto="modifiedObj">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAikuLukioAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveAikuLukioAsValmis()" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="!model.continueToReviewEnabled"></controls-button>
 
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
