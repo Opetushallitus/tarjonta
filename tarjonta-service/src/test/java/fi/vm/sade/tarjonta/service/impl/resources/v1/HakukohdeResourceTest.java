@@ -77,20 +77,20 @@ public class HakukohdeResourceTest {
         
         //stub komotodao
         komoto1 = new KoulutusmoduuliToteutus();
-        komoto1.setAlkamiskausi("kausi");
+        komoto1.setAlkamiskausiUri("kausi");
         komoto1.setAlkamisVuosi(2005);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1")).toReturn(komoto1);
         komoto2 = new KoulutusmoduuliToteutus();
-        komoto2.setAlkamiskausi("kausi");
+        komoto2.setAlkamiskausiUri("kausi");
         komoto2.setAlkamisVuosi(2006);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2")).toReturn(komoto2);
         komoto3 = new KoulutusmoduuliToteutus();
-        komoto3.setAlkamiskausi("kausi2");
+        komoto3.setAlkamiskausiUri("kausi2");
         komoto3.setAlkamisVuosi(2005);
         
         komotoPeruttu = new KoulutusmoduuliToteutus();
         komotoPeruttu.setTila(TarjontaTila.PERUTTU);
-        komotoPeruttu.setAlkamiskausi("kausi2");
+        komotoPeruttu.setAlkamiskausiUri("kausi2");
         komotoPeruttu.setAlkamisVuosi(2005);
         
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3")).toReturn(komoto3);

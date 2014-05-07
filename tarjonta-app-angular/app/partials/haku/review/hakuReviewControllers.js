@@ -35,7 +35,7 @@ app.controller('HakuReviewController',
                 //permissiot
                 $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
                   $scope.isMutable=results[0];
-                  $scope.isRemovable=results[1] && results[2];
+                  $scope.isRemovable=results[1] && results[2].result;
                 });
                 
                 $log.info("  init, args =", $scope, $route, $routeParams);

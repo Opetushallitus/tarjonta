@@ -230,8 +230,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         update.setVersion(toteutus.getVersion());
         adminService.paivitaKoulutus(update);
         toteutus = koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
-        assertEquals("new-value", toteutus.getSuunniteltuKestoArvo());
-        assertEquals("new-units", toteutus.getSuunniteltuKestoYksikko());
+        assertEquals("new-value", toteutus.getSuunniteltukestoArvo());
+        assertEquals("new-units", toteutus.getSuunniteltukestoYksikkoUri());
         assertEquals(fi.vm.sade.tarjonta.shared.types.TarjontaTila.VALMIS, toteutus.getTila());
     }
 
@@ -622,7 +622,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         sc.setKoulutusKoodi(KOULUTUSKOODI);
         sc.setKoulutusohjelmaKoodi(KOKOODI);
         Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
-        assertEquals(KOULUTUSKOODI, komo.getKoulutusKoodi());
+        assertEquals(KOULUTUSKOODI, komo.getKoulutusUri());
 
     }
 
@@ -751,8 +751,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     private void insertSampleKoulutus() {
 
         Koulutusmoduuli moduuli = fixtures.createTutkintoOhjelma();
-        moduuli.setKoulutusKoodi("321101");
-        moduuli.setKoulutusohjelmaKoodi("1603");
+        moduuli.setKoulutusUri("321101");
+        moduuli.setKoulutusohjelmaUri("1603");
         koulutusmoduuliDAO.insert(moduuli);
 
         LisaaKoulutusTyyppi lisaaKoulutus = createSampleKoulutus();
@@ -869,15 +869,15 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         komoto.setOid(komotoOid);
         komoto.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.LUONNOS);
         komoto.setKoulutusmoduuli(komo);
-        komoto.setKoulutusaste("koulutusaste/lukio");
+        komoto.setKoulutusasteUri("koulutusaste/lukio");
         komoto.setOpetusmuoto(EntityUtils.toKoodistoUriSet(createKoodistoList("opetusmuoto/aikuisopetus")));
         komoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(createKoodistoList("opetuskieli/fi")));
         komoto.setKoulutuslajis(EntityUtils.toKoodistoUriSet(createKoodistoList("koulutuslaji/lahiopetus")));
         komoto.setTarjoaja(tarjoajaOid);
         komoto.setKoulutuksenAlkamisPvm(Calendar.getInstance().getTime());
-        komoto.setPohjakoulutusvaatimus("koulutusaste/lukio");
+        komoto.setPohjakoulutusvaatimusUri("koulutusaste/lukio");
         komoto.setSuunniteltuKesto("kesto/vuosi", "3");
-        komoto.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
+        komoto.setPohjakoulutusvaatimusUri(pohjakoulutusvaatimus);
         return komoto;
     }
 

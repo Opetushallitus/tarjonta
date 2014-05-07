@@ -389,15 +389,15 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         if (komoto != null )  {
 
-        final String term = komoto.getAlkamiskausi();
+        final String term = komoto.getAlkamiskausiUri();
         final Integer year = komoto.getAlkamisVuosi();
         final String providerOid = komoto.getTarjoaja();
 
         log.debug("HAKUKOHDE KOULUTUS TERM : " + term);
         log.debug("HAKUKOHDE KOULUTUS YEAR : " + year);
         log.debug("HAKUKOHDE KOULUTUS PROVIDER : " + providerOid);
-        log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppi());
-        if (komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
+        log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppiEnum());
+        if (komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
             return false;
         }
 
@@ -814,7 +814,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
         }
 
-        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         return EntityUtils.convertToKoulutusmoduuliKoosteTyyppi(komo, komoParent);
     }
 
@@ -890,7 +890,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             this.koulutusSisaltyvyysDAO.update(sisaltyvyys);
         }
         koulutusmoduuliDAO.update(parent);
-        komo.setKoulutusKoodi(parent.getKoulutusKoodi());
+        komo.setKoulutusUri(parent.getKoulutusUri());
         koulutusmoduuliDAO.update(komo);
 
         return parent;

@@ -77,10 +77,10 @@ public class HakukohdeValidator {
         Integer vuosi = null;
         for (KoulutusmoduuliToteutus komoto : komotot) {
             if (kausi == null) {
-                kausi = komoto.getAlkamiskausi();
+                kausi = komoto.getAlkamiskausiUri();
                 vuosi = komoto.getAlkamisVuosi();
             } else {
-               if(!(Objects.equal(kausi, komoto.getAlkamiskausi()) && Objects.equal(vuosi, komoto.getAlkamisVuosi()))) {
+               if(!(Objects.equal(kausi, komoto.getAlkamiskausiUri()) && Objects.equal(vuosi, komoto.getAlkamisVuosi()))) {
                    return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID);
                } 
             }

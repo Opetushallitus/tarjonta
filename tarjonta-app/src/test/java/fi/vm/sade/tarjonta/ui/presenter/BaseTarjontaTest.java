@@ -153,17 +153,17 @@ public class BaseTarjontaTest {
     }
 
     protected void clearTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object tunniste) {
-    	NimettyMonikielinenTekstiTyyppi old = ConversionUtils.getTeksti(tekstit, tunniste);
-    	if (old!=null) {
-    		tekstit.remove(old);
-    	}
+        NimettyMonikielinenTekstiTyyppi old = ConversionUtils.getTeksti(tekstit, tunniste);
+        if (old != null) {
+            tekstit.remove(old);
+        }
     }
-    
-    protected void setTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object tunniste, String languageCode, String text) {
-    	clearTeksti(tekstit, tunniste);
 
-    	NimettyMonikielinenTekstiTyyppi tyyppi = new NimettyMonikielinenTekstiTyyppi();
-    	tyyppi.setTunniste(String.valueOf(tunniste));
+    protected void setTeksti(List<NimettyMonikielinenTekstiTyyppi> tekstit, Object tunniste, String languageCode, String text) {
+        clearTeksti(tekstit, tunniste);
+
+        NimettyMonikielinenTekstiTyyppi tyyppi = new NimettyMonikielinenTekstiTyyppi();
+        tyyppi.setTunniste(String.valueOf(tunniste));
         tyyppi.getTeksti().add(KoulutusConveter.convertToMonikielinenTekstiTyyppi(languageCode, text));
 
         tekstit.add(tyyppi);
@@ -201,8 +201,12 @@ public class BaseTarjontaTest {
         return koodiType;
     }
 
-    protected List<KoodiType> createKoodiTypes(final String fieldName) {
-        return createKoodiTypeList(createKoodiType(fieldName));
+    protected List<KoodiType> createKoodiTypes(final String... fieldNames) {
+        List<KoodiType> types = Lists.<KoodiType>newArrayList();
+        for (String s : fieldNames) {
+            types.add(createKoodiType(s));
+        }
+        return types;
     }
 
     protected List<KoodiType> createKoodiTypeList(final KoodiType type) {

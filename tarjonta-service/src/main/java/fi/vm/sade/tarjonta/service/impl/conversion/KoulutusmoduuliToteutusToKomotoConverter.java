@@ -74,11 +74,11 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setOid(s.getOid());
         t.setOpetuskieletUris(convertKoodistoUrisToList(s.getOpetuskielis()));
         t.setOpetusmuodotUris(convertKoodistoUrisToList(s.getOpetusmuotos()));
-        t.setPohjakoulutusVaatimusUri(s.getPohjakoulutusvaatimus());
+        t.setPohjakoulutusVaatimusUri(s.getPohjakoulutusvaatimusUri());
         t.setLaajuusArvo(s.getOpintojenLaajuusArvo());
-        t.setLaajuusYksikkoUri(s.getOpintojenLaajuusYksikko());
-        t.setSuunniteltuKestoArvo(s.getSuunniteltuKestoArvo());
-        t.setSuunniteltuKestoYksikkoUri(s.getSuunniteltuKestoYksikko());
+        t.setLaajuusYksikkoUri(s.getOpintojenLaajuusyksikkoUri());
+        t.setSuunniteltuKestoArvo(s.getSuunniteltukestoArvo());
+        t.setSuunniteltuKestoYksikkoUri(s.getSuunniteltukestoYksikkoUri());
         t.setTarjoajaOid(s.getTarjoaja());
         // t.setTarjotutKieletUris(KoulutusmoduuliToKomoConverter.convert(s.getTarjotutKielet())); // KieliValikoima?
         t.setTeematUris(convertKoodistoUrisToList(s.getTeemas()));
@@ -115,7 +115,7 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
 
                     // Get komotos with same pohjakoulutus and tarjoaja
                     List<KoulutusmoduuliToteutus> parentKomotos =
-                            koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentParentKomo, s.getTarjoaja(), s.getPohjakoulutusvaatimus());
+                            koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentParentKomo, s.getTarjoaja(), s.getPohjakoulutusvaatimusUri());
                     LOG.debug("  3. parent komotos = {}", parentKomotos);
 
                     if (parentKomotos == null || parentKomotos.isEmpty()) {

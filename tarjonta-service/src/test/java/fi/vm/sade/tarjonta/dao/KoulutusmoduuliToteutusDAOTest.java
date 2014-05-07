@@ -50,7 +50,7 @@ public class KoulutusmoduuliToteutusDAOTest {
         KoulutusmoduuliToteutus komoto = fixtures.createTutkintoOhjelmaToteutus();
         komoto.setOid(KOMOTO_OID);
         komoto.setTarjoaja(TARJOAJA_OID);
-        komoto.setPohjakoulutusvaatimus(POHJAKOULUTUS);
+        komoto.setPohjakoulutusvaatimusUri(POHJAKOULUTUS);
         komoto.setKoulutusmoduuli(komo);
         komoto = this.koulutusmoduuliToteutusDAO.insert(komoto);
 

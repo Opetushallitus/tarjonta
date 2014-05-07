@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
@@ -50,6 +51,7 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
@@ -166,7 +168,6 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         Whitebox.setInternalState(instance, "tarjontaPublicService", tarjontaPublicServiceMock);
         Whitebox.setInternalState(instance, "presenter", tarjontaPresenter);
         Whitebox.setInternalState(koulutusKoodisto, "tarjontaUiHelper", tarjontaUiHelperMock);
-        
 
         tarjontaPresenter.getTarjoaja().setSelectedOrganisation(new OrganisationOidNamePair(ORGANISAATIO_OID, "org name"));
         tarjontaPresenter.setTarjontaSearchService(tarjontaSearchServiceMock);
@@ -217,7 +218,6 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         /*
          * Kuvailevat tiedot tab data
          */
-
         kuvailevatTiedot = instance.getKuvailevatTiedotModel();
         kuvailevatTiedot.setDiplomit(createList(1, "diplomi"));
         kuvailevatTiedot.setKieletMuu(createList(2, "kieliMuu"));
@@ -273,14 +273,12 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
 
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
-
+        expectKoodis();
         /*
          * replay
          */
         replay(tarjontaAdminServiceMock);
-  //      replay(organisaatioServiceMock);
+        //      replay(organisaatioServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(tarjontaUiHelperMock);
         replay(organisaatioSearchServiceMock);
@@ -310,7 +308,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
         assertEquals(DATE, koulutus.getKoulutuksenAlkamisPaiva());
         assertEquals(createUri(KOULUTUSKOODI), koulutus.getKoulutusKoodi().getUri());
- //       assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
+        //       assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
         assertEquals(createUri(KOULUTUSLAJI), koulutus.getKoulutuslaji().get(0).getUri()); //only one needed
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
         assertEquals(WEB_LINK, koulutus.getLinkki().get(0).getUri());
@@ -323,7 +321,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertNotNull(koulutus.getYhteyshenkiloTyyppi());
         YhteyshenkiloTyyppi yhteyshenkilo = koulutus.getYhteyshenkiloTyyppi().get(0);
         assertYhteyshenkilo(yhteyshenkilo);
-        
+
         assertEquals("Kansainvalistyminen", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getKieliKoodi());
 
@@ -333,7 +331,6 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals("Sisalto", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getKieliKoodi());
 
-
         assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.PAINOTUS));
         assertEquals(null, koulutus.getNimi()); ///????
         assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN));
@@ -341,6 +338,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA));
         assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KUVAILEVAT_TIEDOT));
     }
+//
 
     @Test
     public void testUpdateSaveKoulutus() throws Exception {
@@ -367,21 +365,15 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         /*
          * Expect
          */
-
         expect(tarjontaAdminServiceMock.paivitaKoulutus(capture(localeCapture))).andReturn(new PaivitaKoulutusVastausTyyppi());
         expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(lueKoulutusVastaus);
         expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
 
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(KOULUTUSKOODI));
-        expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(LUKIOLINJA));
-
-
-
+        expectKoodis();
         /*
          * replay
          */
-
         replay(tarjontaAdminServiceMock);
         replay(tarjontaPublicServiceMock);
         replay(organisaatioSearchServiceMock);
@@ -412,7 +404,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         assertEquals("kesto_tyyppi", koulutus.getKesto().getYksikko());
         assertEquals(DATE, koulutus.getKoulutuksenAlkamisPaiva());
         assertEquals(createUri(KOULUTUSKOODI), koulutus.getKoulutusKoodi().getUri());
- //       assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
+        //       assertEquals(createUri(KOULUTUSASTE), koulutus.getKoulutusaste().getUri());
         assertEquals(createUri(KOULUTUSLAJI), koulutus.getKoulutuslaji().get(0).getUri()); //only one needed
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, koulutus.getKoulutustyyppi());
         assertEquals(WEB_LINK, koulutus.getLinkki().get(0).getUri());
@@ -430,13 +422,13 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
 
         assertEquals("Kansainvalistyminen", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN).getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals("YhteistyoMuidenToimijoidenKanssa", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA).getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA).getTeksti().get(0).getKieliKoodi());
 
         assertEquals("Sisalto", ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getValue());
         assertEquals(LANGUAGE_FI, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SISALTO).getTeksti().get(0).getKieliKoodi());
-        
+
         assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.PAINOTUS));
         assertEquals(null, koulutus.getNimi()); ///????
         assertEquals(null, ConversionUtils.getTeksti(koulutus.getTekstit(), KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN));
@@ -447,6 +439,8 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
 
     @Test
     public void testLoad() throws Exception {
+
+
         /*
          * initilaize
          */
@@ -460,7 +454,7 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         vastaus.setKesto(koulutuksenKestoTyyppi);
 
         vastaus.setKoulutusKoodi(createKoodistoKoodiTyyppi(KOULUTUSKOODI));
-   //     vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
+        //     vastaus.setKoulutusaste(createKoodistoKoodiTyyppi(KOULUTUSASTE));
         vastaus.setKoulutusmoduuli(new KoulutusmoduuliKoosteTyyppi());
 
         setTeksti(vastaus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, LANGUAGE_FI, "KoulutusohjelmanValinta");
@@ -528,19 +522,10 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         expect(organisaatioSearchServiceMock.findByOidSet(anyObject(Set.class))).andReturn(Lists.newArrayList(orgPerus));
         expect(tarjontaPublicServiceMock.lueKoulutus(isA(LueKoulutusKyselyTyyppi.class))).andReturn(vastaus);
 
+        expectKoodis();
+//
 
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiTypes(KOULUTUSKOODI));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiTypes(LUKIOLINJA));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiTypes(KOULUTUSASTE));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiTypes(OPINTOALA));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiTypes(TUTKINTONIMIKE));
-        //expect(tarjontaUiHelper.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiTypes(KOULUTUSLAJI));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiTypes(LAAJUUS_YKSIKKO));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiTypes(LAAJUUS_ARVO));
-        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiTypes(KOULUTUSALA));
-
-
-        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
+        //expect(tarjontaUiHelperMock.getKoodis(isA(String.class))).andReturn(createKoodiTypes(TUTKINTONIMIKE));
 
         /*
          * replay
@@ -553,7 +538,6 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         /*
          * Presenter method call
          */
-
         instance.showEditKoulutusView(KOMOTO_OID, null);
 
         /*
@@ -630,5 +614,33 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         LukiolinjaModel lukiolinja = new LukiolinjaModel();
         createKoodiModel(lukiolinja, koodiUri);
         return lukiolinja;
+    }
+
+    private void expectKoodis() {
+        KoodistoURI.KOODISTO_KOULUTUSALA_URI = "koodisto_koulutusala_uri";
+        KoodistoURI.KOODISTO_OPINTOALA_URI = "koodisto_opintoala_uri";
+        KoodistoURI.KOODISTO_TUTKINTONIMIKE_URI = "koodisto_tutkintonimike_uri";
+        KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI = "koodisto_laajuus_tyyppi_uri";
+        KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI = "koodisto_laajuus_arvo_uri";
+        KoodistoURI.KOODISTO_KOULUTUSASTE_URI = "koodisto_koulutusaste_uri";
+
+        expect(tarjontaUiHelperMock.getKoulutusRelations(and(isA(String.class), eq("koulutuskoodi_uri")))).andReturn(
+                createKoodiTypes(KOULUTUSKOODI, KOULUTUSASTE, OPINTOALA, KOULUTUSALA)
+        );
+
+        expect(tarjontaUiHelperMock.getKoulutusRelations(and(isA(String.class), eq("lukiolinja_uri")))).andReturn(
+                createKoodiTypes(TUTKINTONIMIKE, LAAJUUS_YKSIKKO, LAAJUUS_ARVO));
+//
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiTypes(KOULUTUSKOODI));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LUKIOLINJA)))).andReturn(createKoodiTypes(LUKIOLINJA));
+
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSASTE)))).andReturn(createKoodiTypes(KOULUTUSASTE));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(OPINTOALA)))).andReturn(createKoodiTypes(OPINTOALA));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(TUTKINTONIMIKE)))).andReturn(createKoodiTypes(TUTKINTONIMIKE));
+        // expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSLAJI)))).andReturn(createKoodiTypes(KOULUTUSLAJI));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_YKSIKKO)))).andReturn(createKoodiTypes(LAAJUUS_YKSIKKO));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(LAAJUUS_ARVO)))).andReturn(createKoodiTypes(LAAJUUS_ARVO));
+        expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSALA)))).andReturn(createKoodiTypes(KOULUTUSALA));
+        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKieliUri("fi")).andReturn("kieli_fi").anyTimes();
     }
 }

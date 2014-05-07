@@ -178,7 +178,6 @@ public class PublicationCollector {
             } else {
                 fireCollect(m);
 
-
                 fireCollect(t);
 
                 fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
@@ -194,20 +193,15 @@ public class PublicationCollector {
                 log.debug("LOS provider : {}, LOI provider : {}", m.getOmistajaOrganisaatioOid(), t.getTarjoaja());
             }
 
-
             fireCollect(m, t);
 
-
             //fireCollect(t);
-
             fireCollect(findProviderByOid(m.getOmistajaOrganisaatioOid(), true));
             fireCollect(findProviderByOid(t.getTarjoaja(), false));
 
         }
 
         List<Hakukohde> hakukohdeList = dataService.listHakukohde();
-
-
 
         for (Hakukohde hakukohde : hakukohdeList) {
             List<MonikielinenMetadata> sora = dataService.searchMetaData(hakukohde.getSoraKuvausKoodiUri(), MetaCategory.SORA_KUVAUS);

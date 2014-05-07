@@ -56,24 +56,24 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         // TODO convert, but efficiently! t.setAlaModuulit(null);
         t.setCreated(null);
         t.setCreatedBy(null);
-        t.setEqfLuokitusUri(s.getEqfLuokitus());
-        t.setKoulutusAlaUri(s.getKoulutusala());
-        t.setKoulutusAsteUri(s.getKoulutusAste());
+        t.setEqfLuokitusUri(s.getEqfUri());
+        t.setKoulutusAlaUri(s.getKoulutusalaUri());
+        t.setKoulutusAsteUri(s.getKoulutusasteUri());
         // TODO t.setKoulutusLuokitusKoodiUri(s.get); ??? waat
-        t.setKoulutusOhjelmaKoodiUri(s.getKoulutusohjelmaKoodi());
-        t.setKoulutusTyyppiUri(s.getKoulutustyyppi()); // TODO onko uri?
-        t.setLaajuusArvoUri(s.getLaajuusArvo()); //koodi uri
-        if (s.getLaajuusArvo() != null) {
-            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(s.getLaajuusArvo());
+        t.setKoulutusOhjelmaKoodiUri(s.getKoulutusohjelmaUri());
+        t.setKoulutusTyyppiUri(s.getKoulutustyyppiEnum().name()); // TODO onko uri?
+        t.setLaajuusArvoUri(s.getOpintojenLaajuusarvoUri()); //koodi uri
+        if (s.getOpintojenLaajuusarvoUri() != null) {
+            final KoodiType koodiByUri = tarjontaKoodistoHelper.getKoodiByUri(s.getOpintojenLaajuusarvoUri());
             t.setLaajuusArvo(koodiByUri != null ? koodiByUri.getKoodiArvo() : null);
         }
-        t.setLaajuusYksikkoUri(s.getLaajuusYksikko());
-        t.setLukiolinjaUri(s.getLukiolinja()); // TODO onko?
+        t.setLaajuusYksikkoUri(s.getOpintojenLaajuusyksikkoUri());
+        t.setLukiolinjaUri(s.getLukiolinjaUri()); // TODO onko?
         t.setModuuliTyyppi(s.getModuuliTyyppi() != null ? s.getModuuliTyyppi().name() : null);
         t.setNimi(convertMonikielinenTekstiToMap(s.getNimi()));
-        t.setNqfLuokitusUri(s.getNqfLuokitus());
+        t.setNqfLuokitusUri(s.getNqfUri());
         t.setOid(s.getOid());
-        t.setOpintoalaUri(s.getOpintoala());
+        t.setOpintoalaUri(s.getOpintoalaUri());
 
         // ? Does KOMO have a "owner" other that OPH?
         t.setOrganisaatioOid(s.getOmistajaOrganisaatioOid());
@@ -82,14 +82,14 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         convertTekstit(t.getTekstit(), s.getTekstit());
 
         t.setTila(s.getTila());
-        t.setTutkintoOhjelmanNimiUri(s.getTutkintoOhjelmanNimi());
-        t.setTutkintonimikeUri(s.getTutkintonimike());
+        t.setTutkintoOhjelmanNimiUri(s.getTutkintoUri());
+        t.setTutkintonimikeUri(s.getTutkintonimikeUri());
         t.setUlkoinenTunniste(s.getUlkoinenTunniste());
         t.setModifiedBy(null);
         t.setModified(s.getUpdated());
         t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
 
-        t.setKoulutusKoodiUri(s.getKoulutusKoodi());
+        t.setKoulutusKoodiUri(s.getKoulutusUri());
 
         //
         // TODO check the efficiency of this... :(

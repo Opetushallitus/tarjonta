@@ -204,7 +204,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
                 .where(qHakukohde.hakukohdeNimi.eq(name)
                         .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))
-                        .and(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
+                        .and(qKomoto.alkamiskausiUri.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
 
     }
 
@@ -216,7 +216,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
-                .where(qKomoto.alkamiskausi.eq(term).and(qKomoto.alkamisVuosi.eq(year)
+                .where(qKomoto.alkamiskausiUri.eq(term).and(qKomoto.alkamisVuosi.eq(year)
                         .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))
                         .and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);
 
