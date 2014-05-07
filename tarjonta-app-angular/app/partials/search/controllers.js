@@ -1,7 +1,7 @@
 
 'use strict';
 
-angular.module('app.search.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTable'])
+angular.module('app.search.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTreeTable'])
         .controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto, OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window, SharedStateService, AuthService, $q, dialogService) {
 
             var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
@@ -104,6 +104,38 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.hakukohdeColumns = ['hakutapa', 'aloituspaikat', 'koulutuslaji'];
             $scope.koulutusColumns = ['koulutuslaji'];
+            
+            $scope.tuloksetGetContent = function(row, col) {
+            	//console.log("GET CONTENT FOR "+col,row);
+            	switch (col) {
+            	case undefined:
+            	case null:
+            		return row.nimi;
+            	case "tila":
+            		// HUOM! hakutulostun mukana tulevaa käännöstä ei voida käyttää koska tila voi muuttua riviä päivitettäessä
+            		return LocalisationService.t("tarjonta.tila."+row.tila);
+            	case "kausi":
+            		return row.kausi[LocalisationService.getLocale()] + " " + row.vuosi;
+        		default:
+        			return row[col];
+            	}
+            }
+
+            $scope.tuloksetGetChildren = function(row) {
+            	return row.tulokset;
+            }
+
+            $scope.tuloksetGetIdentifier = function(row) {
+            	return row.tulokset == undefined && row.oid;
+            }
+
+            $scope.koulutusGetLink = function(row) {
+            	return row.tulokset == undefined && ("#/koulutus/"+row.oid);
+            }
+
+            $scope.hakukohdeGetLink = function(row) {
+            	return row.tulokset == undefined && ("#/hakukohde/"+row.oid);
+            }
 
             // organisaatiotyypit; TODO jostain jotenkin dynaamisesti
             $scope.organisaatiotyypit = [{
@@ -278,7 +310,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 canCreateKoulutus: false
             };
             
-            function rowActions(prefix, oid, tila, nimi, actions) {
+            function rowActions(prefix, row, actions) {
+            	var oid = row.oid;
+            	var tila = row.tila;
+            	var nimi = row.nimi;
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
 
@@ -323,7 +358,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                           ret.push({title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
                               action: function() {
                                   TarjontaService.togglePublished(prefix, oid, true).then(function(ns) {
-                                      actions.update("JULKAISTU");
+                                	  row.tila = "JULKAISTU";
+                                      actions.update();
                                       TarjontaService.evictHakutulokset();
                                   });
                               }
@@ -336,7 +372,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                             ret.push({title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
                                 action: function() {
                                     TarjontaService.togglePublished(prefix, oid, false).then(function(ns) {
-                                        actions.update("PERUTTU");
+                                    	row.tila = "PERUTTU";
+                                        actions.update();
                                         TarjontaService.evictHakutulokset();
                                     });
                                 }
@@ -357,16 +394,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     });
                 }
 
+                //console.log("OPTIONS: ", ret);
+                
                 return ret;
             }
 
-            $scope.hakukohdeOptions = function(oid, tila, nimi, actions) {
-                return rowActions("hakukohde", oid, tila, nimi, actions);
-            };
-
-            $scope.koulutusOptions = function(oid, tila, nimi, actions) {
-                return rowActions("koulutus", oid, tila, nimi, actions);
-            };
+            $scope.koulutusGetOptions = function(row, actions) {
+            	return rowActions("koulutus", row, actions);
+            }
+            $scope.hakukohdeGetOptions = function(row, actions) {
+            	return rowActions("hakukohde", row, actions);
+            }
 
             $scope.search = function() {
                 var spec = {

@@ -256,14 +256,29 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (isNew) {
                 // Generate new OID for haku to be created
                 permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
+                
 
                 hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
                 LOG.info("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
             } else {
                 LOG.info("updateHaku() - OLD haku - find by oid");
+                
+                final String oid = hakuDto.getOid();
 
                 // Check haku exists
-                hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
+                hakuToUpdate = hakuDAO.findByOid(oid);
+                
+                final TarjontaTila toTila = TarjontaTila.valueOf(hakuDto.getTila());
+
+                
+                //tilan muutos/testaus tilapalvelun kautta
+                final Tila tila = new Tila(Tyyppi.HAKU, toTila, oid);
+                if(!publication.isValidStatusChange(tila)){
+                    result.addError(ErrorV1RDTO.createValidationError("haku", "haku.tilamuutos.not.allowed", hakuDto.getOid()));
+                    result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+                    return result;
+                }
+                publication.updatePublicationStatus(Lists.newArrayList(tila));
                 
                 if (hakuToUpdate == null) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));
@@ -448,25 +463,22 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             result.addError(ErrorV1RDTO.createValidationError("nimi", "haku.validation.nimi.empty"));
         }
 
-        // Hakulomake URI  -OR- maxHakukohdes
-        if (isEmpty(haku.getHakulomakeUri())) {
-            // max hakuaikas cannot be empty
+        // If we are using systems application form - make sure the "maxHakukohdes" is set
+        if (haku.isJarjestelmanHakulomake()) {
             if (haku.getMaxHakukohdes() <= 0) {
                 result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
-            }
-        } else {
-//            // Cannot have this since we have hakulomakeUri
-//            if (haku.getMaxHakukohdes() > 0) {
-//                result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
-//            }
-
+            }            
+        }
+        
+        // Own hakulomake url? Verify it.
+        if (!isEmpty(haku.getHakulomakeUri())) {
             try {
                 URL url = new URL(haku.getHakulomakeUri());
             } catch (MalformedURLException ex) {
                 result.addError(ErrorV1RDTO.createValidationError("hakulomakeUri", "haku.validation.hakulomakeUri.invalid"));
             }
         }
-
+        
         // Must have at least one hakuaika
         if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
@@ -496,6 +508,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
 
+        // Sijoittelu + system application form -> priority = true
+        if (haku.isSijoittelu() && isEmpty(haku.getHakulomakeUri())) {
+            haku.setUsePriority(true);
+        }        
+        
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 

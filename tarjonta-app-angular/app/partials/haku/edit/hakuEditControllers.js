@@ -42,16 +42,6 @@ app.controller('HakuEditController',
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
-            var hakuOid = $route.current.params.id;
-
-            
-            //permissiot
-            $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
-              $scope.isMutable=results[0];
-              $scope.isRemovable=results[1] && results[2];
-            });
-
-            
             // Reset model to empty
             $scope.model = null;
 
@@ -145,7 +135,9 @@ app.controller('HakuEditController',
                 }
 
                 // Update haku's tila (state)
-                haku.tila = tila;
+                if(haku.tila!="JULKAISTU") { //älä muuta julkaistun tilaa
+                  haku.tila = tila;
+                }
 
                 // Save it
                 HakuV1.save(haku, function(result) {
@@ -389,7 +381,17 @@ app.controller('HakuEditController',
                 });
             };
 
-
+            $scope.checkPriorisointi = function () {
+                $log.debug("checkPriorisointi()");
+                
+                if ($scope.model.hakux.result.jarjestelmanHakulomake && $scope.model.hakux.result.sijoittelu) {
+                    $scope.model.hakux.result.usePriority = true;
+                }
+                
+                if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
+                    $scope.model.hakux.result.usePriority = false;
+                }                
+            };
 
             /**
              * Initialize controller and ui state.
@@ -411,12 +413,10 @@ app.controller('HakuEditController',
                     // Preloaded Haku result
                     hakux: $route.current.locals.hakux,
                     haku: {
-                        // State of the checkbox for "oma hakulomake" - if uri is given the use it
-                        hakulomakeKaytaJarjestemlmanOmaa: !angular.isDefined($route.current.locals.hakux.result.hakulomakeUri)
+                        // Possible UI state for Haku
                     },
                     parameter: {
                         //parametrit populoituu tänne... ks. haeHaunParametrit(...)
-
                     },
                     selectedOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
                     selectedTarjoajaOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
@@ -447,4 +447,24 @@ app.controller('HakuEditController',
                 $scope.updateSelectedTarjoajaOrganisationsList();
             };
             $scope.init();
+            
+            var hakuOid = $route.current.params.id;
+            
+            
+            if(!$scope.isNewHaku()) {
+              //permissiot
+              $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+                $scope.isMutable=results[0];
+                $scope.isRemovable=results[1] && results[2];
+              });
+            } else {
+              //uusi haku
+              $scope.isMutable=true;
+            }
+
+            $scope.isLuonnosOrNew = function(){
+              return $scope.isNewHaku() || $scope.model.hakux.result.tila==='LUONNOS';
+            };
+
+
         });

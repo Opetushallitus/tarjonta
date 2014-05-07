@@ -59,10 +59,36 @@
                 <td colspan="2">
                     <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
                         <i>{{ hakuaika.nimi || t("haku.review.noname") }}</i> -
-                        <div t-show-date value="hakuaika.alkuPvm" timestamp>alkuPvm</div> -
-                        <div t-show-date value="hakuaika.loppuPvm" timestamp>loppuPvm</div>
+                        <div t-show-date value="hakuaika.alkuPvm" timestamp /> -
+                        <div t-show-date value="hakuaika.loppuPvm" timestamp />
                     </div>
                 </td>
+            </tr>
+
+            <tr>
+                <th tt="haku.review.haunTiedot.sijoittelu">Haussa käytetään sijoittelua</th>
+                <td colspan="2">
+                    {{ model.hakux.result.sijoittelu ? t("yes") : t("no") }}
+                </td>
+            </tr>            
+            
+            <tr>
+                <th tt="haku.review.haunTiedot.hakulomake">Hakulomake</th>
+                <td colspan="2">
+                    <div ng-show="model.hakux.result.jarjestelmanHakulomake">
+                        <span tt="haku.review.haunTiedot.hakulomake.jarkestelma">Käytetään järjestelmän omaa hakulomaketta.</span>
+                        <br/>
+                        <span tt="haku.review.haunTiedot.hakulomake.maxHakukohdes">Hakukohteiden maksimimäärä: </span>
+                        {{ model.hakux.result.maxHakukohdes }}
+                        <br/>
+                        <span tt="haku.review.haunTiedot.hakulomake.priorisointi">Haussa käytetään priorisointia: </span>
+                        {{ model.hakux.result.usePriority ? t("yes") : t("no") }}
+                    </div>
+                    <div ng-show="!model.hakux.result.jarjestelmanHakulomake">
+                        <span tt="haku.review.haunTiedot.hakulomake.oma">Käytetään omaa hakulomaketta: </span>
+                        <a href="{{model.hakux.result.hakulomakeUri}}" target="_blank">{{ model.hakux.result.hakulomakeUri }}</a>
+                    </div>
+                </td> 
             </tr>
 
         </tbody>
