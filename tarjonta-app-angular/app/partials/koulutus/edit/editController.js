@@ -141,18 +141,6 @@ app.controller('BaseEditController', [
             $location.path("/koulutus/" + $scope.model.oid);
         };
 
-        $scope.setTabLang = function(langUri) {
-            if (angular.isUndefined(langUri) || langUri === null) {
-                $scope.uiModel.tabLang = Config.app.userLanguages[0]; //fi uri I guess;
-            } else {
-                $scope.uiModel.tabLang = langUri;
-            }
-        };
-
-        $scope.selectKieli = function(kieliUri) {
-            $scope.uiModel.selectedKieliUri = kieliUri;
-        };
-
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
             if (!kieliUri) {
                 return {};
@@ -384,7 +372,7 @@ app.controller('BaseEditController', [
             }
 
             uiModel.isMutable = false;
-            uiModel.selectedKieliUri = "";
+            uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
             $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
 
             converter.createUiModels(uiModel, koulutusasteTyyppi);
@@ -417,7 +405,7 @@ app.controller('BaseEditController', [
             }
 
             uiModel.isMutable = false;
-            uiModel.selectedKieliUri = "";
+            uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
             $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
 
             converter.createUiModels(uiModel, koulutusasteTyyppi);
@@ -488,17 +476,6 @@ app.controller('BaseEditController', [
         /*
          * LISATIEDOT PAGE FUNCTIONS
          */
-        $scope.setTabLang = function(langUri) {
-            if (angular.isUndefined(langUri) || langUri === null) {
-                $scope.uiModel.tabLang = Config.app.userLanguages[0]; //fi uri I guess;
-            } else {
-                $scope.uiModel.tabLang = langUri;
-            }
-        };
-
-        $scope.selectKieli = function(kieliUri) {
-            $scope.uiModel.selectedKieliUri = kieliUri;
-        };
 
         $scope.getLisatietoKielet = function() {
             for (var i in $scope.uiModel.opetuskielis.uris) {

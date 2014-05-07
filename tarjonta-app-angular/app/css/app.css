@@ -733,3 +733,11 @@ table td.controls button {
 	position:relative;
 	top: -5px;
 }
+
+/* virkailija-css-korjaukset (ie) */
+
+input[type=checkbox] {
+	padding:2px;
+	height:auto;	
+}
+
