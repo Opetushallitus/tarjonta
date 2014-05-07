@@ -315,108 +315,24 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
-div#searchResults div.controls {
-	margin-bottom:30px;
+div.resultsTreeTable table th.column-tila {
+    min-width:75px;
+}
+div.resultsTreeTable table th.column-kausi {
+    min-width:90px;
+}
+div.resultsTreeTable table th.column-koulutuslaji {
+    min-width:120px;
+}
+div.resultsTreeTable table th.column-hakutapa {
+    min-width:120px;
+}
+div.resultsTreeTable table th.column-aloituspaikat {
+    min-width:90px;
 }
 
-div#searchResults input.selectAll {
-	margin-left:23px;
-}
-
-div#searchResults input.selectAll + label {
-	position:relative;
-	top:0.25em;
-	margin-left:0.25em;
-}
-
-div#searchResults div.tools {
+div#searchResults div.resultsTable div.tools {
 	float:right;	
-}
-
-div#searchResults table {
-	width:100%;
-}
-
-/*div#searchResults table.loading > tbody {
-	display:none;
-}*/
-
-div#searchResults table tr.header th.nimi {
-	min-width:50%;
-}
-div#searchResults table tr.header th.tila {
-	min-width:75px;
-}
-div#searchResults table tr.header th.hakukausi {
-	min-width:90px;
-}
-div#searchResults table tr.header th.koulutuslaji {
-	min-width:120px;
-}
-div#searchResults table tr.header th.hakutapa {
-	min-width:120px;
-}
-div#searchResults table tr.header th.aloituspaikat {
-	min-width:90px;
-}
-
-div#searchResults table tr.header th {
-	padding-left:0.5em;
-	cursor:default;
-}
-
-div#searchResults table input[type=checkbox] {
-	margin-right:10px;
-	position:relative;
-	top:-0.25em;
-}
-
-div#searchResults table tbody td, div#searchResults table tbody th {
-	cursor:pointer;
-}
-
-div#searchResults table tbody.tresult tr:hover td, div#searchResults table tbody.tresult tr:hover th {
-	background-color:#f0f0f0;
-}
-
-div#searchResults table tbody.tresult td + td {
-	border-left: 1px solid #d0d0d0;
-	padding-left:0.5em;
-}
-
-div#searchResults table th {
-	font-weight:normal;
-	text-align:left;
-}
-
-div#searchResults table td a {
-	font-weight:bold;
-}
-
-div#searchResults table td input[type=checkbox] {
-	margin-left:40px;
-}
-
-div#searchResults table td img {
-	margin-right:10px;
-}
-
-
-/* avoin taulukkorivi */
-div#searchResults table tbody img.unfolded {
-	display:none;
-}
-
-/* suljettu taulukkorivi */
-div#searchResults table tbody.folded img.folded {
-	display:none;
-}
-div#searchResults table tbody.folded img.unfolded {
-	display:inline-block;
-}
-
-div#searchResults table tbody.folded tr.tresult {
-	display:none;
 }
 
 div#deleteDialog .subject {

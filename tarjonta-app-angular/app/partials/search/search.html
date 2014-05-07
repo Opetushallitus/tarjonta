@@ -94,25 +94,35 @@
                     <button class="btn" ng-click="luoHakukohdeEnabled() ? luoUusiHakukohde() : function()" ng-disabled="!luoHakukohdeEnabled()"><span tt="tarjonta.toiminnot.luo_uusi_hakukohde">Luo uusi hakukohde</span> <span class="icon-plus-sign"></span></button>
                     <button class="btn float-right" ng-click="luoKoulutusDisabled() ? function() : openLuoKoulutusDialogi()" ng-disabled="luoKoulutusDisabled()"><span tt="tarjonta.toiminnot.luo_uusi_koulutus">Luo uusi koulutus</span> <span class="icon-plus-sign"></span></button>
                 </div>
-
-	        	<results-table
-	        		id="nkoulutuksetResults"
-	        		prefix="koulutus"
-	        		content="koulutusResults"
-	        		columns="koulutusColumns"
-	        		options="koulutusOptions"
-	        		selection="selection.koulutukset"/>
-
+                
+                <results-tree-table
+                    columns="['kausi', 'koulutuslaji', 'tila']"
+                    column-titles="{kausi:'tarjonta.hakutulokset.kausi', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
+                    model="koulutusResults.tulokset"
+                    selection="selection.koulutukset"
+                    get-content="tuloksetGetContent"
+                    get-children="tuloksetGetChildren"
+                    get-identifier="tuloksetGetIdentifier"
+                    get-link="koulutusGetLink"
+                    get-options="koulutusGetOptions"
+                    ></results-tree-table>
+                    
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
-
-	        	<results-table
-	        		id="nhakukohteetResults"
-	        		prefix="hakukohde"
-	        		content="hakukohdeResults"
-	        		columns="hakukohdeColumns"
-	        		options="hakukohdeOptions"
-	        		selection="selection.hakukohteet"/>
+	        
+                <results-tree-table
+                    columns="['kausi', 'hakutapa', 'aloituspaikat', 'koulutuslaji', 'tila']"
+                    column-titles="{kausi:'tarjonta.hakutulokset.kausi', hakutapa:'tarjonta.hakutulokset.hakutapa', aloituspaikat:'tarjonta.hakutulokset.aloituspaikat', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
+                    model="hakukohdeResults.tulokset"
+                    selection="selection.hakukohteet"
+                    
+                    get-content="tuloksetGetContent"
+                    get-children="tuloksetGetChildren"
+                    get-identifier="tuloksetGetIdentifier"
+                    
+                    get-link="hakukohdeGetLink"
+                    get-options="hakukohdeGetOptions"
+                    ></results-tree-table>
 
 	        </tab>
 

@@ -12,7 +12,7 @@
         See "MainWindow.java" / refresher in init() which creates poller to keep active sessions alive.
     -->
     <session-config>
-        <session-timeout>1</session-timeout>
+        <session-timeout>10</session-timeout>
     </session-config>
 
     <context-param>
