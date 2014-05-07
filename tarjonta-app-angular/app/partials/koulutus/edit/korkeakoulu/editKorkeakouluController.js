@@ -208,5 +208,10 @@ app.controller('EditKorkeakouluController',
                     }
                 });
 
+                $scope.isKandiUri = function() {
+                    var kandiObj = $scope.model.kandidaatinKoulutuskoodi;
+                    return angular.isDefined(kandiObj) && kandiObj !== null && angular.isDefined(kandiObj.uri) && kandiObj.uri.length > 0;
+                };
+
                 $scope.init();
             }]);

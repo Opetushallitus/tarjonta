@@ -22,7 +22,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
@@ -105,7 +104,18 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstis().isEmpty(); //OVT-7531
             kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(useKomotoName ? komoto.getNimi() : komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
 
-            kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutusUri(), komoto.getKandidaatinKoulutusUri(), locale, FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI, showMeta));
+            if (komo.getKandidaatinKoulutusUri() != null || komoto.getKandidaatinKoulutusUri() != null) {
+                /*
+                 Without the null check response json will look like this:
+                 "kandidaatinKoulutuskoodi" : {
+                 "uri" : "",
+                 "versio" : -1,
+                 "arvo" : "",
+                 "nimi" : ""
+                 }
+                 */
+                kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutusUri(), komoto.getKandidaatinKoulutusUri(), locale, FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI, showMeta));
+            }
 
             if (komoto.getTutkintonimikes().isEmpty()) {
                 kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
