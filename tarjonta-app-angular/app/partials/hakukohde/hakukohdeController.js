@@ -70,7 +70,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $log.info("CAN CREATE : ", $route.current.locals.canCreate);
 
 
-        $log.info("IS COPY : " , $route.current.locals.isCopy);
+
         if ($route.current.locals.isCopy !== undefined) {
 
             $scope.isCopy = $route.current.locals.isCopy;
@@ -85,7 +85,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.canCreate = $route.current.locals.canCreate;
         $scope.canEdit =  $route.current.locals.canEdit;
 
-        $log.info('HAKUKOHDE : ', $route.current.locals.hakukohdex.result);
+
         if ($route.current.locals.hakukohdex.result === undefined) {
 
             $scope.model = {
@@ -128,23 +128,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
         }
 
-        if ($route.current.$$route.action === "hakukohde.review") {
-            console.log('Init languages');
 
-            //Get all kieles from hakukohdes names and additional informaty
-            var allKieles = new buckets.Set();
-
-            for (var kieliUri in $scope.model.hakukohde.hakukohteenNimet) {
-
-                allKieles.add(kieliUri);
-            }
-
-            for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
-                allKieles.add(kieliUri);
-            }
-            $scope.model.allkieles = allKieles.toArray();
-            console.log('ALL KIELES : ' , allKieles.toArray());
-        }
 
 
 
@@ -248,7 +232,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             var lukioTyyppi = "LUKIOKOULUTUS";
             //If hakukohdex is defined then we are updating it
             //otherwise try to get selected koulutustyyppi from shared state
-            if($route.current.locals.hakukohdex.result) {
+            if($route.current.locals && $route.current.locals.hakukohdex.result) {
                     $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
                     $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
                     if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
@@ -389,9 +373,9 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
             //If scope or route has isCopy parameter defined as true remove oid,
             //so that new hakukohde will be created
-            $log.debug('IS THIS COPY ROUTE : ',$route.current.locals.isCopy);
 
-            if ($route.current.locals.isCopy) {
+
+            if ($route.current.locals && $route.current.locals.isCopy) {
                 $log.debug('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
@@ -946,7 +930,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
 
 
-        }
+        };
 
         $scope.haeValintaPerusteKuvaus = function(){
 
