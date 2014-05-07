@@ -216,7 +216,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // checkbox-valinta
         $scope.toggle = function(k) {
-            if ($scope.disabled()) {
+            if ($scope.isDisabled()) {
                 return;
             }
             var p = $scope.selection.indexOf(k);
@@ -341,7 +341,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             // angular-form-logiikkaa varten
             name: "@", // nimi formissa
             required: "@", // jos tosi, vähintään yksi arvo vaaditaan
-            disabled: "&"
+            isDisabled: "&"
         }
     }
 
