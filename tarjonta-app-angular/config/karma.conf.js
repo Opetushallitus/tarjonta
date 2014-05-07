@@ -3,7 +3,6 @@ module.exports = function(config) {
     config.set({
         basePath: '../app',
         files: [
-                'index.html',
             'lib/underscore/underscore.js',
             'lib/angular/angular.js',
             'lib/angular/angular-resource.js',
