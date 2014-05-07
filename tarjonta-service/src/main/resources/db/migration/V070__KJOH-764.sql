@@ -49,7 +49,7 @@ ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutusohjelma_uri varchar(255)
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN lukiolinja_uri varchar(255);
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN opintoala_uri varchar(255);
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutustyyppi_uri varchar(255); --for future use
-ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN kandi_koulutus_uri; varchar(255); 
+ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN kandi_koulutus_uri varchar(255); 
 
 create table koulutusmoduuli_toteutus_tutkintonimike (
 	koulutusmoduuli_toteutus_id int8 not null,
