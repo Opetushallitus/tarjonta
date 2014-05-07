@@ -14,6 +14,7 @@ module.exports = function(config) {
             'js/shared/directives/*.html',
             'js/shared/directives/org-puu.js',
             'partials/tarjontaApp.js',
+            'partials/hakukohde/edit/hakukohdeControllers.js',
             'partials/**/*.js',
             '../test/unit/**/*.js',
             '../test/lib/jasmine.async.node.js',
