@@ -527,13 +527,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     }
 
+    private List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeV1RDTO) {
+        LOG.info("HAKUKOHDE KOULUTUSASTETYYPPI: " + hakukohdeV1RDTO.getKoulutusAsteTyyppi());
+        List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+        return validationMessageses;
+    }
+
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakukohdeKoulutusOids());
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Date today = new Date();
-        List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+        List<HakukohdeValidationMessages> validationMessageses = validateHakukohde(hakukohdeRDTO);
 
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
             LOG.warn("HAKUKOHDE KOULUTUS OIDS SHOULD NOT BE NULL!!!");
