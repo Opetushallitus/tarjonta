@@ -237,7 +237,7 @@ abstract class KoulutusBase {
         parent.setUlkoinenTunniste(null);
         parent.setNimi(null);
         parent.setTila(TarjontaTila.JULKAISTU);
-        parent.setKandidaatinKoulutuskoodi(null);
+        parent.setKandidaatinKoulutusUri(null);
         parent.setOppilaitostyyppi("|oppilaitostyypp_xxx#1|");
         Map<KomoTeksti, MonikielinenTeksti> map = Maps.<KomoTeksti, MonikielinenTeksti>newHashMap();
         addKuvaus(map, KomoTeksti.TAVOITTEET);
@@ -272,7 +272,7 @@ abstract class KoulutusBase {
         child.setUlkoinenTunniste(null);
         child.setNimi(null);
         child.setTila(TarjontaTila.JULKAISTU);
-        child.setKandidaatinKoulutuskoodi(null);
+        child.setKandidaatinKoulutusUri(null);
         child.setOppilaitostyyppi(null);
         koulutusmoduuliDAO.insert(child);
         

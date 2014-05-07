@@ -41,6 +41,7 @@ abstract class KoulutusRestBase {
     protected static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
 
     protected enum Type {
+
         BOTH,
         KOMO,
         KOMO_CHILD,
@@ -75,6 +76,7 @@ abstract class KoulutusRestBase {
         m.setNqfUri(testKey(type, FieldNames.NQF));
         m.setEqfUri(testKey(type, FieldNames.EQF));
         m.setKoulutustyyppiUri(testKey(type, FieldNames.KOULUTUSTYYPPI));
+        m.setKandidaatinKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI_KANDIDAATTI));
     }
 
     protected static void lukioPopulateBaseValues(EntityConverterToRDTOTest.Type type, BaseKoulutusmoduuli m) {

@@ -29,24 +29,6 @@ UPDATE koulutusmoduuli SET koulutustyyppi='MAAHANM_AMM_VALMISTAVA_KOULUTUS' WHER
 UPDATE koulutusmoduuli SET koulutustyyppi='MAAHANM_LUKIO_VALMISTAVA_KOULUTUS' WHERE koulutustyyppi='MaahanmLukioValmistavaKoulutus';
 UPDATE koulutusmoduuli SET koulutustyyppi='VAPAAN_SIVISTYSTYON_KOULUTUS' WHERE koulutustyyppi='VapaanSivistystyonKoulutus';
 
---KOMO ROLLBACK
---ALTER TABLE koulutusmoduuli DROP COLUMN koulutustyyppi_uri;
---ALTER TABLE koulutusmoduuli ADD COLUMN tutkintonimike varchar(255);
---ALTER TABLE koulutusmoduuli RENAME COLUMN tutkinto_uri TO tutkintoohjelmanimi;
---ALTER TABLE koulutusmoduuli RENAME COLUMN koulutusala_uri TO koulutusala;
---ALTER TABLE koulutusmoduuli RENAME COLUMN eqf_uri TO eqfluokitus;
---ALTER TABLE koulutusmoduuli RENAME COLUMN nqf_uri TO nqfluokitus;
---ALTER TABLE koulutusmoduuli RENAME COLUMN koulutusaste_uri TO koulutusaste;
---ALTER TABLE koulutusmoduuli RENAME COLUMN koulutus_uri TO koulutusluokitus_koodi;
---ALTER TABLE koulutusmoduuli RENAME COLUMN koulutusohjelma_uri TO koulutusohjelmakoodi;
---ALTER TABLE koulutusmoduuli RENAME COLUMN lukiolinja_uri TO lukiolinja;
---ALTER TABLE koulutusmoduuli RENAME COLUMN opintojen_laajuusarvo_uri TO laajuusarvo;
---ALTER TABLE koulutusmoduuli RENAME COLUMN opintojen_laajuusyksikko_uri TO laajuusyksikko;
---ALTER TABLE koulutusmoduuli RENAME COLUMN opintoala_uri TO opintoala;
---ALTER TABLE koulutusmoduuli RENAME COLUMN kandi_koulutus_uri TO kandi_koulutuskoodi;
---ALTER TABLE koulutusmoduuli DROP COLUMN row_type;
-
-
 --KOMOTO rename
 ALTER TABLE koulutusmoduuli_toteutus RENAME COLUMN opintojen_laajuus_yksikko TO opintojen_laajuusyksikko_uri;
 ALTER TABLE koulutusmoduuli_toteutus RENAME COLUMN opintojen_laajuus_arvo TO opintojen_laajuusarvo;
@@ -67,6 +49,7 @@ ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutusohjelma_uri varchar(255)
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN lukiolinja_uri varchar(255);
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN opintoala_uri varchar(255);
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutustyyppi_uri varchar(255); --for future use
+ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN kandi_koulutus_uri; varchar(255); 
 
 create table koulutusmoduuli_toteutus_tutkintonimike (
 	koulutusmoduuli_toteutus_id int8 not null,
@@ -79,6 +62,24 @@ alter table koulutusmoduuli_toteutus_tutkintonimike
         foreign key (koulutusmoduuli_toteutus_id) 
         references koulutusmoduuli_toteutus;
 
+
+
+--KOMO ROLLBACK
+--ALTER TABLE koulutusmoduuli DROP COLUMN koulutustyyppi_uri;
+--ALTER TABLE koulutusmoduuli ADD COLUMN tutkintonimike varchar(255);
+--ALTER TABLE koulutusmoduuli RENAME COLUMN tutkinto_uri TO tutkintoohjelmanimi;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN koulutusala_uri TO koulutusala;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN eqf_uri TO eqfluokitus;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN nqf_uri TO nqfluokitus;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN koulutusaste_uri TO koulutusaste;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN koulutus_uri TO koulutusluokitus_koodi;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN koulutusohjelma_uri TO koulutusohjelmakoodi;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN lukiolinja_uri TO lukiolinja;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN opintojen_laajuusarvo_uri TO laajuusarvo;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN opintojen_laajuusyksikko_uri TO laajuusyksikko;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN opintoala_uri TO opintoala;
+--ALTER TABLE koulutusmoduuli RENAME COLUMN kandi_koulutus_uri TO kandi_koulutuskoodi;
+--ALTER TABLE koulutusmoduuli DROP COLUMN row_type;
 
 --KOMOTO ROLLBACK
 --ALTER TABLE koulutusmoduuli_toteutus RENAME COLUMN opintojen_laajuusyksikko_uri TO opintojen_laajuus_yksikko;
@@ -100,5 +101,6 @@ alter table koulutusmoduuli_toteutus_tutkintonimike
 --ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN lukiolinja_uri;
 --ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN opintoala_uri;
 --ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN koulutustyyppi_uri;
+--ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN kandi_koulutus_uri;
 
 --DROP TABLE koulutusmoduuli_toteutus_tutkintonimike CASCADE;

@@ -105,15 +105,13 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstis().isEmpty(); //OVT-7531
             kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(useKomotoName ? komoto.getNimi() : komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
 
+            kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutusUri(), komoto.getKandidaatinKoulutusUri(), locale, FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI, showMeta));
+
             if (komoto.getTutkintonimikes().isEmpty()) {
                 kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
             } else {
                 //huomaa: rinnakkainen komoton takia tutkintonimikeet haetaan komoto:lta
                 kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komoto.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
-            }
-
-            if (komo.getKandidaatinKoulutuskoodi() != null) {
-                kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutuskoodi(), locale, FieldNames.KOULUTUSKOODI_KANDIDAATTI, showMeta));
             }
 
             if (komoto.getAihees() != null) {

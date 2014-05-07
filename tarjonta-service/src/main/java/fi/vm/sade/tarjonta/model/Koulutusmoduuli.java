@@ -110,11 +110,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Enumerated(EnumType.STRING)
     @Column(name = "moduulityyppi")
     private KoulutusmoduuliTyyppi moduuliTyyppi;
-    /**ulkoinenTunniste
-     * Optional Koodisto uri. See accessors for more info.
-     */
-    @Column(name = "kandi_koulutus_uri")
-    private String kandidaatinKoulutuskoodi;
 
     /**
      * JPA konstruktori
@@ -400,19 +395,5 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         for (MonikielinenTeksti teksti : tekstit.values()) {
             filter(teksti);
         }
-    }
-
-    /**
-     * @return the kandidaatinKoulutuskoodi
-     */
-    public String getKandidaatinKoulutuskoodi() {
-        return kandidaatinKoulutuskoodi;
-    }
-
-    /**
-     * @param kandidaatinKoulutuskoodi the kandidaatinKoulutuskoodi to set
-     */
-    public void setKandidaatinKoulutuskoodi(String kandidaatinKoulutuskoodi) {
-        this.kandidaatinKoulutuskoodi = kandidaatinKoulutuskoodi;
     }
 }
