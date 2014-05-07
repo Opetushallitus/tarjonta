@@ -1,4 +1,4 @@
-<div id="editHakukohde" ng-controller="HakukohdeEditController">
+<div id="editHakukohde" ng-controller="HakukohdeAikuLukioEditController">
 
     <controls-model
             model="formControls"
@@ -38,10 +38,10 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            Tähän tulee koodisto combobox
+                            <div koodistocombo koodistouri="'hakukohteet'"  koodiuri="model.hakukohde.hakukohteenNimiUri" parentkoodiuri="'lukiolinjat_0086'" isdependent="true" locale="getLocale()"  version="true" isrequired="true" name="hakutapa"></div>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>
+                            <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->
                         </td>
                     </tr>
 
