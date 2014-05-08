@@ -10,6 +10,7 @@ target/
 *.iml
 tarjonta-app-angular/node_modules
 /tarjonta-app-angular/app/dev
+.idea/
 .idea/*/*
 .idea/libraries/
 **/.idea/libraries/*
