@@ -306,6 +306,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the koulutusLajiUri
      */
     public Set<KoodistoUri> getKoulutuslajis() {
+        if (koulutuslajis == null) {
+            koulutuslajis = new HashSet<KoodistoUri>();
+        }
         return koulutuslajis;
     }
 

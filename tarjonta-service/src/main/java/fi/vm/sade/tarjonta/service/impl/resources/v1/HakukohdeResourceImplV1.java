@@ -120,9 +120,15 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Autowired(required = true)
     private ContextDataService contextDataService;
 
-    private final static String KOULUTUSASTE_KEY = "koulutusaste";
+    public final static String KOULUTUSASTE_KEY = "koulutusaste";
 
-    private final static String KOULUTUSLAJI_KEY = "koulutuslaji";
+    public final static String KOULUTUSASTE_LUKIO = "LUKIOKOULUTUS";
+
+    public final static String KOULUTUSLAJI_KEY = "koulutuslaji";
+
+    public final static String KOULUTUSLAJI_AIKUISET = "A";
+
+
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
@@ -405,7 +411,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
-    private HashMap<String,String> getKoulutusAstetyyppiAndLajiForKoulutukses(List<String> komotoOids) {
+    public HashMap<String,String> getKoulutusAstetyyppiAndLajiForKoulutukses(List<String> komotoOids) {
 
             HashMap<String,String> koulutusAstetyyppi = new HashMap<String, String>();
 
@@ -528,8 +534,28 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeV1RDTO) {
-        LOG.info("HAKUKOHDE KOULUTUSASTETYYPPI: " + hakukohdeV1RDTO.getKoulutusAsteTyyppi());
-        List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+
+        /**
+         * Add other validation cases here, currently only aikuiskoulustus has different validation cases.
+         * Toinen aste will bring more.
+         *
+         */
+        List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+
+        HashMap<String,String> hakukohdeKoulutusAstes = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeV1RDTO.getHakukohdeKoulutusOids());
+        //Aiku lukio has different validation
+        if ( (hakukohdeKoulutusAstes.containsKey(KOULUTUSLAJI_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSLAJI_KEY).trim().equalsIgnoreCase(KOULUTUSLAJI_AIKUISET)) && (
+                hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUTUSASTE_LUKIO)
+                )) {
+
+                validationMessageses = HakukohdeValidator.validateAikuLukioHakukohde(hakukohdeV1RDTO);
+
+        } else {
+
+            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+
+        }
+
         return validationMessageses;
     }
 
