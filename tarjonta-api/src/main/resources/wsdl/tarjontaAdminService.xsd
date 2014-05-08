@@ -11,15 +11,6 @@
 
     <xs:element name="genericFaultInfo" type="tarjonta:GenericFaultInfo"></xs:element>
 
-    <xs:element name="lisaaHaku" type="tns:LisaaHakuType"/>
-    <xs:element name="lisaaHakuVastaus" type="tns:LisaaHakuVastausType"/>
-
-    <xs:element name="paivitaHaku" type="tns:PaivitaHakuType"/>
-    <xs:element name="paivitaHakuVastaus" type="tns:PaivitaHakuVastausType"/>
-
-    <xs:element name="poistaHaku" type="tns:PoistaHakuType"/>
-    <xs:element name="poistaHakuVastaus" type="tns:PoistaHakuVastausType"/>
-
     <xs:element name="lisaaKoulutus" type="tns:LisaaKoulutusTyyppi"/>
     <xs:element name="lisaaKoulutusVastaus" type="tns:LisaaKoulutusVastausTyyppi"/>
 
@@ -141,40 +132,6 @@
         <xs:sequence>
             <xs:element minOccurs="1" maxOccurs="1" name="hakukohdeVastaus" type="tarjonta:HakukohdeTyyppi"/>
         </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="LisaaHakuType">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="LisaaHakuVastausType">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuTyyppi"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="PaivitaHakuType">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="PaivitaHakuVastausType">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuVastausDto" type="tarjonta:HakuTyyppi"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="PoistaHakuType">
-        <xs:sequence>
-            <xs:element minOccurs="1" maxOccurs="1" name="hakuDto" type="tarjonta:HakuTyyppi"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="PoistaHakuVastausType">
-        <xs:sequence/>
     </xs:complexType>
 
     <xs:complexType name="LisaaKoulutusTyyppi">

@@ -133,13 +133,13 @@ public class TarjontaPublicServiceTest {
 
         // 0. koulutusmoduuli+toteutus lisätään testaamaan hakukohteiden haun oikeellisuutta sekä yhden koulutusmoduulin lukua.
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
-        koulutusmoduuli.setKoulutusKoodi(KOULUTUSKOODI);
-        koulutusmoduuli.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI1);
+        koulutusmoduuli.setKoulutusUri(KOULUTUSKOODI);
+        koulutusmoduuli.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI1);
         koulutusmoduuliDAO.insert(koulutusmoduuli);
         koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus(KOMOTO_OID);
         koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
-        koulutusmoduuliToteutus.setKoulutusaste(KOULUTUSASTEKOODI);
+        koulutusmoduuliToteutus.setKoulutusasteUri(KOULUTUSASTEKOODI);
         koulutusmoduuliToteutusDAO.insert(koulutusmoduuliToteutus);
 
         // 1. hakukohde oid is given to be able to test lueHakukohde method.
@@ -180,8 +180,8 @@ public class TarjontaPublicServiceTest {
 
         // 1. koulutusmoduuli+toteutus
         koulutusmoduuli = fixtures.createTutkintoOhjelma();
-        koulutusmoduuli.setKoulutusKoodi(KOULUTUSKOODI);
-        koulutusmoduuli.setKoulutusohjelmaKoodi(KOULUTUSOHJELMAKOODI2);
+        koulutusmoduuli.setKoulutusUri(KOULUTUSKOODI);
+        koulutusmoduuli.setKoulutusohjelmaUri(KOULUTUSOHJELMAKOODI2);
         koulutusmoduuliDAO.insert(koulutusmoduuli);
         koulutusmoduuliToteutus = fixtures.createTutkintoOhjelmaToteutus();
         koulutusmoduuliToteutus.setTarjoaja(ORGANISAATIO_A);
@@ -255,43 +255,6 @@ public class TarjontaPublicServiceTest {
         assertEquals(1, vastaus.getHakukohteenValintaKokeet().size());
 
     }
-
-    /*
-    @Test
-    public void testEtsiKoulutukset() {
-
-        KoulutusTulos rivi;
-        KoulutusKoosteTyyppi koulutus;
-
-        // precondition for the query
-        assertEquals(3, koulutusmoduuliToteutusDAO.findAll().size());
-
-        HaeKoulutuksetKyselyTyyppi kysely = new HaeKoulutuksetKyselyTyyppi();
-        HaeKoulutuksetVastausTyyppi vastaus = service.haeKoulutukset(kysely);
-
-        assertNotNull(vastaus);
-
-        List<KoulutusTulos> rivit = vastaus.getKoulutusTulos();
-
-        // vastauksessa pitäisi olla kolme riviä, yksi kullekin koulutukselle
-
-        assertEquals(3, rivit.size());
-
-        rivi = rivit.get(0);
-
-        koulutus = rivi.getKoulutus();
-
-        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
-
-        rivi = rivit.get(1);
-        koulutus = rivi.getKoulutus();
-        assertEquals(ORGANISAATIO_A, koulutus.getTarjoaja());
-
-        rivi = rivit.get(2);
-        koulutus = rivi.getKoulutus();
-        assertEquals(ORGANISAATIO_B, koulutus.getTarjoaja());
-
-    }*/
 
     @Test
     public void testEtsiKoulutusmoduulit() {

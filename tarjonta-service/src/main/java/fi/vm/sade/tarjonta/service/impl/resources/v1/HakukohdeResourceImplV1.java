@@ -120,9 +120,15 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Autowired(required = true)
     private ContextDataService contextDataService;
 
-    private final static String KOULUTUSASTE_KEY = "koulutusaste";
+    public final static String KOULUTUSASTE_KEY = "koulutusaste";
 
-    private final static String KOULUTUSLAJI_KEY = "koulutuslaji";
+    public final static String KOULUTUSASTE_LUKIO = "LUKIOKOULUTUS";
+
+    public final static String KOULUTUSLAJI_KEY = "koulutuslaji";
+
+    public final static String KOULUTUSLAJI_AIKUISET = "A";
+
+
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
@@ -405,7 +411,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
     }
 
-    private HashMap<String,String> getKoulutusAstetyyppiAndLajiForKoulutukses(List<String> komotoOids) {
+    public HashMap<String,String> getKoulutusAstetyyppiAndLajiForKoulutukses(List<String> komotoOids) {
 
             HashMap<String,String> koulutusAstetyyppi = new HashMap<String, String>();
 
@@ -424,8 +430,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
 
-        koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getKoulutustyyppi() != null)
-                ? komoto.getKoulutusmoduuli().getKoulutustyyppi().toUpperCase() : null );
+        koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getKoulutustyyppiEnum() != null)
+                ? komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().getKoulutusasteTyyppi().name() : null );
 
         //TKatva, just get the first koulutuslaji because koulutus cannot have many koulutuslajis (aikuisten,nuorten)
         //or can it ?
@@ -527,13 +533,39 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     }
 
+    private List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeV1RDTO) {
+
+        /**
+         * Add other validation cases here, currently only aikuiskoulustus has different validation cases.
+         * Toinen aste will bring more.
+         *
+         */
+        List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+
+        HashMap<String,String> hakukohdeKoulutusAstes = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeV1RDTO.getHakukohdeKoulutusOids());
+        //Aiku lukio has different validation
+        if ( (hakukohdeKoulutusAstes.containsKey(KOULUTUSLAJI_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSLAJI_KEY).trim().equalsIgnoreCase(KOULUTUSLAJI_AIKUISET)) && (
+                hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUTUSASTE_LUKIO)
+                )) {
+
+                validationMessageses = HakukohdeValidator.validateAikuLukioHakukohde(hakukohdeV1RDTO);
+
+        } else {
+
+            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+
+        }
+
+        return validationMessageses;
+    }
+
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakukohdeKoulutusOids());
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Date today = new Date();
-        List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeRDTO);
+        List<HakukohdeValidationMessages> validationMessageses = validateHakukohde(hakukohdeRDTO);
 
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
             LOG.warn("HAKUKOHDE KOULUTUS OIDS SHOULD NOT BE NULL!!!");

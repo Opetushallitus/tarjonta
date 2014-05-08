@@ -91,8 +91,8 @@
          <tr>
             <th tt="koulutus.edit.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
             <td>
-                <a href="" ng-if="model.kandidaatinKoulutuskoodi === Undefined || model.kandidaatinKoulutuskoodi === null || model.kandidaatinKoulutuskoodi.uri === Undefined" ng-click="createSelectKoulutuskoodiModalDialog()" tt="koulutus.edit.lisaa">Lisää</a>
-                {{model.kandidaatinKoulutuskoodi.nimi}} {{model.kandidaatinKoulutuskoodi.arvo}} <a href="" ng-if="model.kandidaatinKoulutuskoodi !== Undefined && model.kandidaatinKoulutuskoodi !== null && model.kandidaatinKoulutuskoodi.uri !== Undefined" ng-click="removeKandidaatinKoulutuskoodi()" tt="koulutus.edit.poista">Poista</a>
+                <a href="" ng-if="!isKandiUri()" ng-click="createSelectKoulutuskoodiModalDialog()" tt="koulutus.edit.lisaa">Lisää</a>
+                {{model.kandidaatinKoulutuskoodi.nimi}} {{model.kandidaatinKoulutuskoodi.arvo}} <a href="" ng-if="isKandiUri()" ng-click="removeKandidaatinKoulutuskoodi()" tt="koulutus.edit.poista">Poista</a>
             </td>
             <td></td>
             

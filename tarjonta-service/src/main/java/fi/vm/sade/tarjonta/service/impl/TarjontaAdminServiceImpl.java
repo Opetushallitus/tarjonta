@@ -154,30 +154,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private final String JATKUVAHAKU_URI = "hakutapa_03";
 
     @Override
-    @Transactional(readOnly = false)
-    public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) {
-        permissionChecker.checkHakuUpdate(hakuDto != null ? hakuDto.getOid() : null);
-
-//        System.out.println("dto version:" + hakuDto.getVersion());
-        final Haku foundHaku = hakuBusinessService.findByOid(hakuDto != null ? hakuDto.getOid() : null);
-
-        if (foundHaku != null) {
-            mergeHaku(conversionService.convert(hakuDto, Haku.class), foundHaku);
-            hakuBusinessService.update(foundHaku);
-
-            publication.sendEvent(foundHaku.getTila(), foundHaku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_UPDATE);
-            ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
-            listaaHakuTyyppi.setHakuOid(foundHaku.getOid());
-            HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
-
-            return hakuTyyppi;
-
-        } else {
-            throw new BusinessException("tarjonta.haku.update.no.oid");
-        }
-    }
-
-    @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
         permissionChecker.checkUpdateHakukohde(hakukohdeOid);
@@ -389,15 +365,15 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         if (komoto != null )  {
 
-        final String term = komoto.getAlkamiskausi();
+        final String term = komoto.getAlkamiskausiUri();
         final Integer year = komoto.getAlkamisVuosi();
         final String providerOid = komoto.getTarjoaja();
 
         log.debug("HAKUKOHDE KOULUTUS TERM : " + term);
         log.debug("HAKUKOHDE KOULUTUS YEAR : " + year);
         log.debug("HAKUKOHDE KOULUTUS PROVIDER : " + providerOid);
-        log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppi());
-        if (komoto.getKoulutusmoduuli().getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
+        log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppiEnum());
+        if (komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
             return false;
         }
 
@@ -598,55 +574,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) {
-        permissionChecker.checkCreateHaku();
-
-        Haku haku = conversionService.convert(hakuDto, Haku.class);
-        haku = hakuBusinessService.save(haku);
-
-        publication.sendEvent(haku.getTila(), haku.getOid(), PublicationDataService.DATA_TYPE_HAKU, PublicationDataService.ACTION_INSERT);
-
-        ListaaHakuTyyppi listaaHakuTyyppi = new ListaaHakuTyyppi();
-        listaaHakuTyyppi.setHakuOid(haku.getOid());
-
-        HakuTyyppi hakuTyyppi = publicService.listHaku(listaaHakuTyyppi).getResponse().get(0);
-
-        return hakuTyyppi;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
-    public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
-        permissionChecker.checkRemoveHaku(hakuDto != null ? hakuDto.getOid() : null);
-
-        Haku haku = hakuBusinessService.findByOid(hakuDto != null ? hakuDto.getOid() : null);
-        if (checkHakuDepencies(haku)) {
-            throw new HakuUsedException();
-        } else {
-            hakuDAO.remove(haku);
-        }
-    }
-
-    private boolean checkHakuDepencies(Haku haku) {
-        List<Haku> haut = hakuDAO.findHakukohdeHakus(haku);
-        if (haut != null && haut.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean checkHakukohdeDepencies(Hakukohde hakukohde) {
-        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findKomotoByHakukohde(hakukohde);
-        if (komotos != null && komotos.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
@@ -814,7 +741,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             komoParent = handleParentKomo(komo, komoKoosteTyyppi.getParentOid());
         }
 
-        Preconditions.checkNotNull(komo.getKoulutusKoodi(), "Koulutuskoodi URI cannot be null.");
+        Preconditions.checkNotNull(komo.getKoulutusUri(), "Koulutuskoodi URI cannot be null.");
         return EntityUtils.convertToKoulutusmoduuliKoosteTyyppi(komo, komoParent);
     }
 
@@ -890,7 +817,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             this.koulutusSisaltyvyysDAO.update(sisaltyvyys);
         }
         koulutusmoduuliDAO.update(parent);
-        komo.setKoulutusKoodi(parent.getKoulutusKoodi());
+        komo.setKoulutusUri(parent.getKoulutusUri());
         koulutusmoduuliDAO.update(komo);
 
         return parent;

@@ -237,6 +237,10 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         		nd.setMinutes(tm);
         		
         		//console.log("ISN dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm, nd);
+        		if (dd!=nd.getDate()) {
+    				$scope.date = "";
+        			return;
+        		}
 
         		if (!isNaN(nd.getTime())) {
     				omitUpdate = true;

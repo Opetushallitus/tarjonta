@@ -115,18 +115,9 @@ public class TarjontaKorkeakouluPresenter {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
-        @Override
-        public HakuTyyppi paivitaHaku(HakuTyyppi hakuDto) throws GenericFault {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
 
         @Override
         public MonikielinenMetadataTyyppi tallennaMetadata(String avain, String kategoria, String kieli, String arvo) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public HakuTyyppi lisaaHaku(HakuTyyppi hakuDto) throws GenericFault {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
@@ -177,11 +168,6 @@ public class TarjontaKorkeakouluPresenter {
 
         @Override
         public void tallennaLiitteitaHakukohteelle(String hakukohdeOid, List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void poistaHaku(HakuTyyppi hakuDto) throws GenericFault {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 

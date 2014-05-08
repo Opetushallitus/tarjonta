@@ -16,6 +16,10 @@ div.resultsTreeTable span.leaf {
     width:26px;
 }
 
+div.resultsTreeTable div.controls {
+    margin:30px 0 20px 0;
+}
+
 /* otsikkorivi */
 
 div.resultsTreeTable table th {
@@ -31,6 +35,7 @@ div.resultsTreeTable table th.main {
 
 div.resultsTreeTable table td {
     cursor:pointer;
+    height:26px;
 }
 
 div.resultsTreeTable table tr:hover td {

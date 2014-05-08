@@ -59,3 +59,12 @@ div#dateTimeChooser select.year {
     width:100px;
 }
 
+div.tarjontaDateTime {
+    display:inline-block;
+    width: 160px;
+}
+
+div.tarjontaDateTime.timestamp {
+    width: 220px;
+}
+

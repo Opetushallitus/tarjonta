@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String lukiolinjaKoodiUri;
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
-        private KoulutusasteTyyppi koulutustyyppi;
+        private KoulutustyyppiEnum koulutustyyppiEnum;
         private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
         private TarjontaTila tila;
 
@@ -174,15 +174,15 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         /**
          * @return the koulutustyyppi
          */
-        public KoulutusasteTyyppi getKoulutustyyppi() {
-            return koulutustyyppi;
+        public KoulutustyyppiEnum getKoulutustyyppi() {
+            return koulutustyyppiEnum;
         }
 
         /**
-         * @param koulutustyyppi the koulutustyyppi to set
+         * @param koulutustyyppiEnum the koulutustyyppi to set
          */
-        public void setKoulutustyyppi(KoulutusasteTyyppi koulutustyyppi) {
-            this.koulutustyyppi = koulutustyyppi;
+        public void setKoulutustyyppi(KoulutustyyppiEnum koulutustyyppiEnum) {
+            this.koulutustyyppiEnum = koulutustyyppiEnum;
         }
 
         /**

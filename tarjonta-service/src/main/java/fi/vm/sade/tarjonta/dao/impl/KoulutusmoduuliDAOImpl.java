@@ -21,7 +21,6 @@ import java.util.List;
 
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -43,7 +41,6 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakukohde;
 import fi.vm.sade.tarjonta.model.QKoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
@@ -51,6 +48,7 @@ import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -135,23 +133,23 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         }
 
         if (criteria.getLikeKoulutusKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
         if (criteria.getKoulutustyyppi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppi.eq(criteria.getKoulutustyyppi().value()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiEnum.eq(criteria.getKoulutustyyppi()));
         }
 
         if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getLukiolinjaKoodiUri()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
         }
 
         if (criteria.getOppilaitostyyppis() != null && !criteria.getOppilaitostyyppis().isEmpty()) {
@@ -195,15 +193,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaKoodi.isEmpty().or(moduuli.koulutusohjelmaKoodi.isNull()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.isEmpty().or(moduuli.koulutusohjelmaUri.isNull()));
         }
 
         return from(moduuli).
@@ -247,24 +245,24 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
     }
 
     @Override
-    public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUri) {
+    public Koulutusmoduuli findLukiolinja(String koulutusLuokitusUri, String lukiolinjaUriUri) {
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
         BooleanExpression whereExpr = null;
 
         SearchCriteria criteria = new SearchCriteria();
         criteria.setKoulutusKoodi(koulutusLuokitusUri);
-        criteria.setLukiolinjaKoodiUri(lukiolinjaUri);
+        criteria.setLukiolinjaKoodiUri(lukiolinjaUriUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusKoodi.isNull().or(moduuli.koulutusKoodi.isEmpty()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
         }
 
         if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.eq(criteria.getLukiolinjaKoodiUri()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinja.isEmpty().or(moduuli.lukiolinja.isNull()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
         }
 
         return from(moduuli).
@@ -288,13 +286,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
-        List<String> kkKoulutusAstes = new ArrayList<String>();
+        List<KoulutustyyppiEnum> rowTypes = new ArrayList<KoulutustyyppiEnum>();
 
-        kkKoulutusAstes.add(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
-        kkKoulutusAstes.add(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value());
-        kkKoulutusAstes.add(KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value());
+        rowTypes.add(KoulutustyyppiEnum.KORKEAKOULUTUS);
+        rowTypes.add(KoulutustyyppiEnum.AMMATTIKORKEAKOULUTUS);
+        rowTypes.add(KoulutustyyppiEnum.YLIOPISTOKOULUTUS);
 
-        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppi.notIn(kkKoulutusAstes));
+        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(rowTypes));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {

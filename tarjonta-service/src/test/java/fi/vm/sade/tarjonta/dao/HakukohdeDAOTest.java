@@ -158,7 +158,7 @@ public class HakukohdeDAOTest {
 
         final String providerOid = komoto.getTarjoaja();
 
-        komoto.setAlkamiskausi(term);
+        komoto.setAlkamiskausiUri(term);
 
         komoto.setAlkamisVuosi(year);
 

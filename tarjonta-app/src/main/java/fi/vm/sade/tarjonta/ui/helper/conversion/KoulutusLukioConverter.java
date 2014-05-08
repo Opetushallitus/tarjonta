@@ -118,11 +118,11 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return paivita;
     }
 
-    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdePerustieto> hakukohteet) {
+    public void loadLueKoulutusVastausTyyppiToModel(final TarjontaModel tarjontaModel, final LueKoulutusVastausTyyppi koulutus, final Locale locale, List<HakukohdePerustieto> hakukohteet, final boolean searchLatestKoodistoUris) {
         //set tarjoaja data to UI model
         tarjontaModel.getTarjoajaModel().setSelectedOrganisation(searchOrganisationByOid(koulutus.getTarjoaja()));
 
-        KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale);
+        KoulutusLukioPerustiedotViewModel perustiedot = createToKoulutusLukioPerustiedotViewModel(koulutus, locale, searchLatestKoodistoUris);
         perustiedot.setViimeisinPaivittajaOid(koulutus.getViimeisinPaivittajaOid());
         perustiedot.setKoulutuksenHakukohteet(getKoulutusHakukohdes(koulutus, hakukohteet));
         if (koulutus.getViimeisinPaivitysPvm() != null) {
@@ -139,7 +139,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
     private List<SimpleHakukohdeViewModel> getKoulutusHakukohdes(LueKoulutusVastausTyyppi koulutusVastausTyyppi, List<HakukohdePerustieto> hakukohteetDTO) {
         List<SimpleHakukohdeViewModel> hakukohteet = new ArrayList<SimpleHakukohdeViewModel>();
-        
+
         if (koulutusVastausTyyppi.getHakukohteet() != null) {
             for (HakukohdePerustieto hakukohde : hakukohteetDTO) {//HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi : koulutusVastausTyyppi.getHakukohteet()) {
                 SimpleHakukohdeViewModel hakukohdeViewModel = new SimpleHakukohdeViewModel();
@@ -191,27 +191,27 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         model.setKieliB3(Lists.newArrayList(Iterables.transform(input.getB3Kieli(), fromKoodistoKoodiTyyppi)));
         model.setKieletMuu(Lists.newArrayList(Iterables.transform(input.getMuutKielet(), fromKoodistoKoodiTyyppi)));
         model.setDiplomit(Lists.newArrayList(Iterables.transform(input.getLukiodiplomit(), fromKoodistoKoodiTyyppi)));
-        
+
         for (NimettyMonikielinenTekstiTyyppi nmt : input.getTekstit()) {
-        	KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
-        	for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
-        		KoulutusLisatietoModel lisatieto = model.getLisatiedot(t.getKieliKoodi());
-        		switch (kt) {
-        		case SISALTO:
-        			lisatieto.setSisalto(t.getValue());
-        			break;
-        		case KANSAINVALISTYMINEN:
-        			lisatieto.setKansainvalistyminen(t.getValue());
-        			break;
-        		case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
-        			lisatieto.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
-        			break;
-    			default:
-    				LOG.debug("Ignored: {} {}",nmt.getTunniste(), t.getKieliKoodi());
-    				// ignore
-    				break;
-        		}
-        	}
+            KomotoTeksti kt = KomotoTeksti.valueOf(nmt.getTunniste());
+            for (MonikielinenTekstiTyyppi.Teksti t : nmt.getTeksti()) {
+                KoulutusLisatietoModel lisatieto = model.getLisatiedot(t.getKieliKoodi());
+                switch (kt) {
+                    case SISALTO:
+                        lisatieto.setSisalto(t.getValue());
+                        break;
+                    case KANSAINVALISTYMINEN:
+                        lisatieto.setKansainvalistyminen(t.getValue());
+                        break;
+                    case YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA:
+                        lisatieto.setYhteistyoMuidenToimijoidenKanssa(t.getValue());
+                        break;
+                    default:
+                        LOG.debug("Ignored: {} {}", nmt.getTunniste(), t.getKieliKoodi());
+                        // ignore
+                        break;
+                }
+            }
         }
 
         return model;
@@ -243,7 +243,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         //TODO: create a different form model for every level of education: 
         //The datatypes on bottom must be list types as in future we need to have 
         //an option to select multiple languages etc. (lukio, AMK etc...)
-
         for (String opetusmuoto : model.getOpetusmuoto()) {
             tyyppi.getOpetusmuoto().add(createKoodi(opetusmuoto, true, "opetusmuoto"));
         }
@@ -268,6 +267,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
             tyyppi.setViimeisinPaivitysPvm(new Date());
         }
 
+        //update latest komoto uris to database
+        convertCommonModelToKoulutusmoduuliKoosteTyyppi(model.getKoulutuskoodiModel(), model.getLukiolinja(), tyyppi);
+
         return tyyppi;
     }
 
@@ -282,7 +284,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         return hashMap;
     }
 
-    private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, Locale locale) {
+    private KoulutusLukioPerustiedotViewModel createToKoulutusLukioPerustiedotViewModel(LueKoulutusVastausTyyppi koulutus, Locale locale, final boolean searchLatestKoodistoUris) {
         Preconditions.checkNotNull(koulutus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
 
         KoulutusLukioPerustiedotViewModel perustiedot = new KoulutusLukioPerustiedotViewModel();
@@ -338,7 +340,7 @@ public class KoulutusLukioConverter extends KoulutusConveter {
          * convert koodisto uris to UI models
          */
         final KoulutusmoduuliKoosteTyyppi koulutusmoduuliTyyppi = koulutus.getKoulutusmoduuli();
-        koulutusKoodisto.listaaLukioSisalto(perustiedot.getKoulutuskoodiModel(), perustiedot.getLukiolinja(), koulutusmoduuliTyyppi, locale);
+        koulutusKoodisto.listaaLukioSisalto(perustiedot.getKoulutuskoodiModel(), perustiedot.getLukiolinja(), koulutusmoduuliTyyppi, locale, searchLatestKoodistoUris);
         KoulutusLukioConverter.copySelectedKoodiDataToModel(perustiedot);
         /*
          * Data fields used on UI only as extra information:

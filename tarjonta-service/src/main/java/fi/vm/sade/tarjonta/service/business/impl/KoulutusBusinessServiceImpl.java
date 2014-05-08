@@ -130,7 +130,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setViimIndeksointiPvm(komotoModel.getUpdated());
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
-        komotoModel.setAlkamiskausi(getKausiFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
+        komotoModel.setAlkamiskausiUri(getKausiFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
         komotoModel.setAlkamisVuosi(getYearFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
         KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoModel);
         return koulutusmoduuliToteutusDAO.findByOid(response.getOid());
@@ -258,7 +258,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         EntityUtils.copyFields(koulutus, model);
         model.setViimIndeksointiPvm(model.getUpdated());
         model.setAlkamisVuosi(getYearFromDate(model.getKoulutuksenAlkamisPvm()));
-        model.setAlkamiskausi(getKausiFromDate(model.getKoulutuksenAlkamisPvm()));
+        model.setAlkamiskausiUri(getKausiFromDate(model.getKoulutuksenAlkamisPvm()));
         koulutusmoduuliToteutusDAO.update(model);
         model = koulutusmoduuliToteutusDAO.read(model.getId());
 
@@ -302,7 +302,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
-            parentKomoto.setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
+            parentKomoto.setPohjakoulutusvaatimusUri(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }

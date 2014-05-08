@@ -45,6 +45,8 @@ public enum FieldNames {
     SUUNNITELTUKESTO, //type & value
     SUUNNITELTUKESTON_TYYPPI,
     OPPILAITOSTYYPPI,
+    KOULUTUSTYYPPI,
+    TUNNISTE,
     
     //Lukio:
     KOULUTUSLAJI,
