@@ -87,7 +87,7 @@
         </div>
         -->
 	    <tabset>
-	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{koulutusResultCount}}">
+	        <tab heading="{{t('tarjonta.hakutulos.koulutukset')}}{{getKoulutusResultCount()}}">
 
 	        	<div class="controls">
                     <button class="btn" ng-click="koulutusActions.canMoveOrCopy ? siirraTaiKopioi() : function()" ng-disabled="!koulutusActions.canMoveOrCopy"><span tt="tarjonta.toiminnot.siirra_tai_kopioi">Siirrä tai kopioi</span></button>
@@ -108,7 +108,7 @@
                     ></results-tree-table>
                     
 	        </tab>
-	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{hakukohdeResultCount}}">
+	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{getHakukohdeResultCount()}}">
 	        
                 <results-tree-table
                     columns="['kausi', 'hakutapa', 'aloituspaikat', 'koulutuslaji', 'tila']"

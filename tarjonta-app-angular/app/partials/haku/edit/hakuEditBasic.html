@@ -89,11 +89,23 @@
                 <td class="controls">
                     <button class="btn" ng-click="doRemoveHakuaika(hakuaika, $index)"><!-- <span tt="tarjonta.toiminnot.poista">Poista</span> --> <span class="icon-remove"></span></button>
                 </td>
+                <td>
+                    <p class="error" ng-show="!isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm==null" tt="haku.edit.pvms.required">
+                        Haun alkamis- ja päättymispäivät ovat pakollisia.
+                    </p>
+                    <p class="error" ng-show="!isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm!=null" tt="haku.edit.loppuPvm.required">
+                        Haun päättymispäivä on pakollinen.
+                    </p>
+                    <p class="error" ng-show="hakuaika.alkuPvm==null && (isJatkuvaHaku() || hakuaika.loppuPvm!=null)" tt="haku.edit.alkuPvm.required">
+                        Haun alkamispäivä on pakollinen.
+                    </p>
+                </td>
             </tr>
             <tr>
-                <td colspan="5" class="controls">
+                <td colspan="4" class="controls">
                     <button class="btn btn-primary" ng-click="doAddNewHakuaika()"><!-- <span tt="haku.edit.lisää_hakuaika">Lisää uusi hakuaika</span> --> <span class="icon-plus"></span></button>
                 </td>
+                <td>&nbsp;</td>
             </tr>
             </table>
         </td>
