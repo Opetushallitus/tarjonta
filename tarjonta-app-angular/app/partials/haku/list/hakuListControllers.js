@@ -203,7 +203,7 @@ app.controller('HakuListController',
                     }
                 }*/
 
-                $scope.hakuGetOptions = function(haku) {
+                $scope.hakuGetOptions = function(haku, actions) {
 
                 	var ret = [];
                 	
