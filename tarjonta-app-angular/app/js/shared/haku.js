@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -16,7 +16,6 @@
 'use strict';
 
 var app = angular.module('Haku', ['ngResource', 'config', 'Logging']);
-
 
 app.factory('HakuService', function($http, $q, Config, $log) {
 
@@ -73,6 +72,9 @@ app.factory('HakuService', function($http, $q, Config, $log) {
         });
 
 
+/**
+ * Haku resource
+ */
 app.factory('HakuV1', function($resource, $log, Config) {
         $log = $log.getInstance("HakuV1");
 
@@ -175,7 +177,8 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 "koulutuksenAlkamisVuosi": 1900 + new Date().getYear(),
                 "koulutuksenAlkamiskausiUri": "",
                 "tila": "LUONNOS",
-                "sijoittelu": false,
+                "sijoittelu": true,
+                "jarjestelmanHakulomake" : true,
                 "hakuaikas": [{
                         "nimi": "",
                         "alkuPvm": null,
@@ -189,13 +192,36 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                     "kieli_sv": "",
                     "kieli_en": ""
                 },
-                "maxHakukohdes": 0
-                        // "hakulomakeUri" : "http://www.hut.fi",
+                "maxHakukohdes": 0,
+                "usePriority" : true
+                // "hakulomakeUri" : "http://www.hut.fi",
             }
         };
     };
+    
+    var doDelete = function(oid) {
+        $log.debug("doDelete(), oid = ", oid);
+        
+        return HakuV1.remove({oid : oid}).$promise.then(function(result) {
+            $log.info("doDelete() result = ", result);
+            return result;
+        });
+    };
 
   return {
+    
+    
+    /**
+     * Tarkista että tilasiirtymä on sallittu
+     * oidstate esim: {oid: '123.456.789', state: 'JULKAISTU'}
+     * jossa oid on haun oid, state tila johon ollaan siirtymässä.
+     * 
+     * Palauttaa promisen.
+     */
+    checkStateChange: function(oidstate){
+      return HakuV1.checkStateChange(oidstate).$promise;
+      
+    },
     /**
      * Hae hakuja määritellyillä hakuehdoilla
      */
@@ -208,7 +234,13 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
   
     resolveNimi: resolveNimi, 
     
-    createNewEmptyHaku : createNewEmptyHaku
+    createNewEmptyHaku : createNewEmptyHaku,
+    
+    /**
+     * Poista annettu haku (jos oikeuksia)
+     */
+    delete: doDelete
+    
   };
 
 });

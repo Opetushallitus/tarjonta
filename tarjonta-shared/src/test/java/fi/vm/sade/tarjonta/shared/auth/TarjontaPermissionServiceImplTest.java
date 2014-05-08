@@ -77,7 +77,6 @@ public class TarjontaPermissionServiceImplTest {
         setCurrentUser(userOid, Lists.newArrayList(Collections.EMPTY_LIST));
 
         Assert.assertFalse(permissionService.userCanPublishKoulutus(c1));
-        Assert.assertFalse(permissionService.userCanCancelKoulutusPublish(c1));
         Assert.assertFalse(permissionService.userCanCreateHakukohde(c1));
         Assert.assertFalse(permissionService.userCanUpdateHakukohde(c1));
         Assert.assertFalse(permissionService.userCanDeleteHakukohde(c1));
@@ -87,10 +86,9 @@ public class TarjontaPermissionServiceImplTest {
 
         //non oph user with ru
         setCurrentUser(userOid, Lists.newArrayList(getAuthority(
-                permissionService.wrapped.ROLE_RU, userOrgOid)));
+                permissionService.wrapped.ROLE_RU, userOrgOid, permissionService.hakujenHallintaPermissionServiceWrapped.ROLE_R, userOrgOid)));
 
         Assert.assertFalse(permissionService.userCanPublishKoulutus(c1));
-        Assert.assertFalse(permissionService.userCanCancelKoulutusPublish(c1));
         Assert.assertFalse(permissionService.userCanCreateHakukohde(c1));
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1));
         Assert.assertFalse(permissionService.userCanUpdateHakukohde(c2));
@@ -99,6 +97,12 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanUpdateKoulutus(c1));
         Assert.assertFalse(permissionService.userCanUpdateKoulutus(c2));
         Assert.assertFalse(permissionService.userCanDeleteKoulutus(c1));
+        
+        
+        Assert.assertFalse(permissionService.userCanCreateHakuWithOrgs(userOrgOid));
+        Assert.assertFalse(permissionService.userCanUpdateHakuWithOrgs(userOrgOid));
+        Assert.assertFalse(permissionService.userCanDeleteHakuWithOrgs(userOrgOid));
+
 
         //non oph user with crud
         List<GrantedAuthority> authorities = Lists.newArrayList(getAuthority(
@@ -108,7 +112,6 @@ public class TarjontaPermissionServiceImplTest {
         setCurrentUser(userOid, authorities);
 
         Assert.assertTrue(permissionService.userCanPublishKoulutus(c1));
-        Assert.assertTrue(permissionService.userCanCancelKoulutusPublish(c1));
         Assert.assertTrue(permissionService.userCanCreateHakukohde(c1));
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1));
         Assert.assertFalse(permissionService.userCanUpdateHakukohde(c1, true));
@@ -123,15 +126,18 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertFalse(permissionService.userCanPublishHaku("NONE"));
         Assert.assertFalse(permissionService.userCanCancelHakuPublish("NONE"));
 
+        Assert.assertTrue(permissionService.userCanCreateHakuWithOrgs(userOrgOid));
+        Assert.assertTrue(permissionService.userCanUpdateHakuWithOrgs(userOrgOid));
+        Assert.assertTrue(permissionService.userCanDeleteHakuWithOrgs(userOrgOid));
+        
         //oph crud
         setCurrentUser(userOid, Lists.newArrayList(getAuthority(
-                permissionService.wrapped.ROLE_CRUD, rootOrgOid)));
+                permissionService.wrapped.ROLE_CRUD, rootOrgOid, permissionService.hakujenHallintaPermissionServiceWrapped.ROLE_CRUD, rootOrgOid)));
 
         Assert.assertTrue(permissionService.userCanCreateKoulutus(c1));
         Assert.assertTrue(permissionService.userCanUpdateKoulutus(c1));
         Assert.assertTrue(permissionService.userCanDeleteKoulutus(c1));
         Assert.assertTrue(permissionService.userCanPublishKoulutus(c1));
-        Assert.assertTrue(permissionService.userCanCancelKoulutusPublish(c1));
         Assert.assertTrue(permissionService.userCanCreateHakukohde(c1));
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1));
         Assert.assertTrue(permissionService.userCanUpdateHakukohde(c1, true));
@@ -141,12 +147,20 @@ public class TarjontaPermissionServiceImplTest {
         Assert.assertTrue(permissionService.userCanDeleteHaku("NONE"));
         Assert.assertTrue(permissionService.userCanPublishHaku("NONE"));
         Assert.assertTrue(permissionService.userCanCancelHakuPublish("NONE"));
+        
+        Assert.assertTrue(permissionService.userCanCreateHakuWithOrgs(userOrgOid));
+        Assert.assertTrue(permissionService.userCanUpdateHakuWithOrgs(userOrgOid));
+        Assert.assertTrue(permissionService.userCanDeleteHakuWithOrgs(userOrgOid));
+
     }
 
-    List<GrantedAuthority> getAuthority(String appPermission, String oid) {
-        GrantedAuthority orgAuthority = new SimpleGrantedAuthority(String.format("%s", appPermission));
-        GrantedAuthority roleAuthority = new SimpleGrantedAuthority(String.format("%s_%s", appPermission, oid));
-        return Lists.newArrayList(orgAuthority, roleAuthority);
+    List<GrantedAuthority> getAuthority(String... data) {
+        List<GrantedAuthority> authorities = Lists.newArrayList();
+        for(int i=0;i<data.length/2;i++) {
+            authorities.add(new SimpleGrantedAuthority(String.format("%s", data[i*2])));
+            authorities.add(new SimpleGrantedAuthority(String.format("%s_%s", data[i*2], data[i*2+1])));
+        }
+        return authorities;
     }
 
     static void setCurrentUser(final String oid, final List<GrantedAuthority> grantedAuthorities) {

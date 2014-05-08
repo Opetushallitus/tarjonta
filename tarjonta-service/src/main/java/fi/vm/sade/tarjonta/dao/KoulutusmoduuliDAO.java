@@ -313,4 +313,13 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      * @param userOid
      */
     public void safeDelete(final String komoOid, final String userOid);
+
+    /**
+     * Search all active (all other status than 'POISTETTU') komoto objects by komo OID
+     * from database.
+     *
+     * @param komo oid
+     * @return
+     */
+    public List<KoulutusmoduuliToteutus> findActiveKomotosByKomoOid(String oid);
 }

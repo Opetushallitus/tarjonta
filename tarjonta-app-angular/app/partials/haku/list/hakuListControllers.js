@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -14,60 +14,71 @@
  */
 
 
-var app = angular.module('app.haku.list.ctrl', []);
+var app = angular.module('app.haku.list.ctrl', ['ResultsTreeTable']);
 
 app.controller('HakuListController',
-        ['$q', '$scope', '$location', '$log', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto', 'PermissionService', 'loadingService', 
+        ['$q', '$scope', '$location', '$log', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto', 'PermissionService', 'loadingService',
             function HakuListController($q, $scope, $location, $log, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto, PermissionService, loadingService) {
 
-          $log = $log.getInstance("HakuListController");
+                $log = $log.getInstance("HakuListController");
 
-          //sorting
-          $scope.predicate='tila';
-          $scope.reverse=false;
-          $scope.kausi=[];
-          $scope.vuosi=[];
+                //sorting
+                $scope.reverse = false;
+                $scope.kausi = [];
+                $scope.vuosi = [];
+                $scope.hakutyypit = [];
 
-          $log.info("HakuListController()");
+                $log.info("HakuListController()");
 
-                Koodisto.getAllKoodisWithKoodiUri('kausi').then(function(kaudet){
-                  var k = kaudet[0].koodi_uri=="kausi_k"?0:1;
+                // estää hakunapin enabloinnin ennen kuin koodistot on haettu
+                $scope.unloadedKoodis = 0;
 
-                  var kevat = kaudet[k];
-                  var syksy = kaudet[(k+1)%1];
-
-                  $log.debug(kaudet);
-
-                  //vuodet
-                  for (var y = new Date().getFullYear()-2; y < new Date().getFullYear() + 10; y++){
+                //vuodet
+                for (var y = new Date().getFullYear() - 2; y < new Date().getFullYear() + 10; y++) {
                     $scope.vuosi.push(y);
-                  }
+                }
 
-                  //kaudet
-                  $scope.kausi.push({kausi:kevat.koodiUri + "#" + kevat.koodiVersio, label:kevat.koodiNimi});
-                  $scope.kausi.push({kausi:syksy.koodiUri + "#" + syksy.koodiVersio, label:syksy.koodiNimi});
+                function loadKoodistoAsMap(koodisto, scopeId) {
+                    $scope.unloadedKoodis++;
+                    loadingService.beforeOperation();
+                    
+                    Koodisto.getAllKoodisWithKoodiUri(koodisto).then(function(items) {
 
-                });
-
-                $scope.states=[];
-                $scope.vuosikausi=[];
+                    	$scope[scopeId] = {};
+                    	
+                    	for (var i in items) {
+                    		var k = items[i];
+                    		$scope[scopeId][k.koodiUri+"#"+k.koodiVersio] = k.koodiNimi;
+                    	}
+                        
+                        $scope.unloadedKoodis--;
+                        loadingService.afterOperation();
+                    });
+                }
+                
+                // HUOM! nämä koodistot pitää olla _ladattuna_ ennen kuin hakutulostaulukkoa populoidaan
+                loadKoodistoAsMap("kausi", "kaudet");
+                loadKoodistoAsMap("hakutyyppi", "hakutyypit");
+                
+                $scope.states = [];
+                $scope.vuosikausi = [];
+                $scope.selection = [];
 
                 for (var s in CONFIG.env["tarjonta.tila"]) {
-                  $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
+                    $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
                 }
 
                 $scope.clearSearch = function() {
-                  $scope.searchParams=  {
-                    HAKUSANA: undefined,
-                    TILA : undefined,
-                    HAKUKAUSI : undefined,
-                    HAKUVUOSI : undefined,
-                    KOULUTUKSEN_ALKAMISKAUSI : undefined,
-                    KOULUTUKSEN_ALKAMISVUOSI : undefined,
-                    HAKUTAPA : undefined,
-                    HAKUTYYPPI : undefined,
-                    KOHDEJOUKKO : undefined
-                  };
+                    $scope.searchParams = {
+                        HAKUSANA: undefined,
+                        TILA: undefined,
+                        KAUSI: undefined,
+                        VUOSI: undefined,
+                        KAUSIVUOSI: "HAKU",
+                        HAKUTAPA: undefined,
+                        HAKUTYYPPI: undefined,
+                        KOHDEJOUKKO: undefined
+                    };
                 };
 
                 $scope.clearSearch();
@@ -76,105 +87,197 @@ app.controller('HakuListController',
                     $log.info("doCreateNew()");
                     $location.path("/haku/NEW");
                 };
+                
+                $scope.canCreateNew = function() {
+                	// TODO käyttöoikeustarkistus
+                	return true;
+                }
+                
+                function kausiVuosiToString(kausi, vuosi) {
+                	return kausi ? $scope.kaudet[kausi] + " " + vuosi : vuosi;
+                }
 
-                $scope.doDelete = function(haku) {
-                  $log.debug("doDelete()", haku);
-                  dialogService.showNotImplementedDialog();
+                $scope.hakuGetContent = function(row, col) {
+                	switch (col) {
+                	case "hakutyyppi":
+                		return $scope.hakutyypit[row.hakutyyppiUri];
+                	case "hakukausi":
+                		return kausiVuosiToString(row.hakukausiUri, row.hakukausiVuosi);
+                	case "alkamiskausi":
+                		return kausiVuosiToString(row.koulutuksenAlkamiskausiUri, row.koulutuksenAlkamisVuosi);
+                	case "tila":
+                		return LocalisationService.t("tarjonta.tila."+row.tila);
+                	default:
+                		return row.nimi;
+                	}
+                }
+                $scope.hakuGetIdentifier = function(row) {
+                	return row.oid;
+                }
+                $scope.hakuGetLink = function(row) {
+                	return "#/haku/"+row.oid;
+                }
+                $scope.hakuGetOptions = function(row) {
+                	return undefined;
+                }
+                
+                $scope.doDelete = function(haku, doAfter) {
+                    $log.info("doDelete()", haku);
+
+                    // Defined: "hakuControllers.js"
+                    $scope.doDeleteHaku(haku).then(function(result) {
+                    	doAfter();
+                    	//$scope.doSearch();
+                    });
+                    
                 };
 
-                $scope.review=function(haku){
-                  $location.path("/haku/" + haku.oid);
+//                $scope.doDelete = function(haku) {
+//                    $log.debug("doDelete()", haku);
+//
+//                    HakuV1Service.delete(haku.oid).then(function(result) {
+//                        $log.info("delete result", result);
+//                        if (result.status == "OK") {
+//                            $log.info("SHOW DELETE DONE DIALOG");
+//                            dialogService.showSimpleDialog(
+//                                    LocalisationService.t("haku.delete.ok"),
+//                                    LocalisationService.t("haku.delete.ok.description"),
+//                                    LocalisationService.t("ok"),
+//                                    undefined);
+//                            $scope.doSearch();
+//                        } else {
+//                            var errorMessage = "<ul>"
+//                            angular.forEach(result.errors, function(error) {
+//                                var msg = LocalisationService.t(error.errorMessageKey, error.errorMessageParameters);
+//                                errorMessage = errorMessage + "<li>" + msg + "</li>";
+//                            });
+//                            errorMessage = errorMessage + "</ul>";
+//                            var desciptionParams = [errorMessage];
+//
+//                            dialogService.showSimpleDialog(
+//                                    LocalisationService.t("haku.delete.failed"),
+//                                    LocalisationService.t("haku.delete.failed.description", desciptionParams),
+//                                    LocalisationService.t("ok"),
+//                                    undefined);
+//                        }
+//                    });
+//                    
+//                    // dialogService.showNotImplementedDialog();
+//                };
+
+                $scope.review = function(haku) {
+                    $location.path("/haku/" + haku.oid);
                 };
 
                 function changeState(targetState) {
-                  return function(haku) {
-                    Haku.changeState({oid:haku.oid, state:targetState}).$promise.then(function(result){
-                      if("OK"===result.status) {
-                        haku.tila=targetState;
-                      } else {
-                        $log.debug("state change did not work?", result);
-                      }
-                    });
-                  };
+                    return function(haku, doAfter) {
+                        Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
+                            if ("OK" === result.status) {
+                                haku.tila = targetState;
+                                doAfter();
+                            } else {
+                                $log.debug("state change did not work?", result);
+                            }
+                        });
+                    };
                 }
-                
+
                 $scope.doPublish = changeState("JULKAISTU");
                 $scope.doCancel = changeState("PERUTTU");
 
                 $scope.doDeleteSelected = function() {
-                  $log.debug("doDeleteSelected()");
-                  var selected=[];
-                  angular.forEach($scope.model.hakus, function(haku){
-                    if(haku.selected) selected.push(haku);
-                  });
-
-                  $log.debug("selected:", selected);
-                  dialogService.showNotImplementedDialog();
+                    $log.debug("doDeleteSelected()");
+                    $log.debug("selected:", $scope.selection);
+                    dialogService.showNotImplementedDialog();
                 };
-
-                function setKausi(params, parameterName){
-                  if(params[parameterName]) {
-                    var hKausi = params[parameterName];
-                    params[parameterName]=hKausi.kausi;
-                  }
-                }
-
-                /**
-                 * populoi menu laiskasti (permissiot/tila vaikuttaa)
-                 */
-                $scope.initMenu=function(haku) {
-                  haku.actions.splice(0);
-                  //hae permissiot ja testaa tilasiirtymät
-                  $q.all([PermissionService.haku.canEdit(haku.oid), PermissionService.haku.canDelete(haku.oid), Haku.checkStateChange({oid:haku.oid, state: 'JULKAISTU'}), Haku.checkStateChange({oid:haku.oid, state: 'PERUTTU'})]).then(function(results){
-                    if(results[0]) {
-                      //edit
-                      haku.actions.push({name:LocalisationService.t("haku.menu.muokkaa"), action:
-                        function(){
-                          $location.path("/haku/" + haku.oid + "/edit");
-                        }
-                      });
-                    }
-                    
-                    $log.debug("results", results);
-                    
-                    //review
-                    haku.actions.push({name:LocalisationService.t("haku.menu.tarkastele"), action:function(){
-                      $scope.review(haku);
-                    }});
-
-                    //delete
-                    if(results[1]) {
-                      haku.actions.push({name:LocalisationService.t("haku.menu.poista"), action:function(){$scope.doDelete(haku)}});
-                    }
-                    
-                    //publish
-                    if(results[0] && results[2].result && haku.tila!='JULKAISTU') {
-                      haku.actions.push({name:LocalisationService.t("haku.menu.julkaise"), action:function(){$scope.doPublish(haku)}});
-                    }
-                    //cancel
-                    if(results[0] && results[3].result && haku.tila!='PERUTTU') {
-                      haku.actions.push({name:LocalisationService.t("haku.menu.peruuta"), action:function(){$scope.doCancel(haku)}});
-                    }
-
-                  });
-                  
-                }
-
                 
+                $scope.canDeleteSelected = function() {
+                	// TODO käyttöoikeustarkistus -> jos ei saa poistaa mitään, palauta false
+                	return $scope.selection.length>0;
+                }
+
+                /*function setKausi(params, parameterName) {
+                    if (params[parameterName]) {
+                        var hKausi = params[parameterName];
+                        params[parameterName] = hKausi.kausi;
+                    }
+                }*/
+
+                $scope.hakuGetOptions = function(haku) {
+
+                	var ret = [];
+                	
+                    //hae permissiot ja testaa tilasiirtymät
+                    $q.all([PermissionService.haku.canEdit(haku.oid), PermissionService.haku.canDelete(haku.oid), Haku.checkStateChange({oid: haku.oid, state: 'JULKAISTU'}), Haku.checkStateChange({oid: haku.oid, state: 'PERUTTU'})]).then(function(results) {
+                        if (results[0]) {
+                            //edit
+                        	ret.push({title: LocalisationService.t("haku.menu.muokkaa"), action:
+                                function() {
+                                    $location.path("/haku/" + haku.oid + "/edit");
+                                }
+                            });
+                        }
+
+                        $log.debug("results", results);
+
+                        //review
+                        ret.push({title: LocalisationService.t("haku.menu.tarkastele"), action: function() {
+                            $scope.review(haku);
+                        }});
+
+                        //delete
+                        if (results[1] && haku.tila != 'JULKAISTU') {
+                        	ret.push({title: LocalisationService.t("haku.menu.poista"), action: function() {
+                                $scope.doDelete(haku, actions.delete);
+                            }});
+                        }
+
+                        //publish
+                        if (results[0] && results[2].result && haku.tila != 'JULKAISTU') {
+                        	ret.push({title: LocalisationService.t("haku.menu.julkaise"), action: function() {
+                                $scope.doPublish(haku, actions.update);
+                            }});
+                        }
+                        
+                        //cancel
+                        if (results[0] && results[3].result && haku.tila != 'PERUTTU') {
+                        	ret.push({title: LocalisationService.t("haku.menu.peruuta"), action: function() {
+                                $scope.doCancel(haku, actions.update);
+                            }});
+                        }
+
+                    });
+                    
+                    return ret;
+                }
+
                 $scope.doSearch = function() {
                     $log.info("doSearch()");
                     var params = angular.copy($scope.searchParams);
-		    
-	            setKausi(params, 'HAKUKAUSI');
-		    setKausi(params, 'KOULUTUKSEN_ALKAMISKAUSI');
 
-                    HakuV1Service.search(params).then(function(haut){
-
-                      for(var i=0;i<haut.length;i++) {
-                        var haku = haut[i].actions=[];
-                      }
-                      $scope.model.hakus=haut;
-                      }
+                    if (params.KAUSIVUOSI && params.KAUSI) {
+                    	params[params.KAUSIVUOSI+"KAUSI"] = params.KAUSI.kausi;
+                    }
+                    if (params.KAUSIVUOSI && params.VUOSI) {
+                    	params[params.KAUSIVUOSI+"VUOSI"] = params.VUOSI;
+                    }
+                    
+                    // pois turhat parametrit
+                    params.KAUSIVUOSI = undefined;
+                    params.KAUSI = undefined;
+                    params.VUOSI = undefined;
+                    
+                    HakuV1Service.search(params).then(function(haut) {
+                    	// TODO järjestys backendiin?
+                        haut.sort(function(a,b){
+                        	var ret = a.tila.localeCompare(b.tila);
+                        	if (ret==0) {
+                        		ret = a.nimi.localeCompare(b.nimi);
+                        	}
+                        	return ret;
+                        });
+                        $scope.model.hakus = haut;
+                    }
                     );
                 };
 
@@ -186,9 +289,9 @@ app.controller('HakuListController',
                             model: true
                         },
                         search: {
-                            tila : ""
+                            tila: ""
                         },
-                        hakus : [],
+                        hakus: [],
                         place: "holder"
                     };
 

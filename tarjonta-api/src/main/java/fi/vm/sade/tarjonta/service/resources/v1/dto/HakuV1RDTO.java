@@ -62,6 +62,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
 	@ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required=true)
     private boolean sijoittelu;
 
+    @ApiModelProperty(value = "Käytetäänkö järjestelmän hakulomaketta", required=true)
+    private boolean jarjestelmanHakulomake;
+
 	@ApiModelProperty(value = "Lista haun hakuaikoja", required=true)
     private List<HakuaikaV1RDTO> hakuaikas;
 
@@ -92,6 +95,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
 	@ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required=false)
     private String[] tarjoajaOids;
 
+	@ApiModelProperty(value = "Hakukohteet järjestettävä prioriteettijärjestykseen.", required=false)
+    private boolean usePriority;
+        
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -254,4 +260,19 @@ public class HakuV1RDTO extends BaseV1RDTO {
         this.tarjoajaOids = tarjoajaOids;
     }
 
+    public boolean isUsePriority() {
+        return usePriority;
+    }
+
+    public void setUsePriority(boolean usePriority) {
+        this.usePriority = usePriority;
+    }
+
+    public boolean isJarjestelmanHakulomake() {
+        return jarjestelmanHakulomake;
+    }
+
+    public void setJarjestelmanHakulomake(boolean jarjestelmanHakulomake) {
+        this.jarjestelmanHakulomake = jarjestelmanHakulomake;
+    }
 }

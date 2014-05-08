@@ -22,8 +22,7 @@ describe('Edit koulutus testeja', function() {
     var CONFIG_ENV_MOCK = {
         "env": {
             "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo",
-            "key-env-1": "mock-value-env-1",
-            "key-env-2": "mock-value-env-2"
+            "authentication-service.henkilo.search.params":"?count=2000&index=0&ht=VIRKAILIJA",
         }, "app": {
             "key-app-1": "mock-value-app-1",
             "userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']
@@ -39,6 +38,7 @@ describe('Edit koulutus testeja', function() {
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('imageupload'));
     beforeEach(module('TarjontaCache'));
+    beforeEach(module('app.edit.ctrl.kk'));
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('debounce'));
     beforeEach(module('ngRoute'));
@@ -58,8 +58,8 @@ describe('Edit koulutus testeja', function() {
     beforeEach(inject(function($rootScope) {
         $scope = $rootScope.$new();
         $modalInstance = {
-            $scope : $scope,
-            templateUrl: 'partials/koulutus/edit/selectTutkintoOhjelma.html',
+            $scope: $scope,
+            templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
             controller: 'SelectTutkintoOhjelmaController',
             targetFilters: function() {
                 return [];
@@ -69,7 +69,7 @@ describe('Edit koulutus testeja', function() {
 
     it('Testing the SelectTutkintoOhjelmaController initial values', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
-             $scope : $scope,
+            $scope: $scope,
             $modalInstance: $modalInstance,
             resolve: {
                 targetFilters: function() {
@@ -86,7 +86,7 @@ describe('Edit koulutus testeja', function() {
 
     it('Testing the SelectTutkintoOhjelmaController clearCriteria', inject(function($controller) {
         $controller('SelectTutkintoOhjelmaController', {
-            $scope : $scope,
+            $scope: $scope,
             $modalInstance: $modalInstance,
             targetFilters: function() {
                 return [];
@@ -98,35 +98,18 @@ describe('Edit koulutus testeja', function() {
         expect($scope.stoModel.hakulause).toEqual('');
     }));
 
-    /*
-     it('Testing the EditYhteyshenkiloCtrl clearYh', inject(function($controller) {
-     $controller('EditYhteyshenkiloCtrl', {
-     $scope: $scope
-     });
-
-     $scope.uiModel = {};
-     $scope.uiModel.contactPerson = {};
-     $scope.uiModel.contactPerson.nimet = 'Testi nimi';
-     $scope.uiModel.contactPerson.sahkoposti = 'test@oph.fi';
-     $scope.uiModel.contactPerson.titteli = 'Herra';
-     $scope.uiModel.contactPerson.puhelin = '050432134534';
-     $scope.uiModel.contactPerson.etunimet = 'Testi';
-     $scope.uiModel.contactPerson.sukunimi = 'nimi';
-
-     $scope.editYhModel.clearYh();
-     expect($scope.uiModel.contactPerson.nimet).toEqual(undefined);
-     }));
-     */
-
     it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller, $httpBackend) {
 
-        $scope.koulutusModel = {result: {organisaatio: {oid: 'org-oid-1.2.3.4'}}};
+      var $route = {current:{locals:{koulutusModel:{result:{organisaatio:{oid:"org-oid-1.2.3.4"}}}}}}; // this is where the ctrl reads org oid
 
+      var $scope={};
+      
         $controller('EditYhteyshenkiloCtrl', {
+            $route: $route,
             $scope: $scope
         });
 
-        //mock backend calls
+        //mock backend call results
         var henkilo1 = {
             "etunimet": "Testeri",
             "oidHenkilo": "1.2.246.562.24.91121139885",
@@ -141,8 +124,6 @@ describe('Edit koulutus testeja', function() {
                     "sukunimi": "1194-Kuormitus"
                 }]
         };
-
-        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo?count=2000&index=0&ht=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
 
         var henkilo = {
             "id": 29256,
@@ -205,7 +186,6 @@ describe('Edit koulutus testeja', function() {
                         }]
                 }]
         };
-        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
 
         var organisaatiohenkilo = [{
                 "id": 29258,
@@ -214,6 +194,8 @@ describe('Edit koulutus testeja', function() {
                 "passivoitu": false
             }];
 
+        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo?count=2000&index=0&ht=VIRKAILIJA&org=org-oid-1.2.3.4').respond(response);
+        $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885').respond(henkilo);
         $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
 
         $scope.uiModel = {};
@@ -223,8 +205,8 @@ describe('Edit koulutus testeja', function() {
         expect($scope.uiModel.contactPerson.etunimet).toEqual(undefined);
 
         $scope.editYhModel.selectHenkilo(henkilo1);
-
         $httpBackend.flush();
+
 
         expect($scope.uiModel.contactPerson.etunimet).toEqual('Testeri');
         expect($scope.uiModel.contactPerson.sukunimi).toEqual('1194-Kuormitus');
@@ -285,6 +267,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('Organisaatio'));
     beforeEach(module('app.edit.ctrl'));
+    beforeEach(module('app.edit.ctrl.kk'));
     beforeEach(module('TarjontaPermissions'));
 
 
@@ -310,8 +293,14 @@ describe('Edit koulutus insert/edit/load', function() {
             kieli_sv: '',
             kieli_en: ''}};
 
+
+
     it('Testing the BaseEditController.init', inject(function($controller) {
-        $controller('BaseEditController', {
+        var a = $controller('BaseEditController', {
+            $scope: scope
+        });
+
+        $controller('EditKorkeakouluController', {
             "$scope": scope,
             "tarjontaService": tarjontaService,
             "cfg": cfg,

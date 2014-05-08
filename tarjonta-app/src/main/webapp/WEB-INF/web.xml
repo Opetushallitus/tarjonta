@@ -12,7 +12,7 @@
         See "MainWindow.java" / refresher in init() which creates poller to keep active sessions alive.
     -->
     <session-config>
-        <session-timeout>1</session-timeout>
+        <session-timeout>10</session-timeout>
     </session-config>
 
     <context-param>
@@ -67,7 +67,6 @@
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
-        <url-pattern>/hakuapp/*</url-pattern>
         <url-pattern>/valintaapp/*</url-pattern>
         <url-pattern>/adminaapp/*</url-pattern>
     </filter-mapping>
@@ -99,25 +98,6 @@
             of Vaadin applications, such as with JMeter. In such cases, you can disable the protection by
             setting the disable-xsrf-protection parameter to true.
         -->
-        <init-param>
-            <param-name>disable-xsrf-protection</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </servlet>
-
-    <!-- Haku standalone -->
-    <servlet>
-        <servlet-name>hakuapp</servlet-name>
-        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
-        <init-param>
-            <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.HakuApplication</param-value>
-        </init-param>
-        <init-param>
-            <description>Widget Set to Use</description>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
-        </init-param>
         <init-param>
             <param-name>disable-xsrf-protection</param-name>
             <param-value>false</param-value>
@@ -179,11 +159,6 @@
     <servlet-mapping>
         <servlet-name>tarjontaapp</servlet-name>
         <url-pattern>/tarjontaapp/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>hakuapp</servlet-name>
-        <url-pattern>/hakuapp/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

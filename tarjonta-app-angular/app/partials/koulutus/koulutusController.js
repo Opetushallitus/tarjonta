@@ -15,33 +15,27 @@
 
 var app = angular.module('app.koulutus.ctrl', []);
 
-app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location',
-    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location) {
+app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService',
+    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         $log = $log.getInstance("KoulutusRoutingController");
-        $scope.resultPageUri;
 
-        $scope.controlModel = {
-            formStatus: {
-                modifiedBy: '',
-                modified: null,
-                tila: ''
-            },
-            formControls: {reloadDisplayControls: function() {
-                }}
-        };
+        /*
+         * Page routing data
+         */
+        $scope.resultPageUri;
 
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                //var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS)");
-                 var patt = new RegExp("(KORKEAKOULUTUS)");
+                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS)");
+                // var patt = new RegExp("(KORKEAKOULUTUS)");
                 if (patt.test(type)) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }
             } else {
-               $location.path("/error");
+                $location.path("/error");
             }
         };
 

@@ -37,7 +37,7 @@ import fi.vm.sade.generic.service.PermissionService;
 @Configurable
 @Component
 public class TarjontaPermissionServiceImpl implements InitializingBean {
-
+    
     public static final String TARJONTA = "TARJONTA";
 
     public static final String VALINTAPERUSTE_KUVAUS = "VALINTAPERUSTEKUVAUSTENHALLINTA";
@@ -89,16 +89,6 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         Preconditions.checkNotNull(wrapped, "The permissionService is not set");
-    }
-
-    /**
-     * Checks if user can cancel koulutus publishment.
-     *
-     * @param org
-     * @return
-     */
-    public boolean userCanCancelKoulutusPublish(final OrganisaatioContext context) {
-        return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
 
     /**
@@ -311,6 +301,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * TODO
      * - YHTEISHAKU - only root oid user / OPH
      * - others - only root oid user / OPH AND if that user belongs to creators organisation.
+     * @deprecated use {@link #userCanDeleteHakuWithOrgs(String...)}
      *
      * @param hakuOid haku to delete
      * @return
@@ -339,7 +330,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * TODO
      * - YHTEISHAKU - only root oid user / OPH
      * - others - only root oid user / OPH AND if that user belongs to creators organisation.
-     *
+     * @deprecated use {@link #userCanCreateHakuWithOrgs(String...)} instead
      * @return
      */
     public boolean userCanCreateHaku() {
@@ -366,6 +357,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * - other hakus - has CRUD + haku belongs to that organisation
      *
      * @param hakuOid haku to edit
+     * @deprecated älä käytä tätä, vaan {@link #userCanUpdateHakuWithOrgs(String...)}
      * @return
      */
     public boolean userCanUpdateHaku(String hakuOid) {
@@ -392,12 +384,61 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     }
 
     /**
+     * Check if user can edit haku based on organisations.
+     *
+     *
+     * @param hakuOrgs organisaatiot jotka saa muokata hakua
+     * @return
+     */
+    public boolean userCanUpdateHakuWithOrgs(String... hakuOrgs) {
+        
+        for(String org: hakuOrgs) {
+            final boolean isAllowed = hakujenHallintaPermissionServiceWrapped.checkAccess(org, hakujenHallintaPermissionServiceWrapped.ROLE_RU, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+            if(isAllowed) { //update/crud organisaatioon
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if user create haku based on organisations.
+     *
+     *
+     * @param hakuOrgs organisaatiot jotka saa muokata hakua
+     * @return
+     */
+    public boolean userCanCreateHakuWithOrgs(String... hakuOrgs) {
+        
+        for(String org: hakuOrgs) {
+            final boolean isAllowed = hakujenHallintaPermissionServiceWrapped.checkAccess(org, hakujenHallintaPermissionServiceWrapped.ROLE_CRUD);
+            if(isAllowed) { //update/crud organisaatioon
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Check if user create haku based on organisations.
+     *
+     *
+     * @param hakuOrgs organisaatiot jotka saa muokata hakua
+     * @return
+     */
+    public boolean userCanDeleteHakuWithOrgs(String... hakuOrgs) {
+        return userCanCreateHakuWithOrgs(hakuOrgs); //c & d are combined!
+    }
+
+
+    /**
      * Check if user can publish haku.
      *
      * TODO
      * - YHTEISHAKU - onlu "oph" user
      * - other hakus - has CRUD + haku belongs to that organisation
      *
+     * @deprecated user {@link #userCanUpdateHakuWithOrgs(String...)} instead...
      * @param hakuOid haku to publish
      * @return
      */
@@ -420,7 +461,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     /**
      * Check if user can Cancel haku publishment.
-     *
+     * @deprecated use {@link #userCanUpdateHakuWithOrgs(String...)} instead.
      * @return
      */
     public boolean userCanCancelHakuPublish(String hakuOid) {
@@ -445,6 +486,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
 
+    @Deprecated
     public boolean userIsOphCrud() {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
     }
@@ -465,4 +507,5 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         }
         return result;
     }
+
 }

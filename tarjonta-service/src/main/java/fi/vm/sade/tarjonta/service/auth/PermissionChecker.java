@@ -51,8 +51,6 @@ public class PermissionChecker {
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
 
-    private boolean overridePermissionChecks = false;
-
     /**
      *
      * @param organisaatioOids
@@ -70,13 +68,21 @@ public class PermissionChecker {
     }
 
     private void checkPermission(boolean result) {
-        if (!result && !overridePermissionChecks) {
+        if (!result) {
             throw new NotAuthorizedException("no.permission");
         }
     }
 
+    /**
+     * @deprecated use {@link #checkHakuUpdateWithOrgs(String...)}
+     * @param hakuOid
+     */
     public void checkHakuUpdate(String hakuOid) {
         checkPermission(permissionService.userCanUpdateHaku(hakuOid));
+    }
+
+    public void checkHakuUpdateWithOrgs(String... orgs) {
+        checkPermission(permissionService.userCanUpdateHakuWithOrgs(orgs));
     }
 
     public void checkUpdateHakukohde(String hakukohdeOid) {
@@ -149,8 +155,15 @@ public class PermissionChecker {
         } // hakukohde must always have komoto?
     }
 
+    /**
+     * @deprecated use {@link #checkCreateHakuWithOrgs(String...)} 
+     */
     public void checkCreateHaku() {
         checkPermission(permissionService.userCanCreateHaku());
+    }
+
+    public void checkCreateHakuWithOrgs(String... hakuOrgs) {
+        checkPermission(permissionService.userCanCreateHakuWithOrgs(hakuOrgs));
     }
 
     public void checkCreateValintaPeruste() {
@@ -158,8 +171,16 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanCreateValintaperuste());
     }
 
+    /**
+     * @deprecated use {@link #checkRemoveHakuWithOrgs(String...)}
+     * @param hakuOid
+     */
     public void checkRemoveHaku(String hakuOid) {
         checkPermission(permissionService.userCanDeleteHaku(hakuOid));
+    }
+
+    public void checkRemoveHakuWithOrgs(String... orgs) {
+        checkPermission(permissionService.userCanDeleteHakuWithOrgs(orgs));
     }
 
     public void checkRemoveValintaPeruste() {
@@ -219,6 +240,10 @@ public class PermissionChecker {
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komo.getOmistajaOrganisaatioOid())));
     }
 
+    /**
+     * @deprecated used only in vaadin
+     * @param tarjontatiedonTila
+     */
     public void checkTilaUpdate(PaivitaTilaTyyppi tarjontatiedonTila) {
         for (GeneerinenTilaTyyppi tyyppi : tarjontatiedonTila.getTilaOids()) {
             switch (tyyppi.getSisalto()) {
@@ -247,16 +272,12 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanUpdateValinteperuste());
     }
 
-    public void checkUpdateHaku(String oid) {
-        checkPermission(permissionService.userCanUpdateHaku(oid));
-    }
-
-    public void setOverridePermissionChecks(boolean overridePermissionChecks) {
-		this.overridePermissionChecks = overridePermissionChecks;
-	}
-
-    public boolean isOverridePermissionChecks() {
-        return overridePermissionChecks;
+    /**
+     * 
+     * @param orgOids
+     */
+    public void checkUpdateHaku(String... orgOids) {
+        checkPermission(permissionService.userCanUpdateHakuWithOrgs(orgOids));
     }
 
 }

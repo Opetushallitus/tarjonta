@@ -14,6 +14,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
                 filteredkoodis.push(koodi);
             }
         });
+
         return filteredkoodis;
     };
 
@@ -168,11 +169,12 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                         var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                         koodisPromise.then(function(koodisParam){
-                            if ($scope.filterwithkoodistouri !== undefined) {
+
+                            if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri) {
                                 if ($scope.version !== undefined && $scope.version) {
                                     addVersionToKoodis(koodisParam);
                                 }
-                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
+                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam);
 
                             } else {
                                 addVersionToKoodis(koodisParam);
@@ -184,9 +186,9 @@ app.directive('koodistocombo',function(Koodisto,$log){
                         var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                         koodisPromise.then(function(koodisParam){
 
-                            if ($scope.filterwithkoodistouri !== undefined){
+                            if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri){
                                 addVersionToKoodis(koodisParam);
-                               $scope.koodis = filterKoodis($scope.filterwithkoodistouri,koodisParam);
+                               $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam,koodisParam);
                             } else {
                                 addVersionToKoodis(koodisParam);
                                 $scope.koodis = koodisParam;

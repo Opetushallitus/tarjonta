@@ -59,6 +59,7 @@ import static org.junit.Assert.assertNotNull;
 public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
 
     private static final String ORGANISATION_OID_COPY_OR_MOVE_TO = "organisation_oid_move_to";
+    private static final String SEARCH_KOMO_OID =  "search_komo_by_oid_test_init";
 
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private KoulutusmoduuliToteutus komoto;
@@ -216,7 +217,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
 
         kkDto.setOid("test_init");
         kkDto.setKomotoOid("test_init");
-        kkDto.setKomoOid("test_init");
+        kkDto.setKomoOid(SEARCH_KOMO_OID);
         kkDto.setTila(TarjontaTila.JULKAISTU);
 
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
@@ -232,7 +233,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         permissionChecker.checkCreateKoulutus(ORGANISATION_OID_COPY_OR_MOVE_TO);
 
         //convert back to entity
-        expect(convertToEntity.convert(kkDto, USER_OID)).andReturn(komotoCopyTo);
+        expect(convertToEntity.convert(kkDto, USER_OID, true)).andReturn(komotoCopyTo);
 
         //permissionChecker.checkCreateKoulutus(dto.getOrganisaatio().getOid());
         expect(koulutusmoduuliDAO.insert(komotoCopyTo.getKoulutusmoduuli())).andReturn(komotoCopyTo.getKoulutusmoduuli());
@@ -275,7 +276,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
 
         assertEquals(null, kkDto.getOid());
         assertEquals(null, kkDto.getKomotoOid());
-        assertEquals(null, kkDto.getKomoOid());
+        assertEquals(SEARCH_KOMO_OID, kkDto.getKomoOid());
         assertEquals(TarjontaTila.LUONNOS, kkDto.getTila());
 
         assertEquals(ORGANISATION_OID_COPY_OR_MOVE_TO, toOrgOids.getValue().get(0));

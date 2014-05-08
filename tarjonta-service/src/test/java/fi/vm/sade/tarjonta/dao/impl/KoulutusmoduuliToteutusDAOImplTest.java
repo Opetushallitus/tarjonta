@@ -15,22 +15,16 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.BinaryData;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,6 +34,12 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.BinaryData;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 
 /**
  *
@@ -133,15 +133,24 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
         KoulutusmoduuliToteutus komoto1 = fixtures.createTutkintoOhjelmaToteutus("7777771");
         komoto1.setOid("xss-1");
         komoto1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
-        komoto1.getTekstit().put(KomotoTeksti.ARVIOINTIKRITEERIT, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
+        komoto1.getTekstit().put(KomotoTeksti.KOHDERYHMA, new MonikielinenTeksti("fi", "kohderyhmä"));
+        komoto1.getTekstit().put(KomotoTeksti.LISATIETOA_OPETUSKIELISTA, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
         komoto1.setKoulutusmoduuli(persistedKomoto.getKoulutusmoduuli());
         persistedKomoto.setKuvaByUri(URI_EN, fixtures.createBinaryData());
         persist(komoto1);
         
         komoto1 = komotoDao.findBy("oid", "xss-1").get(0);
         Assert.assertEquals("ei saa muuttaa & merkkiä!", komoto1.getNimi().asMap().get("fi"));
-        Assert.assertEquals("<table>foo</table>", komoto1.getTekstit().get(KomotoTeksti.ARVIOINTIKRITEERIT).getTekstiForKieliKoodi("fi"));
-
+        Assert.assertEquals("<table>foo</table>", komoto1.getTekstit().get(KomotoTeksti.LISATIETOA_OPETUSKIELISTA).getTekstiForKieliKoodi("fi"));
+        Assert.assertEquals("kohderyhmä", komoto1.getTekstit().get(KomotoTeksti.KOHDERYHMA).getTekstiForKieliKoodi("fi"));
+        
+        komoto1.getTekstit().put(KomotoTeksti.KOHDERYHMA, new MonikielinenTeksti("fi", "kohderyhmä"));
+        komoto1.getTekstit().put(KomotoTeksti.LISATIETOA_OPETUSKIELISTA, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
+        persist(komoto1);
+        komoto1 = komotoDao.findBy("oid", "xss-1").get(0);
+        Assert.assertEquals("ei saa muuttaa & merkkiä!", komoto1.getNimi().asMap().get("fi"));
+        Assert.assertEquals("<table>foo</table>", komoto1.getTekstit().get(KomotoTeksti.LISATIETOA_OPETUSKIELISTA).getTekstiForKieliKoodi("fi"));
+        Assert.assertEquals("kohderyhmä", komoto1.getTekstit().get(KomotoTeksti.KOHDERYHMA).getTekstiForKieliKoodi("fi"));
     }
 
 }

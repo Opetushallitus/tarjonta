@@ -67,6 +67,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
@@ -96,7 +97,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
     private MonikielinenMetadataDAO metadataDAO;
     @PersistenceContext
     public EntityManager em;
-    
 
     @Override
     public List<KoulutusmoduuliToteutus> listKoulutusmoduuliToteutus() {
@@ -180,21 +180,20 @@ public class PublicationDataServiceImpl implements PublicationDataService {
 
     @Override
     public Tilamuutokset updatePublicationStatus(List<Tila> tilaChanges) throws IllegalArgumentException {
-        
+
         Tilamuutokset tilamuutokset = new Tilamuutokset();
         Map<Tyyppi, Map<TarjontaTila, List<String>>> map = new EnumMap<Tyyppi, Map<TarjontaTila, List<String>>>(Tyyppi.class);
 
         if (tilaChanges == null) {
             throw new IllegalArgumentException("tilasiirtyma.error.null.list");
         }
-        
+
 // disabled for now:  because tests started to fail      
 //        for(Tila tila:tilaChanges) {
 //            if(!isValidStatusChange(tila)) {
 //                throw new IllegalArgumentException("tilasiirtyma.error.impossible");
 //            }
 //        }
-
         //filter given data to map
         for (Tila tila : tilaChanges) {
             getListOfOids(getSubMapByQHakukohde(map, tila.getTyyppi()), tila.getTila()).add(tila.getOid());
@@ -213,7 +212,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 tilamuutokset.getMuutetutKomotot().addAll(tm.getMuutetutKomotot());
             }
         }
-        
+
         return tilamuutokset;
     }
 
@@ -340,7 +339,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 JPAUpdateClause hakuUpdate = new JPAUpdateClause(em, QHaku.haku);
                 BooleanExpression qHaku = QHaku.haku.oid.in(oids);
 
-
                 hakuUpdate.where(qHaku).set(QHaku.haku.tila, toStatus)
                         .set(QHaku.haku.lastUpdateDate, lastUpdatedDate)
                         .set(QHaku.haku.lastUpdatedByOid, userOid);
@@ -356,26 +354,23 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                 BooleanExpression qHakukohde = QHakukohde.hakukohde.oid.in(oids);
                 JPAUpdateClause hakukohdeUpdate = new JPAUpdateClause(em, QHakukohde.hakukohde);
 
-
                 hakukohdeUpdate.where(qHakukohde)
                         .set(QHakukohde.hakukohde.tila, toStatus)
                         .set(QHakukohde.hakukohde.lastUpdateDate, lastUpdatedDate)
-//                        .set(QHakukohde.hakukohde.viimIndeksointiPvm, lastUpdatedDate)
+                        //                        .set(QHakukohde.hakukohde.viimIndeksointiPvm, lastUpdatedDate)
                         .set(QHakukohde.hakukohde.lastUpdatedByOid, userOid);
                 hakukohdeUpdate.execute();
                 muutokset.getMuutetutHakukohteet().addAll(oids);
-                
-                
+
                 switch (toStatus) {
-                
-                case JULKAISTU:
-                    muutokset.getMuutetutKomotot().addAll(updateHakukohdeRelatedKomotos(toStatus, userOid, lastUpdatedDate, oids, TarjontaTila.VALMIS)); //päivitä komotojen tila samaksi jos tila == valmis
-                    break;
-                case PERUTTU:
-                    muutokset.getMuutetutKomotot().addAll(updateHakukohdeRelatedKomotos(toStatus, userOid, lastUpdatedDate, oids, TarjontaTila.JULKAISTU)); //päivitä komotojen tila samaksi jos tila == julkaistu
-                    break;
-                default:
-                    break;
+                    case JULKAISTU:
+                        muutokset.getMuutetutKomotot().addAll(updateHakukohdeRelatedKomotos(toStatus, userOid, lastUpdatedDate, oids, TarjontaTila.VALMIS)); //päivitä komotojen tila samaksi jos tila == valmis
+                        break;
+                    case PERUTTU:
+                        muutokset.getMuutetutKomotot().addAll(updateHakukohdeRelatedKomotos(toStatus, userOid, lastUpdatedDate, oids, TarjontaTila.JULKAISTU)); //päivitä komotojen tila samaksi jos tila == julkaistu
+                        break;
+                    default:
+                        break;
                 }
 
                 break;
@@ -398,22 +393,23 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                         .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.viimIndeksointiPvm, lastUpdatedDate)
                         .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.lastUpdatedByOid, userOid);
                 komotoUpdate.execute();
-                
+
                 muutokset.getMuutetutKomotot().addAll(oids);
 
                 switch (toStatus) {
- 
-                case JULKAISTU:
-                    muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.VALMIS));
-                    break;
-                case PERUTTU:
-                    muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.JULKAISTU));
-                    break;
-                default:
-                    break;
+
+                    case JULKAISTU:
+                        muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.VALMIS));
+                        updateKomoByKomotoOids(toStatus, userOid, lastUpdatedDate, oids);
+                        break;
+                    case PERUTTU:
+                        muutokset.getMuutetutHakukohteet().addAll(updateAllHakukohdeStatusesByKomotoOids(oids, userOid, toStatus, TarjontaTila.JULKAISTU, lastUpdatedDate, TarjontaTila.JULKAISTU));
+                        break;
+                    default:
+                        break;
                 }
                 break;
-                
+
         }
         return muutokset;
     }
@@ -422,20 +418,20 @@ public class PublicationDataServiceImpl implements PublicationDataService {
         List<String> returnList = Lists.newArrayList();
         //hae hakukohdeidt
         Query q = em.createQuery("select hakukohde.id from Hakukohde as hakukohde inner join hakukohde.haku as haku where haku.tila='JULKAISTU' and hakukohde.oid in(:hakukohdeOIDs)");
-        
+
         q.setParameter("hakukohdeOIDs", hakukohdeOids);
-        
+
         List<Long> hakukohdeIds = (List<Long>) q.getResultList();
-        if(hakukohdeIds.size()>0) {
+        if (hakukohdeIds.size() > 0) {
             //hae komotooidt
             List<String> komotoOidList = komotoDAO.searchKomotoOIDsByHakukohdesId(hakukohdeIds, fromStatus);
-        
+
             returnList.addAll(komotoOidList);
-            if(komotoOidList.size()>0) {
+            if (komotoOidList.size() > 0) {
                 updateKomotos(toStatus, userOid, lastUpdatedDate, komotoOidList);
             }
         }
-        
+
         return returnList;
     }
 
@@ -471,7 +467,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
      * @param hakukohdeRequiredStatus
      */
     private List<String> updateAllHakukohdeStatusesByKomotoOids(final Collection<String> komotoOids, final String updaterOid, final TarjontaTila toStatus, final TarjontaTila hakuRequiredStatus, Date lastUpdatedDate, final TarjontaTila... hakukohdeRequiredStatus) {
-        
+
         List<String> oidResult = Lists.newArrayList();
         List<Hakukohde> result = searchHakukohteetByKomotoOid(komotoOids, hakuRequiredStatus, hakukohdeRequiredStatus);
 
@@ -482,7 +478,7 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             hakukohdeDAO.update(h);
             oidResult.add(h.getOid());
         }
-        
+
         return oidResult;
     }
 
@@ -513,7 +509,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             //Update toteutus status by list of hakukohde IDs
             List<String> komotoOidList = komotoDAO.searchKomotoOIDsByHakukohdesId(hakukohdeIds, requiredStatus);
             komotoOids.addAll(komotoOidList);
-            
 
             updateKomotos(toStatus, userOid, lastUpdatedDate, komotoOidList);
         }
@@ -532,6 +527,25 @@ public class PublicationDataServiceImpl implements PublicationDataService {
                     .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.updated, lastUpdatedDate)
                     .set(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.lastUpdatedByOid, userOid);
             komotoUpdate.execute();
+        }
+    }
+
+    private void updateKomoByKomotoOids(final TarjontaTila toStatus, final String userOid, final Date lastUpdatedDate, final Collection<String> komotoOIDs) {
+        if (komotoOIDs != null && !komotoOIDs.isEmpty()) {
+            QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+            final List<String> komoOids = from(komoto).where(komoto.oid.in(komotoOIDs)
+                    .and(komoto.koulutusmoduuli.koulutustyyppi.eq(KoulutusasteTyyppi.KORKEAKOULUTUS.value())))
+                    .list(komoto.koulutusmoduuli.oid);
+
+            if (komoOids != null && !komoOids.isEmpty()) {
+                QKoulutusmoduuli m = QKoulutusmoduuli.koulutusmoduuli;
+                JPAUpdateClause komoUpdate = new JPAUpdateClause(em, m);
+                komoUpdate.where(m.oid.in(komoOids))
+                        .set(m.tila, toStatus)
+                        .set(m.updated, lastUpdatedDate);
+                komoUpdate.execute();
+            }
         }
     }
 

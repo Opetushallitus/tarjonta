@@ -105,8 +105,56 @@ app.service('dialogService', ['$modal', '$log', '$rootScope', 'LocalisationServi
             var texts = {
                 title: LocalisationService.t("notImplemented.title"),
                 description: LocalisationService.t("notImplemented.description"),
+                ok: LocalisationService.t("ok")
+                // cancel: LocalisationService.t("cancel")
+            };
+
+            return this.showDialog(texts);
+        };
+
+        /**
+         * Show dialog to inform user that form has unsaved information.
+         * Result true means "ok, go anyway", cancel is "aha, I'll stay here".
+         * 
+         * Usage example:
+         * <pre>
+         * dialogService.showModifedDialog().result.then(function(result) {
+         *               if (true) {
+         *                   $scope.navigateBack();
+         *               }
+         *           });
+         * </pre>
+         * 
+         * 
+         * @returns {unresolved}
+         */
+        this.showModifedDialog = function() {
+            var texts = {
+                title: LocalisationService.t("modified.title"),
+                description: LocalisationService.t("modified.description"),
                 ok: LocalisationService.t("ok"),
                 cancel: LocalisationService.t("cancel")
+            };
+
+            return this.showDialog(texts);
+        };
+
+
+        /**
+         * Show dialog, show text "as is". If cancel is undefined, only "ok" text will be show.
+         * 
+         * @param {type} title
+         * @param {type} description
+         * @param {type} ok
+         * @param {type} cancel
+         * @returns {unresolved}
+         */
+        this.showSimpleDialog = function(title, description, ok, cancel) {
+            var texts = {
+                title: title,
+                description: description,
+                ok: ok,
+                cancel: cancel
             };
 
             return this.showDialog(texts);

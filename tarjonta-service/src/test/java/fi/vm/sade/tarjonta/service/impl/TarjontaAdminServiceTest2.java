@@ -78,7 +78,6 @@ public class TarjontaAdminServiceTest2 extends Assert {
 	
 	@Before
 	public void initTestData() {
-		permissionChecker.setOverridePermissionChecks(true);
 		doInTransaction(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {

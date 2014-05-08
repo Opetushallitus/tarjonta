@@ -42,8 +42,8 @@ public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Lukiodiplomit", required = true)
     private KoodiUrisV1RDTO lukiodiplomit;
 
-    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO ammattinimikkeet;
+    @ApiModelProperty(value = "Tutkintonimike", required = true)
+    private KoodiV1RDTO tutkintonimike;
 
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan")
     private String linkkiOpetussuunnitelmaan;
@@ -162,6 +162,9 @@ public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
      * @return the lukiodiplomit
      */
     public KoodiUrisV1RDTO getLukiodiplomit() {
+        if (lukiodiplomit == null) {
+            lukiodiplomit = new KoodiUrisV1RDTO();
+        }
         return lukiodiplomit;
     }
 
@@ -170,24 +173,6 @@ public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
      */
     public void setLukiodiplomit(KoodiUrisV1RDTO lukiodiplomit) {
         this.lukiodiplomit = lukiodiplomit;
-    }
-
-    /**
-     * @return the ammattinimikkeet
-     */
-    public KoodiUrisV1RDTO getAmmattinimikkeet() {
-        if (ammattinimikkeet == null) {
-            ammattinimikkeet = new KoodiUrisV1RDTO();
-        }
-
-        return ammattinimikkeet;
-    }
-
-    /**
-     * @param ammattinimikkeet the ammattinimikkeet to set
-     */
-    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
-        this.ammattinimikkeet = ammattinimikkeet;
     }
 
     /**
@@ -202,6 +187,20 @@ public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
      */
     public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
         this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @return the tutkintonimike
+     */
+    public KoodiV1RDTO getTutkintonimike() {
+        return tutkintonimike;
+    }
+
+    /**
+     * @param tutkintonimike the tutkintonimike to set
+     */
+    public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
+        this.tutkintonimike = tutkintonimike;
     }
 
 }

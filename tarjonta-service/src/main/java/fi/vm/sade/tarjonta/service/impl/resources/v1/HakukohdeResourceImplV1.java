@@ -25,6 +25,8 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.tarjonta.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,16 +41,6 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
@@ -90,6 +82,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(HakukohdeResourceImplV1.class);
 
+    @Autowired(required = true)
+    private PublicationDataService publication;
+
     @Autowired
     private HakuDAO hakuDAO;
     @Autowired
@@ -125,6 +120,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Autowired(required = true)
     private ContextDataService contextDataService;
 
+    private final static String KOULUTUSASTE_KEY = "koulutusaste";
+
+    private final static String KOULUTUSLAJI_KEY = "koulutuslaji";
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
@@ -383,6 +381,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 }
                 hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(), hakukohdeRDTO.getValintaPerusteKuvausKielet()));
             }
+            HashMap<String,String> kouluslajiAndKoulutusaste = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeRDTO.getHakukohdeKoulutusOids());
+            hakukohdeRDTO.setKoulutusAsteTyyppi(kouluslajiAndKoulutusaste.get(KOULUTUSASTE_KEY));
+            hakukohdeRDTO.setKoulutuslaji(kouluslajiAndKoulutusaste.get(KOULUTUSLAJI_KEY));
 
             ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
             result.setResult(hakukohdeRDTO);
@@ -403,6 +404,44 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return result;
         }
     }
+
+    private HashMap<String,String> getKoulutusAstetyyppiAndLajiForKoulutukses(List<String> komotoOids) {
+
+            HashMap<String,String> koulutusAstetyyppi = new HashMap<String, String>();
+
+            //TODO: What if koulutusastetyyppi is different ? It should not be
+            if (komotoOids != null && komotoOids.size() >0) {
+                koulutusAstetyyppi = getKoulutusKoulutusAstetyyppi(komotoOids.get(0));
+            } else {
+
+            }
+            return koulutusAstetyyppi;
+
+    }
+
+    private HashMap<String,String> getKoulutusKoulutusAstetyyppi(String komotoOid) {
+        HashMap<String,String> koulutusAstetyyppi = new HashMap<String, String>();
+
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+
+        koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getKoulutustyyppi() != null)
+                ? komoto.getKoulutusmoduuli().getKoulutustyyppi().toUpperCase() : null );
+
+        //TKatva, just get the first koulutuslaji because koulutus cannot have many koulutuslajis (aikuisten,nuorten)
+        //or can it ?
+        if (komoto.getKoulutuslajis() != null && komoto.getKoulutuslajis().size() > 0) {
+            LOG.debug("KOULUTUSLAJI : {}", new ArrayList<KoodistoUri>(komoto.getKoulutuslajis()).get(0).getKoodiUri());
+            KoodiType koulutuslajiKoodi = tarjontaKoodistoHelper.getKoodiByUri(new ArrayList<KoodistoUri>(komoto.getKoulutuslajis()).get(0).getKoodiUri());
+            koulutusAstetyyppi.put(KOULUTUSLAJI_KEY,koulutuslajiKoodi.getKoodiArvo());
+        } else {
+            LOG.debug("KOULUTUSLAJI WAS NULL!!!");
+            koulutusAstetyyppi.put(KOULUTUSLAJI_KEY,null);
+        }
+
+
+        return koulutusAstetyyppi;
+    }
+
 
     private HashMap<String,String> getKuvauksetWithId(Long kuvausId, Set<String> kielet) {
 
@@ -1210,4 +1249,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return resultV1RDTO;
 
     }
+    
+    @Override
+    public ResultV1RDTO<Boolean> isStateChangePossible(String oid,
+            TarjontaTila tila) {
+        Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
+        return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
+    }
+
 }

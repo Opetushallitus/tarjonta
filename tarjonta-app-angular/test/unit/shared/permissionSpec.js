@@ -42,16 +42,23 @@ describe('TarjontaPermissions', function() {
     beforeEach(module('Haku'));
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
-    beforeEach(module('localisation'));
-    beforeEach(module('Koodisto'));
+    
+    
+    
+    
+    
+    
     beforeEach(module('TarjontaCache'));
     beforeEach(module('Logging'));
 
     beforeEach(function(){
         module(function ($provide) {
             $provide.value('Config', CONFIG_ENV_MOCK);
+            var noop = function(){};
+            $provide.value('LocalisationService', {getLocale:noop,t:noop});
         });
     });
+
 
     beforeEach(module('TarjontaPermissions'));
 
@@ -148,23 +155,14 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
         $httpBackend.whenGET('/organisaatio/1.2.4/parentoids').respond("1/1.2/1.2.4");
         $httpBackend.whenGET('/organisaatio/1.2.5/parentoids').respond("1/1.2/1.2.5");
-        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(koulutushaku('1.2.5'));
-        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(koulutushaku('1.2.4'));
-        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(koulutushaku('1.2.3'));
-        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(koulutushaku('1.2.3'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.5'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.4'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.3'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus').respond(hakukohdehaku('1.2.3'));
-
-//        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.5'));
-//        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.4'));
-//        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.3'));
-//        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.3'));
-//        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.5'));
-//        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.4'));
-//        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
-//        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.5'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.4'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.3'));
+        $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(koulutushaku('1.2.3'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.5'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.4'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
 
     };
 

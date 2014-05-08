@@ -28,7 +28,15 @@
 }
 
 .wide {
-	width:100%;
+    width:100%;
+}
+
+.thin {
+	width:50%;
+}
+
+input.thin, select.thin {
+    width:101px;
 }
 
 .float-left {
@@ -214,6 +222,7 @@ footer {
 #tarjonta-body {
 	position:relative;
 	margin-top:20px;
+	min-width:920px;
 }
 
 .wsidebar-left {
@@ -260,7 +269,6 @@ div#orgSearchResults span {
 div#searchSpec {
 	height:96px;
 	position:relative;
-	min-width:960px;
 }
 
 div#searchSpec > div.title {
@@ -307,108 +315,24 @@ div#searchSpec > div.search > input {
 	top:-1px;
 }
 
-div#searchResults div.controls {
-	margin-bottom:30px;
+div.resultsTreeTable table th.column-tila {
+    min-width:75px;
+}
+div.resultsTreeTable table th.column-kausi {
+    min-width:90px;
+}
+div.resultsTreeTable table th.column-koulutuslaji {
+    min-width:120px;
+}
+div.resultsTreeTable table th.column-hakutapa {
+    min-width:120px;
+}
+div.resultsTreeTable table th.column-aloituspaikat {
+    min-width:90px;
 }
 
-div#searchResults input.selectAll {
-	margin-left:23px;
-}
-
-div#searchResults input.selectAll + label {
-	position:relative;
-	top:0.25em;
-	margin-left:0.25em;
-}
-
-div#searchResults div.tools {
+div#searchResults div.resultsTable div.tools {
 	float:right;	
-}
-
-div#searchResults table {
-	width:100%;
-}
-
-/*div#searchResults table.loading > tbody {
-	display:none;
-}*/
-
-div#searchResults table tr.header th.nimi {
-	min-width:50%;
-}
-div#searchResults table tr.header th.tila {
-	min-width:75px;
-}
-div#searchResults table tr.header th.hakukausi {
-	min-width:90px;
-}
-div#searchResults table tr.header th.koulutuslaji {
-	min-width:120px;
-}
-div#searchResults table tr.header th.hakutapa {
-	min-width:120px;
-}
-div#searchResults table tr.header th.aloituspaikat {
-	min-width:90px;
-}
-
-div#searchResults table tr.header th {
-	padding-left:0.5em;
-	cursor:default;
-}
-
-div#searchResults table input[type=checkbox] {
-	margin-right:10px;
-	position:relative;
-	top:-0.25em;
-}
-
-div#searchResults table tbody td, div#searchResults table tbody th {
-	cursor:pointer;
-}
-
-div#searchResults table tbody.tresult tr:hover td, div#searchResults table tbody.tresult tr:hover th {
-	background-color:#f0f0f0;
-}
-
-div#searchResults table tbody.tresult td + td {
-	border-left: 1px solid #d0d0d0;
-	padding-left:0.5em;
-}
-
-div#searchResults table th {
-	font-weight:normal;
-	text-align:left;
-}
-
-div#searchResults table td a {
-	font-weight:bold;
-}
-
-div#searchResults table td input[type=checkbox] {
-	margin-left:40px;
-}
-
-div#searchResults table td img {
-	margin-right:10px;
-}
-
-
-/* avoin taulukkorivi */
-div#searchResults table tbody img.unfolded {
-	display:none;
-}
-
-/* suljettu taulukkorivi */
-div#searchResults table tbody.folded img.folded {
-	display:none;
-}
-div#searchResults table tbody.folded img.unfolded {
-	display:inline-block;
-}
-
-div#searchResults table tbody.folded tr.tresult {
-	display:none;
 }
 
 div#deleteDialog .subject {
@@ -734,4 +658,78 @@ button.btn-invisible {
 	height:0;
 	margin:0;
 	padding:0;
+}
+
+/* yleinen hakuehtonäkymä */
+
+table.seachSpecLayout {
+	width:100%;
+}
+
+table.seachSpecLayout td, table.seachSpecLayout th {
+    width:200px;
+    vertical-align: top;
+}
+
+table.seachSpecLayout th {
+	text-align:left;
+	font-weight:normal;
+}
+
+table.seachSpecLayout td {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+table.seachSpecLayout td.query {
+	min-width:200px;
+	width:100%;
+}
+
+table.seachSpecLayout td.query input {
+	min-width:75%;
+	max-width:400px;
+    top:-1px;
+
+    background-image: url('../img/icon20-search.png');
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right:22px;
+}
+
+table.seachSpecLayout td.controls {
+    text-align:right;
+}
+
+table.seachSpecLayout td.mode ul {
+    margin:0;
+	list-style:none;
+}
+
+table.seachSpecLayout td.mode ul span {
+	position:relative;
+	top:3px;
+}
+
+/* hakujen etusivu */
+
+div#searchResults.haku table td input[type=checkbox] {
+    margin-left:0;
+}
+
+div#searchResults.haku ul a {
+	font-weight:normal;
+}
+
+
+/* taulukon oikeanpuoleisen sarakkeen nappi*/
+
+table td.controls {
+	text-align:right;
+	padding-left:20px;
+}
+
+table td.controls button {
+	position:relative;
+	top: -5px;
 }

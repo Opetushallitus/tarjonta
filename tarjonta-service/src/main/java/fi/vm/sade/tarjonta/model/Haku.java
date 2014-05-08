@@ -100,6 +100,9 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "sijoittelu")
     private boolean sijoittelu;
 
+    @Column(name = "jarjestelmanHakulomake")
+    private boolean jarjestelmanHakulomake;
+
     @Pattern(regexp = WWW_PATTERN)
     @Column(name = "hakulomake_url")
     private String hakulomakeUrl;
@@ -142,6 +145,13 @@ public class Haku extends TarjontaBaseEntity {
      */
     private String tarjoajaOid;
 
+
+    /**
+     * If this is true, then the hakukohde choises users make should be arranged in priority order.
+     */
+    private boolean usePriority = false;
+    
+    
     public String getOid() {
         return oid;
     }
@@ -440,6 +450,22 @@ public class Haku extends TarjontaBaseEntity {
         } else {
             this.tarjoajaOid = StringUtils.join(organisationOids, ",");
         }
+    }
+
+    public boolean isUsePriority() {
+        return usePriority;
+    }
+
+    public void setUsePriority(boolean usePriority) {
+        this.usePriority = usePriority;
+    }
+
+    public boolean isJarjestelmanHakulomake() {
+        return jarjestelmanHakulomake;
+    }
+
+    public void setJarjestelmanHakulomake(boolean jarjestelmanHakulomake) {
+        this.jarjestelmanHakulomake = jarjestelmanHakulomake;
     }
 
 }

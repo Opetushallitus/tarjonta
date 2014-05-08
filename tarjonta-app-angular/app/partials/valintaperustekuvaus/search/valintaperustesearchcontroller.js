@@ -1,4 +1,4 @@
-var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config','ResultsTable']);
+var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Kuvaus','auth','config']);
 
 app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal,$log) {
 
@@ -189,14 +189,20 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         angular.forEach(kuvaukses,function(kuvaus){
 
             for (var prop in kuvaus.kuvauksenNimet) {
+
                 if (kuvaus.kuvauksenNimet.hasOwnProperty(prop)) {
 
                     if (prop.indexOf($scope.model.userLang)) {
-                        kuvaus.kuvauksenNimi = kuvaus.kuvauksenNimet[prop];
+                        if (kuvaus.kuvauksenNimet[prop] && kuvaus.kuvauksenNimet[prop].trim().length > 1) {
+                            kuvaus.kuvauksenNimi = kuvaus.kuvauksenNimet[prop];
+                        }
+
                     }
 
                 }
             }
+
+
 
         });
 

@@ -28,6 +28,10 @@ window.CONFIG.app = {
     "koodisto-uri.tutkintotyyppi.alempiKorkeakoulututkinto": "tutkintotyyppi_13",
     "koodisto-uri.tutkintotyyppi.ylempiKorkeakoulututkinto": "tutkintotyyppi_14",
     "haku.kohdejoukko.kk.uri" : 'haunkohdejoukko_12',
+    "haku.kohdejoukko.aiku.uri" : "haunkohdejoukko_10",
+    "haku.hakutapa.erillishaku.uri" : "hakutapa_02",
+    "haku.hakutapa.jatkuvahaku.uri" : "hakutapa_03",
+    "root.organisaatio.oid":"1.2.246.562.10.00000000001",
     "ui.timeout.short": 10000,
     "ui.timeout.long": 60000
 };
