@@ -508,7 +508,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
 
-                    $scope.getTarjoajaParentPaths($scope.model.hakukohde.tarjoajaOids,hakuFilterFunction);
+                    $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids,hakuFilterFunction);
 
                     var orgQueryPromises = [];
 
@@ -628,6 +628,8 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
          */
         $scope.retrieveHakus = function(filterHakuFunction) {
+
+
             var hakuPromise = HakuService.getAllHakus();
 
             hakuPromise.then(function(hakuDatas) {
@@ -654,6 +656,10 @@ app.controller('HakukohdeRoutingController', ['$scope',
                 });
 
                 var filteredHakus = filterHakuFunction(hakuDatas);
+
+
+
+
 
                 angular.forEach(filteredHakus,function(haku){
                     $scope.model.hakus.push(haku);
@@ -694,7 +700,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
 
 
-        $scope.getTarjoajaParentPaths = function(tarjoajaOids,hakufilterFunction) {
+        $scope.getTarjoajaParentPathsAndHakus = function(tarjoajaOids,hakufilterFunction) {
 
             var orgPromises = [];
 
