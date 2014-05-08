@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
@@ -17,14 +17,6 @@ package fi.vm.sade.tarjonta.service.auth;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -36,8 +28,14 @@ import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
+import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PermissionChecker {
@@ -50,6 +48,8 @@ public class PermissionChecker {
     KoulutusmoduuliToteutusDAOImpl koulutusmoduuliToteutusDAOImpl;
     @Autowired
     KoulutusmoduuliDAO koulutusmoduuliDAOImpl;
+    @Autowired
+    ParameterServices parameterServices;
 
     /**
      *
@@ -279,5 +279,5 @@ public class PermissionChecker {
     public void checkUpdateHaku(String... orgOids) {
         checkPermission(permissionService.userCanUpdateHakuWithOrgs(orgOids));
     }
-
+    
 }
