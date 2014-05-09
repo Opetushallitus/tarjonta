@@ -109,8 +109,11 @@ app.controller('HakukohdeAikuLukioEditController',
         };
 
         var filterHakus = function(hakus) {
-            return  $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
 
+            var filteredHakus =   $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
+
+
+            return filteredHakus;
         };
 
 

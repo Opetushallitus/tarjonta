@@ -17,30 +17,6 @@
         <wsdl:part name="fault" element="ns1:genericFaultInfo"></wsdl:part>
     </wsdl:message>
 
-    <wsdl:message name="lisaaHaku">
-        <wsdl:part element="ns1:lisaaHaku" name="parameters"/>
-    </wsdl:message>
-
-    <wsdl:message name="lisaaHakuVastaus">
-        <wsdl:part element="ns1:lisaaHakuVastaus" name="parameters"/>
-    </wsdl:message>
-
-    <wsdl:message name="paivitaHaku">
-        <wsdl:part element="ns1:paivitaHaku" name="parameters"/>
-    </wsdl:message>
-
-    <wsdl:message name="paivitaHakuVastaus">
-        <wsdl:part element="ns1:paivitaHakuVastaus" name="parameters"/>
-    </wsdl:message>
-
-    <wsdl:message name="poistaHaku">
-        <wsdl:part element="ns1:poistaHaku" name="parameters"/>
-    </wsdl:message>
-
-    <wsdl:message name="poistaHakuVastaus">
-        <wsdl:part element="ns1:poistaHakuVastaus" name="parameters"/>
-    </wsdl:message>
-
     <wsdl:message name="lisaaKoulutus">
         <wsdl:part element="ns1:lisaaKoulutus" name="koulutus"/>
     </wsdl:message>
@@ -301,39 +277,6 @@
             </wsdl:output>
         </wsdl:operation>
 
-        <wsdl:operation name="lisaaHaku">
-            <wsdl:documentation>
-                Lisaa haku
-            </wsdl:documentation>
-            <wsdl:input message="tns:lisaaHaku" name="lisaaHaku">
-            </wsdl:input>
-            <wsdl:output message="tns:lisaaHakuVastaus" name="lisaaHakuVastaus">
-            </wsdl:output>
-            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
-        </wsdl:operation>
-
-        <wsdl:operation name="paivitaHaku">
-            <wsdl:documentation>
-                Paivita haku
-            </wsdl:documentation>
-            <wsdl:input message="tns:paivitaHaku" name="paivitaHaku">
-            </wsdl:input>
-            <wsdl:output message="tns:paivitaHakuVastaus" name="paivitaHakuVastaus">
-            </wsdl:output>
-            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
-        </wsdl:operation>
-
-        <wsdl:operation name="poistaHaku">
-            <wsdl:documentation>
-                Poista haku
-            </wsdl:documentation>
-            <wsdl:input message="tns:poistaHaku" name="poistaHaku">
-            </wsdl:input>
-            <wsdl:output message="tns:poistaHakuVastaus" name="poistaHakuVastaus">
-            </wsdl:output>
-            <wsdl:fault name="fault" message="tns:genericFault"></wsdl:fault>
-        </wsdl:operation>
-
         <wsdl:operation name="lisaaKoulutus">
             <wsdl:documentation>
                 Lisaa uusi koulutus
@@ -474,16 +417,6 @@
     <wsdl:binding name="TarjontaAdminServiceSoapBinding" type="tns:TarjontaAdminService">
         <soap:binding style="document"
                       transport="http://schemas.xmlsoap.org/soap/http"/>
-
-        <wsdl:operation name="lisaaHaku">
-            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/lisaaHaku"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
 
         <wsdl:operation name="lisaaHakukohde">
             <soap:operation soapAction="" type="document"/>

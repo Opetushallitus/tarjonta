@@ -105,19 +105,30 @@ app.directive('koodistocombo',function(Koodisto,$log){
                        $log.info('isalakoodi was undefined');
                        $scope.isalakoodi = true;
                    }
+
                    if ($scope.isalakoodi) {
 
                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
+
                        koodisPromise.then(function(koodisParam){
+                           if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri) {
+                               if ($scope.version !== undefined && $scope.version) {
+                                   addVersionToKoodis(koodisParam);
+                               }
+                               $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam);
 
-                           addVersionToKoodis(koodisParam);
+                           } else {
+                               addVersionToKoodis(koodisParam);
+                               $scope.koodis = koodisParam;
+                           }
 
-                           $scope.koodis = koodisParam;
                            $scope.baseKoodis = $scope.koodis;
                        });
                    } else {
+                   $log.info('PARENT KOODI WAS DEFINED GETTING YLAPUOLISET KOODIT...');
                    var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                    koodisPromise.then(function(koodisParam){
+                       $log.info('PARENT KOODI WAS DEFINED YLAPUOLISET KOODIT : ' ,koodisParam);
                        if ($scope.version !== undefined && $scope.version) {
                            angular.forEach(koodisParam,function(koodi){
                                koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;

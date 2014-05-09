@@ -117,6 +117,8 @@ app.controller('HakukohdeEditController',
 
     var init = function() {
 
+
+
         $scope.model.userLang  =  AuthService.getLanguage();
 
         if ($scope.model.userLang === undefined) {
