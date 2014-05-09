@@ -124,6 +124,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     public final static String KOULUTUSASTE_LUKIO = "LUKIOKOULUTUS";
 
+    public final static String KOULUSTUSASTE_KK = "KORKEAKOULUTUS";
+
     public final static String KOULUTUSLAJI_KEY = "koulutuslaji";
 
     public final static String KOULUTUSLAJI_AIKUISET = "A";
@@ -426,6 +428,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private HashMap<String,String> getKoulutusKoulutusAstetyyppi(String komotoOid) {
+
+        LOG.debug("TRYING TO GET KOULUTUSASTE AND LAJI WITH KOMOTO OID : {}",komotoOid);
         HashMap<String,String> koulutusAstetyyppi = new HashMap<String, String>();
 
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
@@ -543,14 +547,21 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
 
         HashMap<String,String> hakukohdeKoulutusAstes = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeV1RDTO.getHakukohdeKoulutusOids());
+
+        //First check for KK KOULUTUSASTE it does not have koulutuslaji so if koulutusaste is KK then just skip to validation
+        if (hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUSTUSASTE_KK)) {
+            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+        }
         //Aiku lukio has different validation
-        if ( (hakukohdeKoulutusAstes.containsKey(KOULUTUSLAJI_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSLAJI_KEY).trim().equalsIgnoreCase(KOULUTUSLAJI_AIKUISET)) && (
+        else if ( (hakukohdeKoulutusAstes.containsKey(KOULUTUSLAJI_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSLAJI_KEY).trim().equalsIgnoreCase(KOULUTUSLAJI_AIKUISET)) && (
                 hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUTUSASTE_LUKIO)
-                )) {
+        )) {
 
-                validationMessageses = HakukohdeValidator.validateAikuLukioHakukohde(hakukohdeV1RDTO);
+            validationMessageses = HakukohdeValidator.validateAikuLukioHakukohde(hakukohdeV1RDTO);
 
-        } else {
+        }
+        //Default validation is now the same as KK
+         else {
 
             validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
 
