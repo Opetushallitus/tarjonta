@@ -9,7 +9,7 @@
             <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event, koulutusForm)"></controls-button>
             <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" disabled="!canSaveAsLuonnos()" primary="true"></controls-button>
             <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveValmis($event)"  disabled="!canSaveAsValmis()" primary="true"></controls-button>
-            <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs, koulutusForm)" disabled="koulutusForm.$dirty || koulutusForm.$invalid || uiModel.validationmsgs.length > 0"></controls-button>
+            <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs, koulutusForm)" disabled="uiModel.tabs.lisatiedot"></controls-button>
 
             <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
             <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.koulutusasteTyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
