@@ -25,8 +25,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class HakukohdeValidator {
 
 
+    private static List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
-    public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() == null || hakukohdeRDTO.getHakukohdeKoulutusOids().size() < 1) {
@@ -36,6 +36,40 @@ public class HakukohdeValidator {
         if (hakukohdeRDTO.getHakuOid() == null) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_HAKU_MISSING);
         }
+
+        if(hakukohdeRDTO.getTila()==null) {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_MISSING);
+            return validationMessages;
+        }
+
+        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
+
+        if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) ||  hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU))  {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
+        }
+
+
+        return validationMessages;
+    }
+
+    public static List<HakukohdeValidationMessages> validateAikuLukioHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+
+        List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
+
+        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
+
+        if (hakukohdeRDTO.getHakukohteenNimiUri() == null || hakukohdeRDTO.getHakukohteenNimiUri().trim().length() < 1) {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
+        }
+
+        return validationMessages;
+    }
+
+    public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+        List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
+
+
+        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
 
         if (hakukohdeRDTO.getTarjoajaOids() == null || hakukohdeRDTO.getTarjoajaOids().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TARJOAJA_MISSING);
@@ -53,16 +87,6 @@ public class HakukohdeValidator {
             for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
                 validationMessages.addAll(validateLiite(liite));
             }
-        }
-        if(hakukohdeRDTO.getTila()==null) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_MISSING);
-            return validationMessages;
-        }
-
-        TarjontaTila hakukohdeTila = TarjontaTila.valueOf(hakukohdeRDTO.getTila());
-
-        if (hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.JULKAISTU) ||  hakukohdeRDTO.getOid() == null && hakukohdeTila.equals(TarjontaTila.PERUTTU))  {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
         }
 
         return validationMessages;

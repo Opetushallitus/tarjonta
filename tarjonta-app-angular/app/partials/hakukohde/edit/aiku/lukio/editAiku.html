@@ -10,7 +10,7 @@
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAikuLukioAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveAikuLukioAsValmis()" primary="true"></controls-button>
-        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="!model.continueToReviewEnabled"></controls-button>
+        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
 
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
         <controls-button tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
@@ -38,7 +38,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo koodistouri="'hakukohteet'"  koodiuri="model.hakukohde.hakukohteenNimiUri" parentkoodiuri="'lukiolinjat_0086'" isdependent="true" locale="getLocale()"  version="true" isrequired="true" name="hakutapa"></div>
+                            <div koodistocombo koodistouri="'hakukohteet'"  koodiuri="model.hakukohde.hakukohteenNimiUri"  parentkoodiuri="'lukiolinjat_0086'" isdependent="true" locale="'fi'"  version="true" isrequired="true" name="hakutapa"></div>
                         </td>
                         <td>
                             <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->
@@ -124,7 +124,7 @@
             <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
         </tab>
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.valintaperustekuvaus')}}">
-            <div data-ng-include="'partials/hakukohde/edit/valintaperusteKuvaukset.html'" data-ng-controller="HakukohdeEditController"></div>
+            <div data-ng-include="'partials/hakukohde/edit/valintaperusteKuvaukset.html'" data-ng-controller="HakukohdeAikuLukioEditController"></div>
         </tab>
 
     </tabset>

@@ -538,5 +538,98 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         });
     };
 
+    //
+    // OHJAUSPARAMETRIT
+    //
+    dataFactory.ohjausparametritCache = {};
+
+    dataFactory.reloadParameters = function() {
+        $log.info("reloadParameters()");
+        
+        var uri = Config.env["tarjontaOhjausparametritRestUrlPrefix"];
+        
+        if (!angular.isDefined(uri)) {
+            throw "'tarjontaOhjausparametritRestUrlPrefix' is not defined! Cannot proceed.";
+        }
+        
+        var uri = uri + "/api/rest/parametri/ALL";
+        $resource(uri, {}, {
+            get : {
+                cache : false,
+                isArray: true
+            }
+        }).get(function(results) {
+            var cache = dataFactory.ohjausparametritCache;
+            angular.forEach(results, function(p) {
+                cache[p.name] = cache[p.name] ? cache[p.name] : {};
+                cache[p.name][p.path] = p.value;
+            });
+            dataFactory.ohjausparametritCache = cache;
+            $log.info("Processed 'ohjausparametrit' - now cached " + results.length + " entries.");
+        });
+    };
+
+    // LOAD PARAMETERS FROM OHJAUSPARAMETRIT
+    // dataFactory.reloadParameters();
+    
+    dataFactory.getParameter = function(target, name, type, defaultValue) {
+        var result;
+
+        var cache = dataFactory.ohjausparametritCache;
+
+        if (angular.isDefined(cache[target])) {
+            result = cache[target][name];
+        }
+
+        // Conversion to date
+        if ("DATE" == type && angular.isDefined(result)) {
+            result = new Date(result);
+        }
+        
+        if (false && !angular.isDefined(result)) {
+            result = defaultValue;
+        }
+
+        // $log.debug("getParameter()", target, name, result, cache[target]);
+        
+        return result;
+    };
+    
+    dataFactory.parameterCanEditHakukohde = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hklpt) && (now <= ph_hkmt);
+        $log.debug("parameterCanEditHakukohde: ", hakuOid, ph_hklpt, ph_hkmt, result);
+        return result;
+    };
+
+    dataFactory.parameterCanEditHakukohdeLimited = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hkmt);        
+        $log.debug("parameterCanEditHakukohdeLimited: ", hakuOid, ph_hkmt, result);
+        return result;
+    };
+    
+    dataFactory.parameterCanAddHakukohdeToHaku = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hklpt) && (now <= ph_hkmt);
+        $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+        return result;
+    };
+    
+    dataFactory.parameterCanRemoveHakukohdeFromHaku = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hklpt) && (now <= ph_hkmt);
+        $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+        return result;
+    };
+
+
     return dataFactory;
 });
