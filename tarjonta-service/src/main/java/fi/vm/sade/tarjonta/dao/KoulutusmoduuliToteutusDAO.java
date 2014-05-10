@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -94,6 +95,8 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @return
      */
     public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
+
+    public Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid);
 
     /**
      * Find komoto ids by hakukohdeids

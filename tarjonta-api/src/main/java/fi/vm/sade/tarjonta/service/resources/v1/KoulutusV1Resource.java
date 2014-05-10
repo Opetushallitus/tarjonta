@@ -176,7 +176,16 @@ public interface KoulutusV1Resource {
             notes = "Operaatio hakee kuvatiedoton koulutusmoduulin totutuksesta annetulla koodi uri:lla",
             response = KuvaV1RDTO.class)
     public ResultV1RDTO<KuvaV1RDTO> getKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
-
+ 
+    @GET
+    @Path("/{oid}/kuva")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Hakee kaikki kuvatiedostot koulutusmoduulin toteutuksesta",
+            notes = "Operaatio hakee kaikki kuvatiedostot koulutusmoduulin toteutuksesta",
+            response = List.class)
+    public ResultV1RDTO<List<KuvaV1RDTO>> getKuvas(@PathParam("oid") String oid);
+    
     @POST
     @Path("/{oid}/kuva")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
