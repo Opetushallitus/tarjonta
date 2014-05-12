@@ -20,7 +20,7 @@ describe('TarjontaPermissions', function() {
             "tarjonta.localisations": [],
             "organisaatio.api.rest.url":"/",
             "tarjontaRestUrlPrefix": "/",
-            "tarjontaOhjausparametritRestUrlPrefix" : "/",
+            "tarjontaOhjausparametritRestUrlPrefix" : "PARAMETRIT",
             "tarjonta.localisations": [ {
             	  "value" : "Organisations typ",
             	  "key" : "tarjonta.tila.LUONNOS",
@@ -182,7 +182,7 @@ describe('TarjontaPermissions', function() {
                 "type": "LONG"
             }];
 
-        $httpBackend.whenGET('//api/rest/parametri/ALL').respond(parameterResponse);
+        $httpBackend.whenGET('PARAMETRIT/api/rest/parametri/ALL').respond(parameterResponse);
 
 
     };
