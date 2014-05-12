@@ -186,7 +186,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         switch (getType(komoto)) {
             case KORKEAKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, lang, meta));
+                KoulutusKorkeakouluV1RDTO convert = (KoulutusKorkeakouluV1RDTO) converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, lang, meta);
+
+                Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(oid);
+                if (findAllImagesByKomotoOid != null && !findAllImagesByKomotoOid.isEmpty()) {
+                    for (Entry<String, BinaryData> e : findAllImagesByKomotoOid.entrySet()) {
+                        convert.getOpintojenRakenneKuvas().put(e.getKey(), new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
+                    }
+                }
+                result.setResult(convert);
                 break;
             case LUKIOKOULUTUS:
                 result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, lang, meta));
@@ -200,7 +208,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
+    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto
+    ) {
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
@@ -391,7 +400,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             //no komotos found, I quess it's also ok to remove the komo.
                             koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
                         }
-                        ArrayList<Long> ids = Lists.<Long>newArrayList();
+                        List<Long> ids = Lists.<Long>newArrayList();
                         ids.add(komoto.getId());
                         indexerResource.indexKoulutukset(ids);
                     }
@@ -691,7 +700,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         ResultV1RDTO<List<KuvaV1RDTO>> result = new ResultV1RDTO<List<KuvaV1RDTO>>();
         Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(oid);
         if (findAllImagesByKomotoOid != null && !findAllImagesByKomotoOid.isEmpty()) {
-            ArrayList<KuvaV1RDTO> list = Lists.<KuvaV1RDTO>newArrayList();
+            List<KuvaV1RDTO> list = Lists.<KuvaV1RDTO>newArrayList();
             for (Entry<String, BinaryData> e : findAllImagesByKomotoOid.entrySet()) {
                 list.add(new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
             }
