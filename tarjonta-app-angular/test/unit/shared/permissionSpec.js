@@ -20,6 +20,7 @@ describe('TarjontaPermissions', function() {
             "tarjonta.localisations": [],
             "organisaatio.api.rest.url":"/",
             "tarjontaRestUrlPrefix": "/",
+            "tarjontaOhjausparametritRestUrlPrefix" : "/",
             "tarjonta.localisations": [ {
             	  "value" : "Organisations typ",
             	  "key" : "tarjonta.tila.LUONNOS",
@@ -42,12 +43,6 @@ describe('TarjontaPermissions', function() {
     beforeEach(module('Haku'));
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
-    
-    
-    
-    
-    
-    
     beforeEach(module('TarjontaCache'));
     beforeEach(module('Logging'));
 
@@ -58,7 +53,6 @@ describe('TarjontaPermissions', function() {
             $provide.value('LocalisationService', {getLocale:noop,t:noop});
         });
     });
-
 
     beforeEach(module('TarjontaPermissions'));
 
@@ -163,6 +157,33 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.4'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
+
+        // Parameters
+        var parameterResponse = [{
+                "created": 1399639771823,
+                "modified": 1399639771823,
+                "path": "PH_TJT",
+                "name": "1.2.246.562.29.68709456062",
+                "value": 1400149187429,
+                "type": "LONG"
+            }, {
+                "created": 1399639771837,
+                "modified": 1399639771837,
+                "path": "PH_HKMT",
+                "name": "1.2.246.562.29.68709456062",
+                "value": 1399973779271,
+                "type": "LONG"
+            }, {
+                "created": 1399639771838,
+                "modified": 1399639771838,
+                "path": "PH_HKLPT",
+                "name": "1.2.246.562.29.68709456062",
+                "value": 1399887372781,
+                "type": "LONG"
+            }];
+
+        $httpBackend.whenGET('//api/rest/parametri/ALL').respond(parameterResponse);
+
 
     };
 

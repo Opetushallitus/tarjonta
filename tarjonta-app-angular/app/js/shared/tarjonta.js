@@ -570,7 +570,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     // LOAD PARAMETERS FROM OHJAUSPARAMETRIT
-    // dataFactory.reloadParameters();
+    dataFactory.reloadParameters();
     
     dataFactory.getParameter = function(target, name, type, defaultValue) {
         var result;
