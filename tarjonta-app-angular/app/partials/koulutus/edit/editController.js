@@ -355,10 +355,6 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonNewModelHandler = function(form, model, uiModel, koulutusasteTyyppi) {
-//            if (angular.isUndefined(form) || form === null) {
-//                converter.throwError("Form object cannot be null or undefined");
-//            }
-
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
@@ -388,10 +384,6 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonLoadModelHandler = function(form, model, uiModel, koulutusasteTyyppi) {
-//            if (angular.isUndefined(form) || form === null) {
-//                converter.throwError("Form object cannot be null or undefined");
-//            }
-
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
