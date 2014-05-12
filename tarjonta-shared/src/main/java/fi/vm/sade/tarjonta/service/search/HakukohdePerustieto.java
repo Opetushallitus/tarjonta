@@ -21,6 +21,7 @@ public class HakukohdePerustieto implements Serializable
     private Integer koulutuksenAlkamisvuosi;
     private KoodistoKoodi hakutapakoodi;
     private String tarjoajaOid;
+    private String hakuOid;
     private Nimi tarjoajaNimi = new Nimi();
     private Date hakuAlkamisPvm;
     private Date hakuPaattymisPvm;
@@ -182,4 +183,11 @@ public class HakukohdePerustieto implements Serializable
         this.hakutyyppiUri = hakutyyppiUri;
     }
 
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
 }
