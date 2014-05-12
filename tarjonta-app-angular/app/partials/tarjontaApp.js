@@ -173,7 +173,7 @@ angular.module('app').provider(
             }
         }
 );
- 
+
 
 
 angular.module('app').config(['$routeProvider', function($routeProvider) {
@@ -184,6 +184,26 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
         *
         * */
 
+
+       var getHakukohdeKoulutukses = function (Hakukohde, $log, $route, SharedStateService,TarjontaService) {
+
+           var koulutusSet = new buckets.Set();
+
+           var selectedKoulutusOids;
+
+           if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
+               selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
+           } else {
+               selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
+           }
+
+           var spec = {
+               koulutusOid : selectedKoulutusOids
+           };
+
+           return TarjontaService.haeKoulutukset(spec);
+
+       };
        var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService) {
            $log.info("/hakukohde/ID", $route);
            if ("new" === $route.current.params.id) {
@@ -406,6 +426,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     resolve: {
                         canEdit: resolveCanEditHakukohde,
                         canCreate: resolveCanCreateHakukohde,
+                        hakukohdeKoulutuksesx: getHakukohdeKoulutukses,
                         hakukohdex: resolveHakukohde
                     }
                 })
