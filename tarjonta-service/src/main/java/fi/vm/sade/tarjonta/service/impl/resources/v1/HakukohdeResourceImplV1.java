@@ -69,6 +69,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -119,6 +120,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     private ContextDataService contextDataService;
+
+    @Autowired(required = true)
+    private ParameterServices parameterService;
 
     public final static String KOULUTUSASTE_KEY = "koulutusaste";
 
@@ -428,11 +432,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private HashMap<String,String> getKoulutusKoulutusAstetyyppi(String komotoOid) {
-
         LOG.debug("TRYING TO GET KOULUTUSASTE AND LAJI WITH KOMOTO OID : {}",komotoOid);
         HashMap<String,String> koulutusAstetyyppi = new HashMap<String, String>();
 
-        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
+        final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
 
         koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getKoulutustyyppiEnum() != null)
                 ? komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().getKoulutusasteTyyppi().name() : null );
@@ -573,7 +576,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
-        permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakukohdeKoulutusOids());
+        permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakuOid(), hakukohdeRDTO.getHakukohdeKoulutusOids());
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Date today = new Date();
         List<HakukohdeValidationMessages> validationMessageses = validateHakukohde(hakukohdeRDTO);
@@ -658,7 +661,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> updateHakukohde(String hakukohdeOid,HakukohdeV1RDTO hakukohdeRDTO) {
-        permissionChecker.checkUpdateHakukohde(hakukohdeRDTO.getOid());
+        permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohdeRDTO.getHakuOid(), hakukohdeRDTO.getHakukohdeKoulutusOids());
         try {
 
             Date today = new Date();

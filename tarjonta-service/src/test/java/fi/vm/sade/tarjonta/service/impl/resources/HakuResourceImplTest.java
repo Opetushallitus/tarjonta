@@ -14,15 +14,12 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.service.resources.HakuResource;
-import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,7 +32,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
-import static org.junit.Assert.*;
+
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.resources.HakuResource;
+import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 
 /**
  *
@@ -62,6 +65,12 @@ public class HakuResourceImplTest {
 
     @Autowired
     private TarjontaFixtures fixtures;
+
+    @org.junit.Before
+    @org.junit.After
+    public void tearDown(){
+        fixtures.deleteAll();
+    }
 
     @Test
     public void testSearchHaku() throws InterruptedException {
