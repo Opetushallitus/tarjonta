@@ -23,6 +23,7 @@ describe('Edit koulutus testeja', function() {
         "env": {
             "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo",
             "authentication-service.henkilo.search.params":"?count=2000&index=0&ht=VIRKAILIJA",
+            "tarjontaOhjausparametritRestUrlPrefix" : "PARAMETRIT",
         }, "app": {
             "key-app-1": "mock-value-app-1",
             "userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']
@@ -230,6 +231,8 @@ describe('Edit koulutus insert/edit/load', function() {
         module(function($provide) {
             $provide.value('globalConfig', {
                 env: {
+                   "tarjontaOhjausparametritRestUrlPrefix" : "/",
+                   
                     "koodisto-uris.pohjakoulutusvaatimus": "",
                     "koodisto-uris.postinumero": "",
                     "koodisto-uris.suunniteltuKesto": "",
