@@ -22,6 +22,7 @@ describe('Tarjonta', function() {
             "tarjonta.localisations": [],
             "casUrl" : "cas_myroles_tiimi221",
             tarjontaRestUrlPrefix:"/",
+            "tarjontaOhjausparametritRestUrlPrefix" : "PARAMETRIT",
             cas:{userinfo:{
             	  "uid":"tiimi2",
             	  "oid":"1.2.246.562.24.67912964565",
@@ -55,6 +56,32 @@ describe('Tarjonta', function() {
             return response;
         });
         $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
+        
+        // Parameters
+        var parameterResponse = [{
+                "created": 1399639771823,
+                "modified": 1399639771823,
+                "path": "PH_TJT",
+                "name": "1.2.246.562.29.68709456062",
+                "value": 1400149187429,
+                "type": "LONG"
+            }, {
+                "created": 1399639771837,
+                "modified": 1399639771837,
+                "path": "PH_HKMT",
+                "name": "1.2.246.562.29.68709456062",
+                "value": 1399973779271,
+                "type": "LONG"
+            }, {
+                "created": 1399639771838,
+                "modified": 1399639771838,
+                "path": "PH_HKLPT",
+                "name": "1.2.246.562.29.68709456062",
+                "value": 1399887372781,
+                "type": "LONG"
+            }];
+
+        $httpBackend.whenGET('PARAMETRIT/api/rest/parametri/ALL').respond(parameterResponse);
     };
 
     beforeEach(function(){
