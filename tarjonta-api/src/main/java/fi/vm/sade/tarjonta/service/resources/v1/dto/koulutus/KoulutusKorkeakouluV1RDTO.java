@@ -18,7 +18,8 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -52,9 +53,11 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)", required = true)
     private KoodiUrisV1RDTO tutkintonimikes;
 
-
     @ApiModelProperty(value = "Maisterin koulutukseen (maisteri+kandi) liitettävän kandidaatin koulutuksen koulutuskoodi", required = false)
     private KoodiV1RDTO kandidaatinKoulutuskoodi;
+
+    @ApiModelProperty(value = "Opintojen rakenteen kuvat eroteltuna kooditon kieli uri:lla.", required = false)
+    private Map<String, KuvaV1RDTO> opintojenRakenneKuvas;
 
     /**
      * @return the tutkintonimike
@@ -170,8 +173,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
         this.parentKomotoOid = _parentKomotoOid;
     }
 
- 
-
     /**
      * @return the kandidaatinKoulutuskoodi
      */
@@ -184,5 +185,23 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setKandidaatinKoulutuskoodi(KoodiV1RDTO kandidaatinKoulutuskoodi) {
         this.kandidaatinKoulutuskoodi = kandidaatinKoulutuskoodi;
+    }
+
+    /**
+     * @return the opintojenRakenneKuvas
+     */
+    public Map<String, KuvaV1RDTO> getOpintojenRakenneKuvas() {
+        if (opintojenRakenneKuvas == null) {
+            opintojenRakenneKuvas = new HashMap<String, KuvaV1RDTO>();
+        }
+
+        return opintojenRakenneKuvas;
+    }
+
+    /**
+     * @param opintojenRakenneKuvas the opintojenRakenneKuvas to set
+     */
+    public void setOpintojenRakenneKuvas(Map<String, KuvaV1RDTO> opintojenRakenneKuvas) {
+        this.opintojenRakenneKuvas = opintojenRakenneKuvas;
     }
 }
