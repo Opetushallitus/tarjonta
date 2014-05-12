@@ -114,7 +114,7 @@ public class ConverterV1 {
     private ContextDataService contextDataService;
 
     public HakuV1RDTO fromHakuToHakuRDTO(String oid) {
-        return fromHakuToHakuRDTO(hakuDao.findByOid(oid), false);
+        return fromHakuToHakuRDTO(hakuDao.findByOid(oid), true);
     }
 
     public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes) {
@@ -147,12 +147,10 @@ public class ConverterV1 {
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
         t.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
 
-        if (addHakukohdes) {
-            if (haku.getHakukohdes() != null) {
-                for (Hakukohde hakukohde : haku.getHakukohdes()) {
-                    t.getHakukohdeOids().add(hakukohde.getOid());
-                }
-            }
+        // Hakukohdes
+        if (true) {
+            List<String> tmp = hakukohdeDao.findByHakuOid(t.getOid(), null, 0, 0, null, null);
+            t.setHakukohdeOids(tmp);
         }
 
         t.setOrganisaatioOids(haku.getOrganisationOids());
