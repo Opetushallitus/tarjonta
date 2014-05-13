@@ -30,9 +30,11 @@ app.controller('HakukohdeReviewController',
       //by default disable
       $scope.isMutable=false;
       $scope.isRemovable=false;
-
+      $scope.showNimiUri = false;
+      $scope.isAiku = false;
 //      $log.debug("scope.model:", $scope.model);
 
+      var aikuKoulutuslajiUri = "koulutuslaji_a";
 
       var kieliKoodistoUri = "kieli";
 
@@ -391,13 +393,16 @@ app.controller('HakukohdeReviewController',
               TarjontaService.haeKoulutukset(spec).then(function(data){
 
                   var tarjoajaOidsSet = new buckets.Set();
-
+                 console.log('HAKUKOHDE REVIEW KOULUTUKSET : ', data);
                   if(data.tulokset !== undefined) {
                       $scope.model.koulutukses.splice(0,$scope.model.koulutukses.length);
                       angular.forEach(data.tulokset,function(tulos){
                           tarjoajaOidsSet.add(tulos.oid);
                           if (tulos.tulokset !== undefined) {
                               angular.forEach(tulos.tulokset,function(lopullinenTulos){
+                                  if(lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
+                                      $scope.isAiku = true;
+                                  }
                                   var koulutus = {
                                       nimi : lopullinenTulos.nimi,
                                       oid : lopullinenTulos.oid
@@ -484,7 +489,10 @@ app.controller('HakukohdeReviewController',
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
         }
 
-
+        console.log('REVIEW HAKUKOHDE :',$scope.model.hakukohde );
+        if($scope.model.hakukohde.hakukohteenNimiUri) {
+            $scope.showNimiUri = true;
+        }
 
         initLanguages();
         convertValintaPalveluValue();

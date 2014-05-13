@@ -186,6 +186,10 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
     }
 
+    /**
+     * Voiko hakukohteen poistaa, ottaa huomioon parametrit
+     * @param hakukohdeOid
+     */
     public void checkRemoveHakukohde(String hakukohdeOid) {
         final Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
 
@@ -197,13 +201,6 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanDeleteHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
         
         checkPermission(parameterServices.parameterCanRemoveHakukohdeFromHaku(hakukohde.getHaku().getOid()), "error.parameters.deny.removal");
-    }
-
-    /**
-     * @deprecated use {@link #checkCreateHakuWithOrgs(String...)} 
-     */
-    public void checkCreateHaku() {
-        checkPermission(permissionService.userCanCreateHaku());
     }
 
     public void checkCreateHakuWithOrgs(String... hakuOrgs) {
@@ -249,17 +246,23 @@ public class PermissionChecker {
                         .getContext(tarjoajaOid)));
     }
 
-    public void checkRemoveKoulutus(String koulutusOid) {
-        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
-
+    /**
+     * Tarkistaa voiko koulutusta poistaa, ottaa huomioon parametrit
+     * @param koulutusOid
+     */
+    public void checkRemoveKoulutus(final String koulutusOid) {
+        final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
+        //käyttöoikeudet
         checkPermission(permissionService
                 .userCanDeleteKoulutus(OrganisaatioContext.getContext(komoto
                                 .getTarjoaja())));
-    }
 
-    public void checkRemoveKoulutusByTarjoaja(final String tarjoajaOid) {
-        checkPermission(permissionService
-                .userCanDeleteKoulutus(OrganisaatioContext.getContext(tarjoajaOid)));
+        //parametrit
+        for(Hakukohde hk: komoto.getHakukohdes()){
+            final String hakuOid = hk.getHaku().getOid();
+            checkPermission(parameterServices.parameterCanEditHakukohdeLimited(hakuOid), "error.parameters.deny.removal");
+        }
+
     }
 
     public void checkRemoveKoulutusKuva(String koulutusOid) {
