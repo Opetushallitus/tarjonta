@@ -432,7 +432,7 @@ app.controller('HakuEditController',
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
-                  ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+                  ParameterService.haeHaunParametrit($route.current.params.id, model.parameter);
                 }
 
                 /**
