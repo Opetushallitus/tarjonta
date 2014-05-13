@@ -588,7 +588,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         try {
-            permissionChecker.checkCreateHaku();
+            permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
             result.getAccessRights().put("create", true);
         } catch (Throwable ex) {
             result.getAccessRights().put("create", false);

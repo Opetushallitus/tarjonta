@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
+import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -1181,10 +1182,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional(readOnly = false)
     public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(String hakukohdeOid, List<String> koulutukses) {
+        
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
 
+        
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-        permissionChecker.checkUpdateHakukohde(hakukohde.getOid(), hakukohde.getHaku().getOid(), koulutukses);
+        if(!parameterService.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
+            throw new NotAuthorizedException("no.permission");
+        } 
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
+        
         List<KoulutusmoduuliToteutus> liitettavatKomotot = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(koulutukses);
 
         if (liitettavatKomotot != null && liitettavatKomotot.size() > 0) {
@@ -1217,6 +1224,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
+        if(parameterService.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
+            //limited editing -> no changes to koulutuslist
+            throw new NotAuthorizedException("no.permission");
+        }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
         if (hakukohde != null) {
 

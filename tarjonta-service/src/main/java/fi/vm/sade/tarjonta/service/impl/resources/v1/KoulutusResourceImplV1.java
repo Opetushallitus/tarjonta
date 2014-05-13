@@ -368,7 +368,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         KoulutusValidator.validateKoulutusUpdate(komoto, result);
 
         if (result.getStatus().equals(ResultStatus.OK)) {
-            permissionChecker.checkRemoveKoulutusByTarjoaja(komoto.getTarjoaja());
+            permissionChecker.checkRemoveKoulutus(komotoOid);
 
             Map<String, Integer> hkKoulutusMap = Maps.newHashMap();
 
