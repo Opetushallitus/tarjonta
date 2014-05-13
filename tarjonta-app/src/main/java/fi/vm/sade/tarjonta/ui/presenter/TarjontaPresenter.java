@@ -195,7 +195,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     @Autowired(required = true)
     protected PublishingService publishingService;
 
-
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
 
@@ -213,27 +212,26 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         LOG.info("Form saved");
         //checkHakuLiitetoimitusPvm();
         String userOid = userContext.getUserOid();
-        
+
         // OVT-4911
         getModel().setHakukohde(editHakukohdeView.getModel());
         HakukohdeTyyppi fresh;
         if (getModel().getHakukohde().getOid() == null) {
-            
+
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
             hakukohdeTyyppi.setViimeisinPaivittajaOid(userOid);
             getModel().getHakukohde().setOid(hakukohdeTyyppi.getOid());
-            
-            
+
             if (!hakukohdeTyyppi.getHakukohteenKoulutusaste().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
                 KoodiUriAndVersioType uriType = TarjontaUIHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(getModel().getHakukohde().getHakukohdeNimi());
                 List<KoodiType> listKoodiByRelation = koodiService.listKoodiByRelation(uriType, true, SuhteenTyyppiType.SISALTYY);
-                
+
                 for (KoodiType koodi : listKoodiByRelation) {
                     final String koodistoUri = koodi.getKoodisto().getKoodistoUri();
                     if (KoodistoURI.KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI.equals(koodistoUri)) {
                         hakukohdeTyyppi.setValintaperustekuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
                     }
-                    
+
                     if (KoodistoURI.KOODISTO_SORA_KUVAUSRYHMA_URI.equals(koodistoUri)) {
                         hakukohdeTyyppi.setSoraKuvausKoodiUri(TarjontaUIHelper.createVersionUri(koodi.getKoodiUri(), koodi.getVersio()));
                     }
@@ -428,34 +426,34 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
 
         ListaaHakuTyyppi hakuKyselyTyyppi = new ListaaHakuTyyppi();
-        
+
         StringTuple tuple = getHakukohdeKoulutusAlkamisKausiVuosi(getModel().getHakukohde());
         hakuKyselyTyyppi.setKoulutuksenAlkamisKausi(tuple.getStrOne());
         hakuKyselyTyyppi.setKoulutuksenAlkamisVuosi(new Integer(tuple.getStrTwo()));
         ListHakuVastausTyyppi haut = tarjontaPublicService.listHaku(hakuKyselyTyyppi);
-        
-        this.hakuKohdePerustiedotView.initForm();       
-        
+
+        this.hakuKohdePerustiedotView.initForm();
+
         prepareHakuSelections(haut);
-     
+
     }
 
     public String getUserOid() {
         return userContext.getUserOid();
     }
-    
+
     /*
      * Prepares the haku combobox selector in hakukohde form.
      */
     private void prepareHakuSelections(ListHakuVastausTyyppi haut) {
-        
+
         HakuViewModel hakuView = null;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuViewModel() != null) {
             hakuView = getModel().getHakukohde().getHakuViewModel();
         }
-        
+
         List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(haut);
-        
+
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
             public int compare(HakuViewModel a, HakuViewModel b) {
@@ -463,9 +461,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 return ret != 0 ? ret : a.getHakuOid().compareTo(b.getHakuOid());
             }
         });
-        
+
         this.hakuKohdePerustiedotView.addItemsToHakuCombobox(foundHaut);
-        
+
         if (hakuView != null) {
             getModel().getHakukohde().setHakuViewModel(hakuView);
             ListaaHakuTyyppi hakuKysely = new ListaaHakuTyyppi();
@@ -478,36 +476,36 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             this.hakuKohdePerustiedotView.setSelectedHaku(hakuView);
         }
     }
-    
+
     /*
      * Finds the haku instances matching the koulutus for which the hakukohde is created.
      */
     private List<HakuViewModel> findMatchingHakusForHakukohde(ListHakuVastausTyyppi haut) {
-        
+
         KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
-        
+
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
-        
+
         String pkVaatimus = null;
-        if (getModel().getSelectedKoulutukset() != null 
-                && getModel().getSelectedKoulutukset().get(0) != null 
+        if (getModel().getSelectedKoulutukset() != null
+                && getModel().getSelectedKoulutukset().get(0) != null
                 && getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus() != null) {
             pkVaatimus = getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
         }
-        
-        boolean isKoulutusErityisopetus = (pkVaatimus != null) 
-                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI) 
+
+        boolean isKoulutusErityisopetus = (pkVaatimus != null)
+                && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI)
                 && koulTyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         boolean isKoulutusValmentavaOpetus = koulTyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
-        boolean isValmistavaKoulutus =  koulTyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS) 
+        boolean isValmistavaKoulutus = koulTyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
         boolean isVapaaSivistystyo = koulTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
-        
+
         for (HakuTyyppi foundHaku : haut.getResponse()) {
             if (isKoulutusErityisopetus
-                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI) 
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
             } else if (!isKoulutusErityisopetus
@@ -516,7 +514,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
             } else if (isKoulutusValmentavaOpetus
-                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI) 
+                    && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_VALMENTAVA_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
             } else if (isValmistavaKoulutus
@@ -559,7 +557,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         //KoulutuksetVastaus vastaus = tarjontaPublicService.haeKoulutukset(kysely);
 
         List<KoulutusOidNameViewModel> koulutusModel = convertKoulutusToNameOidViewModel(getSelectedKoulutukset());//vastaus.getKoulutukset());
-
 
         CreationDialog<KoulutusOidNameViewModel> dialog = new CreationDialog<KoulutusOidNameViewModel>(koulutusModel, KoulutusOidNameViewModel.class, "HakukohdeCreationDialog.title", null, true);
         List<String> validationMessages = validateKoulutukses(getSelectedKoulutukset());//vastaus.getKoulutukset());
@@ -611,7 +608,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.wrongPohjakoulutus"));
         }
 
-        if (tarjoajaOids.size()>1) {
+        if (tarjoajaOids.size() > 1) {
             returnVal.add(I18N.getMessage("HakukohdeCreationDialog.tarjoajaDoesNotMatch"));
         }
 
@@ -656,9 +653,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
-            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid)  &&  curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
+            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
-                    && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri()) 
+                    && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri())
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
                 validKoulutukses.add(curKoulutus);
             }
@@ -945,7 +942,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     public void showCopyKoulutusPerustiedotEditView(final String koulutusOid, Collection<OrganisaatioPerustieto> orgs, String pohjakoulutusVaatimus) {
 
-
         // If oid of koulutus is provided the koulutus is read from database
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
@@ -978,7 +974,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         // before opening the KoulutusEditView
         if (koulutusOid != null) {
             LOG.info("readeing koulutus:" + koulutusOid);
-            readKoulutusToModel(koulutusOid,KOODISTO_URIS_FROM_KOODISTO);
+            readKoulutusToModel(koulutusOid, KOODISTO_URIS_FROM_KOODISTO);
         } else {
             Preconditions.checkNotNull(getTarjoaja().getSelectedOrganisationOid(), "Missing organisation OID.");
             getTarjoaja().setSelectedResultRowOrganisationOid(null);
@@ -993,7 +989,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         if (koulutusOid != null) {
             readKoulutusToModel(koulutusOid, KOODISTO_URIS_FROM_KOODISTO);
             readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
-
 
             getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().clear();
             getModel().getKoulutusPerustiedotModel().setOpetuskieli(null);
@@ -1057,7 +1052,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
 
-
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
             readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
             getModel().setKoulutusPerustiedotModel(koulutus);
@@ -1090,11 +1084,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         LueKoulutusVastausTyyppi rawKoulutus = this.getKoulutusByOid(koulutusOid);
         try {
             KoulutusToisenAsteenPerustiedotViewModel koulutus;
-            
+
             koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), rawKoulutus, I18N.getLocale(), searchLatestKoodistoUris);
-            
-            
-            
+
             KoodiModel tyyppiModel = new KoodiModel();
             if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)) {
                 tyyppiModel.setKoodi(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri());
@@ -1253,7 +1245,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         if (getModel().getSelectedValintaKoe() == null) {
             getModel().setSelectedValintaKoe(new ValintakoeViewModel());
         }
-
 
         return getModel().getSelectedValintaKoe();
     }
@@ -1417,7 +1408,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             return model.getEditedHakukohdeNimi();
         }
         //return uiHelper.getHakukohdeHakukentta(model.getHakuViewModel().getHakuOid(), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
-        return uiHelper.getHakukohdeHakukentta(model.getKomotoOids().get(0),I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
+        return uiHelper.getHakukohdeHakukentta(model.getKomotoOids().get(0), I18N.getLocale(), model.getHakukohdeNimi()) + ", " + tilaToLangStr(model.getTila());
     }
 
     public ListHakukohdeView getHakukohdeListView() {
@@ -1439,7 +1430,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
-
 
     }
 
@@ -1634,7 +1624,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws OidCreationException {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
-        
+
         String oid = null;
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
@@ -1667,19 +1657,19 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private String persistKoulutus(KoulutusToisenAsteenPerustiedotViewModel koulutusModel, OrganisationOidNamePair pair, SaveButtonState tila) throws OidCreationException {
         //persist new KOMO and KOMOTO
         final KoodiModel koulutuksenTyyppi = koulutusModel.getKoulutuksenTyyppi();
-       
+
         LisaaKoulutusTyyppi lisaa = koulutusToDTOConverter.createLisaaKoulutusTyyppi(getModel(), pair);
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
         //OVT-6477 valmentava ja kuntouttava saa olla useita
         //OVT-6676 vapaan sivistystyön koulutuksia saa olla useita
-        if (lisaa.getKoulutustyyppi()==KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || lisaa.getKoulutustyyppi()==KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS || checkExistingKomoto(lisaa)) {
-            
+        if (lisaa.getKoulutustyyppi() == KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || lisaa.getKoulutustyyppi() == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS || checkExistingKomoto(lisaa)) {
+
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
             koulutusModel.setOid(lisaa.getOid());
-            
+
             koulutusModel.setKoulutuksenTyyppi(koulutuksenTyyppi);
             getModel().getKoulutusPerustiedotModel().setKoulutuksenTyyppi(koulutuksenTyyppi);
             return lisaa.getOid();
@@ -1783,21 +1773,20 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         this.searchResultsView.getKoulutusList().toggleCreateHakukohdeB(null, false);
     }
 
-
     private void restrictKyselyWithKoulutusTyypit(KoulutuksetKysely kysely) {
 
-
-         //Restrict korkeakoulutus from these search results
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.LUKIOKOULUTUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
-         kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+        //Restrict korkeakoulutus from these search results
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
 
     }
+
     /**
      * Retrieves the koulutus objects for ListKoulutusView.
      *     
@@ -1938,7 +1927,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         // Updating koulutuslista to show only komotos with tarjoaja matching
         // the selected org or one of its descendants
-
         reloadMainView(false);
         getRootView().getListKoulutusView().toggleCreateKoulutusB(organisaatioOid, active);
     }
@@ -1985,11 +1973,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void checkKoulutusmoduuli() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
 
-        HaeKoulutusmoduulitKyselyTyyppi kysely =
-                Koulutus2asteConverter.mapToHaeKoulutusmoduulitKyselyTyyppi(
-                KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS,
-                model.getKoulutuskoodiModel(),
-                model.getKoulutusohjelmaModel());
+        HaeKoulutusmoduulitKyselyTyyppi kysely
+                = Koulutus2asteConverter.mapToHaeKoulutusmoduulitKyselyTyyppi(
+                        KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS,
+                        model.getKoulutuskoodiModel(),
+                        model.getKoulutusohjelmaModel());
 
         HaeKoulutusmoduulitVastausTyyppi vastaus = tarjontaPublicService.haeKoulutusmoduulit(kysely);
 
@@ -2010,32 +1998,32 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     @SuppressWarnings("unchecked")
     public void loadKoulutuskoodit() {
         HaeKaikkiKoulutusmoduulitKyselyTyyppi kysely = new HaeKaikkiKoulutusmoduulitKyselyTyyppi();
-        KoodiModel koulutuksenTyyppi = getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi() ;
-        
-        if (koulutuksenTyyppi == null 
-                || (koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri()) 
-                        || koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()))) {
+        KoodiModel koulutuksenTyyppi = getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi();
+
+        if (koulutuksenTyyppi == null
+                || (koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutustyyppiUri())
+                || koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.TOINEN_ASTE_AMMATILLINEN_ERITYISKOULUTUS.getKoulutustyyppiUri()))) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
-        } else if (koulutuksenTyyppi != null 
+        } else if (koulutuksenTyyppi != null
                 && koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri())) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
-        } else if (koulutuksenTyyppi != null 
+        } else if (koulutuksenTyyppi != null
                 && koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
-        } else if (koulutuksenTyyppi != null 
+        } else if (koulutuksenTyyppi != null
                 && koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
-        } else if (koulutuksenTyyppi != null 
+        } else if (koulutuksenTyyppi != null
                 && koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS.getKoulutustyyppiUri())) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS);
-        } else if (koulutuksenTyyppi != null 
+        } else if (koulutuksenTyyppi != null
                 && koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS.getKoulutustyyppiUri())) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
-        } else if (koulutuksenTyyppi != null 
+        } else if (koulutuksenTyyppi != null
                 && koulutuksenTyyppi.getKoodi().equals(Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri())) {
             kysely.setKoulutustyyppi(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
         }
-        
+
         //TODO: fix this
         //kysely.getOppilaitostyyppiUris().addAll(getOppilaitostyyppiUris());
         HaeKaikkiKoulutusmoduulitVastausTyyppi haeKaikkiKoulutusmoduulit = tarjontaPublicService.haeKaikkiKoulutusmoduulit(kysely);
@@ -2053,7 +2041,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         model.setKomos(komos);
         model.createCacheKomos(); //cache komos to map object
-
 
         //koodisto service search result remapped to UI model objects.
         List<KoulutuskoodiModel> listaaKoulutuskoodit = new ArrayList<KoulutuskoodiModel>();
@@ -2271,7 +2258,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 LOG.error("No tutkinto & koulutusohjelma, result was null. Search by '{}'" + " and '{}'", koulutuskoodi.getKoodistoUriVersio(), ohjelma.getKoodistoUriVersio());
             }
 
-            kolutusKoodistoConverter.listaa2asteSisalto(koulutuskoodi, ohjelma, tyyppi, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
+            koulutusToDTOConverter.updateKoulutuskoodiAndKoulutusohjelmaAndRelationsFromKoodisto(model, tyyppi, I18N.getLocale());
         }
     }
 
@@ -2301,14 +2288,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     public void toggleCreateHakukohde() {
         String organisaatioOid = null;
-        if(_model.getSelectedKoulutukset().size()>0) {
+        if (_model.getSelectedKoulutukset().size() > 0) {
             organisaatioOid = _model.getSelectedKoulutukset().get(0).getTarjoaja().getOid();
         }
-        
-        if(organisaatioOid==null) {
+
+        if (organisaatioOid == null) {
             organisaatioOid = getNavigationOrganisation().getOrganisationOid();
         }
-        
+
         this.getRootView().getListKoulutusView().toggleCreateHakukohdeB(organisaatioOid, !this._model.getSelectedKoulutukset().isEmpty());
     }
 
@@ -2455,11 +2442,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         Set<String> oppilaitosTyyppis = new HashSet<String>();
 
         //OrganisaatioDTO selectedOrg = this.getOrganisaatioService().findByOid(org.getOid());
-
 //        if (selectedOrg == null) {
 //            throw new RuntimeException("No organisation found by OID " + this.getNavigationOrganisation().getOrganisationOid() + ".");
 //        }
-
         List<OrganisaatioTyyppi> tyypit = org.getOrganisaatiotyypit();
 
         //If the types of the organisaatio contains oppilaitos, its oppilaitostyyppi is appended to the list of oppilaitostyyppiuris
@@ -2541,11 +2526,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     public void showHakukohteetForKoulutus(KoulutusPerustieto koulutus) {
-       
+
         HakukohteetVastaus vastaus = getHakukohteetForKoulutus(koulutus.getKomotoOid());
         this.getRootView().getListKoulutusView().showHakukohteetForKoulutus(vastaus.getHakukohteet(), koulutus);
     }
-    
+
     public HakukohteetVastaus getHakukohteetForKoulutus(String komotoOid) {
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.getKoulutusOids().add(komotoOid);
@@ -2590,19 +2575,20 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Should be called "isKoulutusMutable" or something similar
+     *
      * @param komotoOid
      * @return
      */
     public boolean isHakuStartedForKoulutus(String komotoOid) {
         boolean hakuStarted = false;
-        HakukohteetVastaus hakukVastaus =  getHakukohteetForKoulutus(komotoOid);
+        HakukohteetVastaus hakukVastaus = getHakukohteetForKoulutus(komotoOid);
         for (HakukohdePerustieto curHakuk : hakukVastaus.getHakukohteet()) {
             Date hakuAlku = curHakuk.getHakuAlkamisPvm();
             Date today = new Date();
             if (today.after(hakuAlku)) {
                 hakuStarted = true;
             }
-            
+
             //jos hakutyyppi tai erillishaku 
             if (KoodistoURI.KOODI_LISAHAKU_URI.equals(curHakuk
                     .getHakutyyppiUri())
@@ -2610,12 +2596,12 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                             .getHakutapaKoodi().getUri())) {
                 hakuStarted = false;
             }
-            
+
         }
-                        
+
         return hakuStarted;
     }
-    
+
     public boolean isKoulutusNivelvaihe() {
         KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
         return koulTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
@@ -2624,20 +2610,19 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 || koulTyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
     }
-    
-    public HakukohteetVastaus findHakukohdeByHakukohdeOid(final String oid){
+
+    public HakukohteetVastaus findHakukohdeByHakukohdeOid(final String oid) {
         return tarjontaSearchService.haeHakukohteet(HakukohteetKysely.byHakukohdeOid(oid));
     }
 
-    public KoulutuksetVastaus findKoulutusByKoulutusOid(final String oid){
+    public KoulutuksetVastaus findKoulutusByKoulutusOid(final String oid) {
         return tarjontaSearchService.haeKoulutukset(KoulutuksetKysely.byKoulutusOid(oid));
     }
-
 
     public List<MonikielinenMetadataTyyppi> haeMetadata(String avain, String kategoria) {
         return tarjontaAdminService.haeMetadata(avain, kategoria);
     }
-    
+
     public void setTarjontaSearchService(TarjontaSearchService tarjontaSearchService) {
         this.tarjontaSearchService = tarjontaSearchService;
     }

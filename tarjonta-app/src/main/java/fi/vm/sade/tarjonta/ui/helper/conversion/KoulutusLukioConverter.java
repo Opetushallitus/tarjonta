@@ -398,6 +398,8 @@ public class KoulutusLukioConverter extends KoulutusConveter {
     }
 
     public void updateKoulutuskoodiAndLukiolinjaAndRelationsFromKoodisto(KoulutusLukioPerustiedotViewModel model, KoulutusmoduuliKoosteTyyppi tyyppi, Locale locale) {
+       
+        //get latest relations search uris
         model.setKoulutuskoodiModel(koulutusKoodisto.listaaKoulutuskoodi(model.getKoulutuskoodiModel().getKoodistoUri(), locale));
         model.setLukiolinja(koulutusKoodisto.listaaLukiolinja(model.getLukiolinja().getKoodistoUri(), locale));
 

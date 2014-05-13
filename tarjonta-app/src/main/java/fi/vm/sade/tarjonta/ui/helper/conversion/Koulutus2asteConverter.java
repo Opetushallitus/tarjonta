@@ -49,12 +49,14 @@ import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
 import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.helper.OidHelper;
+import static fi.vm.sade.tarjonta.ui.helper.conversion.KoulutusConveter.INVALID_DATA;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoodiModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusohjelmaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatiedotModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 
 /**
@@ -428,13 +430,23 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {
 
-            Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>( 
-                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()), 
+            Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(
+                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()),
                     TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutusohjelmakoodiUri())
             );
             hashMap.put(e, komo);
         }
 
         return hashMap;
+    }
+
+    public void updateKoulutuskoodiAndKoulutusohjelmaAndRelationsFromKoodisto(KoulutusToisenAsteenPerustiedotViewModel model, KoulutusmoduuliKoosteTyyppi tyyppi, Locale locale) {
+        model.setKoulutuskoodiModel(koulutusKoodisto.listaaKoulutuskoodi(model.getKoulutuskoodiModel().getKoodistoUri(), locale));
+        model.setKoulutusohjelmaModel(koulutusKoodisto.listaaKoulutusohjelma(model.getKoulutusohjelmaModel().getKoodistoUri(), locale));
+
+        Preconditions.checkNotNull(model.getKoulutuskoodiModel(), INVALID_DATA + " koulutuskoodi model cannot be null.");
+        Preconditions.checkNotNull(model.getKoulutusohjelmaModel(), INVALID_DATA + " koulutusohjelma model cannot be null.");
+
+        koulutusKoodisto.listaa2asteSisalto(model.getKoulutuskoodiModel(), model.getKoulutusohjelmaModel(), tyyppi, locale, true);
     }
 }

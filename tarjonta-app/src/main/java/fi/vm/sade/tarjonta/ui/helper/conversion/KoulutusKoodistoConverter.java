@@ -162,7 +162,7 @@ public class KoulutusKoodistoConverter {
 
             if (lukiolinja != null) {
                 //update or override tutkinto relations by lukiolinja relations
-                komoLukiolinjaData(lukiolinja.getKoodistoUri(), tutkinto, koulutusKoodiToKoodiModel, locale);
+                komoLukiolinjaData(lukiolinja.getKoodistoUriVersio(), tutkinto, koulutusKoodiToKoodiModel, locale);
             }
         } else {
             //For review page - get koodi data from tarjonta service
@@ -200,7 +200,7 @@ public class KoulutusKoodistoConverter {
             //For edit pages - get koodi data from koodisto service
             if (ohjelma != null) {
                 //update or override tutkinto relations by lukiolinja relations
-                komo2asteKoulutusohjelmaData(ohjelma.getKoodistoUri(), ohjelma, tutkinto, koulutusKoodiToKoodiModel, locale);
+                komo2asteKoulutusohjelmaData(ohjelma.getKoodistoUriVersio(), ohjelma, tutkinto, koulutusKoodiToKoodiModel, locale);
             }
         } else {
             //For review page - get koodi data from tarjonta service
@@ -373,7 +373,7 @@ public class KoulutusKoodistoConverter {
     private void komoBaseDataFromKoodistoService(final KoulutuskoodiModel koulutuskoodi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         Preconditions.checkNotNull(koulutuskoodi, "KoulutuskoodiModel object cannot be null.");
 
-        for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(koulutuskoodi.getKoodistoUri())) {
+        for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(koulutuskoodi.getKoodistoUriVersio())) {
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
                 koulutuskoodi.setKoulutusala(listaaKoodi(toUriVersion(type), kc, locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOALA_URI)) {
