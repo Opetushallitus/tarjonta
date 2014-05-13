@@ -14,6 +14,7 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import java.util.Map;
 
 /**
  * Tests for KoulutusmoduuliTotetusDAO.
@@ -59,16 +60,20 @@ public class KoulutusmoduuliToteutusDAOTest {
         komoto1.setKoulutusmoduuli(komo);
         komoto1 = this.koulutusmoduuliToteutusDAO.insert(komoto1);
         komoto1.setKuvaByUri(URI_EN, fixtures.createBinaryData(FILENAME1, MIME1));
+        this.koulutusmoduuliToteutusDAO.update(komoto1);
 
         KoulutusmoduuliToteutus komoto2 = fixtures.createTutkintoOhjelmaToteutus();
         komoto2.setTarjoaja(TARJOAJA_OID + "xxx");
         komoto2.setKoulutusmoduuli(komo);
         komoto2 = this.koulutusmoduuliToteutusDAO.insert(komoto2);
         komoto2.setKuvaByUri(URI_FI, fixtures.createBinaryData(FILENAME2, MIME2));
+        this.koulutusmoduuliToteutusDAO.update(komoto2);
 
         KoulutusmoduuliToteutus result = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(komo, TARJOAJA_OID, POHJAKOULUTUS).get(0);
         assertTrue(result.getOid().equals(KOMOTO_OID));
 
+//        KoulutusmoduuliToteutus a = this.koulutusmoduuliToteutusDAO.findByOid(komoto1.getOid());
+//        assertEquals(1, a.getImageLangsUris().size());
         BinaryData binaryData = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(komoto1.getOid(), "no_result_uri");
         assertNull("found data object?", binaryData);
         binaryData = koulutusmoduuliToteutusDAO.findKuvaByKomotoOidAndKieliUri(komoto1.getOid(), URI_EN);
@@ -82,7 +87,20 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertEquals(FILENAME2, binaryData.getFilename());
         assertEquals(MIME2, binaryData.getMimeType());
 
-        assertEquals(binaryData.getData()[0], 1);
+        Map<String, BinaryData> map = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(komoto1.getOid());
+        assertNotNull(map);
+        assertEquals("count of images", 1, map.size());
+        assertNotNull(map.toString(), map.get(URI_EN));
+        assertEquals(FILENAME1, map.get(URI_EN).getFilename());
+        assertEquals(MIME1, map.get(URI_EN).getMimeType());
+        assertEquals(map.get(URI_EN).getData()[0], 1);
+
+        map = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(komoto2.getOid());
+        assertNotNull(map);
+        assertEquals("count of images", 1, map.size());
+        assertEquals(FILENAME2, map.get(URI_FI).getFilename());
+        assertEquals(MIME2, map.get(URI_FI).getMimeType());
+        assertEquals(map.get(URI_FI).getData()[0], 1);
     }
 
     @Test

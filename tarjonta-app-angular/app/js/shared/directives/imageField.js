@@ -54,7 +54,7 @@ app.directive('imageField', function($log, TarjontaService, PermissionService) {
                     var filename = response.result.filename;
                     var kieliUri = response.result.kieliUri;
                     $scope.ctrl.imagesLoaded[uri] = response.result;
-                    var html = '<div id="show"><img width="300" height="300" src="data:' + mime + ';base64,' + base64 + '"/>';
+                    var html = '<div id="show"><img width="300" height="300" style="width:300px; height:auto;" src="data:' + mime + ';base64,' + base64 + '"/>';
                     if ($scope.ctrl.editable) {
                         html += '<div>' + filename + '</div><a href="" class="btn" ng-click="deleteImage($event, \'' + kieliUri + '\')">{{btnNameRemove}}</a>';
                     }

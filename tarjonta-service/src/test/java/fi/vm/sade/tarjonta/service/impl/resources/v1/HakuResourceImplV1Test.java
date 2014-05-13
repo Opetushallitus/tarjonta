@@ -71,10 +71,9 @@ public class HakuResourceImplV1Test {
 
     private KoodiService koodiService = Mockito.mock(KoodiService.class);
     
-    private PermissionChecker permissionChecker = Mockito.mock(PermissionChecker.class);
-    
     private KoodistoValidator koodistoValidator = new KoodistoValidator();
 
+    private PermissionChecker permissionChecker = Mockito.mock(PermissionChecker.class);
     private TarjontaKoodistoHelper tarjontaKoodistoHelper = new TarjontaKoodistoHelper();
     private ConverterV1 converterV1 = Mockito.mock(ConverterV1.class);
     private HakuDAO hakuDAO = Mockito.mock(HakuDAO.class);
@@ -93,14 +92,15 @@ public class HakuResourceImplV1Test {
         TarjontaSearchServiceTest.stubKoodi(koodiService, "hakutyyppi_01", "01");
         TarjontaSearchServiceTest.stubKoodi(koodiService, "haunkohdejoukko_12", "12");
         
+        
         //wire things up
-        Whitebox.setInternalState(hakuResource, "permissionChecker", permissionChecker);
         Whitebox.setInternalState(hakuResource, "oidService", oidService);
         Whitebox.setInternalState(tarjontaKoodistoHelper, "koodiService", koodiService);
         Whitebox.setInternalState(koodistoValidator, "tarjontaKoodistoHelper", tarjontaKoodistoHelper);
         Whitebox.setInternalState(hakuResource, "koodistoValidator", koodistoValidator);
         Whitebox.setInternalState(hakuResource, "converterV1", converterV1);
         Whitebox.setInternalState(hakuResource, "hakuDAO", hakuDAO);
+        Whitebox.setInternalState(hakuResource, "permissionChecker", permissionChecker);
         
     }
 
@@ -110,7 +110,7 @@ public class HakuResourceImplV1Test {
     }
 
     @Test
-    public void testCreateInvaludAndValidHakus() {
+    public void testCreateInvalidAndValidHakus() {
         LOG.info("testXXX()...");
 
         HakuV1RDTO dto = null;
@@ -125,7 +125,7 @@ public class HakuResourceImplV1Test {
         }
 
         //
-        // Try to create totally empty haku, shoud fail with ERROR + lots of valudation messages
+        // Try to create totally empty haku, shoud fail with ERROR + lots of validation messages
         //
         dto = new HakuV1RDTO();
         result = hakuResource.createHaku(dto);

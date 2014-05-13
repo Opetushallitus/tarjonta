@@ -81,6 +81,7 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
+import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
@@ -105,6 +106,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
@@ -140,6 +142,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     @Autowired
     private OidService oidService;
+    @Autowired
+    private ParameterServices parameterService;
 
     private KoulutuksenKestoTyyppi kesto3Vuotta;
     private static final Logger log = LoggerFactory.getLogger(TarjontaAdminServiceTest.class);
@@ -279,9 +283,10 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     @Test
     public void testOptimisticLockingHakukohde() {
 
-        Hakukohde hk = fixtures.createPersistedHakukohde();
+        final Hakukohde hk = fixtures.createPersistedHakukohdeWithKoulutus();
+        final long version = hk.getVersion();
 
-        HakukohdeTyyppi hakukohdetyyppi = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hk.getOid())).getHakukohde();
+        final HakukohdeTyyppi hakukohdetyyppi = publicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hk.getOid())).getHakukohde();
         //update with illegal version
         hakukohdetyyppi.setVersion(999l);
 
@@ -293,11 +298,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         }
 
         //proper version
-        hakukohdetyyppi.setVersion(0l);
+        hakukohdetyyppi.setVersion(version);
         adminService.paivitaHakukohde(hakukohdetyyppi).getVersion();
 
         //proper version again
-        hakukohdetyyppi.setVersion(1l);
+        hakukohdetyyppi.setVersion(version+1l);
         adminService.paivitaHakukohde(hakukohdetyyppi);
     }
 
@@ -451,14 +456,16 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     @Test
     public void testCRUDHakukohde() {
 
-        String oid = "56.56.56.57.57.57";
-        String oid2 = "56.56.56.57.57.58";
+        
+        String oid;
+        String oid2;
         //Creating a hakukohde with an ongoing hakuaika. Removal should fail
-        Hakukohde hakukohde = fixtures.createHakukohde();
-        hakukohde.setOid(oid);
+        HakukohdeTyyppi hakukohde = fixtures.createHakukohdeTyyppi();
         KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(SAMPLE_KOULUTUS_OID);
-        hakukohde.addKoulutusmoduuliToteutus(komoto);
+        hakukohde.getHakukohteenKoulutusOidit().add(SAMPLE_KOULUTUS_OID);
         Haku haku = fixtures.createHaku();
+
+        
         Hakuaika hakuaika = new Hakuaika();
         Calendar alkuPvm = Calendar.getInstance();//.getTime();
         alkuPvm.set(Calendar.YEAR, alkuPvm.get(Calendar.YEAR) - 1);
@@ -468,8 +475,28 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         hakuaika.setPaattymisPvm(loppuPvm.getTime());
         haku.addHakuaika(hakuaika);
         haku = this.hakuDAO.insert(haku);
-        hakukohde.setHaku(haku);
-        this.hakukohdeDAO.insert(hakukohde);
+        
+        hakukohde.setHakukohteenHakuOid(haku.getOid());
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(Boolean.FALSE);
+        
+        //stub parameter to forbid addition
+        Mockito.stub(parameterService.parameterCanAddHakukohdeToHaku(haku.getOid())).toReturn(false);
+
+        
+        try{
+            HakukohdeTyyppi hakukohdeTyyppi = adminService.lisaaHakukohde(hakukohde);
+            fail("should not suceed!");
+        } catch (NotAuthorizedException nae) {
+            //expected!
+        }
+
+        //stub parameter to allow addition and removals
+        Mockito.stub(parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHakukohteenHakuOid())).toReturn(true);
+        Mockito.stub(parameterService.parameterCanRemoveHakukohdeFromHaku(hakukohde.getHakukohteenHakuOid())).toReturn(true);
+        
+        HakukohdeTyyppi hakukohdeTyyppi = adminService.lisaaHakukohde(hakukohde);
+        oid = hakukohdeTyyppi.getOid();
+        
 
         int originalSize = this.hakukohdeDAO.findAll().size();
 
@@ -477,17 +504,16 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
             HakukohdeTyyppi hakukohdeT = new HakukohdeTyyppi();
             hakukohdeT.setOid(oid);
             this.adminService.poistaHakukohde(hakukohdeT);
-            fail();
-        } catch (Exception ex) {
+            fail("should not succeed!");
+        } catch (HakukohdeUsedException ex) {
             log.debug("Exception thrown");
         }
         assertTrue(this.hakukohdeDAO.findAll().size() == originalSize);
 
 
         //Creating a hakukohde with a hakuaika in the future. Removal should succeed
-        hakukohde = fixtures.createHakukohde();
-        hakukohde.setOid(oid2);
-        hakukohde.addKoulutusmoduuliToteutus(komoto);
+        hakukohde = fixtures.createHakukohdeTyyppi();
+        hakukohde.getHakukohteenKoulutusOidit().add(SAMPLE_KOULUTUS_OID);
         haku = fixtures.createHaku();
         hakuaika = new Hakuaika();
         alkuPvm = Calendar.getInstance();//.getTime();
@@ -498,8 +524,24 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         hakuaika.setPaattymisPvm(loppuPvm.getTime());
         haku.addHakuaika(hakuaika);
         haku = this.hakuDAO.insert(haku);
-        hakukohde.setHaku(haku);
-        this.hakukohdeDAO.insert(hakukohde);
+        
+        //stub parameters, parameter says no add
+        Mockito.stub(parameterService.parameterCanAddHakukohdeToHaku(haku.getOid())).toReturn(false);
+
+        hakukohde.setHakukohteenHakuOid(haku.getOid());
+        hakukohde.setKaytetaanHaunPaattymisenAikaa(Boolean.FALSE);
+        try {
+            HakukohdeTyyppi hk = adminService.lisaaHakukohde(hakukohde);
+            fail("should not succeed!");
+        } catch (NotAuthorizedException nae) {
+            //expected
+        }
+
+        //stub parameters, parameter says yes add
+        Mockito.stub(parameterService.parameterCanAddHakukohdeToHaku(haku.getOid())).toReturn(true);
+        Mockito.stub(parameterService.parameterCanRemoveHakukohdeFromHaku(haku.getOid())).toReturn(true);
+        HakukohdeTyyppi hk = adminService.lisaaHakukohde(hakukohde);
+        oid2=hk.getOid();
 
         originalSize = this.hakukohdeDAO.findAll().size();
 
@@ -522,7 +564,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
         assertNotNull(dto.getPainotettavatOppiaineet().get(0).getPainotettavaOppiaineTunniste());
         assertTrue(dto.getPainotettavatOppiaineet().get(0).getVersion() == 0);
-
 
         //edit oppiaineet
         PainotettavaOppiaineTyyppi oppiaine2 = new PainotettavaOppiaineTyyppi();
@@ -556,7 +597,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         hakukohdeT.setOid(oid2);
         this.adminService.poistaHakukohde(hakukohdeT);
         assertTrue(this.hakukohdeDAO.findAll().size() == (originalSize - 1));
-
     }
 
     @Test
@@ -576,7 +616,6 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         sc.setKoulutusohjelmaKoodi(KOKOODI);
         Koulutusmoduuli komo = this.koulutusmoduuliDAO.search(sc).get(0);
         assertEquals(KOULUTUSKOODI, komo.getKoulutusUri());
-
     }
 
     @Test
@@ -889,9 +928,11 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
         try {
             HakukohdeTyyppi newHakukohde = new HakukohdeTyyppi();
-            KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
-            koulutus.setTarjoaja("tarjoaja-oid");
-            newHakukohde.getHakukohdeKoulutukses().add(koulutus);
+            newHakukohde.setHakukohteenHakuOid("haku-oid");
+            newHakukohde.getHakukohteenKoulutusOidit().add(lisaaKoulutus.getOid());
+            //stub parameter to forbid addition
+            Mockito.stub(parameterService.parameterCanAddHakukohdeToHaku("haku-oid")).toReturn(true);
+
             adminService.lisaaHakukohde(newHakukohde);
             fail("unauthenticated user should not be able to access the service");
         } catch (NotAuthorizedException rte) {

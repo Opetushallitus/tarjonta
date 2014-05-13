@@ -10,7 +10,7 @@
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true"></controls-button>
-        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="!model.continueToReviewEnabled"></controls-button>
+        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
 
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
         <controls-button tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>

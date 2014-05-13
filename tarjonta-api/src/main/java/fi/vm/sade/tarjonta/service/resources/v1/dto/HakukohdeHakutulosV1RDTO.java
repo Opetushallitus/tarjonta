@@ -10,7 +10,8 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
 
 	private Map<String, String> hakutapa;
 	private Integer aloituspaikat;
-	
+	private String hakuOid;
+
 	public Map<String, String> getHakutapa() {
 		return hakutapa;
 	}
@@ -27,4 +28,11 @@ public class HakukohdeHakutulosV1RDTO extends KoulutusHakutulosV1RDTO {
 		this.aloituspaikat = aloituspaikat;
 	}
 
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
 }

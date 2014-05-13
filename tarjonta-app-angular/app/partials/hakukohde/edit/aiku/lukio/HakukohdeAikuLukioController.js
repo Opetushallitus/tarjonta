@@ -109,8 +109,11 @@ app.controller('HakukohdeAikuLukioEditController',
         };
 
         var filterHakus = function(hakus) {
-            return  $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
 
+            var filteredHakus =   $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
+
+
+            return filteredHakus;
         };
 
 
@@ -130,6 +133,7 @@ app.controller('HakukohdeAikuLukioEditController',
             $scope.haeTarjoajaOppilaitosTyypit();
             $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
             $scope.checkIsCopy();
+            console.log('AIKU : ', $scope.model.hakukohde);
             $scope.updateTilaModel($scope.model.hakukohde);
 
             if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {

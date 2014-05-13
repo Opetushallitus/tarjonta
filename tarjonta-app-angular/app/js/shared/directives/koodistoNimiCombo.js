@@ -58,19 +58,40 @@ app.directive('koodistocombo',function(Koodisto,$log){
         },
         controller :  function($scope,Koodisto) {
 
-        	
+            var koodiSeparator = "#";
         	$scope.baseKoodis = [];
 
-            var addVersionToKoodis = function(koodis) {
+            var checkForKoodiUriVersion = function() {
 
+
+
+                if ($scope.koodiuri.indexOf(koodiSeparator) > -1) {
+                    return true;
+                }  else {
+                    return false;
+                }
+
+            };
+
+            var addKoodiToKoodiUri = function (koodiversio) {
+
+                $scope.koodiuri = $scope.koodiuri + koodiSeparator + koodiversio;
+            };
+
+            var addVersionToKoodis = function(koodis) {
+                var koodienVersio = 0;
                 if ($scope.version !== undefined && $scope.version) {
                     angular.forEach(koodis,function(koodi){
                         if (koodi.koodiUri.indexOf("#") < 0) {
+                            koodienVersio = koodi.koodiVersio;
                             koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
                         } else {
                             $log.warn("addVersionToKoodis - tried to add version to already versioned URI!", koodi);
                         }
                     });
+                    if(!checkForKoodiUriVersion()) {
+                        addKoodiToKoodiUri(koodienVersio);
+                    }
                 }
 
             }
@@ -105,19 +126,34 @@ app.directive('koodistocombo',function(Koodisto,$log){
                        $log.info('isalakoodi was undefined');
                        $scope.isalakoodi = true;
                    }
+
                    if ($scope.isalakoodi) {
 
                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
+
                        koodisPromise.then(function(koodisParam){
+                           if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri) {
+                               console.log('SCOPEKOODIURI : ', $scope.koodiuri);
+                               console.log('VERSION : ', $scope.version);
+                               if ($scope.version !== undefined && $scope.version) {
 
-                           addVersionToKoodis(koodisParam);
+                                   addVersionToKoodis(koodisParam);
 
-                           $scope.koodis = koodisParam;
+                               }
+                               $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam);
+
+                           } else {
+                               addVersionToKoodis(koodisParam);
+                               $scope.koodis = koodisParam;
+                           }
+
                            $scope.baseKoodis = $scope.koodis;
                        });
                    } else {
+                   $log.info('PARENT KOODI WAS DEFINED GETTING YLAPUOLISET KOODIT...');
                    var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
                    koodisPromise.then(function(koodisParam){
+                       $log.info('PARENT KOODI WAS DEFINED YLAPUOLISET KOODIT : ' ,koodisParam);
                        if ($scope.version !== undefined && $scope.version) {
                            angular.forEach(koodisParam,function(koodi){
                                koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;

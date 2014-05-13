@@ -25,6 +25,7 @@
     <mockito:mock id="koodiPublicService" class="fi.vm.sade.koodisto.service.KoodiService"/>
 
     <mockito:mock id="koodistoPublicService" class="fi.vm.sade.koodisto.service.KoodistoService"/>
+    <mockito:mock id="parameterServices" class="fi.vm.sade.tarjonta.shared.ParameterServices"/>
     <mockito:mock id="oidService" class="fi.vm.sade.tarjonta.service.OidService"/>
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>

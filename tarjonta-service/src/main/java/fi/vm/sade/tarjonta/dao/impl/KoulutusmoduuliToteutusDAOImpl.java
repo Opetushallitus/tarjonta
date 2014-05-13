@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -32,7 +33,10 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -306,6 +310,21 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return from(qKomoto).
                 join(qKomoto.kuvat, qBinaryData).
                 where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.get(kieliUri).eq(qBinaryData))).singleResult(qBinaryData);
+    }
+
+    @Override
+    public Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QBinaryData qBinaryData = QBinaryData.binaryData;
+        KoulutusmoduuliToteutus t = from(qKomoto).
+                leftJoin(qKomoto.kuvat, qBinaryData).fetch().
+                where(qKomoto.oid.eq(komotoOid)).singleResult(qKomoto);
+
+        if (t == null) {//no results
+            return Maps.<String, BinaryData>newHashMap();
+        }
+
+        return t.getKuvat();
     }
 
     /**
