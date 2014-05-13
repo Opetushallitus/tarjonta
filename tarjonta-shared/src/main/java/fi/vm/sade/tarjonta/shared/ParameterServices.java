@@ -176,12 +176,10 @@ public class ParameterServices implements InitializingBean {
      */
 
     /**
-     * True if user is ophadmin OR parameters PH_HKLPT and PH_HKMT allow it.
+     * True if parameters PH_HKLPT and PH_HKMT allow it.
      * 
      * More explicitly:
      * <pre>
-     *   USER == ophadmin
-     * OR 
      * (
      *   (PH_HKLPT == null || PH_HKLPT >= now()) 
      * AND 
@@ -204,12 +202,10 @@ public class ParameterServices implements InitializingBean {
 
     
     /**
-     * True if user is ophadmin OR parameters PH_HKLPT and PH_HKMT allow it.
+     * True if parameters PH_HKLPT and PH_HKMT allow it.
      * 
      * More explicitly:
      * <pre>
-     *   USER == ophadmin
-     * OR 
      * (
      *   (PH_HKLPT == null || PH_HKLPT >= now()) 
      * AND 
@@ -231,14 +227,12 @@ public class ParameterServices implements InitializingBean {
     }
 
     /**
-     * True if user is ophadmin OR parameters PH_HKLPT and PH_HKMT allow it.
+     * True if parameters PH_HKLPT and PH_HKMT allow it.
      * 
      * NOTE: This may be false BUT "parameterCanEditHakukohdeLimited()" may be true
      * 
      * More explicitly:
      * <pre>
-     *   USER == ophadmin
-     * OR 
      * (
      *   (PH_HKLPT == null || PH_HKLPT >= now()) 
      * AND 
@@ -260,7 +254,7 @@ public class ParameterServices implements InitializingBean {
     }
 
     /**
-     * True if user is ophadmin OR parameter PH_HKMT allow it
+     * True if parameter PH_HKMT allow it
      * 
      * Note: this is always true if "parameterCanEditHakukohde()" is true.
      * 
@@ -269,8 +263,6 @@ public class ParameterServices implements InitializingBean {
      * 
      * More explicitly:
      * <pre>
-     *   USER == ophadmin
-     * OR 
      * (
      *   (PH_HKMT == null || PH_HKMT >= now())
      * )
