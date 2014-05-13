@@ -89,7 +89,7 @@ public class ParameterServices implements InitializingBean {
      */
     private Map<String, Map<String, Parameter>> _parameters = new HashMap<String, Map<String, Parameter>>();
     private long _nextUpdateDue = 0L;
-    private final long _nextUpdatePeriod = 10L * 60L * 1000L;
+    private final long _nextUpdatePeriod = 1L * 60L * 1000L;
     
     /**
      * Calls reload params if needed
@@ -196,7 +196,7 @@ public class ParameterServices implements InitializingBean {
         Date now = new Date();
         
         boolean result = (ph_hklpt == null || ph_hklpt.after(now)) && (ph_hkmt == null || ph_hkmt.after(now));
-        LOG.debug("parameterCanAddHakukohdeToHaku({}) --> {}", hakuOid, result);
+        LOG.debug("parameterCanAddHakukohdeToHaku({}) hklpt={}, hkmt={} --> {}", new Object[] {hakuOid, ph_hklpt, ph_hkmt, result});
         return result;
     }
 
@@ -222,7 +222,7 @@ public class ParameterServices implements InitializingBean {
         Date now = new Date();
         
         boolean result = (ph_hklpt == null || ph_hklpt.after(now)) && (ph_hkmt == null || ph_hkmt.after(now));
-        LOG.debug("parameterCanRemoveHakukohdeFromHaku({}) --> {}", hakuOid, result);
+        LOG.debug("parameterCanRemoveHakukohdeFromHaku({}) hklpt={}, hkmt={} --> {}", new Object[] {hakuOid, ph_hklpt, ph_hkmt, result});
         return result;
     }
 
@@ -249,7 +249,7 @@ public class ParameterServices implements InitializingBean {
         Date now = new Date();
         
         boolean result = (ph_hklpt == null || ph_hklpt.after(now)) && (ph_hkmt == null || ph_hkmt.after(now));
-        LOG.debug("parameterCanEditHakukohde({}) --> {}", hakuOid, result);
+        LOG.debug("parameterCanEditHakukohde({}) hklpt={}, hkmt={} --> {}", new Object[] {hakuOid, ph_hklpt, ph_hkmt, result});
         return result;
     }
 
@@ -276,7 +276,7 @@ public class ParameterServices implements InitializingBean {
         Date now = new Date();
         
         boolean result = (ph_hkmt == null || ph_hkmt.after(now));
-        LOG.debug("parameterCanEditHakukohdeLimited({}) --> {}", hakuOid, result);
+        LOG.debug("parameterCanEditHakukohdeLimited({}) hkmt={} --> {}", new Object[] {hakuOid, ph_hkmt, result});
         return result;
     }
 }
