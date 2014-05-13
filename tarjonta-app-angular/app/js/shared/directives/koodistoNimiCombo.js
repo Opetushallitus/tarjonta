@@ -64,12 +64,16 @@ app.directive('koodistocombo',function(Koodisto,$log){
             var checkForKoodiUriVersion = function() {
 
 
-
-                if ($scope.koodiuri.indexOf(koodiSeparator) > -1) {
-                    return true;
-                }  else {
+                if ($scope.koodiuri) {
+                    if ($scope.koodiuri.indexOf(koodiSeparator) > -1) {
+                        return true;
+                    }  else {
+                        return false;
+                    }
+                } else {
                     return false;
                 }
+
 
             };
 
