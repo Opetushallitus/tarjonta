@@ -317,6 +317,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
 
+                tt.removable = TarjontaService.parameterCanRemoveHakukohdeFromHaku(row.hakuOid);
+
                 var canRead = PermissionService[prefix].canPreview(oid);
                 console.log("row actions can read (" + prefix + ")", canRead);
 
