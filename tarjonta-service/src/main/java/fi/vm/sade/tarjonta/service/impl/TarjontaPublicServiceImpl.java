@@ -97,6 +97,7 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusmoduuliVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 
 /**
@@ -664,9 +665,21 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Override
     public HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit(HaeKoulutusmoduulitKyselyTyyppi kysely) {
         SearchCriteria criteria = new SearchCriteria();
-        criteria.setKoulutusKoodi(kysely.getKoulutuskoodiUri());
-        criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
-        criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
+
+        if (kysely.getKoulutuskoodiUri() != null) {
+            //version information will be removed in search method from koodi uris.
+            criteria.setLikeKoulutusKoodiUriWithoutVersion(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(kysely.getKoulutuskoodiUri()));
+        }
+
+        if (kysely.getKoulutusohjelmakoodiUri() != null) {
+            //version information will be removed in search method from koodi uris.
+            criteria.setLikeKoulutusohjelmaKoodiUriWithoutVersion(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(kysely.getKoulutusohjelmakoodiUri()));
+        }
+
+        if (kysely.getLukiolinjakoodiUri() != null) {
+            //version information will be removed in search method from koodi uris.
+            criteria.setLikeLukiolinjaKoodiUriUriWithoutVersion(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(kysely.getLukiolinjakoodiUri()));
+        }
 
         if (kysely.getKoulutustyyppi() != null) {
             criteria.setKoulutustyyppi(KoulutustyyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
