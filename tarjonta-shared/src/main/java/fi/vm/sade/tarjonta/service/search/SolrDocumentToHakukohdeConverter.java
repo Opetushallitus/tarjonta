@@ -19,6 +19,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_PAATT
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_URI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.HAUN_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSLAJI_FI;
@@ -82,7 +83,9 @@ public class SolrDocumentToHakukohdeConverter {
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
         hakukohde.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, hakukohdeDoc));
         hakukohde.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URI,  KOULUTUSLAJI_FI,  KOULUTUSLAJI_SV,  KOULUTUSLAJI_EN, hakukohdeDoc));
-        
+        if (hakukohdeDoc.getFieldValue(HAUN_OID) != null) {
+            hakukohde.setHakuOid(hakukohdeDoc.getFieldValue(HAUN_OID).toString());
+        }
         hakukohde.setOid("" + hakukohdeDoc.getFieldValue(OID));
         hakukohde.setHakutyyppiUri("" + hakukohdeDoc.getFieldValue(HAKUTYYPPI_URI));
         hakukohde.setTila(IndexDataUtils.createTila(hakukohdeDoc));

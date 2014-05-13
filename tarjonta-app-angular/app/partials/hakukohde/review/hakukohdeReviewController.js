@@ -33,28 +33,6 @@ app.controller('HakukohdeReviewController',
 
 //      $log.debug("scope.model:", $scope.model);
 
-      var hakukohdeOid = $scope.model.hakukohde.oid;
-
-      //permissiot
-      $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({oid: hakukohdeOid, state: 'POISTETTU'}).$promise.then(function(r){return r.$resolved; })]).then(function(results) {
-        $scope.isMutable=results[0]===true;
-        if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
-          //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-          $scope.isMutable = false;
-
-        }
-        $scope.isRemovable=results[1]===true && results[2]===true;
-      });
-
-      $log.debug('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
-
-      /*
-
-        ---------> Internal variable declarations and scope "helper" variable declarations  <--------------
-
-      */
-
-
 
       var kieliKoodistoUri = "kieli";
 
@@ -466,6 +444,18 @@ app.controller('HakukohdeReviewController',
 
     };
 
+        var checkForHakuRemove = function () {
+
+            var canRemoveHakukohde = TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+
+            if (canRemoveHakukohde) {
+                $scope.isRemovable=true;
+            } else {
+
+                $scope.isRemovable=false;
+            }
+
+        };
 
         /*
 
@@ -475,11 +465,25 @@ app.controller('HakukohdeReviewController',
 
         var init = function() {
 
+            var hakukohdeOid = $scope.model.hakukohde.oid;
+
+            //permissiot
+            $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({oid: hakukohdeOid, state: 'POISTETTU'}).$promise.then(function(r){return r.$resolved; })]).then(function(results) {
+                $scope.isMutable=results[0]===true;
+                if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
+                    //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+                    $scope.isMutable = false;
+
+                }
+                $scope.isRemovable=results[1]===true && results[2]===true;
+                checkForHakuRemove();
+            });
 
 
         if ($scope.model.hakukohde.result) {
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
         }
+
 
 
         initLanguages();
@@ -489,6 +493,7 @@ app.controller('HakukohdeReviewController',
         modelInit();
         loadHakukelpoisuusVaatimukses();
         loadKoulutukses();
+        //checkForHakuRemove();
     };
 
     init();

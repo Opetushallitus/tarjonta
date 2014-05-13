@@ -71,7 +71,6 @@ import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
-import fi.vm.sade.tarjonta.service.business.exception.HakuUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeExistsException;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeUsedException;
 import fi.vm.sade.tarjonta.service.business.exception.KoulutusUsedException;
@@ -83,7 +82,6 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
-import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -92,7 +90,6 @@ import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusVastausTyyppi;
-import fi.vm.sade.tarjonta.service.types.ListaaHakuTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenMetadataTyyppi;
@@ -156,7 +153,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
-        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
         /*List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
         for (Valintakoe valintakoe : valintakoes) {
@@ -256,7 +253,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
-        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
 
         List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
         for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
@@ -392,7 +389,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi lisaaHakukohde(HakukohdeTyyppi hakukohde) {
-        permissionChecker.checkCreateHakukohde(hakukohde);
+        permissionChecker.checkCreateHakukohde(hakukohde.getHakukohteenHakuOid(), hakukohde.getHakukohteenKoulutusOidit());
 
         Preconditions.checkNotNull(hakukohde, "HakukohdeTyyppi cannot be null.");
         final String hakuOid = hakukohde.getHakukohteenHakuOid();
@@ -456,11 +453,14 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
-        permissionChecker.checkUpdateHakukohde(parameters.getHakukohdeOid());
 
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
-        int originalHakukohdeKoulutusCount = hakukohde.getKoulutusmoduuliToteutuses().size();
-        int numberOfKoulutuksesToRemove = parameters.getKoulutusOids().size();
+        final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+
+        
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(parameters.getHakukohdeOid());
+
+        final int originalHakukohdeKoulutusCount = hakukohde.getKoulutusmoduuliToteutuses().size();
+        final int numberOfKoulutuksesToRemove = parameters.getKoulutusOids().size();
         log.info("Hakukohde koulutukses : {}", hakukohde.getKoulutusmoduuliToteutuses().size());
         log.info("Number koulutukses to remove from hakukohde : {}", parameters.getKoulutusOids().size());
         if (parameters.isLisaa()) {
@@ -519,11 +519,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi poistaHakukohde(HakukohdeTyyppi hakukohdePoisto) {
-
         permissionChecker.checkRemoveHakukohde(hakukohdePoisto.getOid());
-
-        Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
-
+        final Hakukohde hakukohde = hakukohdeDAO.findBy("oid", hakukohdePoisto.getOid()).get(0);
+        
         if (hakuAlkanut(hakukohde)) {
             throw new HakukohdeUsedException();
         } else {
@@ -548,28 +546,39 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public HakukohdeTyyppi paivitaHakukohde(HakukohdeTyyppi hakukohdePaivitys) {
-        permissionChecker.checkUpdateHakukohde(hakukohdePaivitys.getOid());
 
-        Hakukohde hakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
+        final Hakukohde newHakukohde = conversionService.convert(hakukohdePaivitys, Hakukohde.class);
+        final String hakukohdeOid = hakukohdePaivitys.getOid();
+        final String hakuOid = hakukohdePaivitys.getHakukohteenHakuOid();
+        
+        
+        final Hakukohde originalHakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
+        newHakukohde.setId(originalHakukohde.getId());
 
-        Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdePaivitys.getOid());
-        hakukohde.setId(hakukohdeTemp.getId());
+        final Set<String> komotoOids = Sets.newHashSet(hakukohdePaivitys.getHakukohteenKoulutusOidit());
+        
+        permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakuOid, komotoOids);
+        final Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
 
-        Haku haku = hakuDAO.findByOid(hakukohdePaivitys.getHakukohteenHakuOid());
-
-        hakukohde.setHaku(haku);
-        hakukohde.setHakuaika(findHakuaika(haku, hakukohdePaivitys.getSisaisetHakuajat()));
-        hakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), hakukohde));
-        hakukohde.getValintakoes().addAll(hakukohdeTemp.getValintakoes());
-        hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
-        hakukohde.setViimIndeksointiPvm(hakukohde.getLastUpdateDate());
-        hakukohdeDAO.update(hakukohde);
-        solrIndexer.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-        publication.sendEvent(hakukohde.getTila(), hakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
+        newHakukohde.setHaku(haku);
+        newHakukohde.setHakuaika(findHakuaika(haku, hakukohdePaivitys.getSisaisetHakuajat()));
+        
+        newHakukohde.setKoulutusmoduuliToteutuses(findKoulutusModuuliToteutus(hakukohdePaivitys.getHakukohteenKoulutusOidit(), newHakukohde));
+        newHakukohde.getValintakoes().addAll(originalHakukohde.getValintakoes());
+        newHakukohde.getLiites().addAll(originalHakukohde.getLiites());
+        newHakukohde.setViimIndeksointiPvm(newHakukohde.getLastUpdateDate());
+        hakukohdeDAO.update(newHakukohde);
+        solrIndexer.indexHakukohteet(Lists.newArrayList(newHakukohde.getId()));
+        publication.sendEvent(newHakukohde.getTila(), newHakukohde.getOid(), PublicationDataService.DATA_TYPE_HAKUKOHDE, PublicationDataService.ACTION_UPDATE);
 
         //return fresh copy (that has fresh version so that optimistic locking works)
         LueHakukohdeKyselyTyyppi kysely = new LueHakukohdeKyselyTyyppi(hakukohdePaivitys.getOid());
         return publicService.lueHakukohde(kysely).getHakukohde();
+    }
+
+    private void rejectHakukohdeUpdate(String oid, String message) {
+        log.warn("Rejecting hakukohde ({}), update, message: {}", oid, message);
+        throw new BusinessException(message);
     }
 
     @Override
@@ -577,12 +586,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public LisaaKoulutusVastausTyyppi lisaaKoulutus(LisaaKoulutusTyyppi koulutus) {
         permissionChecker.checkCreateKoulutus(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
-        KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
+        final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.createKoulutus(koulutus);
         solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_INSERT);
 
-        LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
+        final LisaaKoulutusVastausTyyppi vastaus = new LisaaKoulutusVastausTyyppi();
         vastaus.setVersion(toteutus.getVersion()); //optimistic locking
         vastaus.setKomoOid(toteutus.getKoulutusmoduuli().getOid());
 
@@ -594,15 +603,15 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     public PaivitaKoulutusVastausTyyppi paivitaKoulutus(PaivitaKoulutusTyyppi koulutus) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(koulutus.getTarjoaja());
         checkOrganisationExists(koulutus.getTarjoaja());
-        KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
+        final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
 
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
             solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
         } catch (Throwable t) {
         }
-        Set<Hakukohde> hakukohteet = toteutus.getHakukohdes();
-        Set<Long> hakukohteenidt = Sets.newHashSet();
+        final Set<Hakukohde> hakukohteet = toteutus.getHakukohdes();
+        final Set<Long> hakukohteenidt = Sets.newHashSet();
         for (Hakukohde hk : hakukohteet) {
             hakukohteenidt.add(hk.getId());
         }
