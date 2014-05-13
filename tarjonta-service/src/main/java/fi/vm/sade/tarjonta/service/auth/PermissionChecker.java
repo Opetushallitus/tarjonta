@@ -87,9 +87,10 @@ public class PermissionChecker {
 
     /**
      * Saako käyttäjä muokata hakukohdetta, huom tämä ei ota huomioon parametreja!!!!!!
+     * Saa käyttää ainoastaan silloin kun koulutuksia/haun tietoja ei muuteta
      * @param hakukohdeOid
      */
-    public void checkUpdateHakukohde(String hakukohdeOid) {
+    public void checkUpdateHakukohdeAndIgnoreParametersWhileChecking(String hakukohdeOid) {
         Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
         Set<KoulutusmoduuliToteutus> komot = hakukohde
                 .getKoulutusmoduuliToteutuses();
@@ -295,7 +296,7 @@ public class PermissionChecker {
                     checkHakuUpdate(tyyppi.getOid());
                     break;
                 case HAKUKOHDE:
-                    checkUpdateHakukohde(tyyppi.getOid());
+                    checkUpdateHakukohdeAndIgnoreParametersWhileChecking(tyyppi.getOid());
                     break;
                 case KOMO:
                     break; // TODO XXX currently no permission check for this

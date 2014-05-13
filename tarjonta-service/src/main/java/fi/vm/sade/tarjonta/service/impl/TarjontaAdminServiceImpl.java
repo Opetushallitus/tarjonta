@@ -153,7 +153,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public List<ValintakoeTyyppi> paivitaValintakokeitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenValintakokeet", targetNamespace = "") List<ValintakoeTyyppi> hakukohteenValintakokeet) {
-        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
         List<Valintakoe> valintakoes = convertValintaKokees(hakukohteenValintakokeet);
         /*List<Valintakoe> updateValintakokees = new ArrayList<Valintakoe>();
         for (Valintakoe valintakoe : valintakoes) {
@@ -253,7 +253,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void tallennaLiitteitaHakukohteelle(@WebParam(name = "hakukohdeOid", targetNamespace = "") String hakukohdeOid, @WebParam(name = "hakukohteenLiitteen", targetNamespace = "") List<HakukohdeLiiteTyyppi> hakukohteenLiitteen) {
-        permissionChecker.checkUpdateHakukohde(hakukohdeOid);
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohdeOid);
 
         List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
         for (HakukohdeLiite hakukohdeLiite : convertLiiteTyyppi(hakukohteenLiitteen)) {
@@ -453,9 +453,12 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Override
     @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public void lisaaTaiPoistaKoulutuksiaHakukohteelle(@WebParam(partName = "parameters", name = "lisaaKoulutusHakukohteelle", targetNamespace = "http://service.tarjonta.sade.vm.fi/types") LisaaKoulutusHakukohteelleTyyppi parameters) {
-        permissionChecker.checkUpdateHakukohde(parameters.getHakukohdeOid());
 
         final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
+
+        
+        permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(parameters.getHakukohdeOid());
+
         final int originalHakukohdeKoulutusCount = hakukohde.getKoulutusmoduuliToteutuses().size();
         final int numberOfKoulutuksesToRemove = parameters.getKoulutusOids().size();
         log.info("Hakukohde koulutukses : {}", hakukohde.getKoulutusmoduuliToteutuses().size());
