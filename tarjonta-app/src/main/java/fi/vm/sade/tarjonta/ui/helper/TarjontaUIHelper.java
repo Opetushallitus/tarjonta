@@ -124,11 +124,11 @@ public class TarjontaUIHelper {
         for (String cacheName : _cacheManager.getCacheNames()) {
             LOG.info("UI --- {} {}/{}/{}",
                     new Object[]{
-                cacheName,
-                _cacheManager.getCache(cacheName).getSize(),
-                _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
-                _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
-            });
+                        cacheName,
+                        _cacheManager.getCache(cacheName).getSize(),
+                        _cacheManager.getCache(cacheName).getStatistics().getCacheHits(),
+                        _cacheManager.getCache(cacheName).getStatistics().getCacheMisses()
+                    });
         }
     }
 
@@ -141,7 +141,7 @@ public class TarjontaUIHelper {
     public String tryGetViimPaivittaja(String viimPaivittajaOid) {
         try {
             String userName = null;
-            if(viimPaivittajaOid!=null) {
+            if (viimPaivittajaOid != null) {
                 HenkiloType henkilo = userService.findByOid(viimPaivittajaOid);
 
                 if (henkilo.getEtunimet() != null && henkilo.getSukunimi() != null) {
@@ -159,6 +159,7 @@ public class TarjontaUIHelper {
         //fall back to viimPaivittajaOid
         return _i18n.getMessage("tuntematon.kayttaja");
     }
+
     /**
      * Splits koodiUri to URI and Version. Default version for those uris
      * without version information is "-1".
@@ -192,7 +193,7 @@ public class TarjontaUIHelper {
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.getKoulutusOids().addAll(komotoOids);
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
-        
+
         List<String> sourceKoodiUris = new ArrayList<String>();
         for (KoulutusPerustieto koulutus : vastaus.getKoulutukset()) {
             switch (koulutus.getKoulutustyyppi()) {
@@ -277,7 +278,7 @@ public class TarjontaUIHelper {
         result.append(getBestLanguageMatchesForKoodi(hakukohdeNimi, locale));
         result.append(", ");
         //result.append(getHakuKausiJaVuosi(hakuOid, locale));
-        result.append(getKoulutusHakukausiJaVuosi(koulutusOid,locale));
+        result.append(getKoulutusHakukausiJaVuosi(koulutusOid, locale));
         return result.toString();
     }
 
@@ -289,11 +290,9 @@ public class TarjontaUIHelper {
         kusely.setKoulutusOid(koulutusOid);
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kusely);
 
+        for (KoulutusPerustieto koulutusPerustieto : vastaus.getKoulutukset()) {
 
-
-        for(KoulutusPerustieto koulutusPerustieto: vastaus.getKoulutukset()) {
-
-            koulutuksenAlkamistiedot.append(getKoodiNimi(koulutusPerustieto.getKoulutuksenAlkamiskausi().getUri(),locale));
+            koulutuksenAlkamistiedot.append(getKoodiNimi(koulutusPerustieto.getKoulutuksenAlkamiskausi().getUri(), locale));
             koulutuksenAlkamistiedot.append(" ");
             koulutuksenAlkamistiedot.append(koulutusPerustieto.getKoulutuksenAlkamisVuosi());
 
@@ -478,8 +477,7 @@ public class TarjontaUIHelper {
     }
 
     /**
-     * Get koodi's name in given locale. If nimi for given
-     * <code>locale</locale> is not found, we try to return it with locale "FI".
+     * Get koodi's name in given locale. If nimi for given      <code>locale</locale> is not found, we try to return it with locale "FI".
      * Uses versioned koodi data if given.
      *
      * @param koodiUriWithPossibleVersionInformation
@@ -490,7 +488,7 @@ public class TarjontaUIHelper {
     public String getKoodiNimi(String koodiUriWithPossibleVersionInformation, Locale locale) {
         // LOG.debug("getKoodiNimi('{}', {}) ...", new Object[]{koodiUriWithPossibleVersionInformation, locale});
 
-        if(koodiUriWithPossibleVersionInformation==null || koodiUriWithPossibleVersionInformation.trim().length()==0){
+        if (koodiUriWithPossibleVersionInformation == null || koodiUriWithPossibleVersionInformation.trim().length() == 0) {
             return "";
         }
         String result = koodiUriWithPossibleVersionInformation;
@@ -532,7 +530,6 @@ public class TarjontaUIHelper {
         }
 
         // LOG.debug("getKoodiNimi('{}', {}) --> {}", new Object[]{koodiUriWithPossibleVersionInformation, locale, result});
-
         return result;
     }
 
@@ -709,7 +706,6 @@ public class TarjontaUIHelper {
             teksti = searchTekstiTyyppiByLanguage(monikielinenTeksti.getTeksti(), locale);
         }
 
-
         //fi default fallback
         if ((teksti == null || teksti.getKieliKoodi() == null || teksti.getValue() == null) && !locale.getLanguage().equalsIgnoreCase("fi")) {
             final Locale locale1 = new Locale("fi");
@@ -730,24 +726,23 @@ public class TarjontaUIHelper {
         return teksti;
     }
 
-
-
     public static String getYhteystietoFromHenkiloType(HenkiloFatType henkiloFatType, YhteystiedotTyyppiType yhteystietoTyyppi) {
         String sahkoposti = null;
         if (henkiloFatType.getOrganisaatioHenkilos() != null) {
-        for(YhteystiedotRyhmaType yhteystiedotRyhmaType : henkiloFatType.getOrganisaatioHenkilos().get(0).getYhteystiedotRyhma()) {
-            for (HenkiloYhteystiedotType henkiloYhteystiedotType : yhteystiedotRyhmaType.getHenkiloYhteystiedot()) {
-                if(henkiloYhteystiedotType.getYhteystiedotTyyppi().equals(yhteystietoTyyppi)) {
-                    sahkoposti = henkiloYhteystiedotType.getYhteystiedotArvo();
+            for (YhteystiedotRyhmaType yhteystiedotRyhmaType : henkiloFatType.getOrganisaatioHenkilos().get(0).getYhteystiedotRyhma()) {
+                for (HenkiloYhteystiedotType henkiloYhteystiedotType : yhteystiedotRyhmaType.getHenkiloYhteystiedot()) {
+                    if (henkiloYhteystiedotType.getYhteystiedotTyyppi().equals(yhteystietoTyyppi)) {
+                        sahkoposti = henkiloYhteystiedotType.getYhteystiedotArvo();
+                    }
                 }
             }
-        }
         }
         return sahkoposti;
     }
 
     /**
      * Avaimet mapin avaimet: fi, sv, en
+     *
      * @param locale
      * @param monikielinenTeksti
      * @return mapoista parhaan vaihtoehdon
@@ -757,12 +752,12 @@ public class TarjontaUIHelper {
         LinkedList<String> kielet = new LinkedList<String>(allLanguages);
         kielet.remove(lang);
         kielet.addFirst(lang);
-        for(String kieli:kielet) {
-            if(monikielinenTeksti.containsKey(kieli)) {
+        for (String kieli : kielet) {
+            if (monikielinenTeksti.containsKey(kieli)) {
                 return monikielinenTeksti.get(kieli);
             }
         }
-        
+
         //happens when map is empty?
         return null;
     }
@@ -777,7 +772,7 @@ public class TarjontaUIHelper {
         }
 
     }
-    
+
     /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
      *     
@@ -1011,8 +1006,8 @@ public class TarjontaUIHelper {
         KoodistoRelationTraversal koodistoRelation = koodistoRelations[0];
 
         // Get the relations
-        Collection<KoodiType> nextStepResult =
-                getKoodistoRelations(koodiUri, koodistoRelation.getKoodistonNimi(), koodistoRelation.getAlakoodi(), koodistoRelation.getSuhteenTyyppi());
+        Collection<KoodiType> nextStepResult
+                = getKoodistoRelations(koodiUri, koodistoRelation.getKoodistonNimi(), koodistoRelation.getAlakoodi(), koodistoRelation.getSuhteenTyyppi());
 
         if (koodistoRelations.length == 1) {
             // Final step! Return the result
@@ -1039,7 +1034,6 @@ public class TarjontaUIHelper {
 
     private KoodiUriAndVersioType getLatestKoodiNimiAndVersion(String koodiUri) {
 
-
         String justUri = getKoodiURI(koodiUri);
         KoodiUriAndVersioType result = new KoodiUriAndVersioType();
         List<KoodiType> koodis = this.getKoodis(justUri);
@@ -1048,7 +1042,6 @@ public class TarjontaUIHelper {
 
             result.setVersio(koodis.get(koodis.size() - 1).getVersio());
         }
-
 
         return result;
     }
@@ -1100,26 +1093,26 @@ public class TarjontaUIHelper {
         // 2. "nimi"
         // 3. koulutuskoodi + pohjakoulutuskoodi
         final Locale locale = I18N.getLocale();
-        final String pkVaatimus = curKoulutus.getPohjakoulutusvaatimus()!=null?", " + TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getPohjakoulutusvaatimus().getNimi()):"";
-        
-        if(curKoulutus.getKoulutustyyppi()==KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS) {
-            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getNimi()) + pkVaatimus;
+        final String pkVaatimus = curKoulutus.getPohjakoulutusvaatimus() != null ? ", " + TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getPohjakoulutusvaatimus().getNimi()) : "";
+
+        if (curKoulutus.getKoulutustyyppi() == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS) {
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getNimi()) + pkVaatimus;
         } else if (curKoulutus.getKoulutusohjelmakoodi() != null) {
-            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getKoulutusohjelmakoodi().getNimi()) + pkVaatimus;
-        } else if(curKoulutus.getNimi()!=null) {
-            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getNimi());
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutusohjelmakoodi().getNimi()) + pkVaatimus;
+        } else if (curKoulutus.getNimi() != null) {
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getNimi());
         } else if (curKoulutus.getKoulutuskoodi() != null) {
-            return TarjontaUIHelper.getClosestMonikielinenNimi(locale,  curKoulutus.getKoulutuskoodi().getNimi()) + pkVaatimus;
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutuskoodi().getNimi()) + pkVaatimus;
         }
         return "";
     }
 
     public String getKoulutuslaji(KoulutusPerustieto tulos) {
-        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  tulos.getKoulutuslaji().getNimi());
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), tulos.getKoulutuslaji().getNimi());
     }
 
     public String getAjankohtaStr(KoulutusPerustieto curKoulutus) {
-        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(),  curKoulutus.getKoulutuksenAlkamiskausi().getNimi()) + " " + curKoulutus.getKoulutuksenAlkamisVuosi();
+        return TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), curKoulutus.getKoulutuksenAlkamiskausi().getNimi()) + " " + curKoulutus.getKoulutuksenAlkamisVuosi();
     }
 
     /**
@@ -1236,8 +1229,27 @@ public class TarjontaUIHelper {
         return false;
     }
 
-    
     public boolean isOrganisationKorkeakoulu(List<String> olTyyppiUris) {
         return hasRelationKoulutustyyppiToOppilaitostyyppi(Koulutustyyppi.KORKEAKOULU.getKoulutustyyppiUri(), olTyyppiUris);
+    }
+
+    /**
+     * TODO : FILTER PASSIVE & EXPIRED KOODI URIs
+     *
+     * @param koodis
+     * @return
+     */
+    public static KoodiType searchLatestKoodi(List<KoodiType> koodis) {
+        KoodiType latest = null;
+
+        if (koodis != null && !koodis.isEmpty()) {
+            for (KoodiType x : koodis) {
+                if (latest == null || x.getVersio() > latest.getVersio()) {
+                    latest = x;
+                }
+            }
+        }
+
+        return latest;
     }
 }

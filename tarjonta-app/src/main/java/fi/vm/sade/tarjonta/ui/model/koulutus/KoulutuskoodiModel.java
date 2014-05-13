@@ -15,6 +15,9 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  *
  * @author Jani Wilén
@@ -175,5 +178,25 @@ public class KoulutuskoodiModel extends MonikielinenTekstiModel {
      */
     public void setTutkintonimike(KoodiModel tutkintonimike) {
         this.tutkintonimike = tutkintonimike;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+        KoulutusKoodistoModel other = (KoulutusKoodistoModel) obj;
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(koodistoUri, other.koodistoUri);
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().
+                append(koodistoUri).toHashCode();
     }
 }

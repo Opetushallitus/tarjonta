@@ -2162,7 +2162,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         //Select 'koulutusohjelma' from pre-filtered koodisto data.
         if (model.getKoulutuskoodiModel() != null && model.getKoulutuskoodiModel().getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
-            final String koulutuskoodiUri = model.getKoulutuskoodiModel().getKoodistoUriVersio();
+            final String koulutuskoodiUri = model.getKoulutuskoodiModel().getKoodistoUri();
 
             LOG.debug("Find koulutusohjelma by koulutuskoodi uri : '{}'", koulutuskoodiUri);
             List<KoulutusmoduuliKoosteTyyppi> tyyppis = model.getQuickKomosByKoulutuskoodiUri(koulutuskoodiUri);
@@ -2172,7 +2172,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             model.getKoulutusohjelmat().addAll(listaaKoulutusohjelmat);
 
             //Loading data from the parent tutkinto komo (startDate and koulutusohjelmanValinta).
-            loadKoulutusohjelmaLisatiedotData(model.getKoulutuskoodiModel().getKoodistoUriVersio(), model.getPohjakoulutusvaatimus());
+            loadKoulutusohjelmaLisatiedotData(model.getKoulutuskoodiModel().getKoodistoUri(), model.getPohjakoulutusvaatimus());
         }
     }
 
@@ -2256,13 +2256,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         return null;
     }
 
-    private String getKoulutusOhjelmaUriWithKoulutusKoodiVersion(int koulutusKoodiUriVersio, String koulutusOhjelmaUri) {
-
-        final String delim = "#";
-
-        return koulutusOhjelmaUri + delim + new Integer(koulutusKoodiUriVersio).toString();
-    }
-
     public void loadSelectedKomoData() {
         KoulutusToisenAsteenPerustiedotViewModel model = getModel().getKoulutusPerustiedotModel();
         final KoulutuskoodiModel koulutuskoodi = model.getKoulutuskoodiModel();
@@ -2270,11 +2263,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         if (koulutuskoodi != null && koulutuskoodi.getKoodi() != null && ohjelma != null && ohjelma.getKoodi() != null) {
             model.getKoulutusohjelmat().clear();
-            //TUOMAS KATVA
-            String koulutusOhjelmaUri = getKoulutusOhjelmaUriWithKoulutusKoodiVersion(koulutuskoodi.getKoodistoVersio(),ohjelma.getKoodistoUri());
             KoulutusmoduuliKoosteTyyppi tyyppi = model.getQuickKomo(
-                    koulutuskoodi.getKoodistoUriVersio(),
-                    koulutusOhjelmaUri);
+                    koulutuskoodi.getKoodistoUri(),
+                    ohjelma.getKoodistoUri());
 
             if (tyyppi == null) {
                 LOG.error("No tutkinto & koulutusohjelma, result was null. Search by '{}'" + " and '{}'", koulutuskoodi.getKoodistoUriVersio(), ohjelma.getKoodistoUriVersio());

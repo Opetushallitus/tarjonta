@@ -41,6 +41,7 @@ import fi.vm.sade.tarjonta.service.types.LueKoulutusVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
@@ -426,7 +427,11 @@ public class Koulutus2asteConverter extends KoulutusConveter {
         Map<Map.Entry<String, String>, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry<String, String>, KoulutusmoduuliKoosteTyyppi>();
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {
-            Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), komo.getKoulutusohjelmakoodiUri());
+
+            Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>( 
+                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()), 
+                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutusohjelmakoodiUri())
+            );
             hashMap.put(e, komo);
         }
 

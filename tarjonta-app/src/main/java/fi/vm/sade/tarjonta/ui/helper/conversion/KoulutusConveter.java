@@ -319,24 +319,20 @@ public class KoulutusConveter {
 
     public static HaeKoulutusmoduulitKyselyTyyppi mapToHaeKoulutusmoduulitKyselyTyyppi(KoulutusasteTyyppi aste, KoulutuskoodiModel koulutuskoodi, KoulutusKoodistoModel model) {
         HaeKoulutusmoduulitKyselyTyyppi kysely = new HaeKoulutusmoduulitKyselyTyyppi();
-        kysely.setKoulutuskoodiUri(koulutuskoodi.getKoodistoUriVersio());
+        kysely.setKoulutuskoodiUri(koulutuskoodi.getKoodistoUri());
+
+        String childTutkintoUri = null;
+
+        if (model != null && model.getKoodistoUri() != null) {
+            childTutkintoUri = model.getKoodistoUri();
+        }
 
         switch (aste) {
             case AMMATILLINEN_PERUSKOULUTUS:
-                if (model != null && model.getKoodistoUri() != null) {
-                    kysely.setKoulutusohjelmakoodiUri(model.getKoodistoUri());
-                    LOG.debug("Koulutuskoodi URI '{}' Koulutusohjelma URI : '{}'",
-                            kysely.getKoulutuskoodiUri(),
-                            kysely.getKoulutusohjelmakoodiUri());
-                }
+                kysely.setKoulutusohjelmakoodiUri(childTutkintoUri);
                 break;
             case LUKIOKOULUTUS:
-                if (model != null && model.getKoodistoUri() != null) {
-                    kysely.setLukiolinjakoodiUri(model.getKoodistoUri());
-                    LOG.debug("Koulutuskoodi URI '{}' Lukiolinja URI : '{}'",
-                            kysely.getKoulutuskoodiUri(),
-                            kysely.getLukiolinjakoodiUri());
-                }
+                kysely.setLukiolinjakoodiUri(childTutkintoUri);
                 break;
         }
 
@@ -469,21 +465,21 @@ public class KoulutusConveter {
     }
 
     public static Map<String, List<KoulutusmoduuliKoosteTyyppi>> komoCacheMapByKoulutuskoodi(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
-        Map<String, List<KoulutusmoduuliKoosteTyyppi>> hashMap = new HashMap<String, List<KoulutusmoduuliKoosteTyyppi>>();
+        Map<String, List<KoulutusmoduuliKoosteTyyppi>> map = new HashMap<String, List<KoulutusmoduuliKoosteTyyppi>>();
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {
-            final String uri = komo.getKoulutuskoodiUri();
+            //remove version hashtag from koulutus uris
+            final String uri = TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri());
 
-            if (hashMap.containsKey(uri)) {
-                hashMap.get(uri).add(komo);
+            if (map.containsKey(uri)) {
+                map.get(uri).add(komo);
             } else {
                 List<KoulutusmoduuliKoosteTyyppi> l = new ArrayList<KoulutusmoduuliKoosteTyyppi>();
                 l.add(komo);
-                hashMap.put(uri, l);
+                map.put(uri, l);
             }
-
         }
-        return hashMap;
+        return map;
 
     }
 
