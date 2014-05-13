@@ -60,6 +60,7 @@ import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.junit.Ignore;
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -69,6 +70,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 @Transactional()
+@Ignore
 public class HakukohdeResourceImplV1Test extends Assert {
 
     private static final String TARJOAJA_NIMI = "Organisaatio ABC";
