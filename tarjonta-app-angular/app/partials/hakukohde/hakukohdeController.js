@@ -697,11 +697,26 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                 });
 
-                var filteredHakus = filterHakuFunction(hakuDatas);
+                var selectedHaku;
 
+                //Get selected haku if one is defined that must be shown even if the filtering does not show it
+                if ($scope.model.hakukohde.hakuOid) {
 
+                    angular.forEach(hakuDatas,function(haku){
 
+                        if (haku.oid === $scope.model.hakukohde.hakuOid) {
+                            selectedHaku = haku;
+                        }
 
+                    });
+
+                }
+
+                var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
+
+                if (selectedHaku) {
+                    filteredHakus.push(selectedHaku);
+                }
 
                 angular.forEach(filteredHakus,function(haku){
                     $scope.model.hakus.push(haku);
@@ -711,6 +726,20 @@ app.controller('HakukohdeRoutingController', ['$scope',
                     $scope.model.hakuChanged();
                 }
             });
+        };
+
+        var filterHakuWithParams = function(hakus) {
+
+            var paramFilteredHakus = [];
+            angular.forEach(hakus,function(haku){
+
+                if (TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
+                    paramFilteredHakus.push(haku);
+                }
+            });
+
+            return paramFilteredHakus;
+
         };
 
         $scope.filterHakusWithOrgs = function(hakus) {
