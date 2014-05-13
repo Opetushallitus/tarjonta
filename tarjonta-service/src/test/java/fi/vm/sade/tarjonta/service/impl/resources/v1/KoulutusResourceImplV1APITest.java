@@ -259,7 +259,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         
         assertNotNull("missing komoto oid", oid);
         
-        ResultV1RDTO v1 = koulutusResource.findByOid(oid, false, null);
+        ResultV1RDTO v1 = koulutusResource.findByOid(oid, false, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(1, result.getYhteyshenkilos().size());
 
@@ -268,7 +268,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         ResultV1RDTO<KoulutusV1RDTO> postKoulutus = koulutusResource.postKoulutus(result);
         Assert.assertEquals("koulutus update failed", false, postKoulutus.hasErrors());
         
-        v1 = koulutusResource.findByOid(oid, false, null);
+        v1 = koulutusResource.findByOid(oid, false, false, null);
         result = (KoulutusKorkeakouluV1RDTO) v1.getResult();
         Assert.assertEquals(0, result.getYhteyshenkilos().size());
         

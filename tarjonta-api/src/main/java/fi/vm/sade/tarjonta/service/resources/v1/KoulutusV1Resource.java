@@ -68,7 +68,7 @@ public interface KoulutusV1Resource {
             + " Muut parametrit : "
             + "1. meta=false poistaa koodisto-palvelun metatietoa haettavaan koulutuksen dataan. "
             + "2. lang=FI näyttää yksittäisen metadatan annetun kielikoodin mukaan.")
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean showMeta, @QueryParam("img") Boolean showImages, @QueryParam("lang") String userLang);
 
     @DELETE
     @Path("/{oid}")
@@ -120,8 +120,8 @@ public interface KoulutusV1Resource {
             @PathParam("koulutuskoodi") String koulutuskoodi,
             @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
             @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
-            @QueryParam("meta") Boolean meta,
-            @QueryParam("lang") String lang);
+            @QueryParam("meta") Boolean showMeta,
+            @QueryParam("lang") String userLang);
 
     @GET
     @Path("/{oid}/tekstis/komoto")
@@ -176,7 +176,7 @@ public interface KoulutusV1Resource {
             notes = "Operaatio hakee kuvatiedoton koulutusmoduulin totutuksesta annetulla koodi uri:lla",
             response = KuvaV1RDTO.class)
     public ResultV1RDTO<KuvaV1RDTO> getKuva(@PathParam("oid") String oid, @PathParam("kieliUri") String kieliUri);
- 
+
     @GET
     @Path("/{oid}/kuva")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -185,7 +185,7 @@ public interface KoulutusV1Resource {
             notes = "Operaatio hakee kaikki kuvatiedostot koulutusmoduulin toteutuksesta",
             response = List.class)
     public ResultV1RDTO<List<KuvaV1RDTO>> getKuvas(@PathParam("oid") String oid);
-    
+
     @POST
     @Path("/{oid}/kuva")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

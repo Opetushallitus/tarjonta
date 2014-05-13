@@ -111,7 +111,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
 
-        final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, "FI");
+        final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusLukioV1RDTO result1 = (KoulutusLukioV1RDTO) result.getResult();
         assertLoadData(result1);
 

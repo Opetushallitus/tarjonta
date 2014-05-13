@@ -221,7 +221,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         meta = checkArgsMeta(meta, false);
 
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setLikeKoulutusKoodiUri(koulutuskoodi);
+        criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutuskoodi);
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
         ArrayList<KomoV1RDTO> dtos = Lists.<KomoV1RDTO>newArrayList();
         for (Koulutusmoduuli komo : komos) {
@@ -251,7 +251,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         }
 
         if (koulutuskoodiUri != null) {
-            criteria.setLikeKoulutusKoodiUri(koulutuskoodiUri);
+            criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutuskoodiUri);
         }
 
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
