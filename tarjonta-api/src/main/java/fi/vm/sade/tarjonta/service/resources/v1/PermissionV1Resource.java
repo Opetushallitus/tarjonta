@@ -14,11 +14,15 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.UserV1RDTO;
+import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -28,6 +32,7 @@ import javax.ws.rs.core.MediaType;
  * @author jani
  */
 @Path("/v1/permission")
+@Api(value = "/v1/permission", description = "Permissioiden tarkistaminen ja sessioiden luominen.")
 public interface PermissionV1Resource {
 
     @GET
@@ -43,5 +48,48 @@ public interface PermissionV1Resource {
     @POST
     @Path("/recordUiStacktrace")
     public void recordUiStacktrace(String stacktrace);
+
+    /**
+     * Palauta käyttöoikeudet mapissa.
+     *
+     * Esim:
+     * <pre>
+     * /permission/permissions/haku/1.2.3.4.5.6.1
+     * /permission/permissions/hakukohde/1.2.3.4.5.6.2
+     * /permission/permissions/koulutus/1.2.3.4.5.6.3
+     * /permission/permissions/organisation/1.2.3.4.5.6.4
+     * 
+     * {
+     *   // Create
+     *   createHaku: true
+     *   createHakukohde: true
+     *   createKoulutus: true
+     * 
+     *   // Modify
+     *   delete: true,
+     *   modify: true,
+     *   modifyLimited: false,
+     *   copy : true,
+     * 
+     *   // Sate
+     *   to_POISTETTU: true,
+     *   to_LUONNOS: true,
+     *   to_VALMIS : true,
+     *   to_JULKAISTU: false,
+     *   to_PERUTTU : true
+     *   to_KOPIOITU : true
+     * }
+     * 
+     * </pre>
+     *  
+     * 
+     * @param type "haku", "hakukohde", "koulutus", ...?
+     * @param key 
+     */
+    @GET
+    @Path("/permissions/{type}/{key}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Permissioiden kysyminen kohteelta", notes = "Permissioiden kysyminen kohteelta.")
+    public Map<String, Boolean> getPermissions(@PathParam("type") String type, @PathParam("key") String key);
     
 }
