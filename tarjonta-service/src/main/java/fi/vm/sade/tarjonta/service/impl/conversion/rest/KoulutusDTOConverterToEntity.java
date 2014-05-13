@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
+import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
@@ -30,14 +31,18 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,6 +123,7 @@ public class KoulutusDTOConverterToEntity {
          * KOMOTO custom data conversion
          */
         korkeakouluKomotoDataUpdate(komoto, dto, userOid);
+        saveHtmls(dto, komoto, userOid);
 
         return komoto;
     }
@@ -320,5 +326,33 @@ public class KoulutusDTOConverterToEntity {
         komoto.setYhteyshenkilos(yhteyshenkilos);
         komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
         komoto.setLastUpdatedByOid(userOid);
+    }
+
+    private void saveHtmls(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {
+        if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
+            for (Map.Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
+                saveHtml5Image(komoto, e.getValue(), userOid);
+            }
+        }
+    }
+
+    public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String userOid) {
+        /*
+         * Update or insert uploaded binary data
+         */
+        BinaryData bin = null;
+        if (komoto.isKuva(kuva.getKieliUri())) {
+            bin = komoto.getKuvat().get(kuva.getKieliUri());
+        } else {
+            bin = new BinaryData();
+        }
+
+        final byte[] decoded = Base64.decodeBase64(KoulutusValidator.getValidBase64Image(kuva.getBase64data()));
+        bin.setData(decoded);
+        bin.setFilename(kuva.getFilename());
+        bin.setMimeType(kuva.getMimeType());
+        komoto.setKuvaByUri(kuva.getKieliUri(), bin);
+        komoto.setLastUpdatedByOid(userOid);
+        this.koulutusmoduuliToteutusDAO.update(komoto);
     }
 }

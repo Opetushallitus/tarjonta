@@ -697,9 +697,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                 });
 
-                var filteredHakus = filterHakuFunction(hakuDatas);
-
-
+                var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
 
 
 
@@ -711,6 +709,20 @@ app.controller('HakukohdeRoutingController', ['$scope',
                     $scope.model.hakuChanged();
                 }
             });
+        };
+
+        var filterHakuWithParams = function(hakus) {
+
+            var paramFilteredHakus = [];
+            angular.forEach(hakus,function(haku){
+
+                if (TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
+                    paramFilteredHakus.push(haku);
+                }
+            });
+
+            return paramFilteredHakus;
+
         };
 
         $scope.filterHakusWithOrgs = function(hakus) {

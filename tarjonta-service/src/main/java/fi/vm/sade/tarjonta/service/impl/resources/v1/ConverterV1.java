@@ -1097,6 +1097,7 @@ public class ConverterV1 {
         ret.setKausi(ht.getKoulutuksenAlkamiskausi() == null ? null : ht
                 .getKoulutuksenAlkamiskausi().getNimi());
         ret.setVuosi(ht.getKoulutuksenAlkamisvuosi());
+        ret.setHakuOid(ht.getHakuOid());
         ret.setHakutapa(ht.getHakutapaNimi());
         ret.setAloituspaikat(Integer.valueOf(ht.getAloituspaikat()));
         ret.setKoulutuslaji(ht.getKoulutuslaji() == null ? null : ht

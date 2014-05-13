@@ -69,6 +69,7 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.HakukohdeExistsException;
@@ -102,6 +103,7 @@ import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
+import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
@@ -146,6 +148,8 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     private OrganisaatioSearchService organisaatioSearchService;
     @Autowired
     private OidService oidService;
+    @Autowired
+    private ParameterServices parameterServices;
 
     private final String ERILLISHAKU_URI = "hakutapa_02";
     private final String JATKUVAHAKU_URI = "hakutapa_03";
@@ -456,7 +460,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
-        
+        if(parameterServices.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
+            //limited editing -> no changes to koulutuslist
+            throw new NotAuthorizedException("no.permission");
+        }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(parameters.getHakukohdeOid());
 
         final int originalHakukohdeKoulutusCount = hakukohde.getKoulutusmoduuliToteutuses().size();

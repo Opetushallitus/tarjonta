@@ -58,19 +58,44 @@ app.directive('koodistocombo',function(Koodisto,$log){
         },
         controller :  function($scope,Koodisto) {
 
-        	
+            var koodiSeparator = "#";
         	$scope.baseKoodis = [];
 
-            var addVersionToKoodis = function(koodis) {
+            var checkForKoodiUriVersion = function() {
 
+
+                if ($scope.koodiuri) {
+                    if ($scope.koodiuri.indexOf(koodiSeparator) > -1) {
+                        return true;
+                    }  else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+
+
+            };
+
+            var addKoodiToKoodiUri = function (koodiversio) {
+
+                $scope.koodiuri = $scope.koodiuri + koodiSeparator + koodiversio;
+            };
+
+            var addVersionToKoodis = function(koodis) {
+                var koodienVersio = 0;
                 if ($scope.version !== undefined && $scope.version) {
                     angular.forEach(koodis,function(koodi){
                         if (koodi.koodiUri.indexOf("#") < 0) {
+                            koodienVersio = koodi.koodiVersio;
                             koodi.koodiUri = koodi.koodiUri + "#"+koodi.koodiVersio;
                         } else {
                             $log.warn("addVersionToKoodis - tried to add version to already versioned URI!", koodi);
                         }
                     });
+                    if(!checkForKoodiUriVersion()) {
+                        addKoodiToKoodiUri(koodienVersio);
+                    }
                 }
 
             }
@@ -112,8 +137,12 @@ app.directive('koodistocombo',function(Koodisto,$log){
 
                        koodisPromise.then(function(koodisParam){
                            if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri) {
+                               console.log('SCOPEKOODIURI : ', $scope.koodiuri);
+                               console.log('VERSION : ', $scope.version);
                                if ($scope.version !== undefined && $scope.version) {
+
                                    addVersionToKoodis(koodisParam);
+
                                }
                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam);
 

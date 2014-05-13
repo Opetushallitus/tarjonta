@@ -50,6 +50,7 @@ import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -136,20 +137,28 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
         }
 
-        if (criteria.getLikeKoulutusKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like("%" + criteria.getLikeKoulutusKoodiUri() + "%"));
-        }
-
         if (criteria.getKoulutusohjelmaKoodi() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
         }
 
-        if (criteria.getKoulutustyyppi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiEnum.eq(criteria.getKoulutustyyppi()));
-        }
-
         if (criteria.getLukiolinjaKoodiUri() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
+        }
+
+        if (criteria.getLikeKoulutusohjelmaKoodiUriWithoutVersion() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.like(criteria.getLikeKoulutusohjelmaKoodiUriWithoutVersion() + "%"));
+        }
+
+        if (criteria.getLikeLukiolinjaKoodiUriUriWithoutVersion() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.like(criteria.getLikeLukiolinjaKoodiUriUriWithoutVersion() + "%"));
+        }
+
+        if (criteria.getLikeKoulutusKoodiUriWithoutVersion() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like("%" + criteria.getLikeKoulutusKoodiUriWithoutVersion() + "%"));
+        }
+
+        if (criteria.getKoulutustyyppi() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiEnum.eq(criteria.getKoulutustyyppi()));
         }
 
         if (criteria.getOppilaitostyyppis() != null && !criteria.getOppilaitostyyppis().isEmpty()) {
@@ -193,13 +202,13 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         criteria.setKoulutusohjelmaKoodi(koulutusOhjelmaUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusKoodi()) + "%"));
         } else {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
         }
 
         if (criteria.getKoulutusohjelmaKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.eq(criteria.getKoulutusohjelmaKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusohjelmaKoodi()) + "%"));
         } else {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusohjelmaUri.isEmpty().or(moduuli.koulutusohjelmaUri.isNull()));
         }
@@ -254,16 +263,18 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         criteria.setLukiolinjaKoodiUri(lukiolinjaUriUri);
 
         if (criteria.getKoulutusKoodi() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.eq(criteria.getKoulutusKoodi()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getKoulutusKoodi()) + "%"));
         } else {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.isNull().or(moduuli.koulutusUri.isEmpty()));
         }
 
         if (criteria.getLukiolinjaKoodiUri() != null) {
-            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.eq(criteria.getLukiolinjaKoodiUri()));
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(criteria.getLukiolinjaKoodiUri()) + "%"));
         } else {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
         }
+
+        whereExpr.and(moduuli.koulutustyyppiEnum.eq(KoulutustyyppiEnum.LUKIOKOULUTUS));
 
         return from(moduuli).
                 where(whereExpr).

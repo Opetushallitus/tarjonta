@@ -331,7 +331,7 @@ public class KoulutusValidator {
         validateKoodi(result, dto.getSuunniteltuKestoTyyppi(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING, KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_INVALID);
     }
 
-    public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO<KuvaV1RDTO> result) {
+    public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO result) {
         validateKieliUri(kuva.getKieliUri(), "kieliUri", result);
         String raw = kuva.getBase64data();
 

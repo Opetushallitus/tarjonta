@@ -1276,6 +1276,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
     }
 
     private void assertNoPermission(RuntimeException rte) {
-        assertTrue(rte.getClass().getName(), rte.getMessage() != null && rte.getMessage().equals("no.permission"));
+        assertTrue("Exception class mismatch, was excepting " + rte.getClass().getName(), NotAuthorizedException.class==rte.getClass());
+        assertTrue("Exception message mismatch, was excepting 'no.permission', got '" + rte.getMessage() + "'", "no.permission".equals(rte.getMessage()));
     }
 }
