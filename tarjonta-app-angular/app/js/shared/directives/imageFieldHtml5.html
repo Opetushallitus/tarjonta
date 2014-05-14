@@ -1,0 +1,20 @@
+<div>
+    <div ng-show="loading || !isImage()" class="frame"></div>
+    <img class="content" ng-show="!loading && isImage()" ng-src="{{imgSrc()}}" alt="{{model.filename}}" title="{{model.filename}}"/>
+
+    <hr/>
+    
+    <div class="float-right">
+	    <button class="btn" ng-disabled="!isImage() || disabled()" ng-click="deleteImage()">
+	        <span tt="tarjonta.toiminnot.poista">Poista</span>
+	        <span class="icon-remove"></span>
+	    </button>
+	    
+	    <div class="btn btn-primary" ng-disabled="disabled()">
+	        <span tt="tarjonta.toiminnot.lisää">Lisää</span>
+	        <span class="icon-upload"></span>
+	        <input type="file" ng-disabled="disabled()" accept="image/*" onchange="angular.element(this).scope().onUpload()"/>
+	    </div>
+    </div>
+
+</div>

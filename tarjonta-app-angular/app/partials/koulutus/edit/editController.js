@@ -492,6 +492,15 @@ app.controller('BaseEditController', [
                 }
             }
         };
+        
+        $scope.getRakenneKuvaModel = function(kieliUri) {
+        	var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
+        	if (!ret) {
+        		ret = {kieliUri: kieliUri};
+        		$scope.model.opintojenRakenneKuvas[kieliUri] = ret;
+        	}
+        	return ret;
+        }
 
         $scope.onLisatietoLangSelection = function() {
             for (var ki in $scope.model.kuvausKomo) {

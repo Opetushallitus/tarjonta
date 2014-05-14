@@ -211,7 +211,7 @@
     <tr>
         <th tt="koulutus.review.lisatiedot.kuva">Kuva</th>
         <td colspan="2">
-            <image-field editable="false" oid="{{model.koulutus.oid}}" uri="lang.koodi_uri"></image-field>
+            <img ng-show="getRakenneKuvaSrc(lang.koodi_uri)" ng-src="{{getRakenneKuvaSrc(lang.koodi_uri)}}" style="width:300px; max-width:300px; height:auto"/>
         </td>
     </tr>
 

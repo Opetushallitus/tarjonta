@@ -296,13 +296,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.getKoulutus = function(arg, func) {
         $log.debug("getKoulutus()");
         //param meta=false filter all meta fields
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid?img=true", {oid: '@oid'});
         return koulutus.get(arg, func);
     };
 
     //hakee koulutuksen, palauttaa promisen
     dataFactory.getKoulutusPromise = function(oid) {
-        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "?img=true").get().$promise;
     };
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
