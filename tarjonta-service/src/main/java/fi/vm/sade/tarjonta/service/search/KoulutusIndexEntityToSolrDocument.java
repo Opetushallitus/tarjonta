@@ -125,8 +125,7 @@ public class KoulutusIndexEntityToSolrDocument implements
         }
 
         if (koulutus.getKoulutustyyppiEnum() != null) {
-            final KoulutusasteTyyppi tyyppi = koulutus.getKoulutustyyppiEnum().getKoulutusasteTyyppi();
-            switch (tyyppi) {
+            switch (koulutus.getKoulutustyyppiEnum()) {
                 case LUKIOKOULUTUS:
                     //koulutusohjelma ilman pohjakoulutusta
 
@@ -135,14 +134,14 @@ public class KoulutusIndexEntityToSolrDocument implements
                 case AMMATTIKORKEAKOULUTUS:
                 case YLIOPISTOKOULUTUS:
                     //vapaavalintainen nimi
-                    
+
                     //primary name location : komoto OVT-7531
                     MonikielinenTeksti nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
                     if (nimi == null) {
                         //secondary name location : komo
                         nimi = indexerDao.getKomoNimi(koulutus.getKoulutusId());
                     }
-                    
+
                     if (nimi == null) {
                         nimi = new MonikielinenTeksti();
                     }
@@ -158,11 +157,9 @@ public class KoulutusIndexEntityToSolrDocument implements
                     }
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-
                     nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
 
                     if (nimi == null) {
-
                         nimi = new MonikielinenTeksti();
                     }
 
@@ -198,7 +195,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         add(komotoDoc, TILA, koulutus.getTila());
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
-        
+
         //TODO: koulutusasteTyyppi, in future use KoulutustyyppiEnum
         add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutustyyppiEnum().getKoulutusasteTyyppi().value());
         IndexDataUtils.addKoodiLyhytnimiTiedot(komotoDoc, koulutus.getPohjakoulutusvaatimus(), koodiService, POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN);

@@ -758,6 +758,11 @@ public class TarjontaUIHelper {
             }
         }
 
+        if (monikielinenTeksti != null && !monikielinenTeksti.isEmpty()) {
+            //name fallback, name do not match any language code
+            return monikielinenTeksti.entrySet().iterator().next().getValue();
+        }
+        
         //happens when map is empty?
         return null;
     }
