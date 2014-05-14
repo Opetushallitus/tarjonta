@@ -78,6 +78,7 @@ app.controller('HakukohdeAikuLukioEditController',
 
             console.log('AIKU HAKUKOHDE : ' , $scope.model.hakukohde);
             if (!$scope.model.hakukohde.hakukohteenNimiUri || $scope.model.hakukohde.hakukohteenNimiUri.trim().length <1 ) {
+
                 var err = {};
                 err.errorMessageKey = 'hakukohde.edit.nimi.missing';
                 $scope.model.nimiValidationFailed = true;
@@ -133,7 +134,7 @@ app.controller('HakukohdeAikuLukioEditController',
             $scope.haeTarjoajaOppilaitosTyypit();
             $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
             $scope.checkIsCopy();
-            console.log('AIKU : ', $scope.model.hakukohde);
+
             $scope.updateTilaModel($scope.model.hakukohde);
 
             if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
@@ -151,6 +152,11 @@ app.controller('HakukohdeAikuLukioEditController',
 
         init();
 
+        $scope.model.canSaveAsLuonnos = function() {
+
+            return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
+
+        };
 
         $scope.saveAikuLukioAsLuonnos = function() {
 
