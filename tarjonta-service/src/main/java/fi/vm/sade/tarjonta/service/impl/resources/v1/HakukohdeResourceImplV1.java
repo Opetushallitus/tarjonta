@@ -669,8 +669,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         	//LOG.info("TRY UPDATE HAKUKOHDE {}", hakukohdeOid);
             String hakuOid = hakukohdeRDTO.getHakuOid();
 
-            List<HakukohdeValidationMessages> validationMessagesList = HakukohdeValidator
-                    .validateHakukohde(hakukohdeRDTO);
+            List<HakukohdeValidationMessages> validationMessagesList = validateHakukohde(hakukohdeRDTO);
 
             Set<KoulutusmoduuliToteutus> komotot = findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids());
             

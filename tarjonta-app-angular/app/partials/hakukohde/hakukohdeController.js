@@ -697,9 +697,26 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                 });
 
+                var selectedHaku;
+
+                //Get selected haku if one is defined that must be shown even if the filtering does not show it
+                if ($scope.model.hakukohde.hakuOid) {
+
+                    angular.forEach(hakuDatas,function(haku){
+
+                        if (haku.oid === $scope.model.hakukohde.hakuOid) {
+                            selectedHaku = haku;
+                        }
+
+                    });
+
+                }
+
                 var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
 
-
+                if (selectedHaku) {
+                    filteredHakus.push(selectedHaku);
+                }
 
                 angular.forEach(filteredHakus,function(haku){
                     $scope.model.hakus.push(haku);
@@ -1173,6 +1190,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
                         $log.debug('SAVE VALMIS MODEL : ', $scope.model.hakukohde);
                         var returnResource =   $scope.model.hakukohde.$save();
                         returnResource.then(function(hakukohde){
+
                             $log.debug('SERVER RESPONSE WHEN SAVING AS VALMIS: ', hakukohde);
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -1205,6 +1223,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                         var returnResource = $scope.model.hakukohde.$update();
                         returnResource.then(function(hakukohde){
+                            console.log('HAKUKOHDE VALMIS UPDATE : ', hakukohde);
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
 
