@@ -201,8 +201,13 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
     }
 
     private void updateStateTransferInformation(Map<String, Boolean> result, TarjontaTila fromTila) {
-        if (result == null || fromTila == null) {
+        if (result == null) {
             return;
+        }
+
+        // Assume state "LUONNOS" - this is good for new stuff
+        if (fromTila == null) {
+            fromTila = TarjontaTila.LUONNOS;
         }
         
         for (TarjontaTila targetTila : TarjontaTila.values()) {
