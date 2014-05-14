@@ -152,6 +152,11 @@ app.controller('HakukohdeAikuLukioEditController',
 
         init();
 
+        $scope.model.canSaveAsLuonnos = function() {
+
+            return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
+
+        };
 
         $scope.saveAikuLukioAsLuonnos = function() {
 
