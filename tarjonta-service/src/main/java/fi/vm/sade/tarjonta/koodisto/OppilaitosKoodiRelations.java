@@ -190,7 +190,7 @@ public class OppilaitosKoodiRelations {
         final Collection<KoodiType> koulutusastees = searchKoulutusasteFromKoodisto(oppilaitosTyyppiUri);
         
         for (KoodiType koulutusasteKoodi : koulutusastees) {
-            if(koulutusasteKoodi.getKoodiUri().equals(koulutusaste)) {
+            if(KoodistoURI.compareKoodi(koulutusasteKoodi.getKoodiUri(), koulutusaste)) {
                 return true;
             }
         }
