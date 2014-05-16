@@ -106,7 +106,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
     }
 
     private String convertToUri(final KoodiV1RDTO dto, final FieldNames msg, boolean allowNull) {
-        if (allowNull && dto.getUri() == null) {
+        if (allowNull && (dto == null || dto.getUri() == null)) {
             return null;
         }
 
@@ -179,9 +179,11 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
         komo.setKoulutusalaUri(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA, ALLOW_NULL_KOODI_URI));
         komo.setOpintoalaUri(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA, ALLOW_NULL_KOODI_URI));
         komo.setEqfUri(convertToUri(dto.getEqf(), FieldNames.EQF, ALLOW_NULL_KOODI_URI));
+        komo.setNqfUri(convertToUri(dto.getNqf(), FieldNames.NQF, ALLOW_NULL_KOODI_URI));
+        komo.setKoulutustyyppiUri(convertToUri(dto.getKoulutustyyppi(), FieldNames.KOULUTUSTYYPPI, ALLOW_NULL_KOODI_URI));
         komo.setKoulutusohjelmaUri(convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA, ALLOW_NULL_KOODI_URI));
         komo.setTila(dto.getTila());
-        komo.setOmistajaOrganisaatioOid(rootOrgOid); //is this correct?
+        komo.setOmistajaOrganisaatioOid(rootOrgOid); 
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
@@ -212,7 +214,9 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
         komo.setKoulutusalaUri(convertToUri(dto.getKoulutusala(), FieldNames.KOULUTUSALA));
         komo.setOpintoalaUri(convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
         komo.setEqfUri(convertToUri(dto.getEqf(), FieldNames.EQF));
-        komo.setTila(TarjontaTila.JULKAISTU); //is this correct state for a new komo?
+        komo.setNqfUri(convertToUri(dto.getNqf(), FieldNames.NQF, ALLOW_NULL_KOODI_URI));
+        komo.setKoulutustyyppiUri(convertToUri(dto.getKoulutustyyppi(), FieldNames.KOULUTUSTYYPPI, ALLOW_NULL_KOODI_URI));
+        komo.setTila(komo.getTila());
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));

@@ -281,6 +281,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                 var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data){
                     if (data.status === "OK") {
+
+                        $scope.model.valintaperustekuvaus = data.result;
                         $scope.model.showSuccess = true;
                         $scope.model.valintaperustekuvaus.modified  = data.result.modified;
                     } else {
