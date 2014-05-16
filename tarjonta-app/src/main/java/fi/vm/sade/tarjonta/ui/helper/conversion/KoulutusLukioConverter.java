@@ -50,6 +50,7 @@ import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
@@ -277,7 +278,10 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry, KoulutusmoduuliKoosteTyyppi>();
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {
-            Map.Entry e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), komo.getLukiolinjakoodiUri());
+            Map.Entry e = new AbstractMap.SimpleEntry<String, String>(
+                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()),
+                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getLukiolinjakoodiUri())
+            );
             hashMap.put(e, komo);
         }
 
@@ -391,5 +395,17 @@ public class KoulutusLukioConverter extends KoulutusConveter {
             model.setKoulutuslaji(lukiolinja.getKoulutuslaji());
             model.setPohjakoulutusvaatimus(lukiolinja.getPohjakoulutusvaatimus());
         }
+    }
+
+    public void updateKoulutuskoodiAndLukiolinjaAndRelationsFromKoodisto(KoulutusLukioPerustiedotViewModel model, KoulutusmoduuliKoosteTyyppi tyyppi, Locale locale) {
+       
+        //get latest relations search uris
+        model.setKoulutuskoodiModel(koulutusKoodisto.listaaKoulutuskoodi(model.getKoulutuskoodiModel().getKoodistoUri(), locale));
+        model.setLukiolinja(koulutusKoodisto.listaaLukiolinja(model.getLukiolinja().getKoodistoUri(), locale));
+
+        Preconditions.checkNotNull(model.getKoulutuskoodiModel(), INVALID_DATA + "kolutuskoodi model cannot be null.");
+        Preconditions.checkNotNull(model.getLukiolinja(), INVALID_DATA + "lukiolinja model cannot be null.");
+        
+        koulutusKoodisto.listaaLukioSisalto(model.getKoulutuskoodiModel(), model.getLukiolinja(), tyyppi, locale, true);
     }
 }

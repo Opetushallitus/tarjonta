@@ -43,9 +43,7 @@
         <tr>
             <td>
                 <!-- alkamiskausi -->
-                <select class="thin" ng-model="searchParams.KAUSI" ng-options="vk.label for vk in kausi">
-                    <option value="" data-tt="tarjonta.haku.kaikki"></option>
-                </select>
+                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'kausi'" koodiuri="searchParams.kausi" version="true"></koodistocombo>
             </td>
             <td class="align-right">
                 <!-- alkamisvuosi -->

@@ -295,7 +295,10 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 				if (opts) {
 					$scope.menuOptions = opts;
 					$scope.$apply();
-					showMenu(ev);
+					setTimeout(function(){
+						showMenu(ev);
+					});
+					
 				}
 			});
 		}

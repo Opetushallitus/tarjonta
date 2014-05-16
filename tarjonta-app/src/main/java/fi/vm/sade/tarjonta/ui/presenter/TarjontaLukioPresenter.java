@@ -65,6 +65,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTie
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.ShowKoulutusSummaryView;
+import java.util.Locale;
 
 /**
  *
@@ -163,7 +164,7 @@ public class TarjontaLukioPresenter {
             //No KOMO, insert new KOMO
             LOG.error("Tarjonta do not have requested komo! "
                     + "tutkinto : '" + kysely.getKoulutuskoodiUri()
-                    + "', koulutusohjelma : '" + kysely.getKoulutusohjelmakoodiUri() + "'");
+                    + "', lukiolinja : '" + kysely.getLukiolinjakoodiUri() + "'");
         } else {
             //KOMO found
             getPerustiedotModel().setKoulutusmoduuliOid(vastaus.getKoulutusmoduuliTulos().get(0).getKoulutusmoduuli().getOid());
@@ -275,14 +276,14 @@ public class TarjontaLukioPresenter {
         if (koulutuskoodi != null && koulutuskoodi.getKoodi() != null && lukiolinja != null && lukiolinja.getKoodi() != null) {
             perustiedotModel.getLukiolinjas().clear();
             KoulutusmoduuliKoosteTyyppi tyyppi = perustiedotModel.getQuickKomo(
-                    koulutuskoodi.getKoodistoUriVersio(),
-                    lukiolinja.getKoodistoUriVersio());
+                    koulutuskoodi.getKoodistoUri(),
+                    lukiolinja.getKoodistoUri());
 
             if (tyyppi == null) {
                 LOG.error("No tutkinto & koulutusohjelma result was null. Search by '" + koulutuskoodi.getKoodistoUriVersio() + "'" + " and '" + koulutuskoodi.getKoodistoUriVersio() + "'");
             }
 
-            kolutusKoodistoConverter.listaaLukioSisalto(koulutuskoodi, lukiolinja, tyyppi, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
+            lukioKoulutusConverter.updateKoulutuskoodiAndLukiolinjaAndRelationsFromKoodisto(perustiedotModel, tyyppi, I18N.getLocale());
         }
     }
 
@@ -299,7 +300,7 @@ public class TarjontaLukioPresenter {
         if (koulutuskoodiModel != null && koulutuskoodiModel.getKoodi() != null) {
             getPerustiedotModel().getLukiolinjas().clear();
             LOG.debug("Lukiolinjas list size : {}.", perustiedot.getKoulutuskoodiModel().getKoodistoUriVersio());
-            List<KoulutusmoduuliKoosteTyyppi> tyyppis = perustiedot.getQuickKomosByKoulutuskoodiUri(perustiedot.getKoulutuskoodiModel().getKoodistoUriVersio());
+            List<KoulutusmoduuliKoosteTyyppi> tyyppis = perustiedot.getQuickKomosByKoulutuskoodiUri(perustiedot.getKoulutuskoodiModel().getKoodistoUri());
 
             final List<LukiolinjaModel> lukiolinjas = kolutusKoodistoConverter.listaaLukiolinjas(tyyppis, I18N.getLocale());
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);

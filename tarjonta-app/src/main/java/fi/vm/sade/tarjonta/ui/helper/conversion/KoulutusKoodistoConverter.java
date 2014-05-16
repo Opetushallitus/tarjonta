@@ -162,7 +162,7 @@ public class KoulutusKoodistoConverter {
 
             if (lukiolinja != null) {
                 //update or override tutkinto relations by lukiolinja relations
-                komoLukiolinjaData(lukiolinja.getKoodistoUri(), tutkinto, koulutusKoodiToKoodiModel, locale);
+                komoLukiolinjaData(lukiolinja.getKoodistoUriVersio(), tutkinto, koulutusKoodiToKoodiModel, locale);
             }
         } else {
             //For review page - get koodi data from tarjonta service
@@ -200,7 +200,7 @@ public class KoulutusKoodistoConverter {
             //For edit pages - get koodi data from koodisto service
             if (ohjelma != null) {
                 //update or override tutkinto relations by lukiolinja relations
-                komo2asteKoulutusohjelmaData(ohjelma.getKoodistoUri(), ohjelma, tutkinto, koulutusKoodiToKoodiModel, locale);
+                komo2asteKoulutusohjelmaData(ohjelma.getKoodistoUriVersio(), ohjelma, tutkinto, koulutusKoodiToKoodiModel, locale);
             }
         } else {
             //For review page - get koodi data from tarjonta service
@@ -257,13 +257,13 @@ public class KoulutusKoodistoConverter {
      * @return
      */
     public KoulutusohjelmaModel listaaKoulutusohjelma(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
-        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(tyyppi.getUri());
-        if (koodistoData != null && !koodistoData.isEmpty()) {
-            List<KoulutusohjelmaModel> list = koulutusKoodiToKoulutusohjelmaModel.mapKoodistoToModel(KoulutusohjelmaModel.class, handleLocale(locale), koodistoData);
+        return listaaKoulutusohjelma(tyyppi.getUri(), locale);
+    }
 
-            if (!list.isEmpty() && list.size() > 0) {
-                return list.get(0);
-            }
+    public KoulutusohjelmaModel listaaKoulutusohjelma(final String koulutusohjelmaUri, final Locale locale) {
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(koulutusohjelmaUri);
+        if (koodistoData != null && !koodistoData.isEmpty()) {
+            return koulutusKoodiToKoulutusohjelmaModel.mapKoodiTypeToModel(KoulutusohjelmaModel.class, TarjontaUIHelper.searchLatestKoodi(koodistoData), handleLocale(locale));
         }
 
         return null;
@@ -278,14 +278,13 @@ public class KoulutusKoodistoConverter {
      * @return
      */
     public LukiolinjaModel listaaLukiolinja(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
-        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(tyyppi.getUri());
+        return listaaLukiolinja(tyyppi.getUri(), locale);
+    }
 
+    public LukiolinjaModel listaaLukiolinja(final String lukiolinjaUri, final Locale locale) {
+        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(lukiolinjaUri);
         if (koodistoData != null && !koodistoData.isEmpty()) {
-            List<LukiolinjaModel> list = koulutusKoodiToLukiolinjaModel.mapKoodistoToModel(LukiolinjaModel.class, handleLocale(locale), koodistoData);
-
-            if (!list.isEmpty() && list.size() > 0) {
-                return list.get(0);
-            }
+            return koulutusKoodiToLukiolinjaModel.mapKoodiTypeToModel(LukiolinjaModel.class, TarjontaUIHelper.searchLatestKoodi(koodistoData), handleLocale(locale));
         }
 
         return null;
@@ -299,26 +298,13 @@ public class KoulutusKoodistoConverter {
      * @return
      */
     public KoulutuskoodiModel listaaKoulutuskoodi(final KoodistoKoodiTyyppi tyyppi, final Locale locale) {
-        final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(tyyppi.getUri());
-        if (koodistoData != null && !koodistoData.isEmpty()) {
-            List<KoulutuskoodiModel> list = koulutusKoodiToKoulutuskoodiModel.mapKoodistoToModel(KoulutuskoodiModel.class, handleLocale(locale), koodistoData);
-
-            if (!list.isEmpty() && list.size() > 0) {
-                return list.get(0);
-            }
-        }
-
-        return null;
+        return listaaKoulutuskoodi(tyyppi.getUri(), locale);
     }
 
     public KoulutuskoodiModel listaaKoulutuskoodi(final String koulutuskoodiUri, final Locale locale) {
         final List<KoodiType> koodistoData = tarjontaUiHelper.getKoodis(koulutuskoodiUri);
         if (koodistoData != null && !koodistoData.isEmpty()) {
-            List<KoulutuskoodiModel> list = koulutusKoodiToKoulutuskoodiModel.mapKoodistoToModel(KoulutuskoodiModel.class, handleLocale(locale), koodistoData);
-
-            if (!list.isEmpty() && list.size() > 0) {
-                return list.get(0);
-            }
+            return koulutusKoodiToKoulutuskoodiModel.mapKoodiTypeToModel(KoulutuskoodiModel.class, TarjontaUIHelper.searchLatestKoodi(koodistoData), handleLocale(locale));
         }
 
         return null;
@@ -387,7 +373,7 @@ public class KoulutusKoodistoConverter {
     private void komoBaseDataFromKoodistoService(final KoulutuskoodiModel koulutuskoodi, final KoulutusKoodiToModelConverter<KoodiModel> kc, final Locale locale) {
         Preconditions.checkNotNull(koulutuskoodi, "KoulutuskoodiModel object cannot be null.");
 
-        for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(koulutuskoodi.getKoodistoUri())) {
+        for (KoodiType type : tarjontaUiHelper.getKoulutusRelations(koulutuskoodi.getKoodistoUriVersio())) {
             if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSALA_URI)) {
                 koulutuskoodi.setKoulutusala(listaaKoodi(toUriVersion(type), kc, locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_OPINTOALA_URI)) {
@@ -400,6 +386,8 @@ public class KoulutusKoodistoConverter {
                 koulutuskoodi.setOpintojenLaajuus(listaaKoodi(toUriVersion(type), kc, locale));
             } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_KOULUTUSASTE_URI)) {
                 koulutuskoodi.setKoulutusaste(listaaKoodi(toUriVersion(type), kc, locale));
+            } else if (type.getKoodisto().getKoodistoUri().equals(KoodistoURI.KOODISTO_HAKUKOHDE_URI)) {
+                //do nothing, currently not needed
             }
         }
     }

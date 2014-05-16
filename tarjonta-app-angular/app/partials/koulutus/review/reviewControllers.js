@@ -415,6 +415,14 @@ app.controller('BaseReviewController', [
 
             return result;
         };
+
+        $scope.getRakenneKuvaSrc = function(kieliUri) {
+        	var img = $scope.model.koulutus.opintojenRakenneKuvas[kieliUri];
+        	if (!img) {
+        		return false;
+        	}
+        	return "data:"+img.mimeType+";base64,"+img.base64data;
+        }
         
     }]);
 

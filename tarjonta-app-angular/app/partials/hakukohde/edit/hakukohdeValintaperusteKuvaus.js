@@ -65,7 +65,27 @@ app.controller('ValitseValintaPerusteKuvausDialog',
             }
 
 
-        }
+        };
+
+        var initializeGrid = function () {
+
+            console.log('INITIALIZING GRID : ' , $scope.dialog.kuvaukset);
+
+            $scope.kuvausGrid = {
+                data: "dialog.kuvaukset",
+                multiSelect: false,
+                selectedItems: $scope.selectedKuvaus,
+                afterSelectionChange: function(row, event){
+                    if ($scope.selectedKuvaus[0]) {
+                        $scope.selectKuvaus($scope.selectedKuvaus[0]);
+                    }
+                },
+                columnDefs:
+                    [{field:"nimi", displayName: $scope.dialog.titles.tableValintaRyhma, width: "75%" },
+                        {field:"kielet", displayName: $scope.dialog.titles.tableKuvauskielet, width: "25%" }]
+            };
+
+        };
 
         var getTitle = function(){
             if (tyyppi === "valintaperustekuvaus") {
@@ -92,6 +112,18 @@ app.controller('ValitseValintaPerusteKuvausDialog',
 
                 $scope.dialog.titles.linkkausHelp =  LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.sora.help');
             }
+        };
+
+        var checkObjectPropertiesLength = function (object) {
+
+            var elementCount = 0;
+
+            for (e in object) {
+                elementCount++;
+            }
+
+            return elementCount;
+
         }
 
         var haeValintaPerusteet = function() {
@@ -118,9 +150,15 @@ app.controller('ValitseValintaPerusteKuvausDialog',
                     var kieliPromiseArray = [];
 
                     //Loop through valintaperusteet and get all different kieli promises
-                    angular.forEach(valintaperusteet.result,function(valintaPeruste){
+                    angular.forEach(valintaperusteet.result,function(valintaPeruste) {
 
-                        $log.debug('VALINTAPERUSTE : ', valintaPeruste);
+
+                        console.log('VALINTABERUSTE : ', valintaPeruste);
+                        var propLength = checkObjectPropertiesLength(valintaPeruste.kuvaukset);
+
+                        if (propLength > 0) {
+
+
 
                         kaikkiKuvaukset[valintaPeruste.kuvauksenTunniste] = valintaPeruste;
 
@@ -135,10 +173,10 @@ app.controller('ValitseValintaPerusteKuvausDialog',
                         for (var kieli in valintaPeruste.kuvaukset) {
 
 
-                            if(kieli.toString().indexOf(userLang) != -1) {
+                            if (kieli.toString().indexOf(userLang) != -1) {
 
                                 valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[kieli];
-
+                                console.log('VALINTABERUSTE : ', valintaPerusteObj.nimi);
                             }
 
                             if (valintaPerusteObj.nimi === undefined) {
@@ -149,14 +187,21 @@ app.controller('ValitseValintaPerusteKuvausDialog',
 
                             valintaPerusteObj.kieliUris.push(kieli);
                             if (kieliPromises[kieli] === undefined) {
-                                var kieliPromise = Koodisto.getKoodi(koodistoKieliUri,kieli,userLang);
+                                var kieliPromise = Koodisto.getKoodi(koodistoKieliUri, kieli, userLang);
                                 kieliPromises[kieli] = kieli;
                                 kieliPromiseArray.push(kieliPromise);
                             }
 
                         }
+                        if (valintaPerusteObj.nimi === undefined) {
+                            for (var kiali in valintaPeruste.kuvauksenNimet) {
+                                valintaPerusteObj.nimi = valintaPeruste.kuvauksenNimet[kiali];
+                            }
+                        }
+                        console.log('VALINTAPERUSTEOBJ : ', valintaPerusteObj);
                         $scope.dialog.kuvaukset.push(valintaPerusteObj);
 
+                        }
                     });
 
                     //Wait all promises to complete and add those values to objects
@@ -200,23 +245,13 @@ app.controller('ValitseValintaPerusteKuvausDialog',
 
         $scope.selectedKuvaus = [];
 
-        $scope.kuvausGrid = {
-            data: "dialog.kuvaukset",
-            multiSelect: false,
-            selectedItems: $scope.selectedKuvaus,
-            afterSelectionChange: function(row, event){
-                if ($scope.selectedKuvaus[0]) {
-                    $scope.selectKuvaus($scope.selectedKuvaus[0]);
-                }
-            },
-            columnDefs:
-                [{field:"nimi", displayName: $scope.dialog.titles.tableValintaRyhma, width: "75%" },
-                    {field:"kielet", displayName: $scope.dialog.titles.tableKuvauskielet, width: "25%" }]
-        };
+        initializeGrid();
+
+
 
         $scope.isOk = function() {
             return $scope.valittuKuvaus && $scope.dialog.valitutKuvauksenKielet.length>0
-        }
+        };
 
         $scope.selectKuvaus = function(kuvaus) {
             $log.debug("SELECT ",kuvaus);

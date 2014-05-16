@@ -49,6 +49,8 @@ public enum KoulutusValidationMessages {
     KOULUTUS_OPINTOALA_INVALID("opintoala"),
     KOULUTUS_TUTKINTO_MISSING("tutkinto"),
     KOULUTUS_TUTKINTO_INVALID("tutkinto"),
+    KOULUTUS_KOULUTUSTYYPPI_MISSING("koulutustyyppi"),
+    KOULUTUS_KOULUTUSTYYPPI_INVALID("koulutustyyppi"),
     KOULUTUS_TUTKINTONIMIKE_MISSING("tutkintonimike"),
     KOULUTUS_TUTKINTONIMIKE_INVALID("tutkintonimike"),
     KOULUTUS_EQF_MISSING("eqf"),
@@ -88,7 +90,12 @@ public enum KoulutusValidationMessages {
     KOULUTUS_RELATION_KOMO_REMOVE_KOMOTO(""),
     KOULUTUS_DELETED(""),
     //tunniste
-    KOULUTUS_TUNNISTE_LENGTH("");
+    KOULUTUS_TUNNISTE_LENGTH(""),
+    //komo
+    KOULUTUS_OPPILAITOSTYYPPI_MISSING("oppilaitostyyppi"),
+    KOULUTUS_OPPILAITOSTYYPPI_INVALID("oppilaitostyyppi"),
+    KOULUTUS_MODUULI_TYYPPI_MISSING("moduuliTyyppi"),
+    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi");
 
     private String fieldName;
 

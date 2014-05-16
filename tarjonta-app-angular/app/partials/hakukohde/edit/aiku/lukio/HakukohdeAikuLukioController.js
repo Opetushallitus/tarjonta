@@ -78,6 +78,7 @@ app.controller('HakukohdeAikuLukioEditController',
 
             console.log('AIKU HAKUKOHDE : ' , $scope.model.hakukohde);
             if (!$scope.model.hakukohde.hakukohteenNimiUri || $scope.model.hakukohde.hakukohteenNimiUri.trim().length <1 ) {
+
                 var err = {};
                 err.errorMessageKey = 'hakukohde.edit.nimi.missing';
                 $scope.model.nimiValidationFailed = true;

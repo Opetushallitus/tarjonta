@@ -78,8 +78,9 @@ app.directive('koodistocombo',function(Koodisto,$log){
             };
 
             var addKoodiToKoodiUri = function (koodiversio) {
-
+              if($scope.koodiuri) {
                 $scope.koodiuri = $scope.koodiuri + koodiSeparator + koodiversio;
+              }
             };
 
             var addVersionToKoodis = function(koodis) {

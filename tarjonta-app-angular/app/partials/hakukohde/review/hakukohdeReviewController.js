@@ -449,6 +449,12 @@ app.controller('HakukohdeReviewController',
 
     };
 
+        var reloadFormControls = function () {
+
+            $scope.formControls.reloadDisplayControls();
+
+        };
+
         var checkForHakuRemove = function () {
 
             var canRemoveHakukohde = TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
@@ -501,6 +507,7 @@ app.controller('HakukohdeReviewController',
         modelInit();
         loadHakukelpoisuusVaatimukses();
         loadKoulutukses();
+        reloadFormControls();
         //checkForHakuRemove();
     };
 

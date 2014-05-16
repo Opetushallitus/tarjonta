@@ -1082,6 +1082,10 @@
             <xs:enumeration value="MaahanmAmmValmistavaKoulutus" /><!-- Maahanmuuttajien ammatilliseen koulutukseen valmistava koulutus -->
             <xs:enumeration value="MaahanmLukioValmistavaKoulutus" /><!-- Maahanmuuttajien lukiokoulutukseen valmistava koulutus -->
             <xs:enumeration value="VapaanSivistystyonKoulutus" /><!-- Vapaan sivistystyon koulutus -->
+            <xs:enumeration value="Peruskoulu" /><!-- Peruskoulu -->
+            <xs:enumeration value="Ulkomainen" /><!-- Ulkomainen / ulkomainen tutntematon -->
+            <xs:enumeration value="AmmatillinenPerustutkintoNayttotutkintona" /><!-- aikuiskoulutus -->
+            <xs:enumeration value="Tuntematon" /><!-- geneerinen tuntematon -->      
         </xs:restriction>
     </xs:simpleType>
     

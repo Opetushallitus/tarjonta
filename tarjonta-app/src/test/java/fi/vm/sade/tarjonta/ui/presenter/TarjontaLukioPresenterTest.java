@@ -624,11 +624,11 @@ public class TarjontaLukioPresenterTest extends BaseTarjontaTest {
         KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI = "koodisto_laajuus_arvo_uri";
         KoodistoURI.KOODISTO_KOULUTUSASTE_URI = "koodisto_koulutusaste_uri";
 
-        expect(tarjontaUiHelperMock.getKoulutusRelations(and(isA(String.class), eq("koulutuskoodi_uri")))).andReturn(
+        expect(tarjontaUiHelperMock.getKoulutusRelations(and(isA(String.class), eq("koulutuskoodi_uri#1")))).andReturn(
                 createKoodiTypes(KOULUTUSKOODI, KOULUTUSASTE, OPINTOALA, KOULUTUSALA)
         );
 
-        expect(tarjontaUiHelperMock.getKoulutusRelations(and(isA(String.class), eq("lukiolinja_uri")))).andReturn(
+        expect(tarjontaUiHelperMock.getKoulutusRelations(and(isA(String.class), eq("lukiolinja_uri#1")))).andReturn(
                 createKoodiTypes(TUTKINTONIMIKE, LAAJUUS_YKSIKKO, LAAJUUS_ARVO));
 //
         expect(tarjontaUiHelperMock.getKoodis(eq(createUri(KOULUTUSKOODI)))).andReturn(createKoodiTypes(KOULUTUSKOODI));
