@@ -284,14 +284,6 @@ app.controller('BaseEditController', [
                 return;
             }
 
-            // tyhjien kuvien siivous
-            for (var k in $scope.model.opintojenRakenneKuvas) {
-                var kuva = $scope.model.opintojenRakenneKuvas[k];
-                if (!kuva.base64data) {
-                    $scope.model.opintojenRakenneKuvas[k] = undefined;
-                }
-            }
-
             PermissionService.permissionResource().authorize({}, function(authResponse) {
                 $log.debug("Authorization check : " + authResponse.result);
 
@@ -499,26 +491,21 @@ app.controller('BaseEditController', [
                     $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
                 }
             }
-        };
+        }
 
         $scope.getRakenneKuvaModel = function(kieliUri) {
-            if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === {}) {
+            if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === Object(kieliUri)) {
                 return kieliUri;
             }
-            if (!$scope.model) {
-                $scope.model = {};
-            }
-            if (!$scope.model.opintojenRakenneKuvas) {
-                $scope.model.opintojenRakenneKuvas = {};
-            }
-
+            
             var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
             if (!ret) {
                 ret = {};
                 $scope.model.opintojenRakenneKuvas[kieliUri] = ret;
             }
+
             return ret;
-        }
+        };
 
         $scope.onLisatietoLangSelection = function() {
             for (var ki in $scope.model.kuvausKomo) {

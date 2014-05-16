@@ -178,8 +178,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
 
-        userLang = checkArgsLangCode(userLang);
-        showMeta = checkArgsMeta(showMeta);
+        userLang = checkArgsLangCode(userLang); //default fi
+        showMeta = checkArgsDefaultTrue(showMeta); //always show meta data
+        showImg = checkArgsDefaultFalse(showImg); //show images when needed
 
         if (komoto == null) {
             result.setStatus(ResultStatus.NOT_FOUND);
@@ -188,23 +189,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         switch (getType(komoto)) {
             case KORKEAKOULUTUS:
-                KoulutusKorkeakouluV1RDTO convert = (KoulutusKorkeakouluV1RDTO) converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, userLang, showMeta);
-
-                if (showImg != null && showImg) {
-                    Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(komotoOid);
-                    if (findAllImagesByKomotoOid != null && !findAllImagesByKomotoOid.isEmpty()) {
-                        for (Entry<String, BinaryData> e : findAllImagesByKomotoOid.entrySet()) {
-                            convert.getOpintojenRakenneKuvas().put(e.getKey(), new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
-                        }
-                    }
-                }
-                result.setResult(convert);
+                result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, userLang, showMeta, showImg));
                 break;
             case LUKIOKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta));
+                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
             case AMMATILLINEN_PERUSKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, userLang, showMeta));
+                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
         }
 
@@ -239,14 +230,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
 
-        Set<String> deleteImageUris = Sets.<String>newHashSet();
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
             //validate optional images
             for (Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
+                 //do not validate null img objects as the img keys will be use to delete images
                 if (e.getValue() != null) {
                     KoulutusValidator.validateKoulutusKuva(e.getValue(), e.getKey(), result);
-                } else {
-                    deleteImageUris.add(e.getKey());
                 }
             }
         }
@@ -261,12 +250,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     return result;
                 }
 
-                for (String kieliUri : deleteImageUris) {
-                    if (komoto.isKuva(kieliUri)) {
-                        komoto.getKuvat().remove(kieliUri);
-                    }
-                }
-
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);
             } else {
                 //create korkeakoulu koulutus
@@ -274,7 +257,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
+            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, true));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -331,7 +314,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
+            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, false));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -551,7 +534,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String userLang) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
         userLang = checkArgsLangCode(userLang);
-        showMeta = checkArgsMeta(showMeta);
+        showMeta = checkArgsDefaultTrue(showMeta);
         ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> result = new ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO>();
 
         try {
@@ -748,14 +731,23 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     /**
-     * Validate the show meta argument. No argument, then show all meta data
-     * objects.
+     * Validate the show argument. Null is boolean true.
      *
      * @param meta
      * @return
      */
-    private boolean checkArgsMeta(Boolean meta) {
+    private boolean checkArgsDefaultTrue(Boolean meta) {
         return meta != null ? meta : true;
+    }
+    
+      /**
+     * Validate the show argument. Null is boolean false.
+     *
+     * @param meta
+     * @return
+     */
+    private boolean checkArgsDefaultFalse(Boolean meta) {
+        return meta != null ? meta : false;
     }
 
     /**
@@ -1016,7 +1008,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {
         //convert entity to dto
-        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, "FI", false);
+        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, "FI", false, true);
         //keep the komo oid, we do need it to search correct komo for the komoto
         copy.setOid(null);
         copy.setKomotoOid(null);

@@ -121,7 +121,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
 
-        final KoulutusKorkeakouluV1RDTO convert = instanceKk.convert(KoulutusKorkeakouluV1RDTO.class, t, "FI", false);
+        final KoulutusKorkeakouluV1RDTO convert = instanceKk.convert(KoulutusKorkeakouluV1RDTO.class, t, "FI", false, true);
         EasyMock.verify(commonConverterMock);
         assertKk(convert, returnKomoto);
     }
@@ -159,7 +159,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
 
-        final KoulutusKorkeakouluV1RDTO convert = instanceKk.convert(KoulutusKorkeakouluV1RDTO.class, t, "FI", false);
+        final KoulutusKorkeakouluV1RDTO convert = instanceKk.convert(KoulutusKorkeakouluV1RDTO.class, t, "FI", false, true);
         EasyMock.verify(commonConverterMock);
         assertKk(convert, returnKomoto);
     }
@@ -197,7 +197,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
 
-        final KoulutusKorkeakouluV1RDTO convert = instanceKk.convert(KoulutusKorkeakouluV1RDTO.class, t, "FI", false);
+        final KoulutusKorkeakouluV1RDTO convert = instanceKk.convert(KoulutusKorkeakouluV1RDTO.class, t, "FI", false, true);
         EasyMock.verify(commonConverterMock);
         assertKk(convert, returnKomo);
     }
@@ -251,7 +251,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
 
-        final KoulutusLukioV1RDTO convert = instanceLukio.convert(KoulutusLukioV1RDTO.class, t, "FI", false);
+        final KoulutusLukioV1RDTO convert = instanceLukio.convert(KoulutusLukioV1RDTO.class, t, "FI", false, false);
         EasyMock.verify(commonConverterMock);
         assertLukio(convert, returnKomoto);
     }
@@ -301,7 +301,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
 
-        final KoulutusLukioV1RDTO convert = instanceLukio.convert(KoulutusLukioV1RDTO.class, t, "FI", false);
+        final KoulutusLukioV1RDTO convert = instanceLukio.convert(KoulutusLukioV1RDTO.class, t, "FI", false, false);
         EasyMock.verify(commonConverterMock);
         assertLukio(convert, returnKomoto);
     }

@@ -123,7 +123,7 @@ public class KoulutusDTOConverterToEntity {
          * KOMOTO custom data conversion
          */
         korkeakouluKomotoDataUpdate(komoto, dto, userOid);
-        saveHtmls(dto, komoto, userOid);
+        addOrRemoveImages(dto, komoto, userOid);
 
         return komoto;
     }
@@ -328,22 +328,29 @@ public class KoulutusDTOConverterToEntity {
         komoto.setLastUpdatedByOid(userOid);
     }
 
-    private void saveHtmls(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {
+    private void addOrRemoveImages(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
             for (Map.Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
-                saveHtml5Image(komoto, e.getValue(), e.getKey(), userOid);
+                if (e.getValue() == null && e.getKey() != null && !e.getKey().isEmpty()) {
+                    //delete image
+                    komoto.getKuvat().remove(e.getKey());
+                } else {
+                    //add or overwrite previous image
+                    addImageToKomoto(komoto, e.getValue(), e.getKey(), userOid);
+                }
             }
         }
     }
 
-    public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String userOid) {
-        saveHtml5Image(komoto, kuva, null, userOid);
-    }
-
-    public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String mapKeyKieliUri, final String userOid) {
+    private void addImageToKomoto(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String mapKeyKieliUri, final String userOid) {
+        Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null!");
+        Preconditions.checkNotNull(kuva, "Image DTO cannot be null!");
         //select a map key as kieli uri, when kuva object kieliUri field is null
         final String imageKieliUri = kuva.getKieliUri() != null ? kuva.getKieliUri() : mapKeyKieliUri;
-        Preconditions.checkNotNull(imageKieliUri, "Kieli uri cannot be null!");
+        Preconditions.checkNotNull(imageKieliUri, "Image language uri cannot be null!");
+        Preconditions.checkNotNull(kuva.getFilename(), "Image filename cannot be null!");
+        Preconditions.checkNotNull(kuva.getMimeType(), "Image mime type cannot be null!");
+        Preconditions.checkNotNull(kuva.getBase64data(), "Image binary data cannot be null!");
         /*
          * Update or insert uploaded binary data
          */
@@ -360,6 +367,10 @@ public class KoulutusDTOConverterToEntity {
         bin.setMimeType(kuva.getMimeType());
         komoto.setKuvaByUri(imageKieliUri, bin);
         komoto.setLastUpdatedByOid(userOid);
+    }
+
+    public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String userOid) {
+        addImageToKomoto(komoto, kuva, null, userOid);
         this.koulutusmoduuliToteutusDAO.update(komoto);
     }
 }
