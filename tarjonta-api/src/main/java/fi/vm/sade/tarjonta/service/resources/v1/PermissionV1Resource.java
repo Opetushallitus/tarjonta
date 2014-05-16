@@ -44,7 +44,7 @@ public interface PermissionV1Resource {
     @Path("/user")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<UserV1RDTO> getUser();
-    
+
     @POST
     @Path("/recordUiStacktrace")
     public void recordUiStacktrace(String stacktrace);
@@ -58,38 +58,46 @@ public interface PermissionV1Resource {
      * /permission/permissions/hakukohde/1.2.3.4.5.6.2
      * /permission/permissions/koulutus/1.2.3.4.5.6.3
      * /permission/permissions/organisation/1.2.3.4.5.6.4
-     * 
-     * {
-     *   // Create
-     *   createHaku: true
-     *   createHakukohde: true
-     *   createKoulutus: true
-     * 
-     *   // Modify
-     *   delete: true,
-     *   modify: true,
-     *   modifyLimited: false,
-     *   copy : true,
-     * 
-     *   // Sate
-     *   to_POISTETTU: true,
-     *   to_LUONNOS: true,
-     *   to_VALMIS : true,
-     *   to_JULKAISTU: false,
-     *   to_PERUTTU : true
-     *   to_KOPIOITU : true
-     * }
-     * 
+     *
+     * Vastaus esim:
+     *{
+     *  "haku" : {
+     *    "update" : true,
+     *    "remove" : true,
+     *    "updateLimited" : true,
+     *    "create" : false,
+     *    "copy" : false
+     *    "to_POISTETTU" : false,
+     *    "to_KOPIOITU" : false,
+     *    "to_PERUTTU" : true,
+     *    "to_VALMIS" : false,
+     *    "to_JULKAISTU" : true,
+     *    "to_LUONNOS" : false,
+     *  },
+     *  "hakukohde" : {
+     *    "update" : false,
+     *    "remove" : false,
+     *    "updateLimited" : false,
+     *    "create" : false,
+     *    "copy" : false
+     *    "to_POISTETTU" : true,
+     *    "to_KOPIOITU" : false,
+     *    "to_PERUTTU" : false,
+     *    "to_VALMIS" : true,
+     *    "to_JULKAISTU" : false,
+     *    "to_LUONNOS" : true,
+     *  }
+     *}
      * </pre>
-     *  
-     * 
+     *
+     *
      * @param type "haku", "hakukohde", "koulutus", ...?
-     * @param key 
+     * @param key
      */
     @GET
     @Path("/permissions/{type}/{key}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Permissioiden kysyminen kohteelta", notes = "Permissioiden kysyminen kohteelta.")
-    public Map<String, Boolean> getPermissions(@PathParam("type") String type, @PathParam("key") String key);
-    
+    public Map getPermissions(@PathParam("type") String type, @PathParam("key") String key);
+
 }
