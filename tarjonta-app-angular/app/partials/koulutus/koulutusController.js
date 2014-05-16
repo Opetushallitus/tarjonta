@@ -27,8 +27,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS)");
-                // var patt = new RegExp("(KORKEAKOULUTUS)");
+                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA)");
                 if (patt.test(type)) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
                 } else {
