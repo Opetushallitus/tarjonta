@@ -177,6 +177,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.model.collapse.model = true;
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
+        $scope.model.isDeEnabled = false;
 
         var deferredOsoite = $q.defer();
         var parentOrgOids = new buckets.Set();
@@ -327,6 +328,18 @@ app.controller('HakukohdeRoutingController', ['$scope',
                 return true;
             }
 
+        };
+
+        $scope.canSaveParam = function(hakuOid) {
+
+            if (hakuOid) {
+                $log.info('CAN EDIT : ' , hakuOid);
+                var canEdit = TarjontaService.parameterCanEditHakukohdeLimited(hakuOid);
+                $log.info('CAN EDIT : ' , canEdit);
+                $scope.model.isDeEnabled = !canEdit;
+            }
+
+            $log.info('IS DEENABLED : ', $scope.model.isDeEnabled);
         };
 
         $scope.updateTilaModel = function(hakukohde) {
@@ -733,7 +746,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             var paramFilteredHakus = [];
             angular.forEach(hakus,function(haku){
 
-                if (TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
+                if (TarjontaService.parameterCanEditHakukohde(haku.oid) &&  TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
                     paramFilteredHakus.push(haku);
                 }
             });
