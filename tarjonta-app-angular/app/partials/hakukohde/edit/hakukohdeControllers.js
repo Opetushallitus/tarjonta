@@ -71,7 +71,24 @@ app.controller('HakukohdeEditController',
 
     $scope.model.canSaveAsLuonnos = function() {
 
-        return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
+        if ($scope.model.isDeEnabled) {
+            var canSave = !$scope.model.isDeEnabled;
+            $log.info('CanSaveAsLuonnos, parameter says not ok');
+            return canSave;
+        } else {
+            $log.info('CanSaveAsLuonnos, parameter says ok. Tila : ', $scope.model.hakukohde.tila);
+            var canSaveAsLuonnosByTila = CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
+            return canSaveAsLuonnosByTila;
+        }
+
+
+
+    };
+
+    $scope.model.canSaveAsValmis = function () {
+
+        return $scope.model.isDeEnabled;
+
 
     };
 
@@ -127,6 +144,7 @@ app.controller('HakukohdeEditController',
 
         $scope.loadHakukelpoisuusVaatimukset();
         $scope.loadKoulutukses(filterHakus);
+        $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
         $scope.checkIsCopy();

@@ -400,7 +400,7 @@ app.controller('HakukohdeReviewController',
                           tarjoajaOidsSet.add(tulos.oid);
                           if (tulos.tulokset !== undefined) {
                               angular.forEach(tulos.tulokset,function(lopullinenTulos){
-                                  if(lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
+                                  if(lopullinenTulos.koulutuslajiUri && lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
                                       $scope.isAiku = true;
                                   }
                                   var koulutus = {
@@ -451,7 +451,10 @@ app.controller('HakukohdeReviewController',
 
         var reloadFormControls = function () {
 
-            $scope.formControls.reloadDisplayControls();
+            if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
+                $scope.formControls.reloadDisplayControls();
+            }
+
 
         };
 
