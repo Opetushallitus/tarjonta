@@ -233,6 +233,20 @@ public class ParameterServices implements InitializingBean {
      * 
      * More explicitly:
      * <pre>
+     * // Examples of return values: 
+     * // ---------------- - (edit / edit limited)
+     * // x - null - null  - true/true
+     * // null - x - null  - true/true
+     * // null - null - x  - true/true
+     *
+     * // x - 1.1. - null  - true/true
+     * // 1.1. - x - null  - false/true
+     * // 1.1. - null - x  - false/true
+     *
+     * // x - 1.1. - 1.2.  - true/true
+     * // 1.1. - x - 1.2.  - false/true
+     * // 1.1. - 1.2. - x  - false/false
+     * 
      * (
      *   (PH_HKLPT == null || PH_HKLPT >= now()) 
      * AND 
@@ -263,6 +277,24 @@ public class ParameterServices implements InitializingBean {
      * 
      * More explicitly:
      * <pre>
+     * // Examples of return values: 
+     * // ---------------- - (edit / edit limited)
+     * // x - null - null  - true/true
+     * // null - x - null  - true/true
+     * // null - null - x  - true/true
+     *
+     * // x - 1.1. - null  - true/true
+     * // 1.1. - x - null  - false/true
+     * // 1.1. - null - x  - false/true
+     *
+     * // x - null - 1.2.  - true/true
+     * // null - x - 1.2.  - true/true
+     * // null - 1.2. - x  - true/false
+     *
+     * // x - 1.1. - 1.2.  - true/true
+     * // 1.1. - x - 1.2.  - false/true
+     * // 1.1. - 1.2. - x  - false/false
+     * 
      * (
      *   (PH_HKMT == null || PH_HKMT >= now())
      * )

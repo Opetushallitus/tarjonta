@@ -60,7 +60,7 @@ public class EntityConverterToKomoRDTO {
         kkDto.setModified(komo.getUpdated());
         kkDto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(komo.getModuuliTyyppi().name()));
         kkDto.setVersion(komo.getVersion());
-        
+
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
         komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), showMeta));
         kkDto.setKuvausKomo(komoKuvaus);
@@ -88,7 +88,17 @@ public class EntityConverterToKomoRDTO {
                         break;
                 }
                 break;
+            default:
+                if (komo.getKoulutusohjelmaUri() != null && !komo.getKoulutusohjelmaUri().isEmpty()) {
+                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
+                } else if (komo.getLukiolinjaUri() != null && !komo.getLukiolinjaUri().isEmpty()) {
+                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, false, showMeta));
+                } else {
+                    kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
+                }
+                break;
         }
+
         kkDto.setKoulutusasteTyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
         kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), locale, FieldNames.KOULUTUSKOODI, showMeta));
         kkDto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), locale, FieldNames.TUTKINTO, ALLOW_NULL_KOODI_URI, showMeta));
@@ -106,7 +116,8 @@ public class EntityConverterToKomoRDTO {
         //legacy data
         kkDto.setOppilaitostyyppis(splitLegacyData(komo.getOppilaitostyyppi(), locale, FieldNames.OPPILAITOSTYYPPI, showMeta));
 
-        LOG.debug("in EntityConverterToKomoRDTO : {}", kkDto);
+        LOG.debug(
+                "in EntityConverterToKomoRDTO : {}", kkDto);
         return kkDto;
     }
 

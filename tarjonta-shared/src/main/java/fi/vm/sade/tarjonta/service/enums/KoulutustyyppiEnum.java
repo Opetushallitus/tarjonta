@@ -4,7 +4,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 public enum KoulutustyyppiEnum {
 
-    //TODO: remove the KoulutusasteTyyppi soap type
+    //TODO: remove the KoulutusasteTyyppi xml type as soon as you can.
     AMMATILLINEN_PERUSKOULUTUS(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS),
     LUKIOKOULUTUS(KoulutusasteTyyppi.LUKIOKOULUTUS),
     KORKEAKOULUTUS(KoulutusasteTyyppi.KORKEAKOULUTUS),
@@ -16,10 +16,10 @@ public enum KoulutustyyppiEnum {
     MAAHANM_LUKIO_VALMISTAVA_KOULUTUS(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS),
     MAAHANM_AMM_VALMISTAVA_KOULUTUS(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS),
     VAPAAN_SIVISTYSTYON_KOULUTUS(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS),
-    PERUSKOULU(KoulutusasteTyyppi.PERUSKOULU),
-    ULKOMAINEN(KoulutusasteTyyppi.ULKOMAINEN),
+    PERUSOPETUS(KoulutusasteTyyppi.PERUSOPETUS),
+    PERUSOPETUS_ULKOMAINEN(KoulutusasteTyyppi.PERUSOPETUS_ULKOMAINEN),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA(KoulutusasteTyyppi.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA),
-    TUNTEMATON(KoulutusasteTyyppi.TUNTEMATON);
+    TUNTEMATON(KoulutusasteTyyppi.TUNTEMATON); //generic unknown type for missing data
 
     final private KoulutusasteTyyppi koulutusasteTyyppi;
 

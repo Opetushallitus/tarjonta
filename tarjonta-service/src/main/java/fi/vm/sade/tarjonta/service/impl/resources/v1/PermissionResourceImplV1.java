@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.collect.HashBiMap;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -107,7 +106,8 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
     private static final String PERMISSION_REMOVE = "remove";
     private static final String PERMISSION_COPY = "copy";
     
-    
+    // http://localhost:8084/tarjonta-service/rest/v1/permission/permissions/haku/1.2.246.562.29.45401879304
+    // http://localhost:8084/tarjonta-service/rest/v1/permission/permissions/hakukohde/1.2.246.562.20.46022392388
     @Override
     @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
     @Transactional(readOnly = true)
@@ -181,10 +181,35 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
                 // OK - by permissions we can edit, how about parameters?
                 boolean paramsCanEdit = parameterServices.parameterCanEditHakukohde(key);
                 boolean paramsCanEditLimited = parameterServices.parameterCanEditHakukohdeLimited(key);
+
+                // Parametripalvelu toimii näin:  - (edit / edit limited) - (update/limited)
+                // x - null - null  - true/true -> true / false
+                // null - x - null  - true/true -> true / false
+                // null - null - x  - true/true -> true / false
+
+                // x - 1.1. - null  - true/true -> true / false
+                // 1.1. - x - null  - false/true -> true / true
+                // 1.1. - null - x  - false/true -> true / true
+     
+                // x - null - 1.2.  - true/true --> true / false
+                // null - x - 1.2.  - true/true --> true / false
+                // null - 1.2. - x  - false/false --> false / false
                 
+                // x - 1.1. - 1.2.  - true/true  -> true / false
+                // 1.1. - x - 1.2.  - false/true -> true / true
+                // 1.1. - 1.2. - x  - false/false ->  -> false / false
+                
+                // Halutaan, että jos saa muokata mitään -> update=true
+                // Halutaan, että jos muokkaus on rajattua -> updateLimited = true
+                // --> "update" == edit || limited
+                // --> "updateLimited" == (edit || limited) && !edit
+                
+                boolean canEditAtAll = paramsCanEdit || paramsCanEditLimited;
+                boolean canEditLimited = canEditAtAll && !paramsCanEdit;
+
                 // Now - in UI it's easer to just check if we can modify AT ALL and limit the fields if limited mode is on...
-                result.put(PERMISSION_UPDATE, paramsCanEdit || paramsCanEditLimited);
-                result.put(PERMISSION_UPDATE_LIMITED, paramsCanEditLimited);
+                result.put(PERMISSION_UPDATE, canEditAtAll);
+                result.put(PERMISSION_UPDATE_LIMITED, canEditLimited);
             } catch (Exception ex) {
                 LOG.info("  (permissions) cannot edit");
                 result.put(PERMISSION_UPDATE, false);

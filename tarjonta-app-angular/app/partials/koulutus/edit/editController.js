@@ -20,7 +20,7 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService','CacheService',
+    'dialogService', 'CacheService',
     function BaseEditController($scope, $log, Config,
             $routeParams, $route, $location,
             converter, TarjontaService, PermissionService,
@@ -283,15 +283,15 @@ app.controller('BaseEditController', [
                 $scope.controlFormMessages(form, $scope.uiModel, "ERROR", "UI_ERRORS");
                 return;
             }
-            
+
             // tyhjien kuvien siivous
             for (var k in $scope.model.opintojenRakenneKuvas) {
-            	var kuva = $scope.model.opintojenRakenneKuvas[k];
-            	if (!kuva.base64data) {
-            		$scope.model.opintojenRakenneKuvas[k] = undefined;
-            	}
+                var kuva = $scope.model.opintojenRakenneKuvas[k];
+                if (!kuva.base64data) {
+                    $scope.model.opintojenRakenneKuvas[k] = undefined;
+                }
             }
-            
+
             PermissionService.permissionResource().authorize({}, function(authResponse) {
                 $log.debug("Authorization check : " + authResponse.result);
 
@@ -500,20 +500,24 @@ app.controller('BaseEditController', [
                 }
             }
         };
-        
+
         $scope.getRakenneKuvaModel = function(kieliUri) {
-        	if (!$scope.model) {
-        		$scope.model = {};
-        	}
-        	if (!$scope.model.opintojenRakenneKuvas) {
-        		$scope.model.opintojenRakenneKuvas = {};
-        	}
-        	var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
-        	if (!ret) {
-        		ret = {kieliUri: kieliUri};
-        		$scope.model.opintojenRakenneKuvas[kieliUri] = ret;
-        	}
-        	return ret;
+            if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === {}) {
+                return kieliUri;
+            }
+            if (!$scope.model) {
+                $scope.model = {};
+            }
+            if (!$scope.model.opintojenRakenneKuvas) {
+                $scope.model.opintojenRakenneKuvas = {};
+            }
+
+            var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
+            if (!ret) {
+                ret = {};
+                $scope.model.opintojenRakenneKuvas[kieliUri] = ret;
+            }
+            return ret;
         }
 
         $scope.onLisatietoLangSelection = function() {
