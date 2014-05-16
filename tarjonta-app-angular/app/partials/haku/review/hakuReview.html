@@ -57,11 +57,14 @@
             <tr>
                 <th tt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
                 <td colspan="2">
-                    <div ng-repeat="hakuaika in model.hakux.result.hakuaikas">
-                        <i>{{ hakuaika.nimi || t("haku.review.noname") }}</i> -
-                        <div t-show-date value="hakuaika.alkuPvm" timestamp /> -
-                        <div t-show-date value="hakuaika.loppuPvm" timestamp />
-                    </div>
+                    <table>
+                    <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas | orderBy:[alkuPvm,loppuPvm,nimi]">
+                        <td>{{ hakuaika.nimi || t("haku.review.noname") }} </td>
+                        <td><span t-show-date value="hakuaika.alkuPvm" timestamp></span></td>
+                        <td> &rarr; </td>
+                        <td><span t-show-date value="hakuaika.loppuPvm" timestamp></span></td>
+                    </tr>
+                    </table>
                 </td>
             </tr>
 
@@ -127,7 +130,9 @@
             <tr>
                 <th tt="haku.review.parametrit.PH_KKM.label">Koekutsujen muodostaminen</th>
                 <td colspan="2">
-                	<t-show-date value="parametrit.PH_KKM_S" timestamp/> --- <t-show-date value="parametrit.PH_KKM_E" timestamp/>
+                	<t-show-date value="parametrit.PH_KKM_S" timestamp/>
+                	<span ng-show="parametrit.PH_KKM_S || parametrit.PH_KKM_E">&rarr;</span>
+                	<t-show-date value="parametrit.PH_KKM_E" timestamp/>
                 </td>
             </tr>
 
@@ -141,28 +146,36 @@
             <tr>
                 <th tt="haku.review.parametrit.PH_KTT.label">Koetulosten tallentaminen</th>
                 <td colspan="2">
-                	<t-show-date value="parametrit.PH_KTT_S" timestamp/> --- <t-show-date value="parametrit.PH_KTT_E" timestamp/>
+                	<t-show-date value="parametrit.PH_KTT_S" timestamp/>
+                    <span ng-show="parametrit.PH_KTT_S || parametrit.PH_KTT_E">&rarr;</span>
+                	<t-show-date value="parametrit.PH_KTT_E" timestamp/>
                 </td>
             </tr>
 
             <tr>
                 <th tt="haku.review.parametrit.PH_OLVVPKE.label">Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
                 <td colspan="2">
-                	<t-show-date value="parametrit.PH_OLVVPKE_S" timestamp/> --- <t-show-date value="parametrit.PH_OLVVPKE_E" timestamp/>
+                	<t-show-date value="parametrit.PH_OLVVPKE_S" timestamp/>
+                    <span ng-show="parametrit.PH_OLVVPKE_S || parametrit.PH_OLVVPKE_E">&rarr;</span>
+                    <t-show-date value="parametrit.PH_OLVVPKE_E" timestamp/>
                 </td>
             </tr>
 
             <tr>
                 <th tt="haku.review.parametrit.PH_VLS.label">Valintalaskennan suorittaminen</th>
                 <td colspan="2">
-                	<t-show-date value="parametrit.PH_VLS_S" timestamp/> --- <t-show-date value="parametrit.PH_VLS_E" timestamp/>
+                	<t-show-date value="parametrit.PH_VLS_S" timestamp/>
+                    <span ng-show="parametrit.PH_VLS_S || parametrit.PH_VLS_E">&rarr;</span>
+                    <t-show-date value="parametrit.PH_VLS_E" timestamp/>
                 </td>
             </tr>
 
             <tr>
                 <th tt="haku.review.parametrit.PH_SS.label">Sijoittelun suorittaminen</th>
                 <td colspan="2">
-                	<t-show-date value="parametrit.PH_SS_S" timestamp/> --- <t-show-date value="parametrit.PH_SS_E" timestamp/>
+                	<t-show-date value="parametrit.PH_SS_S" timestamp/>
+                    <span ng-show="parametrit.PH_SS_S || parametrit.PH_SS_E">&rarr;</span>
+                    <t-show-date value="parametrit.PH_SS_E" timestamp/>
                 </td>
             </tr>
 
@@ -177,6 +190,15 @@
                 <th tt="haku.review.parametrit.PH_SST.label">Sijoittelun suorittamistiheys</th>
                 <td colspan="2">
                     <div ng-if="parametrit.PH_SST">{{ parametrit.PH_SST }} <span tt="haku.review.tuntia">tuntia</span></div>
+                </td>
+            </tr>
+
+            <tr>
+                <th tt="haku.review.parametrit.PH_VTJH.label">Valintatulosten julkaiseminen hakijoille</th>
+                <td colspan="2">
+                    <t-show-date value="parametrit.PH_VTJH_S" timestamp/>
+                    <span ng-show="parametrit.PH_VTJH_S || parametrit.PH_VTJH_E">&rarr;</span>
+                    <t-show-date value="parametrit.PH_VTJH_E" timestamp/>
                 </td>
             </tr>
 
