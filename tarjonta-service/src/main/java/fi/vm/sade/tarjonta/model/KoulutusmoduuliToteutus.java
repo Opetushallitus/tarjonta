@@ -852,7 +852,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public boolean isKuva(String kielikoodi) {
         return kuvat.containsKey(kielikoodi);
     }
-
+    
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
     }

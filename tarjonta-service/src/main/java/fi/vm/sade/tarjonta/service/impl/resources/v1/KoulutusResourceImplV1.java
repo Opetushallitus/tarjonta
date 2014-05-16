@@ -45,6 +45,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -111,6 +112,7 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import java.util.Set;
 
 /**
  *
@@ -237,10 +239,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
 
+        Set<String> deleteImageUris = Sets.<String>newHashSet();
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
             //validate optional images
             for (Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
-                KoulutusValidator.validateKoulutusKuva(e.getValue(), result);
+                if (e.getValue() != null) {
+                    KoulutusValidator.validateKoulutusKuva(e.getValue(), e.getKey(), result);
+                } else {
+                    deleteImageUris.add(e.getKey());
+                }
             }
         }
 
@@ -252,6 +259,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 KoulutusValidator.validateKoulutusUpdate(komoto, result);
                 if (result.hasErrors()) {
                     return result;
+                }
+
+                for (String kieliUri : deleteImageUris) {
+                    if (komoto.isKuva(kieliUri)) {
+                        komoto.getKuvat().remove(kieliUri);
+                    }
                 }
 
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);

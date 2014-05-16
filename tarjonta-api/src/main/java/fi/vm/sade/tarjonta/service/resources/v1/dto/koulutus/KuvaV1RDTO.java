@@ -28,11 +28,11 @@ public class KuvaV1RDTO implements Serializable {
 
     @ApiModelProperty(value = "Koodisto kieli uri", required = false)
     private String kieliUri;
-    @ApiModelProperty(value = "Tiedoston alkuperäinen nimi", required = false)
+    @ApiModelProperty(value = "Tiedoston alkuperäinen nimi", required = true)
     private String filename;
-    @ApiModelProperty(value = "Tiedoston tyyppi (image/jpeg, image/png jne.)", required = false)
+    @ApiModelProperty(value = "Tiedoston tyyppi (image/jpeg, image/png jne.)", required = true)
     private String mimeType;
-    @ApiModelProperty(value = "Kuvan binaari base64-enkoodauksella", required = false)
+    @ApiModelProperty(value = "Kuvatiedosto base64-enkoodauksella", required = true)
     private String base64data;
 
     public KuvaV1RDTO() {

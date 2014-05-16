@@ -172,7 +172,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                     KomoValidator.validateModuleKorkeakoulu(dto, result);
                     break;
                 case TUNTEMATON:
-                case ULKOMAINEN:
+                case PERUSOPETUS_ULKOMAINEN:
                     KomoValidator.validateModuleGeneric(dto, result);
                     break;
                 default:

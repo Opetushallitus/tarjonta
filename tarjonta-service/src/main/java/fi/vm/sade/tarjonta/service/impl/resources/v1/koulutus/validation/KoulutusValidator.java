@@ -332,17 +332,29 @@ public class KoulutusValidator {
     }
 
     public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO result) {
-        validateKieliUri(kuva.getKieliUri(), "kieliUri", result);
-        String raw = kuva.getBase64data();
+        validateKoulutusKuva(kuva, null, result);
+    }
 
-        /*
-         * Data validation check
-         */
-        if (getValidBase64Image(raw) == null) {
-            result.addError(ErrorV1RDTO.createValidationError("base64data", "error_invalid_base64_data"));
+    public static void validateKoulutusKuva(final KuvaV1RDTO kuva, final String kieliUri, ResultV1RDTO result) {
+        if (validateKieliUri(kuva.getKieliUri() != null ? kuva.getKieliUri() : kieliUri, "kieliUri", result)) {
+            //invalid kieli uri, fail fast.
+            return;
+        }
+
+        String raw = kuva.getBase64data();
+        if (raw == null || raw.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError("base64data", "error_missing_base64_data"));
+        } else {
+            /*
+             * Data validation check
+             */
+            if (getValidBase64Image(raw) == null) {
+                result.addError(ErrorV1RDTO.createValidationError("base64data", "error_invalid_base64_data"));
+            }
         }
 
         validateMimeType(kuva.getMimeType(), "mimeType", result);
+
     }
 
     public static void validateMimeType(String mimeType, final String errorInObjectfieldname, ResultV1RDTO result) {
@@ -353,15 +365,20 @@ public class KoulutusValidator {
         }
     }
 
-    public static void validateKieliUri(final String kieliUri, final String errorInObjectfieldname, ResultV1RDTO result) {
+    public static boolean validateKieliUri(final String kieliUri, final String errorInObjectfieldname, ResultV1RDTO result) {
         if (kieliUri == null || kieliUri.isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_uri"));
+            return false;
         } else if (!KoodistoURI.isValidKieliUri(kieliUri)) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_invalid_uri"));
+            return false;
         }
+
+        return true;
     }
 
     public static String getValidBase64Image(final String rawbase64) {
+        Preconditions.checkNotNull(rawbase64, "Image string cannot be null!");
         String modifiedBase64 = rawbase64;
         final boolean isBase64 = Base64.isBase64(rawbase64);
         if (!isBase64) {

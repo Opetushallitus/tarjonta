@@ -331,18 +331,25 @@ public class KoulutusDTOConverterToEntity {
     private void saveHtmls(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
             for (Map.Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
-                saveHtml5Image(komoto, e.getValue(), userOid);
+                saveHtml5Image(komoto, e.getValue(), e.getKey(), userOid);
             }
         }
     }
 
     public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String userOid) {
+        saveHtml5Image(komoto, kuva, null, userOid);
+    }
+
+    public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String mapKeyKieliUri, final String userOid) {
+        //select a map key as kieli uri, when kuva object kieliUri field is null
+        final String imageKieliUri = kuva.getKieliUri() != null ? kuva.getKieliUri() : mapKeyKieliUri;
+        Preconditions.checkNotNull(imageKieliUri, "Kieli uri cannot be null!");
         /*
          * Update or insert uploaded binary data
          */
         BinaryData bin = null;
-        if (komoto.isKuva(kuva.getKieliUri())) {
-            bin = komoto.getKuvat().get(kuva.getKieliUri());
+        if (komoto.isKuva(imageKieliUri)) {
+            bin = komoto.getKuvat().get(imageKieliUri);
         } else {
             bin = new BinaryData();
         }
@@ -351,7 +358,7 @@ public class KoulutusDTOConverterToEntity {
         bin.setData(decoded);
         bin.setFilename(kuva.getFilename());
         bin.setMimeType(kuva.getMimeType());
-        komoto.setKuvaByUri(kuva.getKieliUri(), bin);
+        komoto.setKuvaByUri(imageKieliUri, bin);
         komoto.setLastUpdatedByOid(userOid);
         this.koulutusmoduuliToteutusDAO.update(komoto);
     }
