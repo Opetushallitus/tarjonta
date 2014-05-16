@@ -283,7 +283,15 @@ app.controller('BaseEditController', [
                 $scope.controlFormMessages(form, $scope.uiModel, "ERROR", "UI_ERRORS");
                 return;
             }
-
+            
+            // tyhjien kuvien siivous
+            for (var k in $scope.model.opintojenRakenneKuvas) {
+            	var kuva = $scope.model.opintojenRakenneKuvas[k];
+            	if (!kuva.base64data) {
+            		$scope.model.opintojenRakenneKuvas[k] = undefined;
+            	}
+            }
+            
             PermissionService.permissionResource().authorize({}, function(authResponse) {
                 $log.debug("Authorization check : " + authResponse.result);
 
@@ -494,6 +502,12 @@ app.controller('BaseEditController', [
         };
         
         $scope.getRakenneKuvaModel = function(kieliUri) {
+        	if (!$scope.model) {
+        		$scope.model = {};
+        	}
+        	if (!$scope.model.opintojenRakenneKuvas) {
+        		$scope.model.opintojenRakenneKuvas = {};
+        	}
         	var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
         	if (!ret) {
         		ret = {kieliUri: kieliUri};
