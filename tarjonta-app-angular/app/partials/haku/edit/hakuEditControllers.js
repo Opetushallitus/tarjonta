@@ -453,11 +453,12 @@ app.controller('HakuEditController',
             
             var hakuOid = $route.current.params.id;
             
-
-            TarjontaService.parameterCanEditHakukohde(hakuOid);
-            TarjontaService.parameterCanEditHakukohdeLimited(hakuOid);
-            TarjontaService.parameterCanAddHakukohdeToHaku(hakuOid);
-            TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid);
+//
+//            TarjontaService.parameterCanEditHakukohde(hakuOid);
+//            TarjontaService.parameterCanEditHakukohdeLimited(hakuOid);
+//            TarjontaService.parameterCanAddHakukohdeToHaku(hakuOid);
+//            TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid);
+//
 
             if(!$scope.isNewHaku()) {
               //permissiot
@@ -465,6 +466,11 @@ app.controller('HakuEditController',
                 $scope.isMutable=results[0];
                 $scope.isRemovable=results[1] && results[2];
               });
+              
+              PermissionService.getPermissions("haku", hakuOid).then(function(permissions) {
+                  $log.info("got permissions! ", permissions);
+              });
+              
             } else {
               //uusi haku
               $scope.isMutable=true;
