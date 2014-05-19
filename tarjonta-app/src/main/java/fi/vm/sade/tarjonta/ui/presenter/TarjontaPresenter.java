@@ -1525,13 +1525,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             for(KoulutusPerustieto koulutus: kv.getKoulutukset()){
                 String tarjoajaOid = koulutus.getTarjoaja().getOid();
                 //pitää olla oikeuis kaikkiin!
-                hasPermission = hasPermission && getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
+                hasPermission = hasPermission && getPermission().userCanUpdateHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
             }
         }
 
         final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         
-        boolean parameterAllows = parameterServices.parameterCanAddHakukohdeToHaku(hakuOid);
+        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
         
         return hasPermission && parameterAllows;
     }
@@ -1543,7 +1543,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     public boolean isHakukohdeEditableForCurrentUser(final String hakukohdeOid) {
 
-        LueHakukohdeVastausTyyppi hakukohde = tarjontaPublicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohdeOid));
+        final LueHakukohdeVastausTyyppi hakukohde = tarjontaPublicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohdeOid));
         
         final String hakuOid = hakukohde.getHakukohde().getHakukohteenHakuOid();
 
@@ -1560,12 +1560,12 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             for(KoulutusPerustieto koulutus: kv.getKoulutukset()){
                 String tarjoajaOid = koulutus.getTarjoaja().getOid();
                 //pitää olla oikeuis kaikkiin!
-                hasPermission = hasPermission && getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
+                hasPermission = hasPermission && getPermission().userCanUpdateHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
             }
         }
 
         
-        boolean parameterAllows = parameterServices.parameterCanAddHakukohdeToHaku(hakuOid);
+        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
         
         return hasPermission && parameterAllows;
     }
