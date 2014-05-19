@@ -1501,6 +1501,40 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             getModel().getHakukohde().getHakuViewModel().setPaattymisPvm(hakuaika.getSisaisenHaunPaattymisPvm());
         }
     }
+    
+    /** 
+     * Saako nykyinen käyttäjä muokata hakukohdetta, tarkistaa permissiot ja parametrit
+     * 
+     * @return
+     */
+    public boolean isHakukohdeEditableForCurrentUser() {
+
+        //for oph crud user, always editable
+        if (getPermission().userIsOphCrud()) {
+            return true;
+        }
+
+        //TODO tarvitaanko tätä?
+        loadHakukohdeHakuPvm();
+        
+        boolean hasPermission=true;
+
+        //hae koulutukset jotta tiedetään tarjoaja(t)
+        for(String komotoOid: getModel().getHakukohde().getKomotoOids()){
+            KoulutuksetVastaus kv = findKoulutusByKoulutusOid(komotoOid);
+            for(KoulutusPerustieto koulutus: kv.getKoulutukset()){
+                String tarjoajaOid = koulutus.getTarjoaja().getOid();
+                //pitää olla oikeuis kaikkiin!
+                hasPermission = hasPermission && getPermission().userCanAddKoulutusToHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
+            }
+        }
+
+        final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
+        
+        boolean parameterAllows = parameterServices.parameterCanAddHakukohdeToHaku(hakuOid);
+        
+        return hasPermission && parameterAllows;
+    }
 
     public void removeSelectedHakukohde() {
         getModel().getSelectedhakukohteet().clear();
