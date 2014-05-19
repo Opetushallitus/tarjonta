@@ -450,7 +450,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
         List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
         for (HakukohdePerustieto hk : vs.getHakukohteet()) {
-            ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid()));
+            ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid(), hk.getHakuOid()));
         }
         return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
     }
