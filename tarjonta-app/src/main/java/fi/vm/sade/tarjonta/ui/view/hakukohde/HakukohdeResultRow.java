@@ -117,11 +117,11 @@ public class HakukohdeResultRow extends HorizontalLayout {
     }
 
     void reinitMenubar() {
-        final OrganisaatioContext context = OrganisaatioContext.getContext(this.hakukohde.getTarjoajaOid());
+        final String hakukohdeOid = hakukohde.getOid();
 
         final TarjontaTila tila = TarjontaTila.valueOf(hakukohde.getTila());
         rowMenuBar.clear();
-        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand);
+        rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.SHOW.key), menuCommand); //show always
        
 
         //jos tila = luonnos/kopioitu niin saa muokata oikeuksien puitteissa vaikka haussa kiinni
@@ -129,35 +129,25 @@ public class HakukohdeResultRow extends HorizontalLayout {
         /*if ((tila.isMutable() && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context))
                 || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {*/
 
-        if (checkForErillishakuAndRights(context) || tarjontaPresenter.getPermission().userCanUpdateHakukohde(context, hakuStarted)) {
+        if (tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
-        rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand);
+        rowMenuBar.addMenuCommand(i18n.getMessage("naytaKoulutukset"), menuCommand); //show always
 
-        if (tila.isRemovable() && (checkForErillishakuAndRights(context) || tarjontaPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted))) {
+        if (tila.isRemovable() && tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
         
-        if (tila.equals(TarjontaTila.VALMIS) && (tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted) || checkForErillishakuAndRights(context))) {
+        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.PERUTTU)) && tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && (tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted) || checkForErillishakuAndRights(context))) {
+        }
+        
+        if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
     }
 
-    private boolean checkForErillishakuAndRights(OrganisaatioContext context) {
-        return tarjontaPresenter.getPermission().userCanUpdateHakukohde(context) && (hakukohde.getHakutapaKoodi().getUri().contains(hakutapaErillishaku) ||
-                hakukohde.getHakutapaKoodi().getUri().contains(hakutapaJatkuvaHaku) );
-    }
-
-
-    private boolean checkErillishakuAndRightsToDelete(OrganisaatioContext context) {
-       return tarjontaPresenter.getPermission().userCanDeleteHakukohde(context) && (hakukohde.getHakutapaKoodi().getUri().contains(hakutapaErillishaku) ||
-               hakukohde.getHakutapaKoodi().getUri().contains(hakutapaJatkuvaHaku));
-    }
     /**
      * Fires an event based on user's selection in the row's menubar.
      *
