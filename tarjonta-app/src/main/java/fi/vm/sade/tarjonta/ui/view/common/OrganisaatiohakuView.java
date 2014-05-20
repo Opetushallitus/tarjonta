@@ -61,6 +61,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.organisaatio.service.search.SearchCriteria;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -100,7 +101,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     @Autowired
     private TarjontaPresenter presenter;
     private List<OrganisaatioPerustieto> organisaatios;
-    private OrganisaatioSearchCriteria criteria;
+    private SearchCriteria criteria;
     List<String> rootOrganisaatioOids;
     private boolean isAttached = false;
     @Autowired(required = true)
@@ -117,8 +118,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     };
     
     public OrganisaatiohakuView() {
-
-        criteria = new OrganisaatioSearchCriteria();
+        criteria = new SearchCriteria();
         criteria.setSkipParents(true);
     }
 
@@ -194,7 +194,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 new String[]{
                     OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
                     OrganisaatioTyyppi.OPPILAITOS.value(),
-                    OrganisaatioTyyppi.OPETUSPISTE.value(),
+                    OrganisaatioTyyppi.TOIMIPISTE.value(),
                     OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
                     OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
                 });
@@ -224,7 +224,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                criteria = new OrganisaatioSearchCriteria();
+                criteria = new SearchCriteria();
                 criteria.setSkipParents(true);
                 if (rootOrganisaatioOids != null) {
                     criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
@@ -453,7 +453,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     private void setOrgTyyppiItemCaptions() {
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(), T(OrganisaatioTyyppi.KOULUTUSTOIMIJA.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.MUU_ORGANISAATIO.value(), T(OrganisaatioTyyppi.MUU_ORGANISAATIO.name()));
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPETUSPISTE.value(), T(OrganisaatioTyyppi.OPETUSPISTE.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.TOIMIPISTE.value(), T(OrganisaatioTyyppi.TOIMIPISTE.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), T(OrganisaatioTyyppi.OPPILAITOS.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
     }

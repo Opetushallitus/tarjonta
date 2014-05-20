@@ -30,8 +30,8 @@ import fi.vm.sade.koodisto.widget.KoodistoComponent;
 
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.organisaatio.service.search.SearchCriteria;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.RaportointiRestClientHelper;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
@@ -185,7 +185,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
 
 
               cbOppilaitos.select(selectedOrg);
-          }  else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+          }  else if (organisaatioPerustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.TOIMIPISTE)) {
               String oppilaitos = getKoulutusParent(organisaatioPerustieto, 2);
               String koulutustoimija = getKoulutusParent(organisaatioPerustieto, 1);
 
@@ -371,7 +371,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     private ComboBox buildKoulutustoimijaCombo() {
         ComboBox koulutustoimijaCombo = new ComboBox();
 
-        OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
+        SearchCriteria criteria = new SearchCriteria();
 
         criteria.setOrganisaatioTyyppi(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value());
 
@@ -411,8 +411,8 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
          }
     }
 
-    private OrganisaatioSearchCriteria createOrganisaatioSearchCriteria(String oid,OrganisaatioTyyppi tyyppi) {
-        OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
+    private SearchCriteria createOrganisaatioSearchCriteria(String oid,OrganisaatioTyyppi tyyppi) {
+        SearchCriteria criteria = new SearchCriteria();
 
         criteria.setOrganisaatioTyyppi(tyyppi.value());
         criteria.getOidRestrictionList().add(oid);
@@ -423,7 +423,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     private void createToimipisteComboDatasource(String oppilaitosOid) {
         if (cbToimipiste != null) {
 
-            cbToimipiste.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(createOrganisaatioSearchCriteria(oppilaitosOid, OrganisaatioTyyppi.OPETUSPISTE))));
+            cbToimipiste.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(createOrganisaatioSearchCriteria(oppilaitosOid, OrganisaatioTyyppi.TOIMIPISTE))));
             cbToimipiste.setItemCaptionPropertyId(CAPTION_PROPERTY_ID);
             cbToimipiste.setEnabled(true);
 
