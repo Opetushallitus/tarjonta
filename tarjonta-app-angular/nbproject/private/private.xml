@@ -2,14 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
-            <url>app/partials/koulutus/review/AMMATTIKORKEAKOULUTUS_reviewLanguage.html</url>
-            <bookmark id="2">
-                <name/>
-                <line>143</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>app/partials/helpers/localisation.html</url>
             <bookmark id="1">
                 <name/>
@@ -17,63 +9,21 @@
                 <key/>
             </bookmark>
         </file>
+        <file>
+            <url>app/partials/koulutus/review/AMMATTIKORKEAKOULUTUS_reviewLanguage.html</url>
+            <bookmark id="2">
+                <name/>
+                <line>143</line>
+                <key/>
+            </bookmark>
+        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/edit/hakuEditControllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/koodisto.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/loading.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/init.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/shared/configSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/review/reviewControllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/config/karma.conf.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/organisaatio.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/e2e/scenarios.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/shared/permissionSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/app-configuration.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/directiveSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/edit/alkamispaiva-ja-kausi.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/list/hakuListControllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/review/hakuReviewControllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/hakuControllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/localisation.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/directivesSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/edit/koulutusConverter.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/kuvaukset.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/shared/tarjontaSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/filters.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/debounce.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/edit/editYhteyshenkiloController.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/controllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/loading-error-dialog.html</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/cache.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/sharedStateService.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/tarjonta.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/hakukohde.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/CommonUtilService.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/edit/editControllers.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/config.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/koodistoSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/filtersSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/luo-koulutus-dialogi.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/edit/aiheet-teemat.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/directives.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/tarjontaApp.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/directives.js</file>
             <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/permissions.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/servicesSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/yhteyshenkilo.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/koulutusController.js</file>
+            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/edit/hakuEditBasic.html</file>
             <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/ohjausparametrit.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/shared/localisationSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/sisaltyvyys/liita-sisaltyvyys-ctrl.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/shared/authSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/koulutus/remove/poista-koulutus-ctrl.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/auth.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/test/unit/controllersSpec.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/js/shared/haku.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/services.js</file>
-            <file>file:/Users/mlyly/work/OPH/git/tarjonta/tarjonta-app-angular/app/partials/haku/edit/select-organisations-dialog.js</file>
         </group>
     </open-files>
 </project-private>
