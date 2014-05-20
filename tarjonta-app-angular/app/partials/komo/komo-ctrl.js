@@ -63,8 +63,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {enum: 'YLIOPISTOKOULUTUS', name: "Yliopistokoulutus"},
                     {enum: 'AMMATTIKORKEAKOULUTUS', name: "Ammattikorkeakoulutus"},
                     {enum: 'KORKEAKOULUTUS', name: "Korkeakoulutus"},
-                    {enum: 'PERUSKOULU', name: "Peruskoulu"},
-                    {enum: 'ULKOMAINEN', name: "Ulkomainen"},
+                    {enum: 'PERUSOPETUS', name: "Perusopetus"},
+                    {enum: 'PERUSOPETUS_ULKOMAINEN', name: "PerusopetusUlkomainen"},
                     {enum: 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA', name: "AmmatillinenPerustutkintoNayttotutkintona"},
                     {enum: 'TUNTEMATON', name: "Tuntematon"}
                 ],
@@ -242,7 +242,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 });
 
                 d.result.then(function(data) {
-                     // results: "ACTION" or "CANCEL"
+                    // results: "ACTION" or "CANCEL"
                     if (data) {
                         $scope.copy();
                     }

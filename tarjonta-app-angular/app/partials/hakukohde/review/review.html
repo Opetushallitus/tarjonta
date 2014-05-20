@@ -26,7 +26,7 @@
 	
 	    <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
 	        <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
+	        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
 	    </tr>
 	
 	    <tbody ng-show="!model.collapse.perusTiedot">
@@ -91,7 +91,7 @@
 	
 	    <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
 	        <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
-	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
+	        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
 	    </tr>
 	    <tr ng-show="!model.collapse.valintakokeet">
 	        <th></th>
@@ -132,7 +132,7 @@
 	
 	    <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
 	        <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
-	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
+	        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
 	    </tr>
 	    <tr ng-show="!model.collapse.liitteet">
 	        <th></th>

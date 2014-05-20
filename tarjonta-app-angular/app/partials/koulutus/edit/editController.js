@@ -20,7 +20,7 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService','CacheService',
+    'dialogService', 'CacheService',
     function BaseEditController($scope, $log, Config,
             $routeParams, $route, $location,
             converter, TarjontaService, PermissionService,
@@ -491,16 +491,21 @@ app.controller('BaseEditController', [
                     $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
                 }
             }
-        };
-        
-        $scope.getRakenneKuvaModel = function(kieliUri) {
-        	var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
-        	if (!ret) {
-        		ret = {kieliUri: kieliUri};
-        		$scope.model.opintojenRakenneKuvas[kieliUri] = ret;
-        	}
-        	return ret;
         }
+
+        $scope.getRakenneKuvaModel = function(kieliUri) {
+            if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === Object(kieliUri)) {
+                return kieliUri;
+            }
+            
+            var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
+            if (!ret) {
+                ret = {};
+                $scope.model.opintojenRakenneKuvas[kieliUri] = ret;
+            }
+
+            return ret;
+        };
 
         $scope.onLisatietoLangSelection = function() {
             for (var ki in $scope.model.kuvausKomo) {

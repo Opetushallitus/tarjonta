@@ -308,7 +308,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
 
         angular.forEach(factory.STRUCTURE[koulutusastetyyppi].STR, function(value, key) {
-            $log.debug(value);
+            apiModel[key] = value.default;
+        });
+
+        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].IMAGES, function(value, key) {
             apiModel[key] = value.default;
         });
 
@@ -387,6 +390,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
                 opintojenMaksullisuus: {"default": false}
+            }, IMAGES: {
+                opintojenRakenneKuvas: {"default": {}}
             }, DESC: {
                 kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
                         'KOULUTUKSEN_RAKENNE',
@@ -456,6 +461,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
+            }, IMAGES: {
             }, DESC: {
                 kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
                     ])},
@@ -555,6 +561,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 angular.forEach(uiModel[key].uris, function(uri) {
                     apiModel[key].uris[uri] = map[uri];
                 });
+            }
+        });
+        
+        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].IMAGES, function(value, key) {
+            for (var i in apiModel[key]) {
+                if (angular.isUndefined(apiModel[key][i].base64data) || apiModel[key][i].base64data === null) {
+                    apiModel[key][i] = null;
+                }
             }
         });
 

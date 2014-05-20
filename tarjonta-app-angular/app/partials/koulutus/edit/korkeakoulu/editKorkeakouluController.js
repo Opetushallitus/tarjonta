@@ -133,33 +133,6 @@ app.controller('EditKorkeakouluController',
                     });
                 };
 
-                //LISATIEDOT PAGE FUNCTIONS
-
-                $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
-                    if (!kieliUri) {
-                        return {};
-                    }
-                    var kuvaus = null;
-                    if (typeof boolIsKomo !== 'boolean') {
-                        converter.throwError('An invalid boolean variable : ' + boolIsKomo);
-                    }
-
-                    if (boolIsKomo) {
-                        kuvaus = $scope.model.kuvausKomo;
-                    } else {
-                        kuvaus = $scope.model.kuvausKomoto;
-                    }
-
-                    if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
-                        kuvaus[textEnum] = {tekstis: {}};
-                        if (!angular.isUndefined(kieliUri)) {
-                            kuvaus[textEnum].tekstis[kieliUri] = '';
-                        }
-                    }
-
-                    return kuvaus[textEnum].tekstis;
-                };
-
                 $scope.removeKandidaatinKoulutuskoodi = function(koodi) {
                     $scope.model.kandidaatinKoulutuskoodi = {};
                 };

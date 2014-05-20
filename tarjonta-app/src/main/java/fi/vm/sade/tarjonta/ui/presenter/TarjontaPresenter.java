@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vaadin.ui.Window;
@@ -94,6 +95,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
 import fi.vm.sade.tarjonta.service.types.ValintakoeTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.enums.DocumentStatus;
@@ -194,6 +196,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private TarjontaSearchService tarjontaSearchService;
     @Autowired(required = true)
     protected PublishingService publishingService;
+    @Autowired
+    private ParameterServices parameterServices;
 
     public static final String VALINTAKOE_TAB_SELECT = "valintakokeet";
     public static final String LIITTEET_TAB_SELECT = "liitteet";
@@ -454,6 +458,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(haut);
 
+        
+        //XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) 
+        
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
             public int compare(HakuViewModel a, HakuViewModel b) {
@@ -529,7 +536,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }
-        return foundHaut;
+        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(parameterServices, tarjontaPermissionService)));
     }
 
     /**
@@ -1494,7 +1501,77 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             getModel().getHakukohde().getHakuViewModel().setPaattymisPvm(hakuaika.getSisaisenHaunPaattymisPvm());
         }
     }
+    
+    /** 
+     * Saako nykyinen käyttäjä muokata hakukohdetta, tarkistaa permissiot ja parametrit
+     * 
+     * @return
+     */
+    public boolean isHakukohdeEditableForCurrentUser() {
 
+        //for oph crud user, always editable
+        if (getPermission().userIsOphCrud()) {
+            return true;
+        }
+
+        //TODO tarvitaanko tätä?
+        loadHakukohdeHakuPvm();
+        
+        boolean hasPermission=true;
+
+        //hae koulutukset jotta tiedetään tarjoaja(t)
+        for(String komotoOid: getModel().getHakukohde().getKomotoOids()){
+            KoulutuksetVastaus kv = findKoulutusByKoulutusOid(komotoOid);
+            for(KoulutusPerustieto koulutus: kv.getKoulutukset()){
+                String tarjoajaOid = koulutus.getTarjoaja().getOid();
+                //pitää olla oikeuis kaikkiin!
+                hasPermission = hasPermission && getPermission().userCanUpdateHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
+            }
+        }
+
+        final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
+        
+        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        
+        return hasPermission && parameterAllows;
+    }
+
+    /** 
+     * Saako nykyinen käyttäjä muokata hakukohdetta, tarkistaa permissiot ja parametrit
+     * 
+     * @return
+     */
+    public boolean isHakukohdeEditableForCurrentUser(final String hakukohdeOid) {
+
+        final LueHakukohdeVastausTyyppi hakukohde = tarjontaPublicService.lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohdeOid));
+        
+        final String hakuOid = hakukohde.getHakukohde().getHakukohteenHakuOid();
+
+        //for oph crud user, always editable
+        if (getPermission().userIsOphCrud()) {
+            return true;
+        }
+        
+        boolean hasPermission=true;
+
+        //hae koulutukset jotta tiedetään tarjoaja(t)
+        for(KoulutusKoosteTyyppi koulutusKoosteTyyppi: hakukohde.getHakukohde().getHakukohdeKoulutukses()){
+            KoulutuksetVastaus kv = findKoulutusByKoulutusOid(koulutusKoosteTyyppi.getKomotoOid());
+            for(KoulutusPerustieto koulutus: kv.getKoulutukset()){
+                String tarjoajaOid = koulutus.getTarjoaja().getOid();
+                //pitää olla oikeuis kaikkiin!
+                hasPermission = hasPermission && getPermission().userCanUpdateHakukohde(OrganisaatioContext.getContext(tarjoajaOid));
+            }
+        }
+
+        
+        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        
+        return hasPermission && parameterAllows;
+    }
+
+    
+    
     public void removeSelectedHakukohde() {
         getModel().getSelectedhakukohteet().clear();
         removeHakukohde(getModel().getHakukohde().getOid());

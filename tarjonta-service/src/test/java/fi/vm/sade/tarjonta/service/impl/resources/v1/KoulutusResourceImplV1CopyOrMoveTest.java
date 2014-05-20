@@ -227,7 +227,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, "kk")).andReturn(true);
 
         //remove all not needed referenses by using convert entity to dto (language can be any)
-        expect(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class,komoto, "FI", false)).andReturn(kkDto);
+        expect(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class,komoto, "FI", false, true)).andReturn(kkDto);
 
         Capture<List> toOrgOids = new Capture<List>();
         permissionChecker.checkCopyKoulutus(capture(toOrgOids));

@@ -309,6 +309,11 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 canCreateHakukohde: false,
                 canCreateKoulutus: false
             };
+        
+            var canRemove = function (hakuOid) {
+                return ((TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid) &&
+                    TarjontaService.parameterCanEditHakukohde(hakuOid)));
+            };
             
             function rowActions(prefix, row, actions) {
             	var oid = row.oid;
@@ -317,7 +322,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
 
-                tt.removable = TarjontaService.parameterCanRemoveHakukohdeFromHaku(row.hakuOid);
+                tt.removable = canRemove(row.hakuOid);
 
                 var canRead = PermissionService[prefix].canPreview(oid);
                 console.log("row actions can read (" + prefix + ")", canRead);

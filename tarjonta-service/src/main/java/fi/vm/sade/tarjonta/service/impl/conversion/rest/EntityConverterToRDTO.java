@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -26,11 +27,14 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatilline
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +60,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final String lang, final boolean showMeta) {
+    public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final String lang, final boolean showMeta, final boolean showImg) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
         final Locale locale = new Locale(lang);
 
@@ -139,6 +143,14 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             kkDto.setPohjakoulutusvaatimukset(commonConverter.convertToKoodiUrisDTO(komoto.getKkPohjakoulutusvaatimus(), locale, FieldNames.POHJALKOULUTUSVAATIMUS, showMeta));
             convertFlatKomoToRDTO(dto, komo, komoto, locale, showMeta);
+
+            //Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(komotoOid);
+            if (showImg && komoto.getKuvat() != null && !komoto.getKuvat().isEmpty()) {
+                for (Map.Entry<String, BinaryData> e : komoto.getKuvat().entrySet()) {
+                    kkDto.getOpintojenRakenneKuvas().put(e.getKey(), new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
+                }
+            }
+
         } else if (dto instanceof KoulutusLukioV1RDTO) {
             /**
              * 2ASTE : LUKIO

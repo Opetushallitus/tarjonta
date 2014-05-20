@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -105,18 +106,14 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
     private static final String PERMISSION_REMOVE = "remove";
     private static final String PERMISSION_COPY = "copy";
     
-    
+    // http://localhost:8084/tarjonta-service/rest/v1/permission/permissions/haku/1.2.246.562.29.45401879304
+    // http://localhost:8084/tarjonta-service/rest/v1/permission/permissions/hakukohde/1.2.246.562.20.46022392388
     @Override
     @Secured({ROLE_READ, ROLE_UPDATE, ROLE_CRUD})
-    public Map<String, Boolean> getPermissions(String type, String key) {
-        Map<String, Boolean> result = new HashMap<String, Boolean>();
+    @Transactional(readOnly = true)
+    public Map getPermissions(String type, String key) {
+        Map result = new HashMap();
 
-        result.put(PERMISSION_CREATE, Boolean.FALSE);
-        result.put(PERMISSION_UPDATE, Boolean.FALSE);
-        result.put(PERMISSION_UPDATE_LIMITED, Boolean.FALSE);
-        result.put(PERMISSION_REMOVE, Boolean.FALSE);
-        result.put(PERMISSION_COPY, Boolean.FALSE);
-        
         if ("haku".equalsIgnoreCase(type)) {
             Haku haku = processHakuPermissions(key, result);
             if (haku != null) {
@@ -136,7 +133,10 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         }
         
         if ("organisaatio".equalsIgnoreCase(type)) {
+            Map subResults = new HashMap();
+            result.put("organisaatio", subResults);
             
+            // TODO 
         }
 
         LOG.info("getPermissions({}, {}) -> {}", new Object[] {type, key, result});
@@ -144,7 +144,17 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
         return result;
     }
     
-    private Haku processHakuPermissions(String key, Map<String, Boolean> result) {
+    private Haku processHakuPermissions(String key, Map parentResult) {
+
+        Map result = new HashMap();
+        parentResult.put("haku", result);
+
+        result.put(PERMISSION_COPY, false);
+        result.put(PERMISSION_CREATE, false);
+        result.put(PERMISSION_REMOVE, false);
+        result.put(PERMISSION_UPDATE, false);
+        result.put(PERMISSION_UPDATE_LIMITED, false);
+        
         Haku h = hakuDao.findByOid(key);
         if (h != null) {
             updateStateTransferInformation(result, h.getTila());
@@ -159,9 +169,9 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
 
             try {
                 permissionChecker.checkRemoveHakuWithOrgs(h.getTarjoajaOids());
-                result.put(PERMISSION_REMOVE, Boolean.TRUE);
+                result.put(PERMISSION_REMOVE, true);
             } catch (Exception ex) {
-                result.put(PERMISSION_REMOVE, Boolean.FALSE);
+                result.put(PERMISSION_REMOVE, false);
             }
 
             try {
@@ -171,28 +181,76 @@ public class PermissionResourceImplV1 implements PermissionV1Resource {
                 // OK - by permissions we can edit, how about parameters?
                 boolean paramsCanEdit = parameterServices.parameterCanEditHakukohde(key);
                 boolean paramsCanEditLimited = parameterServices.parameterCanEditHakukohdeLimited(key);
+
+                // Parametripalvelu toimii näin:  - (edit / edit limited) - (update/limited)
+                // x - null - null  - true/true -> true / false
+                // null - x - null  - true/true -> true / false
+                // null - null - x  - true/true -> true / false
+
+                // x - 1.1. - null  - true/true -> true / false
+                // 1.1. - x - null  - false/true -> true / true
+                // 1.1. - null - x  - false/true -> true / true
+     
+                // x - null - 1.2.  - true/true --> true / false
+                // null - x - 1.2.  - true/true --> true / false
+                // null - 1.2. - x  - false/false --> false / false
                 
+                // x - 1.1. - 1.2.  - true/true  -> true / false
+                // 1.1. - x - 1.2.  - false/true -> true / true
+                // 1.1. - 1.2. - x  - false/false ->  -> false / false
+                
+                // Halutaan, että jos saa muokata mitään -> update=true
+                // Halutaan, että jos muokkaus on rajattua -> updateLimited = true
+                // --> "update" == edit || limited
+                // --> "updateLimited" == (edit || limited) && !edit
+                
+                boolean canEditAtAll = paramsCanEdit || paramsCanEditLimited;
+                boolean canEditLimited = canEditAtAll && !paramsCanEdit;
+
                 // Now - in UI it's easer to just check if we can modify AT ALL and limit the fields if limited mode is on...
-                result.put(PERMISSION_UPDATE, paramsCanEdit || paramsCanEditLimited);
-                result.put(PERMISSION_UPDATE_LIMITED, paramsCanEditLimited);
+                result.put(PERMISSION_UPDATE, canEditAtAll);
+                result.put(PERMISSION_UPDATE_LIMITED, canEditLimited);
             } catch (Exception ex) {
                 LOG.info("  (permissions) cannot edit");
-                result.put(PERMISSION_UPDATE, Boolean.FALSE);
-                result.put(PERMISSION_UPDATE_LIMITED, Boolean.FALSE);
+                result.put(PERMISSION_UPDATE, false);
+                result.put(PERMISSION_UPDATE_LIMITED, false);
             }
         }        
         return h;
     }
 
-    private Hakukohde processHakukohdePermissions(String key, Map<String, Boolean> result) {
+    private Hakukohde processHakukohdePermissions(String key, Map parentResult) {
+        Map result = new HashMap();
+        parentResult.put("hakukohde", result);
+
+        result.put(PERMISSION_COPY, false);
+        result.put(PERMISSION_CREATE, false);
+        result.put(PERMISSION_REMOVE, false);
+        result.put(PERMISSION_UPDATE, false);
+        result.put(PERMISSION_UPDATE_LIMITED, false);
+                
         Hakukohde hk = hakukohdeDao.findHakukohdeByOid(key);
         if (hk != null) {
             updateStateTransferInformation(result, hk.getTila());
+            
+            Haku h = hk.getHaku();
+            if (h != null) {
+                processHakuPermissions(h.getOid(), parentResult);
+            }
         }
         return hk;
     }
 
-    private KoulutusmoduuliToteutus processKomotoPermissions(String key, Map<String, Boolean> result) {
+    private KoulutusmoduuliToteutus processKomotoPermissions(String key, Map parentResult) {
+        Map result = new HashMap();
+        parentResult.put("koulutus", result);
+
+        result.put(PERMISSION_COPY, false);
+        result.put(PERMISSION_CREATE, false);
+        result.put(PERMISSION_REMOVE, false);
+        result.put(PERMISSION_UPDATE, false);
+        result.put(PERMISSION_UPDATE_LIMITED, false);
+
         KoulutusmoduuliToteutus komoto = komoDao.findKomotoByOid(key);
         if (komoto != null) {
             updateStateTransferInformation(result, komoto.getTila());

@@ -29,6 +29,7 @@ app.controller('HakukohdeReviewController',
 
       //by default disable
       $scope.isMutable=false;
+      $scope.isPartiallyMutable=false;
       $scope.isRemovable=false;
       $scope.showNimiUri = false;
       $scope.isAiku = false;
@@ -106,7 +107,7 @@ app.controller('HakukohdeReviewController',
             $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
         }
 
-     }
+     };
 
 
       var loadKielesSetFromHakukohde = function() {
@@ -400,7 +401,7 @@ app.controller('HakukohdeReviewController',
                           tarjoajaOidsSet.add(tulos.oid);
                           if (tulos.tulokset !== undefined) {
                               angular.forEach(tulos.tulokset,function(lopullinenTulos){
-                                  if(lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
+                                  if(lopullinenTulos.koulutuslajiUri && lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
                                       $scope.isAiku = true;
                                   }
                                   var koulutus = {
@@ -451,20 +452,35 @@ app.controller('HakukohdeReviewController',
 
         var reloadFormControls = function () {
 
-            $scope.formControls.reloadDisplayControls();
+            if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
+                $scope.formControls.reloadDisplayControls();
+            }
+
 
         };
 
         var checkForHakuRemove = function () {
 
             var canRemoveHakukohde = TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+            var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
+            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
 
-            if (canRemoveHakukohde) {
+            if (canRemoveHakukohde && canEditHakukohdeAtAll) {
                 $scope.isRemovable=true;
-            } else {
-
+                $scope.isMutable = true;
+                $scope.isPartiallyMutable = true;
+            } else if (canPartiallyEditHakukohde) {
+                $scope.isMutable = false;
                 $scope.isRemovable=false;
+                $scope.isPartiallyMutable = true;
+            }  else {
+
+                $scope.isMutable = false;
+                $scope.isRemovable=false;
+                $scope.isPartiallyMutable = false;
             }
+
+
 
         };
 

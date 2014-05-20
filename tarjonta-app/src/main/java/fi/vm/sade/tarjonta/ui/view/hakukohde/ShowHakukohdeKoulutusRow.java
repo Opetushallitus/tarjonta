@@ -75,18 +75,10 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
         Preconditions.checkNotNull(tarjontaPresenter, "Tarjonta presenter cannot be null");
         final OrganisaatioContext context = OrganisaatioContext.getContext(tarjontaPresenter.getTarjoaja().getSelectedOrganisationOid());
         if (poistaBtn != null) {
-        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanUpdateHakukohde(context));
+            //nappula saa olla aktiivinen vain jos hakukohde ei ole julkaistu ja viimeinen koulutus
+            final boolean buttonVisible = tarjontaPresenter.getPermission().userCanUpdateHakukohde(context) && tarjontaPresenter.getModel().getHakukohde().getKoulukses().size()!=1;
+            poistaBtn.setVisible(buttonVisible);
         }
-    }
-    //TODO: Remove this when button logic is implemented
-
-    private void disableButtons() {
-        if (nimiBtn != null) {
-            nimiBtn.setEnabled(false);
-        }
-        /* if (poistaBtn != null) {
-         poistaBtn.setEnabled(false);
-         }*/
     }
 
     public Button getNimiBtn() {
