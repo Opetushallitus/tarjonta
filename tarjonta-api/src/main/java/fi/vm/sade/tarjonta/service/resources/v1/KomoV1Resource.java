@@ -21,8 +21,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -68,7 +68,10 @@ public interface KomoV1Resource {
             + " Muut parametrit : "
             + "1. meta=false poistaa koodisto-palvelun metatietoa haettavaan koulutuksen dataan. "
             + "2. lang=FI näyttää yksittäisen metadatan annetun kielikoodin mukaan.", response = KomoV1RDTO.class)
-    public ResultV1RDTO<KomoV1RDTO> findKomoByOid(@PathParam("oid") String oid, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
+    public ResultV1RDTO<KomoV1RDTO> findKomoByOid(
+            @PathParam("oid") String oid,
+            @QueryParam("meta") Boolean meta,
+            @QueryParam("lang") String lang);
 
     @GET
     @Path("/search")
@@ -77,21 +80,35 @@ public interface KomoV1Resource {
             value = "Näyttää koulutusmoduulien tulosjoukon annetuilla parametreillä",
             notes = "Operaatio näyttää koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
-    public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(@QueryParam("koulutuskoodi") String koulutuskoodi, @QueryParam("meta") Boolean meta, @QueryParam("lang") String lang);
+    public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(
+            @QueryParam("koulutuskoodi") String koulutuskoodi,
+            @QueryParam("meta") Boolean meta,
+            @QueryParam("lang") String lang);
 
     @GET
-    @Path("/search/{koulutusasteTyyppi}/")
+    @Path("/search/{koulutustyyppi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
             notes = "Operaatio näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
-            @QueryParam("koulutusmoduuliTyyppi") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
             @QueryParam("koulutuskoodiUri") String koulutuskoodiUri,
-            @QueryParam("tila") String tila
-    );
+            @QueryParam("tila") String tila);
+
+    @GET
+    @Path("/search/{koulutustyyppi}/{moduuli}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
+            notes = "Operaatio näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
+            response = ResultV1RDTO.class)
+    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
+            @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
+            @PathParam("moduuli") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            @QueryParam("koulutuskoodiUri") String koulutuskoodiUri,
+            @QueryParam("tila") String tila);
 
     @GET
     @Path("/{oid}/tekstis")

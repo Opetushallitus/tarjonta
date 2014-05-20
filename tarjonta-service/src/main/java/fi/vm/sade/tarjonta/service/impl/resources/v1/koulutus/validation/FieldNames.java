@@ -51,5 +51,8 @@ public enum FieldNames {
     //Lukio:
     KOULUTUSLAJI,
     LUKIODIPLOMI,
-    KIELIVALIKOIMA;
+    KIELIVALIKOIMA,
+    
+    //amm
+    OSAAMISALA;
 }

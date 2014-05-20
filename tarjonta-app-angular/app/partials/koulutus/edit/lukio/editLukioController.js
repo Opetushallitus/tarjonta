@@ -103,7 +103,7 @@ app.controller('EditLukioController',
                             {
                                 koulutusasteTyyppi: 'Lukiokoulutus',
                                 koulutuskoodiUri: koulutuskoodi,
-                                defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1",
+                                defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1,koulutustyyppi:koulutustyyppi_14",
                                 languageCode: $scope.koodistoLocale
                             }, function(data) {
                         var restRelationData = data.result;

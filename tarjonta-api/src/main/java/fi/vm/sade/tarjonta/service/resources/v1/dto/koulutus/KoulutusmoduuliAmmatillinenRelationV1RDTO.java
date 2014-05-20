@@ -16,14 +16,13 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
 
 /**
  *
  * @author jani
  */
 @ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
-public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
+public class KoulutusmoduuliAmmatillinenRelationV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
     //KOODISTO KOMO DATA OBJECTS:
     @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
@@ -38,10 +37,10 @@ public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardR
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
 
-    @ApiModelProperty(value = "Lukiolinja-koodi", required = true)
-    private KoodiV1RDTO lukiolinja;
+    @ApiModelProperty(value = "Osaamisala-koodi", required = true)
+    private KoodiV1RDTO osaamisala;
 
-    @ApiModelProperty(value = "Lukiolinja-koodi, REST-rajapinnan selkeyttämisen vuoksi lukiolinja-koodiston tietoa kuljetetaan myös koulutusohjelma-kentässä")
+    @ApiModelProperty(value = "koulutusohjelma-koodi")
     private KoodiV1RDTO koulutusohjelma;
 
     /**
@@ -115,17 +114,17 @@ public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardR
     }
 
     /**
-     * @return the lukiolinja
+     * @return the osaamisala
      */
-    public KoodiV1RDTO getLukiolinja() {
-        return lukiolinja;
+    public KoodiV1RDTO getOsaamisala() {
+        return osaamisala;
     }
 
     /**
-     * @param lukiolinja the lukiolinja to set
+     * @param osaamisala the osaamisala to set
      */
-    public void setLukiolinja(KoodiV1RDTO lukiolinja) {
-        this.lukiolinja = lukiolinja;
+    public void setOsaamisala(KoodiV1RDTO osaamisala) {
+        this.osaamisala = osaamisala;
     }
 
 }

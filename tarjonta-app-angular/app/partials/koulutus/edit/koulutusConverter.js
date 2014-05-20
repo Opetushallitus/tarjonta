@@ -437,7 +437,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'},
                 opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
                 opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
-                tutkintonimike: {module: 'TUTKINTO_OHJELMA'}
+                tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
+                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
             }, COMBO: {
                 suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
                 koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},

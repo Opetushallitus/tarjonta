@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Date;
@@ -121,12 +122,13 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
         private String lukiolinjaKoodiUri;
+        private KoulutustyyppiUri koulutustyyppiUri;
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
         private KoulutustyyppiEnum koulutustyyppiEnum;
         private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+
         private TarjontaTila tila;
-        
 
         private String likeKoulutusKoodiUriWithoutVersion;
         private String likeKoulutusohjelmaKoodiUriWithoutVersion;
@@ -298,7 +300,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         /**
-         * @param likeKoulutusKoodiUriWithoutVersion the likeKoulutusKoodiUriWithoutVersion to set
+         * @param likeKoulutusKoodiUriWithoutVersion the
+         * likeKoulutusKoodiUriWithoutVersion to set
          */
         public void setLikeKoulutusKoodiUriWithoutVersion(String likeKoulutusKoodiUriWithoutVersion) {
             this.likeKoulutusKoodiUriWithoutVersion = likeKoulutusKoodiUriWithoutVersion;
@@ -312,7 +315,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         /**
-         * @param likeKoulutusohjelmaKoodiUriWithoutVersion the likeKoulutusohjelmaKoodiUriWithoutVersion to set
+         * @param likeKoulutusohjelmaKoodiUriWithoutVersion the
+         * likeKoulutusohjelmaKoodiUriWithoutVersion to set
          */
         public void setLikeKoulutusohjelmaKoodiUriWithoutVersion(String likeKoulutusohjelmaKoodiUriWithoutVersion) {
             this.likeKoulutusohjelmaKoodiUriWithoutVersion = likeKoulutusohjelmaKoodiUriWithoutVersion;
@@ -326,10 +330,25 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         /**
-         * @param likeLukiolinjaKoodiUriUriWithoutVersion the likeLukiolinjaKoodiUriUriWithoutVersion to set
+         * @param likeLukiolinjaKoodiUriUriWithoutVersion the
+         * likeLukiolinjaKoodiUriUriWithoutVersion to set
          */
         public void setLikeLukiolinjaKoodiUriUriWithoutVersion(String likeLukiolinjaKoodiUriUriWithoutVersion) {
-            this.likeLukiolinjaKoodiUriUriWithoutVersion =  likeLukiolinjaKoodiUriUriWithoutVersion;
+            this.likeLukiolinjaKoodiUriUriWithoutVersion = likeLukiolinjaKoodiUriUriWithoutVersion;
+        }
+
+        /**
+         * @return the koulutustyyppiUri
+         */
+        public KoulutustyyppiUri getKoulutustyyppiUri() {
+            return koulutustyyppiUri;
+        }
+
+        /**
+         * @param koulutustyyppiUri the koulutustyyppiUri to set
+         */
+        public void setKoulutustyyppiUri(KoulutustyyppiUri koulutustyyppiUri) {
+            this.koulutustyyppiUri = koulutustyyppiUri;
         }
 
         public enum GroupBy {

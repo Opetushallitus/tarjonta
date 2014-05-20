@@ -94,6 +94,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakoulu
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliAmmatillinenRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliLukioRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliStandardRelationV1RDTO;
@@ -110,6 +111,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import java.util.Set;
@@ -233,7 +235,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
             //validate optional images
             for (Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
-                 //do not validate null img objects as the img keys will be use to delete images
+                //do not validate null img objects as the img keys will be use to delete images
                 if (e.getValue() != null) {
                     KoulutusValidator.validateKoulutusKuva(e.getValue(), e.getKey(), result);
                 }
@@ -526,9 +528,19 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoulutusRelation(
+    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
             String koulutuskoodi,
-            KoulutusasteTyyppi koulutusasteTyyppi,
+            String defaults, //new String("field:uri, field:uri, ....")
+            Boolean showMeta,
+            String userLang) {
+
+        return getKoodistoRelations(koulutuskoodi, null, defaults, showMeta, userLang);
+    }
+
+    @Override
+    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
+            String koulutuskoodi,
+            KoulutustyyppiUri koulutustyyppiUri,
             String defaults, //new String("field:uri, field:uri, ....")
             Boolean showMeta,
             String userLang) {
@@ -539,20 +551,27 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         try {
             //split params, if any
-
             KoulutusmoduuliStandardRelationV1RDTO dto = KoulutusmoduuliStandardRelationV1RDTO.class.newInstance();
-            /*
-             * TODO: toinen aste koodisto relations (as the korkeakoulu has different set of relations...)
-             */
-            switch (koulutusasteTyyppi) {
-                case KORKEAKOULUTUS:
-                    dto = KoulutusmoduuliKorkeakouluRelationV1RDTO.class.newInstance();
-                    break;
-                case LUKIOKOULUTUS:
-                    dto = KoulutusmoduuliLukioRelationV1RDTO.class.newInstance();
-                    break;
-                default:
-                    break;
+
+            if (koulutustyyppiUri != null) {
+                switch (koulutustyyppiUri) {
+                    case KORKEAKOULUTUS:
+                        dto = KoulutusmoduuliKorkeakouluRelationV1RDTO.class.newInstance();
+                        break;
+                    case LUKIOKOULUTUS:
+                        dto = KoulutusmoduuliLukioRelationV1RDTO.class.newInstance();
+                        break;
+                    case AMMATILLINEN_PERUSTUTKINTO:
+                    case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+                    case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                        dto = KoulutusmoduuliAmmatillinenRelationV1RDTO.class.newInstance();
+                        break;
+                    default:
+                        /*
+                         * return standard relations
+                         */
+                        break;
+                }
             }
 
             Map<String, String> defaultsMap = Maps.<String, String>newHashMap();
@@ -739,8 +758,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private boolean checkArgsDefaultTrue(Boolean meta) {
         return meta != null ? meta : true;
     }
-    
-      /**
+
+    /**
      * Validate the show argument. Null is boolean false.
      *
      * @param meta
