@@ -816,6 +816,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     public List<OrganisaatioPerustieto> fetchChildOrganisaatios(List<String> organisaatioOids) {
         SearchCriteria criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
+
 
         criteria.getOidRestrictionList().addAll(organisaatioOids);
         criteria.setSuunnitellut(true);
@@ -1036,6 +1038,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         LOG.info("getting org oid tree by oid : {}", organisaatioOid);
         SearchCriteria dto = new SearchCriteria();
+        dto.setAktiiviset(true);
+
         dto.getOidRestrictionList().add(organisaatioOid);
         try {
             List<OrganisaatioPerustieto> orgs = organisaatioSearchService.searchBasicOrganisaatios(dto);
@@ -2205,6 +2209,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private List<String> getChildOrgOlTyyppis(OrganisaatioPerustieto selectedOrg) {
         List<String> childOlTyyppis = new ArrayList<String>();
         SearchCriteria criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
+
         criteria.getOidRestrictionList().add(selectedOrg.getOid());
         List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {

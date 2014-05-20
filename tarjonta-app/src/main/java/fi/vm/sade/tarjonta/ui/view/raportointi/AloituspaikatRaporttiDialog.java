@@ -372,7 +372,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         ComboBox koulutustoimijaCombo = new ComboBox();
 
         SearchCriteria criteria = new SearchCriteria();
-
+        criteria.setAktiiviset(true);
         criteria.setOrganisaatioTyyppi(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value());
 
         koulutustoimijaCombo.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(criteria)));
@@ -413,6 +413,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
 
     private SearchCriteria createOrganisaatioSearchCriteria(String oid,OrganisaatioTyyppi tyyppi) {
         SearchCriteria criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
 
         criteria.setOrganisaatioTyyppi(tyyppi.value());
         criteria.getOidRestrictionList().add(oid);
