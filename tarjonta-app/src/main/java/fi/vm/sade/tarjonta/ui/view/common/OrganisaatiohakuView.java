@@ -119,6 +119,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
     
     public OrganisaatiohakuView() {
         criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
+
         criteria.setSkipParents(true);
     }
 
@@ -225,6 +227,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new SearchCriteria();
+                criteria.setAktiiviset(true);
                 criteria.setSkipParents(true);
                 if (rootOrganisaatioOids != null) {
                     criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
