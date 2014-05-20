@@ -306,7 +306,17 @@ app.controller('HakukohdeEditController',
 
     };
 
+    $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset); }, function(n, o){
+    	if (!angular.equals(n,o) && o!="{}") {
+    		$scope.status.dirty = true;
+    	}
+	});
 
+    $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.soraKuvaukset); }, function(n, o){
+    	if (!angular.equals(n,o) && o!="{}") {
+    		$scope.status.dirty = true;
+    	}
+	});	
 
 });
 

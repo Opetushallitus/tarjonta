@@ -157,6 +157,8 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
         };
 
+        $scope.status = {dirty: false}; // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
+        
         $scope.model.showSuccess = false;
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
@@ -969,9 +971,8 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                 });
 
-
-
-
+                $scope.status.dirty = true;
+                
             });
 
         };
@@ -1021,10 +1022,14 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.isHakukohdeRootScope = function(scope) {
         	return scope==$scope;
         }
+        
+        function isDirty() {
+        	return $scope.status.dirty || ($scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty);
+        }
 
         $scope.model.takaisin = function(confirm) {
         	//console.log("LINK CONFIRM TAKAISIN", [confirm, $scope.editHakukohdeForm, $scope]);
-            if (!confirm && $scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty) {
+            if (!confirm && isDirty()) {
                 dialogService.showModifedDialog().result.then(function(result) {
                     if (result) {
                     	$scope.model.takaisin(true);
@@ -1037,7 +1042,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
         $scope.model.tarkastele = function(confirm) {
         	//console.log("LINK CONFIRM TARKASTELE", [confirm, $scope.editHakukohdeForm, $scope]);
-            if (!confirm && $scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty) {
+            if (!confirm && isDirty()) {
                 dialogService.showModifedDialog().result.then(function(result) {
                     if (result) {
                     	$scope.model.tarkastele(true);
@@ -1165,6 +1170,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             }
                             $scope.canEdit = true;
                             $scope.model.continueToReviewEnabled = true;
+                            $scope.status.dirty = false;
                             $log.debug('SAVED MODEL : ', $scope.model.hakukohde);
                         },function(error) {
                             $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
@@ -1191,6 +1197,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                                 $scope.model.hakukohde.soraKuvaukset = {};
                             }
+                            $scope.status.dirty = false;
                         }, function(error) {
 
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE AS LUONNOS : ', error);
