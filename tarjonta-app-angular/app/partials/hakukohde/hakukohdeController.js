@@ -40,6 +40,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
     'Kuvaus',
     'CommonUtilService',
     'PermissionService',
+    'dialogService',
     function ($scope,
                                         $log,
                                         $routeParams,
@@ -57,7 +58,8 @@ app.controller('HakukohdeRoutingController', ['$scope',
                                         TarjontaService,
                                         Kuvaus,
                                         CommonUtilService,
-                                        PermissionService) {
+                                        PermissionService,
+                                        dialogService) {
 
 
 
@@ -1015,16 +1017,35 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
 
         };
+        
+        $scope.isHakukohdeRootScope = function(scope) {
+        	return scope==$scope;
+        }
 
-        $scope.model.takaisin = function() {
-            $location.path('/etusivu');
+        $scope.model.takaisin = function(confirm) {
+        	//console.log("LINK CONFIRM TAKAISIN", [confirm, $scope.editHakukohdeForm, $scope]);
+            if (!confirm && $scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty) {
+                dialogService.showModifedDialog().result.then(function(result) {
+                    if (result) {
+                    	$scope.model.takaisin(true);
+                    }
+                });
+            } else {
+                $location.path('/etusivu');
+            }
         };
 
-        $scope.model.tarkastele = function() {
-
-            $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
-
-
+        $scope.model.tarkastele = function(confirm) {
+        	//console.log("LINK CONFIRM TARKASTELE", [confirm, $scope.editHakukohdeForm, $scope]);
+            if (!confirm && $scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty) {
+                dialogService.showModifedDialog().result.then(function(result) {
+                    if (result) {
+                    	$scope.model.tarkastele(true);
+                    }
+                });
+            } else {
+                $location.path('/hakukohde/'+$scope.model.hakukohde.oid);
+            }
         };
 
         $scope.haeValintaPerusteKuvaus = function(){

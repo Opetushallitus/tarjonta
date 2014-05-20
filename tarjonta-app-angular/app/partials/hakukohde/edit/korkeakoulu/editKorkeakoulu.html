@@ -27,13 +27,13 @@
 
     <display-controls model="formControls" display="header"></display-controls>
 
-
-
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
 
         	<form name="editHakukohdeForm" novalidate>
 
+                <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
+                
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->
