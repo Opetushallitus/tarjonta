@@ -9,6 +9,7 @@ public class NimiJaOidRDTO implements Serializable {
 	
 	private Map<String,String> nimi;
 	private String oid;
+    private String relatedOid;
 	
 	public NimiJaOidRDTO() {
 	}
@@ -18,6 +19,13 @@ public class NimiJaOidRDTO implements Serializable {
 		this.nimi = nimi;
 		this.oid = oid;
 	}
+
+    public NimiJaOidRDTO(Map<String, String> nimi, String oid, String relatedOidParam) {
+        super();
+        this.nimi = nimi;
+        this.oid = oid;
+        this.relatedOid = relatedOidParam;
+    }
 
 	public Map<String, String> getNimi() {
 		return nimi;
@@ -33,5 +41,12 @@ public class NimiJaOidRDTO implements Serializable {
 	public void setOid(String oid) {
 		this.oid = oid;
 	}
-	
+
+    public String getRelatedOid() {
+        return relatedOid;
+    }
+
+    public void setRelatedOid(String relatedOid) {
+        this.relatedOid = relatedOid;
+    }
 }

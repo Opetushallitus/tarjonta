@@ -29,6 +29,7 @@ app.controller('HakukohdeReviewController',
 
       //by default disable
       $scope.isMutable=false;
+      $scope.isPartiallyMutable=false;
       $scope.isRemovable=false;
       $scope.showNimiUri = false;
       $scope.isAiku = false;
@@ -106,7 +107,7 @@ app.controller('HakukohdeReviewController',
             $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
         }
 
-     }
+     };
 
 
       var loadKielesSetFromHakukohde = function() {
@@ -461,13 +462,25 @@ app.controller('HakukohdeReviewController',
         var checkForHakuRemove = function () {
 
             var canRemoveHakukohde = TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+            var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
+            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
 
-            if (canRemoveHakukohde) {
+            if (canRemoveHakukohde && canEditHakukohdeAtAll) {
                 $scope.isRemovable=true;
-            } else {
-
+                $scope.isMutable = true;
+                $scope.isPartiallyMutable = true;
+            } else if (canPartiallyEditHakukohde) {
+                $scope.isMutable = false;
                 $scope.isRemovable=false;
+                $scope.isPartiallyMutable = true;
+            }  else {
+
+                $scope.isMutable = false;
+                $scope.isRemovable=false;
+                $scope.isPartiallyMutable = false;
             }
+
+
 
         };
 

@@ -243,6 +243,10 @@ public class ParameterServices implements InitializingBean {
      * // 1.1. - x - null  - false/true
      * // 1.1. - null - x  - false/true
      *
+     * // x - null - 1.2.  - true/true
+     * // null - x - 1.2.  - true/true
+     * // null - 1.2. - x  - false/false
+     *
      * // x - 1.1. - 1.2.  - true/true
      * // 1.1. - x - 1.2.  - false/true
      * // 1.1. - 1.2. - x  - false/false
@@ -289,7 +293,7 @@ public class ParameterServices implements InitializingBean {
      *
      * // x - null - 1.2.  - true/true
      * // null - x - 1.2.  - true/true
-     * // null - 1.2. - x  - true/false
+     * // null - 1.2. - x  - false/false
      *
      * // x - 1.1. - 1.2.  - true/true
      * // 1.1. - x - 1.2.  - false/true

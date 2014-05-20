@@ -271,7 +271,7 @@
                         <div class="align-right">
                             <!-- <a class="btn" href ><span tt="hakukohde.review.koulutus.nayta.koulutus">Näytä koulutus</span> <span class="icon-eye-open"></span></a> -->
 
-                            <a class="btn" ng-disabled="!isMutable" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></a>
+                            <a class="btn" ng-disabled="!canRemoveHakukohdeFromKoulutus(hakukohde)" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></a>
                         </div>
                     </td>
                 </tr>

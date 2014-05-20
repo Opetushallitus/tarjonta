@@ -105,7 +105,7 @@ public class OppilaitosKoodiRelations {
             return false;
         }
         
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.TOIMIPISTE)) {
             String oid = oids.get(1); // oppilaitos (oph/kt/ol/op)
             final OrganisaatioDTO pathOrgDto = organisaatioService
                     .findByOid(oid);
@@ -159,7 +159,7 @@ public class OppilaitosKoodiRelations {
 
         for (OrganisaatioTyyppi organisaatioTyyppi : org.getTyypit()) {
             switch (organisaatioTyyppi) {
-                case OPETUSPISTE:
+                case TOIMIPISTE:
                     //- we are on the leaf (or one of them)
                     break;
                 case KOULUTUSTOIMIJA:
