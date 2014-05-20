@@ -425,7 +425,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         search.setPropertyDataSource(new NestedMethodProperty(criteria, "searchStr"));
         organisaatioTyyppi.setPropertyDataSource(new NestedMethodProperty(criteria, "organisaatioTyyppi"));
         oppilaitosTyyppi.setPropertyDataSource(new NestedMethodProperty(criteria, "oppilaitosTyyppi"));
-        lakkautetut.setPropertyDataSource(new NestedMethodProperty(criteria, "vainLakkautetut"));
+        lakkautetut.setPropertyDataSource(new NestedMethodProperty(criteria, "lakkautetut"));
         suunnitellut.setPropertyDataSource(new NestedMethodProperty(criteria, "suunnitellut"));
     }
 
