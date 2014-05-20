@@ -430,7 +430,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.resourceLink =
             $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid", {}, {
                 checkput: {
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
                 },
                 save: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -444,15 +444,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 parents: {
                     url: Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
                     isArray: false,
-                    method: 'GET',
+                    method: 'GET'
                 },
                 remove: {
                     method: 'DELETE',
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child"
                 },
                 removeMany: {
                     method: 'DELETE',
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent",
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent"
                 }
             });
 
@@ -527,15 +527,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             },
             search: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi"
             },
             searchModules: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi"
             },
             tekstis: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis"
             }
         });
     };
@@ -618,9 +618,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var now = new Date().getTime();
         var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
-        result = (now <= ph_hklpt) && (now <= ph_hkmt);
-        $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
-        return result;
+        if (ph_hklpt && ph_hkmt) {
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
+        } else {
+            return true;
+        }
     };
 
     dataFactory.parameterCanRemoveHakukohdeFromHaku = function(hakuOid) {

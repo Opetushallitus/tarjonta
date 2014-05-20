@@ -746,7 +746,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             var paramFilteredHakus = [];
             angular.forEach(hakus,function(haku){
 
-                if (TarjontaService.parameterCanEditHakukohde(haku.oid) &&  TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
+                if (TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
                     paramFilteredHakus.push(haku);
                 }
             });
