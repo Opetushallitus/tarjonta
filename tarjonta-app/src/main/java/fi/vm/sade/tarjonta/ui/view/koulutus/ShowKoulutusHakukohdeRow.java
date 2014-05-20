@@ -26,6 +26,7 @@ import com.vaadin.ui.HorizontalLayout;
 
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -89,7 +90,9 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
 
         moreComplexHakukohdeViewModel = tarjontaPresenter.findHakukohdeByHakukohdeOid(hakukohdeViewModel.getHakukohdeOid());
 
-        poistaBtn.setVisible(tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeViewModel.getHakukohdeOid()));
+        final boolean buttonVisible = tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeViewModel.getHakukohdeOid()) && !TarjontaTila.JULKAISTU.value().equals(hakukohdeViewModel.getHakukohdeTila());
+        
+        poistaBtn.setVisible(buttonVisible);
 
         poistaBtn.setStyleName("link-row");
     }
