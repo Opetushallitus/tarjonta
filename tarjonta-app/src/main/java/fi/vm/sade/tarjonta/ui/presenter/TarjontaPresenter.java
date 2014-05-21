@@ -48,6 +48,7 @@ import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
+import fi.vm.sade.organisaatio.service.search.SearchCriteria;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -814,14 +815,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     public List<OrganisaatioPerustieto> fetchChildOrganisaatios(List<String> organisaatioOids) {
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
 
-        OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
 
         criteria.getOidRestrictionList().addAll(organisaatioOids);
         criteria.setSuunnitellut(true);
 
         return organisaatioSearchService.searchBasicOrganisaatios(criteria);
-
     }
 
     private List<KoulutusOidNameViewModel> getHakukohdeKoulutukses(HakukohdeViewModel hakukohdeViewModel) {
@@ -1036,7 +1037,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         Preconditions.checkNotNull(organisaatioOid, "Organisation OID cannot be null.");
 
         LOG.info("getting org oid tree by oid : {}", organisaatioOid);
-        OrganisaatioSearchCriteria dto = new OrganisaatioSearchCriteria();
+        SearchCriteria dto = new SearchCriteria();
+        dto.setAktiiviset(true);
+
         dto.getOidRestrictionList().add(organisaatioOid);
         try {
             List<OrganisaatioPerustieto> orgs = organisaatioSearchService.searchBasicOrganisaatios(dto);
@@ -2155,7 +2158,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
             //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
             //oppilaitostyyppiuris
-        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)
+        } else if (tyypit.contains(OrganisaatioTyyppi.TOIMIPISTE)
                 && selectedOrg.getParentOid() != null) {
             addParentOlTyyppi(selectedOrg, olTyyppiUris);
         }
@@ -2194,7 +2197,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         //OrganisaatioDTO organisaatio = this.getOrganisaatioService().findByOid(oid);
         if (perustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
             return perustieto.getOppilaitostyyppi();
-        } else if (perustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+        } else if (perustieto.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.TOIMIPISTE)) {
             return getOrganisaatioOlTyyppi(perustieto.getParentOid());
         }
         return null;
@@ -2205,7 +2208,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     private List<String> getChildOrgOlTyyppis(OrganisaatioPerustieto selectedOrg) {
         List<String> childOlTyyppis = new ArrayList<String>();
-        OrganisaatioSearchCriteria criteria = new OrganisaatioSearchCriteria();
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
+
         criteria.getOidRestrictionList().add(selectedOrg.getOid());
         List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         if (childOrgs != null) {
@@ -2535,7 +2540,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
             //If the types of the organisaatio contain opetuspiste the oppilaitostyyppi of its parent organisaatio is appended to the list of
             //oppilaitostyyppiuris
-        } else if (tyypit.contains(OrganisaatioTyyppi.OPETUSPISTE)
+        } else if (tyypit.contains(OrganisaatioTyyppi.TOIMIPISTE)
                 && org.getParentOid() != null) {
             List<String> olTyyppis = new ArrayList<String>(oppilaitosTyyppis);
             addParentOlTyyppi(org, olTyyppis);

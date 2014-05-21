@@ -61,6 +61,7 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.organisaatio.service.search.SearchCriteria;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
@@ -100,7 +101,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     @Autowired
     private TarjontaPresenter presenter;
     private List<OrganisaatioPerustieto> organisaatios;
-    private OrganisaatioSearchCriteria criteria;
+    private SearchCriteria criteria;
     List<String> rootOrganisaatioOids;
     private boolean isAttached = false;
     @Autowired(required = true)
@@ -117,8 +118,9 @@ public class OrganisaatiohakuView extends VerticalLayout {
     };
     
     public OrganisaatiohakuView() {
+        criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
 
-        criteria = new OrganisaatioSearchCriteria();
         criteria.setSkipParents(true);
     }
 
@@ -194,7 +196,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 new String[]{
                     OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(),
                     OrganisaatioTyyppi.OPPILAITOS.value(),
-                    OrganisaatioTyyppi.OPETUSPISTE.value(),
+                    OrganisaatioTyyppi.TOIMIPISTE.value(),
                     OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(),
                     OrganisaatioTyyppi.MUU_ORGANISAATIO.value()
                 });
@@ -224,7 +226,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
 
             @Override
             public void buttonClick(ClickEvent event) {
-                criteria = new OrganisaatioSearchCriteria();
+                criteria = new SearchCriteria();
+                criteria.setAktiiviset(true);
                 criteria.setSkipParents(true);
                 if (rootOrganisaatioOids != null) {
                     criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
@@ -345,6 +348,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 LOG.debug("Using restriction:" + userContext.getUserOrganisations());
                 criteria.getOidRestrictionList().addAll(userContext.getUserOrganisations());
             }
+            criteria.setAktiiviset(true);
             organisaatios = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         } catch (Exception ex) {
             if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
@@ -425,7 +429,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
         search.setPropertyDataSource(new NestedMethodProperty(criteria, "searchStr"));
         organisaatioTyyppi.setPropertyDataSource(new NestedMethodProperty(criteria, "organisaatioTyyppi"));
         oppilaitosTyyppi.setPropertyDataSource(new NestedMethodProperty(criteria, "oppilaitosTyyppi"));
-        lakkautetut.setPropertyDataSource(new NestedMethodProperty(criteria, "vainLakkautetut"));
+        lakkautetut.setPropertyDataSource(new NestedMethodProperty(criteria, "lakkautetut"));
         suunnitellut.setPropertyDataSource(new NestedMethodProperty(criteria, "suunnitellut"));
     }
 
@@ -453,7 +457,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
     private void setOrgTyyppiItemCaptions() {
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value(), T(OrganisaatioTyyppi.KOULUTUSTOIMIJA.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.MUU_ORGANISAATIO.value(), T(OrganisaatioTyyppi.MUU_ORGANISAATIO.name()));
-        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPETUSPISTE.value(), T(OrganisaatioTyyppi.OPETUSPISTE.name()));
+        organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.TOIMIPISTE.value(), T(OrganisaatioTyyppi.TOIMIPISTE.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPILAITOS.value(), T(OrganisaatioTyyppi.OPPILAITOS.name()));
         organisaatioTyyppi.setItemCaption(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.value(), T(OrganisaatioTyyppi.OPPISOPIMUSTOIMIPISTE.name()));
     }
