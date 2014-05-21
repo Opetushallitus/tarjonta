@@ -347,24 +347,22 @@ public class HakuResourceImpl implements HakuResource {
     @Transactional(readOnly = false)
     @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     public String createHaku(HakuDTO dto) {
-        return tarjontaAdminService.lisaaHaku(conversionService.convert(dto, HakuTyyppi.class)).getOid();
+        LOG.error("operation not supported!");
+        return "not supported";
     }
 
     @Override
     @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     @Transactional(readOnly = false)
     public void replaceHaku(HakuDTO dto) {
-        tarjontaAdminService.paivitaHaku(conversionService.convert(dto, HakuTyyppi.class));
+        LOG.error("operation not supported!");
     }
 
     @Override
     @Secured("ROLE_APP_TARJONTA_READ_UPDATE")
     @Transactional(readOnly = false)
     public void deleteHaku(String hakuOid) {
-        HakuTyyppi tmp = new HakuTyyppi();
-        tmp.setOid(hakuOid);
-        // TODO adminServicen apin voisi korjata ottamaan pelkkä oid-parametri
-        tarjontaAdminService.poistaHaku(tmp);
+        LOG.error("operation not supported!");
     }
 
     @Override

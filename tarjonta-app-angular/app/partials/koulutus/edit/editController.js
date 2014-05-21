@@ -20,7 +20,7 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService','CacheService',
+    'dialogService', 'CacheService',
     function BaseEditController($scope, $log, Config,
             $routeParams, $route, $location,
             converter, TarjontaService, PermissionService,
@@ -139,18 +139,6 @@ app.controller('BaseEditController', [
         $scope.navigateReview = function() {
             $log.debug("navigateReview()");
             $location.path("/koulutus/" + $scope.model.oid);
-        };
-
-        $scope.setTabLang = function(langUri) {
-            if (angular.isUndefined(langUri) || langUri === null) {
-                $scope.uiModel.tabLang = Config.app.userLanguages[0]; //fi uri I guess;
-            } else {
-                $scope.uiModel.tabLang = langUri;
-            }
-        };
-
-        $scope.selectKieli = function(kieliUri) {
-            $scope.uiModel.selectedKieliUri = kieliUri;
         };
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
@@ -367,10 +355,6 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonNewModelHandler = function(form, model, uiModel, koulutusasteTyyppi) {
-//            if (angular.isUndefined(form) || form === null) {
-//                converter.throwError("Form object cannot be null or undefined");
-//            }
-
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
@@ -384,7 +368,7 @@ app.controller('BaseEditController', [
             }
 
             uiModel.isMutable = false;
-            uiModel.selectedKieliUri = "";
+            uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
             $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
 
             converter.createUiModels(uiModel, koulutusasteTyyppi);
@@ -400,10 +384,6 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonLoadModelHandler = function(form, model, uiModel, koulutusasteTyyppi) {
-//            if (angular.isUndefined(form) || form === null) {
-//                converter.throwError("Form object cannot be null or undefined");
-//            }
-
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
@@ -417,7 +397,7 @@ app.controller('BaseEditController', [
             }
 
             uiModel.isMutable = false;
-            uiModel.selectedKieliUri = "";
+            uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
             $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
 
             converter.createUiModels(uiModel, koulutusasteTyyppi);
@@ -488,17 +468,6 @@ app.controller('BaseEditController', [
         /*
          * LISATIEDOT PAGE FUNCTIONS
          */
-        $scope.setTabLang = function(langUri) {
-            if (angular.isUndefined(langUri) || langUri === null) {
-                $scope.uiModel.tabLang = Config.app.userLanguages[0]; //fi uri I guess;
-            } else {
-                $scope.uiModel.tabLang = langUri;
-            }
-        };
-
-        $scope.selectKieli = function(kieliUri) {
-            $scope.uiModel.selectedKieliUri = kieliUri;
-        };
 
         $scope.getLisatietoKielet = function() {
             for (var i in $scope.uiModel.opetuskielis.uris) {
@@ -522,6 +491,20 @@ app.controller('BaseEditController', [
                     $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
                 }
             }
+        }
+
+        $scope.getRakenneKuvaModel = function(kieliUri) {
+            if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === Object(kieliUri)) {
+                return kieliUri;
+            }
+            
+            var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
+            if (!ret) {
+                ret = {};
+                $scope.model.opintojenRakenneKuvas[kieliUri] = ret;
+            }
+
+            return ret;
         };
 
         $scope.onLisatietoLangSelection = function() {

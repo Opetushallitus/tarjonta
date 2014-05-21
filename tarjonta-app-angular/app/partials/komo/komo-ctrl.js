@@ -1,9 +1,21 @@
 angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisation', 'auth', 'Koodisto', 'TarjontaCache', 'TarjontaDateTime'])
-        .controller('KomoController', function($scope, $q, TarjontaService, PermissionService) {
+        .controller('KomoController', function($scope, $q, TarjontaService, PermissionService, LocalisationService, dialogService) {
             'use strict';
+            $scope.controlModel = {
+                formStatus: {
+                    modifiedBy: '',
+                    modified: null,
+                    tila: ''
+                },
+                formControls: {reloadDisplayControls: function() {
+                    }}
+            };
+
             $scope.ctrl = {
+                showError: false,
+                showSuccess: false,
+                validationmsgs: [],
                 apiKeys: {},
-                saved: false,
                 koulutuskoodi: null,
                 komoOid: "",
                 result: {},
@@ -34,9 +46,11 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {enum: 'TUTKINTO_OHJELMA', name: "Tutkinto-ohjelma"}],
                 statusOptions: [
                     {enum: 'JULKAISTU', name: 'Julkaistu'},
-                    {enum: 'KOPIO', name: "Kopio"},
+                    {enum: 'KOPIOITU', name: "Kopioitu"},
                     {enum: 'LUONNOS', name: "Luonnos"},
-                    {enum: 'VALMIS', name: "Valmis"}],
+                    {enum: 'PERUTTU', name: "Peruttu"},
+                    {enum: 'VALMIS', name: "Valmis"},
+                    {enum: 'POISTETTU', name: "Poistettu"}],
                 koulutusOptions: [
                     {enum: 'LUKIOKOULUTUS', name: "Lukiokoulutus"},
                     {enum: 'AMMATILLINEN_PERUSKOULUTUS', name: "AmmatillinenPeruskoulutus"},
@@ -48,7 +62,11 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {enum: 'MAAHANM_LUKIO_VALMISTAVA_KOULUTUS', name: "MaahanmLukioValmistavaKoulutus"},
                     {enum: 'YLIOPISTOKOULUTUS', name: "Yliopistokoulutus"},
                     {enum: 'AMMATTIKORKEAKOULUTUS', name: "Ammattikorkeakoulutus"},
-                    {enum: 'KORKEAKOULUTUS', name: "Korkeakoulutus"}
+                    {enum: 'KORKEAKOULUTUS', name: "Korkeakoulutus"},
+                    {enum: 'PERUSOPETUS', name: "Perusopetus"},
+                    {enum: 'PERUSOPETUS_ULKOMAINEN', name: "PerusopetusUlkomainen"},
+                    {enum: 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA', name: "AmmatillinenPerustutkintoNayttotutkintona"},
+                    {enum: 'TUNTEMATON', name: "Tuntematon"}
                 ],
                 textFields: [
                     {name: "modified", type: "DATE"},
@@ -56,15 +74,17 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "koulutusmoduuliTyyppi", type: "ENUM_TUTKINTO"},
                     {name: "koulutusasteTyyppi", type: "ENUM_KOULUTUS"},
                     {name: "tila", type: "ENUM_STATUS"},
+                    {name: "koulutuskoodi", type: "URI"},
                     {name: "koulutusaste", type: "URI"},
                     {name: "eqf", type: "URI"},
-                    //{name: "organisaatio", type: "OID"},
+                    {name: "nqf", type: "URI"},
+                    {name: "koulutustyyppi", type: "URI"},
+                    {name: "organisaatio", type: "OID"},
                     {name: "koulutusala", type: "URI"},
                     {name: "tutkinto", type: "URI"},
                     {name: "opintojenLaajuusyksikko", type: "URI"},
                     {name: "opintoala", type: "URI"},
-                    {name: "koulutuskoodi", type: "URI"},
-                    {name: "opintojenLaajuus", type: "URI"},
+                    {name: "opintojenLaajuusarvo", type: "URI"},
                     {name: "koulutusohjelma", type: "URI"},
                     {name: "koulutusohjelma", type: "TEXT_MAP"},
                     {name: "tutkintonimikes", type: "URI_MAP"},
@@ -191,7 +211,15 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 field.uris[koodiUri] = versio;
             };
 
-            $scope.save = function() {
+            $scope.update = function() {
+                $scope.ctrl.showError = false;
+                $scope.ctrl.showSuccess = false;
+                $scope.ctrl.validationmsgs = [];
+
+                if (!$scope.canUpdate()) {
+                    return;
+                }
+
                 var resource = TarjontaService.komo();
                 PermissionService.permissionResource().authorize({}, function(authResponse) {
 
@@ -201,13 +229,63 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                         delete $scope.ctrl.result.komoOid;
                     }
 
-                    resource.save($scope.ctrl.result, function(res) {
-                        console.log("saved", res);
-                        $scope.ctrl.komoOid = res.result.komoOid;
-                        $scope.ctrl.saved = true;
-
-                    });
+                    resource.update($scope.clearApiObject(), $scope.saveCallBack);
                 });
+            };
+
+            $scope.create = function() {
+                var d = dialogService.showDialog({
+                    ok: LocalisationService.t("ok"),
+                    cancel: LocalisationService.t("cancel"),
+                    title: LocalisationService.t("tarjonta.kopioi-uudeksi"),
+                    description: LocalisationService.t("tarjonta.kopioi-uudeksi")
+                });
+
+                d.result.then(function(data) {
+                    // results: "ACTION" or "CANCEL"
+                    if (data) {
+                        $scope.copy();
+                    }
+                });
+            };
+            $scope.copy = function() {
+                $scope.ctrl.showError = false;
+                $scope.ctrl.showSuccess = false;
+                $scope.ctrl.validationmsgs = [];
+
+                if (!$scope.canCreate()) {
+                    return;
+                }
+
+                delete $scope.ctrl.result.oid;
+                delete $scope.ctrl.result.komoOid;
+
+                var resource = TarjontaService.komo();
+                PermissionService.permissionResource().authorize({}, function(authResponse) {
+
+                    $scope.ctrl.result.modified = (new Date()).getTime();
+                    delete $scope.ctrl.result.oid;
+                    delete $scope.ctrl.result.komoOid;
+
+                    resource.insert($scope.clearApiObject(), $scope.saveCallBack);
+                });
+            };
+
+            $scope.saveCallBack = function(res) {
+                console.log("saveCallBack", res);
+                var model = res.result;
+
+                if (res.status === 'OK') {
+                    $scope.ctrl.komoOid = model.komoOid;
+                    $scope.ctrl.showSuccess = true;
+                } else {
+                    $scope.ctrl.showError = true;
+                    if (angular.isDefined(res.errors)) {
+                        for (var i = 0; i < res.errors.length; i++) {
+                            $scope.ctrl.validationmsgs.push(res.errors[i].errorMessageKey);
+                        }
+                    }
+                }
             };
 
             $scope.addChilds = function(komoOid, komoOids) {
@@ -261,9 +339,31 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 return {komoOid: komoOid, koulutuskoodi: {}, koulutusohjelma: {}};
             };
 
+            $scope.canUpdate = function() {
+                var oid = $scope.ctrl.result.oid;
+                return oid !== null && angular.isDefined(oid) && oid.length > 0;
+            };
 
-//            var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.ctrl.koodistoLocale);
-//            koodisPromise.then(function(result) {
-//                uiModel[key].koodis = result;
-//            });
+            $scope.canCreate = function() {
+                return  $scope.canUpdate();
+            };
+
+            $scope.clearApiObject = function() {
+                var copy = angular.copy($scope.ctrl.result);
+                for (var i = 0; i < $scope.ctrl.textFields.length; i++) {
+                    var o = $scope.ctrl.textFields[i];
+                    if (o.type === 'URI') {
+                        var f = copy[o.name];
+                        if (
+                                angular.isDefined(f) &&
+                                angular.isDefined(f.versio) &&
+                                (f.versio > 0 && (f.versio === '-1') || f.versio === -1)
+                                ) {
+                            copy[o.name] = null;
+                        }
+                    }
+                }
+                return copy;
+            };
+
         });

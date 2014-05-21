@@ -1,0 +1,21 @@
+<div>
+    <div ng-show="loading || !isImage()" class="frame"></div>
+    <img class="content" ng-show="!loading && isImage()" ng-src="{{imgSrc()}}" alt="{{model.filename}}" title="{{model.filename}}"/>
+
+    <hr/>
+    
+    <p ng-hide="flashAvailable" tt="imagefield.ie9.noflash">Tiedostojen lataaminen IE9:llä vaatii <a href="http://adobe.com">Flash</a>-liitännäisen.</p>
+
+    <div class="float-right" ng-hide="!flashAvailable">
+        <button class="btn" ng-disabled="!isImage() || disabled()" ng-click="deleteImage()">
+            <span tt="tarjonta.toiminnot.poista">Poista</span>
+            <span class="icon-remove"></span>
+        </button>
+        
+        <button class="upload btn btn-primary" ng-disabled="disabled() || !ready">
+            <span tt="tarjonta.toiminnot.lisää">Lisää</span>
+            <span class="icon-upload"></span>
+        </button>
+    </div>
+
+</div>

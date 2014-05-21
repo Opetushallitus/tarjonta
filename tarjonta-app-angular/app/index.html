@@ -25,7 +25,12 @@
 
         <script src="lib/jquery-1.10.2.min.js"></script>
         <script src="lib/jquery-ui.min.js"></script>
-
+        
+        <!--[if IE 9]>
+        <script src="lib/swfobject/swfobject.js"></script>
+        <script src="lib/filereader/jquery.FileReader.min.js"></script>
+        <![endif]-->
+        
         <!--
           Environment configuration file(s):
           Do not add angular application data to 'ext/*' (or 'ext/js/*' etc.)
@@ -107,6 +112,7 @@
         <script src="js/shared/directives/osoiteField.js"></script>
         <script src="js/shared/directives/zippy.js"></script>
         <script src="js/shared/directives/resultsTreeTable.js"></script>
+        <script src="js/shared/directives/exportToParent.js"></script>
 
         <script src="js/shared/filters/orderByNum.js"></script>
         <script src="js/shared/filters/dateFormat.js"></script>
@@ -139,6 +145,7 @@
         <script src="partials/koulutus/edit/korkeakoulu/editKorkeakouluController.js"></script>
         <script src="partials/koulutus/edit/korkeakoulu/selectTutkintoController.js"></script>
         <script src="partials/koulutus/edit/lukio/editLukioController.js"></script>
+        <script src="partials/koulutus/edit/amm/editNayttotutkintoController.js"></script>
 
         <script src="partials/koulutus/edit/editYhteyshenkiloController.js"></script>
         <script src="partials/koulutus/edit/aiheet-teemat.js"></script>

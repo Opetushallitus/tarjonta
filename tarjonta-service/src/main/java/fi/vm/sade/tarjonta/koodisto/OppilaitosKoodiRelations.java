@@ -15,8 +15,19 @@
  */
 package fi.vm.sade.tarjonta.koodisto;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
@@ -25,17 +36,8 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidListType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioSearchOidType;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -62,8 +64,8 @@ public class OppilaitosKoodiRelations {
      * @param organisaatioOid
      * @return
      */
-    public boolean isKoulutusAllowedForOrganisation(final String organisaatioOid, final KoulutusasteTyyppi tyyppi) {
-        Preconditions.checkNotNull(tyyppi, "KoulutusasteTyyppi enum cannot be null");
+    public boolean isKoulutusAllowedForOrganisation(final String organisaatioOid, final String koulutusaste) {
+        Preconditions.checkNotNull(koulutusaste, "KoulutusasteTyyppi enum cannot be null");
         Preconditions.checkNotNull(organisaatioOid, "Organisaatio OID cannot be null");
         final OrganisaatioDTO orgDto = organisaatioService.findByOid(organisaatioOid);
 
@@ -76,7 +78,7 @@ public class OppilaitosKoodiRelations {
         oids.remove(rootOphOid); //remove OPH OID from the list
 
         if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPPILAITOS)) {
-            if (isCorrectOppilaitostyyppis(organisaatioOid, tyyppi)) {
+            if (isCorrectOppilaitostyyppis(organisaatioOid, koulutusaste)) {
                 return true;
             } else {
                 return false;
@@ -93,7 +95,7 @@ public class OppilaitosKoodiRelations {
 
             if (!oppilaitostyyppiUris.isEmpty()) {
                 for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                    if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                    if (oppilaitostyyppiMatchesKoulutusaste(koulutusaste, oppilaitostyyppiUri)) {
                         LOG.debug("Found : {} KOULUTUSTOIMIJA parent of OPPILAITOS with correct oppilaitostyyppiUri {}", organisaatioOid, oppilaitostyyppiUri);
                         return true;
                     }
@@ -103,7 +105,7 @@ public class OppilaitosKoodiRelations {
             return false;
         }
         
-        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.OPETUSPISTE)) {
+        if (orgDto.getTyypit().contains(OrganisaatioTyyppi.TOIMIPISTE)) {
             String oid = oids.get(1); // oppilaitos (oph/kt/ol/op)
             final OrganisaatioDTO pathOrgDto = organisaatioService
                     .findByOid(oid);
@@ -116,7 +118,7 @@ public class OppilaitosKoodiRelations {
 
                 if (!oppilaitostyyppiUris.isEmpty()) {
                     for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                        if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                        if (oppilaitostyyppiMatchesKoulutusaste(koulutusaste, oppilaitostyyppiUri)) {
                             LOG.debug(
                                     "Found : {} OPPILAITOS with correct oppilaitostyyppi {}",
                                     oid, oppilaitostyyppiUri);
@@ -130,12 +132,12 @@ public class OppilaitosKoodiRelations {
         return false;
     }
 
-    private boolean isCorrectOppilaitostyyppis(String orgOid, KoulutusasteTyyppi tyyppi) {
-        List<String> oppilaitostyyppiUris = getAllOppilaitosTyyppisByOrganisaatioOid(orgOid);
+    private boolean isCorrectOppilaitostyyppis(final String orgOid, final String koulutusaste) {
+        final List<String> oppilaitostyyppiUris = getAllOppilaitosTyyppisByOrganisaatioOid(orgOid);
         
         if (!oppilaitostyyppiUris.isEmpty()) {
             for (String oppilaitostyyppiUri : oppilaitostyyppiUris) {
-                if (compareEnumToKoodiUr(tyyppi, oppilaitostyyppiUri)) {
+                if (oppilaitostyyppiMatchesKoulutusaste(koulutusaste, oppilaitostyyppiUri)) {
                     LOG.debug("Found (by path index) : {} OPPILAITOS with correct oppilaitostyyppi {}", orgOid, oppilaitostyyppiUri);
                     return true;
                 }
@@ -152,22 +154,12 @@ public class OppilaitosKoodiRelations {
         return list;
     }
 
-    private boolean isCorrectOrganisaatioTyyppi(OrganisaatioDTO org, OrganisaatioTyyppi tyyppi) {
-        for (OrganisaatioTyyppi organisaatioTyyppi : org.getTyypit()) {
-            if (tyyppi.equals(organisaatioTyyppi)) {
-                return true;
-            }
-
-        }
-        return false;
-    }
-
     private List<String> getOppilaitosTyyppis(OrganisaatioDTO org) {
         List<String> oppilaitostyyppis = Lists.<String>newArrayList();
 
         for (OrganisaatioTyyppi organisaatioTyyppi : org.getTyypit()) {
             switch (organisaatioTyyppi) {
-                case OPETUSPISTE:
+                case TOIMIPISTE:
                     //- we are on the leaf (or one of them)
                     break;
                 case KOULUTUSTOIMIJA:
@@ -191,45 +183,24 @@ public class OppilaitosKoodiRelations {
         return getOppilaitosTyyppis(dto);
     }
 
-    private boolean compareEnumToKoodiUr(final KoulutusasteTyyppi tyyppi, final String oppilaitosTyyppiUri) {
-        Preconditions.checkNotNull(tyyppi, "KoulutusasteTyyppi enum cannot be null");
+    private boolean oppilaitostyyppiMatchesKoulutusaste(final String koulutusaste, final String oppilaitosTyyppiUri) {
+        Preconditions.checkNotNull(koulutusaste, "Koulutusaste cannot be null");
+        Preconditions.checkNotNull(oppilaitosTyyppiUri, "Oppilaitostyyppi cannot be null");
 
-        if (oppilaitosTyyppiUri == null) {
-            return false;
-        }
-
+        final Collection<KoodiType> koulutusastees = searchKoulutusasteFromKoodisto(oppilaitosTyyppiUri);
         
-        Collection<KoodiType> koulutustyyppis = searchKoulutustyyppiFromKoodisto(oppilaitosTyyppiUri);
-        
-        for (KoodiType koulutustyyppi : koulutustyyppis) {
-            //XX hardcoded urls
-
-            switch (tyyppi) {
-                case KORKEAKOULUTUS:
-                    if (koulutustyyppi.getKoodiUri().equals("koulutustyyppi_3")) {
-                        return true;
-                    }
-                    break;
-                case AMMATTIKORKEAKOULUTUS:
-                    if (koulutustyyppi.getKoodiUri().equals("koulutustyyppi_3")) {
-                        return true;
-                    }
-                    break;
-                case LUKIOKOULUTUS:
-                    if (koulutustyyppi.getKoodiUri().equals("koulutustyyppi_2")) {
-                        return true;
-                    }
-                    break;
+        for (KoodiType koulutusasteKoodi : koulutusastees) {
+            if(KoodistoURI.compareKoodi(koulutusasteKoodi.getKoodiUri(), koulutusaste)) {
+                return true;
             }
         }
 
         return false;
     }
 
-    private Collection<KoodiType> searchKoulutustyyppiFromKoodisto(final String oppilaitostyyppiUri) {
+    private Collection<KoodiType> searchKoulutusasteFromKoodisto(final String oppilaitostyyppiUri) {
         Preconditions.checkNotNull(oppilaitostyyppiUri, "Oppilaitostyyppi URI cannot be null");
-        final Collection<KoodiType> koodistoRelations = tarjontaKoodistoHelper.getKoodistoRelations(oppilaitostyyppiUri, KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI, SuhteenTyyppiType.SISALTYY, false);
-
+        final Collection<KoodiType> koodistoRelations = tarjontaKoodistoHelper.getKoodistoRelations(oppilaitostyyppiUri, KoodistoURI.KOODISTO_KOULUTUSASTE_URI, SuhteenTyyppiType.SISALTYY, false);
         return koodistoRelations;
     }
 }

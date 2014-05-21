@@ -28,6 +28,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -154,7 +155,7 @@ public class KoulutusValidator {
         // TODO:  kun relaatiot on tehty koodistoon
         // alidateKoodi(result, dto.getNqf(), KoulutusValidationMessages.KOULUTUS_NQF_MISSING, KoulutusValidationMessages.KOULUTUS_NQF_INVALID);
         // validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
-        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID); 
+        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(result, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
@@ -330,18 +331,34 @@ public class KoulutusValidator {
         validateKoodi(result, dto.getSuunniteltuKestoTyyppi(), KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_MISSING, KoulutusValidationMessages.KOULUTUS_SUUNNITELTU_KESTO_TYPE_INVALID);
     }
 
-    public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO<KuvaV1RDTO> result) {
-        validateKieliUri(kuva.getKieliUri(), "kieliUri", result);
-        String raw = kuva.getBase64data();
+    public static void validateKoulutusKuva(KuvaV1RDTO kuva, ResultV1RDTO result) {
+        validateKoulutusKuva(kuva, null, result);
+    }
 
-        /*
-         * Data validation check
-         */
-        if (getValidBase64Image(raw) == null) {
-            result.addError(ErrorV1RDTO.createValidationError("base64data", "error_invalid_base64_data"));
+    public static void validateKoulutusKuva(final KuvaV1RDTO kuva, final String kieliUri, ResultV1RDTO result) {
+        if (!validateKieliUri(kuva.getKieliUri() != null ? kuva.getKieliUri() : kieliUri, "kieliUri", result)) {
+            //invalid kieli uri, fail fast.
+            return;
+        }
+
+        final String rawBase64 = kuva.getBase64data();
+        if (rawBase64 == null || rawBase64.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError("base64data", "error_missing_base64_data"));
+        } else {
+            /*
+             * Data validation check
+             */
+            if (getValidBase64Image(rawBase64) == null) {
+                result.addError(ErrorV1RDTO.createValidationError("base64data", "error_invalid_base64_data"));
+            }
+        }
+
+        if (kuva.getFilename() == null || kuva.getFilename().isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError("filename", "error_missing_filename"));
         }
 
         validateMimeType(kuva.getMimeType(), "mimeType", result);
+
     }
 
     public static void validateMimeType(String mimeType, final String errorInObjectfieldname, ResultV1RDTO result) {
@@ -352,15 +369,23 @@ public class KoulutusValidator {
         }
     }
 
-    public static void validateKieliUri(final String kieliUri, final String errorInObjectfieldname, ResultV1RDTO result) {
+    /**
+     * Return true when correct kieli uri format.
+     */
+    public static boolean validateKieliUri(final String kieliUri, final String errorInObjectfieldname, ResultV1RDTO result) {
         if (kieliUri == null || kieliUri.isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_uri"));
+            return false;
         } else if (!KoodistoURI.isValidKieliUri(kieliUri)) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_invalid_uri"));
+            return false;
         }
+
+        return true;
     }
 
     public static String getValidBase64Image(final String rawbase64) {
+        Preconditions.checkNotNull(rawbase64, "Image string cannot be null!");
         String modifiedBase64 = rawbase64;
         final boolean isBase64 = Base64.isBase64(rawbase64);
         if (!isBase64) {
@@ -389,9 +414,8 @@ public class KoulutusValidator {
             checkIsDeleted(komoto, dto);
         }
     }
-    
-    
-    private static final Set<String> allowDeletingPublishedKomoForTypes = new ImmutableSet.Builder<String>().add(KoulutusasteTyyppi.KORKEAKOULUTUS.value(), KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS.value(), KoulutusasteTyyppi.YLIOPISTOKOULUTUS.value()).build();
+
+    private static final Set<KoulutustyyppiEnum> allowDeletingPublishedKomoForTypes = new ImmutableSet.Builder<KoulutustyyppiEnum>().add(KoulutustyyppiEnum.KORKEAKOULUTUS, KoulutustyyppiEnum.AMMATTIKORKEAKOULUTUS, KoulutustyyppiEnum.YLIOPISTOKOULUTUS).build();
 
     public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<KoulutusmoduuliToteutus> relatedKomotos, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
@@ -421,7 +445,7 @@ public class KoulutusValidator {
                 dto.addError(ErrorV1RDTO.createValidationError("komo.link.parents", KoulutusValidationMessages.KOULUTUS_RELATION_KOMO_PARENT_REMOVE_LINK.lower(), parent.toArray(new String[parent.size()])));
             }
 
-            if (!allowDeletingPublishedKomoForTypes.contains(komoto.getKoulutusmoduuli().getKoulutustyyppi()) && !komoto.getKoulutusmoduuli().getTila().isRemovable()) {
+            if (!allowDeletingPublishedKomoForTypes.contains(komoto.getKoulutusmoduuli().getKoulutustyyppiEnum()) && !komoto.getKoulutusmoduuli().getTila().isRemovable()) {
                 dto.addError(ErrorV1RDTO.createValidationError("komo.invalid.transition", KoulutusValidationMessages.KOULUTUS_INVALID_TRANSITION.lower(), parent.toArray(new String[parent.size()])));
             }
         }
@@ -430,8 +454,8 @@ public class KoulutusValidator {
          * Ei haukohteita (tai kaikki poistettu) == OK
          * Jos hakukohde ja hakukohteessa on jokin muu koulutus kiinni == OK
          */
-        if (hkKoulutusMap.size()>=0) {
-            
+        if (hkKoulutusMap.size() >= 0) {
+
             Set<String> hakukohdeOids = Sets.<String>newHashSet();
 
             for (Entry<String, Integer> hkKoulutusCount : hkKoulutusMap.entrySet()) {

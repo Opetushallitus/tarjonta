@@ -1,5 +1,11 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -21,11 +27,14 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoodistoUri;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
@@ -39,7 +48,7 @@ public class HakukohdeResourceTest {
     private static final Logger LOG = LoggerFactory
             .getLogger(HakukohdeResourceTest.class);
 
-    private HakukohdeResourceImplV1 hakukohdeResource = new HakukohdeResourceImplV1();
+    private HakukohdeResourceImplV1 hakukohdeResource = spy(new HakukohdeResourceImplV1());
 
     private OidService oidService = Mockito.mock(OidService.class);
 
@@ -59,6 +68,8 @@ public class HakukohdeResourceTest {
 
     private PublicationDataService publicationDataService = Mockito.mock(PublicationDataService.class);
 
+
+    private Koulutusmoduuli komo;
     private KoulutusmoduuliToteutus komoto1;
     private KoulutusmoduuliToteutus komoto2;
     private KoulutusmoduuliToteutus komoto3;
@@ -72,25 +83,48 @@ public class HakukohdeResourceTest {
         Mockito.stub(oidService.get(TarjontaOidType.HAKU))
                 .toReturn("1.2.3.4.5");
 
+        HashMap<String,String> koulutusLajiJaKoulutusAste = new HashMap<String, String>();
+        koulutusLajiJaKoulutusAste.put(HakukohdeResourceImplV1.KOULUTUSASTE_KEY,"LUKIOKOULUTUS");
+        koulutusLajiJaKoulutusAste.put(HakukohdeResourceImplV1.KOULUTUSLAJI_KEY,"N");
+
+
+        when(hakukohdeResource.getKoulutusAstetyyppiAndLajiForKoulutukses(anyList())).thenReturn(koulutusLajiJaKoulutusAste);
+
+
+
+
+
         // Stub koodisto values
         TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
+
+        komo = new Koulutusmoduuli();
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
+        KoodistoUri koodistoUri = new KoodistoUri("koulutuslaji_n");
+
+
         
         //stub komotodao
         komoto1 = new KoulutusmoduuliToteutus();
-        komoto1.setAlkamiskausi("kausi");
+        komoto1.setAlkamiskausiUri("kausi");
         komoto1.setAlkamisVuosi(2005);
+        komoto1.setKoulutusmoduuli(komo);
+        komoto1.getKoulutuslajis().add(koodistoUri);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1")).toReturn(komoto1);
         komoto2 = new KoulutusmoduuliToteutus();
-        komoto2.setAlkamiskausi("kausi");
+        komoto2.setAlkamiskausiUri("kausi");
         komoto2.setAlkamisVuosi(2006);
+        komoto2.setKoulutusmoduuli(komo);
+        komoto2.getKoulutuslajis().add(koodistoUri);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2")).toReturn(komoto2);
         komoto3 = new KoulutusmoduuliToteutus();
-        komoto3.setAlkamiskausi("kausi2");
+        komoto3.setAlkamiskausiUri("kausi2");
+        komoto3.setKoulutusmoduuli(komo);
         komoto3.setAlkamisVuosi(2005);
-        
+        komoto3.getKoulutuslajis().add(koodistoUri);
+
         komotoPeruttu = new KoulutusmoduuliToteutus();
         komotoPeruttu.setTila(TarjontaTila.PERUTTU);
-        komotoPeruttu.setAlkamiskausi("kausi2");
+        komotoPeruttu.setAlkamiskausiUri("kausi2");
         komotoPeruttu.setAlkamisVuosi(2005);
         
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3")).toReturn(komoto3);

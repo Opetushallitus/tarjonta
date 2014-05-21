@@ -173,7 +173,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         /*
          * LOAD KORKEAKOULU DTO FROM DB
          */
-        final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, "FI");
+        final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusKorkeakouluV1RDTO result1 = (KoulutusKorkeakouluV1RDTO) result.getResult();
         assertLoadData(result1);
 

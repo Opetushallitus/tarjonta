@@ -141,7 +141,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     var resetErrorMsgs = function() {
 
 
-        $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
+        $scope.model.validationmsgs = [];
 
 
         $scope.model.nimiValidationFailed = false;
@@ -180,17 +180,14 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
 
     var showError = function(errorArray) {
-
-
-
         angular.forEach(errorArray,function(error) {
 
-
-            $scope.model.validationmsgs.push(error.errorMessageKey);
-
-
+        	var p = $scope.model.validationmsgs.indexOf(error.errorMessageKey);
+        	if (p==-1) {
+                $scope.model.validationmsgs.push(error.errorMessageKey);
+        	}
+            
         });
-
 
     }
 
@@ -281,6 +278,8 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                 var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data){
                     if (data.status === "OK") {
+
+                        $scope.model.valintaperustekuvaus = data.result;
                         $scope.model.showSuccess = true;
                         $scope.model.valintaperustekuvaus.modified  = data.result.modified;
                     } else {

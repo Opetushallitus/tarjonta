@@ -210,7 +210,7 @@ angular
                         var path = params[i].path;
                         var type = paramTemplates[path].type;
                         var value = params[i].value;
-                        $log.debug("path, type", path, type);
+                        // $log.debug("path, type", path, type);
                         // if("DATE"===type) {
                         // value=new Date(value);
                         // }

@@ -11,6 +11,7 @@ angular.module('app.kk',
             'app.edit.ctrl',
             'app.edit.ctrl.kk',
             'app.edit.ctrl.lukio',
+            'app.edit.ctrl.amm',
             'app.edit.ctrl.alkamispaiva',
             'app.edit.ctrl.tutkintonimike',
             'app.edit.ctrl.laajuus',
@@ -86,6 +87,7 @@ angular.module('app',
             'AiheetJaTeematChooser',
             'TarjontaDateTime',
             'TarjontaOsoiteField',
+            'ExportToParent',
             'debounce',
             'Parameter',
             'Logging'
@@ -97,7 +99,7 @@ angular.module('app').value("globalConfig", window.CONFIG);
 angular.module('app').factory(
         "errorLogService",
         function($log, $window, Config) {
-            
+
             var serviceUrl = Config.env["tarjontaRestUrlPrefix"] + "permission/recordUiStacktrace";
 
             $log.info("*** errorLogService ***", serviceUrl);
@@ -110,7 +112,7 @@ angular.module('app').factory(
                 M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
                 return M[0];
             }
-            
+
             function get_browser_version() {
                 var N = navigator.appName, ua = navigator.userAgent, tem;
                 var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
@@ -128,21 +130,21 @@ angular.module('app').factory(
                 // Try to send stacktrace event to server
                 try {
                     $log.debug("logging error to server side...");
-                    
+
                     var errorMessage = exception.toString();
                     var stackTrace = exception.stack.toString();
                     var browserInfo = {
                         browser: get_browser(),
                         browserVersion: get_browser_version()
                     };
-                    
+
                     // Log the JavaScript error to the server.
                     $.ajax({
                         type: "POST",
                         url: serviceUrl,
                         contentType: "application/json",
                         xhrFields: {
-                           withCredentials: true
+                            withCredentials: true
                         },
                         data: angular.toJson({
                             errorUrl: $window.location.href,
@@ -173,109 +175,129 @@ angular.module('app').provider(
             }
         }
 );
- 
+
 
 
 angular.module('app').config(['$routeProvider', function($routeProvider) {
 
-       /**
-        *
-        * Helper functions for hakukohde resolvers
-        *
-        * */
-
-       var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService) {
-           $log.info("/hakukohde/ID", $route);
-           if ("new" === $route.current.params.id) {
-
-               var selectedTarjoajaOids;
-               var selectedKoulutusOids;
-
-               if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
-                   selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
-               } else {
-                   selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
-               }
-
-               if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
-                   selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
-               } else {
-                   selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
-               }
-               //Initialize model and arrays inside it
-
-               return new Hakukohde({
-                   liitteidenToimitusOsoite: {
-                   },
-                   tarjoajaOids: selectedTarjoajaOids,
-                   hakukohteenNimet: {},
-                   hakukelpoisuusvaatimusUris: [],
-                   hakukohdeKoulutusOids: selectedKoulutusOids,
-                   hakukohteenLiitteet: [],
-                   valintakokeet: [],
-                   lisatiedot: {},
-                   valintaperusteKuvaukset: {},
-                   soraKuvaukset: {}
-               });
+        /**
+         *
+         * Helper functions for hakukohde resolvers
+         *
+         * */
 
 
+        var getHakukohdeKoulutukses = function(Hakukohde, $log, $route, SharedStateService, TarjontaService) {
 
-           } else {
+            var koulutusSet = new buckets.Set();
 
-               var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
+            var selectedKoulutusOids;
 
-               return deferredHakukohde.$promise;
+            if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
+                selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
+            } else {
+                selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
+            }
 
-           }
-       };
+            var spec = {
+                koulutusOid: selectedKoulutusOids
+            };
 
-       var resolveCanEditHakukohde = function(Hakukohde, $log, $route, $q, PermissionService) {
+            return TarjontaService.haeKoulutukset(spec);
 
-           if ($route.current.params.id !== "new") {
-               var deferredPermission = $q.defer();
-               Hakukohde.get({oid: $route.current.params.id}, function(data) {
+        };
+        var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService) {
+            $log.info("/hakukohde/ID", $route);
+            if ("new" === $route.current.params.id) {
 
-                   var canEditVar = PermissionService.canEdit(data.result.tarjoajaOids[0]);
+                var selectedTarjoajaOids;
+                var selectedKoulutusOids;
 
-                   //deferredPermission.resolve(canEditVar);
-                   canEditVar.then(function(permission) {
+                if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
+                    selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
+                } else {
+                    selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+                }
 
-                       deferredPermission.resolve(permission);
+                if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
+                    selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
+                } else {
+                    selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
+                }
+                //Initialize model and arrays inside it
 
-                   });
-
-               });
-
-               return deferredPermission.promise;
-
-           } else {
-               return undefined;
-           }
-
-
-       };
-
-       var resolveCanCreateHakukohde = function(Hakukohde, $log, $route, SharedStateService, PermissionService) {
-
-           var selectedTarjoajaOids;
-
-           if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
-               selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
-           } else {
-               selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
-           }
-
-           if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
-               $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
-               var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
-               $log.debug('CREATE VAR : ', canCreateVar);
-               return canCreateVar;
-           } else {
-               return undefined;
-           }
+                return new Hakukohde({
+                    liitteidenToimitusOsoite: {
+                    },
+                    tarjoajaOids: selectedTarjoajaOids,
+                    hakukohteenNimet: {},
+                    hakukelpoisuusvaatimusUris: [],
+                    hakukohdeKoulutusOids: selectedKoulutusOids,
+                    hakukohteenLiitteet: [],
+                    valintakokeet: [],
+                    lisatiedot: {},
+                    valintaperusteKuvaukset: {},
+                    soraKuvaukset: {}
+                });
 
 
-       };
+
+            } else {
+
+                var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
+
+                return deferredHakukohde.$promise;
+
+            }
+        };
+
+        var resolveCanEditHakukohde = function(Hakukohde, $log, $route, $q, PermissionService) {
+
+            if ($route.current.params.id !== "new") {
+                var deferredPermission = $q.defer();
+                Hakukohde.get({oid: $route.current.params.id}, function(data) {
+
+                    var canEditVar = PermissionService.canEdit(data.result.tarjoajaOids[0]);
+
+                    //deferredPermission.resolve(canEditVar);
+                    canEditVar.then(function(permission) {
+
+                        deferredPermission.resolve(permission);
+
+                    });
+
+                });
+
+                return deferredPermission.promise;
+
+            } else {
+                return undefined;
+            }
+
+
+        };
+
+        var resolveCanCreateHakukohde = function(Hakukohde, $log, $route, SharedStateService, PermissionService) {
+
+            var selectedTarjoajaOids;
+
+            if (angular.isArray(SharedStateService.getFromState('SelectedOrgOid'))) {
+                selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
+            } else {
+                selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+            }
+
+            if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
+                $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
+                var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
+                $log.debug('CREATE VAR : ', canCreateVar);
+                return canCreateVar;
+            } else {
+                return undefined;
+            }
+
+
+        };
 
         $routeProvider
                 .when("/etusivu", {
@@ -388,24 +410,25 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-            .when('/hakukohde/:id/edit/copy', {
-                action: "hakukohde.edit",
-                controller: 'HakukohdeRoutingController',
-                resolve: {
-                    isCopy : function() {
-                        return true;
-                    },
-                    canEdit: resolveCanEditHakukohde,
-                    canCreate: resolveCanCreateHakukohde,
-                    hakukohdex: resolveHakukohde
-                }
-            })
+                .when('/hakukohde/:id/edit/copy', {
+                    action: "hakukohde.edit",
+                    controller: 'HakukohdeRoutingController',
+                    resolve: {
+                        isCopy: function() {
+                            return true;
+                        },
+                        canEdit: resolveCanEditHakukohde,
+                        canCreate: resolveCanCreateHakukohde,
+                        hakukohdex: resolveHakukohde
+                    }
+                })
                 .when('/hakukohde/:id/edit', {
                     action: "hakukohde.edit",
                     controller: 'HakukohdeRoutingController',
                     resolve: {
                         canEdit: resolveCanEditHakukohde,
                         canCreate: resolveCanCreateHakukohde,
+                        hakukohdeKoulutuksesx: getHakukohdeKoulutukses,
                         hakukohdex: resolveHakukohde
                     }
                 })
@@ -428,7 +451,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         hakux: function($log, HakuV1Service) {
                             $log.debug("/haku/NEW");
                             return HakuV1Service.createNewEmptyHaku();
-                        }                            
+                        }
                     }
                 })
 
@@ -464,8 +487,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 })
 
                 .otherwise({redirectTo: "/etusivu"});
-        
-        
+
+
     }]);
 
 
@@ -479,7 +502,7 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
         $scope.count = 0;
 
         PermissionService.permissionResource().authorize({}, function(response) {
-          $log.debug("Authorization check : " + response.result);
+            $log.debug("Authorization check : " + response.result);
         });
 
         var render = function() {

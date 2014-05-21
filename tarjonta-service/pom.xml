@@ -4,7 +4,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>9.4</version>
+        <version>9.4.1</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -540,12 +540,6 @@
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.13</version>
-            </plugin>
-
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>maven-apt-plugin</artifactId>

@@ -15,22 +15,21 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import fi.vm.sade.generic.common.I18NHelper;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
-import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter;
-import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
-import fi.vm.sade.vaadin.util.UiUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+
+import fi.vm.sade.generic.common.I18NHelper;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.ui.model.SimpleHakukohdeViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
+import fi.vm.sade.vaadin.util.UiUtil;
 
 /*
  * Author: Tuomas Katva
@@ -47,7 +46,6 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     private Button poistaBtn;
     @Autowired(required = true)
     private TarjontaPresenter tarjontaPresenter;
-    private OrganisaatioContext context;
     private static final Logger LOG = LoggerFactory.getLogger(ShowKoulutusHakukohdeRow.class);
     private boolean lukioKoulutus = false;
 
@@ -56,16 +54,14 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
     @Value("${koodisto-uris.jatkuvahaku}")
     private String hakutapaJatkuvaHaku;
 
-    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, OrganisaatioContext context) {
+    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model) {
         super();
-        this.context = context;
         hakukohdeViewModel = model;
         buildButtons();
     }
 
-    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, OrganisaatioContext context, boolean lukio) {
+    public ShowKoulutusHakukohdeRow(SimpleHakukohdeViewModel model, boolean lukio) {
         super();
-        this.context = context;
         hakukohdeViewModel = model;
         buildButtons();
         lukioKoulutus = lukio;
@@ -94,21 +90,11 @@ public class ShowKoulutusHakukohdeRow extends HorizontalLayout {
 
         moreComplexHakukohdeViewModel = tarjontaPresenter.findHakukohdeByHakukohdeOid(hakukohdeViewModel.getHakukohdeOid());
 
-        boolean isHakuStarted = checkIsHakuStartedOrErillisJatkuvaHaku(moreComplexHakukohdeViewModel.getHakukohteet().get(0),hakukohdeViewModel);
-
-        poistaBtn.setVisible(tarjontaPresenter.getPermission().userCanDeleteHakukohdeFromKoulutus(context, isHakuStarted));
+        final boolean buttonVisible = tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeViewModel.getHakukohdeOid()) && !TarjontaTila.JULKAISTU.value().equals(hakukohdeViewModel.getHakukohdeTila());
+        
+        poistaBtn.setVisible(buttonVisible);
 
         poistaBtn.setStyleName("link-row");
-    }
-
-    private boolean checkIsHakuStartedOrErillisJatkuvaHaku(HakukohdePerustieto hakukohdePerustieto, SimpleHakukohdeViewModel hakukohdeViewModel) {
-
-       if (hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutapaErillishaku) || hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutapaJatkuvaHaku)) {
-            return false;
-       } else {
-           return hakukohdeViewModel.isHakuStarted();
-       }
-
     }
 
     protected String T(String key) {

@@ -17,9 +17,9 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
@@ -33,7 +33,10 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -71,10 +74,10 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
             String query = "SELECT komoto FROM "
                     + "KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k "
                     + "WHERE komoto.koulutusmoduuli = komo "
-                    + "AND komoto.pohjakoulutusvaatimus = :pkv "
+                    + "AND komoto.pohjakoulutusvaatimusUri = :pkv "
                     + "AND komoto.tarjoaja = :tarjoaja "
-                    + "AND komo.koulutusKoodi = :koulutuskoodi "
-                    + "AND komo.koulutusohjelmaKoodi = :koulutusohjelmaKoodi "
+                    + "AND komo.koulutusUri = :koulutusUri "
+                    + "AND komo.koulutusohjelmaUri = :koulutusohjelmaUri "
                     + "AND o.koodiUri IN (:opetuskielis) "
                     + "AND k.koodiUri IN (:koulutuslajis)";
 
@@ -82,8 +85,8 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     .createQuery(query)
                     .setParameter("pkv", pohjakoulutus.trim())
                     .setParameter("tarjoaja", tarjoaja.trim())
-                    .setParameter("koulutuskoodi", koulutusluokitus.trim())
-                    .setParameter("koulutusohjelmaKoodi", koulutusohjelma.trim())
+                    .setParameter("koulutusUri", koulutusluokitus.trim())
+                    .setParameter("koulutusohjelmaUri", koulutusohjelma.trim())
                     .setParameter("opetuskielis", opetuskielis)
                     .setParameter("koulutuslajis", koulutuslajis)
                     .getResultList();
@@ -133,7 +136,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return from(komoto)
                 .where(komoto.oid.in(oids))
                 .join(komoto.koulutusmoduuli, komo)
-                .orderBy(komo.koulutusKoodi.asc())
+                .orderBy(komo.koulutusUri.asc())
                 .list(komoto);
     }
 
@@ -210,7 +213,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 criteria = criteria.and(komoto.tarjoaja.eq(tarjoaja));
             }
             if (pohjakoulutusvaatimusUri != null) {
-                criteria = criteria.and(komoto.pohjakoulutusvaatimus.eq(pohjakoulutusvaatimusUri));
+                criteria = criteria.and(komoto.pohjakoulutusvaatimusUri.eq(pohjakoulutusvaatimusUri));
             }
 
             komotoRes = from(komoto).
@@ -307,6 +310,21 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         return from(qKomoto).
                 join(qKomoto.kuvat, qBinaryData).
                 where(qKomoto.oid.eq(komotoOid).and(qKomoto.kuvat.get(kieliUri).eq(qBinaryData))).singleResult(qBinaryData);
+    }
+
+    @Override
+    public Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid) {
+        QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QBinaryData qBinaryData = QBinaryData.binaryData;
+        KoulutusmoduuliToteutus t = from(qKomoto).
+                leftJoin(qKomoto.kuvat, qBinaryData).fetch().
+                where(qKomoto.oid.eq(komotoOid)).singleResult(qKomoto);
+
+        if (t == null) {//no results
+            return Maps.<String, BinaryData>newHashMap();
+        }
+
+        return t.getKuvat();
     }
 
     /**

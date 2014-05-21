@@ -371,6 +371,17 @@ app.controller('BaseReviewController', [
 //            });
         };
 
+        $scope.canRemoveHakukohdeFromKoulutus = function (hakukohde) {
+
+
+
+
+            return TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakukohde.relatedOid);
+
+
+
+        };
+
         $scope.getKoulutusohjelmaNimi = function() {            
             // Get user's language and update scope with it
             var userLangUri = "kieli_" + AuthService.getLanguage();
@@ -415,6 +426,14 @@ app.controller('BaseReviewController', [
 
             return result;
         };
+
+        $scope.getRakenneKuvaSrc = function(kieliUri) {
+        	var img = $scope.model.koulutus.opintojenRakenneKuvas[kieliUri];
+        	if (!img) {
+        		return false;
+        	}
+        	return "data:"+img.mimeType+";base64,"+img.base64data;
+        }
         
     }]);
 

@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.view.hakukohde;
 
 import java.util.*;
 
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
-import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.CommonTranslationKeys;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
@@ -91,8 +89,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
         //Build the layout
 
-        //XXX oid not set
-        addNavigationButtons(OrganisaatioContext.getContext(tarjontaPresenterPresenter.getTarjoaja().getSelectedOrganisationOid()));
+        addNavigationButtons(tarjontaPresenterPresenter.isHakukohdeEditableForCurrentUser());
         Set<String> allLangs = getAllKielet();
         final TabSheet tabs = new TabSheet();
         for (String lang : allLangs) {
@@ -103,56 +100,6 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
             }
         }
         vl.addComponent(tabs);
-        enableOrDisableButtonsByHaku();
-    }
-
-    private void enableOrDisableButtonsByHaku() {
-
-        HakuViewModel hakuViewModel = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel();
-        boolean isHakuStarted = checkHakuStarted(hakuViewModel);
-        if (isHakuStarted && poista != null) {
-            poista.setEnabled(false);
-        }
-
-    }
-
-    private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
-
-        if (tarjontaPresenterPresenter.getPermission().userIsOphCrud()) {
-            return false;
-        }
-
-
-        HakuViewModel refreshHakuViewModel =  tarjontaPresenterPresenter.findHakuByOid(hakuViewModel.getHakuOid());
-
-        hakuViewModel.setHakutapa(refreshHakuViewModel.getHakuDto().getHakutapaUri());
-        Date minHakuAlkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
-
-        if (isErillishakuOrLisahaku(hakuViewModel)) {
-            return false;
-        } else if (new Date().after(minHakuAlkamisPvm)) {
-            return true;
-        } else {
-            return false;
-        }
-        //What if user is OPH ? should he or she have the right to edit haku ?
-            /*else if (presenter.getPermission().userIsOphCrud()) {
-
-            }*/
-
-
-    }
-
-    private boolean isErillisOrJatkuvaHaku() {
-        HakuViewModel hakuViewModel = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel();
-        HakuViewModel refreshHakuViewModel =  tarjontaPresenterPresenter.findHakuByOid(hakuViewModel.getHakuOid());
-
-        hakuViewModel.setHakutapa(refreshHakuViewModel.getHakuDto().getHakutapaUri());
-        return isErillishakuOrLisahaku(hakuViewModel);
-    }
-
-    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
-        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
     }
 
 
@@ -179,8 +126,12 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
         return kielet;
     }
 
-    private void addNavigationButtons(OrganisaatioContext context) {
-        final boolean hakuStarted = !checkHaunAlkaminen();
+    private void addNavigationButtons(final boolean canRemoveHakukohde) {
+        
+        final TarjontaTila tila = tarjontaPresenterPresenter.getModel().getHakukohde().getTila();
+        
+        final boolean buttonVisible = canRemoveHakukohde && (tila!=null && tila!=TarjontaTila.JULKAISTU);
+        
         addNavigationButton("", new Button.ClickListener() {
             private static final long serialVersionUID = 5019806363620874205L;
 
@@ -195,7 +146,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if (isErillisOrJatkuvaHaku() || !hakuStarted) {
+                if (buttonVisible) {
                     showConfirmationDialog();
                 } else {
                     getWindow().showNotification(T("hakukohdePoistoEpaonnistui"), Window.Notification.TYPE_ERROR_MESSAGE);
@@ -214,8 +165,7 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
          }, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
         //permissions
-        poista.setVisible(isErillisOrJatkuvaHaku() || tarjontaPresenterPresenter.getPermission().userCanDeleteHakukohde(context, hakuStarted));
-        /*kopioiUudeksi.setVisible(tarjontaPresenterPresenter.getPermission().userCanCopyHakukohdAsNew(context));*/
+        poista.setVisible(buttonVisible);
     }
 
     private void showConfirmationDialog() {
@@ -272,18 +222,6 @@ public class ShowHakukohdeView extends AbstractVerticalInfoLayout {
         koulutusRemovalDialog.setModal(true);
         koulutusRemovalDialog.center();
         getWindow().addWindow(koulutusRemovalDialog);
-    }
-
-    private boolean checkHaunAlkaminen() {
-        tarjontaPresenterPresenter.loadHakukohdeHakuPvm();
-        //Date haunPaattymisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getPaattymisPvm();
-        Date haunAlkamisPvm = tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getAlkamisPvm();
-        Date tanaan = new Date();
-        if (!tanaan.after(haunAlkamisPvm) || KoodistoURI.KOODI_LISAHAKU_URI.equals(tarjontaPresenterPresenter.getModel().getHakukohde().getHakuViewModel().getHakutyyppi())) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public void addLayoutSplit(VerticalLayout layout) {

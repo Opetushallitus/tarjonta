@@ -265,17 +265,6 @@ public class KorkeakouluConverter extends KoulutusConveter {
         return tyyppi;
     }
 
-    public static Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> fullLukioKomoCacheMap(Collection<KoulutusmoduuliKoosteTyyppi> komos) {
-        Map<Map.Entry, KoulutusmoduuliKoosteTyyppi> hashMap = new HashMap<Map.Entry, KoulutusmoduuliKoosteTyyppi>();
-
-        for (KoulutusmoduuliKoosteTyyppi komo : komos) {
-            Map.Entry e = new AbstractMap.SimpleEntry<String, String>(komo.getKoulutuskoodiUri(), komo.getLukiolinjakoodiUri());
-            hashMap.put(e, komo);
-        }
-
-        return hashMap;
-    }
-
     private KorkeakouluPerustiedotViewModel createKorkeakouluPerustiedotViewModel(LueKoulutusVastausTyyppi vastaus, Locale locale) {
         Preconditions.checkNotNull(vastaus, INVALID_DATA + "LueKoulutusVastausTyyppi object cannot be null.");
         Preconditions.checkNotNull(vastaus.getKoulutusmoduuli(), INVALID_DATA + "KoulutusmoduuliKoosteTyyppi object cannot be null.");

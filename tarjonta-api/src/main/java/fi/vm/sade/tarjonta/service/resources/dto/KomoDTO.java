@@ -55,6 +55,7 @@ public class KomoDTO extends BaseRDTO {
     private Map<String, String> _nimi;
     private Map<KomoTeksti, Map<String, String>> _tekstit;
     private String _koulutusKoodiUri;
+    private String koulutustyyppi;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
@@ -299,5 +300,19 @@ public class KomoDTO extends BaseRDTO {
      */
     public void setLaajuusArvoUri(String laajuusArvoUri) {
         this.laajuusArvoUri = laajuusArvoUri;
+    }
+
+    /**
+     * @return the koulutustyyppi
+     */
+    public String getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
+
+    /**
+     * @param koulutustyyppi the koulutustyyppi to set
+     */
+    public void setKoulutustyyppi(String koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
     }
 }

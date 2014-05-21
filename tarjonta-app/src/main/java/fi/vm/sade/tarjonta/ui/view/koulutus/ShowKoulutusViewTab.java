@@ -422,7 +422,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
     private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
         final List<ShowKoulutusHakukohdeRow> rows = Lists.newArrayList();
         for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
-            final ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel, context);
+            final ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel);
             rows.add(row);
         }
         return rows;

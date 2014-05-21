@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
@@ -123,7 +124,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,
             List<KoulutusIndexEntity> koulutuses) {
         if(koulutuses!=null && koulutuses.size()>0) {
-            String koulutusastetyyppi = koulutuses.get(0).getKoulutusTyyppi();
+            String koulutusastetyyppi = koulutuses.get(0).getKoulutustyyppiEnum().getKoulutusasteTyyppi().value();
             hakukohdeDoc.addField(KOULUTUSASTETYYPPI, koulutusastetyyppi);
         }
     }
@@ -191,7 +192,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
        
         //Vapaan sivistyon koulutus has an edited name, not a koodiuri
         if (!koulutuses.isEmpty() 
-                && !koulutuses.get(0).getKoulutusTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.value())) {
+                && !koulutuses.get(0).getKoulutustyyppiEnum().equals(KoulutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
             
             KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
             

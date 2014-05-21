@@ -1,62 +1,44 @@
 var app = angular.module('app.kk.edit.hakukohde.review.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MonikielinenText']);
 
 
-app.controller('HakukohdeReviewController', 
-    function($scope, 
-             $q, 
+app.controller('HakukohdeReviewController',
+    function($scope,
+             $q,
              $log,
-             LocalisationService, 
-             OrganisaatioService, 
-             Koodisto, 
-             Hakukohde, 
-             AuthService, 
-             dialogService, 
-             HakuService, 
-             $modal, 
-             Config, 
-             $location, 
-             $timeout, 
-             TarjontaService, 
-             HakukohdeKoulutukses, 
-             dialogService, 
-             SisaltyvyysUtil, 
-             TreeHandlers, 
+             LocalisationService,
+             OrganisaatioService,
+             Koodisto,
+             Hakukohde,
+             AuthService,
+             dialogService,
+             HakuService,
+             $modal,
+             Config,
+             $location,
+             $timeout,
+             $route,
+             TarjontaService,
+             HakukohdeKoulutukses,
+             dialogService,
+             SisaltyvyysUtil,
+             TreeHandlers,
              PermissionService) {
-                 
+
       $log = $log.getInstance("HakukohdeReviewController");
       $log.debug("init...");
-       
+
       //by default disable
       $scope.isMutable=false;
+      $scope.isPartiallyMutable=false;
       $scope.isRemovable=false;
-      
+      $scope.showNimiUri = false;
+      $scope.isAiku = false;
 //      $log.debug("scope.model:", $scope.model);
 
-      var hakukohdeOid = $scope.model.hakukohde.oid;
-      
-      //permissiot
-      $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({oid: hakukohdeOid, state: 'POISTETTU'}).$promise.then(function(r){return r.$resolved; })]).then(function(results) {
-        $scope.isMutable=results[0]===true;
-        if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
-          //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-          $scope.isMutable = false;
-          
-        }
-        $scope.isRemovable=results[1]===true && results[2]===true;
-      });
-
-      $log.debug('HAKUKOHDE REVIEW:  ', $scope.model.hakukohde);
-
-      /*
-
-        ---------> Internal variable declarations and scope "helper" variable declarations  <--------------
-
-      */
-
-
+      var aikuKoulutuslajiUri = "koulutuslaji_a";
 
       var kieliKoodistoUri = "kieli";
-      
+
       $scope.model.hakukohteenKielet = [];
 
       $scope.model.koulutukses = [];
@@ -87,75 +69,8 @@ app.controller('HakukohdeReviewController',
       };
 
 
-     $scope.getHakukohteenJaOrganisaationNimi = function() {
 
 
-         console.log('ORGANISAATION NIMET : ', $scope.model.organisaatioNimet);
-
-         var ret = "";
-         var ja = LocalisationService.t("tarjonta.yleiset.ja");
-
-         for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-             if (i>0) {
-                 ret = ret + ((i==$scope.model.hakukohde.hakukohteenNimet.length-1) ? " "+ja+" " : ", ");
-             }
-             ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
-         }
-
-         if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0)  {
-
-             var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
-
-             ret  = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
-
-         } else {
-             var counter = 0;
-             var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
-             angular.forEach($scope.model.organisaatioNimet,function(organisaatioNimi) {
-
-
-                 if (counter === 0) {
-
-
-                     ret  = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
-
-
-                 } else {
-
-
-//                    ret = ret + ((counter===$scope.model.organisaatioNimet.length-1) ? " " : ", ");
-
-                     ret = ret + ", <b>" + organisaatioNimi + "</b>";
-
-                 }
-                 counter++;
-
-             });
-
-         }
-
-         return ret;
-
-     };
-      
-      $scope.getHakukohteenNimi = function() {
-
-
-          if ($scope.model==undefined || $scope.model.hakukohde==undefined || $scope.model.hakukohde.hakukohteenNimet==undefined) {
-              return null;
-          }
-          var lc = $scope.model.hakukohde.hakukohteenNimet[kieliKoodistoUri+"_"+$scope.model.userLang.toLowerCase()];
-          if (lc) {
-              return lc;
-          }
-
-          for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-              return $scope.model.hakukohde.hakukohteenNimet[i];
-          }
-          return null;
-
-      }
-      
       // liitteiden / valintakokeiden kielet
       function aggregateLangs(items) {
     	  var ret = [];
@@ -167,11 +82,11 @@ app.controller('HakukohdeReviewController',
     	  }
     	  return ret;
       }
-      
+
       $scope.model.valintakoeKielet = aggregateLangs($scope.model.hakukohde.valintakokeet);
       $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
-      
-      $log.debug('HAKUKOHDE : ' , $scope.model.hakukohde);
+
+
 
       /*
         ----------------------------> Helper functions  < ----------------------------
@@ -192,7 +107,7 @@ app.controller('HakukohdeReviewController',
             $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
         }
 
-     }
+     };
 
 
       var loadKielesSetFromHakukohde = function() {
@@ -253,6 +168,26 @@ app.controller('HakukohdeReviewController',
       };
 
 
+   var initLanguages = function() {
+
+       console.log('Init languages');
+
+       //Get all kieles from hakukohdes names and additional informaty
+       var allKieles = new buckets.Set();
+
+       for (var kieliUri in $scope.model.hakukohde.hakukohteenNimet) {
+
+           allKieles.add(kieliUri);
+       }
+
+       for (var kieliUri in $scope.model.hakukohde.lisatiedot) {
+           allKieles.add(kieliUri);
+       }
+       $scope.model.allkieles = allKieles.toArray();
+
+
+   };
+
     var checkIsOkToRemoveKoulutus = function() {
         if ($scope.model.koulutukses.length > 1) {
 
@@ -261,14 +196,14 @@ app.controller('HakukohdeReviewController',
             return false;
         }
 
-    }
+    };
 
 
     var createFormattedDateString = function(date) {
 
         return moment(date).format('DD.MM.YYYY HH:mm');
 
-    }
+    };
 
     var filterNewKoulutukses = function(koulutukses) {
 
@@ -368,43 +303,45 @@ app.controller('HakukohdeReviewController',
       */
 
      var loadHakuInformation = function() {
+         if ($scope.model.hakukohde.hakuOid) {
 
          var hakuPromise = HakuService.getHakuWithOid($scope.model.hakukohde.hakuOid);
-         hakuPromise.then(function(haku){
-            $log.debug('HAKU: ', haku);
-            for (var kieliUri in haku.nimi) {
-                var upperCaseKieliUri = kieliUri.toUpperCase();
-                var upperUserLang = $scope.model.userLang.toUpperCase();
-                if (upperCaseKieliUri.indexOf(upperUserLang) != -1) {
-                    $scope.model.hakuNimi = haku.nimi[kieliUri];
-                }
-            }
+         hakuPromise.then(function (haku) {
+             {
+             $log.debug('HAKU: ', haku);
+             if (haku && haku.nimi)
+                 for (var kieliUri in haku.nimi) {
+                     var upperCaseKieliUri = kieliUri.toUpperCase();
+                     var upperUserLang = $scope.model.userLang.toUpperCase();
+                     if (upperCaseKieliUri.indexOf(upperUserLang) != -1) {
+                         $scope.model.hakuNimi = haku.nimi[kieliUri];
+                     }
+                 }
 
-            if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 0 && $scope.model.hakukohde.hakuaikaId !== undefined) {
+             if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 0 && $scope.model.hakukohde.hakuaikaId !== undefined) {
 
-                var valittuHakuAika = undefined;
-                angular.forEach(haku.hakuaikas,function(hakuaika){
+                 var valittuHakuAika = undefined;
+                 angular.forEach(haku.hakuaikas, function (hakuaika) {
 
-                      if (hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId) {
-                          valittuHakuAika = hakuaika;
-                      }
+                     if (hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId) {
+                         valittuHakuAika = hakuaika;
+                     }
 
-                });
+                 });
 
-                if (valittuHakuAika !== undefined) {
+                 if (valittuHakuAika !== undefined) {
 
-                    var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
+                     var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
 
 
+                     $scope.model.hakuNimi = $scope.model.hakuNimi + "  ( " + prefix + createFormattedDateString(valittuHakuAika.alkuPvm) + " - " + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
 
-                    $scope.model.hakuNimi = $scope.model.hakuNimi + "  ( " + prefix  + createFormattedDateString(valittuHakuAika.alkuPvm) + " - " + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
+                 }
 
-                }
-
-            }
-
+             }
+         }
          });
-
+     }
      };
 
     /*
@@ -457,13 +394,16 @@ app.controller('HakukohdeReviewController',
               TarjontaService.haeKoulutukset(spec).then(function(data){
 
                   var tarjoajaOidsSet = new buckets.Set();
-
+                 console.log('HAKUKOHDE REVIEW KOULUTUKSET : ', data);
                   if(data.tulokset !== undefined) {
                       $scope.model.koulutukses.splice(0,$scope.model.koulutukses.length);
                       angular.forEach(data.tulokset,function(tulos){
                           tarjoajaOidsSet.add(tulos.oid);
                           if (tulos.tulokset !== undefined) {
                               angular.forEach(tulos.tulokset,function(lopullinenTulos){
+                                  if(lopullinenTulos.koulutuslajiUri && lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
+                                      $scope.isAiku = true;
+                                  }
                                   var koulutus = {
                                       nimi : lopullinenTulos.nimi,
                                       oid : lopullinenTulos.oid
@@ -508,25 +448,162 @@ app.controller('HakukohdeReviewController',
 
           }
 
-    }
+    };
 
-     /*
+        var reloadFormControls = function () {
 
-        -----------> Controller "initialization" part where initialization functions are run  <--------------
+            if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
+                $scope.formControls.reloadDisplayControls();
+            }
 
-      */
-    convertValintaPalveluValue();
-    loadKielesSetFromHakukohde();
-    loadHakuInformation();
-    modelInit();
-    loadHakukelpoisuusVaatimukses();
-    loadKoulutukses();
+
+        };
+
+        var checkForHakuRemove = function () {
+
+            var canRemoveHakukohde = TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+            var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
+            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
+
+            if (canRemoveHakukohde && canEditHakukohdeAtAll) {
+                $scope.isRemovable=true;
+                $scope.isMutable = true;
+                $scope.isPartiallyMutable = true;
+            } else if (canPartiallyEditHakukohde) {
+                $scope.isMutable = false;
+                $scope.isRemovable=false;
+                $scope.isPartiallyMutable = true;
+            }  else {
+
+                $scope.isMutable = false;
+                $scope.isRemovable=false;
+                $scope.isPartiallyMutable = false;
+            }
+
+
+
+        };
+
+        /*
+
+         -----------> Controller "initialization" part where initialization functions are run  <--------------
+
+         */
+
+        var init = function() {
+
+            var hakukohdeOid = $scope.model.hakukohde.oid;
+
+            //permissiot
+            $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({oid: hakukohdeOid, state: 'POISTETTU'}).$promise.then(function(r){return r.$resolved; })]).then(function(results) {
+                $scope.isMutable=results[0]===true;
+                if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
+                    //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+                    $scope.isMutable = false;
+
+                }
+                $scope.isRemovable=results[1]===true && results[2]===true;
+                checkForHakuRemove();
+            });
+
+
+        if ($scope.model.hakukohde.result) {
+            $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
+        }
+
+        console.log('REVIEW HAKUKOHDE :',$scope.model.hakukohde );
+        if($scope.model.hakukohde.hakukohteenNimiUri) {
+            $scope.showNimiUri = true;
+        }
+
+        initLanguages();
+        convertValintaPalveluValue();
+        loadKielesSetFromHakukohde();
+        loadHakuInformation();
+        modelInit();
+        loadHakukelpoisuusVaatimukses();
+        loadKoulutukses();
+        reloadFormControls();
+        //checkForHakuRemove();
+    };
+
+    init();
 
     /*
 
         -----------> Controller event/click handlers etc. <------------------
 
      */
+
+
+        $scope.getHakukohteenJaOrganisaationNimi = function() {
+
+
+            console.log('ORGANISAATION NIMET : ', $scope.model.organisaatioNimet);
+
+            var ret = "";
+            var ja = LocalisationService.t("tarjonta.yleiset.ja");
+
+            for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+                if (i>0) {
+                    ret = ret + ((i==$scope.model.hakukohde.hakukohteenNimet.length-1) ? " "+ja+" " : ", ");
+                }
+                ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
+            }
+
+            if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0)  {
+
+                var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
+
+                ret  = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
+
+            } else {
+                var counter = 0;
+                var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
+                angular.forEach($scope.model.organisaatioNimet,function(organisaatioNimi) {
+
+
+                    if (counter === 0) {
+
+
+                        ret  = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
+
+
+                    } else {
+
+
+//                    ret = ret + ((counter===$scope.model.organisaatioNimet.length-1) ? " " : ", ");
+
+                        ret = ret + ", <b>" + organisaatioNimi + "</b>";
+
+                    }
+                    counter++;
+
+                });
+
+            }
+
+            return ret;
+
+        };
+
+        $scope.getHakukohteenNimi = function() {
+
+
+            if ($scope.model==undefined || $scope.model.hakukohde==undefined || $scope.model.hakukohde.hakukohteenNimet==undefined) {
+                return null;
+            }
+            var lc = $scope.model.hakukohde.hakukohteenNimet[kieliKoodistoUri+"_"+$scope.model.userLang.toLowerCase()];
+            if (lc) {
+                return lc;
+            }
+
+            for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+                return $scope.model.hakukohde.hakukohteenNimet[i];
+            }
+            return null;
+
+        };
 
     $scope.doEdit = function(event, targetPart) {
         $log.debug("doEdit()...", event, targetPart);
@@ -819,7 +896,7 @@ app.controller('ShowKoulutusHakukohtees',
              LocalisationService,
              hakukohtees,
              selectedLocale) {
-                 
+
     $log = $log.getInstance("ShowKoulutusHakukohtees");
     $log.debug("init...");
 

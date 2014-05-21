@@ -38,7 +38,10 @@ app.controller('HakuEditController',
                 OrganisaatioService,
                 AuthService,
                 dialogService,
-                KoodistoURI, PermissionService, HakuV1Service) {
+                KoodistoURI, 
+                PermissionService, 
+                HakuV1Service,
+                TarjontaService) {
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
@@ -429,7 +432,7 @@ app.controller('HakuEditController',
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
-                  ParameterService.haeHaunParametrit(hakuOid, model.parameter);
+                  ParameterService.haeHaunParametrit($route.current.params.id, model.parameter);
                 }
 
                 /**
@@ -450,13 +453,24 @@ app.controller('HakuEditController',
             
             var hakuOid = $route.current.params.id;
             
-            
+//
+//            TarjontaService.parameterCanEditHakukohde(hakuOid);
+//            TarjontaService.parameterCanEditHakukohdeLimited(hakuOid);
+//            TarjontaService.parameterCanAddHakukohdeToHaku(hakuOid);
+//            TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid);
+//
+
             if(!$scope.isNewHaku()) {
               //permissiot
               $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
                 $scope.isMutable=results[0];
                 $scope.isRemovable=results[1] && results[2];
               });
+              
+              PermissionService.getPermissions("haku", hakuOid).then(function(permissions) {
+                  $log.info("got permissions! ", permissions);
+              });
+              
             } else {
               //uusi haku
               $scope.isMutable=true;

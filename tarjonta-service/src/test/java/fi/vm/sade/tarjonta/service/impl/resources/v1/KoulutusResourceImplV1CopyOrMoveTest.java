@@ -29,6 +29,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
@@ -156,7 +157,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
 
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(false);
+        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID, "kk")).andReturn(false);
 
         replay(koulutusmoduuliToteutusDAO);
         replay(organisaatioServiceMock);
@@ -180,7 +181,7 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
+        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, "kk")).andReturn(true);
         koulutusmoduuliToteutusDAO.update(komoto);
 
         expect(hakukohdeDAO.findByKoulutusOid(KOMOTO_OID)).andReturn(Lists.<Hakukohde>newArrayList());
@@ -223,10 +224,10 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
         assertEquals(ORGANISATION_OID, komoto.getTarjoaja());
         expect(koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID)).andReturn(komoto);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID_COPY_OR_MOVE_TO)).andReturn(organisaatioDTO);
-        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, KoulutusasteTyyppi.KORKEAKOULUTUS)).andReturn(true);
+        expect(oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(ORGANISATION_OID_COPY_OR_MOVE_TO, "kk")).andReturn(true);
 
         //remove all not needed referenses by using convert entity to dto (language can be any)
-        expect(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class,komoto, "FI", false)).andReturn(kkDto);
+        expect(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class,komoto, "FI", false, true)).andReturn(kkDto);
 
         Capture<List> toOrgOids = new Capture<List>();
         permissionChecker.checkCopyKoulutus(capture(toOrgOids));
@@ -313,8 +314,9 @@ public class KoulutusResourceImplV1CopyOrMoveTest extends KoulutusBase {
 
     private KoulutusmoduuliToteutus createKomotoKomo(String komotoOid, String orgOid) {
         Koulutusmoduuli komo = tarjontaFixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
+        komo.setKoulutusasteUri("kk");
         komo.setOid("komo_oid_of_" + komotoOid);
-        komo.setKoulutustyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
         KoulutusmoduuliToteutus kt = tarjontaFixtures.createTutkintoOhjelmaToteutusWithTarjoajaOid(orgOid);
         kt.setId(1l);
         kt.setOid(komotoOid);

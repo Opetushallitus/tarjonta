@@ -14,14 +14,38 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import static fi.vm.sade.tarjonta.service.business.impl.EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Nullable;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -46,7 +70,6 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
@@ -89,27 +112,7 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import javax.annotation.Nullable;
-import javax.ws.rs.core.Response;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Set;
 
 /**
  *
@@ -169,14 +172,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     private PublicationDataService publicationDataService;
 
     @Override
-    public ResultV1RDTO<KoulutusV1RDTO> findByOid(String oid, Boolean meta, String lang) {
-        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+    public ResultV1RDTO<KoulutusV1RDTO> findByOid(String komotoOid, Boolean showMeta, Boolean showImg, String userLang) {
+        Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+        final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
 
-        lang = checkArgsLangCode(lang);
-        meta = checkArgsMeta(meta);
+        userLang = checkArgsLangCode(userLang); //default fi
+        showMeta = checkArgsDefaultTrue(showMeta); //always show meta data
+        showImg = checkArgsDefaultFalse(showImg); //show images when needed
 
         if (komoto == null) {
             result.setStatus(ResultStatus.NOT_FOUND);
@@ -185,13 +189,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         switch (getType(komoto)) {
             case KORKEAKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, lang, meta));
+                result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, userLang, showMeta, showImg));
                 break;
             case LUKIOKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, lang, meta));
+                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
             case AMMATILLINEN_PERUSKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, lang, meta));
+                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
         }
 
@@ -199,7 +203,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
+    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto
+    ) {
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
@@ -225,6 +230,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         KoulutusValidator.validateKoulutusKorkeakoulu(dto, result);
 
+        if (dto.getOpintojenRakenneKuvas() != null && !dto.getOpintojenRakenneKuvas().isEmpty()) {
+            //validate optional images
+            for (Entry<String, KuvaV1RDTO> e : dto.getOpintojenRakenneKuvas().entrySet()) {
+                 //do not validate null img objects as the img keys will be use to delete images
+                if (e.getValue() != null) {
+                    KoulutusValidator.validateKoulutusKuva(e.getValue(), e.getKey(), result);
+                }
+            }
+        }
+
         if (!result.hasErrors() && validateOrganisation(dto, result)) {
 
             if (dto.getOid() != null && dto.getOid().length() > 0) {
@@ -242,7 +257,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
+            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, true));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -299,7 +314,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
+            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, false));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -351,17 +366,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         KoulutusValidator.validateKoulutusUpdate(komoto, result);
 
         if (result.getStatus().equals(ResultStatus.OK)) {
-            permissionChecker.checkRemoveKoulutusByTarjoaja(komoto.getTarjoaja());
+            permissionChecker.checkRemoveKoulutus(komotoOid);
 
             Map<String, Integer> hkKoulutusMap = Maps.newHashMap();
 
             for (Hakukohde hk : komoto.getHakukohdes()) {
                 if (hk.getTila() != TarjontaTila.POISTETTU) { //skippaa poistetut OVT-7518
                     //laske kuinka monta aktiivista (ei poistettua) koulutusta hakukohteessa on kiinni
-                    int koulutusCount = 0; 
+                    int koulutusCount = 0;
 
-                    for(KoulutusmoduuliToteutus hkKomoto: hk.getKoulutusmoduuliToteutuses()){
-                        if(hkKomoto.getTila()!=TarjontaTila.POISTETTU) {
+                    for (KoulutusmoduuliToteutus hkKomoto : hk.getKoulutusmoduuliToteutuses()) {
+                        if (hkKomoto.getTila() != TarjontaTila.POISTETTU) {
                             koulutusCount++;
                         }
                     }
@@ -369,12 +384,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 }
             }
 
-
             Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
             final String komoOid = komo.getOid();
             final String userOid = contextDataService.getCurrentUserOid();
 
-            switch (KoulutusTyyppiStrToKoulutusAsteTyyppi(komo.getKoulutustyyppi())) {
+            switch (komo.getKoulutustyyppiEnum()) {
                 case KORKEAKOULUTUS:
                     //safe delete komoto, if 'sister' komoto search gives an empty result, then safe delete the komo.
 
@@ -389,9 +403,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         final List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliDAO.findActiveKomotosByKomoOid(komoOid);
                         if (komotos.isEmpty()) {
                             //no komotos found, I quess it's also ok to remove the komo.
-                        koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
+                            koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
                         }
-                        ArrayList<Long> ids = Lists.<Long>newArrayList();
+                        List<Long> ids = Lists.<Long>newArrayList();
                         ids.add(komoto.getId());
                         indexerResource.indexKoulutukset(ids);
                     }
@@ -401,9 +415,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     KoulutusValidator.validateKoulutusDelete(komoto, Lists.<KoulutusmoduuliToteutus>newArrayList(), Lists.<String>newArrayList(), Lists.<String>newArrayList(), hkKoulutusMap, result);
                     if (!result.hasErrors()) {
                         koulutusmoduuliToteutusDAO.safeDelete(komotoOid, userOid);
-            }
+                    }
                     break;
-        }
+            }
         }
 
         return result;
@@ -436,7 +450,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
         List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
         for (HakukohdePerustieto hk : vs.getHakukohteet()) {
-            ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid()));
+            ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid(), hk.getHakuOid()));
         }
         return new ResultV1RDTO<List<NimiJaOidRDTO>>(ret);
     }
@@ -516,11 +530,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String koulutuskoodi,
             KoulutusasteTyyppi koulutusasteTyyppi,
             String defaults, //new String("field:uri, field:uri, ....")
-            Boolean meta,
-            String lang) {
+            Boolean showMeta,
+            String userLang) {
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
-        lang = checkArgsLangCode(lang);
-        meta = checkArgsMeta(meta);
+        userLang = checkArgsLangCode(userLang);
+        showMeta = checkArgsDefaultTrue(showMeta);
         ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> result = new ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO>();
 
         try {
@@ -563,14 +577,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
             if (koulutuskoodi.contains("_")) {
                 //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
-                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, koulutuskoodi, new Locale(lang.toUpperCase()), meta));
+                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, koulutuskoodi, new Locale(userLang.toUpperCase()), showMeta));
             } else {
                 SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
                 List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
                 if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                     throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
                 }
-                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(lang.toUpperCase()), meta));
+                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(userLang.toUpperCase()), showMeta));
             }
         } catch (InstantiationException ex) {
             LOG.error("Relation initialization error.", ex);
@@ -685,6 +699,23 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
+    @Override
+    public ResultV1RDTO<List<KuvaV1RDTO>> getKuvas(String oid) {
+        Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
+        ResultV1RDTO<List<KuvaV1RDTO>> result = new ResultV1RDTO<List<KuvaV1RDTO>>();
+        Map<String, BinaryData> findAllImagesByKomotoOid = koulutusmoduuliToteutusDAO.findAllImagesByKomotoOid(oid);
+        if (findAllImagesByKomotoOid != null && !findAllImagesByKomotoOid.isEmpty()) {
+            List<KuvaV1RDTO> list = Lists.<KuvaV1RDTO>newArrayList();
+            for (Entry<String, BinaryData> e : findAllImagesByKomotoOid.entrySet()) {
+                list.add(new KuvaV1RDTO(e.getValue().getFilename(), e.getValue().getMimeType(), e.getKey(), Base64.encodeBase64String(e.getValue().getData())));
+            }
+            result.setResult(list);
+        } else {
+            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        }
+        return result;
+    }
+
     /**
      * Validate user language code. Default or fallback value is 'FI'.
      *
@@ -700,14 +731,23 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     /**
-     * Validate the show meta argument. No argument, then show all meta data
-     * objects.
+     * Validate the show argument. Null is boolean true.
      *
      * @param meta
      * @return
      */
-    private boolean checkArgsMeta(Boolean meta) {
+    private boolean checkArgsDefaultTrue(Boolean meta) {
         return meta != null ? meta : true;
+    }
+    
+      /**
+     * Validate the show argument. Null is boolean false.
+     *
+     * @param meta
+     * @return
+     */
+    private boolean checkArgsDefaultFalse(Boolean meta) {
+        return meta != null ? meta : false;
     }
 
     /**
@@ -820,23 +860,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return result;
         }
 
-        /*
-         * Update or insert uploaded binary data
-         */
-        BinaryData bin = null;
-        if (komoto.isKuva(kuva.getKieliUri())) {
-            bin = komoto.getKuvat().get(kuva.getKieliUri());
-        } else {
-            bin = new BinaryData();
-        }
-
-        final byte[] decoded = Base64.decodeBase64(KoulutusValidator.getValidBase64Image(kuva.getBase64data()));
-        bin.setData(decoded);
-        bin.setFilename(kuva.getFilename());
-        bin.setMimeType(kuva.getMimeType());
-        komoto.setKuvaByUri(kuva.getKieliUri(), bin);
-        komoto.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
-        this.koulutusmoduuliToteutusDAO.update(komoto);
+        convertToEntity.saveHtml5Image(komoto, kuva, contextDataService.getCurrentUserOid());
 
         return new ResultV1RDTO<KuvaV1RDTO>(kuva);
     }
@@ -865,7 +889,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(
                         orgOid,
-                        EntityUtils.KoulutusTyyppiStrToKoulutusAsteTyyppi(komoto.getKoulutusmoduuli().getKoulutustyyppi()))) {
+                        komoto.getKoulutusmoduuli().getKoulutusasteUri())) {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 }
             }
@@ -979,12 +1003,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private static KoulutusasteTyyppi getType(KoulutusmoduuliToteutus komoto) {
-        return KoulutusasteTyyppi.fromValue(komoto.getKoulutusmoduuli().getKoulutustyyppi());
+        return komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().getKoulutusasteTyyppi();
     }
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {
         //convert entity to dto
-        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, "FI", false);
+        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, "FI", false, true);
         //keep the komo oid, we do need it to search correct komo for the komoto
         copy.setOid(null);
         copy.setKomotoOid(null);
@@ -992,4 +1016,5 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
         return copy;
     }
+
 }

@@ -25,7 +25,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.impl.IndexerDaoImpl;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutusIndexEntityToSolrDocumentTest {
@@ -33,12 +33,11 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private static final String KOMO_OID = "komo-oid";
     private static final String OID = "oid";
     private static final String TUTKINTONIMIKEKOODI = "tutkintonimikekoodi";
-    private static final String KOULUTUSTYYPPIKOODI = KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS.value();
+    private static final KoulutustyyppiEnum KOULUTUSTYYPPIKOODI = KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS;
     private static final String LUKIOLINJAKOODI = "lukiolinjakoodi";
     private static final String KOULUTUSOHJELMAKOODI = "koulutusohjelmakoodi";
     private static final String KOULUTUSKOODI = "koulutuskoodi";
     private static final String POHJAKOULUTUSVAATIMUSKOODI = "pohjakoulutusvaatimuskoodi";
-    private static final String KOULUTUSTUYYPPIKOODI = KOULUTUSTYYPPIKOODI;
     private static final String TARJOAJA_OID = "tarjoaja-oid";
     private static final String KAUSI_URI = "kausi_uri";
     private static final int VUOSI = 2014;
@@ -47,7 +46,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     public void test() {
         Date d = new GregorianCalendar(VUOSI, 1, 1).getTime();
         KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d,
-                TarjontaTila.JULKAISTU, KOULUTUSTUYYPPIKOODI, KOMO_OID,
+                TarjontaTila.JULKAISTU, KOULUTUSTYYPPIKOODI, KOMO_OID,
                 KOULUTUSKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
                 POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
@@ -65,12 +64,12 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         Whitebox.setInternalState(converter, "koodiService", koodiService);
         Mockito.reset(koodiService);
         //stubKoodi(koodiService, TUTKINTONIMIKEKOODI);
-        stubKoodi(koodiService, KOULUTUSTUYYPPIKOODI);
+       // stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
         stubKoodi(koodiService, LUKIOLINJAKOODI);
         stubKoodi(koodiService, KOULUTUSOHJELMAKOODI);
         stubKoodi(koodiService, KOULUTUSKOODI);
         stubKoodi(koodiService, POHJAKOULUTUSVAATIMUSKOODI);
-        stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
+        //stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
         stubKoodi(koodiService, "kausi_k");
 
         IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
@@ -135,7 +134,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         //System.out.println(doc);
         Assert.assertEquals("kausi_k#0",
                 doc.removeField(SolrFields.Koulutus.KAUSI_URI).getValue());
-        Assert.assertEquals(KOULUTUSTYYPPIKOODI,
+        Assert.assertEquals(KOULUTUSTYYPPIKOODI.getKoulutusasteTyyppi().value(),
                 doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI).getValue());
         Assert.assertEquals(POHJAKOULUTUSVAATIMUSKOODI + "#0",
                 doc.removeField(SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI)
@@ -149,7 +148,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     @Test
     public void testNullAlkamispvm() {
         KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null,
-                TarjontaTila.JULKAISTU, KOULUTUSTUYYPPIKOODI, KOMO_OID,
+                TarjontaTila.JULKAISTU, KOULUTUSTYYPPIKOODI, KOMO_OID,
                 KOULUTUSKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
                 POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);

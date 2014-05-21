@@ -24,6 +24,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
@@ -66,7 +67,7 @@ public class KoulutusResourceTest {
     private KoulutusmoduuliToteutus komoto1;
     private KoulutusmoduuliToteutus komoto2;
     private KoulutusmoduuliToteutus komoto3;
-    
+
     private Hakukohde hk1;
     private Hakukohde hk2;
     
@@ -88,21 +89,22 @@ public class KoulutusResourceTest {
 
         
         komo = new Koulutusmoduuli();
-        komo.setKoulutustyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS.value());
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
 
         // stub komotodao, one hakukohde with two koulutuses
         hk1 = getHakukohde();
 
         komoto1 = new KoulutusmoduuliToteutus();
-        komoto1.setAlkamiskausi("kausi");
+        komoto1.setAlkamiskausiUri("kausi");
         komoto1.setAlkamisVuosi(2005);
         komoto1.setKoulutusmoduuli(komo);
         komoto1.addHakukohde(hk1);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
         
         komoto2 = new KoulutusmoduuliToteutus();
-        komoto2.setAlkamiskausi("kausi");
+        komoto2.setAlkamiskausiUri("kausi");
         komoto2.setAlkamisVuosi(2006);
         komoto2.setKoulutusmoduuli(komo);
         komoto2.addHakukohde(hk1);
@@ -117,7 +119,7 @@ public class KoulutusResourceTest {
         hk2 = getHakukohde();
 
         komoto3 = new KoulutusmoduuliToteutus();
-        komoto3.setAlkamiskausi("kausi");
+        komoto3.setAlkamiskausiUri("kausi");
         komoto3.setAlkamisVuosi(2005);
         komoto3.setKoulutusmoduuli(komo);
         komoto3.addHakukohde(hk2);
@@ -143,7 +145,7 @@ public class KoulutusResourceTest {
                     // palauta sama olio
                     @Override
                     public Hakukohde answer(InvocationOnMock invocation)
-                            throws Throwable {
+                    throws Throwable {
                         Hakukohde hk = (Hakukohde) invocation.getArguments()[0];
                         return hk;
                     }
@@ -155,16 +157,16 @@ public class KoulutusResourceTest {
                 indexerResource);
         Whitebox.setInternalState(koulutusResource, "publicationDataService",
                 publicationDataService);
-        Whitebox.setInternalState(koulutusResource,  "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
-        Whitebox.setInternalState(koulutusResource,  "koulutusmoduuliDAO", koulutusmoduuliDAO);
+        Whitebox.setInternalState(koulutusResource, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
+        Whitebox.setInternalState(koulutusResource, "koulutusmoduuliDAO", koulutusmoduuliDAO);
     }
 
     @After
     public void tearDown() {
         LOG.info("tearDown()");
     }
-    
-    private Hakukohde getHakukohde(){
+
+    private Hakukohde getHakukohde() {
         Hakukohde hk = new Hakukohde();
         hk.setOid("hakukohde-1");
         hk.setHakukohdeNimi("hk");
@@ -195,16 +197,16 @@ public class KoulutusResourceTest {
     public void testOVT7543() {
         //kaksi koulutusta kiinni hakukohteessa, ensimmäisen voi poistaa
         komo.setTila(TarjontaTila.JULKAISTU);
-        komo.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
         ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
-        komo.setKoulutustyyppi(KoulutusasteTyyppi.LUKIOKOULUTUS.value());
+        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
         komoto1.setTila(TarjontaTila.POISTETTU);
 
         
         //kaksi koulutusta kiinni hakukohteessa, jälkimmäistä ei voi poistaa
         result = koulutusResource.deleteByOid("komoto-2");
         Assert.assertEquals(ResultV1RDTO.ResultStatus.ERROR, result.getStatus());
-    }
+}
 
 }

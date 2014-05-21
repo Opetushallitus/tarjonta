@@ -397,7 +397,7 @@ public class ShowKoulutusSummaryView extends AbstractVerticalInfoLayout {
     private List<ShowKoulutusHakukohdeRow> getKoulutusHakukohdeRows(List<SimpleHakukohdeViewModel> hakukohdes) {
         List<ShowKoulutusHakukohdeRow> rows = new ArrayList<ShowKoulutusHakukohdeRow>();
         for (SimpleHakukohdeViewModel hakukohdeViewModel : hakukohdes) {
-            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel, OrganisaatioContext.getContext(_presenter.getModel().getTarjoajaModel().getSelectedOrganisationOid()), true);
+            ShowKoulutusHakukohdeRow row = new ShowKoulutusHakukohdeRow(hakukohdeViewModel, true);
             rows.add(row);
         }
         return rows;

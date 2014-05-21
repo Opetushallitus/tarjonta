@@ -309,6 +309,11 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 canCreateHakukohde: false,
                 canCreateKoulutus: false
             };
+        
+            var canRemove = function (hakuOid) {
+                return ((TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid) &&
+                    TarjontaService.parameterCanEditHakukohde(hakuOid)));
+            };
             
             function rowActions(prefix, row, actions) {
             	var oid = row.oid;
@@ -316,6 +321,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             	var nimi = row.nimi;
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
+
+                tt.removable = canRemove(row.hakuOid);
 
                 var canRead = PermissionService[prefix].canPreview(oid);
                 console.log("row actions can read (" + prefix + ")", canRead);
@@ -387,7 +394,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         if (canDelete) {
                             ret.push({title: LocalisationService.t("tarjonta.toiminnot.poista"),
                                 action: function(ev) {
-                                    $scope.openDeleteDialog(prefix, oid, nimi, actions.remove);
+                                    $scope.openDeleteDialog(prefix, oid, nimi, actions.delete);
                                 }
                             });
                         }
@@ -421,15 +428,25 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 // valinnat
                 TarjontaService.haeKoulutukset(spec).then(function(data) {
                     $scope.koulutusResults = data;
-                    $scope.koulutusResultCount = " (" + data.tuloksia + ")";
                 });
 
                 TarjontaService.haeHakukohteet(spec).then(function(data) {
                     $scope.hakukohdeResults = data;
-                    $scope.hakukohdeResultCount = " (" + data.tuloksia + ")";
                 });
 
             };
+            
+            function getResultCount(res) {
+            	return (res && res.tuloksia && res.tuloksia > 0)  ? " (" + res.tuloksia + ")" : "";
+            }
+            
+            $scope.getKoulutusResultCount = function() {
+            	return getResultCount($scope.koulutusResults);
+            }
+
+            $scope.getHakukohdeResultCount = function() {
+            	return getResultCount($scope.hakukohdeResults);
+            }
 
             $scope.luoKoulutusDisabled = function() {
                 var disabled = !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
@@ -478,7 +495,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             };
 
-            $scope.openDeleteDialog = function(prefix, oid, nimi, action) {
+            $scope.openDeleteDialog = function(prefix, oid, nimi, deleteAction) {
 
                 var ns = {};
                 ns.oid = oid;
@@ -500,12 +517,9 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                     modalInstance.result.then(function() {
 
-                        var promise = prefix == "hakukohde"
-                                ? TarjontaService.deleteHakukohde(oid)
-                                : TarjontaService.deleteKoulutus(oid);
-
-                        promise.then(function() {
-                            action();
+                        TarjontaService.deleteHakukohde(oid).then(function() {
+                        	deleteAction(); // poistaa rivin hakutuloslistasta
+                        	$scope.hakukohdeResults.tuloksia--;
                             TarjontaService.evictHakutulokset();
                         });
 
@@ -525,10 +539,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     });
 
                     modalInstance.result.then(function() {
-                        //$route.reload();
-                        $location.path("/");
-                    }, function() { /* dismissed */
-                    })
+                    	deleteAction(); // poistaa rivin hakutuloslistasta
+                    	$scope.koulutusResults.tuloksia--;
+                    	TarjontaService.evictHakutulokset();
+                    });
 
                 }
 

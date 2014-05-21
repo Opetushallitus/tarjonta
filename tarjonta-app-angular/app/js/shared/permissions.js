@@ -459,6 +459,31 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                             headers: {'Content-Type': 'application/json; charset=UTF-8'}
                         }
                     });
+                },
+                getPermissions: function(type, target) {
+                    var permissionsUrl = Config.env.tarjontaRestUrlPrefix + "permission/permissions/:type/:target";
+                    var permissions = $resource(permissionsUrl, {}, {
+                        cache: false,
+                        get: {
+                            method: "GET",
+                            withCredentials : true,
+                            isArray: false
+                        }
+                    });
+
+                    var ret = $q.defer();
+                    
+                    permissions.get({"target": target, "type": type}, 
+                        function(result) {
+                            $log.info("GOT PERMISSIONS: ", permissionsUrl, type, target, result);
+                            ret.resolve(result);
+                        },
+                        function(err) {
+                            $log.warn("FAILED TO GET PERMISSIONS: ", permissionsUrl, type, target, err);
+                            ret.resolve({error: err});
+                        });
+
+                    return ret.promise;
                 }
             };
         });

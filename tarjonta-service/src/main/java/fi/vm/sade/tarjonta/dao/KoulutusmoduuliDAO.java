@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
@@ -119,14 +119,18 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String kieliUri;
         private String nimiQuery;
         private String koulutusKoodiUri;
-        private String likeKoulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
         private String lukiolinjaKoodiUri;
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
-        private KoulutusasteTyyppi koulutustyyppi;
+        private KoulutustyyppiEnum koulutustyyppiEnum;
         private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
         private TarjontaTila tila;
+        
+
+        private String likeKoulutusKoodiUriWithoutVersion;
+        private String likeKoulutusohjelmaKoodiUriWithoutVersion;
+        private String likeLukiolinjaKoodiUriUriWithoutVersion;
 
         private Class<? extends BaseKoulutusmoduuli> type;
         private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
@@ -164,25 +168,25 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         public String getKoulutusohjelmaKoodi() {
-            return koulutusohjelmaKoodiUri;
+            return getKoulutusohjelmaKoodiUri();
         }
 
         public void setKoulutusohjelmaKoodi(String koulutusohjelmaKoodi) {
-            this.koulutusohjelmaKoodiUri = koulutusohjelmaKoodi;
+            this.setKoulutusohjelmaKoodiUri(koulutusohjelmaKoodi);
         }
 
         /**
          * @return the koulutustyyppi
          */
-        public KoulutusasteTyyppi getKoulutustyyppi() {
-            return koulutustyyppi;
+        public KoulutustyyppiEnum getKoulutustyyppi() {
+            return koulutustyyppiEnum;
         }
 
         /**
-         * @param koulutustyyppi the koulutustyyppi to set
+         * @param koulutustyyppiEnum the koulutustyyppi to set
          */
-        public void setKoulutustyyppi(KoulutusasteTyyppi koulutustyyppi) {
-            this.koulutustyyppi = koulutustyyppi;
+        public void setKoulutustyyppi(KoulutustyyppiEnum koulutustyyppiEnum) {
+            this.koulutustyyppiEnum = koulutustyyppiEnum;
         }
 
         /**
@@ -245,20 +249,6 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         /**
-         * @return the likeKoulutusKoodiUri
-         */
-        public String getLikeKoulutusKoodiUri() {
-            return likeKoulutusKoodiUri;
-        }
-
-        /**
-         * @param likeKoulutusKoodiUri the likeKoulutusKoodiUri to set
-         */
-        public void setLikeKoulutusKoodiUri(String likeKoulutusKoodiUri) {
-            this.likeKoulutusKoodiUri = likeKoulutusKoodiUri;
-        }
-
-        /**
          * @return the koulutusmoduuliTyyppi
          */
         public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
@@ -284,6 +274,62 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
          */
         public void setTila(TarjontaTila tila) {
             this.tila = tila;
+        }
+
+        /**
+         * @return the koulutusohjelmaKoodiUri
+         */
+        public String getKoulutusohjelmaKoodiUri() {
+            return koulutusohjelmaKoodiUri;
+        }
+
+        /**
+         * @param koulutusohjelmaKoodiUri the koulutusohjelmaKoodiUri to set
+         */
+        public void setKoulutusohjelmaKoodiUri(String koulutusohjelmaKoodiUri) {
+            this.koulutusohjelmaKoodiUri = koulutusohjelmaKoodiUri;
+        }
+
+        /**
+         * @return the likeKoulutusKoodiUriWithoutVersion
+         */
+        public String getLikeKoulutusKoodiUriWithoutVersion() {
+            return likeKoulutusKoodiUriWithoutVersion;
+        }
+
+        /**
+         * @param likeKoulutusKoodiUriWithoutVersion the likeKoulutusKoodiUriWithoutVersion to set
+         */
+        public void setLikeKoulutusKoodiUriWithoutVersion(String likeKoulutusKoodiUriWithoutVersion) {
+            this.likeKoulutusKoodiUriWithoutVersion = likeKoulutusKoodiUriWithoutVersion;
+        }
+
+        /**
+         * @return the likeKoulutusohjelmaKoodiUriWithoutVersion
+         */
+        public String getLikeKoulutusohjelmaKoodiUriWithoutVersion() {
+            return likeKoulutusohjelmaKoodiUriWithoutVersion;
+        }
+
+        /**
+         * @param likeKoulutusohjelmaKoodiUriWithoutVersion the likeKoulutusohjelmaKoodiUriWithoutVersion to set
+         */
+        public void setLikeKoulutusohjelmaKoodiUriWithoutVersion(String likeKoulutusohjelmaKoodiUriWithoutVersion) {
+            this.likeKoulutusohjelmaKoodiUriWithoutVersion = likeKoulutusohjelmaKoodiUriWithoutVersion;
+        }
+
+        /**
+         * @return the likeLukiolinjaKoodiUriUriWithoutVersion
+         */
+        public String getLikeLukiolinjaKoodiUriUriWithoutVersion() {
+            return likeLukiolinjaKoodiUriUriWithoutVersion;
+        }
+
+        /**
+         * @param likeLukiolinjaKoodiUriUriWithoutVersion the likeLukiolinjaKoodiUriUriWithoutVersion to set
+         */
+        public void setLikeLukiolinjaKoodiUriUriWithoutVersion(String likeLukiolinjaKoodiUriUriWithoutVersion) {
+            this.likeLukiolinjaKoodiUriUriWithoutVersion =  likeLukiolinjaKoodiUriUriWithoutVersion;
         }
 
         public enum GroupBy {
@@ -315,8 +361,8 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
     public void safeDelete(final String komoOid, final String userOid);
 
     /**
-     * Search all active (all other status than 'POISTETTU') komoto objects by komo OID
-     * from database.
+     * Search all active (all other status than 'POISTETTU') komoto objects by
+     * komo OID from database.
      *
      * @param komo oid
      * @return

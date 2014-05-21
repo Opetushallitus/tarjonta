@@ -73,7 +73,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"],
-            hakuOid : args.hakuOid
+            hakuOid: args.hakuOid
         };
 
         $log.debug("haeHakukohteet()", params);
@@ -99,9 +99,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
-            
+
             $log.info("haeHakukohteet() params, result", params, result);
-            
+
             return result;
         });
     };
@@ -119,7 +119,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         };
 
         $log.debug("haeKoulutukset()", params);
-        
+
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
             result = result.result;  //unwrap v1
             for (var i in result.tulokset) {
@@ -296,13 +296,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.getKoulutus = function(arg, func) {
         $log.debug("getKoulutus()");
         //param meta=false filter all meta fields
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid", {oid: '@oid'});
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid?img=true", {oid: '@oid'});
         return koulutus.get(arg, func);
     };
 
     //hakee koulutuksen, palauttaa promisen
     dataFactory.getKoulutusPromise = function(oid) {
-        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid).get().$promise;
+        return $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/" + oid + "?img=true").get().$promise;
     };
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
@@ -430,7 +430,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.resourceLink =
             $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid", {}, {
                 checkput: {
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
                 },
                 save: {
                     headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -444,15 +444,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 parents: {
                     url: Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
                     isArray: false,
-                    method: 'GET',
+                    method: 'GET'
                 },
                 remove: {
                     method: 'DELETE',
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child",
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child"
                 },
                 removeMany: {
                     method: 'DELETE',
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent",
+                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent"
                 }
             });
 
@@ -513,11 +513,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             update: {
                 method: 'POST',
                 withCredentials: true,
+                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid",
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
-            save: {
+            insert: {
                 method: 'POST',
                 withCredentials: true,
+                url: Config.env.tarjontaRestUrlPrefix + "komo",
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             get: {
@@ -525,18 +527,116 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             },
             search: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search?koulutuskoodi=:koulutuskoodi"
             },
             searchModules: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi"
             },
             tekstis: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis"
             }
         });
     };
+
+    //
+    // OHJAUSPARAMETRIT
+    //
+    dataFactory.ohjausparametritCache = {};
+
+    dataFactory.reloadParameters = function() {
+        $log.info("reloadParameters()");
+
+        var uri = Config.env["tarjontaOhjausparametritRestUrlPrefix"];
+
+        if (!angular.isDefined(uri)) {
+            throw "'tarjontaOhjausparametritRestUrlPrefix' is not defined! Cannot proceed.";
+        }
+
+        var uri = uri + "/api/rest/parametri/ALL";
+        $resource(uri, {}, {
+            get: {
+                cache: false,
+                isArray: true
+            }
+        }).get(function(results) {
+            var cache = dataFactory.ohjausparametritCache;
+            angular.forEach(results, function(p) {
+                cache[p.name] = cache[p.name] ? cache[p.name] : {};
+                cache[p.name][p.path] = p.value;
+            });
+            dataFactory.ohjausparametritCache = cache;
+            $log.info("Processed 'ohjausparametrit' - now cached " + results.length + " entries.");
+        });
+    };
+
+    // LOAD PARAMETERS FROM OHJAUSPARAMETRIT
+    dataFactory.reloadParameters();
+
+    dataFactory.getParameter = function(target, name, type, defaultValue) {
+        var result;
+
+        var cache = dataFactory.ohjausparametritCache;
+
+        if (angular.isDefined(cache[target])) {
+            result = cache[target][name];
+        }
+
+        // Conversion to date
+        if ("DATE" == type && angular.isDefined(result)) {
+            result = new Date(result);
+        }
+
+        if (false && !angular.isDefined(result)) {
+            result = defaultValue;
+        }
+
+        // $log.debug("getParameter()", target, name, result, cache[target]);
+
+        return result;
+    };
+
+    dataFactory.parameterCanEditHakukohde = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hklpt) && (now <= ph_hkmt);
+        $log.debug("parameterCanEditHakukohde: ", hakuOid, ph_hklpt, ph_hkmt, result);
+        return result;
+    };
+
+    dataFactory.parameterCanEditHakukohdeLimited = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hkmt);
+        $log.debug("parameterCanEditHakukohdeLimited: ", hakuOid, ph_hkmt, result);
+        return result;
+    };
+
+    dataFactory.parameterCanAddHakukohdeToHaku = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        if (ph_hklpt && ph_hkmt) {
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
+        } else {
+            $log.info('PP_HKLPT AND PH_HKMT WAS EMPTY');
+            return true;
+        }
+    };
+
+    dataFactory.parameterCanRemoveHakukohdeFromHaku = function(hakuOid) {
+        var now = new Date().getTime();
+        var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
+        var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
+        result = (now <= ph_hklpt) && (now <= ph_hkmt);
+        $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+        return result;
+    };
+
 
     return dataFactory;
 });

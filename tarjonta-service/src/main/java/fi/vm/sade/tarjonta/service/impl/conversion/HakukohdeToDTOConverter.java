@@ -31,6 +31,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.PainotettavaOppiaineTyyppi;
@@ -79,8 +80,8 @@ public class HakukohdeToDTOConverter extends AbstractFromDomainConverter<Hakukoh
         hakukohde.getHakukohteenKoulutusOidit().addAll(convertKoulutukses(s.getKoulutusmoduuliToteutuses()));
 
         if (s.getKoulutusmoduuliToteutuses() != null && !s.getKoulutusmoduuliToteutuses().isEmpty()) {
-            final String koulutustyyppi = s.getKoulutusmoduuliToteutuses().iterator().next().getKoulutusmoduuli().getKoulutustyyppi();
-            hakukohde.setHakukohteenKoulutusaste(KoulutusTyyppiStrToKoulutusAsteTyyppi(koulutustyyppi));
+            KoulutustyyppiEnum rowType = s.getKoulutusmoduuliToteutuses().iterator().next().getKoulutusmoduuli().getKoulutustyyppiEnum();
+            hakukohde.setHakukohteenKoulutusaste(rowType.getKoulutusasteTyyppi());
         }
 
         hakukohde.setKaytetaanHaunPaattymisenAikaa(s.isKaytetaanHaunPaattymisenAikaa());

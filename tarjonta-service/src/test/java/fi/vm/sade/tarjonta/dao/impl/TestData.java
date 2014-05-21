@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Calendar;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public class TestData {
 
-	public static final int VALINTAKOE_COUNT_FOR_OID1 = 3;
+    public static final int VALINTAKOE_COUNT_FOR_OID1 = 3;
     public static final String KOMOTO_OID_1 = "komoto_oid1";
     public static final String KOMOTO_OID_2 = "komoto_oid2";
     public static final String KOMOTO_OID_3 = "komoto_oid3";
@@ -82,15 +83,15 @@ public class TestData {
     public KoulutusmoduuliToteutus getPersistedKomoto4() {
         return komoto4;
     }
-    
+
     public Haku getHaku1() {
-		return haku1;
-	}
-    
+        return haku1;
+    }
+
     public Haku getHaku2() {
-		return haku2;
-	}
-    
+        return haku2;
+    }
+
     public TestData() {
     }
 
@@ -195,7 +196,41 @@ public class TestData {
         assertEquals(items, k.getValintakoes().size());
     }
 
-    protected void persist(Object o) {
+    protected void check(KoulutusmoduuliToteutus k) {
+        assertNotNull(k.getOid());
+       // assertNotNull(k.getKoulutuksenAlkamisPvm()); tests disabled as tested elsewhere
+        assertNotNull("alkamisvuosi", k.getAlkamisVuosi());
+        assertEquals(YEAR, k.getAlkamisVuosi().intValue());
+        assertEquals(KAUSI, k.getAlkamiskausiUri());
+        assertEquals("TRUE", k.getMaksullisuus());
+        assertEquals(1, k.getOpetuskielis().size());
+        assertEquals(1, k.getOpetusmuotos().size());
+        assertEquals(1, k.getKoulutuslajis().size());
+        assertEquals(TarjontaTila.VALMIS, k.getTila());
+        assertEquals(ORG_OID_1, k.getTarjoaja());
+        assertEquals("pohjakoulutusvaatimus_uri", k.getPohjakoulutusvaatimusUri());
+        assertEquals("100000000", k.getSuunniteltukestoArvo());
+        assertEquals("suuniteltu_kesto_uri", k.getSuunniteltukestoYksikkoUri());
+
+        //KJOH-764 - new fields:
+        assertEquals("koulutusala_uri", k.getKoulutusalaUri());
+        assertEquals("eqf_uri", k.getEqfUri());
+        assertEquals("nqf_uri", k.getNqfUri());
+        assertEquals("koulutusaste_uri", k.getKoulutusasteUri());
+        assertEquals("koulutus_uri", k.getKoulutusUri());
+        assertEquals("koulutusohjelma_uri", k.getKoulutusohjelmaUri());
+        assertEquals("tutkinto_uri", k.getTutkintoUri());
+
+        assertEquals("laajuus_arvo", k.getOpintojenLaajuusArvo());
+        assertEquals("laajuus_arvo_uri", k.getOpintojenLaajuusarvoUri());
+        assertEquals("laajuus_yksikko_uri", k.getOpintojenLaajuusyksikkoUri());
+        assertEquals("lukiolinja_uri", k.getLukiolinjaUri());
+        assertEquals("koulutustyyppi_uri", k.getKoulutustyyppiUri());
+        assertEquals("opintoala_uri", k.getOpintoalaUri());
+        assertEquals("tutkintonimike_uri", k.getTutkintonimikeUri());
+    }
+
+    private void persist(Object o, boolean validatePersistedData) {
         em.persist(o);
         em.flush();
 
@@ -214,8 +249,12 @@ public class TestData {
         } else if (o instanceof KoulutusmoduuliToteutus) {
             KoulutusmoduuliToteutus v = (KoulutusmoduuliToteutus) o;
             KoulutusmoduuliToteutus find = em.find(KoulutusmoduuliToteutus.class, v.getId());
-            assertNotNull(find);
-            assertNotNull(find.getId());
+            assertNotNull("Persist failed : KoulutusmoduuliToteutus object", find);
+            if (validatePersistedData) {
+                check(find);
+            } else {
+                assertNotNull(find.getId());
+            }
         } else if (o instanceof Koulutusmoduuli) {
             Koulutusmoduuli v = (Koulutusmoduuli) o;
             Koulutusmoduuli find = em.find(Koulutusmoduuli.class, v.getId());
@@ -224,6 +263,10 @@ public class TestData {
         } else {
             fail("Found an unknown object type : " + o.toString());
         }
+    }
+
+    protected void persist(Object o) {
+        persist(o, false);
     }
 
     public void clean() {
@@ -251,7 +294,7 @@ public class TestData {
     }
 
     private KoulutusmoduuliToteutus addKomoto(String oid) {
-        return addKomoto(fixtures.createTutkintoOhjelmaToteutus(oid), cal1.getTime());
+        return addKomoto(createKomoto(oid), cal1.getTime());
     }
 
     private KoulutusmoduuliToteutus addKomoto(KoulutusmoduuliToteutus komoto, Date date) {
@@ -262,25 +305,43 @@ public class TestData {
             komoto.setKoulutuksenAlkamisPvm(date);
         }
 
-        persist(komoto);
+        persist(komoto, true);
 
         return komoto;
     }
 
     private KoulutusmoduuliToteutus createKomoto(String oid) {
-        KoulutusmoduuliToteutus t3 = new KoulutusmoduuliToteutus(null);
-        t3.setOid(oid);
-        t3.setKoulutuksenAlkamisPvm(cal1.getTime());
-        t3.setAlkamisVuosi(YEAR);
-        t3.setAlkamiskausi(KAUSI);
-        t3.setMaksullisuus(null);
-        t3.addOpetuskieli(new KoodistoUri("kieli_uri"));
-        t3.addOpetusmuoto(new KoodistoUri("opetusmuoto_uri"));
-        t3.addKoulutuslaji("koulutuslaji_uri");
-        t3.setTila(TarjontaTila.VALMIS);
-        t3.setTarjoaja(ORG_OID_1);
-        t3.setPohjakoulutusvaatimus("pohjakoulutusvaatimus_uri");
+        KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
+        t.setOid(oid);
+        t.setKoulutuksenAlkamisPvm(cal1.getTime());
+        t.setAlkamisVuosi(YEAR);
+        t.setAlkamiskausiUri(KAUSI);
+        t.setMaksullisuus("TRUE");
+        t.addOpetuskieli(new KoodistoUri("kieli_uri"));
+        t.addOpetusmuoto(new KoodistoUri("opetusmuoto_uri"));
+        t.addKoulutuslaji("koulutuslaji_uri");
+        t.setTila(TarjontaTila.VALMIS);
+        t.setTarjoaja(ORG_OID_1);
+        t.setPohjakoulutusvaatimusUri("pohjakoulutusvaatimus_uri");
+        t.setOpintojenLaajuusArvo("laajuus_arvo");
+        t.setSuunniteltuKesto("suuniteltu_kesto_uri", "100000000");
 
-        return t3;
+        //KJOH-764 - new fields:
+        t.setKoulutusalaUri("koulutusala_uri");
+        t.setEqfUri("eqf_uri");
+        t.setNqfUri("nqf_uri");
+        t.setKoulutusasteUri("koulutusaste_uri");
+        t.setKoulutusUri("koulutus_uri");
+        t.setKoulutusohjelmaUri("koulutusohjelma_uri");
+        t.setTutkintoUri("tutkinto_uri");
+
+        t.setOpintojenLaajuusarvoUri("laajuus_arvo_uri");
+        t.setOpintojenLaajuusyksikkoUri("laajuus_yksikko_uri");
+        t.setLukiolinjaUri("lukiolinja_uri");
+        t.setKoulutustyyppiUri("koulutustyyppi_uri");
+        t.setOpintoalaUri("opintoala_uri");
+        t.setTutkintonimikeUri("tutkintonimike_uri");
+
+        return t;
     }
 }

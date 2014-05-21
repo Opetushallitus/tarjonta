@@ -57,8 +57,10 @@ public class OppilaitosKoodiRelationsTest {
     private static final String LUKIO_OPETUSPISTE_OID = "1.2.246.562.10.33517818658";
     private static final String AMK_OID = "1.2.246.562.10.33517818649";
     private static final String OTHER_OID = "1.2.246.562.10.xxxxxxx1";
-    private static final String KOULUTUSTYYPPI_LUKIOKOULUTUS = "koulutustyyppi_2";
-    private static final String KOULUTUSTYYPPI_KORKEAKOULUTUS = "koulutustyyppi_3";
+    private static final String KOULUTUSASTE_LUKIOKOULUTUS = "koulutusasteoph2002_31";
+    private static final String KOULUTUSASTE_YLEMPIAMK = "koulutusasteoph2002_71";
+    private static final String KOULUTUSASTE_ALEMPIKK = "koulutusasteoph2002_63";
+    private static final String VAPAAN_SIVISTYSTYON_KOULUTUS = "";
 
     private static final String PATH_LUKIO = "|" + OPH_OID + "|"
             + KOULUTUSTOIMIJA_OID + "|" + LUKIO_OID + "|";
@@ -87,7 +89,7 @@ public class OppilaitosKoodiRelationsTest {
 
     @Before
     public void setUp() {
-        KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI = "koulutustyyppi";
+        KoodistoURI.KOODISTO_KOULUTUSASTE_URI = "koulutusasteoph2002";
 
         OPH = new OrganisaatioDTO();
         OPH.setOid(OPH_OID);
@@ -119,7 +121,7 @@ public class OppilaitosKoodiRelationsTest {
         LUKIO_OPETUSPISTE = new OrganisaatioDTO();
         LUKIO_OPETUSPISTE.setOid(LUKIO_OPETUSPISTE_OID);
         LUKIO_OPETUSPISTE.setParentOidPath(PATH_LUKIO_OPETUSPISTE);
-        LUKIO_OPETUSPISTE.getTyypit().add(OrganisaatioTyyppi.OPETUSPISTE);
+        LUKIO_OPETUSPISTE.getTyypit().add(OrganisaatioTyyppi.TOIMIPISTE);
 
         orgOther = new OrganisaatioDTO();
         orgOther.setOid(OTHER_OID);
@@ -174,16 +176,17 @@ public class OppilaitosKoodiRelationsTest {
         
         Mockito.stub(tarjontaKoodistoHelperMock.getKoodistoRelations(
                         OPPILAITOSTYYPPI_LUKIO,
-                        KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI,
+                        KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
                         SuhteenTyyppiType.SISALTYY, false)).toReturn(
-                createKoodis(KOULUTUSTYYPPI_LUKIOKOULUTUS));
+                createKoodis(KOULUTUSASTE_LUKIOKOULUTUS));
         
         Mockito.stub(
                 tarjontaKoodistoHelperMock.getKoodistoRelations(
                         OPPILAITOSTYYPPI_AMK,
-                        KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI,
+                        KoodistoURI.KOODISTO_KOULUTUSASTE_URI,
                         SuhteenTyyppiType.SISALTYY, false)).toReturn(
-                createKoodis(KOULUTUSTYYPPI_KORKEAKOULUTUS));
+                createKoodis(KOULUTUSASTE_YLEMPIAMK));
+
     }
 
     @Test
@@ -204,55 +207,50 @@ public class OppilaitosKoodiRelationsTest {
 
     @Test
     public void testIsKoulutusAllowedForOrganisationNotFound() {
-        boolean result = instance.isKoulutusAllowedForOrganisation("FOO",
-                KoulutusasteTyyppi.KORKEAKOULUTUS);
-        assertFalse(result);
+        assertFalse(instance.isKoulutusAllowedForOrganisation("FOO",
+                KOULUTUSASTE_ALEMPIKK));
     }
 
     @Test
     public void testCorrectTypeOppilaitos() {
-        final boolean result = instance.isKoulutusAllowedForOrganisation(
-                AMK_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-        assertTrue(result);
+        assertTrue(instance.isKoulutusAllowedForOrganisation(
+                AMK_OID, KOULUTUSASTE_YLEMPIAMK));
     }
 
     @Test
     public void testIncorrectTypeOppilaitos() {
-        final boolean result = instance.isKoulutusAllowedForOrganisation(
-                LUKIO_OID, KoulutusasteTyyppi.KORKEAKOULUTUS);
-        assertFalse(result);
-    }
+        assertFalse(instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OID, KOULUTUSASTE_ALEMPIKK));
+        assertFalse(instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OID, KOULUTUSASTE_YLEMPIAMK));
+        assertFalse(instance.isKoulutusAllowedForOrganisation(
+                AMK_OID, KOULUTUSASTE_ALEMPIKK));
+}
 
     @Test
     public void testCorrectTypeOpetuspiste() {
-        final boolean result = instance.isKoulutusAllowedForOrganisation(
-                LUKIO_OPETUSPISTE_OID, KoulutusasteTyyppi.LUKIOKOULUTUS);
-        assertTrue(result);
+        assertTrue(instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OPETUSPISTE_OID, KOULUTUSASTE_LUKIOKOULUTUS));
     }
 
     @Test
     public void testIncorrectTypeOpetuspiste() {
-        final boolean result = instance.isKoulutusAllowedForOrganisation(
-                LUKIO_OPETUSPISTE_OID, KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS);
-        assertFalse(result);
+        assertFalse(instance.isKoulutusAllowedForOrganisation(
+                LUKIO_OPETUSPISTE_OID, KOULUTUSASTE_ALEMPIKK));
     }
 
     @Test
     public void testCorrectTypeKoulutustoimija() {
-        boolean result = instance.isKoulutusAllowedForOrganisation(
-                KOULUTUSTOIMIJA_OID, KoulutusasteTyyppi.LUKIOKOULUTUS);
-        assertTrue(result);
-        result = instance.isKoulutusAllowedForOrganisation(KOULUTUSTOIMIJA_OID,
-                KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS);
-        assertTrue(result);
+        assertTrue(instance.isKoulutusAllowedForOrganisation(
+                KOULUTUSTOIMIJA_OID, KOULUTUSASTE_LUKIOKOULUTUS));
+        assertTrue(instance.isKoulutusAllowedForOrganisation(KOULUTUSTOIMIJA_OID,
+                KOULUTUSASTE_YLEMPIAMK));
     }
 
     @Test
     public void testIncorrectTypeKoulutustoimija() {
-        boolean result = instance.isKoulutusAllowedForOrganisation(
-                KOULUTUSTOIMIJA_OID,
-                KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
-        assertFalse(result);
+        assertFalse(instance.isKoulutusAllowedForOrganisation(
+                KOULUTUSTOIMIJA_OID, "foo"));
     }
 
     private List<KoodiType> createKoodis(final String koodiUri) {
