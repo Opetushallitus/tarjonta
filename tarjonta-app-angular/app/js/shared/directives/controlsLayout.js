@@ -127,8 +127,12 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 if (!user || user.length == 0) {
                     user = LocalisationService.t("tarjonta.metadata.unknown");
                 }
-                md.push(LocalisationService.t(key,
-                        [$filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user]));
+                
+                var msg = LocalisationService.t(key,
+                        [$filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user]);
+                if (md.indexOf(msg)==-1) { // jostain tulee duplikaatteja??
+                	md.push(msg);
+                }
             }
             //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
             $scope.$watch('dto.modified', function(newValue, oldValue) {
@@ -145,7 +149,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
              */
             $scope.model.reloadDisplayControls = function() {
                 $scope.dto = $scope.model.dto();
-
+                
                 var userOid = $scope.dto.modifiedBy;
                 if (!angular.isUndefined($scope.dto.createdBy) && $scope.dto.createdBy !== null) {
                     userOid = $scope.dto.createdBy;
@@ -180,6 +184,8 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                             name += response.sukunimi;
                         }
                         appendMetadata($scope.model.metadata, lokalisointiKey, name, date);
+                    }, function(){
+                        appendMetadata($scope.model.metadata, lokalisointiKey, userOid, date);
                     });
                 } else {
                     appendMetadata($scope.model.metadata, lokalisointiKey, userOid, date);
@@ -187,7 +193,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             };
 
             $scope.isNew = function() {
-                return $scope.model.metadata.length == 1;
+                return !$scope.dto.oid && $scope.model.metadata.length==0;
             }
 
             function titleText() {

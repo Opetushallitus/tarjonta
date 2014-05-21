@@ -121,7 +121,7 @@ public class OppilaitosKoodiRelationsTest {
         LUKIO_OPETUSPISTE = new OrganisaatioDTO();
         LUKIO_OPETUSPISTE.setOid(LUKIO_OPETUSPISTE_OID);
         LUKIO_OPETUSPISTE.setParentOidPath(PATH_LUKIO_OPETUSPISTE);
-        LUKIO_OPETUSPISTE.getTyypit().add(OrganisaatioTyyppi.OPETUSPISTE);
+        LUKIO_OPETUSPISTE.getTyypit().add(OrganisaatioTyyppi.TOIMIPISTE);
 
         orgOther = new OrganisaatioDTO();
         orgOther.setOid(OTHER_OID);

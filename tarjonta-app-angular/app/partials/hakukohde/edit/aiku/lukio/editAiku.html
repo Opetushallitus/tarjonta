@@ -31,6 +31,8 @@
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
 
+                <export-to-parent name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
+
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->

@@ -108,6 +108,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     		valintakoe.valintakoeAjankohtas.push(ajankohta);
     	}
     	
+        $scope.status.dirty = true;
     	$scope.resetAjankohta(valintakoe);
     }
     
@@ -130,6 +131,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
         	if (p!=-1) {
         		valintakoe.valintakoeAjankohtas.splice(p, 1);
         	}
+            $scope.status.dirty = true;
     	} else {
     		
     		dialogService.showDialog({
@@ -159,6 +161,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     	if (confirm) {
         	var p = $scope.model.hakukohde.valintakokeet.indexOf(valintakoe);
         	if (p!=-1) {
+                $scope.status.dirty = true;
         		$scope.model.hakukohde.valintakokeet.splice(p, 1);
         	}
     	} else {
@@ -173,12 +176,15 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     	}
     }
     
-    $scope.addValintakoe = function(lc) {
+    $scope.addValintakoe = function(lc, omitDirty) {
     	/*for (var i in $scope.model.hakukohde.valintakokeet) {
     		if ($scope.model.hakukohde.valintakokeet[i].kieliUri==lc && !$scope.model.hakukohde.valintakokeet[i].oid) {
     			return;
     		}
     	}*/
+    	if (!omitDirty) {
+            $scope.status.dirty = true;
+    	}
     	
     	var vk = {
         		hakukohdeOid:$scope.model.hakukohde.oid,
@@ -202,7 +208,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     	}
     	
     	if (ret.length==0) {
-    		ret.push($scope.addValintakoe(lc));
+    		ret.push($scope.addValintakoe(lc, true));
     	}
     	return ret;
     }

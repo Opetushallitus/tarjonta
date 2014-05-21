@@ -19,7 +19,7 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField','ExportToParent']);
 
 
 app.controller('HakukohdeEditController', 
@@ -306,7 +306,17 @@ app.controller('HakukohdeEditController',
 
     };
 
+    $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset); }, function(n, o){
+    	if (!angular.equals(n,o) && o!="{}") {
+    		$scope.status.dirty = true;
+    	}
+	});
 
+    $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.soraKuvaukset); }, function(n, o){
+    	if (!angular.equals(n,o) && o!="{}") {
+    		$scope.status.dirty = true;
+    	}
+	});	
 
 });
 
