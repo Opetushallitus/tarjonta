@@ -63,7 +63,11 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setAvainsanatUris(convertKoodistoUrisToList(s.getAvainsanas()));
 
         // t.set(s.getHakukohdes()); TODO list OIDs
-        t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
+        try {
+            t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
+        } catch (Exception e) {
+            LOG.warn("Deprecated / invalid data model, use REST V1 API. KOMOTO OID : ", s.getOid());
+        }
         t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
         t.setModified(s.getUpdated());
         t.setModifiedBy(s.getLastUpdatedByOid());
