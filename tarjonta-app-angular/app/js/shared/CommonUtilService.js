@@ -72,7 +72,7 @@ app.service('CommonUtilService',function($resource, $log,$q, Config,Organisaatio
             deferred.resolve(oppilaitostyypit);
         }
 
-        else if(organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE")!=-1) {
+        else if(organisaatio.organisaatiotyypit.indexOf("TOIMIPISTE")!=-1) {
             //opetuspiste, kerää parentin tyyppi
                 //parentti ei ole saatavilla, kysytään organisaatioservicestä
                 OrganisaatioService.etsi({oidRestrictionList:organisaatio.parentOid}).then(function(vastaus) {
