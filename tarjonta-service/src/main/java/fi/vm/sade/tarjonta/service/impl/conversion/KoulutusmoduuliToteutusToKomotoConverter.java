@@ -66,7 +66,7 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         try {
             t.setKoulutuksenAlkamisDate(s.getKoulutuksenAlkamisPvm());
         } catch (Exception e) {
-            LOG.warn("Not supported koulutus.", s.getOid());
+            LOG.warn("Use V1 API - Not supported data type.", s.getOid());
         }
         t.setKoulutuslajiUris(convertKoodistoUrisToList(s.getKoulutuslajis()));
         t.setModified(s.getUpdated());
