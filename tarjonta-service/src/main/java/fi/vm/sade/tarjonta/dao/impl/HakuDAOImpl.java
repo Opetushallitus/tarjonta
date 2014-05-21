@@ -168,6 +168,8 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public void update(final Haku entity) {
         getEntityManager().detach(entity);
         Preconditions.checkNotNull(getEntityManager().find(Haku.class, entity.getId()));
+        
+        entity.setLastUpdateDate(new Date());
         super.update(entity);
     }
 

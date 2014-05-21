@@ -57,6 +57,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import java.util.Date;
 
 /**
  * REST API V1 implementation for Haku.
@@ -299,7 +300,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             LOG.info("updateHaku() - convert");
 
             hakuToUpdate = converterV1.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
-
+            
             if (isNew) {
                 LOG.info("updateHaku() - insert");
                 hakuDAO.insert(hakuToUpdate);

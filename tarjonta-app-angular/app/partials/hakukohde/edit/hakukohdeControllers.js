@@ -110,10 +110,15 @@ app.controller('HakukohdeEditController',
 
             if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
 
-                //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
-                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
+                    //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
+                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                        filteredHakus.push(haku);
+                    }
+                } else {
                     filteredHakus.push(haku);
                 }
+
 
 
             }
