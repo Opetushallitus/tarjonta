@@ -744,8 +744,10 @@ app.controller('HakukohdeRoutingController', ['$scope',
         var filterHakuWithParams = function(hakus) {
 
             var paramFilteredHakus = [];
+            $log.info('FILTERING HAKUS WITH PARAMS, SIZE : ', hakus.length);
             angular.forEach(hakus,function(haku){
-
+                $log.info('FILTERING HAKUS WITH PARAMS, HAKU : ', haku);
+                $log.info('FILTERING HAKUS WITH PARAMS, CAN ADD TO HAKU : ', TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid));
                 if (TarjontaService.parameterCanAddHakukohdeToHaku(haku.oid)) {
                     paramFilteredHakus.push(haku);
                 }

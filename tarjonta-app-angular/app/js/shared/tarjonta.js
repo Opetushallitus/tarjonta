@@ -623,6 +623,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
             return result;
         } else {
+            $log.info('PP_HKLPT AND PH_HKMT WAS EMPTY');
             return true;
         }
     };
