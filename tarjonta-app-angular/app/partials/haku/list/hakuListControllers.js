@@ -170,17 +170,22 @@ app.controller('HakuListController',
                 };
 
                 function changeState(targetState) {
-                    return function(haku, doAfter) {
-                        Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
-                            if ("OK" === result.status) {
-                                haku.tila = targetState;
-                                doAfter();
-                            } else {
-                                $log.debug("state change did not work?", result);
-                            }
-                        });
-                    };
-                }
+                  return function(haku, doAfter) {
+                      $log.debug("changing state with service call...");
+                      Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
+                          $log.debug("call done:", result);
+                          if ("OK" === result.status) {
+                              haku.tila = targetState;
+                              doAfter();
+                          } else {
+                              $log.debug("state change did not work?", result);
+                          }
+                      }, function(reason) {
+                              alert('service call failed: ' + reason);
+                      });
+                  };
+              }
+
 
                 $scope.doPublish = changeState("JULKAISTU");
                 $scope.doCancel = changeState("PERUTTU");
