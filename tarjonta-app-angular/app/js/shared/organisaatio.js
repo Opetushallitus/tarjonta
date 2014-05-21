@@ -110,7 +110,7 @@ angular
                       }
 
                       if (organisaatio.organisaatiotyypit
-                          .indexOf("OPETUSPISTE") != -1) {
+                          .indexOf("TOIMIPISTE") != -1) {
                         $log.debug("toimipiste, recurse...");
                         deferred
                             .resolve(haeOppilaitostyypit(organisaatio.parentOid));
