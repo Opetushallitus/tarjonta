@@ -6,6 +6,7 @@ var app = angular.module('app.edit.ctrl.kk');
 
 app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$modalInstance', 'Koodisto', '$q', 'Config', 'TarjontaService', 'LocalisationService',
     function($scope, targetFilters, $modalInstance, Koodisto, $q, config, TarjontaService, LocalisationService) {
+         var KOULUTUSTYYPPI = 'koulutustyyppi_3';
 
         //filtterisivun malli
         $scope.stoModel = {koulutusalaKoodistoUri: config.env["koodisto-uris.koulutusala"],
@@ -30,7 +31,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
                 $scope.clearErrors();
                 console.log("HERE IS THE BEFORE SELECTION CALLBACK" + rowItem.entity.koodiUri);
                 $scope.stoModel.active = rowItem.entity;
-                TarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: rowItem.entity.koodiUri, languageCode: $scope.koodistoLocale}, function(response) {
+                TarjontaService.getKoulutuskoodiRelations({koulutus: rowItem.entity.koodiUri, koulutustyyppi : KOULUTUSTYYPPI, languageCode: $scope.koodistoLocale}, function(response) {
                     $scope.stoModel.itemSelected = false;
                     if (response.status === 'OK') {
                         var relation = response.result;

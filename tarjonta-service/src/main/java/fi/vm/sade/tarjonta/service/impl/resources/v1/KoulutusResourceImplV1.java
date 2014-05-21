@@ -45,7 +45,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -87,12 +86,14 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyStatusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuistenOppimaaraV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO1;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliAmmatillinenRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
@@ -114,7 +115,6 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-import java.util.Set;
 
 /**
  *
@@ -195,8 +195,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 break;
             case LUKIOKOULUTUS:
                 result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta, false));
+            case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
-            case AMMATILLINEN_PERUSKOULUTUS:
+            case AMMATILLINEN_PERUSTUTKINTO:
                 result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
         }
@@ -559,6 +561,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         dto = KoulutusmoduuliKorkeakouluRelationV1RDTO.class.newInstance();
                         break;
                     case LUKIOKOULUTUS:
+                    case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                         dto = KoulutusmoduuliLukioRelationV1RDTO.class.newInstance();
                         break;
                     case AMMATILLINEN_PERUSTUTKINTO:
@@ -938,11 +941,20 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             //currenlty this will only add new 'sister' komoto, and create a link to previously created komo.
                             persisted = insertKoulutusKorkeakoulu((KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid), true);
                             break;
+
+                        case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                            persisted = insertKoulutusLukiokoulu((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
+                            break;
                         case LUKIOKOULUTUS:
                             //create copy of komoto
                             persisted = insertKoulutusLukiokoulu((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));
                             break;
-                        case AMMATILLINEN_PERUSKOULUTUS:
+                        case AMMATILLINEN_PERUSTUTKINTO:
+                            persisted = insertKoulutusLukiokoulu((KoulutusAmmatillinenPeruskoulutusV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, orgOid));
+                            break;
+                        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                            persisted = insertKoulutusLukiokoulu((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
+
                         default:
                             throw new RuntimeException("Not implemented type : " + getType(komoto));
                     }
@@ -1007,8 +1019,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO1 koulutusMultiCopy
-    ) {
+    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy) {
         ResultV1RDTO result = new ResultV1RDTO();
         result.setErrors(Lists.<ErrorV1RDTO>newArrayList());
         for (String komotoOid : koulutusMultiCopy.getKomotoOids()) {
@@ -1021,8 +1032,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private static KoulutusasteTyyppi getType(KoulutusmoduuliToteutus komoto) {
-        return komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().getKoulutusasteTyyppi();
+    private static KoulutustyyppiUri getType(KoulutusmoduuliToteutus komoto) {
+        return KoulutustyyppiUri.fromString(komoto.getKoulutustyyppiUri());
     }
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {

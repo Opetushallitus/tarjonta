@@ -89,9 +89,9 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "koulutustyyppi")
+    @Deprecated
     private fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum koulutustyyppiEnum;
 
     @Column(name = "oppilaitostyyppi", length = 500)
@@ -253,10 +253,12 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         this.moduuliTyyppi = moduuliTyyppi;
     }
 
+    @Deprecated
     public KoulutustyyppiEnum getKoulutustyyppiEnum() {
         return koulutustyyppiEnum;
     }
 
+    @Deprecated
     public void setKoulutustyyppiEnum(KoulutustyyppiEnum koulutustyyppiEnum) {
         this.koulutustyyppiEnum = koulutustyyppiEnum;
     }
@@ -300,7 +302,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     public void setTutkintonimikes(Set<KoodistoUri> koodistoUris) {
         this.tutkintonimikes = koodistoUris;
     }
-
 
     /**
      * Koulutuksen rakenteen kuvaus tekstina mikali rakenteellista tieto ei ole.

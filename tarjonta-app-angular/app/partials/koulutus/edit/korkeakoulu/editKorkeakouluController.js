@@ -5,7 +5,8 @@ app.controller('EditKorkeakouluController',
             function EditKorkeakouluController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
-                var ENUM_KORKEAKOULUTUS = 'KORKEAKOULUTUS';
+                var KOULUTUSTYYPPI = 'koulutustyyppi_3';
+                var ENUM_KORKEAKOULUTUS = 'korkeakoulu';
                 $log = $log.getInstance("EditKorkeakouluController");
                 $scope.tutkintoDialogModel = {};
 
@@ -83,7 +84,7 @@ app.controller('EditKorkeakouluController',
                 };
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
-                    TarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
+                    TarjontaService.getKoulutuskoodiRelations({koulutus: koulutuskoodi, koulutustyyppi : KOULUTUSTYYPPI, languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
                         angular.forEach(converter.STRUCTURE[ENUM_KORKEAKOULUTUS].RELATION, function(value, key) {
                             apiModel[key] = restRelationData[key];

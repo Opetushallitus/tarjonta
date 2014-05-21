@@ -15,13 +15,13 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 
 /**
  *
  * @author jani
  */
-public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends KoulutusV1RDTO {
+public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends KoulutusAmmatillinenPeruskoulutusV1RDTO {
 
     @ApiModelProperty(value = "Tutkintonimike", required = true)
     private KoodiV1RDTO tutkintonimike;
@@ -33,7 +33,7 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
     private Double hinta;
 
     public KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO() {
-        super(KoulutusasteTyyppi.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
+        super(KoulutustyyppiUri.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
     }
 
     /**

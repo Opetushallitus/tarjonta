@@ -20,9 +20,10 @@ import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
  *
  * @author mlyly
  */
-public class KoulutusValmentavaJaKuntouttavaV1RDTO extends KoulutusV1RDTO {
+public class KoulutusLukioAikuistenOppimaaraV1RDTO extends KoulutusLukioV1RDTO {
 
-    public KoulutusValmentavaJaKuntouttavaV1RDTO() {
-        super(KoulutustyyppiUri.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS);
+    public KoulutusLukioAikuistenOppimaaraV1RDTO() {
+        super(KoulutustyyppiUri.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA);
     }
+
 }

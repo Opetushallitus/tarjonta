@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,11 @@ public class KoulutusLukioV1RDTO extends KoulutusV1RDTO {
     private String linkkiOpetussuunnitelmaan;
 
     public KoulutusLukioV1RDTO() {
-        super(KoulutusasteTyyppi.LUKIOKOULUTUS);
+        super(KoulutustyyppiUri.LUKIOKOULUTUS);
+    }
+
+    protected KoulutusLukioV1RDTO(KoulutustyyppiUri koulutustyyppiUri) {
+        super(koulutustyyppiUri);
     }
 
     /**
