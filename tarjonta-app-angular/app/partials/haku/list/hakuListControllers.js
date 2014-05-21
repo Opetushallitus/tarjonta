@@ -170,17 +170,22 @@ app.controller('HakuListController',
                 };
 
                 function changeState(targetState) {
-                    return function(haku, doAfter) {
-                        Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
-                            if ("OK" === result.status) {
-                                haku.tila = targetState;
-                                doAfter();
-                            } else {
-                                $log.debug("state change did not work?", result);
-                            }
-                        });
-                    };
-                }
+                  return function(haku, doAfter) {
+                      $log.debug("changing state with service call...");
+                      Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
+                          $log.debug("call done:", result);
+                          if ("OK" === result.status) {
+                              haku.tila = targetState;
+                              doAfter();
+                          } else {
+                              $log.debug("state change did not work?", result);
+                          }
+                      }, function(reason) {
+                              alert('service call failed: ' + reason);
+                      });
+                  };
+              }
+
 
                 $scope.doPublish = changeState("JULKAISTU");
                 $scope.doCancel = changeState("PERUTTU");
@@ -208,8 +213,8 @@ app.controller('HakuListController',
                 	var ret = [];
                 	
                     //hae permissiot ja testaa tilasiirtymät
-                    $q.all([PermissionService.haku.canEdit(haku.oid), PermissionService.haku.canDelete(haku.oid), Haku.checkStateChange({oid: haku.oid, state: 'JULKAISTU'}), Haku.checkStateChange({oid: haku.oid, state: 'PERUTTU'})]).then(function(results) {
-                        if (results[0]) {
+                    $q.all([PermissionService.haku.canEdit(haku.oid), PermissionService.haku.canDelete(haku.oid), Haku.checkStateChange({oid: haku.oid, state: 'JULKAISTU'}).$promise, Haku.checkStateChange({oid: haku.oid, state: 'PERUTTU'}).$promise]).then(function(results) {
+                        if (true === results[0]) {
                             //edit
                         	ret.push({title: LocalisationService.t("haku.menu.muokkaa"), action:
                                 function() {
@@ -226,21 +231,21 @@ app.controller('HakuListController',
                         }});
 
                         //delete
-                        if (results[1] && haku.tila != 'JULKAISTU') {
+                        if (true === results[1] && haku.tila != 'JULKAISTU') {
                         	ret.push({title: LocalisationService.t("haku.menu.poista"), action: function() {
                                 $scope.doDelete(haku, actions.delete);
                             }});
                         }
 
                         //publish
-                        if (results[0] && results[2].result && haku.tila != 'JULKAISTU') {
+                        if (true === results[0] && true === results[2].result && haku.tila != 'JULKAISTU') {
                         	ret.push({title: LocalisationService.t("haku.menu.julkaise"), action: function() {
                                 $scope.doPublish(haku, actions.update);
                             }});
                         }
                         
                         //cancel
-                        if (results[0] && results[3].result && haku.tila != 'PERUTTU') {
+                        if (true === results[0] && true === results[3].result && haku.tila != 'PERUTTU') {
                         	ret.push({title: LocalisationService.t("haku.menu.peruuta"), action: function() {
                                 $scope.doCancel(haku, actions.update);
                             }});
