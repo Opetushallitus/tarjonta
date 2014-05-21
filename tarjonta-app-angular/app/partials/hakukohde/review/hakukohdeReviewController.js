@@ -506,6 +506,13 @@ app.controller('HakukohdeReviewController',
                 checkForHakuRemove();
             });
 
+            var permissionPromise = PermissionService.getPermissions("hakukohde",hakukohdeOid);
+            permissionPromise.then(function(data){
+
+                $log.info('PERMISSIONPROMISE : ', data);
+
+            });
+
 
         if ($scope.model.hakukohde.result) {
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);

@@ -601,17 +601,25 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var now = new Date().getTime();
         var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
-        result = (now <= ph_hklpt) && (now <= ph_hkmt);
-        $log.debug("parameterCanEditHakukohde: ", hakuOid, ph_hklpt, ph_hkmt, result);
-        return result;
+        if (ph_hklpt && ph_hkmt) {
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanEditHakukohde: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
+        } else {
+            return true;
+        }
     };
 
     dataFactory.parameterCanEditHakukohdeLimited = function(hakuOid) {
         var now = new Date().getTime();
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
-        result = (now <= ph_hkmt);
-        $log.debug("parameterCanEditHakukohdeLimited: ", hakuOid, ph_hkmt, result);
-        return result;
+        if (ph_hkmt) {
+            result = (now <= ph_hkmt);
+            $log.debug("parameterCanEditHakukohdeLimited: ", hakuOid, ph_hkmt, result);
+            return result;
+        } else {
+            return true;
+        }
     };
 
     dataFactory.parameterCanAddHakukohdeToHaku = function(hakuOid) {
@@ -632,9 +640,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var now = new Date().getTime();
         var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
-        result = (now <= ph_hklpt) && (now <= ph_hkmt);
-        $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
-        return result;
+        if (ph_hklpt && ph_hkmt) {
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
+        } else {
+            return true;
+        }
     };
 
 
