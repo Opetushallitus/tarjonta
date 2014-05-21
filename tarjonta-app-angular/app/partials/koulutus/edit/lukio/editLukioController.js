@@ -128,26 +128,6 @@ app.controller('EditLukioController',
                     $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
                 }
 
-                $scope.tutkintoDialogModel = {};
-                $scope.tutkintoDialogModel.open = function() {
-
-                    var modalInstance = $modal.open({
-                        scope: $scope,
-                        templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
-                        controller: 'SelectTutkintoOhjelmaController'
-                    });
-                    modalInstance.result.then(function(selectedItem) {
-                        $log.debug('Ok, dialog closed: ' + selectedItem.koodiNimi);
-                        $log.debug('Koodiarvo is: ' + selectedItem.koodiArvo);
-                        if (!converter.isNull(selectedItem)) {
-                            //$scope.model.koulutuskoodi = selectedItem;
-                            $scope.model.koulutuskoodi.koodi.arvo = selectedItem.koodiArvo;
-                        }
-                    }, function() {
-                        $log.debug('Cancel, dialog closed');
-                    });
-                };
-
                 $scope.loadKomoKuvausTekstis = function(komoOid, uiModel, kuvausKomoto) {
                     if (angular.isDefined(kuvausKomoto) && komoOid === null && kuvausKomoto) {
                         if (angular.isDefined(kuvausKomoto['TAVOITTEET'])) {

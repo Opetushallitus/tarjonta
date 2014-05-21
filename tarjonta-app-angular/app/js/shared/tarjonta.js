@@ -307,18 +307,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/:koulutusasteTyyppi?meta=false&lang=:languageCode",
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koodisto/:koulutus/:koulutustyyppi?meta=false&lang=:languageCode",
                 {
-                    koulutusasteTyyppi: '@koulutusasteTyyppi',
-                    koulutuskoodiUri: '@koulutuskoodiUri',
+                    koulutustyyppi: '@koulutustyyppi',
+                    koulutus: '@koulutus',
                     defaults: '@defaults', //optional data : string like 'object-field1:uri, object-field2:uri, ...';
                     languageCode: '@languageCode'
                 });
-        if (angular.isUndefined(arg.koulutusasteTyyppi)) {
-            //todo : remove
-            arg.koulutusasteTyyppi = 'Korkeakoulutus';
-        }
-
         return koulutus.get(arg, func);
     };
 
@@ -531,7 +526,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             },
             searchModules: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi",
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutustyyppi/:moduuli",
             },
             tekstis: {
                 method: 'GET',

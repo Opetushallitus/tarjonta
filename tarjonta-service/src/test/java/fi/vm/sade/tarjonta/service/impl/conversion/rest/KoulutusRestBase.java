@@ -66,7 +66,7 @@ abstract class KoulutusRestBase {
         m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
         m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
         m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI));
+        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
         m.setKoulutusohjelmaUri(testKey(type, FieldNames.KOULUTUSOHJELMA));
         m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
         m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
@@ -86,7 +86,7 @@ abstract class KoulutusRestBase {
         m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
         m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
         m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI));
+        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
         m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
         m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
         m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
@@ -99,7 +99,7 @@ abstract class KoulutusRestBase {
         Preconditions.checkNotNull(m, "Koulutusmoduuli object cannot be null.");
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         m.setOid(EntityConverterToRDTOTest.Type.KOMO_CHILD.name());
-        m.setKoulutusUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.KOULUTUSKOODI));
+        m.setKoulutusUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.KOULUTUS));
         m.setNqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.NQF));
         m.setEqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.EQF));
         m.setLukiolinjaUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.LUKIOLINJA));

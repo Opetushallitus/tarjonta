@@ -81,7 +81,7 @@ public interface KomoV1Resource {
             notes = "Operaatio näyttää koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(
-            @QueryParam("koulutuskoodi") String koulutuskoodi,
+            @QueryParam("koulutus") String koulutuskoodi,
             @QueryParam("meta") Boolean meta,
             @QueryParam("lang") String lang);
 
@@ -94,7 +94,7 @@ public interface KomoV1Resource {
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
             @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
-            @QueryParam("koulutuskoodiUri") String koulutuskoodiUri,
+            @QueryParam("koulutus") String koulutuskoodiUri,
             @QueryParam("tila") String tila);
 
     @GET
@@ -107,7 +107,7 @@ public interface KomoV1Resource {
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
             @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
             @PathParam("moduuli") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
-            @QueryParam("koulutuskoodiUri") String koulutuskoodiUri,
+            @QueryParam("koulutus") String koulutuskoodiUri,
             @QueryParam("tila") String tila);
 
     @GET

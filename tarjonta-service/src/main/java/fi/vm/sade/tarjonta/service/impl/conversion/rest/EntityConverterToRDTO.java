@@ -210,7 +210,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         //FYI: Non-symmetrical data - the KOMO has string('|uri_1|uri_2|') collection of uris, put the KOMOTO has only single uri.
         dto.setKoulutustyyppi(commonConverter.convertToKoodiDTO(komoto.getKoulutustyyppiUri(), locale, FieldNames.KOULUTUSTYYPPI, ALLOW_NULL_KOODI_URI, showMeta));
 
-        dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), komoto.getKoulutusUri(), locale, FieldNames.KOULUTUSKOODI, showMeta));
+        dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), komoto.getKoulutusUri(), locale, FieldNames.KOULUTUS, showMeta));
         dto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), komoto.getTutkintoUri(), locale, FieldNames.TUTKINTO, ALLOW_NULL_KOODI_URI, showMeta));
         dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), komoto.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));
         dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), komoto.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, showMeta));

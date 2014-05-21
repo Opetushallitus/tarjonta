@@ -187,7 +187,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
-        komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
+        komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUS));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
@@ -224,7 +224,7 @@ public class KomoRDTOConverterToEntity extends AbstractToDomainConverter<KomoV1R
 
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
-        komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUSKOODI));
+        komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUS));
 
         komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
         komo.setUlkoinenTunniste(dto.getTunniste());

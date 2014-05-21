@@ -19,6 +19,14 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
     function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         $log = $log.getInstance("KoulutusRoutingController");
 
+        var map = {};
+        map['koulutustyyppi_1'] = 'amm';
+        map['koulutustyyppi_4'] = 'amm';
+        map['koulutustyyppi_13'] = 'amm';
+        map['koulutustyyppi_2'] = 'lukio';
+        map['koulutustyyppi_14'] = 'lukio';
+        map['koulutustyyppi_3'] = 'korkeakoulu';
+
         /*
          * Page routing data
          */
@@ -26,10 +34,27 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
 
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
-                var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA)");
+                /*
+                 koulutustyyppi_5	Valmentava ja kuntouttava opetus ja ohjaus
+                 koulutustyyppi_12	Erikoisammattitutkinto
+                 koulutustyyppi_10	Vapaan sivistystyön koulutus
+                 koulutustyyppi_11	Ammattitutkinto
+                 koulutustyyppi_2	Lukiokoulutus
+                 koulutustyyppi_13	ammatillinen perustutkinto näyttötutkintona
+                 koulutustyyppi_14	Lukiokoulutus, aikuisten oppimäärä
+                 koulutustyyppi_7	Ammatilliseen peruskoulutukseen ohjaava ja valmistava koulutus
+                 koulutustyyppi_4	Ammatillinen peruskoulutus erityisopetuksena
+                 koulutustyyppi_1	Ammatillinen perustutkinto
+                 koulutustyyppi_8	Maahanmuuttajien ammatilliseen peruskoulutukseen valmistava koulutus
+                 koulutustyyppi_3	Korkeakoulutus
+                 koulutustyyppi_9	Maahanmuuttajien ja vieraskielisten lukiokoulutukseen valmistava koulutus
+                 koulutustyyppi_6	Perusopetuksen lisäopetus
+                 */
+
+                var type = $route.current.locals.koulutusModel.result.koulutustyyppi;
+                var patt = new RegExp("(koulutustyyppi_1|koulutustyyppi_2|koulutustyyppi_3|koulutustyyppi_13)");
                 if (patt.test(type)) {
-                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
+                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + map[type] + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }

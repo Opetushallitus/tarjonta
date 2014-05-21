@@ -14,7 +14,7 @@
 
     <!-- koulutusohjelma -->
     <tr class="required">
-        <th tt="koulutus.edit.lukiolinja">Lukiolinja</th>
+        <th tt="koulutus.edit.koulutusohjelma">Koulutusohjelma</th>
         <td>
             <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'"></select>
             <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
@@ -22,10 +22,10 @@
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
-               tt="koulutus.edit.lukiolinja.required">Lukiolinja vaaditaan</p>
+               tt="koulutus.edit.koulutusohjelma.required">Lukiolinja vaaditaan</p>
         </td>
     </tr>
-
+    
     <!-- k. ala -->
     <tr>
         <th tt="koulutus.edit.koulutusala">Koulutusala</th>

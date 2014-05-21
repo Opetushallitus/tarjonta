@@ -100,7 +100,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         dto.setKoulutusala(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSALA));
         dto.setKoulutusaste(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSASTE));
         dto.setTutkintonimikes(toKoodiUris(Type.BOTH, FieldNames.TUTKINTONIMIKE));
-        dto.setKoulutuskoodi(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSKOODI));
+        dto.setKoulutuskoodi(toKoodiUri(Type.BOTH, FieldNames.KOULUTUS));
         dto.setKoulutusohjelma(toKoodiUriNimi(Type.BOTH, FieldNames.KOULUTUSOHJELMA));
         dto.setOpintojenLaajuusarvo(toKoodiUri(Type.BOTH, FieldNames.OPINTOJEN_LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(Type.BOTH, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
@@ -166,7 +166,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         dto.setKoulutusala(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUSALA));
         dto.setKoulutusaste(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUSASTE));
         dto.setTutkintonimike(toKoodiUri(Type.KOMOTO, FieldNames.TUTKINTONIMIKE));
-        dto.setKoulutuskoodi(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUSKOODI));
+        dto.setKoulutuskoodi(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUS));
         dto.setKoulutusohjelma(toKoodiUriNimi(Type.KOMOTO, FieldNames.LUKIOLINJA));
         dto.setOpintojenLaajuusarvo(toKoodiUri(Type.KOMOTO, FieldNames.OPINTOJEN_LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(Type.KOMOTO, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
@@ -186,7 +186,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expectField(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
         expectField(FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectField(FieldNames.OPINTOALA);
-        expectField(FieldNames.KOULUTUSKOODI);
+        expectField(FieldNames.KOULUTUS);
         expectFieldNimi(FieldNames.LUKIOLINJA);
         expectField(FieldNames.KOULUTUSALA);
         expectFieldNullable(FieldNames.KOULUTUSASTE);
@@ -263,7 +263,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.KOULUTUSALA), komoto.getKoulutusalaUri());
         assertEquals(testKey(type, FieldNames.KOULUTUSASTE), komoto.getKoulutusasteUri());
         assertEquals(testKey(type, FieldNames.TUTKINTONIMIKE), komoto.getTutkintonimikeUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI), komoto.getKoulutusUri());
+        assertEquals(testKey(type, FieldNames.KOULUTUS), komoto.getKoulutusUri());
         assertEquals(testKey(type, FieldNames.LUKIOLINJA), komoto.getLukiolinjaUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), komoto.getOpintojenLaajuusarvoUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), komoto.getOpintojenLaajuusyksikkoUri());
@@ -308,7 +308,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.KOULUTUSALA), komo.getKoulutusalaUri());
         assertEquals(testKey(type, FieldNames.KOULUTUSASTE), komo.getKoulutusasteUri());
 
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI), komo.getKoulutusUri());
+        assertEquals(testKey(type, FieldNames.KOULUTUS), komo.getKoulutusUri());
         assertEquals(null, komo.getKoulutusohjelmaUri());
         assertEquals(null, komo.getLukiolinjaUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), komo.getOpintojenLaajuusarvoUri());
@@ -327,7 +327,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expectField(FieldNames.OPINTOJEN_LAAJUUSARVO, type);
         expectFieldNullable(FieldNames.KOULUTUSASTE, type);
         expectField(FieldNames.OPINTOALA, type);
-        expectField(FieldNames.KOULUTUSKOODI, type);
+        expectField(FieldNames.KOULUTUS, type);
         expectField(FieldNames.KOULUTUSALA, type);
         expectFieldNullable(FieldNames.NQF, type);
         expectFieldNullable(FieldNames.EQF, type);

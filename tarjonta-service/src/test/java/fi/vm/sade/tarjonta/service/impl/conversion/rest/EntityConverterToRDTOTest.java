@@ -105,7 +105,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         expect(commonConverterMock.convertToKoodiUrisDTO(SET_KOMOTO_TUTKINTONIMIKE, FI, FieldNames.TUTKINTONIMIKE, false)).andReturn(toKoodiUris(Type.KOMOTO, FieldNames.TUTKINTONIMIKE));
 
-        expectConvertToKoodiDTO(returnKomoto, FieldNames.KOULUTUSKOODI);
+        expectConvertToKoodiDTO(returnKomoto, FieldNames.KOULUTUS);
         expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.TUTKINTO);
         expectConvertToKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectConvertToKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
@@ -143,7 +143,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         expect(commonConverterMock.convertToKoodiUrisDTO(SET_KOMOTO_TUTKINTONIMIKE, FI, FieldNames.TUTKINTONIMIKE, false)).andReturn(toKoodiUris(Type.KOMOTO, FieldNames.TUTKINTONIMIKE));
 
-        expectConvertToKomotoKoodiDTO(returnKomoto, FieldNames.KOULUTUSKOODI);
+        expectConvertToKomotoKoodiDTO(returnKomoto, FieldNames.KOULUTUS);
         expectConvertToKomotoKoodiDTOAllowNull(returnKomoto, FieldNames.TUTKINTO);
         expectConvertToKomotoKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectConvertToKomotoKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
@@ -181,7 +181,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         expect(commonConverterMock.convertToKoodiUrisDTO(SET_KOMO_TUTKINTONIMIKE, FI, FieldNames.TUTKINTONIMIKE, false)).andReturn(toKoodiUris(Type.KOMOTO, FieldNames.TUTKINTONIMIKE));
 
-        expectConvertToKomoKoodiDTO(returnKomo, FieldNames.KOULUTUSKOODI);
+        expectConvertToKomoKoodiDTO(returnKomo, FieldNames.KOULUTUS);
         expectConvertToKomoKoodiDTOAllowNull(returnKomo, FieldNames.TUTKINTO);
         expectConvertToKomoKoodiDTO(returnKomo, FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectConvertToKomoKoodiDTO(returnKomo, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
@@ -238,7 +238,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         expect(commonConverterMock.convertToKoodiDTO(anyObject(String.class), anyObject(String.class), eq(FI), eq(FieldNames.TUTKINTO), eq(true), eq(false))).andReturn(null);
 
-        expectConvertToKoodiDTO(returnKomoto, FieldNames.KOULUTUSKOODI);
+        expectConvertToKoodiDTO(returnKomoto, FieldNames.KOULUTUS);
         expectConvertToKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectConvertToKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
         expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSASTE);
@@ -288,7 +288,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         expect(commonConverterMock.convertToKoodiDTO(anyObject(String.class), anyObject(String.class), eq(FI), eq(FieldNames.TUTKINTO), eq(true), eq(false))).andReturn(null);
 
-        expectConvertToKomoKoodiDTO(returnKomoto, FieldNames.KOULUTUSKOODI);
+        expectConvertToKomoKoodiDTO(returnKomoto, FieldNames.KOULUTUS);
         expectConvertToKomoKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectConvertToKomoKoodiDTO(returnKomoto, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
         expectConvertToKomoKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSASTE);
@@ -343,7 +343,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.KOULUTUSALA), convert.getKoulutusala().getUri());
         assertEquals(testKey(type, FieldNames.KOULUTUSASTE), convert.getKoulutusaste().getUri());
         assertEquals(false, convert.getTutkintonimikes().getUris().isEmpty());
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI), convert.getKoulutuskoodi().getUri());
+        assertEquals(testKey(type, FieldNames.KOULUTUS), convert.getKoulutuskoodi().getUri());
         assertEquals(null, convert.getKoulutusohjelma().getUri()); //only name, not uri
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), convert.getOpintojenLaajuusarvo().getUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), convert.getOpintojenLaajuusyksikko().getUri());
@@ -360,7 +360,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.KOULUTUSALA), convert.getKoulutusala().getUri());
         assertEquals(testKey(type, FieldNames.KOULUTUSASTE), convert.getKoulutusaste().getUri());
         assertEquals(testKey(type, FieldNames.TUTKINTONIMIKE), convert.getTutkintonimike().getUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI), convert.getKoulutuskoodi().getUri());
+        assertEquals(testKey(type, FieldNames.KOULUTUS), convert.getKoulutuskoodi().getUri());
         assertEquals(testKey(type, FieldNames.LUKIOLINJA), convert.getKoulutusohjelma().getUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), convert.getOpintojenLaajuusarvo().getUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), convert.getOpintojenLaajuusyksikko().getUri());

@@ -110,7 +110,7 @@ public interface KoulutusV1Resource {
             notes = "Operaatio näyttää kaikki koulutuksen monikieliset kuvaustekstit")
     public KuvausV1RDTO loadTekstis(@PathParam("oid") String oid);
 
-     @GET
+    @GET
     @Path("/koodisto/{koulutus}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
@@ -122,7 +122,7 @@ public interface KoulutusV1Resource {
             @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
             @QueryParam("meta") Boolean showMeta,
             @QueryParam("lang") String userLang);
-    
+
     @GET
     @Path("/koodisto/{koulutus}/{koulutustyyppi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

@@ -335,7 +335,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*********************************************/
         /*  KORKEAKOULUTUS INITIALIZATION PARAMETERS */
         /*********************************************/
-        KORKEAKOULUTUS: {
+        korkeakoulu: {
             KUVAUS_ORDER: [
                 {type: "TAVOITTEET", isKomo: true, length: 2000},
                 {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false, length: 2000},
@@ -419,7 +419,58 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* LUKIOKOULUTUS INITIALIZATION PARAMETERS */
         /*******************************************/
-        LUKIOKOULUTUS: {
+        lukio: {
+            KUVAUS_ORDER: [
+                {type: "SISALTO", isKomo: false, length: 2000},
+                {type: "KOHDERYHMA", isKomo: false, length: 2000},
+                {type: "OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
+                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+            ],
+            MLANG: {},
+            RELATION: {
+                koulutuskoodi: {module: 'TUTKINTO'},
+                koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
+                koulutusala: {module: 'TUTKINTO'},
+                opintoala: {module: 'TUTKINTO'},
+                koulutuslaji: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'},
+                opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
+                tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
+                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
+            }, COMBO: {
+                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
+                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
+            }, MCOMBO: {
+                kielivalikoima: {
+                    koodisto: 'koodisto-uris.kieli',
+                    types: ['A1A2KIELI', 'B1KIELI', 'B2KIELI', 'B3KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
+                },
+                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+                opetuskielis: {koodisto: 'koodisto-uris.kieli'},
+                lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
+            }, STR: {
+                koulutuksenAlkamisvuosi: {"default": ''},
+                koulutusasteTyyppi: {"default": 'LUKIOKOULUTUS'},
+                tila: {'default': 'LUONNOS'},
+                tunniste: {"default": ''},
+                linkkiOpetussuunnitelmaan: {"default": ''},
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            }, DATES: {
+                koulutuksenAlkamisPvms: {"default": new Date()}
+            }, BOOL: {
+            }, IMAGES: {
+            }, DESC: {
+                kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
+                    ])},
+                kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
+                    ])}
+            }
+        },
+        amm: {
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 2000},
                 {type: "KOHDERYHMA", isKomo: false, length: 2000},
