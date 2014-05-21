@@ -20,6 +20,11 @@ app.controller('HakuListController',
         ['$q', '$scope', '$location', '$log', '$window', '$modal', 'LocalisationService', 'HakuV1', 'dialogService', 'HakuV1Service', 'Koodisto', 'PermissionService', 'loadingService',
             function HakuListController($q, $scope, $location, $log, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto, PermissionService, loadingService) {
 
+          
+          PermissionService.permissionResource().authorize({}, function(response) {
+            $log.debug("Authorization check : " + response.result);
+          });
+
                 $log = $log.getInstance("HakuListController");
 
                 //sorting
