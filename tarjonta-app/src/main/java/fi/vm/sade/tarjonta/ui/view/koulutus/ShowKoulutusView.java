@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.ui.view.koulutus;
 
 import java.util.*;
 
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusPerustiedotViewModel;
 import org.slf4j.Logger;
@@ -128,15 +127,6 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
         enableOrDisableButtonsByHaku();
     }
 
-
-    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(hakualkamisPvm);
-        cal.add(Calendar.DATE, -4);
-        return cal.getTime();
-    }
-
     private void enableOrDisableButtonsByHaku() {
         if (presenter.getModel().getKoulutusPerustiedotModel() != null && presenter.getModel().getKoulutusPerustiedotModel().getOid() != null) {
 
@@ -144,42 +134,15 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
 
             HakukohteetVastaus hakukohteetVastaus = presenter.getHakukohteetForKoulutus(perustiedotViewModel.getOid());
 
-            if(checkHakukohteetForStartedHaku(hakukohteetVastaus)) {
+            //tarkista hakukophteiden määrä==0
+            final boolean canDelete = hakukohteetVastaus.getHakukohteet().size()==0;
+            
+            if(canDelete) {
                 if (poista != null) {
                     poista.setEnabled(false);
                 }
             }
         }
-    }
-
-    private Boolean checkHakukohteetForStartedHaku(HakukohteetVastaus hakukohteetVastaus) {
-        if (hakukohteetVastaus != null && hakukohteetVastaus.getHitCount() > 0) {
-
-            boolean hakuStarted = false;
-            for (HakukohdePerustieto hakukohdePerustieto : hakukohteetVastaus.getHakukohteet()) {
-                hakuStarted = checkHakuStarted(hakukohdePerustieto.getHakuAlkamisPvm(),hakukohdePerustieto.getHakutyyppiUri());
-            }
-
-
-            return hakuStarted;
-        } else {
-            return false;
-        }
-    }
-
-    private Boolean checkHakuStarted(Date hakuAlkamisPvm, String hakutyyppi) {
-
-        Date minAlkamisPvm = getMinHakuAlkamisDate(hakuAlkamisPvm);
-
-        if (this.hakutyyppiLisahakuUrl.equals(hakutyyppi) || this.hakutapaErillishaku.equals(hakutyyppi)) {
-            return false;
-        } else if (new Date().after(minAlkamisPvm)) {
-            return true;
-        } else {
-            return false;
-        }
-
-
     }
 
     public void showHakukohdeRemovalDialog(final String hakukohdeOid, final String hakukohdeNimi) {
@@ -274,9 +237,13 @@ public class ShowKoulutusView extends AbstractVerticalInfoLayout {
     	}, StyleEnum.STYLE_BUTTON_PRIMARY);*/
 
     	//check permissions
-    	final TarjontaPermissionServiceImpl permissions = presenter.getPermission(); 
+    	final TarjontaPermissionServiceImpl permissions = presenter.getPermission();
+    	
+    	final boolean isDeletePermission = permissions.userCanDeleteKoulutus(context);
+    	final boolean deleteVisible = isDeletePermission && presenter.getModel().getKoulutusPerustiedotModel().getKoulutuksenHakukohteet().size()==0;
+    	
     	poista.setVisible(TarjontaTila.valueOf(presenter.getModel().getKoulutusPerustiedotModel().getTila()).isRemovable()
-    			&& permissions.userCanDeleteKoulutus(context, presenter.isHakuStartedForKoulutus(presenter.getModel().getKoulutusPerustiedotModel().getOid())));
+    			&& deleteVisible);
     	
 //    	kopioiUudeksi.setVisible(permissions.userCanCopyKoulutusAsNew(context));
     	//siirraOsaksiToista.setVisible(permissions.userCanMoveKoulutus(context));

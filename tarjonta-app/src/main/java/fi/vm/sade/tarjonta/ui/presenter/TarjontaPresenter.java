@@ -46,7 +46,6 @@ import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.SearchCriteria;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
@@ -512,6 +511,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         boolean isVapaaSivistystyo = koulTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
 
         for (HakuTyyppi foundHaku : haut.getResponse()) {
+            
             if (isKoulutusErityisopetus
                     && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI)) {
@@ -1132,7 +1132,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), hakukohde.getNimi()));
                     hakukohdeViewModel.setHakukohdeOid(hakukohde.getOid());
                     hakukohdeViewModel.setHakukohdeTila(hakukohde.getTila().value());
-                    hakukohdeViewModel.setHakuStarted(hakukohde.getHakuAlkamisPvm());
                     koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
                 }
             }
@@ -2653,35 +2652,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         public String getStrTwo() {
             return strTwo;
         }
-    }
-
-    /**
-     * Should be called "isKoulutusMutable" or something similar
-     *
-     * @param komotoOid
-     * @return
-     */
-    public boolean isHakuStartedForKoulutus(String komotoOid) {
-        boolean hakuStarted = false;
-        HakukohteetVastaus hakukVastaus = getHakukohteetForKoulutus(komotoOid);
-        for (HakukohdePerustieto curHakuk : hakukVastaus.getHakukohteet()) {
-            Date hakuAlku = curHakuk.getHakuAlkamisPvm();
-            Date today = new Date();
-            if (today.after(hakuAlku)) {
-                hakuStarted = true;
-            }
-
-            //jos hakutyyppi tai erillishaku 
-            if (KoodistoURI.KOODI_LISAHAKU_URI.equals(curHakuk
-                    .getHakutyyppiUri())
-                    || KoodistoURI.KOODI_ERILLISHAKU_URI.equals(curHakuk
-                            .getHakutapaKoodi().getUri())) {
-                hakuStarted = false;
-            }
-
-        }
-
-        return hakuStarted;
     }
 
     public boolean isKoulutusNivelvaihe() {
