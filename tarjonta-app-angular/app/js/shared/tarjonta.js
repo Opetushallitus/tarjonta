@@ -569,14 +569,17 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             //     param2: { date: yyy }
             //   },
             // }
+            // 
+            // FIXME *** Only "date" value cached... *** Use the server side permission checker!
+            
             var cache = dataFactory.ohjausparametritCache;
             var targetNames = Object.keys(results);
             
-            $log.info("Processing targets: ", targetNames);
+            // $log.debug("Processing targets: ", targetNames);
             
             angular.forEach(targetNames, function(targetName) {
                 var pt = results[targetName];
-                $log.info("  Processing target parameters for : ", targetName, pt);
+                // $log.debug("  Processing target parameters for : ", targetName, pt);
 
                 if (angular.isDefined(pt) && typeof pt === 'object') {
                     cache[targetName] = cache[targetName] ? cache[targetName] : {};
@@ -587,10 +590,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                         // TODO only single dates used as of now!!!!
                         cache[targetName][paramName] = p.date;
-                        $log.info("    STORED ", targetName, paramName, p.date);
+                        $log.debug("    STORED ", targetName, paramName, p.date);
                     });
                 } else {
-                    $log.info("  NOT OBJECT: ", targetName, pt);
+                    $log.debug("  NOT OBJECT: ", targetName, pt);
                 }
             });
 
