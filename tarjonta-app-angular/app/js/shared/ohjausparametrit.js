@@ -24,6 +24,7 @@ angular
           var parametrit = $resource(haeUrl, {}, {
             cache : false,
             get : {
+              params: {target:"@target", name:"@name"},
               method : "GET",
               isArray : false
             },
@@ -34,6 +35,7 @@ angular
                 isArray : false
             },
             save : {
+              params: {target:"@target", name:"@name"},
               method : "POST",
               withCredentials : true,
               headers: {'Content-Type': 'application/json; charset=UTF-8'}
@@ -57,7 +59,8 @@ angular
               ret.resolve(result);
             }, function(err) {
               loadingService.onErrorHandled();
-              $log.error("Error loading parameter data", hakuehdot, err);
+              ret.resolve({});
+              $log.debug("Error loading parameter data", hakuehdot, err);
             });
             return ret.promise;
           };
@@ -72,18 +75,19 @@ angular
            * @returns {promise}
            */
           var tallennaParametrit = function(kohde, parametrinNimi, parametrinArvo) {
-              var hakuehdot = {};
+              //var hakuehdot = {};
               if (kohde) {
-                  hakuehdot.target = kohde;
+                  parametrinArvo.target = kohde;
               }
               if (parametrinNimi) {
-                  hakuehdot.name = parametrinNimi;
+                parametrinArvo.name = parametrinNimi;
               }
               
-              $log.debug('tallennetaan parametrit, q:', hakuehdot, parametrinArvo);
+              $log.debug('tallennetaan parametrit, q:', parametrinArvo);
+              
 
               // TODO miten tähän saatiin se result handleri?
-              return parametrit.save(hakuehdot, parametrinArvo).$promise;
+              return parametrit.save(parametrinArvo).$promise;
           };
             
           return {
@@ -119,9 +123,11 @@ angular
              * @param parametrit
              *                tallennettavat parametrit oliona, esim: { PH_HKMT : {date: 239848747} }
              */
-            tallennaUUSI : function(hakuOid, parametrit) {
-              $log.debug("tallennetaan parametreja:", hakuOid, parametrit);
-              return tallennaParametrit(hakuOid, undefined, parametrit);
+            tallennaUUSI : function(hakuOid, parametritArvo) {
+              $log.debug("tallennetaan parametreja:");
+              parametrit.authorize();
+              $log.debug("tallennetaan parametreja:", hakuOid, parametritArvo);
+              return tallennaParametrit(hakuOid, undefined, parametritArvo);
             }
 
           };
