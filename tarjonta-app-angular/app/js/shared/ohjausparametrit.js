@@ -125,10 +125,20 @@ angular
              *                tallennettavat parametrit oliona, esim: { PH_HKMT : {date: 239848747} }
              */
             tallennaUUSI : function(hakuOid, parametritArvo) {
-              $log.debug("tallennetaan parametreja:");
-              parametrit.authorize();
-              $log.debug("tallennetaan parametreja:", hakuOid, parametritArvo);
-              return tallennaParametrit(hakuOid, undefined, parametritArvo);
+              $log.debug("tallennetaan parametreja, preauthorize");
+              parametrit.authorize().then(
+                function(result) {
+                  $log.debug("preauthorize succesful, calling save");
+                  $log.debug("tallennetaan parametreja:", hakuOid, parametritArvo);
+                  return tallennaParametrit(hakuOid, undefined, parametritArvo);
+                }, function(error){
+                    loadingService.onErrorHandled();
+                    $log.debug("preauthorize failed, let's try to save anyway.");
+                    return tallennaParametrit(hakuOid, undefined, parametritArvo);
+                }  
+              );
+              
+              ;
             }
 
           };
