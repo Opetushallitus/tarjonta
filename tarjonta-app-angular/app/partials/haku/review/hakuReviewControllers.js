@@ -151,6 +151,9 @@ app.controller('HakuReviewController',
                 $scope.init();
 
                 $scope.parametrit = {};
-                ParameterService.haeHaunParametrit(hakuOid, $scope.parametrit);
+                ParameterService.haeParametritUUSI(hakuOid).then(function(parameters) {
+                    $scope.parametrit = parameters;
+                });
+                // ParameterService.haeHaunParametrit(hakuOid, $scope.parametrit);
 
             }]);
