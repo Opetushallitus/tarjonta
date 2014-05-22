@@ -31,6 +31,7 @@ angular
             authorize : {
                 params: { target : "authorize" },
                 method : "GET",
+                headers: {"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
                 withCredentials : true,
                 isArray : false
             },
