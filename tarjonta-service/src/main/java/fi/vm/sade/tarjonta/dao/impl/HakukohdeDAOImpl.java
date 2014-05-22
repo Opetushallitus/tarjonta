@@ -339,7 +339,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        log.info("findByHakuOid({}, ...)", hakuOid);
+        log.debug("findByHakuOid({}, ...)", hakuOid);
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
 
@@ -395,7 +395,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
      * @return
      */
     private List<Object[]> findScalars(BooleanExpression whereExpr, int count, int startIndex, Expression<?>... projectionExpr) {
-        log.info("findScalars({}, {}, {}, {})", new Object[]{whereExpr, count, startIndex, projectionExpr});
+        log.debug("findScalars({}, {}, {}, {})", new Object[]{whereExpr, count, startIndex, projectionExpr});
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
 
@@ -418,7 +418,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             result.add(tuple.toArray());
         }
 
-        log.info("  result size = {}", result.size());
+        log.debug("  result size = {}", result.size());
 
         return result;
     }
