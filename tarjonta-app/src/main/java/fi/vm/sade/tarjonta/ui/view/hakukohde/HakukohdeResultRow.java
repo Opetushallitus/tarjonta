@@ -30,8 +30,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
-import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.MenuBarActions;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
@@ -71,7 +69,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     private CheckBox isSelected;
     private Window removeHakukohdeDialog;
-    private boolean hakuStarted = false;
     private String rowKey;
     /**
      * The presenter object for the component.
@@ -268,26 +265,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
      */
     public HakukohdeResultRow format(String text, boolean withMenuBar) {
         
-        Date today = new Date();
-        //Haku has started if the start date of the haku is is in the past and if the haku is not a lisahaku
-        if  ((hakukohde != null
-                    && hakukohde != null
-                    && hakukohde.getHakuAlkamisPvm() != null
-                    && hakukohde.getHakuAlkamisPvm().before(today))
-                && (!(KoodistoURI.KOODI_LISAHAKU_URI.equals(hakukohde
-                        .getHakutyyppiUri()) || KoodistoURI.KOODI_ERILLISHAKU_URI
-                        .equals(hakukohde.getHakutapaKoodi().getUri())))) {
-            hakuStarted = true;
-            
-//            System.out.println("" + hakukohde.getHakutyyppiUri());
-//            System.out.println("" + hakukohde.getHakutapaKoodi().getUri());
-            
-        }
-
-        if (hakukohde.getHakuAlkamisPvm() != null) {
-            hakuStarted = checkHakuStarted(hakukohde.getHakuAlkamisPvm());
-        }
-        
         isSelected = UiUtil.checkbox(null, null);
         isSelected.setImmediate(true);
         isSelected.addListener(new Property.ValueChangeListener() {
@@ -366,7 +343,6 @@ public class HakukohdeResultRow extends HorizontalLayout {
 
     private void openHakukohdeView() {
         tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoajaOid());
-        tarjontaPresenter.getModel().setSelectedHakuStarted(hakuStarted);
         tarjontaPresenter.showHakukohdeViewImpl(hakukohde.getOid());
     }
 

@@ -133,26 +133,24 @@ public class KoulutusResultRow extends HorizontalLayout {
         
         final OrganisaatioContext context = OrganisaatioContext.getContext(koulutus.getTarjoaja().getOid());
 
-        boolean hakuStarted = tarjontaPresenter.isHakuStartedForKoulutus(koulutus.getKomotoOid());
-        
-        if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)) {
+        if (tarjontaPresenter.getPermission().userCanUpdateKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.EDIT.key), menuCommand);
         }
 
         rowMenuBar.addMenuCommand(i18n.getMessage("naytaHakukohteet"), menuCommand);
 
-        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context, hakuStarted)) {
+        if (tila.isRemovable() && tarjontaPresenter.getPermission().userCanDeleteKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
-        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context, hakuStarted)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanCancelKoulutusPublish(context, hakuStarted)) {
-            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
-        } else if (tila.equals(TarjontaTila.PERUTTU) && tarjontaPresenter.getPermission().userCanPublishCancelledKoulutus()) {
+        if ((tila.equals(TarjontaTila.VALMIS) ||tila.equals(TarjontaTila.PERUTTU)) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
-        //menuLayout.requestRepaintAll();
+        
+        if (tila.equals(TarjontaTila.JULKAISTU) && tarjontaPresenter.getPermission().userCanUpdateHakukohde(context)) {
+            rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.CANCEL.key), menuCommand);
+        }
+        
         rowMenuBar.requestRepaint();
         this.getWindow().getApplication().getMainWindow().executeJavaScript("javascript:vaadin.forceSync();");
         commandsAdded = true;

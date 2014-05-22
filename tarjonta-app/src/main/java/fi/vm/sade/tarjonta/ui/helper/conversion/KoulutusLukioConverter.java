@@ -148,7 +148,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
                 hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), hakukohde.getNimi()));
                 hakukohdeViewModel.setHakukohdeOid(hakukohde.getOid());
                 hakukohdeViewModel.setHakukohdeTila(hakukohde.getTila().value());
-                hakukohdeViewModel.setHakuStarted(hakukohde.getHakuAlkamisPvm());
                 hakukohteet.add(hakukohdeViewModel);
             }
 

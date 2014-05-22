@@ -132,7 +132,7 @@ public class ParameterServices implements InitializingBean {
             try {
                 ts = p.getLong(fieldName);
             } catch (JSONException ex) {
-                LOG.error("Failed to parse to long: " + target + "/" + parameterName + "/" + fieldName, ex);
+                LOG.info("Failed to parse to long: " + target + "/" + parameterName + "/" + fieldName);
                 ts = null;
             }
             return (ts != null) ? new Date(ts) : null;
