@@ -554,11 +554,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             throw "'tarjontaOhjausparametritRestUrlPrefix' is not defined! Cannot proceed.";
         }
 
-        var uri = uri + "/api/rest/parametri/ALL";
+        var uri = uri + "/api/v1/rest/parametri/ALL";
         $resource(uri, {}, {
             get: {
                 cache: false,
-                isArray: true
+                isArray: false
             }
         }).get(function(results) {
             var cache = dataFactory.ohjausparametritCache;
