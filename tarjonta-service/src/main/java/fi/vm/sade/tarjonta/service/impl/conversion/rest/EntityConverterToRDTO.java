@@ -96,6 +96,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), showMeta));
         dto.setKuvausKomoto(komotoKuvaus);
+        
+        dto.setKoulutusasteTyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
 
         //KOMO
         if (dto instanceof KoulutusKorkeakouluV1RDTO) {

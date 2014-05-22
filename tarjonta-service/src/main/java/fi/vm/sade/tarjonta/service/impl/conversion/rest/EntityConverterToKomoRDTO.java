@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 
 import org.slf4j.Logger;
@@ -25,8 +26,11 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -66,14 +70,16 @@ public class EntityConverterToKomoRDTO {
         kkDto.setKuvausKomo(komoKuvaus);
 
         //KOMO
-        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "RowType cannot be null!");
-        switch (komo.getKoulutustyyppiEnum()) {
+        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "KoulutustyyppiEnum cannot be null!");
+        Preconditions.checkNotNull(komo.getKoulutustyyppiUri(), "KoulutustyyppiUri cannot be null!");
+        List<KoulutustyyppiUri> convertStringListToEnums = convertStringListToEnums(komo.getKoulutustyyppiUri());
+
+        switch (convertStringListToEnums.get(0)) {
             case KORKEAKOULUTUS:
-            case YLIOPISTOKOULUTUS:
-            case AMMATTIKORKEAKOULUTUS:
                 kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
                 break;
-            case AMMATILLINEN_PERUSKOULUTUS:
+            case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                 switch (komo.getModuuliTyyppi()) {
                     case TUTKINTO_OHJELMA:
                         kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
@@ -82,6 +88,7 @@ public class EntityConverterToKomoRDTO {
 
                 break;
             case LUKIOKOULUTUS:
+            case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                 switch (komo.getModuuliTyyppi()) {
                     case TUTKINTO_OHJELMA:
                         kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, false, showMeta));
@@ -111,22 +118,32 @@ public class EntityConverterToKomoRDTO {
         kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
         kkDto.setEqf(commonConverter.convertToKoodiDTO(komo.getEqfUri(), locale, FieldNames.EQF, ALLOW_NULL_KOODI_URI, showMeta));
         kkDto.setNqf(commonConverter.convertToKoodiDTO(komo.getNqfUri(), locale, FieldNames.NQF, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setKoulutustyyppi(commonConverter.convertToKoodiDTO(komo.getKoulutustyyppiUri(), locale, FieldNames.KOULUTUSTYYPPI, ALLOW_NULL_KOODI_URI, showMeta));
+
+        kkDto.setKoulutustyyppi(splitData(komo.getKoulutustyyppiUri(), locale, FieldNames.KOULUTUSTYYPPI, showMeta));
 
         //legacy data
-        kkDto.setOppilaitostyyppis(splitLegacyData(komo.getOppilaitostyyppi(), locale, FieldNames.OPPILAITOSTYYPPI, showMeta));
+        kkDto.setOppilaitostyyppis(splitData(komo.getOppilaitostyyppi(), locale, FieldNames.OPPILAITOSTYYPPI, showMeta));
 
-        LOG.debug(
-                "in EntityConverterToKomoRDTO : {}", kkDto);
+        LOG.debug("in EntityConverterToKomoRDTO : {}", kkDto);
         return kkDto;
     }
 
     /*
      * Remove ppilaitostyyppi data after the Vaadin UI has been removed from tarjonta project.
      */
-    private KoodiUrisV1RDTO splitLegacyData(String str, Locale locale, FieldNames fieldName, boolean showMeta) {
+    private KoodiUrisV1RDTO splitData(String str, Locale locale, FieldNames fieldName, boolean showMeta) {
         List<String> splitStringToList = EntityUtils.splitStringToList(str);
 
         return commonConverter.convertToKoodiUrisDTO(splitStringToList, locale, fieldName, showMeta);
+    }
+
+    private List<KoulutustyyppiUri> convertStringListToEnums(String str) {
+        String[] split = StringUtils.split(str, EntityUtils.STR_ARRAY_SEPARATOR);
+        ArrayList<KoulutustyyppiUri> types = Lists.<KoulutustyyppiUri>newArrayList();
+        for (String s : split) {
+            types.add(KoulutustyyppiUri.fromString(s));
+        }
+
+        return types;
     }
 }

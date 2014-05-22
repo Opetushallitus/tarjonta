@@ -460,6 +460,16 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                         }
                     });
                 },
+                /**
+                 * Palauttaa json olion, johon kerätty erilaisia oikeuksia.
+                 * <pre>
+                 * TODO esimerkki tuloksesta tähän!
+                 * </pre>
+                 * 
+                 * @param {type} type esim. "haku", "hakukohde"
+                 * @param {type} target oid
+                 * @returns {$q@call;defer.promise}
+                 */
                 getPermissions: function(type, target) {
                     var permissionsUrl = Config.env.tarjontaRestUrlPrefix + "permission/permissions/:type/:target";
                     var permissions = $resource(permissionsUrl, {}, {

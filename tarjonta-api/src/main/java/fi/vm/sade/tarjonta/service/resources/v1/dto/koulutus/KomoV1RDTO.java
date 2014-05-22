@@ -68,8 +68,8 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
 
-    @ApiModelProperty(value = "OPH koulutustyyppi-koodi", required = false)
-    private KoodiV1RDTO koulutustyyppi;
+    @ApiModelProperty(value = "OPH koulutustyyppi-koodit", required = false)
+    private KoodiUrisV1RDTO koulutustyyppis;
 
     public KomoV1RDTO() {
     }
@@ -277,16 +277,21 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     }
 
     /**
-     * @return the koulutustyyppi
+     * @return the koulutustyyppis
      */
-    public KoodiV1RDTO getKoulutustyyppi() {
-        return koulutustyyppi;
+    public KoodiUrisV1RDTO getKoulutustyyppis() {
+        return koulutustyyppis;
     }
 
     /**
-     * @param koulutustyyppi the koulutustyyppi to set
+     * @param koulutustyyppis the koulutustyyppis to set
      */
-    public void setKoulutustyyppi(KoodiV1RDTO koulutustyyppi) {
-        this.koulutustyyppi = koulutustyyppi;
+    public void setKoulutustyyppis(KoodiUrisV1RDTO koulutustyyppis) {
+        if (koulutustyyppis == null) {
+            koulutustyyppis = new KoodiUrisV1RDTO();
+        }
+
+        this.koulutustyyppis = koulutustyyppis;
     }
+
 }

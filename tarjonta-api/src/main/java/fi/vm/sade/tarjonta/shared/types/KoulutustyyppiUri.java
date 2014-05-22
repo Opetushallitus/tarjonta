@@ -39,7 +39,7 @@ public enum KoulutustyyppiUri {
                 return e;
             }
         }
-        throw new IllegalArgumentException("Koulutustyyppi enum not found by value : " + strValue);
+        throw new IllegalArgumentException("Koulutustyyppi enum not found by value : '" + strValue + "'");
     }
 
 }

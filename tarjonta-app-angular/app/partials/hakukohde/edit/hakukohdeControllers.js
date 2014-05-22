@@ -19,7 +19,7 @@
 /* Controllers */
 
 
-var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField']);
+var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField','ExportToParent']);
 
 
 app.controller('HakukohdeEditController', 
@@ -110,10 +110,15 @@ app.controller('HakukohdeEditController',
 
             if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
 
-                //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
-                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
+                    //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
+                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                        filteredHakus.push(haku);
+                    }
+                } else {
                     filteredHakus.push(haku);
                 }
+
 
 
             }
@@ -306,7 +311,17 @@ app.controller('HakukohdeEditController',
 
     };
 
+    $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset); }, function(n, o){
+    	if (!angular.equals(n,o) && o!="{}") {
+    		$scope.status.dirty = true;
+    	}
+	});
 
+    $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.soraKuvaukset); }, function(n, o){
+    	if (!angular.equals(n,o) && o!="{}") {
+    		$scope.status.dirty = true;
+    	}
+	});	
 
 });
 

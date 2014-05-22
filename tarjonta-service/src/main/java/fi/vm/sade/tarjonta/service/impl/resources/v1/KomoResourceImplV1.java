@@ -291,6 +291,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                     null);
 
             switch (koulutustyyppiUri) {
+                case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                 case LUKIOKOULUTUS:
                     if (m.getLukiolinjaUri() != null && !m.getLukiolinjaUri().isEmpty()) {
                         dto.setKoulutusohjelmaUri(m.getLukiolinjaUri().substring(0, m.getLukiolinjaUri().indexOf("#")));

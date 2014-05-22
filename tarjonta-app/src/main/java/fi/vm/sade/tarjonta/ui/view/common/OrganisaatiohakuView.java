@@ -119,6 +119,8 @@ public class OrganisaatiohakuView extends VerticalLayout {
     
     public OrganisaatiohakuView() {
         criteria = new SearchCriteria();
+        criteria.setAktiiviset(true);
+
         criteria.setSkipParents(true);
     }
 
@@ -225,6 +227,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
             @Override
             public void buttonClick(ClickEvent event) {
                 criteria = new SearchCriteria();
+                criteria.setAktiiviset(true);
                 criteria.setSkipParents(true);
                 if (rootOrganisaatioOids != null) {
                     criteria.getOidRestrictionList().addAll(rootOrganisaatioOids);
@@ -345,6 +348,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 LOG.debug("Using restriction:" + userContext.getUserOrganisations());
                 criteria.getOidRestrictionList().addAll(userContext.getUserOrganisations());
             }
+            criteria.setAktiiviset(true);
             organisaatios = organisaatioSearchService.searchBasicOrganisaatios(criteria);
         } catch (Exception ex) {
             if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {

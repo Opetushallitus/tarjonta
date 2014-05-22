@@ -132,7 +132,7 @@ public class TarjontaFixtures {
         m.setOpintojenLaajuusarvoUri(randomUri("laajuus_arvo"));
         m.setOpintojenLaajuusyksikkoUri(randomUri("laajuus_yksikko"));
         m.setLukiolinjaUri(randomUri("lukiolinja"));
-        m.setKoulutustyyppiUri(randomUri("koulutustyyppi"));
+        m.setKoulutustyyppiUri("|koulutustyyppi_1|koulutustyyppi_13|");
         m.setOpintoalaUri(randomUri("opintoala"));
         m.setTutkintonimikeUri(randomUri("tutkintonimike"));
 

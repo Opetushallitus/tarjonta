@@ -69,7 +69,7 @@ app.controller('CopyMoveKoulutusController', ['$modalInstance', 'targetKoulutus'
                 //oppilaitos, kerää tyyppi
                 addTyyppi(organisaatio);
                 deferred.resolve(oppilaitostyypit);
-            } else if (organisaatio.organisaatiotyypit.indexOf("OPETUSPISTE") != -1) {
+            } else if (organisaatio.organisaatiotyypit.indexOf("TOIMIPISTE") != -1) {
                 //opetuspiste, kerää parentin tyyppi
                 var parent = $scope.organisaatiomap[organisaatio.parentOid];
                 if (undefined !== parent) {

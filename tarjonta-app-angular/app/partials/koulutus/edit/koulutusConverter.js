@@ -180,17 +180,17 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             delete obj.meta;
         }
     };
-    factory.createUiModels = function(uiModel, koulutusastetyyppi) {
+    factory.createUiModels = function(uiModel, tyyppi) {
         //single select nodels
         uiModel['contactPerson'] = {henkiloTyyppi: 'YHTEYSHENKILO'};
         uiModel['ectsCoordinator'] = {henkiloTyyppi: 'ECTS_KOORDINAATTORI'};
         uiModel['tabs'] = {lisatiedot: true}; //lisatiedot tab disabled=true
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].COMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].COMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoSingleModel();
         });
         //multi select models
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].MCOMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].MCOMBO, function(value, key) {
 
             if (angular.isDefined(value.types)) {
                 uiModel[key] = {};
@@ -203,13 +203,13 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].DATES, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].DATES, function(value, key) {
             if (angular.isUndefined(uiModel[key])) {
                 uiModel[key] = [];
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].RELATIONS, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].RELATIONS, function(value, key) {
             uiModel[key] = factory.createUiMetaMultiModel();
         });
 

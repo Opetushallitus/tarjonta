@@ -313,7 +313,11 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertEquals(null, komo.getLukiolinjaUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), komo.getOpintojenLaajuusarvoUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), komo.getOpintojenLaajuusyksikkoUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSTYYPPI), komo.getKoulutustyyppiUri());
+        if (Type.KOMO == type) {
+            assertEquals("|koulutustyyppi_3|", komo.getKoulutustyyppiUri());
+        } else {
+            assertEquals(testKey(type, FieldNames.KOULUTUSTYYPPI), komo.getKoulutustyyppiUri());
+        }
         assertEquals(testKey(type, FieldNames.TUTKINTO), komo.getTutkintoUri());
         assertEquals(testKey(Type.BOTH, FieldNames.TUNNISTE), komo.getUlkoinenTunniste());
         assertEquals(testKey(type, FieldNames.NQF), komo.getNqfUri());

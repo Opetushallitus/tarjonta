@@ -114,7 +114,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expectConvertToKoodiDTO(returnKomoto, FieldNames.OPINTOALA);
         expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.EQF);
         expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.NQF);
-        expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSTYYPPI);
+        expectNoKomoOverride(returnKomoto, FieldNames.KOULUTUSTYYPPI);
         expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI);
 
         EasyMock.replay(komoKuvausConvertersMock);
@@ -152,7 +152,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expectConvertToKomotoKoodiDTO(returnKomoto, FieldNames.OPINTOALA);
         expectConvertToKomotoKoodiDTOAllowNull(returnKomoto, FieldNames.EQF);
         expectConvertToKomotoKoodiDTOAllowNull(returnKomoto, FieldNames.NQF);
-        expectConvertToKomotoKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSTYYPPI);
+        expectNoKomoOverride(returnKomoto, FieldNames.KOULUTUSTYYPPI);
         expectConvertToKomotoKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI);
 
         EasyMock.replay(komoKuvausConvertersMock);
@@ -169,7 +169,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         Koulutusmoduuli m = new Koulutusmoduuli();
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         korkeakouluPopulateBaseValues(Type.KOMO, m);
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
         m.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE))));
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
@@ -190,7 +190,9 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expectConvertToKomoKoodiDTO(returnKomo, FieldNames.OPINTOALA);
         expectConvertToKomoKoodiDTOAllowNull(returnKomo, FieldNames.EQF);
         expectConvertToKomoKoodiDTOAllowNull(returnKomo, FieldNames.NQF);
-        expectConvertToKomoKoodiDTOAllowNull(returnKomo, FieldNames.KOULUTUSTYYPPI);
+          // expectNoKomoOverride(returnKomoto, FieldNames.KOULUTUSTYYPPI);
+        expect(commonConverterMock.convertToKoodiDTO(null, FI,  FieldNames.KOULUTUSTYYPPI, true, false)).andReturn(toKoodiUri(returnKomo, FieldNames.KOULUTUSTYYPPI));
+    
         expectConvertToKomoKoodiDTOAllowNull(returnKomo, FieldNames.KOULUTUSKOODI_KANDIDAATTI);
 
         EasyMock.replay(komoKuvausConvertersMock);
@@ -244,7 +246,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSASTE);
         expectConvertToKoodiDTO(returnKomoto, FieldNames.KOULUTUSALA);
         expectConvertToKoodiDTO(returnKomoto, FieldNames.OPINTOALA);
-        expectConvertToKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSTYYPPI);
+        expectNoKomoOverride(returnKomoto, FieldNames.KOULUTUSTYYPPI);
 
         EasyMock.replay(koulutusmoduuliDAOMock);
         EasyMock.replay(komoKuvausConvertersMock);
@@ -274,6 +276,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setKoulutusmoduuli(ohjelmaChildKomo);
+        t.setKoulutustyyppiUri(testKey(Type.KOMOTO, FieldNames.KOULUTUSTYYPPI));
 
         final Type returnKomoto = Type.KOMO;
 
@@ -294,7 +297,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expectConvertToKomoKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSASTE);
         expectConvertToKomoKoodiDTO(returnKomoto, FieldNames.KOULUTUSALA);
         expectConvertToKomoKoodiDTO(returnKomoto, FieldNames.OPINTOALA);
-        expectConvertToKomoKoodiDTOAllowNull(returnKomoto, FieldNames.KOULUTUSTYYPPI);
+        expectNoKomoOverride(returnKomoto, FieldNames.KOULUTUSTYYPPI);
 
         EasyMock.replay(koulutusmoduuliDAOMock);
         EasyMock.replay(komoKuvausConvertersMock);
@@ -336,6 +339,11 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
     private void expectConvertToKoodiDTOAllowNull(Type param1, Type param2, Type returnType, FieldNames field) {
         expect(commonConverterMock.convertToKoodiDTO(testKey(param1, field), param2 != null ? testKey(param2, field) : null, FI, field, true, false)).andReturn(toKoodiUri(returnType, field));
+    }
+
+    private void expectNoKomoOverride(Type returnType, FieldNames field) {
+        expect(commonConverterMock.convertToKoodiDTO(testKey(Type.KOMOTO, field), FI, field, true, false)).andReturn(toKoodiUri(returnType, field));
+
     }
 
     private void assertKk(final KoulutusKorkeakouluV1RDTO convert, final Type type) {

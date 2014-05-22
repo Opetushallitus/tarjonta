@@ -260,13 +260,13 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                             })
                 })
 
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_2") {
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_2") { //TODO: vaihda oikea vertailu -> koulutustyyppi_14
                 //LUKIO
-                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/koulutustyyppi_14/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_1") {
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_1") { //TODO: vaihda oikea vertailu -> koulutustyyppi_4
                 //AMMATILLINEN
-                $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/koulutustyyppi_4/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
             } else {
                 eiToteutettu();

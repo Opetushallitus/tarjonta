@@ -111,27 +111,27 @@ public interface KoulutusV1Resource {
     public KuvausV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
-    @Path("/koodisto/{koulutus}")
+    @Path("/koodisto/{value}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
-            notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
+            value = "Näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
+            notes = "Operaatio näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
             response = KoulutusmoduuliStandardRelationV1RDTO.class)
     public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
-            @PathParam("koulutus") String koulutuskoodi,
+            @PathParam("value") String value,
             @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
             @QueryParam("meta") Boolean showMeta,
             @QueryParam("lang") String userLang);
 
     @GET
-    @Path("/koodisto/{koulutus}/{koulutustyyppi}")
+    @Path("/koodisto/{value}/{koulutustyyppi}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
-            notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
+            value = "Näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
+            notes = "Operaatio näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
             response = KoulutusmoduuliStandardRelationV1RDTO.class)
     public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
-            @PathParam("koulutus") String koulutuskoodi,
+            @PathParam("value") String value,
             @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
             @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
             @QueryParam("meta") Boolean showMeta,

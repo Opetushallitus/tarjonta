@@ -264,7 +264,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		var index = $scope.model.hakukohde.hakukohteenLiitteet.indexOf(liite);
             liite.hakukohdeOid = $scope.model.hakukohde.oid;
             $scope.model.hakukohde.hakukohteenLiitteet.splice(index,1);
-    	} else {
+            $scope.status.dirty = true;
+   	} else {
     		dialogService.showDialog({
     			title: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.liite.title"),
     			description: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.liite", [liite.liitteenNimi])
@@ -300,6 +301,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
             liite.hakukohdeOid = $scope.model.hakukohde.oid;
             $scope.createLiite(kieliUri);
+            $scope.status.dirty = true;
         }
     }
     

@@ -9,6 +9,10 @@ app.controller('EditKorkeakouluController',
 
                 $scope.init = function() {
                     $log.debug("init");
+                    
+                    /*
+                     * INITIALIZE PAGE CONFIG
+                     */
                     $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
 
                     var model = {};
@@ -84,7 +88,7 @@ app.controller('EditKorkeakouluController',
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
                     TarjontaService.getKoulutuskoodiRelations({
-                        koulutus: koulutuskoodi,
+                        uri: koulutuskoodi,
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         defaults: "koulutustyyppi:" + $scope.CONFIG.KOULUTUSTYYPPI,
                         languageCode: $scope.koodistoLocale}, function(data) {
