@@ -163,18 +163,8 @@ public class ShowHakukohteetDialog extends ShowRelatedObjectsDialog {
         final String hakukohdeOid = hakukohde.getOid();
         presenter.closeKoulutusRemovalDialog();
         presenter.getTarjoaja().setSelectedResultRowOrganisationOid(hakukohde.getTarjoajaOid());
-        presenter.getModel().setSelectedHakuStarted(isHakuStarted(hakukohde));
         presenter.showHakukohdeViewImpl(hakukohdeOid);
 
-    }
-
-    private boolean isHakuStarted(HakukohdePerustieto hakukohde) {
-        if (hakukohde != null
-                && hakukohde.getHakuAlkamisPvm() != null
-                && hakukohde.getHakuAlkamisPvm().before(new Date())) {
-            return true;
-        }
-        return false;
     }
 
 }

@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.ui.model;
 
-import java.util.Date;
 
 /*
 * Author: Tuomas Katva
@@ -30,8 +29,6 @@ public class SimpleHakukohdeViewModel {
 
     private String hakukohdeTila;
     
-    private boolean hakuStarted;
-
     public String getHakukohdeOid() {
         return hakukohdeOid;
     }
@@ -62,18 +59,5 @@ public class SimpleHakukohdeViewModel {
 
     public void setHakukohdeTila(String hakukohdeTila) {
         this.hakukohdeTila = hakukohdeTila;
-    }
-
-    public void setHakuStarted(Date hakuAlkamisPvm) {
-        Date today = new Date();
-        hakuStarted = (hakuAlkamisPvm != null) && today.after(hakuAlkamisPvm);
-    }
-
-    public boolean isHakuStarted() {
-        return hakuStarted;
-    }
-
-    public void setHakuStarted(boolean hakuStarted) {
-        this.hakuStarted = hakuStarted;
     }
 }
