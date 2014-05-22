@@ -1533,7 +1533,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         
-        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        final boolean parameterAllows = 
+                parameterServices.parameterCanEditHakukohde(hakuOid) ||
+                parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
         
         return hasPermission && parameterAllows;
     }
@@ -1567,7 +1569,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
 
         
-        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        final boolean parameterAllows = 
+                parameterServices.parameterCanEditHakukohde(hakuOid) ||
+                parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
         
         return hasPermission && parameterAllows;
     }
