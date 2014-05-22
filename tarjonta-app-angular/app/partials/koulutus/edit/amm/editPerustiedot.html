@@ -3,7 +3,10 @@
     <tr class="required">
         <th tt="koulutus.edit.koulutuskoodi">Koulutus</th>
         <td>
-            <select required class="span5" name="koulutuskoodi" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'"></select>
+            <select required class="span5" name="koulutuskoodi" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'">
+	            <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
+	            <option value="" ng-disabled="model.koulutuskoodi.uri"></option>
+            </select>
             <span ng-if="model.oid !== Undefined">{{model.koulutuskoodi.nimi}} {{model.koulutuskoodi.arvo}}</span><!-- loaded -->
         </td>
         <td>
@@ -16,7 +19,10 @@
     <tr class="required">
         <th tt="koulutus.edit.lukiolinja">Lukiolinja</th>
         <td>
-            <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'"></select>
+            <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
+                <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
+                <option value="" ng-disabled="model.koulutusohjelma.uri"></option>
+            </select>
             <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
 
         </td>
@@ -109,7 +115,10 @@
     <th tt="koulutus.edit.suunniteltu-kesto">Suunniteltu kesto</th>
     <td>
         <input required name="suunniteltuKestoArvo" class="thin" type="text" data-ng-model="model.suunniteltuKestoArvo" required />
-        <select required name="suunniteltuKestoTyyppi" class="thin" ng-model="model.suunniteltuKestoTyyppi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKestoTyyppi.koodis | orderBy:'koodiNimi'"></select>
+        <select required name="suunniteltuKestoTyyppi" class="thin" ng-model="model.suunniteltuKestoTyyppi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.suunniteltuKestoTyyppi.koodis | orderBy:'koodiNimi'">
+            <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
+            <option value="" ng-disabled="model.suunniteltuKestoTyyppi.uri"></option>
+        </select>
     </td>
     <td>
         <p class="error" ng-show="uiModel.showValidationErrors && (koulutusForm.suunniteltuKestoArvo.$error.required || koulutusForm.suunniteltuKestoTyyppi.$error.required)"
