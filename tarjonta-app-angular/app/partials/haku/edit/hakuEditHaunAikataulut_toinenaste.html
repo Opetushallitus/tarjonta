@@ -6,9 +6,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_KKM'>Koekutsujen muodostaminen</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_KKM_S" ng-model="model.parameter.PH_KKM_S"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KKM_S" ng-model="model.parameter.PH_KKM.dateStart"></t-date-time>
                 &rarr;
-                <t-date-time type="long" timestamp="true" name="PH_KKM_E" ng-model="model.parameter.PH_KKM_E"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KKM_E" ng-model="model.parameter.PH_KKM.dateEnd"></t-date-time>
             </td>
             <td>
                 <div>
@@ -21,7 +21,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HVVPTP'>Harkinnanvaraisen valinnan päätösten tallennus päättyy</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_HVVPTP" ng-model="model.parameter.PH_HVVPTP.date"></t-date-time>
             </td>
             <td>
                 <div>
@@ -33,9 +33,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_KTT'>Koetulosten tallentaminen</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_KTT_S" ng-model="model.parameter.PH_KTT_S"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KTT_S" ng-model="model.parameter.PH_KTT.dateStart"></t-date-time>
                 &rarr;
-                <t-date-time type="long" timestamp="true" name="PH_KTT_E" ng-model="model.parameter.PH_KTT_E"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_KTT_E" ng-model="model.parameter.PH_KTT.dateEnd"></t-date-time>
             </td>
             <td>
                 <div>
@@ -48,9 +48,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_OLVVPKE'>Oppilaitosten virkailijoiden valintapalvelun käyttö estetty</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE_S"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_S" ng-model="model.parameter.PH_OLVVPKE.dateStart"></t-date-time>
                 &rarr;
-                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE_E"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_OLVVPKE_E" ng-model="model.parameter.PH_OLVVPKE.dateEnd"></t-date-time>
             </td>
             <td>
                 <div>
@@ -63,9 +63,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_VLS'>Valintalaskennan suorittaminen</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_VLS_S" ng-model="model.parameter.PH_VLS_S"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_VLS_S" ng-model="model.parameter.PH_VLS.dateStart"></t-date-time>
                 &rarr;
-                <t-date-time type="long" timestamp="true" name="PH_VLS_E" ng-model="model.parameter.PH_VLS_E"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_VLS_E" ng-model="model.parameter.PH_VLS.dateEnd"></t-date-time>
             </td>
             <td>
                 <div>
@@ -78,9 +78,9 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_SS'>Sijoittelun suorittaminen</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_SS_S" ng-model="model.parameter.PH_SS_S"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_SS_S" ng-model="model.parameter.PH_SS.dateStart"></t-date-time>
                 &rarr;
-                <t-date-time type="long" timestamp="true" name="PH_SS_E" ng-model="model.parameter.PH_SS_E"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_SS_E" ng-model="model.parameter.PH_SS.dateEnd"></t-date-time>
             </td>
             <td>
                 <div>
@@ -93,7 +93,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_SSAVTM'>Sijoittelun suorittaminen aina valintatietojen muuttuessa</th>
             <td>
-                <input type="checkbox" ng-model="model.parameter.PH_SSAVTM" name="PH_SSAVTM"> Sijoittelu aina valintatietojen muuttuessa
+                <input type="checkbox" ng-model="model.parameter.PH_SS.ainaMuuttuessa" name="PH_SSAVTM"> Sijoittelu aina valintatietojen muuttuessa
             </td>
             <td>
                 <div>
@@ -105,7 +105,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_SST'>Sijoittelun suorittamistiheys</th>
             <td>
-                <input ng-required="false" type="number" ng-model="model.parameter.PH_SST" name="PH_SST" min="1" max="336"> <span tt="haku.tuntia">tuntia</span>
+                <input ng-required="false" type="number" ng-model="model.parameter.PH_SS.suorittamisTiheys" name="PH_SST" min="1" max="336"> <span tt="haku.tuntia">tuntia</span>
             </td>
             <td>
                 <div>
@@ -145,7 +145,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_JKLIP" ng-model="model.parameter.PH_JKLIP.date"></t-date-time>
             </td>
             <td>
                 <div>
@@ -157,7 +157,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
-                <t-date-time type="long" timestamp="true" name="PH_HKP" ng-model="model.parameter.PH_HKP"></t-date-time>
+                <t-date-time type="long" timestamp="true" name="PH_HKP" ng-model="model.parameter.PH_HKP.date"></t-date-time>
             </td>
             <td>
                 <div>
