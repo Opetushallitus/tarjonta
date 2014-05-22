@@ -277,7 +277,7 @@ app.controller('HakuEditController',
 
             $scope.saveParameters = function(haku) {
                 $log.info("saveParameters()");
-                ParameterService.tallenna(haku.oid, $scope.model.parameter);
+                ParameterService.tallennaUUSI(haku.oid, $scope.model.parameter);
             };
 
 
@@ -432,7 +432,9 @@ app.controller('HakuEditController',
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
-                  ParameterService.haeHaunParametrit($route.current.params.id, model.parameter);
+                  ParameterService.haeParametritUUSI($route.current.params.id).then(function(parameters){
+                    model.parameter=parameters;
+                  });
                 }
 
                 /**
