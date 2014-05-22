@@ -561,13 +561,41 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 isArray: false
             }
         }).get(function(results) {
+            
+            // NOTE: now "ALL" parameters is an object like:
+            // {
+            //   target1: {
+            //     param1: { date: xxxx },
+            //     param2: { date: yyy }
+            //   },
+            // }
             var cache = dataFactory.ohjausparametritCache;
-            angular.forEach(results, function(p) {
-                cache[p.name] = cache[p.name] ? cache[p.name] : {};
-                cache[p.name][p.path] = p.value;
+            var targetNames = Object.keys(results);
+            
+            $log.info("Processing targets: ", targetNames);
+            
+            angular.forEach(targetNames, function(targetName) {
+                var pt = results[targetName];
+                $log.info("  Processing target parameters for : ", targetName, pt);
+
+                if (angular.isDefined(pt) && typeof pt === 'object') {
+                    cache[targetName] = cache[targetName] ? cache[targetName] : {};
+                    var paramNames = Object.keys(pt);
+                
+                    angular.forEach(paramNames, function(paramName) {
+                        var p = results[targetName][paramName];
+
+                        // TODO only single dates used as of now!!!!
+                        cache[targetName][paramName] = p.date;
+                        $log.info("    STORED ", targetName, paramName, p.date);
+                    });
+                } else {
+                    $log.info("  NOT OBJECT: ", targetName, pt);
+                }
             });
+
             dataFactory.ohjausparametritCache = cache;
-            $log.info("Processed 'ohjausparametrit' - now cached " + results.length + " entries.");
+            $log.info("Processed 'ohjausparametrit' - now cached.");
         });
     };
 
@@ -592,7 +620,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             result = defaultValue;
         }
 
-        // $log.debug("getParameter()", target, name, result, cache[target]);
+        $log.debug("getParameter()", target, name, result, cache[target]);
 
         return result;
     };
