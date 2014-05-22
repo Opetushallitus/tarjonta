@@ -126,7 +126,7 @@ angular
              */
             tallennaUUSI : function(hakuOid, parametritArvo) {
               $log.debug("tallennetaan parametreja, preauthorize");
-              parametrit.authorize().then(
+              parametrit.authorize().$promise.then(
                 function(result) {
                   $log.debug("preauthorize succesful, calling save");
                   $log.debug("tallennetaan parametreja:", hakuOid, parametritArvo);
