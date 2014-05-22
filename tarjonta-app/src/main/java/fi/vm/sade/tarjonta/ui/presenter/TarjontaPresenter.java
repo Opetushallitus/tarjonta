@@ -1537,6 +1537,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 parameterServices.parameterCanEditHakukohde(hakuOid) ||
                 parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
         
+        LOG.info("isHakukohdeEditableForCurrentUser() - haku={} per={}, params={}", new Object[] {hakuOid, hasPermission, parameterAllows});
+        
         return hasPermission && parameterAllows;
     }
 
@@ -1572,6 +1574,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         final boolean parameterAllows = 
                 parameterServices.parameterCanEditHakukohde(hakuOid) ||
                 parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
+
+        LOG.info("isHakukohdeEditableForCurrentUser({}) - per={}, params={}", new Object[] {hakuOid, hasPermission, parameterAllows});
         
         return hasPermission && parameterAllows;
     }
