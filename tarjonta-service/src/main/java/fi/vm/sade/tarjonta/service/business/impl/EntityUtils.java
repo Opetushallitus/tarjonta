@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 
@@ -737,6 +738,10 @@ public final class EntityUtils {
             kielet.add(newKieli);
         }
         return kielet;
+    }
+
+    public static String joinListToString(String item) {
+        return joinListToString(Lists.<String>newArrayList(item));
     }
 
     public static String joinListToString(Collection<String> list) {

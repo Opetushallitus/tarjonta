@@ -51,12 +51,16 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import static fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli.TILA_COLUMN_NAME;
 import static fi.vm.sade.tarjonta.model.Koulutusmoduuli.TABLE_NAME;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import javax.persistence.Enumerated;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -69,6 +73,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
     private static final long serialVersionUID = -1278564574746813425L;
+    
+    @Column(name = "tyyppi")
+    @Enumerated(EnumType.STRING)
+    private KoulutustyyppiUri tyyppi;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
@@ -992,6 +1001,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             EntityUtils.keepSelectedKoodistoUri(this.tutkintonimikes, koodistoUri);
             tutkintonimikes.add(koodistoUri);
         }
+    }
+
+    /**
+     * @return the tyyppi
+     */
+    public KoulutustyyppiUri getTyyppi() {
+        return tyyppi;
+    }
+
+    /**
+     * @param tyyppi the tyyppi to set
+     */
+    public void setTyyppi(KoulutustyyppiUri tyyppi) {
+        this.tyyppi = tyyppi;
     }
 
 }

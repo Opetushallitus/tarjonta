@@ -251,7 +251,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                                     $scope.luoKoulutusDialog.close();
                                     if (selectedItem.koodiUri != null) {
                                         $log.debug("org:", $scope.model.organisaatiot[0]);
-                                        $location.path('/koulutus/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+                                        $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
                                     }
                                 }, function() {
                                     $scope.tutkintoDialogModel.selected = null;
@@ -262,11 +262,11 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
 
             } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_2") {
                 //LUKIO
-                $location.path('/koulutus/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
             } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_1") {
                 //AMMATILLINEN
-                $location.path('/koulutus/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
             } else {
                 eiToteutettu();

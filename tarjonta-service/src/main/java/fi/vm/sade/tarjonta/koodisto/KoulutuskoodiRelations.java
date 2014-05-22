@@ -239,7 +239,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                     lk.setKoulutusohjelma(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUSOHJELMA, locale, showMeta));
                 }
             } else {
-                LOG.info("I koodisto relation : '{}'", type.getKoodisto().getKoodistoUri());
+                LOG.info("Ignored koodisto relation : '{}'", type.getKoodisto().getKoodistoUri());
             }
         }
 

@@ -62,8 +62,8 @@ public class KoulutusValidator {
             return true;
         }
 
-        if (koulutus.getKoulutusasteTyyppi() == null) {
-            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.lower()));
+        if (koulutus.getTyyppi() == null) {
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TYYPPI_ENUM_MISSING.lower()));
         }
 
         if (koulutus.getTila() == null) {

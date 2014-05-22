@@ -2,5 +2,8 @@ UPDATE koulutusmoduuli SET koulutustyyppi_uri='|koulutustyyppi_1|koulutustyyppi_
 UPDATE koulutusmoduuli SET koulutustyyppi_uri='|koulutustyyppi_3|' WHERE koulutustyyppi = 'KORKEAKOULUTUS';
 UPDATE koulutusmoduuli SET koulutustyyppi_uri='|koulutustyyppi_14|' WHERE koulutustyyppi = 'LUKIOKOULUTUS';
 
-UPDATE koulutusmoduuli_toteutus kt set koulutustyyppi_uri='koulutustyyppi_3' FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'KORKEAKOULUTUS';
-UPDATE koulutusmoduuli_toteutus kt set koulutustyyppi_uri='koulutustyyppi_14' FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'LUKIOKOULUTUS';
+
+ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN tyyppi varchar(255);
+UPDATE koulutusmoduuli_toteutus kt set tyyppi='KORKEAKOULUTUS' FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'KORKEAKOULUTUS';
+UPDATE koulutusmoduuli_toteutus kt set tyyppi='LUKIOKOULUTUS' FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'LUKIOKOULUTUS';
+

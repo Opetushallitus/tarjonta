@@ -69,6 +69,7 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
@@ -85,7 +86,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyStatusV1RDTO;
@@ -199,7 +200,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO:
-                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, userLang, showMeta, false));
+                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, userLang, showMeta, false));
+                break;
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, userLang, showMeta, false));
                 break;
         }
 
@@ -341,6 +345,18 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private KoulutusmoduuliToteutus insertKoulutusLukiokoulu(final KoulutusLukioV1RDTO dto) {
+        Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
+        Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
+
+        final KoulutusmoduuliToteutus newKomoto = convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
+        Preconditions.checkNotNull(newKomoto, "KOMOTO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
+        Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
+
+        permissionChecker.checkCreateKoulutus(dto.getOrganisaatio().getOid());
+        return koulutusmoduuliToteutusDAO.insert(newKomoto);
+    }
+
+    private KoulutusmoduuliToteutus insertKoulutusAmmattikoulu(final KoulutusAmmatillinenPerustutkintoV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
 
@@ -941,7 +957,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             //currenlty this will only add new 'sister' komoto, and create a link to previously created komo.
                             persisted = insertKoulutusKorkeakoulu((KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid), true);
                             break;
-
                         case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                             persisted = insertKoulutusLukiokoulu((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
                             break;
@@ -950,11 +965,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             persisted = insertKoulutusLukiokoulu((KoulutusLukioV1RDTO) koulutusDtoForCopy(KoulutusLukioV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSTUTKINTO:
-                            persisted = insertKoulutusLukiokoulu((KoulutusAmmatillinenPeruskoulutusV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPeruskoulutusV1RDTO.class, komoto, orgOid));
+                            persisted = insertKoulutusAmmattikoulu((KoulutusAmmatillinenPerustutkintoV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                            persisted = insertKoulutusLukiokoulu((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
-
+                            persisted = insertKoulutusAmmattikoulu((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
                         default:
                             throw new RuntimeException("Not implemented type : " + getType(komoto));
                     }
@@ -1033,7 +1047,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private static KoulutustyyppiUri getType(KoulutusmoduuliToteutus komoto) {
-        return KoulutustyyppiUri.fromString(komoto.getKoulutustyyppiUri());
+        if (komoto.getTyyppi() != null) {
+            return komoto.getTyyppi();
+        } else {
+            LOG.debug("Trying to resolve type of koulutus entity, OID : {}", komoto.getOid());
+            final List<String> uris = EntityUtils.splitStringToList(komoto.getKoulutusmoduuli().getKoulutustyyppiUri());
+            if (uris.size() == 1 && !uris.isEmpty()) {
+                return KoulutustyyppiUri.fromString(uris.get(0));
+            } else {
+                throw new RuntimeException("Cannot convert 'unknown' entity to DTO - found KOMO koulutustyyppi : '" + komoto.getKoulutusmoduuli().getKoulutustyyppiUri() + "' for komoto OID :" + komoto.getOid());
+            }
+        }
     }
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {

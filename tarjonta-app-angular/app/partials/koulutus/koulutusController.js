@@ -19,14 +19,6 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
     function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         $log = $log.getInstance("KoulutusRoutingController");
 
-        var map = {};
-        map['koulutustyyppi_1'] = 'amm';
-        map['koulutustyyppi_4'] = 'amm';
-        map['koulutustyyppi_13'] = 'amm';
-        map['koulutustyyppi_2'] = 'lukio';
-        map['koulutustyyppi_14'] = 'lukio';
-        map['koulutustyyppi_3'] = 'korkeakoulu';
-
         /*
          * Page routing data
          */
@@ -35,26 +27,26 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 /*
-                 koulutustyyppi_5	Valmentava ja kuntouttava opetus ja ohjaus
-                 koulutustyyppi_12	Erikoisammattitutkinto
-                 koulutustyyppi_10	Vapaan sivistystyön koulutus
-                 koulutustyyppi_11	Ammattitutkinto
-                 koulutustyyppi_2	Lukiokoulutus
-                 koulutustyyppi_13	ammatillinen perustutkinto näyttötutkintona
-                 koulutustyyppi_14	Lukiokoulutus, aikuisten oppimäärä
-                 koulutustyyppi_7	Ammatilliseen peruskoulutukseen ohjaava ja valmistava koulutus
-                 koulutustyyppi_4	Ammatillinen peruskoulutus erityisopetuksena
-                 koulutustyyppi_1	Ammatillinen perustutkinto
-                 koulutustyyppi_8	Maahanmuuttajien ammatilliseen peruskoulutukseen valmistava koulutus
-                 koulutustyyppi_3	Korkeakoulutus
-                 koulutustyyppi_9	Maahanmuuttajien ja vieraskielisten lukiokoulutukseen valmistava koulutus
-                 koulutustyyppi_6	Perusopetuksen lisäopetus
+                 VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5"), Valmentava ja kuntouttava opetus ja ohjaus
+                 ERIKOISAMMATTITUTKINTO("koulutustyyppi_12"), Erikoisammattitutkinto
+                 VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10"), Vapaan sivistystyön koulutus
+                 AMMATTITUTKINTO("koulutustyyppi_11"), Ammattitutkinto
+                 LUKIOKOULUTUS("koulutustyyppi_2"), Lukiokoulutus
+                 AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13"), ammatillinen perustutkinto näyttötutkintona
+                 LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA("koulutustyyppi_14"), Lukiokoulutus, aikuisten oppimäärä
+                 AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS("koulutustyyppi_7"), Ammatilliseen peruskoulutukseen ohjaava ja valmistava koulutus
+                 AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA("koulutustyyppi_4"), Ammatillinen peruskoulutus erityisopetuksena
+                 AMMATILLINEN_PERUSTUTKINTO("koulutustyyppi_1"), Ammatillinen perustutkinto
+                 MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_8"), Maahanmuuttajien ammatilliseen peruskoulutukseen valmistava koulutus
+                 KORKEAKOULUTUS("koulutustyyppi_3"), Korkeakoulutus
+                 MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_9"), Maahanmuuttajien ja vieraskielisten lukiokoulutukseen valmistava koulutus
+                 PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6"), Perusopetuksen lisäopetus
                  */
 
-                var type = $route.current.locals.koulutusModel.result.koulutustyyppi;
-                var patt = new RegExp("(koulutustyyppi_1|koulutustyyppi_2|koulutustyyppi_3|koulutustyyppi_13)");
+                var type = $route.current.locals.koulutusModel.result.tyyppi;
+                var patt = new RegExp("(AMMATILLINEN_PERUSTUTKINTO|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA|KORKEAKOULUTUS|LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA)");
                 if (patt.test(type)) {
-                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + map[type] + "/" + type + ".html";
+                    $scope.resultPageUri = "partials/koulutus/" + actionType  + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }

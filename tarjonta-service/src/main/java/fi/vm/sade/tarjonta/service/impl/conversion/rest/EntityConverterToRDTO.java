@@ -23,7 +23,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPeruskoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
@@ -169,11 +169,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
             convertParentChildKomoHierarchyToRDTO(dto, parentKomo, komo, komoto, locale, showMeta);
-        } else if (dto instanceof KoulutusAmmatillinenPeruskoulutusV1RDTO) {
+        } else if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
             /**
              * 2ASTE : AMMATILLINEN
              */
-            KoulutusAmmatillinenPeruskoulutusV1RDTO ammDto = (KoulutusAmmatillinenPeruskoulutusV1RDTO) dto;
+            KoulutusAmmatillinenPerustutkintoV1RDTO ammDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data

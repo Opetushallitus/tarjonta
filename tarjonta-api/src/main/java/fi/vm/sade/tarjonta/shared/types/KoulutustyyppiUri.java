@@ -27,12 +27,19 @@ public enum KoulutustyyppiUri {
         return this.koulutustyyppiUri;
     }
 
-    public static KoulutustyyppiUri fromString(String v) {
-        for (KoulutustyyppiUri c : KoulutustyyppiUri.values()) {
-            if (c.koulutustyyppiUri.equals(v)) {
-                return c;
+    /**
+     * Convert string name or value to enumeration.
+     *
+     * @param strValue
+     * @return
+     */
+    public static KoulutustyyppiUri fromString(String strValue) {
+        for (KoulutustyyppiUri e : KoulutustyyppiUri.values()) {
+            if (e.koulutustyyppiUri.equals(strValue) || e.name().equals(strValue)) {
+                return e;
             }
         }
-        throw new IllegalArgumentException("Koulutustyyppi URI not found. URI : " + v);
+        throw new IllegalArgumentException("Koulutustyyppi enum not found by value : " + strValue);
     }
+
 }

@@ -32,12 +32,14 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -217,13 +219,86 @@ public class KoulutusDTOConverterToEntity {
     }
 
     /*
+     * AMMATILLINEN RDTO CONVERSION TO ENTITY
+     */
+    public KoulutusmoduuliToteutus convert(final KoulutusAmmatillinenPerustutkintoV1RDTO dto, final String userOid) {
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        if (dto == null) {
+            return komoto;
+        }
+
+        Koulutusmoduuli komo = null;
+        if (dto.getOid() != null) {
+            //update komo & komoto
+            komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
+            komo = komoto.getKoulutusmoduuli();
+        } else {
+            //insert only new komoto data to database, do not change or update komo. 
+            Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
+            komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
+            Preconditions.checkNotNull(komo, "KOMO object not found.");
+            komoto.setKoulutusmoduuli(komo);
+            try {
+                komoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
+            } catch (OIDCreationException ex) {
+                //XXX Should signal error!
+                LOG.error("OIDService failed!", ex);
+            }
+        }
+
+        Preconditions.checkNotNull(komo, "KOMO object cannot be null.");
+        Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
+        Preconditions.checkNotNull(komoto.getOid(), "KOMOTO OID cannot be null.");
+        /*
+         * KOMOTO common data conversion
+         */
+        convertKomotoCommonData(komoto, dto, userOid);
+
+        /*
+         * KOMOTO custom data conversion
+         */
+        komoto.setLukiolinjaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.LUKIOLINJA));
+        komoto.setTutkintonimikeUri(commonConverter.convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
+
+        if (dto.getOpetuskielis() != null) {
+            komoto.getOpetuskielis().clear();
+            komoto.setOpetuskieli(commonConverter.convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
+        }
+
+        if (dto.getOpetusmuodos() != null) {
+            komoto.getOpetusmuotos().clear();
+            komoto.setOpetusmuoto(commonConverter.convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
+        }
+
+        if (dto.getOpetusAikas() != null) {
+            komoto.getOpetusAikas().clear();
+            komoto.setOpetusAikas(commonConverter.convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
+        }
+
+        if (dto.getOpetusPaikkas() != null) {
+            komoto.getOpetusPaikkas().clear();
+            komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
+        }
+
+        if (dto.getLinkkiOpetussuunnitelmaan() != null) {
+            komoto.getLinkkis().clear();
+            komoto.setLinkkis(
+                    commonConverter.convertToLinkkis(WebLinkki.LinkkiTyyppi.OPETUSSUUNNITELMA,
+                            dto.getLinkkiOpetussuunnitelmaan(),
+                            komoto.getLinkkis()));
+        }
+
+        return komoto;
+    }
+
+    /*
      * Update korkeakoulu komo data.
      */
     private void korkeakouluKomoDataUpdate(Koulutusmoduuli komo, final KoulutusKorkeakouluV1RDTO dto) {
         Preconditions.checkNotNull(dto, "KoulutusKorkeakouluV1RDTO object cannot be null.");
         Preconditions.checkNotNull(komo, "KoulutusmoduuliToteutus object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getTyyppi(), "KoulutustyyppiUri enum cannot be null.");
+        Preconditions.checkNotNull(dto.getTyyppi(), "Tyyppi enum cannot be null.");
 
         final String organisationOId = dto.getOrganisaatio().getOid();
         Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");
@@ -239,6 +314,7 @@ public class KoulutusDTOConverterToEntity {
         komo.setKandidaatinKoulutusUri(commonConverter.convertToUri(dto.getKandidaatinKoulutuskoodi(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI));
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
         komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiUri(toListUri(dto.getTyyppi()));
         komo.setTutkintonimikes(commonConverter.convertToUris(dto.getTutkintonimikes(), komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE));
         komoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
     }
@@ -319,6 +395,7 @@ public class KoulutusDTOConverterToEntity {
         base(komoto, dto);
         komoto.setTarjoaja(organisationOId);
         commonConverter.handleDates(komoto, dto); //set dates
+        komoto.setTyyppi(dto.getTyyppi());
 
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
@@ -372,5 +449,9 @@ public class KoulutusDTOConverterToEntity {
     public void saveHtml5Image(KoulutusmoduuliToteutus komoto, final KuvaV1RDTO kuva, final String userOid) {
         addImageToKomoto(komoto, kuva, null, userOid);
         this.koulutusmoduuliToteutusDAO.update(komoto);
+    }
+
+    private static String toListUri(KoulutustyyppiUri e) {
+        return EntityUtils.joinListToString(e.uri());
     }
 }

@@ -335,7 +335,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*********************************************/
         /*  KORKEAKOULUTUS INITIALIZATION PARAMETERS */
         /*********************************************/
-        korkeakoulu: {
+        KORKEAKOULUTUS: {
             KUVAUS_ORDER: [
                 {type: "TAVOITTEET", isKomo: true, length: 2000},
                 {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false, length: 2000},
@@ -361,7 +361,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opintoala: {},
                 eqf: {},
                 tutkinto: {},
-                opintojenLaajuusyksikko: {}
+                opintojenLaajuusyksikko: {},
+                koulutustyyppi: {}
             },
             RELATIONS: {
                 tutkintonimikes: {},
@@ -382,7 +383,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
                 koulutusmoduuliTyyppi: {"default": 'TUTKINTO'},
-                koulutusasteTyyppi: {"default": 'KORKEAKOULUTUS'},
+                tyyppi: {"default": 'KORKEAKOULUTUS'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''}
@@ -419,7 +420,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* LUKIOKOULUTUS INITIALIZATION PARAMETERS */
         /*******************************************/
-        lukio: {
+        LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: {
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 2000},
                 {type: "KOHDERYHMA", isKomo: false, length: 2000},
@@ -454,7 +455,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
-                koulutusasteTyyppi: {"default": 'LUKIOKOULUTUS'},
+                tyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
@@ -470,7 +471,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     ])}
             }
         },
-        amm: {
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: {
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 2000},
                 {type: "KOHDERYHMA", isKomo: false, length: 2000},
@@ -505,7 +506,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
-                koulutusasteTyyppi: {"default": 'LUKIOKOULUTUS'},
+                tyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},

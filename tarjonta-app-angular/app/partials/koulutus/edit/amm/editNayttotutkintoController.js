@@ -5,7 +5,7 @@ app.controller('EditNayttotutkintoController',
             function EditLukioController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, Koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
-                var ENUM_AMMATILLINEN = 'amm';
+                var ENUM_AMMATILLINEN = 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA';
                 var ENUM_KOMO_MODULE_TUTKINTO = 'TUTKINTO';
                 var ENUM_KOMO_MODULE_TUTKINTO_OHJELMA = 'TUTKINTO_OHJELMA';
                 var KOULUTUSTYYPPI = 'koulutustyyppi_1';

@@ -342,13 +342,18 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-                .when('/koulutus/:koulutustyyppi/edit/:org/:koulutuskoodi', {
+                .when('/koulutus/:tyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi', {
                     action: "koulutus.edit",
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function($log, $route) {
                             $log.info("/koulutus/ID/edit", $route);
-                            return {'result': {koulutustyyppi: $route.current.params.koulutustyyppi}};
+                            return {
+                                'result': {
+                                    tyyppi: $route.current.params.tyyppi,
+                                    koulutustyyppi: $route.current.params.koulutustyyppi
+                                }
+                            };
                         }
                     }
                 })
