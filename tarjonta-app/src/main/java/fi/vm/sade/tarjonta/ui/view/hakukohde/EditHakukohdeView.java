@@ -130,10 +130,6 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
     }
 
-    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
-        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
-    }
-
     public static Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
         Calendar cal = Calendar.getInstance();

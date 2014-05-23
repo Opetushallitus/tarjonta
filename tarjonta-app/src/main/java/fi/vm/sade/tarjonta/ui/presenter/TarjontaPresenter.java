@@ -456,7 +456,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             hakuView = getModel().getHakukohde().getHakuViewModel();
         }
 
-        List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(haut);
+        List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(getModel().getHakukohde().getHakuViewModel().getHakuOid(), haut);
 
         
         //XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) 
@@ -487,7 +487,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /*
      * Finds the haku instances matching the koulutus for which the hakukohde is created.
      */
-    private List<HakuViewModel> findMatchingHakusForHakukohde(ListHakuVastausTyyppi haut) {
+    private List<HakuViewModel> findMatchingHakusForHakukohde(final String currentHakuOid, ListHakuVastausTyyppi haut) {
 
         KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
 
@@ -537,7 +537,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }
-        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(parameterServices, tarjontaPermissionService)));
+        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService)));
     }
 
     /**
