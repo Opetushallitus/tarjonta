@@ -8,7 +8,7 @@ public enum ToteutustyyppiEnum {
     AMMATTITUTKINTO("koulutustyyppi_11"),
     LUKIOKOULUTUS("koulutustyyppi_2"),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13"),
-    AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA(null),
+    AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA(MISSING_OR_PLACEHOLDER),
     LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA("koulutustyyppi_14"),
     AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS("koulutustyyppi_7"),
     AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA("koulutustyyppi_4"),
@@ -17,6 +17,8 @@ public enum ToteutustyyppiEnum {
     KORKEAKOULUTUS("koulutustyyppi_3"),
     MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_9"),
     PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6");
+
+    private static final MISSING_OR_PLACEHOLDER  = null;
 
     final private String koulutustyyppiUri;
 
@@ -36,7 +38,7 @@ public enum ToteutustyyppiEnum {
      */
     public static ToteutustyyppiEnum fromString(String strValue) {
         for (ToteutustyyppiEnum e : ToteutustyyppiEnum.values()) {
-            if (e.koulutustyyppiUri.equals(strValue) || e.name().equals(strValue)) {
+            if (e.koulutustyyppiUri != null && (e.koulutustyyppiUri.equals(strValue) || e.name().equals(strValue))) {
                 return e;
             }
         }

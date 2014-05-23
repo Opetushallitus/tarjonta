@@ -69,7 +69,8 @@ public enum KoulutusValidationMessages {
     KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING("koulutusohjelma"),
     //other & common
-    KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING("tyyppi"),
+    KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING("toteutustyyppi"),
+    KOULUTUS_MODUULITYYPPI_ENUM_MISSING("moduulityyppi"),
     KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING("koulutusasteTyyppi"),
     KOULUTUS_TILA_ENUM_MISSING("tila"),
     KOULUTUS_INPUT_OBJECT_MISSING(""),
