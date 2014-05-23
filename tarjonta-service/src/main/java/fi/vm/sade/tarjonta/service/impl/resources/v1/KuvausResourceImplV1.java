@@ -419,7 +419,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             LOG.debug("UPDATED KUVAUS : ", kuvausRDTO.getOid());
 
-            resultV1RDTO.setResult(kuvausRDTO);
+            resultV1RDTO.setResult(converter.toKuvausRDTO(oldVps,true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         } catch (Exception exp) {
