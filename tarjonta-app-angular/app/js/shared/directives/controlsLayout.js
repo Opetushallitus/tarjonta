@@ -136,51 +136,56 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             }
             //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
             $scope.$watch('dto.modified', function(newValue, oldValue) {
-                if (angular.isUndefined(newValue) && angular.isUndefined(oldValue)) {
+                /*if (angular.isUndefined(newValue) && angular.isUndefined(oldValue)) {
                     //missing date.
                     return;
-                } else if (newValue !== oldValue || $scope.model.metadata.length === 0) {
-                    $scope.model.reloadDisplayControls();
-                }
+                } else if (newValue !== oldValue || $scope.model.metadata.length === 0) {*/
+                    $scope.model._reloadDisplayControls();
+                //}
             });
+            
+            
+            $scope.model.reloadDisplayControls = function() {
+            	// TODO poista tämä delegaattifunktio kun virheelliset viittaukset on poistettu
+            	alert("reloadDisplayControls() EI OLE OSA DIREKTIIVIN JULKISTA APIA ELI ÄLÄ KÄYTÄ!!!");
+            	$scope.model._reloadDisplayControls();
+            }
 
             /*
              * Reload modified&status data.
              */
-            $scope.model.reloadDisplayControls = function() {
+            $scope.model._reloadDisplayControls = function() {
                 $scope.dto = $scope.model.dto();
-                
+            	//console.log("controlsLayout._reloadDisplayControls() ", [ $scope.dto.modified, $scope.dto.modifiedBy, $scope.dto.created, $scope.dto.createdBy ]);
+
+                $scope.model.metadata = [];
+
+                // oletuksenä näytetään muokkaustiedot
                 var userOid = $scope.dto.modifiedBy;
-                if (!angular.isUndefined($scope.dto.createdBy) && $scope.dto.createdBy !== null) {
+                var date = $scope.dto.modified;
+                var lokalisointiKey = "tarjonta.metadata.modified";
+                
+                if (!date) { // ei muokkaustietoja -> näytetään luontitiedot
                     userOid = $scope.dto.createdBy;
+                    date = $scope.dto.created;
+                    lokalisointiKey = "tarjonta.metadata.created";
+                	
                 }
 
+                // tila
                 if ($scope.dto.tila) {
                     $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
                 }
 
-                var date = $scope.dto.modified;
-                var lokalisointiKey = "tarjonta.metadata.modified";
-                if (!angular.isUndefined($scope.dto.created) && $scope.dto.created !== null) {
-                    date = $scope.dto.created;
-                    lokalisointiKey = "tarjonta.metadata.created";
-                }
-
                 //load user info by oid
-                if (!angular.isUndefined(userOid) && userOid !== null && userOid.length > 0) {
+                if (userOid) {
                     var promise = YhteyshenkiloService.haeHenkilo(userOid);
                     promise.then(function(response) {
-                        $scope.model.metadata = [];
-
-                        if ($scope.dto.tila) {
-                            $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
-                        }
-
                         var name = "";
-                        if (!angular.isUndefined(response.etunimet)) {
+                        if (response.etunimet) {
                             name = response.etunimet + " ";
                         }
-                        if (!angular.isUndefined(response.sukunimi)) {
+                        if (response.sukunimi) {
                             name += response.sukunimi;
                         }
                         appendMetadata($scope.model.metadata, lokalisointiKey, name, date);
