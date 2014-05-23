@@ -383,7 +383,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
                 koulutusmoduuliTyyppi: {"default": 'TUTKINTO'},
-                tyyppi: {"default": 'KORKEAKOULUTUS'},
+                toteutustyyppi: {"default": 'KORKEAKOULUTUS'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''}
@@ -455,7 +455,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
-                tyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'},
+                toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
@@ -471,6 +471,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     ])}
             }
         },
+        /*******************************************/
+        /* AMMATILLINEN INITIALIZATION PARAMETERS  */
+        /*******************************************/
         AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: {
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 2000},
@@ -481,39 +484,28 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             ],
             MLANG: {},
             RELATION: {
+                koulutusaste: {module: 'TUTKINTO'},
                 koulutuskoodi: {module: 'TUTKINTO'},
                 koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
                 koulutusala: {module: 'TUTKINTO'},
                 opintoala: {module: 'TUTKINTO'},
-                koulutuslaji: {module: 'TUTKINTO'},
-                pohjakoulutusvaatimus: {module: 'TUTKINTO'},
-                opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
-                opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
                 tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
                 koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
             }, COMBO: {
-                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
-                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
+                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
             }, MCOMBO: {
-                kielivalikoima: {
-                    koodisto: 'koodisto-uris.kieli',
-                    types: ['A1A2KIELI', 'B1KIELI', 'B2KIELI', 'B3KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
-                },
-                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
-                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
-                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
                 opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-                lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
+                ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
-                tyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'},
+                toteutustyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
-                linkkiOpetussuunnitelmaan: {"default": ''},
-                suunniteltuKestoArvo: {nullable: true, "default": ''}
+                linkkiOpetussuunnitelmaan: {"default": ''}
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
+                opintojenMaksullisuus: {"default": false}
             }, IMAGES: {
             }, DESC: {
                 kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
@@ -532,7 +524,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         //remove all meta data fields, if any
         angular.forEach(factory.STRUCTURE[koulutusasteTyyppi], function(value, key) {
             if ('MLANG' !== key) {
-                //MLANG objects needs the meta fields
+                //MLANG objects needs the meta fields                
                 angular.forEach(value, function(value, key) {
                     factory.deleteMetaField(m[key]);
                 });
@@ -616,7 +608,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 });
             }
         });
-        
+
         angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].IMAGES, function(value, key) {
             for (var i in apiModel[key]) {
                 if (angular.isUndefined(apiModel[key][i].base64data) || apiModel[key][i].base64data === null) {

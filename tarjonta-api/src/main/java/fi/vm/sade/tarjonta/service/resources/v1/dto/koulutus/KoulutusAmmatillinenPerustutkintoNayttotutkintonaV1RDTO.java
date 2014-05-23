@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
@@ -23,16 +24,24 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
  */
 public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends KoulutusAmmatillinenPerustutkintoV1RDTO {
 
-   
-
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
     private Double hinta;
+
+    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO ammattinimikkeet;
+
+    @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
+    private OrganisaatioV1RDTO jarjestavaOrganisaatio;
+
+    private KoulutusValmistavaV1RDTO valmistavaKoulutus;
 
     public KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO() {
         super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
     }
 
-   
+    protected KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO(ToteutustyyppiEnum toteutustyyppi) {
+        super(toteutustyyppi);
+    }
 
     /**
      * @return the hinta
@@ -46,6 +55,48 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
      */
     public void setHinta(Double hinta) {
         this.hinta = hinta;
+    }
+
+    /**
+     * @return the valmistavaKoulutus
+     */
+    public KoulutusValmistavaV1RDTO getValmistavaKoulutus() {
+        return valmistavaKoulutus;
+    }
+
+    /**
+     * @param valmistavaKoulutus the valmistavaKoulutus to set
+     */
+    public void setValmistavaKoulutus(KoulutusValmistavaV1RDTO valmistavaKoulutus) {
+        this.valmistavaKoulutus = valmistavaKoulutus;
+    }
+
+    /**
+     * @return the ammattinimikkeet
+     */
+    public KoodiUrisV1RDTO getAmmattinimikkeet() {
+        return ammattinimikkeet;
+    }
+
+    /**
+     * @param ammattinimikkeet the ammattinimikkeet to set
+     */
+    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
+        this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    /**
+     * @return the jarjestavaOrganisaatio
+     */
+    public OrganisaatioV1RDTO getJarjestavaOrganisaatio() {
+        return jarjestavaOrganisaatio;
+    }
+
+    /**
+     * @param jarjestavaOrganisaatio the jarjestavaOrganisaatio to set
+     */
+    public void setJarjestavaOrganisaatio(OrganisaatioV1RDTO jarjestavaOrganisaatio) {
+        this.jarjestavaOrganisaatio = jarjestavaOrganisaatio;
     }
 
 }

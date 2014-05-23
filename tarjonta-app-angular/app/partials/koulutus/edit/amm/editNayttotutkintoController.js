@@ -17,9 +17,8 @@ app.controller('EditNayttotutkintoController',
                      */
                     $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
 
-                    var model = {};
+                    var model = {opetuskielis: {kieli_fi: 1}};
                     var uiModel = {
-                        loadedKoulutuslaji: null, //a hack : esta nuorten lukiokoulutuksen tallennus
                         //custom stuff
                         koulutusohjelma: [],
                         tutkintoModules: {},
@@ -35,7 +34,6 @@ app.controller('EditNayttotutkintoController',
                          *  Look more info from koulutusController.js.
                          */
                         model = $route.current.locals.koulutusModel.result;
-                        uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                         $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
                         /*
@@ -107,7 +105,6 @@ app.controller('EditNayttotutkintoController',
                     TarjontaService.getKoulutuskoodiRelations({
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         uri: koulutuskoodi,
-                        defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1",
                         languageCode: $scope.koodistoLocale
                     }, function(response) {
                         var restRelationData = response.result;
@@ -220,6 +217,25 @@ app.controller('EditNayttotutkintoController',
                 $scope.saveValmis = function() {
                     $scope.saveByStatus('VALMIS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
                 };
+
+
+                $scope.onMaksullisuusChanged = function() {
+                    if (!$scope.model.hinta) {
+                        return;
+                    }
+                    var p = $scope.model.hinta.indexOf(',');
+                    while (p != -1) {
+                        $scope.model.hinta = $scope.model.hinta.substring(0, p) + "." + $scope.model.hinta.substring(p + 1);
+                        p = $scope.model.hinta.indexOf(',', p);
+                    }
+                }
+
+                $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
+                    if (!valNew && valOld) {
+                        //clear price data field
+                        $scope.model.hinta = '';
+                    }
+                });
 
                 $scope.init();
             }]);

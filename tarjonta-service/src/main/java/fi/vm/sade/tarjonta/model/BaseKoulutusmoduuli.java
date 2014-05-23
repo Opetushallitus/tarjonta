@@ -77,8 +77,8 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     /**
      * Koodisto uri. See accessors for more info.
      *
-     * Will be deprecated in near future 2015?, the osaamisala will replaced
-     * this field.
+     * KoulutusohjelmaUri will be deprecated in near future 2015?, the
+     * osaamisala will replaced this field.
      */
     @Column(name = "koulutusohjelma_uri")
     private String koulutusohjelmaUri;
@@ -92,7 +92,7 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
     /**
      * Koodisto uri like koulutusohjelma. See accessors for more info.
      */
-    @Column(name = "osaamiala_uri")
+    @Column(name = "osaamisala_uri")
     private String osaamisalaUri;
 
     /**

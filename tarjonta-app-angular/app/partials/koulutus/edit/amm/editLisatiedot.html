@@ -1,82 +1,16 @@
 <table class="tarjontaForm">
-    <tr><td colspan="2"><h4 tt="koulutus.edit.kielivalikoima.title">Kielivalikoima</h4></td><td></td></tr>
-    <tr><td colspan="2"><p tt="koulutus.edit.kielivalikoima.help">Kielivalikoiman ohjeteksti puuttuu.</p></td><td></td></tr>
-    <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.A1A2KIELI.title"">A1/A2-kieli</th>
-           <td><multi-select
-            order-with="userLanguages"
-            selection="uiModel.kielivalikoima.A1A2KIELI.uris"
-            model="uiModel.tmp"
-            promise="uiModel.kielivalikoima.promise"
-            display="tokenfield" /></td>
-        <td></td>
-    </tr>
-   
-     <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.B1KIELI.title">B1-kieli</th>
-        <td><multi-select
-            order-with="userLanguages"
-            selection="uiModel.kielivalikoima.B1KIELI.uris"
-            model="uiModel.tmp"
-            promise="uiModel.kielivalikoima.promise"
-            display="tokenfield" /></td>
-        <td></td>
-    </tr>
-     <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.B2KIELI.title">B2-kieli</th>
-        <td><multi-select  
-                    order-with="userLanguages"
-                    selection="uiModel.kielivalikoima.B2KIELI.uris"
-                    model="uiModel.tmp"
-                    promise="uiModel.kielivalikoima.promise"
-                    display="tokenfield" /></td>
-        <td></td>
-    </tr>
-    <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.B3KIELI.title">B3-kieli</th>
-        <td><multi-select 
-            order-with="userLanguages"
-            selection="uiModel.kielivalikoima.B3KIELI.uris"
-            model="uiModel.tmp"
-            promise="uiModel.opetuskielis.promise"
-            display="tokenfield"/></td>
-        <td></td>
-    </tr>
-     <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.VALINNAINEN.title">Valinnainen oman äidinkielen opetus</th>
-        <td><multi-select
-            order-with="userLanguages"
-            selection="uiModel.kielivalikoima.VALINNAINEN_OMAN_AIDINKIELEN_OPETUS.uris"
-            model="uiModel.tmp"
-            promise="uiModel.opetuskielis.promise"
-            display="tokenfield" /></td>
-        <td></td>
-    </tr>
-    <tr class="info">
-        <th tt="koulutus.edit.kielivalikoima.MUUT_KIELET.title">Muut kielet</th>
-        <td><multi-select
-            order-with="userLanguages"
-            selection="uiModel.kielivalikoima.MUUT_KIELET.uris"
-            model="uiModel.tmp"
-            promise="uiModel.opetuskielis.promise"
-            display="tokenfield" /></td>
-        <td></td>
-    </tr>
-    <tr><td colspan="2"><h4 tt="koulutus.edit.lukiodiplomit.title">Lukiodiplomit</h4></td><td></td></tr>
-    <tr><td colspan="2"><p tt="koulutus.edit.lukiodiplomit.help">Lukiodiplomien ohjeteksti puuttuu.</p></td><td></td></tr>
-    <tr class="info">
-        <th></th>
-        <td><multi-select model="uiModel.tmp"
-                      selection="uiModel.lukiodiplomit.uris"
-                      promise="uiModel.lukiodiplomit.promise" 
-                      display="checklist"
-                      columns="3"
-                      tt-show-all-title="koulutus.edit.lukiodiplomit.title"/></td>
-    <!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
-    <td></td>
-    </tr>
-</table>
 
+    <!-- ammattinimikkeet -->
+    <tr class="info">
+        <th tt="koulutus.edit.ammattinimikkeet.title" />
+        <td><multi-select model="uiModel.tmp"
+                      selection="uiModel.ammattinimikkeet.uris"
+                      promise="uiModel.ammattinimikkeet.promise" display="combobox"
+                      tt-show-all-title="koulutus.edit.ammattinimikkeet.title"/></td>
+<!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
+<td></td>
+</tr>
+</table>
 
 <mk-tabs
     model="getLisatietoKielet()"
@@ -93,14 +27,18 @@
         selection="uiModel.lisatietoKielet"
         display="dualpane"></multi-select>
 </div>
-
+ 
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
     <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
         <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
-        <rich-textarea max="1500" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
+        <rich-textarea max="{{lisatieto.length}}" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
     </div>
+
+    <h4 tt="koulutus.edit.kuva.title"></h4>
+    <p tt="koulutus.edit.kuva.help"></p>
+
+    <image-field model="getRakenneKuvaModel(uiModel.selectedKieliUri)"></image-field>
+
 </div>
-
-
