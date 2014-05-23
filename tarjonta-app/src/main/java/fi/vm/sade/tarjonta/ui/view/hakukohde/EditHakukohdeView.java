@@ -117,7 +117,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
       final HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
       
-      final String tila = hakuViewModel.getHaunTila();
+      final String tila = hakuViewModel!=null?hakuViewModel.getHaunTila():null;
       
       
       if (hakuViewModel != null) {
