@@ -1516,7 +1516,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
 
         //TODO tarvitaanko tätä?
-        loadHakukohdeHakuPvm();
+//        loadHakukohdeHakuPvm();
         
         boolean hasPermission=true;
 
