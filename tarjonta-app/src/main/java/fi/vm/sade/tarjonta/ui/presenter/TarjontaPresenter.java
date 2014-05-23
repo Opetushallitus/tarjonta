@@ -1530,6 +1530,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
         }
 
+        if(getModel()==null||getModel().getHakukohde()==null||getModel().getHakukohde().getHakuViewModel()==null) {
+            //uusi
+            return true;
+        }
         final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         
         final boolean parameterAllows = 
