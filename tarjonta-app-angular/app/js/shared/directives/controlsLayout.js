@@ -134,15 +134,9 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 	md.push(msg);
                 }
             }
-            //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
-            $scope.$watch('dto.modified', function(newValue, oldValue) {
-                /*if (angular.isUndefined(newValue) && angular.isUndefined(oldValue)) {
-                    //missing date.
-                    return;
-                } else if (newValue !== oldValue || $scope.model.metadata.length === 0) {*/
-                    $scope.model._reloadDisplayControls();
-                //}
-            });
+
+            $scope.$watch('dto.created', $scope.model._reloadDisplayControls);
+            $scope.$watch('dto.modified', $scope.model._reloadDisplayControls);
             
             
             $scope.model.reloadDisplayControls = function() {
