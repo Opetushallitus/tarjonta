@@ -458,9 +458,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(getModel().getHakukohde().getHakuViewModel().getHakuOid(), haut);
 
-        
-        //XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) 
-        
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
             public int compare(HakuViewModel a, HakuViewModel b) {
