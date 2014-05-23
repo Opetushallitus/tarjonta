@@ -72,7 +72,15 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoodistoUri koodistoUri = QKoodistoUri.koodistoUri;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
 
-        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).join(komoto.koulutusmoduuli, komo).leftJoin(komoto.koulutuslajis, koodistoUri).where(hakukohde.id.eq(hakukohdeId)).list(new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja, koodistoUri.koodiUri, komoto.pohjakoulutusvaatimusUri, komo.koulutustyyppiEnum));
+        return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).join(
+                komoto.koulutusmoduuli, komo).leftJoin(
+                        komoto.koulutuslajis, koodistoUri).where(
+                        hakukohde.id.eq(hakukohdeId)).list(
+                        new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja,
+                                koodistoUri.koodiUri,
+                                komoto.pohjakoulutusvaatimusUri,
+                                komo.koulutustyyppiEnum,
+                                komoto.tyyppi));
     }
 
     @Override
@@ -119,14 +127,14 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
-                        koulutusmoduuli.koulutustyyppiEnum, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
-                        koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                        koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                        koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
                         komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi
                 )
                 .list(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
-                                koulutusmoduuli.koulutustyyppiEnum, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
-                                koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                                koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                                koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
                                 komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
     }
 
@@ -139,15 +147,15 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
-                        koulutusmoduuli.koulutustyyppiEnum, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
-                        koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                        koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                        koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
                         komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi
                 )
                 .where(komoto.id.eq(koulutusmoduuliToteutusId))
                 .singleResult(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
-                                koulutusmoduuli.koulutustyyppiEnum, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
-                                koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
+                                koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                                koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
                                 komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
     }
 

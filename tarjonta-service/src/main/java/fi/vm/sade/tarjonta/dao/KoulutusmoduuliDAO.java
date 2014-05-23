@@ -21,9 +21,9 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,10 +122,10 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
         private String lukiolinjaKoodiUri;
-        private KoulutustyyppiUri koulutustyyppiUri;
+        private ToteutustyyppiEnum koulutustyyppiUri;
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
-        private KoulutustyyppiEnum koulutustyyppiEnum;
+        private ModuulityyppiEnum koulutustyyppiEnum;
         private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
         private TarjontaTila tila;
@@ -180,14 +180,14 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         /**
          * @return the koulutustyyppi
          */
-        public KoulutustyyppiEnum getKoulutustyyppi() {
+        public ModuulityyppiEnum getKoulutustyyppi() {
             return koulutustyyppiEnum;
         }
 
         /**
          * @param koulutustyyppiEnum the koulutustyyppi to set
          */
-        public void setKoulutustyyppi(KoulutustyyppiEnum koulutustyyppiEnum) {
+        public void setKoulutustyyppi(ModuulityyppiEnum koulutustyyppiEnum) {
             this.koulutustyyppiEnum = koulutustyyppiEnum;
         }
 
@@ -340,14 +340,14 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         /**
          * @return the koulutustyyppiUri
          */
-        public KoulutustyyppiUri getKoulutustyyppiUri() {
+        public ToteutustyyppiEnum getKoulutustyyppiUri() {
             return koulutustyyppiUri;
         }
 
         /**
          * @param koulutustyyppiUri the koulutustyyppiUri to set
          */
-        public void setKoulutustyyppiUri(KoulutustyyppiUri koulutustyyppiUri) {
+        public void setKoulutustyyppiUri(ToteutustyyppiEnum koulutustyyppiUri) {
             this.koulutustyyppiUri = koulutustyyppiUri;
         }
 

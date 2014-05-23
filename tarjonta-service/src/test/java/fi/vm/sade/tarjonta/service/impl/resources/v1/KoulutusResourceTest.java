@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
@@ -89,7 +89,7 @@ public class KoulutusResourceTest {
 
         
         komo = new Koulutusmoduuli();
-        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
 
         // stub komotodao, one hakukohde with two koulutuses
         hk1 = getHakukohde();
@@ -101,7 +101,7 @@ public class KoulutusResourceTest {
         komoto1.addHakukohde(hk1);
         Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1"))
                 .toReturn(komoto1);
-        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
         
         komoto2 = new KoulutusmoduuliToteutus();
         komoto2.setAlkamiskausiUri("kausi");
@@ -197,10 +197,10 @@ public class KoulutusResourceTest {
     public void testOVT7543() {
         //kaksi koulutusta kiinni hakukohteessa, ensimmäisen voi poistaa
         komo.setTila(TarjontaTila.JULKAISTU);
-        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
         ResultV1RDTO result = koulutusResource.deleteByOid("komoto-1");
         Assert.assertEquals(ResultV1RDTO.ResultStatus.OK, result.getStatus());
-        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        komo.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
         komoto1.setTila(TarjontaTila.POISTETTU);
 
         

@@ -221,9 +221,6 @@ public class TarjontaUIHelper {
                 case LUKIOKOULUTUS:
                     sourceKoodiUris.add(koulutus.getLukiolinjakoodi().getUri());
                     break;
-
-                case AMMATTIKORKEAKOULUTUS:
-                case YLIOPISTOKOULUTUS:
                 default:
                     LOG.error("UNKNOWN KOULUTUSTYYPPI, CANNOT GET RELATED KOODIS FOR: {}", koulutus);
                     LOG.error(" koulutustyyppi == {}", koulutus.getKoulutustyyppi());

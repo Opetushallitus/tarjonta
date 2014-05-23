@@ -111,11 +111,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             case LUKIOKOULUTUS:
                 moduuli = handleLukiomoduuli(koulutus);
                 break;
-            case AMMATTIKORKEAKOULUTUS:
-            case YLIOPISTOKOULUTUS:
-                moduuli = handleKorkeakoulumoduuli(koulutus);
-                break;
-
             default:
                 throw new RuntimeException("Unsupported koulutustyyppi.");
         }
@@ -290,7 +285,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         } else if (parentKomo != null) {
             parentKomoto = new KoulutusmoduuliToteutus();
             generateOidForKomoto(parentKomoto);
-           // parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
+            // parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);

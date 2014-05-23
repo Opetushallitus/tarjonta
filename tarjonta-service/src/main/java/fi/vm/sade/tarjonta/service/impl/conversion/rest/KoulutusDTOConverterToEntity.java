@@ -29,7 +29,7 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
@@ -39,7 +39,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -257,7 +257,7 @@ public class KoulutusDTOConverterToEntity {
         /*
          * KOMOTO custom data conversion
          */
-        komoto.setLukiolinjaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.LUKIOLINJA));
+        komoto.setOsaamisalaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.OSAAMISALA));
         komoto.setTutkintonimikeUri(commonConverter.convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
 
         if (dto.getOpetuskielis() != null) {
@@ -298,7 +298,7 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(dto, "KoulutusKorkeakouluV1RDTO object cannot be null.");
         Preconditions.checkNotNull(komo, "KoulutusmoduuliToteutus object cannot be null.");
         Preconditions.checkNotNull(dto.getKoulutusmoduuliTyyppi(), "KoulutusmoduuliTyyppi enum cannot be null.");
-        Preconditions.checkNotNull(dto.getTyyppi(), "Tyyppi enum cannot be null.");
+        Preconditions.checkNotNull(dto.getToteutustyyppi(), "Toteutustyyppi enum cannot be null.");
 
         final String organisationOId = dto.getOrganisaatio().getOid();
         Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");
@@ -313,8 +313,8 @@ public class KoulutusDTOConverterToEntity {
         //Kandidaatti can be null object:
         komo.setKandidaatinKoulutusUri(commonConverter.convertToUri(dto.getKandidaatinKoulutuskoodi(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, ALLOW_NULL_KOODI_URI));
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
-        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
-        komo.setKoulutustyyppiUri(toListUri(dto.getTyyppi()));
+        komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiUri(toListUri(dto.getToteutustyyppi()));
         komo.setTutkintonimikes(commonConverter.convertToUris(dto.getTutkintonimikes(), komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE));
         komoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
     }
@@ -395,7 +395,7 @@ public class KoulutusDTOConverterToEntity {
         base(komoto, dto);
         komoto.setTarjoaja(organisationOId);
         commonConverter.handleDates(komoto, dto); //set dates
-        komoto.setTyyppi(dto.getTyyppi());
+        komoto.setTyyppi(dto.getToteutustyyppi());
 
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
@@ -451,7 +451,7 @@ public class KoulutusDTOConverterToEntity {
         this.koulutusmoduuliToteutusDAO.update(komoto);
     }
 
-    private static String toListUri(KoulutustyyppiUri e) {
+    private static String toListUri(ToteutustyyppiEnum e) {
         return EntityUtils.joinListToString(e.uri());
     }
 }

@@ -14,7 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
@@ -23,7 +23,7 @@ import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
 public class KoulutusLukioAikuistenOppimaaraV1RDTO extends KoulutusLukioV1RDTO {
 
     public KoulutusLukioAikuistenOppimaaraV1RDTO() {
-        super(KoulutustyyppiUri.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA);
+        super(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA);
     }
 
 }

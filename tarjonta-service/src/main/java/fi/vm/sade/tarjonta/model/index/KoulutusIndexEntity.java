@@ -3,7 +3,8 @@ package fi.vm.sade.tarjonta.model.index;
 import java.util.Date;
 
 import com.mysema.query.annotations.QueryProjection;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -15,10 +16,8 @@ public class KoulutusIndexEntity {
     private Long koulutusId;
     private final String oid;
     private String tarjoaja;
-    private KoulutustyyppiEnum koulutustyyppiEnum;
-    private String koulutusohjelmaKoodi;
-    private String lukiolinja;
-    private String koulutusKoodi;
+    private ModuulityyppiEnum baseKoulutustyyppiEnum;
+    private ToteutustyyppiEnum subKoulutustyyppiEnum;
     private Date koulutuksenAlkamisPvm;
     private TarjontaTila tila;
     private String koulutusmoduuliOid;
@@ -27,29 +26,53 @@ public class KoulutusIndexEntity {
     private String kausi;
     private Integer vuosi;
 
+    //required uri for all data objects
+    private String koulutusUri;
+
+    //child komo/komoto name data fields:
+    private String koulutusohjelmaUri;
+    private String lukiolinjaUri;
+    private String osaamisalaUri;
+
     @QueryProjection
-    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri, KoulutustyyppiEnum koulutustyyppiEnum) {
+    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri,
+            ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
         this.koulutuslaji = koulutuslaji;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimusUri;
-        this.koulutustyyppiEnum = koulutustyyppiEnum;
+        this.baseKoulutustyyppiEnum = baseKoulutustyyppiEnum;
+        this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
     }
 
     @QueryProjection
-    public KoulutusIndexEntity(Long id, String oid, Date koulutuksenAlkamisPvm,
-            TarjontaTila tila, KoulutustyyppiEnum koulutustyyppiEnum,
-            String koulutusmoduuliOid, String koulutusKoodi, String lukiolinja,
-            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi) {
+    public KoulutusIndexEntity(
+            Long id,
+            String oid,
+            Date koulutuksenAlkamisPvm,
+            TarjontaTila tila,
+            ModuulityyppiEnum baseKoulutustyyppiEnum,
+            ToteutustyyppiEnum subKoulutustyyppiEnum,
+            String koulutusmoduuliOid, String koulutusUri,
+            String lukiolinjaUri,
+            String koulutusohjelmaUri,
+            String osaamisalaUri,
+            String tarjoaja,
+            String pohjakoulutusVaatimus,
+            String kausi,
+            Integer vuosi) {
+
         this.koulutusId = id;
         this.oid = oid;
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
-        this.koulutusKoodi = koulutusKoodi;
-        this.koulutustyyppiEnum = koulutustyyppiEnum;
-        this.lukiolinja = lukiolinja;
-        this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
+        this.koulutusUri = koulutusUri;
+        this.baseKoulutustyyppiEnum = baseKoulutustyyppiEnum;
+        this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
+        this.lukiolinjaUri = lukiolinjaUri;
+        this.koulutusohjelmaUri = koulutusohjelmaUri;
+        this.osaamisalaUri = osaamisalaUri;
         this.tarjoaja = tarjoaja;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
         this.kausi = kausi;
@@ -83,20 +106,20 @@ public class KoulutusIndexEntity {
         return tarjoaja;
     }
 
-    public KoulutustyyppiEnum getKoulutustyyppiEnum() {
-        return koulutustyyppiEnum;
+    public ModuulityyppiEnum getBaseKoulutustyyppiEnum() {
+        return baseKoulutustyyppiEnum;
     }
 
     public String getKoulutusohjelmaKoodi() {
-        return koulutusohjelmaKoodi;
+        return koulutusohjelmaUri;
     }
 
     public String getLukiolinja() {
-        return lukiolinja;
+        return lukiolinjaUri;
     }
 
-    public String getKoulutusKoodi() {
-        return koulutusKoodi;
+    public String getKoulutusUri() {
+        return koulutusUri;
     }
 
     public Date getKoulutuksenAlkamisPvm() {
@@ -122,10 +145,12 @@ public class KoulutusIndexEntity {
     @Override
     public String toString() {
         return "KoulutusIndexEntity [koulutusId=" + koulutusId + ", oid=" + oid
-                + ", tarjoaja=" + tarjoaja + ", koulutusTyyppi="
-                + koulutustyyppiEnum + ", koulutusohjelmaKoodi="
-                + koulutusohjelmaKoodi + ", lukiolinja=" + lukiolinja
-                + ", koulutusKoodi=" + koulutusKoodi + ", koulutuksenAlkamisPvm="
+                + ", tarjoaja=" + tarjoaja + ", "
+                + "baseKoulutusTyyppi=" + baseKoulutustyyppiEnum
+                + "subKoulutusTyyppi=" + subKoulutustyyppiEnum
+                + ", koulutusohjelmaKoodi="
+                + koulutusohjelmaUri + ", lukiolinja=" + lukiolinjaUri
+                + ", koulutusKoodi=" + koulutusUri + ", koulutuksenAlkamisPvm="
                 + koulutuksenAlkamisPvm + ", tila=" + tila
                 + ", koulutusmoduuliOid=" + koulutusmoduuliOid
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
@@ -160,6 +185,34 @@ public class KoulutusIndexEntity {
      */
     public void setVuosi(Integer vuosi) {
         this.vuosi = vuosi;
+    }
+
+    /**
+     * @return the subKoulutustyyppiEnum
+     */
+    public ToteutustyyppiEnum getSubKoulutustyyppiEnum() {
+        return subKoulutustyyppiEnum;
+    }
+
+    /**
+     * @param subKoulutustyyppiEnum the subKoulutustyyppiEnum to set
+     */
+    public void setSubKoulutustyyppiEnum(ToteutustyyppiEnum subKoulutustyyppiEnum) {
+        this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
+    }
+
+    /**
+     * @return the osaamisalaUri
+     */
+    public String getOsaamisalaUri() {
+        return osaamisalaUri;
+    }
+
+    /**
+     * @param osaamisalaUri the osaamisalaUri to set
+     */
+    public void setOsaamisalaUri(String osaamisalaUri) {
+        this.osaamisalaUri = osaamisalaUri;
     }
 
 }

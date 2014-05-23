@@ -30,7 +30,7 @@ app.controller('BaseReviewController', [
             $scope.isMutable = tila.mutable && data;
             $scope.isRemovable = tila.removable && data;
 
-            if (koulutusModel.tyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
+            if (koulutusModel.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
                 //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
                 if (angular.isDefined(koulutusModel.koulutuslaji) &&
                         KoodistoURI.compareKoodi(
@@ -118,15 +118,15 @@ app.controller('BaseReviewController', [
             $log.debug("parents:", parents);
         });
 
-        $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.tyyppi].KUVAUS_ORDER;
-//        if (koulutusModel.tyyppi === 'KORKEAKOULUTUS') {
+        $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.toteutustyyppi].KUVAUS_ORDER;
+//        if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
 //            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
 //                if (kieliUri.indexOf(kieliUri) != -1) {
 //                    $scope.model.userLangUri = kieliUri;
 //                }
 //            }
 //            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
-//        } else if (koulutusModel.tyyppi === 'LUKIOKOULUTUS') {
+//        } else if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
 //            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
 //                if (kieliUri.indexOf(kieliUri) != -1) {
 //                    $scope.model.userLangUri = kieliUri;
@@ -265,7 +265,7 @@ app.controller('BaseReviewController', [
             var koulutusOids = [];
             koulutusOids.push($scope.model.koulutus.oid);
             SharedStateService.addToState('SelectedKoulutukses', koulutusOids);
-            SharedStateService.addToState('SelectedKoulutusTyyppi', $scope.model.koulutus.tyyppi);
+            SharedStateService.addToState('SelectedKoulutusTyyppi', $scope.model.koulutus.toteutustyyppi);
             SharedStateService.addToState('SelectedOrgOid', $scope.model.koulutus.organisaatio.oid);
             $location.path('/hakukohde/new/edit');
         };
@@ -386,19 +386,19 @@ app.controller('BaseReviewController', [
 
             var result = "XXX";
 
-            if (koulutusModel.tyyppi === 'KORKEAKOULUTUS') {
+            if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
                 if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {
                     // Just take first value for language
                     userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
                 }
                 result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
-            } else if (koulutusModel.tyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
+            } else if (koulutusModel.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
                 if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.meta[userLangUri])) {
                     // Just take first value for language
                     userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.meta)[0];
                 }
                 result = $scope.model.koulutus.koulutusohjelma.meta[userLangUri].nimi;
-            } else if (koulutusModel.tyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA') {
+            } else if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA') {
                 if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.meta[userLangUri])) {
                     // Just take first value for language
                     userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.meta)[0];

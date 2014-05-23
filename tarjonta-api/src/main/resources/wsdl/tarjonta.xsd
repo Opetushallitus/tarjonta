@@ -1074,8 +1074,6 @@
             <xs:enumeration value="AmmatillinenPeruskoulutus" />
             <xs:enumeration value="Lukiokoulutus"/>
             <xs:enumeration value="Korkeakoulutus"/>
-            <xs:enumeration value="Ammattikorkeakoulutus"/>
-            <xs:enumeration value="Yliopistokoulutus"/>
             <xs:enumeration value="PerusopetuksenLisaopetus"/>   
             <xs:enumeration value="ValmentavaJaKuntouttavaOpetus" />
             <xs:enumeration value="AmmOhjaavaJaValmistavaKoulutus" /><!-- Ammatilliseen koulutukseen ohjaava ja valmistava koulutus -->

@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKomoRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.komo.validation.KomoValidator;
@@ -33,7 +33,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,7 +166,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         ResultV1RDTO result = new ResultV1RDTO();
 
         if (!KomoValidator.validateBaseData(dto, result)) {
-            switch (KoulutustyyppiEnum.fromEnum(dto.getKoulutusasteTyyppi())) {
+            switch (ModuulityyppiEnum.fromEnum(dto.getKoulutusasteTyyppi())) {
                 case KORKEAKOULUTUS:
                     KomoValidator.validateModuleKorkeakoulu(dto, result);
                     break;
@@ -241,7 +241,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
     @Override
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            KoulutustyyppiUri koulutustyyppiUri,
+            ToteutustyyppiEnum koulutustyyppiUri,
             String koulutuskoodiUri,
             String tila) {
         return searchModule(koulutustyyppiUri, null, koulutuskoodiUri, tila);
@@ -249,7 +249,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
     @Override
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            KoulutustyyppiUri koulutustyyppiUri,
+            ToteutustyyppiEnum koulutustyyppiUri,
             KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
             String koulutuskoodiUri,
             String tila) {

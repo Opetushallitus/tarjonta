@@ -33,7 +33,6 @@ public enum FieldNames {
     KOULUTUS,
     KOULUTUSKOODI_KANDIDAATTI,
     KOULUTUSOHJELMA,
-    LUKIOLINJA,
     ALKAMISKAUSI,
     AIHEES,
     OPETUSKIELIS,
@@ -47,12 +46,11 @@ public enum FieldNames {
     OPPILAITOSTYYPPI,
     KOULUTUSTYYPPI,
     TUNNISTE,
-    
     //Lukio:
     KOULUTUSLAJI,
     LUKIODIPLOMI,
     KIELIVALIKOIMA,
-    
+    LUKIOLINJA,
     //amm
     OSAAMISALA;
 }

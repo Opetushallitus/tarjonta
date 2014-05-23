@@ -57,7 +57,7 @@ public class KomoValidator {
         }
 
         if (dto.getKoulutusasteTyyppi() == null) {
-            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TYYPPI_ENUM_MISSING.lower()));
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING.lower()));
         }
 
         if (dto.getTila() == null) {

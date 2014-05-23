@@ -58,7 +58,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import javax.persistence.Enumerated;
 
@@ -73,11 +73,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
     private static final long serialVersionUID = -1278564574746813425L;
-    
+
     @Column(name = "tyyppi")
     @Enumerated(EnumType.STRING)
-    private KoulutustyyppiUri tyyppi;
-    
+    private ToteutustyyppiEnum tyyppi;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
@@ -240,6 +240,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
+
+    @OneToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "koulutusmoduuli_toteutus_children_id", referencedColumnName = "id", nullable = true)
+    private KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
@@ -598,8 +602,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return suunniteltukestoYksikkoUri;
     }
 
- 
-
     /**
      * Sanallinen kuvaus arviointikriteereistä.
      *
@@ -861,7 +863,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public boolean isKuva(String kielikoodi) {
         return kuvat.containsKey(kielikoodi);
     }
-    
+
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
     }
@@ -1006,15 +1008,30 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the tyyppi
      */
-    public KoulutustyyppiUri getTyyppi() {
+    public ToteutustyyppiEnum getTyyppi() {
         return tyyppi;
     }
 
     /**
      * @param tyyppi the tyyppi to set
      */
-    public void setTyyppi(KoulutustyyppiUri tyyppi) {
+    public void setTyyppi(ToteutustyyppiEnum tyyppi) {
         this.tyyppi = tyyppi;
+    }
+
+    /**
+     * @return the nayttotutkintoValmentavaKoulutus
+     */
+    public KoulutusmoduuliToteutus getNayttotutkintoValmentavaKoulutus() {
+        return nayttotutkintoValmentavaKoulutus;
+    }
+
+    /**
+     * @param nayttotutkintoValmentavaKoulutus the
+     * nayttotutkintoValmentavaKoulutus to set
+     */
+    public void setNayttotutkintoValmentavaKoulutus(KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus) {
+        this.nayttotutkintoValmentavaKoulutus = nayttotutkintoValmentavaKoulutus;
     }
 
 }

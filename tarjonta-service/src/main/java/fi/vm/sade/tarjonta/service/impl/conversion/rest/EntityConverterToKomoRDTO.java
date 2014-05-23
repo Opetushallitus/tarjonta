@@ -26,7 +26,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -72,7 +72,7 @@ public class EntityConverterToKomoRDTO {
         //KOMO
         Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "KoulutustyyppiEnum cannot be null!");
         Preconditions.checkNotNull(komo.getKoulutustyyppiUri(), "KoulutustyyppiUri cannot be null!");
-        List<KoulutustyyppiUri> convertStringListToEnums = convertStringListToEnums(komo.getKoulutustyyppiUri());
+        List<ToteutustyyppiEnum> convertStringListToEnums = convertStringListToEnums(komo.getKoulutustyyppiUri());
 
         switch (convertStringListToEnums.get(0)) {
             case KORKEAKOULUTUS:
@@ -137,11 +137,11 @@ public class EntityConverterToKomoRDTO {
         return commonConverter.convertToKoodiUrisDTO(splitStringToList, locale, fieldName, showMeta);
     }
 
-    private List<KoulutustyyppiUri> convertStringListToEnums(String str) {
+    private List<ToteutustyyppiEnum> convertStringListToEnums(String str) {
         String[] split = StringUtils.split(str, EntityUtils.STR_ARRAY_SEPARATOR);
-        ArrayList<KoulutustyyppiUri> types = Lists.<KoulutustyyppiUri>newArrayList();
+        ArrayList<ToteutustyyppiEnum> types = Lists.<ToteutustyyppiEnum>newArrayList();
         for (String s : split) {
-            types.add(KoulutustyyppiUri.fromString(s));
+            types.add(ToteutustyyppiEnum.fromString(s));
         }
 
         return types;

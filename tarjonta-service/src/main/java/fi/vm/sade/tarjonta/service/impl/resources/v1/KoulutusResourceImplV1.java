@@ -113,7 +113,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
@@ -598,7 +598,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     @Override
     public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
             String koulutuskoodi,
-            KoulutustyyppiUri koulutustyyppiUri,
+            ToteutustyyppiEnum koulutustyyppiUri,
             String defaults, //new String("field:uri, field:uri, ....")
             Boolean showMeta,
             String userLang) {
@@ -1086,14 +1086,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private static KoulutustyyppiUri getType(KoulutusmoduuliToteutus komoto) {
+    private static ToteutustyyppiEnum getType(KoulutusmoduuliToteutus komoto) {
         if (komoto.getTyyppi() != null) {
             return komoto.getTyyppi();
         } else {
             LOG.debug("Trying to resolve type of koulutus entity, OID : {}", komoto.getOid());
             final List<String> uris = EntityUtils.splitStringToList(komoto.getKoulutusmoduuli().getKoulutustyyppiUri());
             if (uris.size() == 1 && !uris.isEmpty()) {
-                return KoulutustyyppiUri.fromString(uris.get(0));
+                return ToteutustyyppiEnum.fromString(uris.get(0));
             } else {
                 throw new RuntimeException("Cannot convert 'unknown' entity to DTO - found KOMO koulutustyyppi : '" + komoto.getKoulutusmoduuli().getKoulutustyyppiUri() + "' for komoto OID :" + komoto.getOid());
             }

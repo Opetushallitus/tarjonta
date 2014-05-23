@@ -22,7 +22,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -93,7 +93,7 @@ public interface KomoV1Resource {
             notes = "Operaatio näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
+            @PathParam("koulutustyyppi") ToteutustyyppiEnum koulutustyyppiUri,
             @QueryParam("koulutus") String koulutuskoodiUri,
             @QueryParam("tila") String tila);
 
@@ -105,7 +105,7 @@ public interface KomoV1Resource {
             notes = "Operaatio näyttää supistetun koulutusmoduulien tulosjoukon annetuilla parametreillä",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
+            @PathParam("koulutustyyppi") ToteutustyyppiEnum koulutustyyppiUri,
             @PathParam("moduuli") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
             @QueryParam("koulutus") String koulutuskoodiUri,
             @QueryParam("tila") String tila);

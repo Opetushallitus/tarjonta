@@ -72,16 +72,16 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonCreatePageConfig = function(routeParams, result) {
-            if (angular.isDefined(routeParams) && angular.isDefined(routeParams.tyyppi)) {
+            if (angular.isDefined(routeParams) && angular.isDefined(routeParams.toteutustyyppi)) {
                 //create new 
                 $scope.CONFIG = {
-                    TYYPPI: routeParams.tyyppi,
+                    TYYPPI: routeParams.toteutustyyppi,
                     KOULUTUSTYYPPI: routeParams.koulutustyyppi
                 };
-            } else if (angular.isDefined(result.tyyppi)) {
+            } else if (angular.isDefined(result.toteutustyyppi)) {
                 //page load
                 $scope.CONFIG = {
-                    TYYPPI: result.tyyppi,
+                    TYYPPI: result.toteutustyyppi,
                     KOULUTUSTYYPPI: result.koulutustyyppi.uri
                 };
             } else {
@@ -435,7 +435,7 @@ app.controller('BaseEditController', [
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;
 
-                if (model.tyyppi === 'LUKIOKOULUTUS') {
+                if (model.toteutustyyppi === 'LUKIOKOULUTUS') {
                     //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
                     if (angular.isDefined(uiModel.loadedKoulutuslaji) &&
                             KoodistoURI.compareKoodi(

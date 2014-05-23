@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
@@ -62,8 +62,8 @@ public class KoulutusValidator {
             return true;
         }
 
-        if (koulutus.getTyyppi() == null) {
-            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TYYPPI_ENUM_MISSING.lower()));
+        if (koulutus.getToteutustyyppi() == null) {
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING.lower()));
         }
 
         if (koulutus.getTila() == null) {
@@ -444,7 +444,7 @@ public class KoulutusValidator {
         }
     }
 
-    private static final Set<KoulutustyyppiEnum> allowDeletingPublishedKomoForTypes = new ImmutableSet.Builder<KoulutustyyppiEnum>().add(KoulutustyyppiEnum.KORKEAKOULUTUS, KoulutustyyppiEnum.AMMATTIKORKEAKOULUTUS, KoulutustyyppiEnum.YLIOPISTOKOULUTUS).build();
+    private static final Set<ModuulityyppiEnum> allowDeletingPublishedKomoForTypes = new ImmutableSet.Builder<ModuulityyppiEnum>().add(ModuulityyppiEnum.KORKEAKOULUTUS).build();
 
     public static void validateKoulutusDelete(final KoulutusmoduuliToteutus komoto, final List<KoulutusmoduuliToteutus> relatedKomotos, final List<String> children, final List<String> parent, Map<String, Integer> hkKoulutusMap, ResultV1RDTO dto) {
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");

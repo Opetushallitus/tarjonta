@@ -1,6 +1,6 @@
 package fi.vm.sade.tarjonta.shared.types;
 
-public enum KoulutustyyppiUri {
+public enum ToteutustyyppiEnum {
 
     VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5"),
     ERIKOISAMMATTITUTKINTO("koulutustyyppi_12"),
@@ -19,7 +19,7 @@ public enum KoulutustyyppiUri {
 
     final private String koulutustyyppiUri;
 
-    private KoulutustyyppiUri(String koulutustyyppiUri) {
+    private ToteutustyyppiEnum(String koulutustyyppiUri) {
         this.koulutustyyppiUri = koulutustyyppiUri;
     }
 
@@ -33,8 +33,8 @@ public enum KoulutustyyppiUri {
      * @param strValue
      * @return
      */
-    public static KoulutustyyppiUri fromString(String strValue) {
-        for (KoulutustyyppiUri e : KoulutustyyppiUri.values()) {
+    public static ToteutustyyppiEnum fromString(String strValue) {
+        for (ToteutustyyppiEnum e : ToteutustyyppiEnum.values()) {
             if (e.koulutustyyppiUri.equals(strValue) || e.name().equals(strValue)) {
                 return e;
             }

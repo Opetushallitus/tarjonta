@@ -25,7 +25,8 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class IndexerResourceTest {
@@ -63,7 +64,7 @@ public class IndexerResourceTest {
 
     private List<KoulutusIndexEntity> getHakukohdeKoulutukset(long id) {
         List<KoulutusIndexEntity> hakukohteenKoulutukset = Lists.newArrayList();
-        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus", KoulutustyyppiEnum.KORKEAKOULUTUS);
+        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus", ModuulityyppiEnum.KORKEAKOULUTUS, ToteutustyyppiEnum.KORKEAKOULUTUS);
         hakukohteenKoulutukset.add(koulutus);
         return hakukohteenKoulutukset;
     }

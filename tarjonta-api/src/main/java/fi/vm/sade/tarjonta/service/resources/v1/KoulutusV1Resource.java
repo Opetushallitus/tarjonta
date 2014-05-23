@@ -32,7 +32,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
@@ -132,7 +132,7 @@ public interface KoulutusV1Resource {
             response = KoulutusmoduuliStandardRelationV1RDTO.class)
     public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
             @PathParam("value") String value,
-            @PathParam("koulutustyyppi") KoulutustyyppiUri koulutustyyppiUri,
+            @PathParam("koulutustyyppi") ToteutustyyppiEnum koulutustyyppiUri,
             @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
             @QueryParam("meta") Boolean showMeta,
             @QueryParam("lang") String userLang);

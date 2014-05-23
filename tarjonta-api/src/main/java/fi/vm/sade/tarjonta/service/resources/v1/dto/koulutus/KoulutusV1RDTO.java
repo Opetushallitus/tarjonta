@@ -25,9 +25,10 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,7 +40,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  * @author jwilen
  */
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "tyyppi")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi")
 @JsonSubTypes({
     @Type(value = KoulutusKorkeakouluV1RDTO.class, name = "KORKEAKOULUTUS"),
     @Type(value = KoulutusLukioV1RDTO.class, name = "LUKIOKOULUTUS"),
@@ -49,9 +50,12 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 })
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
-    @ApiModelProperty(value = "Koulutuksen tarkasti yksiloiva enumeraatio", required = true)
+    @ApiModelProperty(value = "Koulutuksen toteutuksen tarkasti yksiloiva enumeraatio", required = true)
     @JsonTypeId
-    private KoulutustyyppiUri tyyppi;
+    private final ToteutustyyppiEnum toteutustyyppi;
+
+    @ApiModelProperty(value = "Koulutusmoduulin karkeasti yksilöivä enumeraatio", required = true)
+    private ModuulityyppiEnum moduulityyppi;
 
     @ApiModelProperty(value = "Koulutusmoduulin yksilöivä tunniste")
     private String komoOid;
@@ -74,10 +78,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-
-    @ApiModelProperty(value = "Koulutuksen koulutusastetyyppi, KoulutusV1RDTO.tyyppi-kenttä korvaa tämän tiedon.", required = true)
-    @Deprecated
-    private KoulutusasteTyyppi koulutusasteTyyppi;
 
     @ApiModelProperty(value = "Koulutuksen koulutusmoduulin monikieliset kuvaustekstit")
     private KuvausV1RDTO<KomoTeksti> kuvausKomo;
@@ -116,8 +116,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "OPH koulutustyyppi-koodi", required = false)
     private KoodiV1RDTO koulutustyyppi;
 
-    public KoulutusV1RDTO(KoulutustyyppiUri tyyppi) {
-        this.tyyppi = tyyppi;
+    public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
+        this.toteutustyyppi = toteutustyyppi;
+        this.moduulityyppi = moduulityyppi;
     }
 
     public String getKomoOid() {
@@ -202,11 +203,17 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     /**
+     * Will be removed in the future, use the moduulityyppi or toteutustyyppi
+     * enum.
+     *
      * @return the koulutusasteTyyppi
      */
     @Deprecated
     public KoulutusasteTyyppi getKoulutusasteTyyppi() {
-        return koulutusasteTyyppi;
+        if (moduulityyppi != null) {
+            return moduulityyppi.getKoulutusasteTyyppi();
+        }
+        return null;
     }
 
     /**
@@ -448,19 +455,24 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     }
 
     /**
-     * Koulutuksen tarkasti yksiloiva enumeraatio. Vastaa
-     * koulutustyyppi-koodiston sisaltamia arvoja.
-     *
-     * @return the tyyppi
+     * @return the toteutustyyppi
      */
-    public KoulutustyyppiUri getTyyppi() {
-        return tyyppi;
+    public ToteutustyyppiEnum getToteutustyyppi() {
+        return toteutustyyppi;
     }
 
     /**
-     * @param koulutusasteTyyppi the koulutusasteTyyppi to set
+     * @return the moduulityyppi
      */
-    public void setKoulutusasteTyyppi(KoulutusasteTyyppi koulutusasteTyyppi) {
-        this.koulutusasteTyyppi = koulutusasteTyyppi;
+    public ModuulityyppiEnum getModuulityyppi() {
+        return moduulityyppi;
     }
+
+    /**
+     * @param moduulityyppi the moduulityyppi to set
+     */
+    public void setModuulityyppi(ModuulityyppiEnum moduulityyppi) {
+        this.moduulityyppi = moduulityyppi;
+    }
+
 }

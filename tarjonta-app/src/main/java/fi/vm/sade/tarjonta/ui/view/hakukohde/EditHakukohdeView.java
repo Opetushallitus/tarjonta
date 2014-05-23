@@ -510,8 +510,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
         perustiedotTab = tabs.addTab(wrapperVl, T("tabNimi"));
         valintakokeetTab = tabs.addTab(valintakokeet, T("valintakoeTab"));
         liitteetTab = tabs.addTab(liitteet, T("liitteetTab"));
-        if (presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS)
-    		|| presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.YLIOPISTOKOULUTUS)) {
+        if (presenter.getModel().getHakukohde().getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.KORKEAKOULUTUS)) {
             kuvauksetTab = tabs.addTab(kuvaukset, T("sovapeTab"));
         }
         

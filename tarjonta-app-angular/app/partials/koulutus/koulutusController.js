@@ -43,7 +43,7 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
                  PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6"), Perusopetuksen lisäopetus
                  */
 
-                var type = $route.current.locals.koulutusModel.result.tyyppi;
+                var type = $route.current.locals.koulutusModel.result.toteutustyyppi;
                 var patt = new RegExp("(AMMATILLINEN_PERUSTUTKINTO|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA|KORKEAKOULUTUS|LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA)");
                 if (patt.test(type)) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType  + "/" + type + ".html";

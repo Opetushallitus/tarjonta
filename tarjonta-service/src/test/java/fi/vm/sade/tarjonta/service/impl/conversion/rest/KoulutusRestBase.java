@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -104,7 +104,7 @@ abstract class KoulutusRestBase {
         m.setEqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.EQF));
         m.setLukiolinjaUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.LUKIOLINJA));
         m.setTutkintonimikeUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.TUTKINTONIMIKE));
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
     }
 
     protected static KoodiV1RDTO toKoodiUri(final String type) {

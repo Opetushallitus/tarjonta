@@ -71,6 +71,12 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     @ApiModelProperty(value = "OPH koulutustyyppi-koodit", required = false)
     private KoodiUrisV1RDTO koulutustyyppis;
 
+    @ApiModelProperty(value = "lukiolinja-koodi", required = true)
+    private KoodiV1RDTO lukiolinja;
+
+    @ApiModelProperty(value = "osaamisala-koodi", required = true)
+    private KoodiV1RDTO osaamisala;
+
     public KomoV1RDTO() {
     }
 
@@ -292,6 +298,34 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
         }
 
         this.koulutustyyppis = koulutustyyppis;
+    }
+
+    /**
+     * @return the lukiolinja
+     */
+    public KoodiV1RDTO getLukiolinja() {
+        return lukiolinja;
+    }
+
+    /**
+     * @param lukiolinja the lukiolinja to set
+     */
+    public void setLukiolinja(KoodiV1RDTO lukiolinja) {
+        this.lukiolinja = lukiolinja;
+    }
+
+    /**
+     * @return the osaamisala
+     */
+    public KoodiV1RDTO getOsaamisala() {
+        return osaamisala;
+    }
+
+    /**
+     * @param osaamisala the osaamisala to set
+     */
+    public void setOsaamisala(KoodiV1RDTO osaamisala) {
+        this.osaamisala = osaamisala;
     }
 
 }

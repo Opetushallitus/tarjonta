@@ -15,7 +15,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
@@ -29,7 +29,7 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
     private Double hinta;
 
     public KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO() {
-        super(KoulutustyyppiUri.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
+        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
     }
 
    

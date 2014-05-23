@@ -60,8 +60,6 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {enum: 'MAAHANM_AMM_VALMISTAVA_KOULUTUS', name: "MaahanmAmmValmistavaKoulutus"},
                     {enum: 'AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS', name: "AmmOhjaavaJaValmistavaKoulutus"},
                     {enum: 'MAAHANM_LUKIO_VALMISTAVA_KOULUTUS', name: "MaahanmLukioValmistavaKoulutus"},
-                    {enum: 'YLIOPISTOKOULUTUS', name: "Yliopistokoulutus"},
-                    {enum: 'AMMATTIKORKEAKOULUTUS', name: "Ammattikorkeakoulutus"},
                     {enum: 'KORKEAKOULUTUS', name: "Korkeakoulutus"},
                     {enum: 'PERUSOPETUS', name: "Perusopetus"},
                     {enum: 'PERUSOPETUS_ULKOMAINEN', name: "PerusopetusUlkomainen"},

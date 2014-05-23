@@ -15,7 +15,8 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.shared.types.KoulutustyyppiUri;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
@@ -30,11 +31,11 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
     private String linkkiOpetussuunnitelmaan;
 
     public KoulutusAmmatillinenPerustutkintoV1RDTO() {
-        super(KoulutustyyppiUri.AMMATILLINEN_PERUSTUTKINTO);
+        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
 
-    protected KoulutusAmmatillinenPerustutkintoV1RDTO(KoulutustyyppiUri koulutustyyppiUri) {
-        super(koulutustyyppiUri);
+    protected KoulutusAmmatillinenPerustutkintoV1RDTO(ToteutustyyppiEnum koulutustyyppiUri) {
+        super(koulutustyyppiUri, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
 
     /**

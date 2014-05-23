@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
@@ -157,7 +157,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
     public void testLukioCopyCommonUrisToKomoto() throws OIDCreationException {
         Koulutusmoduuli m = new Koulutusmoduuli();
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
 
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
         dto.setOrganisaatio(new OrganisaatioV1RDTO("org_oid", "org_name", null));
