@@ -117,10 +117,12 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
       HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
       if (hakuViewModel != null) {
-          boolean isHakuStarted =  checkHakuStarted(hakuViewModel);
+          
+          boolean hasEditPermission = presenter.isHakukohdeEditableForCurrentUser();
+          
           if (isHakuStarted) {
-              enableButtonByListener(clickListenerSaveAsDraft,!isHakuStarted);
-              enableButtonByListener(clickListenerSaveAsReady,!isHakuStarted);
+              enableButtonByListener(clickListenerSaveAsDraft, hasEditPermission);
+              enableButtonByListener(clickListenerSaveAsReady, hasEditPermission);
           }
       }
 
@@ -128,33 +130,9 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
     }
 
-    private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
-
-            Date hakualkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
-
-            if (presenter.getPermission().userIsOphCrud()) {
-                return false;
-            }
-
-            if (isErillishakuOrLisahaku(hakuViewModel)) {
-                return false;
-            } else if (new Date().after(hakualkamisPvm)) {
-                return true;
-            } else {
-                return false;
-            }
-            //What if user is OPH ? should he or she have the right to edit haku ?
-            /*else if (presenter.getPermission().userIsOphCrud()) {
-
-            }*/
-
-
-    }
-
     private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
         return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
     }
-
 
     public static Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
