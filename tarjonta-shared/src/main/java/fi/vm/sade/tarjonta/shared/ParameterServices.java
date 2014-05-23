@@ -132,7 +132,7 @@ public class ParameterServices implements InitializingBean {
             try {
                 ts = p.getLong(fieldName);
             } catch (JSONException ex) {
-                LOG.error("Failed to parse to long: " + target + "/" + parameterName + "/" + fieldName, ex);
+                LOG.info("Failed to parse to long: " + target + "/" + parameterName + "/" + fieldName);
                 ts = null;
             }
             return (ts != null) ? new Date(ts) : null;
@@ -236,7 +236,7 @@ public class ParameterServices implements InitializingBean {
         Date now = new Date();
         
         boolean result = (ph_hklpt == null || ph_hklpt.after(now)) && (ph_hkmt == null || ph_hkmt.after(now));
-        LOG.debug("parameterCanEditHakukohde({}) hklpt={}, hkmt={} --> {}", new Object[] {hakuOid, ph_hklpt, ph_hkmt, result});
+        LOG.info("parameterCanEditHakukohde({}) hklpt={}, hkmt={} --> {}", new Object[] {hakuOid, ph_hklpt, ph_hkmt, result});
         return result;
     }
 
@@ -281,7 +281,7 @@ public class ParameterServices implements InitializingBean {
         Date now = new Date();
         
         boolean result = (ph_hkmt == null || ph_hkmt.after(now));
-        LOG.debug("parameterCanEditHakukohdeLimited({}) hkmt={} --> {}", new Object[] {hakuOid, ph_hkmt, result});
+        LOG.info("parameterCanEditHakukohdeLimited({}) hkmt={} --> {}", new Object[] {hakuOid, ph_hkmt, result});
         return result;
     }
 }

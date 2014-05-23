@@ -132,4 +132,5 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @param userOid
      */
     public void safeDelete(final String hakukohdeOid, final String userOid);
+
 }

@@ -21,6 +21,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
@@ -60,15 +61,13 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
          *  FORM LAYOUT (form components under navigation buttons)
          */
         model = presenter.getModel().getKoulutusPerustiedotModel();
-        EditKoulutusPerustiedotFormView formView = new EditKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
+        final EditKoulutusPerustiedotFormView formView = new EditKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
 
         buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
         this.makeFormDataUnmodified();
-    }
-
-    public void disableOrEnableSaveButtons(Boolean enabled) {
-        enableButtonByListener(clickListenerSaveAsDraft,enabled);
-        enableButtonByListener(clickListenerSaveAsReady,enabled);
+        
+        final boolean draftActive = !model.isLoaded() || TarjontaTila.LUONNOS.equals(model.getTila()); //enabloitu jos uusi tai tila==draft
+        enableButtonByListener(clickListenerSaveAsDraft,draftActive);
     }
 
     @Override

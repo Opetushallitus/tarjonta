@@ -46,7 +46,6 @@ import fi.vm.sade.organisaatio.api.model.types.OsoiteDTO;
 import fi.vm.sade.organisaatio.api.model.types.OsoiteTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
-import fi.vm.sade.organisaatio.api.search.OrganisaatioSearchCriteria;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.SearchCriteria;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
@@ -453,15 +452,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private void prepareHakuSelections(ListHakuVastausTyyppi haut) {
 
         HakuViewModel hakuView = null;
+        String currentHaku=null;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuViewModel() != null) {
             hakuView = getModel().getHakukohde().getHakuViewModel();
+            currentHaku = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         }
 
-        List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(haut);
+        final List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(currentHaku, haut);
 
-        
-        //XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) 
-        
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
             public int compare(HakuViewModel a, HakuViewModel b) {
@@ -488,7 +486,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /*
      * Finds the haku instances matching the koulutus for which the hakukohde is created.
      */
-    private List<HakuViewModel> findMatchingHakusForHakukohde(ListHakuVastausTyyppi haut) {
+    private List<HakuViewModel> findMatchingHakusForHakukohde(final String currentHakuOid, ListHakuVastausTyyppi haut) {
 
         KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
 
@@ -512,6 +510,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         boolean isVapaaSivistystyo = koulTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
 
         for (HakuTyyppi foundHaku : haut.getResponse()) {
+            
             if (isKoulutusErityisopetus
                     && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_ERILLISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI)) {
@@ -537,7 +536,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }
-        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(parameterServices, tarjontaPermissionService)));
+        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService)));
     }
 
     /**
@@ -1132,7 +1131,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     hakukohdeViewModel.setHakukohdeNimi(TarjontaUIHelper.getClosestMonikielinenNimi(I18N.getLocale(), hakukohde.getNimi()));
                     hakukohdeViewModel.setHakukohdeOid(hakukohde.getOid());
                     hakukohdeViewModel.setHakukohdeTila(hakukohde.getTila().value());
-                    hakukohdeViewModel.setHakuStarted(hakukohde.getHakuAlkamisPvm());
                     koulutus.getKoulutuksenHakukohteet().add(hakukohdeViewModel);
                 }
             }
@@ -1534,7 +1532,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         
-        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        final boolean parameterAllows = 
+                parameterServices.parameterCanEditHakukohde(hakuOid) ||
+                parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
+        
+        LOG.info("isHakukohdeEditableForCurrentUser() - haku={} per={}, params={}", new Object[] {hakuOid, hasPermission, parameterAllows});
         
         return hasPermission && parameterAllows;
     }
@@ -1568,7 +1570,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
 
         
-        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        final boolean parameterAllows = 
+                parameterServices.parameterCanEditHakukohde(hakuOid) ||
+                parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
+
+        LOG.info("isHakukohdeEditableForCurrentUser({}) - per={}, params={}", new Object[] {hakuOid, hasPermission, parameterAllows});
         
         return hasPermission && parameterAllows;
     }
@@ -2653,35 +2659,6 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         public String getStrTwo() {
             return strTwo;
         }
-    }
-
-    /**
-     * Should be called "isKoulutusMutable" or something similar
-     *
-     * @param komotoOid
-     * @return
-     */
-    public boolean isHakuStartedForKoulutus(String komotoOid) {
-        boolean hakuStarted = false;
-        HakukohteetVastaus hakukVastaus = getHakukohteetForKoulutus(komotoOid);
-        for (HakukohdePerustieto curHakuk : hakukVastaus.getHakukohteet()) {
-            Date hakuAlku = curHakuk.getHakuAlkamisPvm();
-            Date today = new Date();
-            if (today.after(hakuAlku)) {
-                hakuStarted = true;
-            }
-
-            //jos hakutyyppi tai erillishaku 
-            if (KoodistoURI.KOODI_LISAHAKU_URI.equals(curHakuk
-                    .getHakutyyppiUri())
-                    || KoodistoURI.KOODI_ERILLISHAKU_URI.equals(curHakuk
-                            .getHakutapaKoodi().getUri())) {
-                hakuStarted = false;
-            }
-
-        }
-
-        return hakuStarted;
     }
 
     public boolean isKoulutusNivelvaihe() {
