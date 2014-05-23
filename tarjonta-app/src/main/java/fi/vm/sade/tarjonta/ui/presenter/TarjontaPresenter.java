@@ -452,15 +452,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private void prepareHakuSelections(ListHakuVastausTyyppi haut) {
 
         HakuViewModel hakuView = null;
+        String currentHaku=null;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuViewModel() != null) {
             hakuView = getModel().getHakukohde().getHakuViewModel();
+            currentHaku = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         }
 
-        List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(getModel().getHakukohde().getHakuViewModel().getHakuOid(), haut);
+        final List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(currentHaku, haut);
 
-        
-        //XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) 
-        
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
             public int compare(HakuViewModel a, HakuViewModel b) {

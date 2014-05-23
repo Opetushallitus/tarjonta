@@ -115,13 +115,17 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private void enableDeEnableSaveButtonsForHaku() {
 
 
-      HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
+      final HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
+      
+      final String tila = hakuViewModel!=null?hakuViewModel.getHaunTila():null;
+      
+      
       if (hakuViewModel != null) {
           
-          boolean hasEditPermission = presenter.isHakukohdeEditableForCurrentUser();
+          final boolean hasEditPermission = presenter.isHakukohdeEditableForCurrentUser();
           
           if (hasEditPermission) {
-              enableButtonByListener(clickListenerSaveAsDraft, hasEditPermission);
+              enableButtonByListener(clickListenerSaveAsDraft, !"JULKAISTU".equals(tila) && hasEditPermission); //jos julkaistu ei saa tallentaa draftina
               enableButtonByListener(clickListenerSaveAsReady, hasEditPermission);
           }
       }

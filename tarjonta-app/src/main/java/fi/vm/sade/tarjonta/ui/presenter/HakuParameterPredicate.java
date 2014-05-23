@@ -24,7 +24,8 @@ public class HakuParameterPredicate implements Predicate<HakuViewModel> {
     }
 
     public boolean apply(HakuViewModel input) {
-        if(currentHakuOid==input.getHakuOid()) { //näytä myös nykyinen haku vaikka parametrit estää
+
+        if(input.getHakuOid().equals(currentHakuOid)) { //näytä myös nykyinen haku vaikka parametrit estää
             return true;
         }
         return parameterServices.parameterCanAddHakukohdeToHaku(input

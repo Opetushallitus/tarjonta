@@ -29,7 +29,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import fi.vm.sade.tarjonta.ui.view.hakukohde.EditHakukohdeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -914,47 +913,9 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return false;
     }
 
-    /*
-     * Checking if the haku is acceptable for hakukohde
-     */
-    private boolean accepts(HakuViewModel hm) {
-
-        //Oph user has her own rules
-        if (presenter.getPermission().userIsOphCrud()) {
-            return acceptsForOph(hm);
-        }
-
-        final boolean isErillishakuOrLisahaku = isErillishakuOrLisahaku(hm);
-        
-        //If it is lisahaku or erillishauku  it is ok for hakukohde if the haku has not ended
-        if (isErillishakuOrLisahaku && (hm.getPaattymisPvm() != null && hm.getPaattymisPvm().after(new Date()))) {
-            return true;
-        }
-
-        Date hakuAlkamisPvm = EditHakukohdeView.getMinHakuAlkamisDate(hm.getAlkamisPvm());
-        Date tanaan = new Date();
-        if (tanaan.after(hakuAlkamisPvm)) {
-            return false;
-        }
-
-        //If haku has not started it is ok for hakukohde
-    	if (hm.getAlkamisPvm() != null && !hm.getAlkamisPvm().before(new Date())) {
-    		return true;
-    	}
-
-    	//Checking sisaiset hakuajat if there is at least on acceptable the haku is ok
-    	for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-    	    if (accepts(ham, isErillishakuOrLisahaku)) {
-    	        return true;
-    	    }
-    	}
-    	return false;
-    }
-
     private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
         return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
     }
-
 
     /*
      *
@@ -967,10 +928,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
 
         List<HakuViewModel> fhaut = new ArrayList<HakuViewModel>();
         for (HakuViewModel hvm : haut) {
-                
-        	if (accepts(hvm)) {
-        		fhaut.add(hvm);
-        	}
+ 		fhaut.add(hvm);
         }
 
         hakuContainer.addAll(fhaut);
