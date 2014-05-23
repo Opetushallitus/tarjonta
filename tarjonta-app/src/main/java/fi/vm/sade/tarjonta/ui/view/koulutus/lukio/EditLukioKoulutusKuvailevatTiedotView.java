@@ -27,10 +27,12 @@ import com.vaadin.ui.VerticalLayout;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.helper.OidCreationException;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusToisenAsteenPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioKuvailevatTiedotViewModel;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -66,6 +68,10 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
         model = presenter.getModel().getKoulutusLukioKuvailevatTiedot();
         formView = new EditLukioKoulutusKuvailevatTiedotFormView(presenter, uiHelper, getUiBuilder(), model);
         buildFormLayout("kuvailevatTiedot", presenter, layout, model, formView);
+
+        final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
+        final boolean draftActive = !model.isLoaded() || TarjontaTila.LUONNOS.equals(model.getTila()); //enabloitu jos uusi tai tila==draft
+        enableButtonByListener(clickListenerSaveAsDraft,draftActive);
     }
 
     @Override

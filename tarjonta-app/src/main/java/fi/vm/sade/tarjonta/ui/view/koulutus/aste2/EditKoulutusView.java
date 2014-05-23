@@ -23,12 +23,9 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
-import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.AbstractEditLayoutView;
@@ -38,9 +35,6 @@ import fi.vm.sade.vaadin.util.UiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  *
@@ -141,87 +135,7 @@ public class EditKoulutusView extends AbstractVerticalLayout {
             
         });
 
-        enableOrDisableButtons();
-    }
-
-    private void enableOrDisableButtons() {
-
-        if (presenter.getModel().getKoulutusPerustiedotModel() != null && presenter.getModel().getKoulutusPerustiedotModel().getOid() != null
-                && presenter.getModel().getKoulutusPerustiedotModel().getOid() != "-1") {
-
-            KoulutusPerustiedotViewModel perustiedotViewModel = presenter.getModel().getKoulutusPerustiedotModel();
-
-            HakukohteetVastaus hakukohteetVastaus = presenter.getHakukohteetForKoulutus(perustiedotViewModel.getOid());
-
-            if(checkHakukohteetForStartedHaku(hakukohteetVastaus)) {
-
-                if (perustiedotView != null) {
-                    perustiedotView.disableOrEnableSaveButtons(false);
-                    lisatiedotView.disableOrEnableSaveButtons(false);
-                }
-
-            }
-
-
-        }
-
-
-    }
-
-    private Boolean checkHakukohteetForStartedHaku(HakukohteetVastaus hakukohteetVastaus) {
-
-        if (presenter.getPermission().userIsOphCrud()) {
-            return false;
-        }
-
-
-        if (hakukohteetVastaus != null && hakukohteetVastaus.getHitCount() > 0) {
-
-            boolean hakuStarted = false;
-            for (HakukohdePerustieto hakukohdePerustieto : hakukohteetVastaus.getHakukohteet()) {
-
-                if (hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutapaErillishaku)
-                        || hakukohdePerustieto.getHakutapaKoodi().getUri().contains(hakutyyppiLisahakuUrl)) {
-
-                    hakuStarted = false;
-
-                } else {
-
-                    hakuStarted = checkHakuStarted(hakukohdePerustieto.getHakuAlkamisPvm(),hakukohdePerustieto.getHakutyyppiUri());
-
-                }
-
-
-            }
-
-
-            return hakuStarted;
-        } else {
-            return false;
-        }
-    }
-
-    private Boolean checkHakuStarted(Date hakuAlkamisPvm, String hakutyyppi) {
-
-        Date minAlkamisPvm = getMinHakuAlkamisDate(hakuAlkamisPvm);
-
-        if (this.hakutyyppiLisahakuUrl.equals(hakutyyppi) || this.hakutapaErillishaku.equals(hakutyyppi)) {
-            return false;
-        } else if (new Date().after(minAlkamisPvm)) {
-            return true;
-        } else {
-            return false;
-        }
-
-
-    }
-
-    private Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(hakualkamisPvm);
-        cal.add(Calendar.DATE, -4);
-        return cal.getTime();
+        //enableOrDisableButtons();
     }
 
     @SuppressWarnings("rawtypes")

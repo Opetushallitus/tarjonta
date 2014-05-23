@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import fi.vm.sade.authentication.service.types.dto.HenkiloType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -71,7 +70,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
     private final OrganisaatioContext context;
 //    private final LueKoulutusVastausTyyppi koulutus;
     private final String datePattern = "dd.MM.yyyy HH:mm";
-    boolean hakuStarted = false;
 
     /**
      *
@@ -115,7 +113,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
     }
 
     private void build(final VerticalLayout parent) {
-        hakuStarted = presenter.isHakuStartedForKoulutus(presenter.getModel().getKoulutusPerustiedotModel().getOid());
         FormGridBuilder layout = new FormGridBuilder();
         layout.setWidth("100%");
         parent.addComponent(layout);
@@ -124,10 +121,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
         insertKoulutuksenKuvailevatTiedot(layout);
         insertLayoutSplit(layout);
         insertKoulutuksenHakukohteet(layout);
-    }
-
-    private void checkHakustarted() {
-
     }
 
     private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean buttonVisible, boolean showTime) {
@@ -239,6 +232,9 @@ public class ShowKoulutusViewTab extends CustomComponent {
         final KoulutusLisatiedotModel lisatiedotModel = presenter.getModel()
                 .getKoulutusLisatiedotModel();
 
+        final boolean updatePermission = presenter.getPermission().userCanUpdateKoulutus(context);
+        
+        
         layout.addHeader(buildHeaderLayout(
                 i18n.getMessage("kuvailevatTiedot"),
                 i18n.getMessage(CommonTranslationKeys.MUOKKAA),
@@ -251,7 +247,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
                         presenter.showKoulutustEditView(getEditViewOid(),
                                 KoulutusActiveTab.LISATIEDOT);
                     }
-                }, presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted), false));
+                }, updatePermission, false));
 
         final KoulutusLisatietoModel lisatietoForLang = lisatiedotModel
                 .getLisatiedot().get(language);
@@ -329,7 +325,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
                 presenter.getTarjoaja().setSelectedResultRowOrganisationOid(null);
                 presenter.showKoulutustEditView(getEditViewOid(), KoulutusActiveTab.PERUSTIEDOT);
             }
-        }, lastUpdDateLbl, presenter.getPermission().userCanUpdateKoulutus(context, hakuStarted)));
+        }, lastUpdDateLbl, presenter.getPermission().userCanUpdateKoulutus(context)));
 
         final KoulutuskoodiModel koodiModel = model.getKoulutuskoodiModel();
         final KoodiModel koulutusala = koodiModel.getKoulutusala();
