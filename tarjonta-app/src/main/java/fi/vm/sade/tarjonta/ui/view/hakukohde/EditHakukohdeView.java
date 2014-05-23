@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.HakukohdeActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -115,46 +115,26 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private void enableDeEnableSaveButtonsForHaku() {
 
 
-      HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
-      if (hakuViewModel != null) {
-          boolean isHakuStarted =  checkHakuStarted(hakuViewModel);
-          if (isHakuStarted) {
-              enableButtonByListener(clickListenerSaveAsDraft,!isHakuStarted);
-              enableButtonByListener(clickListenerSaveAsReady,!isHakuStarted);
-          }
+      final HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
+      
+      final fi.vm.sade.tarjonta.service.types.TarjontaTila tila = hakukohde!=null?hakukohde.getTila():null;
+      
+      
+      if (hakukohde != null) {
+          
+          final boolean hasEditPermission = presenter.isHakukohdeEditableForCurrentUser();
+          
+              
+              //saa tallentaa draftina vain jos tila draft tai null
+              final boolean saveableAsDraft = tila==null || TarjontaTila.LUONNOS.equals(tila);
+              
+              enableButtonByListener(clickListenerSaveAsDraft, saveableAsDraft && hasEditPermission); 
+              enableButtonByListener(clickListenerSaveAsReady, hasEditPermission);
       }
 
 
 
     }
-
-    private boolean checkHakuStarted(HakuViewModel hakuViewModel) {
-
-            Date hakualkamisPvm = getMinHakuAlkamisDate(hakuViewModel.getAlkamisPvm());
-
-            if (presenter.getPermission().userIsOphCrud()) {
-                return false;
-            }
-
-            if (isErillishakuOrLisahaku(hakuViewModel)) {
-                return false;
-            } else if (new Date().after(hakualkamisPvm)) {
-                return true;
-            } else {
-                return false;
-            }
-            //What if user is OPH ? should he or she have the right to edit haku ?
-            /*else if (presenter.getPermission().userIsOphCrud()) {
-
-            }*/
-
-
-    }
-
-    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
-        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
-    }
-
 
     public static Date getMinHakuAlkamisDate(Date hakualkamisPvm) {
 
@@ -503,7 +483,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
-        liitteet = new HakukohteenLiitteetTabImpl();
+        liitteet = new HakukohteenLiitteetTabImpl(presenter);
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid, presenter.getModel().getHakukohde().getKoulutusasteTyyppi());
         kuvaukset = new HakukohteenKuvauksetTabImpl(presenter);
         

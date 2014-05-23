@@ -48,7 +48,6 @@ import fi.vm.sade.vaadin.util.UiUtil;
 @Configurable(preConstruction = true)
 public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout {
 
-    @Autowired
     private TarjontaPresenter presenter;
     @Autowired(required = true)
     private transient UiBuilder uiBuilder;
@@ -61,8 +60,8 @@ public class HakukohteenLiitteetTabImpl extends AbstractVerticalNavigationLayout
 
     private HorizontalLayout headerLayout;
 
-    public HakukohteenLiitteetTabImpl() {
-        super();
+    public HakukohteenLiitteetTabImpl(TarjontaPresenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override

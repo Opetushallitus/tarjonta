@@ -452,15 +452,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private void prepareHakuSelections(ListHakuVastausTyyppi haut) {
 
         HakuViewModel hakuView = null;
+        String currentHaku=null;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuViewModel() != null) {
             hakuView = getModel().getHakukohde().getHakuViewModel();
+            currentHaku = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         }
 
-        List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(haut);
+        final List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(currentHaku, haut);
 
-        
-        //XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) 
-        
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
             public int compare(HakuViewModel a, HakuViewModel b) {
@@ -487,7 +486,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /*
      * Finds the haku instances matching the koulutus for which the hakukohde is created.
      */
-    private List<HakuViewModel> findMatchingHakusForHakukohde(ListHakuVastausTyyppi haut) {
+    private List<HakuViewModel> findMatchingHakusForHakukohde(final String currentHakuOid, ListHakuVastausTyyppi haut) {
 
         KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
 
@@ -537,7 +536,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }
-        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(parameterServices, tarjontaPermissionService)));
+        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService)));
     }
 
     /**
@@ -1533,7 +1532,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         final String hakuOid = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         
-        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        final boolean parameterAllows = 
+                parameterServices.parameterCanEditHakukohde(hakuOid) ||
+                parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
+        
+        LOG.info("isHakukohdeEditableForCurrentUser() - haku={} per={}, params={}", new Object[] {hakuOid, hasPermission, parameterAllows});
         
         return hasPermission && parameterAllows;
     }
@@ -1567,7 +1570,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         }
 
         
-        final boolean parameterAllows = parameterServices.parameterCanEditHakukohde(hakuOid);
+        final boolean parameterAllows = 
+                parameterServices.parameterCanEditHakukohde(hakuOid) ||
+                parameterServices.parameterCanEditHakukohdeLimited(hakuOid);
+
+        LOG.info("isHakukohdeEditableForCurrentUser({}) - per={}, params={}", new Object[] {hakuOid, hasPermission, parameterAllows});
         
         return hasPermission && parameterAllows;
     }
