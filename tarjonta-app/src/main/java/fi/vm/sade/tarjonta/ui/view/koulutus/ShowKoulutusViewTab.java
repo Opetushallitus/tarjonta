@@ -123,10 +123,6 @@ public class ShowKoulutusViewTab extends CustomComponent {
         insertKoulutuksenHakukohteet(layout);
     }
 
-    private void checkHakustarted() {
-
-    }
-
     private AbstractComponent buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, boolean buttonVisible, boolean showTime) {
         VerticalLayout vl = new VerticalLayout();
         final GridLayout grid = new GridLayout(showTime ? 3 : 2, 1);
