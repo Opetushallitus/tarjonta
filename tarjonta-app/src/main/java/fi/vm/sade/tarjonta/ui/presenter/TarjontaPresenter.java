@@ -452,11 +452,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     private void prepareHakuSelections(ListHakuVastausTyyppi haut) {
 
         HakuViewModel hakuView = null;
+        String currentHaku=null;
         if (getModel().getHakukohde() != null && getModel().getHakukohde().getHakuViewModel() != null) {
             hakuView = getModel().getHakukohde().getHakuViewModel();
+            currentHaku = getModel().getHakukohde().getHakuViewModel().getHakuOid();
         }
 
-        List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(getModel().getHakukohde().getHakuViewModel().getHakuOid(), haut);
+        final List<HakuViewModel> foundHaut = findMatchingHakusForHakukohde(currentHaku, haut);
 
         Collections.sort(foundHaut, new Comparator<HakuViewModel>() {
             @Override
