@@ -120,7 +120,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
           
           boolean hasEditPermission = presenter.isHakukohdeEditableForCurrentUser();
           
-          if (isHakuStarted) {
+          if (hasEditPermission) {
               enableButtonByListener(clickListenerSaveAsDraft, hasEditPermission);
               enableButtonByListener(clickListenerSaveAsReady, hasEditPermission);
           }
