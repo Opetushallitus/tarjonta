@@ -489,7 +489,7 @@ app.controller('HakukohdeReviewController',
             $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({oid: hakukohdeOid, state: 'POISTETTU'}).$promise.then(function(r){return r.$resolved; })]).then(function(results) {
                 $scope.isMutable=results[0]===true;
                 if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
-                    //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
+
                     $scope.isMutable = false;
 
                 }

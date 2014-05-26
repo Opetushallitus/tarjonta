@@ -70,6 +70,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $log.info("SCOPE: ", $scope);
         $log.info("CAN EDIT : ", $route.current.locals.canEdit);
         $log.info("CAN CREATE : ", $route.current.locals.canCreate);
+        $log.info("HAKUKOHDEX RESULT : " , $route.current.locals.hakukohdex.result);
 
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
