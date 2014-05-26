@@ -127,18 +127,30 @@ public class KoulutusValidator {
         }
 
         validateKoodistoRelationsAmm(dto, result);
+
+        validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
         if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
+            KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDTO = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
+
+            if (nayttoDTO.getValmistavaKoulutus() != null) {
+
+                validateKoodiUris(result, nayttoDTO.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
+                validateKoodiUris(result, nayttoDTO.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
+                validateKoodiUris(result, nayttoDTO.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
+                validateKoodiUris(result, nayttoDTO.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
+                validateSuuniteltukesto(result, nayttoDTO);
+            }
+
             //TODO:
         } else {
             validateKoodiUris(result, dto.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, dto.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
-            validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
-
+            validateSuuniteltukesto(result, dto);
         }
 
         validateAlkamisPvms(result, dto);
-        validateSuuniteltukesto(result, dto);
+
         return result;
     }
 

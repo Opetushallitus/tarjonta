@@ -96,6 +96,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuis
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliAmmatillinenRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliLukioRelationV1RDTO;
@@ -195,16 +196,35 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, userLang, showMeta, showImg));
                 break;
             case LUKIOKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta, false));
+                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta));
                 break;
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
-                result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, userLang, showMeta, false));
+                result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, userLang, showMeta));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO:
-                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, userLang, showMeta, false));
+                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, userLang, showMeta));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, userLang, showMeta, false));
+                //convert required base komoto to dto.
+                KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convert = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) converterToRDTO.convert(
+                        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
+                        komoto,
+                        userLang,
+                        showMeta
+                );
+                result.setResult(convert);
+
+                //null == no optional inserted vamentava koulutus 
+                if (komoto.getNayttotutkintoValmentavaKoulutus() != null) {
+                    //convert joined optional komoto to the base komoto .
+                    convert.setValmistavaKoulutus((KoulutusValmistavaV1RDTO) converterToRDTO.convert(
+                            KoulutusValmistavaV1RDTO.class,
+                            komoto.getNayttotutkintoValmentavaKoulutus(),
+                            userLang,
+                            showMeta
+                    ));
+                }
+
                 break;
         }
 
@@ -716,7 +736,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             List<String> koulutusOids,
             String komotoTila,
             String alkamisKausi,
-            Integer alkamisVuosi, List<KoulutusasteTyyppi> koulutusastetyyppi, String komoOid) {
+            Integer alkamisVuosi,
+            List<ToteutustyyppiEnum> koulutustyyppi,
+            @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
+            String komoOid) {
 
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
@@ -730,6 +753,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutusOids().addAll(koulutusOids);
         q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
+        q.getKoulutustyyppi().addAll(koulutustyyppi); //TODO : only partially implemented
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));

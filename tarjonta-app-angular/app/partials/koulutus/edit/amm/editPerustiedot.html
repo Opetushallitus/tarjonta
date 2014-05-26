@@ -1,4 +1,15 @@
+{{uiModel.cbShowValmistavaKoulutus | json}}        
+        
 <table class="tarjontaForm"><!--pre>{{model.koulutuskoodi| json }}</pre-->
+    <tr>
+        <th></th>
+        <td>
+            <input type="checkbox" data-ng-model="uiModel.cbShowValmistavaKoulutus"/>
+            <span tt="koulutus.edit.sisaltyy-valmistava-koulutus">Sisältyy valmistava koulutus</span>
+        </td>
+        <td></td>
+    </tr>
+
     <!-- koulutuskoodi -->
     <tr class="required">
         <th tt="koulutus.edit.koulutuskoodi">Koulutus</th>
@@ -119,12 +130,6 @@
             Maksullisuus vaaditaan
         </p>
     </td>
-</tr>
-
-<tr>
-    <th tt="koulutus.edit.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
-    <td><input class="wide" name="linkkiOpetussuunnitelmaan" type="text" data-ng-model="model.linkkiOpetussuunnitelmaan" /></td>
-    <td></td>
 </tr>
 
 <!-- väli -->

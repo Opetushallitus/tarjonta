@@ -30,7 +30,7 @@ app.controller('BaseReviewController', [
             $scope.isMutable = tila.mutable && data;
             $scope.isRemovable = tila.removable && data;
 
-            if (koulutusModel.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
+            if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
                 //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
                 if (angular.isDefined(koulutusModel.koulutuslaji) &&
                         KoodistoURI.compareKoodi(

@@ -33,6 +33,7 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
     @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO jarjestavaOrganisaatio;
 
+    @ApiModelProperty(value = "Valmistavan koulutukseen tarvittavat tiedot", required = false)
     private KoulutusValmistavaV1RDTO valmistavaKoulutus;
 
     public KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO() {
@@ -75,6 +76,10 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
      * @return the ammattinimikkeet
      */
     public KoodiUrisV1RDTO getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = new KoodiUrisV1RDTO();
+        }
+
         return ammattinimikkeet;
     }
 

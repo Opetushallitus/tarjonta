@@ -395,10 +395,10 @@ app.controller('BaseEditController', [
             $scope.controlFormMessages(form, uiModel, "INIT");
             converter.createAPIModel(model, Config.app.userLanguages, tyyppi);
 
-            var promiseOrg = organisaatioService.nimi($routeParams.org);
-            promiseOrg.then(function(vastaus) {
-                converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-            });
+//            var promiseOrg = organisaatioService.nimi($routeParams.org);
+//            promiseOrg.then(function(vastaus) {
+//                converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
+//            });
 
         };
 

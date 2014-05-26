@@ -14,16 +14,34 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
  * @author jani
  */
-public class KoulutusValmistavaV1RDTO extends KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO {
+public class KoulutusValmistavaV1RDTO extends KoulutusV1RDTO {
 
     public KoulutusValmistavaV1RDTO() {
-        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA);
+        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
 
+    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
+    private Double hinta;
+
+    /**
+     * @return the hinta
+     */
+    public Double getHinta() {
+        return hinta;
+    }
+
+    /**
+     * @param hinta the hinta to set
+     */
+    public void setHinta(Double hinta) {
+        this.hinta = hinta;
+    }
 }

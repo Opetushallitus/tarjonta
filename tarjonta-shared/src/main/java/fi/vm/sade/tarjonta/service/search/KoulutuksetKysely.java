@@ -1,4 +1,3 @@
-
 package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
@@ -7,10 +6,9 @@ import java.util.List;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
-
-public class KoulutuksetKysely implements Serializable
-{
+public class KoulutuksetKysely implements Serializable {
 
     private final static long serialVersionUID = 100L;
     private String nimi;
@@ -22,8 +20,11 @@ public class KoulutuksetKysely implements Serializable
     private String koulutusKoodi;
     private List<String> hakukohdeOids = new ArrayList<String>();
     private String koulutusOid;
-    private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>();
+    @Deprecated
+    private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>(); //use the koulutustyyppi
     private String komoOid;
+
+    private List<ToteutustyyppiEnum> koulutustyyppi = new ArrayList<ToteutustyyppiEnum>();
 
     public String getKomoOid() {
         return komoOid;
@@ -33,6 +34,7 @@ public class KoulutuksetKysely implements Serializable
         this.komoOid = komoOid;
     }
 
+    @Deprecated
     public List<KoulutusasteTyyppi> getKoulutusasteTyypit() {
         return koulutusasteTyypit;
     }
@@ -47,7 +49,7 @@ public class KoulutuksetKysely implements Serializable
 
     /**
      * Fully-initialising value constructor
-     * 
+     *
      */
     public KoulutuksetKysely(final String nimi, final List<String> tarjoajaOids, final List<String> koulutusOids, final TarjontaTila koulutuksenTila, final Integer koulutuksenAlkamisvuosi, final String koulutuksenAlkamiskausi, final String koulutusKoodi, final List<String> hakukohdeOids) {
         this.nimi = nimi;
@@ -62,11 +64,9 @@ public class KoulutuksetKysely implements Serializable
 
     /**
      * Gets the value of the nimi property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
+     *
      */
     public String getNimi() {
         return nimi;
@@ -135,6 +135,13 @@ public class KoulutuksetKysely implements Serializable
 
     public void setkomoOid(String komoOid) {
         this.komoOid = komoOid;
+    }
+
+    /**
+     * @return the koulutustyyppi
+     */
+    public List<ToteutustyyppiEnum> getKoulutustyyppi() {
+        return koulutustyyppi;
     }
 
 }

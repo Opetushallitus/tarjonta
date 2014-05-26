@@ -23,10 +23,12 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -51,6 +53,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToRDTO.class);
     private static final boolean ALLOW_NULL_KOODI_URI = true;
+    private static final boolean DO_NOT_CONVERT_IMAGE = false;
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired(required = true)
@@ -59,6 +62,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private KoulutusCommonConverter commonConverter;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final String lang, final boolean showMeta) {
+        return convert(clazz, komoto, lang, showMeta, DO_NOT_CONVERT_IMAGE);
+    }
 
     public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final String lang, final boolean showMeta, final boolean showImg) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
@@ -177,6 +184,16 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
             convertParentChildKomoHierarchyToRDTO(dto, parentKomo, komo, komoto, locale, showMeta);
+
+            if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
+                final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
+                KoulutusValmistavaV1RDTO valmistavaKoulutus = nayttoDto.getValmistavaKoulutus();
+                KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus = komoto.getNayttotutkintoValmentavaKoulutus();
+                if (nayttotutkintoValmentavaKoulutus != null && nayttotutkintoValmentavaKoulutus.getOid() != null && valmistavaKoulutus == null) {
+                    //remove joined valmentava koulutus from db.
+                    komoto.setNayttotutkintoValmentavaKoulutus(null);
+                }
+            }
         }
 
         dto.setOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getTarjoaja(), locale));
@@ -189,7 +206,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         if (komoto.getOpetusPaikkas() != null) {
             dto.setOpetusPaikkas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusPaikkas(), locale, FieldNames.OPETUSPAIKKAS, showMeta));
         }
-        dto.setSuunniteltuKestoTyyppi(commonConverter.convertToKoodiDTO(komoto.getSuunniteltukestoYksikkoUri(), locale, FieldNames.SUUNNITELTUKESTON_TYYPPI, showMeta));
+        dto.setSuunniteltuKestoTyyppi(commonConverter.convertToKoodiDTO(komoto.getSuunniteltukestoYksikkoUri(), locale, FieldNames.SUUNNITELTUKESTON_TYYPPI, ALLOW_NULL_KOODI_URI, showMeta));
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
 
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
@@ -211,8 +228,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), komoto.getKoulutusUri(), locale, FieldNames.KOULUTUS, showMeta));
         dto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), komoto.getTutkintoUri(), locale, FieldNames.TUTKINTO, ALLOW_NULL_KOODI_URI, showMeta));
-        dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), komoto.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, showMeta));
-        dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), komoto.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, showMeta));
+        dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), komoto.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, ALLOW_NULL_KOODI_URI, showMeta));
+        dto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), komoto.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, ALLOW_NULL_KOODI_URI, showMeta));
         dto.setKoulutusaste(commonConverter.convertToKoodiDTO(komo.getKoulutusasteUri(), komoto.getKoulutusasteUri(), locale, FieldNames.KOULUTUSASTE, ALLOW_NULL_KOODI_URI, showMeta));
         dto.setKoulutusala(commonConverter.convertToKoodiDTO(komo.getKoulutusalaUri(), komoto.getKoulutusalaUri(), locale, FieldNames.KOULUTUSALA, showMeta));
         dto.setOpintoala(commonConverter.convertToKoodiDTO(komo.getOpintoalaUri(), komoto.getOpintoalaUri(), locale, FieldNames.OPINTOALA, showMeta));

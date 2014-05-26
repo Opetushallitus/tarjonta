@@ -115,7 +115,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Lukiokoulutus"]
+            koulutusastetyyppi: ["Korkeakoulutus", "Lukiokoulutus", "AmmatillinenPeruskoulutus"]
+          //  koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14"] //TODO : unimplemented index
         };
 
         $log.debug("haeKoulutukset()", params);
@@ -556,7 +557,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 isArray: false
             }
         }).get(function(results) {
-            
+
             // NOTE: now "ALL" parameters is an object like:
             // {
             //   target1: {
@@ -566,12 +567,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             // }
             // 
             // FIXME *** Only "date" value cached... *** Use the server side permission checker!
-            
+
             var cache = dataFactory.ohjausparametritCache;
             var targetNames = Object.keys(results);
-            
+
             // $log.debug("Processing targets: ", targetNames);
-            
+
             angular.forEach(targetNames, function(targetName) {
                 var pt = results[targetName];
                 // $log.debug("  Processing target parameters for : ", targetName, pt);
@@ -579,7 +580,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 if (angular.isDefined(pt) && typeof pt === 'object') {
                     cache[targetName] = cache[targetName] ? cache[targetName] : {};
                     var paramNames = Object.keys(pt);
-                
+
                     angular.forEach(paramNames, function(paramName) {
                         var p = results[targetName][paramName];
 
@@ -628,9 +629,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
         if (ph_hklpt && ph_hkmt) {
-        result = (now <= ph_hklpt) && (now <= ph_hkmt);
-        $log.debug("parameterCanEditHakukohde: ", hakuOid, ph_hklpt, ph_hkmt, result);
-        return result;
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanEditHakukohde: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
         } else {
             return true;
         }
@@ -640,9 +641,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var now = new Date().getTime();
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
         if (ph_hkmt) {
-        result = (now <= ph_hkmt);
-        $log.debug("parameterCanEditHakukohdeLimited: ", hakuOid, ph_hkmt, result);
-        return result;
+            result = (now <= ph_hkmt);
+            $log.debug("parameterCanEditHakukohdeLimited: ", hakuOid, ph_hkmt, result);
+            return result;
         } else {
             return true;
         }
@@ -653,9 +654,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
         if (ph_hklpt && ph_hkmt) {
-        result = (now <= ph_hklpt) && (now <= ph_hkmt);
-        $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
-        return result;
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanAddHakukohdeToHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
         } else {
             $log.info('PP_HKLPT AND PH_HKMT WAS EMPTY');
             return true;
@@ -667,9 +668,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var ph_hklpt = dataFactory.getParameter(hakuOid, "PH_HKLPT", "LONG", now);
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
         if (ph_hklpt && ph_hkmt) {
-        result = (now <= ph_hklpt) && (now <= ph_hkmt);
-        $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
-        return result;
+            result = (now <= ph_hklpt) && (now <= ph_hkmt);
+            $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            return result;
         } else {
             return true;
         }

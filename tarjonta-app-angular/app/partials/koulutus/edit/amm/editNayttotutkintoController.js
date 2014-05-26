@@ -7,6 +7,7 @@ app.controller('EditNayttotutkintoController',
 
                 var ENUM_KOMO_MODULE_TUTKINTO = 'TUTKINTO';
                 var ENUM_KOMO_MODULE_TUTKINTO_OHJELMA = 'TUTKINTO_OHJELMA';
+                var ENUM_OPTIONAL_TOTEUTUS = 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA';
                 $log = $log.getInstance("EditNayttotutkintoController");
 
                 $scope.init = function() {
@@ -17,9 +18,14 @@ app.controller('EditNayttotutkintoController',
                      */
                     $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
 
-                    var model = {opetuskielis: {kieli_fi: 1}};
+                    $scope.cbShowValmistavaKoulutus = false;
+
+                    var model = {
+                        valmistavaKoulutus: null
+                    };
                     var uiModel = {
                         //custom stuff
+                        cbShowValmistavaKoulutus: false,
                         koulutusohjelma: [],
                         tutkintoModules: {},
                         koulutusohjelmaModules: {}
@@ -228,12 +234,37 @@ app.controller('EditNayttotutkintoController',
                         $scope.model.hinta = $scope.model.hinta.substring(0, p) + "." + $scope.model.hinta.substring(p + 1);
                         p = $scope.model.hinta.indexOf(',', p);
                     }
-                }
+                };
+
+                $scope.getEditValmistavaKoulutusPerustiedot = function() {
+                    return '/partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html';
+                };
+
+                $scope.getEditValmistavaKoulutusPerustiedot = function() {
+                    return '/partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html';
+                };
 
                 $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
                     if (!valNew && valOld) {
                         //clear price data field
                         $scope.model.hinta = '';
+                    }
+                });
+
+                $scope.$watch("uiModel.cbShowValmistavaKoulutus", function(valNew, valOld) {
+                    if (valNew) {
+
+                        var uiModel = {};
+                        var model = {};
+
+                        $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        $scope.model.valmistavaKoulutus = model;
+                        $scope.vkUiModel = uiModel;
+                        $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        $scope.cbShowValmistavaKoulutus = true;
+                    } else {
+                        $scope.model.valmistavaKoulutus = null;
+                        $scope.cbShowValmistavaKoulutus = false;
                     }
                 });
 
