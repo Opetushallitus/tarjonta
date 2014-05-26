@@ -18,6 +18,7 @@ host.ilb={{host_ilb}}
 host.postgresql.tarjonta={{host_postgresql_tarjonta}}
 host.postgresql.tarjonta.password={{host_postgresql_tarjonta_password}}
 host.postgresql.tarjonta.user={{host_postgresql_tarjonta_user}}
+host.virkailija={{host_virkailija}}
 ldap.manager.password={{ldap_manager_password}}
 ldap.manager-password={{ldap_manager_password}}
 port.organisaatio-service={{port_organisaatio_service}}

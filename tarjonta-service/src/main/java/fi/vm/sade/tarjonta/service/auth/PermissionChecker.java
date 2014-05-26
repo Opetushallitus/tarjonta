@@ -112,6 +112,9 @@ public class PermissionChecker {
      */
     public void checkUpdateHakukohde(String hakukohdeOid, String targetHakuOid, Collection<String> newKoulutusOids) {
 
+        if(permissionService.userIsOphCrud()) {
+            return;
+        }
         Preconditions.checkArgument(newKoulutusOids.size()>0, "hakukohde without komotos");
 
 
@@ -120,7 +123,7 @@ public class PermissionChecker {
 
         // 1. rajapinnassa hakukohde voidaan "siirtää" hausta toiseen, jolloin pitää tarkistaa uusi haku + vanha haku
         
-        //jos "kohde" haku lukittu voidaan failata heti TODO: jos ei oph
+        //jos "kohde" haku lukittu voidaan failata heti 
         if(!currentHaku.getOid().equals(targetHakuOid)){
             checkPermission(parameterServices.parameterCanAddHakukohdeToHaku(targetHakuOid));
         } 
@@ -150,6 +153,11 @@ public class PermissionChecker {
     }
     
     public void checkCreateHakukohde(String hakuOid, List<String> komotoOids) {
+        
+        if(permissionService.userIsOphCrud()) {
+            return;
+        }
+
         //tarkista että koulutuksia on
         Preconditions.checkArgument(komotoOids.size()>0, "hakukohde without komotos");
 
@@ -325,6 +333,15 @@ public class PermissionChecker {
      */
     public void checkUpdateHaku(String... orgOids) {
         checkPermission(permissionService.userCanUpdateHakuWithOrgs(orgOids));
+    }
+
+    /**
+     * Returns true if user is OPH CRUD user.
+     * 
+     * @return 
+     */
+    public boolean isOphCrud() {
+        return permissionService.userIsOphCrud();
     }
     
 }

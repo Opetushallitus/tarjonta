@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import fi.vm.sade.tarjonta.ui.model.HakuViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
+import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.ui.enums.HakukohdeActiveTab;
 import fi.vm.sade.tarjonta.ui.enums.SaveButtonState;
 import fi.vm.sade.tarjonta.ui.enums.UserNotification;
@@ -115,19 +115,21 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
     private void enableDeEnableSaveButtonsForHaku() {
 
 
-      final HakuViewModel hakuViewModel = presenter.getModel().getHakukohde().getHakuViewModel();
+      final HakukohdeViewModel hakukohde = presenter.getModel().getHakukohde();
       
-      final String tila = hakuViewModel!=null?hakuViewModel.getHaunTila():null;
+      final fi.vm.sade.tarjonta.service.types.TarjontaTila tila = hakukohde!=null?hakukohde.getTila():null;
       
       
-      if (hakuViewModel != null) {
+      if (hakukohde != null) {
           
           final boolean hasEditPermission = presenter.isHakukohdeEditableForCurrentUser();
           
-          if (hasEditPermission) {
-              enableButtonByListener(clickListenerSaveAsDraft, !"JULKAISTU".equals(tila) && hasEditPermission); //jos julkaistu ei saa tallentaa draftina
+              
+              //saa tallentaa draftina vain jos tila draft tai null
+              final boolean saveableAsDraft = tila==null || TarjontaTila.LUONNOS.equals(tila);
+              
+              enableButtonByListener(clickListenerSaveAsDraft, saveableAsDraft && hasEditPermission); 
               enableButtonByListener(clickListenerSaveAsReady, hasEditPermission);
-          }
       }
 
 
