@@ -147,8 +147,9 @@ app.controller('HakuListController',
                     // Defined: "hakuControllers.js"
                     $scope.doDeleteHaku(haku).then(function(result) {
                         $log.info("  result = ", result);
-                        doAfter();
-                        //$scope.doSearch();
+                        if (result) {
+                            doAfter();
+                        }
                     });
 
                 };
@@ -173,7 +174,6 @@ app.controller('HakuListController',
                                     		$scope.model.hakus[i].$delete();
                                     	}
                                     }
-                                    // TODO how to refresh haku list?
                                 });
                             });
                         }

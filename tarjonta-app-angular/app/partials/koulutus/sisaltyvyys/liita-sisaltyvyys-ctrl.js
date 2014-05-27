@@ -32,7 +32,7 @@ app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, Localisatio
             });
 
             return arr;
-        }
+        };
 
         factoryScope.handleResult = function(targetKomo, response, selectedRowData, modalInstance) {
             var arrErrors = [];
@@ -46,14 +46,15 @@ app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, Localisatio
                     //add additional information to the error data object
                     var arr = [];
 
-                    if (error.errorMessageKey === 'LINKING_PARENT_HAS_NO_CHILDREN') {
+                    switch(error.errorMessageKey){
+                      case 'LINKING_PARENT_HAS_NO_CHILDREN':
                         arr = [targetKomo.nimi];
-                    } else if (error.errorMessageKey === 'LINKING_CHILD_OID_NOT_FOUND') {
+                        break;
+                      case 'LINKING_CHILD_OID_NOT_FOUND':
+                      case 'LINKING_OID_HAS_CHILDREN':
+                      case 'LINKING_CANNOT_CREATE_LOOP':
                         arr = factoryScope.searchErrorNimi(error.errorMessageParameters, selectedRowData);
-                    } else if (error.errorMessageKey === 'LINKING_OID_HAS_CHILDREN') {
-                        arr = factoryScope.searchErrorNimi(error.errorMessageParameters, selectedRowData);
-                    } else if (error.errorMessageKey === 'LINKING_CANNOT_CREATE_LOOP') {
-                        arr = factoryScope.searchErrorNimi(error.errorMessageParameters, selectedRowData);
+                        break;
                     }
 
                     error.msg = LocalisationService.t("sisaltyvyys.error." + error.errorMessageKey, arr);
@@ -115,8 +116,8 @@ app.service('TreeHandlers', function() {
     return singleton;
 });
 
-app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers',
-    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers) {
+app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers', 'AuthService',
+    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService) {
         /*
          * Select koulutus data objects.
          */
@@ -143,9 +144,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
                 data: [] //only row objects
             },
             spec: {//search parameter object
-                oid: organisaatio.oid,
+                oid: AuthService.getOrganisations(),
                 terms: '', //search words
-                state: null,
                 year: targetKomo.vuosi,
                 season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio 
             },
@@ -259,7 +259,7 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
         $scope.clearErrors = function() {
             $scope.model.errors = [];
         };
-
+        
         /*
          * 2TAB tree event handlers
          */

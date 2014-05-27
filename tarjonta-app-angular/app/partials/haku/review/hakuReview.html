@@ -17,7 +17,7 @@
                 </td>
             </tr>
 
-            <tr>
+            <tr ng-if="!isJatkuvaHaku()">
                 <th tt="haku.review.haunTiedot.hakukausi">Hakukausi ja vuosi</th>
                 <td colspan="2">
                     <div data-koodi data-uri="model.hakux.result.hakukausiUri">resolved</div>
@@ -25,7 +25,7 @@
                 </td>
             </tr>
 
-            <tr>
+            <tr ng-if="!isJatkuvaHaku()">
                 <th tt="haku.review.haunTiedot.alkamiskausi">Koulutuksen alkamiskausi</th>
                 <td colspan="2">
                     <div data-koodi data-uri="model.hakux.result.koulutuksenAlkamiskausiUri">resolved</div>
