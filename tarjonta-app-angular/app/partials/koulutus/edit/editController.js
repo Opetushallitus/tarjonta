@@ -291,6 +291,16 @@ app.controller('BaseEditController', [
         };
 
         $scope.saveByStatus = function(tila, form, tyyppi, fnCustomCallbackAfterSave) {
+            $scope.saveByStatusAndApiObject(
+                    tila,
+                    form,
+                    tyyppi,
+                    fnCustomCallbackAfterSave,
+                    converter.saveModelConverter(tila, $scope.model, $scope.uiModel, tyyppi)
+                    );
+        };
+
+        $scope.saveByStatusAndApiObject = function(tila, form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
             $scope.controlFormMessages(form, $scope.uiModel, "CLEAR");
 
             if (angular.isUndefined(tila)) {
@@ -313,7 +323,6 @@ app.controller('BaseEditController', [
                 }
 
                 var KoulutusRes = TarjontaService.koulutus();
-                var apiModelReadyForSave = converter.saveModelConverter(tila, $scope.model, $scope.uiModel, tyyppi);
 
                 KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
                     var model = saveResponse.result;
@@ -395,11 +404,12 @@ app.controller('BaseEditController', [
             $scope.controlFormMessages(form, uiModel, "INIT");
             converter.createAPIModel(model, Config.app.userLanguages, tyyppi);
 
-//            var promiseOrg = organisaatioService.nimi($routeParams.org);
-//            promiseOrg.then(function(vastaus) {
-//                converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-//            });
-
+            if (angular.isDefined($routeParams.org) || (angular.isDefined(model.organisaatio) && angular.isDefined(model.organisaatio.oid))) {
+                var promiseOrg = organisaatioService.nimi(angular.isDefined($routeParams.org) ? $routeParams.org : model.organisaatio.oid);
+                promiseOrg.then(function(vastaus) {
+                    converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
+                });
+            }
         };
 
         $scope.commonLoadModelHandler = function(form, model, uiModel, tyyppi) {

@@ -231,6 +231,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_OSAAMISALA_URI)) {
                 if (dto instanceof KoulutusmoduuliAmmatillinenRelationV1RDTO) {
                     KoulutusmoduuliAmmatillinenRelationV1RDTO lk = (KoulutusmoduuliAmmatillinenRelationV1RDTO) dto;
+                    lk.setKoulutusohjelma(singleKoodi(type.getKoodiUri(), FieldNames.OSAAMISALA, locale, showMeta));
                     lk.setOsaamisala(singleKoodi(type.getKoodiUri(), FieldNames.OSAAMISALA, locale, showMeta));
                 }
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI)) {

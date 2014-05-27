@@ -187,12 +187,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
                 final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
-                KoulutusValmistavaV1RDTO valmistavaKoulutus = nayttoDto.getValmistavaKoulutus();
-                KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus = komoto.getNayttotutkintoValmentavaKoulutus();
-                if (nayttotutkintoValmentavaKoulutus != null && nayttotutkintoValmentavaKoulutus.getOid() != null && valmistavaKoulutus == null) {
-                    //remove joined valmentava koulutus from db.
-                    komoto.setNayttotutkintoValmentavaKoulutus(null);
-                }
             }
         }
 

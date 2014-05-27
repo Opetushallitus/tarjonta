@@ -1,0 +1,29 @@
+<tr class="primary" ng-controller="EditYhteyshenkiloCtrl">
+    <th tt="koulutus.edit.yhteyshenkilo.name">Koulutuksen yhteyshenkilö</th>
+	<td><input class="wide" type="text" ng-model="vkUiModel.contactPerson.nimet" typeahead-wait-ms="300" typeahead-on-select="editYhModel.selectHenkilo($item)" typeahead="henkilo.nimi for henkilo in yhteyshenkilot | filter:$viewValue"></td>
+    <td><a href ng-click="editYhModel.clearYh()"><span tt='koulutus.edit.tyhjenna'>Tyhjennä</span></a>
+	</td>
+</tr>
+
+<tr>
+    <th tt="koulutus.edit.yhteyshenkilo.email">Sähköpostiosoite</th>
+	<td><input type="text" data-ng-model="vkUiModel.contactPerson.sahkoposti" /></td>
+	<td></td>
+</tr>
+
+<tr>
+    <th tt="koulutus.edit.yhteyshenkilo.title">Tehtävänimike</th>
+	<td><input type="text" data-ng-model="vkUiModel.contactPerson.titteli" /></td>
+	<td></td>
+</tr>
+
+<tr>
+    <th tt="koulutus.edit.yhteyshenkilo.phone">Puhelinnumero</th>
+	<td><input type="text" data-ng-model="vkUiModel.contactPerson.puhelin" /></td>
+	<td></td>
+</tr>
+
+<tr>
+	<th></th>
+    <td colspan="2" class="help" tt="koulutus.edit.contactPerson.help">Yhteyshenkilö voi olla myös opinto- tai hakutoimisto</td>
+</tr>

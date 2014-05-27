@@ -31,6 +31,9 @@ app.controller('EditNayttotutkintoController',
                         koulutusohjelmaModules: {}
                     };
 
+                    //valmistava koulutus
+                    var vkModel = {};
+
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
                      */
@@ -50,6 +53,22 @@ app.controller('EditNayttotutkintoController',
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
 
+                        if (angular.isDefined(model.valmistavaKoulutus) && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
+                            var vkUiModel = {};
+                            $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+
+                            vkUiModel.lisatietoKielet = angular.copy(vkUiModel.opetuskielis.uris);
+                            for (var ki in model.kuvausKomoto) {
+                                for (var lc in model.valmistavaKoulutus.kuvausKomoto[ki].tekstis) {
+                                    if (vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
+                                        vkUiModel.lisatietoKielet.push(lc);
+                                    }
+                                }
+                            }
+
+                            $scope.vkUiModel = vkUiModel;
+                            $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        }
 
                     } else if (!angular.isUndefined($routeParams.org)) {
                         /*
@@ -87,6 +106,7 @@ app.controller('EditNayttotutkintoController',
                      */
                     $scope.commonKoodistoLoadHandler(uiModel, $scope.CONFIG.TYYPPI);
 
+
                     /*
                      * CUSTOM LOGIC
                      */
@@ -105,12 +125,20 @@ app.controller('EditNayttotutkintoController',
                      */
                     $scope.setUiModel(uiModel);
                     $scope.setModel(model);
+
+                    if (angular.isDefined(model.valmistavaKoulutus) && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
+                        $scope.uiModel.cbShowValmistavaKoulutus = true;
+                        $scope.cbShowValmistavaKoulutus = true;
+                    } else {
+                        $scope.uiModel.cbShowValmistavaKoulutus = false;
+                        $scope.cbShowValmistavaKoulutus = false;
+                    }
                 };
 
-                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi, tutkintoTyyppi) {
+                $scope.loadRelationKoodistoData = function(apiModel, uiModel, uri, tutkintoTyyppi) {
                     TarjontaService.getKoulutuskoodiRelations({
-                        koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
-                        uri: koulutuskoodi,
+                        koulutustyyppi: $scope.CONFIG.TYYPPI,
+                        uri: uri,
                         languageCode: $scope.koodistoLocale
                     }, function(response) {
                         var restRelationData = response.result;
@@ -218,12 +246,21 @@ app.controller('EditNayttotutkintoController',
                 });
 
                 $scope.saveLuonnos = function() {
-                    $scope.saveByStatus('LUONNOS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
+                    $scope.saveByStatus('LUONNOS');
                 };
                 $scope.saveValmis = function() {
-                    $scope.saveByStatus('VALMIS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
+                    $scope.saveByStatus('VALMIS');
                 };
 
+                $scope.saveByStatus = function(tila) {
+                    var api = converter.saveModelConverter(tila, $scope.model, $scope.uiModel, $scope.CONFIG.TYYPPI);
+                    if ($scope.model.valmistavaKoulutus !== null) {
+                        $scope.model.valmistavaKoulutus.organisaatio = $scope.model.organisaatio;
+                        $scope.model.valmistavaKoulutus.tila = $scope.model.tila;
+                        api.valmistavaKoulutus = converter.saveModelConverter(tila, $scope.model.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    }
+                    $scope.saveByStatusAndApiObject(tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave, api);
+                };
 
                 $scope.onMaksullisuusChanged = function() {
                     if (!$scope.model.hinta) {
@@ -251,8 +288,8 @@ app.controller('EditNayttotutkintoController',
                     }
                 });
 
-                $scope.$watch("uiModel.cbShowValmistavaKoulutus", function(valNew, valOld) {
-                    if (valNew) {
+                $scope.clickShowValmistavaKoulutus = function() {
+                    if ($scope.uiModel.cbShowValmistavaKoulutus) {
 
                         var uiModel = {};
                         var model = {};
@@ -266,7 +303,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.model.valmistavaKoulutus = null;
                         $scope.cbShowValmistavaKoulutus = false;
                     }
-                });
+                };
 
                 $scope.init();
             }]);

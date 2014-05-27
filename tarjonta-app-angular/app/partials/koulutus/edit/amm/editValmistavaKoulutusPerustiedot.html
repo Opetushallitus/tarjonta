@@ -104,7 +104,7 @@
 <tr>
     <th tt="koulutus.edit.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
     <td><input class="wide" name="linkkiOpetussuunnitelmaan" type="text" data-ng-model="model.valmistavaKoulutus.linkkiOpetussuunnitelmaan" /></td>
-    <td>  <pre>{{model.valmistavaKoulutus | json}} {{vkUiModel | json}}</pre>
+    <td>
 
 </td>
 </tr>
@@ -112,7 +112,7 @@
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
 
-<tbody ng-include="'partials/koulutus/edit/editYhteyshenkilo.html'"></tbody>
+<tbody ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusYhteyshenkilo.html'"></tbody>
 
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>

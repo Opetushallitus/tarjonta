@@ -191,6 +191,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             return result;
         }
 
+        //convert required komoto to dto rest format.
         switch (getType(komoto)) {
             case KORKEAKOULUTUS:
                 result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, userLang, showMeta, showImg));
@@ -205,26 +206,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, userLang, showMeta));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                //convert required base komoto to dto.
-                KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convert = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) converterToRDTO.convert(
-                        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
-                        komoto,
-                        userLang,
-                        showMeta
-                );
-                result.setResult(convert);
-
-                //null == no optional inserted vamentava koulutus 
-                if (komoto.getNayttotutkintoValmentavaKoulutus() != null) {
-                    //convert joined optional komoto to the base komoto .
-                    convert.setValmistavaKoulutus((KoulutusValmistavaV1RDTO) converterToRDTO.convert(
-                            KoulutusValmistavaV1RDTO.class,
-                            komoto.getNayttotutkintoValmentavaKoulutus(),
-                            userLang,
-                            showMeta
-                    ));
-                }
-
+                //very special case: may have a double komoto structure  
+                result.setResult(convertAmmValmentavaToDTO(komoto, userLang, showMeta));
                 break;
         }
 
@@ -375,9 +358,19 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 //create korkeakoulu koulutus
                 fullKomotoWithKomo = insertKoulutusAmmattikoulu(dto);
             }
-
+            Preconditions.checkNotNull(fullKomotoWithKomo, "KOMOTO object cannot be null!");
+            Preconditions.checkNotNull(fullKomotoWithKomo.getId(), "KOMOTO ID cannot be null!");
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, false));
+
+            switch (fullKomotoWithKomo.getTyyppi()) {
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                    result.setResult(convertAmmValmentavaToDTO(fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
+                    break;
+                default:
+                    result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, false));
+                    break;
+            }
+
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -1133,6 +1126,30 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         copy.setTila(TarjontaTila.LUONNOS);
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
         return copy;
+    }
+
+    private KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convertAmmValmentavaToDTO(final KoulutusmoduuliToteutus komoto, final String userLang, final boolean showMeta) {
+
+        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convert = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) converterToRDTO.convert(
+                KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
+                komoto,
+                userLang,
+                showMeta
+        );
+
+        //null == no optional inserted vamentava koulutus 
+        if (komoto.getNayttotutkintoValmentavaKoulutus() != null) {
+            //convert joined optional komoto to the base komoto .
+
+            convert.setValmistavaKoulutus((KoulutusValmistavaV1RDTO) converterToRDTO.convert(
+                    KoulutusValmistavaV1RDTO.class,
+                    komoto.getNayttotutkintoValmentavaKoulutus(),
+                    userLang,
+                    showMeta
+            ));
+        }
+
+        return convert;
     }
 
 }

@@ -1,11 +1,9 @@
-{{uiModel.cbShowValmistavaKoulutus | json}}        
-        
 <table class="tarjontaForm"><!--pre>{{model.koulutuskoodi| json }}</pre-->
     <tr>
         <th></th>
         <td>
-            <input type="checkbox" data-ng-model="uiModel.cbShowValmistavaKoulutus"/>
-            <span tt="koulutus.edit.sisaltyy-valmistava-koulutus">Sisältyy valmistava koulutus</span>
+            <input type="checkbox" ng-model="uiModel.cbShowValmistavaKoulutus" ng-change="clickShowValmistavaKoulutus()" />
+            <span tt="koulutus.edit.sisaltyy-valmistava-koulutus">Tutkintoon sisältyy valmistava koulutus</span>
         </td>
         <td></td>
     </tr>

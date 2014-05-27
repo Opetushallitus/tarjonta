@@ -484,11 +484,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: {
             KUVAUS_ORDER: [
-                {type: "SISALTO", isKomo: false, length: 2000},
-                {type: "KOHDERYHMA", isKomo: false, length: 2000},
-                {type: "OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
-                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
-                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+                {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
+                {type: "NAYTTOTUTKINNON_SUORITTAMINEN", isKomo: false, length: 1500},
+                {type: "MAKSULLISUUS", isKomo: false, length: 1500},
+                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 1500},
+                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500}
             ],
             MLANG: {},
             RELATION: {
@@ -502,7 +502,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }, COMBO: {
                 koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
             }, MCOMBO: {
-                opetuskielis: {koodisto: 'koodisto-uris.kieli', 'default': {uris: {'kieli_fi': 1}}},
+                opetuskielis: {koodisto: 'koodisto-uris.kieli', "default": {uris: {'kieli_fi': 1}}},
                 ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
@@ -524,11 +524,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         },
         AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA: {
             KUVAUS_ORDER: [
-                {type: "SISALTO", isKomo: false, length: 2000},
-                {type: "KOHDERYHMA", isKomo: false, length: 2000},
-                {type: "OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
-                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
-                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+                {type: "SISALTO", isKomo: false, length: 1500},
+                {type: "KOHDERYHMA", isKomo: false, length: 1500},
+                {type: "OPISKELUN_HENKILOKOHTAISTAMINEN", isKomo: false, length: 1500},
+                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 1500}
             ],
             MLANG: {},
             RELATION: {
@@ -576,10 +575,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
     };
 
-    factory.saveModelConverter = function(tila, pmodel, uiModel, koulutusasteTyyppi) {
+    factory.saveModelConverter = function(tila, pmodel, uiModel, toteutustyyppi) {
         var apiModel = angular.copy(pmodel);
         apiModel.tila = tila;
-        factory.validateOutputData(apiModel, koulutusasteTyyppi);
+        factory.validateOutputData(apiModel, toteutustyyppi);
         /*
          * DATA CONVERSIONS FROM UI MODEL TO API MODEL
          * Convert person object to back-end object format.
@@ -592,7 +591,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
 
         //for single select models
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].COMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].COMBO, function(value, key) {
             //search version information for list of uris;
 
             var koodis = uiModel[key].koodis;
@@ -607,7 +606,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].RELATIONS, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].RELATIONS, function(value, key) {
             if (angular.isUndefined(value.skipApiModel)) {
                 apiModel[key] = {'uris': {}};
                 //search version information for list of uris;
@@ -623,7 +622,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
 
         //multi-select models, add version to the koodi
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].MCOMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].MCOMBO, function(value, key) {
 
             if (angular.isDefined(value.types)) {
                 apiModel[key] = {};
@@ -639,7 +638,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                         apiModel[key][type].uris[uri] = map[uri];
                     });
                 });
-            } else {
+            } else if (angular.isDefined(uiModel[key].uris) && Object.keys(uiModel[key].uris).length > 0) {
                 apiModel[key] = {'uris': {}};
                 //search version information for list of uris;
                 var map = {};
@@ -653,7 +652,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].IMAGES, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].IMAGES, function(value, key) {
             for (var i in apiModel[key]) {
                 if (angular.isUndefined(apiModel[key][i].base64data) || apiModel[key][i].base64data === null) {
                     apiModel[key][i] = null;

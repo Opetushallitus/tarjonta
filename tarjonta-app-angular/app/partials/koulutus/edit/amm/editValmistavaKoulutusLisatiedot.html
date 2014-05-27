@@ -1,1 +1,27 @@
-<div></div>
+<table class="tarjontaForm">
+</table>
+
+
+<mk-tabs
+    model="getLisatietoKielet()"
+    selection="vkUiModel.selectedKieliUri"
+    mutable="true"
+    ></mk-tabs>
+ 
+<div class="mkTabsContent" ng-show="vkUiModel.selectedKieliUri==null">
+    <multi-select
+        on-change="onLisatietoLangSelection()"
+        promise="vkUiModel.opetuskielis.promise"
+        order-with="userLanguages"
+        selection="vkUiModel.lisatietoKielet"
+        display="dualpane"></multi-select>
+</div>
+ 
+<div class="mkTabsContent" ng-show="vkUiModel.selectedKieliUri">
+    <div ng-if="vkUiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.valmistavaKoulutus.opintojenMaksullisuus">
+        <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
+        <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
+        <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
+        <rich-textarea max="{{lisatieto.length}}" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, vkUiModel.selectedKieliUri)[vkUiModel.selectedKieliUri]"></rich-textarea>
+    </div>
+</div>

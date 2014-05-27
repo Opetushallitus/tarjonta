@@ -187,6 +187,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "alkamispvm")
     private Set<Date> koulutuksenAlkamisPvms = new HashSet<Date>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
+
+    @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "koulutusmoduuli_toteutus_children_id", nullable = true)
+    private KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus;
+
     @Column(name = "tarjoaja")
     private String tarjoaja;
 
@@ -235,15 +244,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     @Column(name = "suunniteltukesto_arvo")
     private String suunniteltukestoArvo;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
-            = @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
-
-    @OneToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "koulutusmoduuli_toteutus_children_id", referencedColumnName = "id", nullable = true)
-    private KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus;
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;

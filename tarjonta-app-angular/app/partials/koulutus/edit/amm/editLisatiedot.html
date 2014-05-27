@@ -3,7 +3,7 @@
     <!-- ammattinimikkeet -->
     <tr class="info">
         <th tt="koulutus.edit.ammattinimikkeet.title" />
-        <td><multi-select model="uiModel.tmp"
+        <td><multi-select
                       selection="uiModel.ammattinimikkeet.uris"
                       promise="uiModel.ammattinimikkeet.promise" display="combobox"
                       tt-show-all-title="koulutus.edit.ammattinimikkeet.title"/></td>
@@ -35,7 +35,4 @@
         <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
         <rich-textarea max="{{lisatieto.length}}" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
     </div>
-
-    <h4 tt="koulutus.edit.kuva.title"></h4>
-    <p tt="koulutus.edit.kuva.help"></p>
 </div>

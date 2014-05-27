@@ -55,6 +55,14 @@ public class KoulutusmoduuliToteutusDAOTest {
         komoto.setKoulutusmoduuli(komo);
         komoto = this.koulutusmoduuliToteutusDAO.insert(komoto);
 
+        KoulutusmoduuliToteutus findByOid = koulutusmoduuliToteutusDAO.findByOid(komoto.getOid());
+        assertNotNull("no komoto object found by findByOid?", findByOid);
+        assertEquals(komoto.getOid(), findByOid.getOid());
+
+        findByOid = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto.getOid());
+        assertNotNull("no komoto object found by findKomotoByOid?", findByOid);
+        assertEquals(komoto.getOid(), findByOid.getOid());
+
         KoulutusmoduuliToteutus komoto1 = fixtures.createTutkintoOhjelmaToteutus();
         komoto1.setTarjoaja(TARJOAJA_OID + "xxx");
         komoto1.setKoulutusmoduuli(komo);
@@ -101,6 +109,20 @@ public class KoulutusmoduuliToteutusDAOTest {
         assertEquals(FILENAME2, map.get(URI_FI).getFilename());
         assertEquals(MIME2, map.get(URI_FI).getMimeType());
         assertEquals(map.get(URI_FI).getData()[0], 1);
+
+        /*
+         * LINK TEST : KOMOTO A TO KOMOTO B
+         */
+        KoulutusmoduuliToteutus linkedKomoto1 = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto1.getOid());
+        KoulutusmoduuliToteutus linkedKomoto2 = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto2.getOid());
+
+        linkedKomoto1.setNayttotutkintoValmentavaKoulutus(linkedKomoto2);
+        this.koulutusmoduuliToteutusDAO.update(linkedKomoto1);
+
+        linkedKomoto1 = koulutusmoduuliToteutusDAO.findByOid(linkedKomoto1.getOid());
+        assertNotNull("no base link komoto object found by findByOid?", linkedKomoto1);
+        assertNotNull("no linked komoto object found by findByOid?", linkedKomoto1.getNayttotutkintoValmentavaKoulutus());
+        assertEquals(linkedKomoto2, linkedKomoto1.getNayttotutkintoValmentavaKoulutus());
     }
 
     @Test
