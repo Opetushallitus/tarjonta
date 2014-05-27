@@ -168,6 +168,11 @@ app.controller('HakuListController',
                             angular.forEach(hakus.result, function(haku) {
                                 $scope.doDelete(haku, function() {
                                     $log.info("DO AFTER...", haku);
+                                    for (var i in $scope.model.hakus) {
+                                    	if ($scope.model.hakus[i].oid == haku.oid) {
+                                    		$scope.model.hakus[i].$delete();
+                                    	}
+                                    }
                                     // TODO how to refresh haku list?
                                 });
                             });
@@ -249,21 +254,21 @@ app.controller('HakuListController',
                         //delete
                         if (true === results[1] && haku.tila != 'JULKAISTU') {
                             ret.push({title: LocalisationService.t("haku.menu.poista"), action: function() {
-                                    $scope.doDelete(haku, actions.delete);
+                                    $scope.doDelete(haku, haku.$delete);
                                 }});
                         }
 
                         //publish
                         if (true === results[0] && true === results[2].result && haku.tila != 'JULKAISTU') {
                             ret.push({title: LocalisationService.t("haku.menu.julkaise"), action: function() {
-                                    $scope.doPublish(haku, actions.update);
+                                    $scope.doPublish(haku, haku.$update);
                                 }});
                         }
 
                         //cancel
                         if (true === results[0] && true === results[3].result && haku.tila != 'PERUTTU') {
                             ret.push({title: LocalisationService.t("haku.menu.peruuta"), action: function() {
-                                    $scope.doCancel(haku, actions.update);
+                                    $scope.doCancel(haku, haku.$update);
                                 }});
                         }
 
