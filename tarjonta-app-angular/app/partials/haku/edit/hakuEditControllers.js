@@ -142,6 +142,15 @@ app.controller('HakuEditController',
                   haku.tila = tila;
                 }
 
+                // When saving JATKUVA HAKU, reset year and term info
+                if ($scope.isJatkuvaHaku()) {
+                    $log.info("  this seems to be JATKUVA HALU - maybe reset vuosi kausi info?", haku);
+//                    haku.hakukausiUri = null;
+//                    haku.hakukausiVuosi = 0;
+//                    haku.koulutuksenAlkamiskausiUri = null;
+//                    haku.koulutuksenAlkamisVuosi = 0;
+                }
+
                 // Save it
                 HakuV1.save(haku, function(result) {
                     $log.debug("doSaveHakuAndParameters() - haku save OK", result);
@@ -263,13 +272,8 @@ app.controller('HakuEditController',
             };
 
 
-            /**
-             *
-             * @returns true if current haku is JATKUVA_HAKU
-             */
             $scope.isJatkuvaHaku = function() {
-                // Ignore koodisto versions in comparison
-                var result = KoodistoURI.compareKoodi(KoodistoURI.HAKUTAPA_JATKUVAHAKU, $scope.model.hakux.result.hakutapaUri, true);                
+                var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
                 // $log.info("isJatkuvaHaku()", result);
                 return result;
             };

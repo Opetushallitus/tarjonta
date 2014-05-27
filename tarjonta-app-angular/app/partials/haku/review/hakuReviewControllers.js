@@ -47,6 +47,13 @@ app.controller('HakuReviewController',
                 // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve for "/haku/:id"
 
                 $scope.model = null;
+                
+                $scope.isJatkuvaHaku = function() {
+                    // Defined in "hakuControllers.js"
+                    var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
+                    // $log.info("isJatkuvaHaku()", result);
+                    return result;
+                };
 
                 $scope.goBack = function() {
                     $location.path("/haku");

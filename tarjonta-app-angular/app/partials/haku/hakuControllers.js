@@ -7,10 +7,10 @@ var app = angular.module('app.haku.ctrl',
 app.controller('HakuRoutingController',
         ['$scope', '$log', '$routeParams',
             '$route', 'dialogService', 'LocalisationService',
-            'HakuV1Service', 'HakuV1',
+            'HakuV1Service', 'HakuV1', 'KoodistoURI',
             function HakukohdeRoutingController($scope, $log, $routeParams,
                     $route, dialogService, LocalisationService,
-                    HakuV1Service, HakuV1) {
+                    HakuV1Service, HakuV1, KoodistoURI) {
 
                 $log = $log.getInstance("HakuRoutingController");
 
@@ -123,6 +123,15 @@ app.controller('HakuRoutingController',
                         }
                     });
                 };
-
+                
+                
+                /**
+                 * @returns true if current haku is JATKUVA_HAKU
+                 */
+                $scope.isHakuJatkuvaHaku = function(haku) {
+                    // Ignore koodisto versions in comparison
+                    var result = KoodistoURI.compareKoodi(KoodistoURI.HAKUTAPA_JATKUVAHAKU, haku.hakutapaUri, true);                
+                    return result;
+                };
             }
         ]);
