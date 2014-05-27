@@ -20,10 +20,12 @@ app.controller('HakuReviewController',
             '$routeParams', 'ParameterService', '$location',
             'HakuV1Service', 'TarjontaService', 'dialogService',
             'LocalisationService', '$q', "PermissionService",
+            'OrganisaatioService',
             function HakuReviewController($scope, $route, $log,
                     $routeParams, ParameterService, $location,
                     HakuV1Service, TarjontaService, dialogService,
-                    LocalisationService, $q, PermissionService) {
+                    LocalisationService, $q, PermissionService,
+                    OrganisaatioService) {
 
                 $log = $log.getInstance("HakuReviewController");
                 $scope.isMutable = false;
@@ -95,8 +97,29 @@ app.controller('HakuReviewController',
                         },
                         haku: {todo: "TODO LOAD ME 1"},
                         hakukohteet: [],
+                        
+                        tarjoajaOrganisations: [],   // { tarjoajaOids : [...] }
+                        hakukohdeOrganisations: [],  // { organisaatioOids : [...] }
+                        
                         place: "holder"
                     };
+                    
+                    //
+                    // Get organisation information
+                    //
+                    angular.forEach($scope.model.hakux.result.organisaatioOids, function(organisationOid) {
+                        $log.info("  get [organisaatioOids] ", organisationOid);
+                        OrganisaatioService.byOid(organisationOid).then(function(organisation) {
+                          $scope.model.hakukohdeOrganisations.push(organisation);
+                        });
+                    });
+
+                    angular.forEach($scope.model.hakux.result.tarjoajaOids, function(organisationOid) {
+                        $log.info("  get [tarjoajaOids] ", organisationOid);
+                        OrganisaatioService.byOid(organisationOid).then(function(organisation) {
+                          $scope.model.tarjoajaOrganisations.push(organisation);
+                        });
+                    });
 
                     //
                     // Get hakukohdes for current haku

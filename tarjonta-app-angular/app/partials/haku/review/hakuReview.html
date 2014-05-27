@@ -94,6 +94,28 @@
                 </td> 
             </tr>
 
+            <tr>
+                <th tt="haku.edit.organisaatiot.tarjoaja">Haun muokkausoikeus</th>
+                <td colspan="2">
+                    <ul>
+                        <li ng-repeat="org in model.tarjoajaOrganisations">
+                            <a href="/organisaatio-ui/html/index.html#/organisaatiot/{{ org.oid }}">{{ org.nimi }}</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>            
+            
+            <tr>
+                <th tt="haku.edit.organisaatiot.hakukohteet">Hakukohteita liittävät organisaatiot</th>
+                <td colspan="2">
+                    <ul>
+                        <li ng-repeat="org in model.hakukohdeOrganisations">
+                            <a href="/organisaatio-ui/html/index.html#/organisaatiot/{{ org.oid }}">{{ org.nimi }}</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>            
+
         </tbody>
 
 
