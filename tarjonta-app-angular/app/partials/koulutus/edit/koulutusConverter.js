@@ -549,6 +549,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
+                opintojenMaksullisuus: {"default": false}
             }, IMAGES: {
             }, DESC: {
                 kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([

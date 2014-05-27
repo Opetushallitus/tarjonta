@@ -32,7 +32,7 @@ app.controller('EditNayttotutkintoController',
                     };
 
                     //valmistava koulutus
-                    var vkModel = {};
+                    var vkUiModel = {};
 
                     /*
                      * HANDLE EDIT / CREATE NEW ROUTING
@@ -53,8 +53,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
 
-                        if (angular.isDefined(model.valmistavaKoulutus) && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
-                            var vkUiModel = {};
+                        if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
                             $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
 
                             vkUiModel.lisatietoKielet = angular.copy(vkUiModel.opetuskielis.uris);
@@ -66,8 +65,7 @@ app.controller('EditNayttotutkintoController',
                                 }
                             }
 
-                            $scope.vkUiModel = vkUiModel;
-                            $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                            $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         }
 
                     } else if (!angular.isUndefined($routeParams.org)) {
@@ -123,10 +121,14 @@ app.controller('EditNayttotutkintoController',
                     /*
                      * INIT SCOPES FOR RENDERER IN koulutusController.js
                      */
-                    $scope.setUiModel(uiModel);
                     $scope.setModel(model);
 
-                    if (angular.isDefined(model.valmistavaKoulutus) && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
+                    //Ui model for editPerustiedot and editLisatiedot pages (normal case)
+                    $scope.setUiModel(uiModel);
+                    //Ui model for editValmistavaKoulutusPerustiedot and eeditValmistavaKoulutusLisatiedot pages (special case)
+                    $scope.vkUiModel = vkUiModel;
+
+                    if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
                         $scope.uiModel.cbShowValmistavaKoulutus = true;
                         $scope.cbShowValmistavaKoulutus = true;
                     } else {
@@ -254,7 +256,7 @@ app.controller('EditNayttotutkintoController',
 
                 $scope.saveByStatus = function(tila) {
                     var api = converter.saveModelConverter(tila, $scope.model, $scope.uiModel, $scope.CONFIG.TYYPPI);
-                    if ($scope.model.valmistavaKoulutus !== null) {
+                    if (angular.isDefined($scope.model.valmistavaKoulutus) && $scope.model.valmistavaKoulutus !== null && angular.isDefined($scope.model.valmistavaKoulutus.toteutustyyppi)) {
                         $scope.model.valmistavaKoulutus.organisaatio = $scope.model.organisaatio;
                         $scope.model.valmistavaKoulutus.tila = $scope.model.tila;
                         api.valmistavaKoulutus = converter.saveModelConverter(tila, $scope.model.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
@@ -262,16 +264,17 @@ app.controller('EditNayttotutkintoController',
                     $scope.saveByStatusAndApiObject(tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave, api);
                 };
 
-                $scope.onMaksullisuusChanged = function() {
-                    if (!$scope.model.hinta) {
+                $scope.onMaksullisuusChanged = function(model) {
+                    if (!model.hinta) {
                         return;
                     }
-                    var p = $scope.model.hinta.indexOf(',');
+                    var p = model.hinta.indexOf(',');
                     while (p != -1) {
-                        $scope.model.hinta = $scope.model.hinta.substring(0, p) + "." + $scope.model.hinta.substring(p + 1);
-                        p = $scope.model.hinta.indexOf(',', p);
+                        model.hinta = model.hinta.substring(0, p) + "." + model.hinta.substring(p + 1);
+                        p = model.hinta.indexOf(',', p);
                     }
                 };
+
 
                 $scope.getEditValmistavaKoulutusPerustiedot = function() {
                     return '/partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html';
@@ -285,6 +288,13 @@ app.controller('EditNayttotutkintoController',
                     if (!valNew && valOld) {
                         //clear price data field
                         $scope.model.hinta = '';
+                    }
+                });
+
+                $scope.$watch("model.valmistavaKoulutus.opintojenMaksullisuus", function(valNew, valOld) {
+                    if (!valNew && valOld) {
+                        //clear price data field
+                        $scope.model.valmistavaKoulutus.hinta = '';
                     }
                 });
 

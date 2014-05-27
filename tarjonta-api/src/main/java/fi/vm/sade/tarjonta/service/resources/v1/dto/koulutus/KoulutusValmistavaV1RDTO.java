@@ -31,6 +31,9 @@ public class KoulutusValmistavaV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
     private Double hinta;
 
+    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
+    private Boolean opintojenMaksullisuus;
+
     /**
      * @return the hinta
      */
@@ -43,5 +46,19 @@ public class KoulutusValmistavaV1RDTO extends KoulutusV1RDTO {
      */
     public void setHinta(Double hinta) {
         this.hinta = hinta;
+    }
+
+    /**
+     * @return the opintojenMaksullisuus
+     */
+    public Boolean getOpintojenMaksullisuus() {
+        return opintojenMaksullisuus;
+    }
+
+    /**
+     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
+     */
+    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
+        this.opintojenMaksullisuus = opintojenMaksullisuus;
     }
 }

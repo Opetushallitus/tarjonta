@@ -18,11 +18,13 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
                 multi: $scope.pvms.length > 1,
-                koodis: []
+                koodis: [],
+                kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisPvm" : "kausiVaiPvm",
+                alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamiskausi" : "alkamiskausi"
             };
-            
-            $scope.minYear = new Date().getFullYear()-1;
-            $scope.maxYear = $scope.minYear+11;
+
+            $scope.minYear = new Date().getFullYear() - 1;
+            $scope.maxYear = $scope.minYear + 11;
 
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
                 $scope.form['kausivuosi'] = valNew;
@@ -112,11 +114,11 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             ,
             controller: controller,
             scope: {
-                validationFieldName: "@",
                 pvms: "=",
                 vuosi: "=",
                 kausiUiModel: "=",
-                kausiUri: "="
+                kausiUri: "=",
+                fieldNamePrefix: "@"
             }
         };
     }]);
@@ -128,7 +130,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
             $scope.ctrl = {
                 addedDates: [],
                 index: 0,
-                ignoreDateListChanges: false
+                ignoreDateListChanges: false,
+                alkamisPvmFieldName: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisPvm" : "alkamisPvm"
             };
 
             $scope.thisYear = new Date(new Date().getFullYear(), 0, 1, 0, 0, 0, 0);
@@ -286,8 +289,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 kausiUri: "=",
                 fnClearKausi: "=",
                 enabled: "=",
-                multi: "="
-
+                multi: "=",
+                fieldNamePrefix: "@"
             }
         };
     }]);

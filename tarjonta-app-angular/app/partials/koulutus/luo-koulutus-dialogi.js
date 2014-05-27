@@ -266,7 +266,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                 $scope.luoKoulutusDialog.close();
             } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_1") { //TODO: vaihda oikea vertailu -> koulutustyyppi_4
                 //AMMATILLINEN
-                $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/koulutustyyppi_4/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/koulutustyyppi_13/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
             } else {
                 eiToteutettu();

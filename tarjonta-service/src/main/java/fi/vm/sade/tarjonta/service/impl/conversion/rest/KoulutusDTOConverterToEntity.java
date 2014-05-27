@@ -258,6 +258,7 @@ public class KoulutusDTOConverterToEntity {
          */
         convertKomotoCommonData(komoto, dto, userOid);
 
+
         /*
          * KOMOTO custom data conversion
          */
@@ -295,34 +296,9 @@ public class KoulutusDTOConverterToEntity {
         /* CUSTOM DATA by object type */
         if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
             KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDTO = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
-
-            KoulutusValmistavaV1RDTO valmistavaKoulutus = nayttoDTO.getValmistavaKoulutus();
-            if (valmistavaKoulutus != null) {
-                //copy&overwrite data from the base komoto
-                valmistavaKoulutus.setKomoOid(dto.getKomoOid());
-                valmistavaKoulutus.setTila(dto.getTila());
-                valmistavaKoulutus.setOrganisaatio(dto.getOrganisaatio());
-
-                //copy&overwrite other data
-                valmistavaKoulutus.setTutkinto(dto.getTutkinto());
-                valmistavaKoulutus.setKoulutusaste(dto.getKoulutusaste());
-                valmistavaKoulutus.setKoulutusala(dto.getKoulutusala());
-                valmistavaKoulutus.setOpintoala(dto.getOpintoala());
-                valmistavaKoulutus.setEqf(dto.getEqf());
-                valmistavaKoulutus.setNqf(dto.getNqf());
-                valmistavaKoulutus.setKoulutuskoodi(dto.getKoulutuskoodi());
-                valmistavaKoulutus.setKoulutustyyppi(dto.getKoulutustyyppi());
-                valmistavaKoulutus.setTunniste(dto.getTunniste());
-                //convert and insert to the base komoto
-                KoulutusmoduuliToteutus vkKomoto = convert(valmistavaKoulutus, userOid);
-                if (valmistavaKoulutus.getOid() != null && !valmistavaKoulutus.getOid().isEmpty()) {
-                    koulutusmoduuliToteutusDAO.update(vkKomoto);
-                } else {
-                    koulutusmoduuliToteutusDAO.insert(vkKomoto);
-                }
-
-                komoto.setNayttotutkintoValmentavaKoulutus(vkKomoto);
-            }
+            komoto.setHinta(nayttoDTO.getHinta() != null ? new BigDecimal(nayttoDTO.getHinta().toString()) : null);
+            komoto.setMaksullisuus(nayttoDTO.getOpintojenMaksullisuus() != null ? nayttoDTO.getOpintojenMaksullisuus().toString() : Boolean.FALSE.toString());
+            komoto.setAmmattinimikes(commonConverter.convertToUris(nayttoDTO.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
         }
 
         return komoto;
@@ -399,21 +375,24 @@ public class KoulutusDTOConverterToEntity {
         }
     }
 
-    public KoulutusmoduuliToteutus convert(final KoulutusValmistavaV1RDTO dto, final String userOid) {
+    public KoulutusmoduuliToteutus convert(final KoulutusValmistavaV1RDTO valmistavaKoulutus, KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto, final String userOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
-        if (dto == null) {
+        if (valmistavaKoulutus == null || nayttoDto == null) {
             return komoto;
         }
 
         Koulutusmoduuli komo = null;
-        if (dto.getOid() != null) {
+        if (valmistavaKoulutus.getOid() != null) {
             //update komo & komoto
-            komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
+            komoto = koulutusmoduuliToteutusDAO.findByOid(valmistavaKoulutus.getOid());
             komo = komoto.getKoulutusmoduuli();
         } else {
+            //follow base komoto
+            valmistavaKoulutus.setKomoOid(nayttoDto.getKomoOid());
+
             //insert only new komoto data to database, do not change or update komo. 
-            Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
-            komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
+            Preconditions.checkNotNull(valmistavaKoulutus.getKomoOid(), "KOMO OID cannot be null.");
+            komo = koulutusmoduuliDAO.findByOid(valmistavaKoulutus.getKomoOid());
             Preconditions.checkNotNull(komo, "KOMO object not found.");
             komoto.setKoulutusmoduuli(komo);
             try {
@@ -428,27 +407,45 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
         Preconditions.checkNotNull(komoto.getOid(), "KOMOTO OID cannot be null.");
 
-        if (dto.getOpetuskielis() != null) {
+        //copy&overwrite data from the base komoto
+        valmistavaKoulutus.setTila(nayttoDto.getTila());
+        valmistavaKoulutus.setOrganisaatio(nayttoDto.getOrganisaatio());
+
+        //copy&overwrite other data
+        valmistavaKoulutus.setTutkinto(nayttoDto.getTutkinto());
+        valmistavaKoulutus.setKoulutusaste(nayttoDto.getKoulutusaste());
+        valmistavaKoulutus.setKoulutusala(nayttoDto.getKoulutusala());
+        valmistavaKoulutus.setOpintoala(nayttoDto.getOpintoala());
+        valmistavaKoulutus.setEqf(nayttoDto.getEqf());
+        valmistavaKoulutus.setNqf(nayttoDto.getNqf());
+        valmistavaKoulutus.setKoulutuskoodi(nayttoDto.getKoulutuskoodi());
+        valmistavaKoulutus.setKoulutustyyppi(nayttoDto.getKoulutustyyppi());
+        valmistavaKoulutus.setTunniste(nayttoDto.getTunniste());
+
+        komoto.setHinta(valmistavaKoulutus.getHinta() != null ? new BigDecimal(valmistavaKoulutus.getHinta().toString()) : null);
+        komoto.setMaksullisuus(valmistavaKoulutus.getOpintojenMaksullisuus() != null ? valmistavaKoulutus.getOpintojenMaksullisuus().toString() : Boolean.FALSE.toString());
+
+        if (valmistavaKoulutus.getOpetuskielis() != null) {
             komoto.getOpetuskielis().clear();
-            komoto.setOpetuskieli(commonConverter.convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
+            komoto.setOpetuskieli(commonConverter.convertToUris(valmistavaKoulutus.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
         }
 
-        if (dto.getOpetusmuodos() != null) {
+        if (valmistavaKoulutus.getOpetusmuodos() != null) {
             komoto.getOpetusmuotos().clear();
-            komoto.setOpetusmuoto(commonConverter.convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
+            komoto.setOpetusmuoto(commonConverter.convertToUris(valmistavaKoulutus.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
         }
 
-        if (dto.getOpetusAikas() != null) {
+        if (valmistavaKoulutus.getOpetusAikas() != null) {
             komoto.getOpetusAikas().clear();
-            komoto.setOpetusAikas(commonConverter.convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
+            komoto.setOpetusAikas(commonConverter.convertToUris(valmistavaKoulutus.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
         }
 
-        if (dto.getOpetusPaikkas() != null) {
+        if (valmistavaKoulutus.getOpetusPaikkas() != null) {
             komoto.getOpetusPaikkas().clear();
-            komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
+            komoto.setOpetusPaikkas(commonConverter.convertToUris(valmistavaKoulutus.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
 
-        convertKomotoCommonData(komoto, dto, userOid);
+        convertKomotoCommonData(komoto, valmistavaKoulutus, userOid);
 
         return komoto;
     }

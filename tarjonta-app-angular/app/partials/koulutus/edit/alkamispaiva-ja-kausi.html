@@ -1,5 +1,5 @@
 <div id="koulutuksenAlkamisPvm">
-    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.kausi" ng-value="false"/>
+    <input type="radio" name="{{ctrl.kausiVaiPvm}}" ng-model="ctrl.kausi" ng-value="false"/>
     <span tt="koulutus.alkamispvm.singlePvm">Yksi alkamispäivämäärä</span><br/>
     <div class="indent">
         <alkamispaivat
@@ -7,7 +7,9 @@
             kausi-uri="kausiUri"
             fn-clear-kausi="clearKausiSelection"
             enabled="!ctrl.kausi"
-            multi="multi">
+            multi="multi"
+            field-name-prefix={{fieldNamePrefix}} 
+            >
         </alkamispaivat>
 
         <input type="checkbox" name="pvmMulti" ng-model="ctrl.multi" ng-disabled="ctrl.kausi" ng-click="onToggleManyDates($event)"/>
@@ -22,7 +24,7 @@
     <div class="indent">
         <span tt="koulutus.alkamispvm.kausi">Alkamiskausi</span> {{ctrl.text.notSelected}}
         <select
-            name="alkamiskausi"
+            name="{{ctrl.alkamiskausi}}"
             ng-required="ctrl.kausi"
             ng-model="kausiUri"
             ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"

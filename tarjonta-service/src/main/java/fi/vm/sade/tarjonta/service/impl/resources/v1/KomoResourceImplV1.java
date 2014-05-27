@@ -297,6 +297,14 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                         dto.setKoulutusohjelmaUri(m.getLukiolinjaUri().substring(0, m.getLukiolinjaUri().indexOf("#")));
                     }
                     break;
+                case ERIKOISAMMATTITUTKINTO:
+                case AMMATTITUTKINTO:
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
+                    if (m.getOsaamisalaUri() != null && !m.getOsaamisalaUri().isEmpty()) {
+                        dto.setKoulutusohjelmaUri(m.getOsaamisalaUri().substring(0, m.getOsaamisalaUri().indexOf("#")));
+                    }
+                    break;
                 default:
                     if (m.getKoulutusohjelmaUri() != null && !m.getKoulutusohjelmaUri().isEmpty()) {
                         dto.setKoulutusohjelmaUri(m.getKoulutusohjelmaUri().substring(0, m.getKoulutusohjelmaUri().indexOf("#")));

@@ -187,6 +187,13 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
                 final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
+
+                final String maksullisuus = komoto.getMaksullisuus();
+                nayttoDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
+
+                if (komoto.getHinta() != null) {
+                    nayttoDto.setHinta(komoto.getHinta().doubleValue());
+                }
             }
         }
 

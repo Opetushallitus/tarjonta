@@ -27,6 +27,9 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
     private Double hinta;
 
+    @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
+    private Boolean opintojenMaksullisuus;
+
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
 
@@ -102,6 +105,20 @@ public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends Kou
      */
     public void setJarjestavaOrganisaatio(OrganisaatioV1RDTO jarjestavaOrganisaatio) {
         this.jarjestavaOrganisaatio = jarjestavaOrganisaatio;
+    }
+
+    /**
+     * @return the opintojenMaksullisuus
+     */
+    public Boolean getOpintojenMaksullisuus() {
+        return opintojenMaksullisuus;
+    }
+
+    /**
+     * @param opintojenMaksullisuus the opintojenMaksullisuus to set
+     */
+    public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
+        this.opintojenMaksullisuus = opintojenMaksullisuus;
     }
 
 }

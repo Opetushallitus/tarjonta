@@ -5,6 +5,8 @@
         <th tt="koulutus.edit.koulutuksen-alkamispvm">Koulutuksen alkamispvm</th>
         <td>
     <alkamispaiva-ja-kausi
+        field-name-prefix="vk"
+        name="valmistavaKoulutusAlkamisPvm"
         pvms="model.valmistavaKoulutus.koulutuksenAlkamisPvms"
         vuosi="model.valmistavaKoulutus.koulutuksenAlkamisvuosi"
         kausi-uri = "model.valmistavaKoulutus.koulutuksenAlkamiskausi.uri"
@@ -12,7 +14,7 @@
     </alkamispaiva-ja-kausi>
 </td>
 <td>
-    <p class="error" ng-show="vkUiModel.showValidationErrors && !koulutusForm.kausivuosi && koulutusForm.alkamisPvm.$error.required" tt="koulutus.edit.alkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && !koulutusForm.kausivuosi && koulutusForm.valmistavaKoulutusAlkamisPvm.$error.required" tt="koulutus.edit.valmistavaKoulutusAlkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
     <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.kausivuosi && (koulutusForm.alkamiskausi.$error.required || koulutusForm.alkamisvuosi.$error.required || koulutusForm.alkamisvuosi.$error.number || koulutusForm.alkamisvuosi.$error.min || koulutusForm.alkamisvuosi.$error.max)" tt="koulutus.edit.alkamis-kausi-ja-vuosi.required">Opintojen alkamiskausi ja alkamisvuosi vaaditaan</p>
 </td>
 </tr>
@@ -101,12 +103,34 @@
 </td>
 </tr>
 
+<!-- k. maksullisuus -->
+<tr>
+    <th tt="koulutus.edit.maksullisuus">Maksullisuus</th>
+    <td>
+        <input type="checkbox" data-ng-model="model.valmistavaKoulutus.opintojenMaksullisuus"/>
+        <span tt="koulutus.edit.maksullisuus.valinta">Maksullisuuden valinta</span>
+    </td>
+    <td></td>
+</tr>
+<tr>
+    <th></th>
+    <td>
+        <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
+        <input ng-required="model.valmistavaKoulutus.opintojenMaksullisuus" name="hinta" ng-disabled="!vkUiModel.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.valmistavaKoulutus.hinta" ng-change="onMaksullisuusChanged(model.valmistavaKoulutus)"  />
+        <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
+    </td>
+    <td>
+        <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required">
+            Maksullisuus vaaditaan
+        </p>
+    </td>
+</tr>
 <tr>
     <th tt="koulutus.edit.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
     <td><input class="wide" name="linkkiOpetussuunnitelmaan" type="text" data-ng-model="model.valmistavaKoulutus.linkkiOpetussuunnitelmaan" /></td>
     <td>
 
-</td>
+    </td>
 </tr>
 
 <!-- väli -->
@@ -117,5 +141,5 @@
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
 
-  
+
 </table>

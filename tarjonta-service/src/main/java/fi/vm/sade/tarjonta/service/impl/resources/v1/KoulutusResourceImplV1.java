@@ -428,7 +428,31 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private KoulutusmoduuliToteutus updateAmmatillinenkoulu(KoulutusmoduuliToteutus komoto, final KoulutusAmmatillinenPerustutkintoV1RDTO dto) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
-        return convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
+
+        //detached komoto
+        KoulutusmoduuliToteutus base = convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
+
+        if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
+            KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO naytto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
+            if (naytto.getValmistavaKoulutus() != null) { //insert or update
+                //detached komoto
+                KoulutusmoduuliToteutus vk = convertToEntity.convert(naytto.getValmistavaKoulutus(), naytto, contextDataService.getCurrentUserOid());
+
+                //join valmistava komoto to the base komoto
+                base = koulutusmoduuliToteutusDAO.findByOid(base.getOid());
+                vk = koulutusmoduuliToteutusDAO.findByOid(vk.getOid());
+                base.setNayttotutkintoValmentavaKoulutus(vk);
+                koulutusmoduuliToteutusDAO.update(base);
+            } else {//delete
+                KoulutusmoduuliToteutus vk = koulutusmoduuliToteutusDAO.findByOid(naytto.getOid());
+                if (vk != null && vk.getNayttotutkintoValmentavaKoulutus() != null) {
+                    //remove child komoto from base komoto
+                    koulutusmoduuliToteutusDAO.remove(vk.getNayttotutkintoValmentavaKoulutus());
+                }
+            }
+        }
+
+        return base;
     }
 
     @Override
