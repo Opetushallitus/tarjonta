@@ -182,7 +182,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.model.hakuaikas = [];
         $scope.model.isDeEnabled = false;
 
-        var deferredOsoite = $q.defer();
+
         var parentOrgOids = new buckets.Set();
         var orgSet = new buckets.Set();
 
@@ -563,15 +563,14 @@ app.controller('HakukohdeRoutingController', ['$scope',
                     $q.all(orgQueryPromises).then(function(orgs){
 
                         var counter = 0;
-
                         angular.forEach(orgs,function(data){
 
                             orgSet.add(data.nimi);
 
                             if (counter === 0) {
                                 var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
-
                                 if (wasHakutoimistoFound) {
+
                                     deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                                 } else {
                                     $scope.tryGetParentsApplicationOffice(data);
