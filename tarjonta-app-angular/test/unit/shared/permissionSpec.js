@@ -159,31 +159,15 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Ammattikorkeakoulutus&koulutusastetyyppi=Yliopistokoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
 
         // Parameters
-        var parameterResponse = [{
-                "created": 1399639771823,
-                "modified": 1399639771823,
-                "path": "PH_TJT",
-                "name": "1.2.246.562.29.68709456062",
-                "value": 1400149187429,
-                "type": "LONG"
-            }, {
-                "created": 1399639771837,
-                "modified": 1399639771837,
-                "path": "PH_HKMT",
-                "name": "1.2.246.562.29.68709456062",
-                "value": 1399973779271,
-                "type": "LONG"
-            }, {
-                "created": 1399639771838,
-                "modified": 1399639771838,
-                "path": "PH_HKLPT",
-                "name": "1.2.246.562.29.68709456062",
-                "value": 1399887372781,
-                "type": "LONG"
-            }];
+        var parameterResponse = {
+            "1.2.3.4" : {
+                "PH_TJT" : { date : 1400149187429 },
+                "PH_HKMT" : { date : 1399973779271 },
+                "PH_HKLPT" : { date : 1399887372781 }
+            }
+        };
 
-        $httpBackend.whenGET('PARAMETRIT/api/rest/parametri/ALL').respond(parameterResponse);
-
+        $httpBackend.whenGET('PARAMETRIT/api/v1/rest/parametri/ALL').respond(parameterResponse);
 
     };
 

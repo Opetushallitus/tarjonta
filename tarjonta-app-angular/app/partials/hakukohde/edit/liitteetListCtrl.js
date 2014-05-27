@@ -16,7 +16,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
 
-
+        console.log('LIITTEIDEN TOIMITUSOSOITTEET : ' , osoitteet);
         for(var osoiteLang in osoitteet) {
 
             if ($scope.liitteetModel.selectedLiite[osoiteLang] !== undefined) {

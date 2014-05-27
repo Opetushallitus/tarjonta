@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,6 +29,7 @@ import javax.annotation.Nullable;
 import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
@@ -1186,7 +1189,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-        if(!parameterService.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
+        if(!parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHaku().getOid())){
             throw new NotAuthorizedException("no.permission");
         } 
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
@@ -1203,9 +1206,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                 koulutusmoduuliToteutusDAO.update(komoto);
 
+                indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
 
             hakukohdeDAO.update(hakukohde);
+            indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
@@ -1223,10 +1228,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-        if(parameterService.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
-            //limited editing -> no changes to koulutuslist
-            throw new NotAuthorizedException("no.permission");
-        }
+        
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
         if (hakukohde != null) {
 
@@ -1240,12 +1242,18 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         komotoToRemove.add(komoto);
                     }
                 }
-
             }
 
             if (komotoToRemove.size() > 0) {
                 Collection<KoulutusmoduuliToteutus> remainingKomotos =  CollectionUtils.subtract(hakukohde.getKoulutusmoduuliToteutuses(),komotoToRemove);
 
+                List<String> remainingOids=Lists.newArrayList(Iterables.transform(remainingKomotos, new Function<KoulutusmoduuliToteutus, String>(){
+                    public String apply(@Nullable KoulutusmoduuliToteutus input) {
+                        return input.getOid();
+                    }
+                }));
+                
+                permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohde.getHaku().getOid(), remainingOids);
 
                 LOG.debug("Removed {} koulutukses from hakukohde : {}",komotoToRemove.size(),hakukohde.getOid());
                 if (remainingKomotos.size() > 0)  {
@@ -1257,35 +1265,28 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         hakukohde.removeKoulutusmoduuliToteutus(komoto);
 
                         koulutusmoduuliToteutusDAO.update(komoto);
-
+                        indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                     }
 
                     LOG.debug("Hakukohde has more koulutukses, updating it");
                     hakukohdeDAO.update(hakukohde);
-                    try {
-                        indexerResource.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
-                        indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
-                    }  catch (Exception exp ){
-
-                    }
+                    indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                 } else {
 
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);
 
                     for (KoulutusmoduuliToteutus komoto : komotos) {
-
                         komoto.removeHakukohde(hakukohde);
-
                         hakukohde.removeKoulutusmoduuliToteutus(komoto);
-
+                        indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                     }
 
                     LOG.debug("Hakukohde does not have anymore koulutukses, removing it");
                     hakukohdeDAO.remove(hakukohde);
                     try {
-                    indexerResource.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
-                    } catch (Exception exp) {
-                        LOG.warn("EXCEPTION REMOVING HAKUKOHDE: {} FROM INDEX : {}",hakukohdeOid,exp.toString());
+                        indexerResource.deleteHakukohde(Lists.newArrayList(hakukohdeOid));
+                    } catch (IOException ioe) {
+                        throw new RuntimeException(ioe);
                     }
                 }
 

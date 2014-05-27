@@ -70,6 +70,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $log.info("SCOPE: ", $scope);
         $log.info("CAN EDIT : ", $route.current.locals.canEdit);
         $log.info("CAN CREATE : ", $route.current.locals.canCreate);
+        $log.info("HAKUKOHDEX RESULT : " , $route.current.locals.hakukohdex.result);
 
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
@@ -85,9 +86,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
             $scope.isCopy = false;
         }
 
-        $scope.formControls = {reloadDisplayControls: function() {
-        }}; // controls-layouttia varten
-
+        $scope.formControls = {}; // controls-layouttia varten
 
         $scope.canCreate = $route.current.locals.canCreate;
         $scope.canEdit =  $route.current.locals.canEdit;
@@ -183,7 +182,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.model.hakuaikas = [];
         $scope.model.isDeEnabled = false;
 
-        var deferredOsoite = $q.defer();
+
         var parentOrgOids = new buckets.Set();
         var orgSet = new buckets.Set();
 
@@ -344,22 +343,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
             }
 
             $log.info('IS DEENABLED : ', $scope.model.isDeEnabled);
-        };
-
-        $scope.updateTilaModel = function(hakukohde) {
-
-            if (hakukohde) {
-                $scope.modifiedObj.modifiedBy = hakukohde.modifiedBy;
-                $scope.modifiedObj.modified = hakukohde.modified;
-                $scope.modifiedObj.tila = hakukohde.tila;
-            }
-            console.log('FORM CONTROLS : ', $scope.formControls);
-            if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
-                $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
-                $scope.formControls.reloadDisplayControls();
-            }
-
-
         };
 
         $scope.emptyErrorMessages = function() {
@@ -580,15 +563,14 @@ app.controller('HakukohdeRoutingController', ['$scope',
                     $q.all(orgQueryPromises).then(function(orgs){
 
                         var counter = 0;
-
                         angular.forEach(orgs,function(data){
 
                             orgSet.add(data.nimi);
 
                             if (counter === 0) {
                                 var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
-
                                 if (wasHakutoimistoFound) {
+
                                     deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                                 } else {
                                     $scope.tryGetParentsApplicationOffice(data);
@@ -1157,7 +1139,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                                 $scope.checkIfSavingCopy($scope.model.hakukohde);
                             } else {
@@ -1186,7 +1167,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                         returnResource.then(function(hakukohde){
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                             } else {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -1238,7 +1218,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                                 $scope.checkIfSavingCopy($scope.model.hakukohde);
                             } else {
@@ -1269,8 +1248,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             console.log('HAKUKOHDE VALMIS UPDATE : ', hakukohde);
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                             } else {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);

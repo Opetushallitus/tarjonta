@@ -268,11 +268,6 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
             removeEmptyKuvaukses();
 
-            $scope.model.valintaperustekuvaus.modifiedBy = AuthService.getUserOid();
-
-
-
-
             if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
 
                 var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
@@ -281,7 +276,6 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
                         $scope.model.valintaperustekuvaus = data.result;
                         $scope.model.showSuccess = true;
-                        $scope.model.valintaperustekuvaus.modified  = data.result.modified;
                     } else {
                         showError(data.errors);
                         console.log('DID NOT GET OK : ', data);

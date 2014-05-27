@@ -334,5 +334,14 @@ public class PermissionChecker {
     public void checkUpdateHaku(String... orgOids) {
         checkPermission(permissionService.userCanUpdateHakuWithOrgs(orgOids));
     }
+
+    /**
+     * Returns true if user is OPH CRUD user.
+     * 
+     * @return 
+     */
+    public boolean isOphCrud() {
+        return permissionService.userIsOphCrud();
+    }
     
 }
