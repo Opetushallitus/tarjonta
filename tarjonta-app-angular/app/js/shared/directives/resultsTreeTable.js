@@ -275,6 +275,14 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 				onToggleFold(row, ev);
 			});
 			
+			row.$update = function() {
+				replaceRow(row, element);
+			}
+			
+			row.$delete = function() {
+				element.detach();						
+			}
+			
 			$("a.options", element).click(function(ev){
 				if (ev.button!=0) {
 					return;
@@ -284,13 +292,14 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 				
 				var actions = {
 					update: function(){
-						replaceRow(row, element);
+						console.log("actions.update() is deprecated, use row.$update()");
+						row.$update();
 					},
 					delete: function(){
-						element.detach();						
+						console.log("actions.delete() is deprecated, use row.delete()");
+						row.$delete();					
 					}
 				};
-				
 				var opts = getOptions(row, actions);
 				if (opts) {
 					$scope.menuOptions = opts;
@@ -518,6 +527,10 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 		scope: {
 			// perusparametrit
 			model: "=",				// (array) sisältö joka näytetään
+									//  - jokaiselle rivi-oliolle luodaan näyttämisen yhteydessä funktiot $update() ja $delete(),
+									//    joilla rivi voidaan päivittää tai poistaa (näitä voidaan kutsua mistä tahansa mutta
+									//    tällöin tulee aina ottaa huomioon että riviä ei ole välttämättä ehditty vielä näyttää
+									//    jolloin em. funktioitakaan ei ole). 
 			columns: "=",			// (array) lista sarakkeiden nimistä jotka näytetään (poislukien otsikko), siinä
 									//   järjestyksessä kun ne näytetään; HUOM! muutokset sarakkeisiin tulevat voimaan modelin
 									//   vaihtuessa, joten näiden mahdollinen piilotus yms. toiminnalisuus on tehtävä
@@ -539,9 +552,10 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 									//    href:	linkin url, johon siirrytään klikkauksella
 									//	  action: js-funktio, joka suoritetaan klikattaessa
 									//
-									// - actions -parametri sisältää callback-funktiot joilla voidaan muuttaa taulukossa jo näkyvää riviä:
-									//    update():	päivittää rivin sisällön (oletuksena on, että sisältö säilyy samassa olioreferenssissä!)
-									//    delete(): poistaa rivin
+									// toiminto voi päivittää tai poistaa rivin kutsumalla sen callback-funktioita, joko rivioliosta
+									// tai actions-oliosta (HUOM! deprekoitu toiminto):
+									//    row.$update() ( tai actions.update() ): päivittää rivin
+									//    row.$delete() ( tai actions.delete() ): poistaa rivin
 									//
 									// - Valikon sisältö voidaan hakea asynkronisesti siten, että palautetaan tyhjä array, jota
 									//   promiset valmistuessaan täydentävät; valikko täydentyy tällöin automaattisesti angularin

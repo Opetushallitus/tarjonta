@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
@@ -1226,10 +1228,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-        if(parameterService.parameterCanRemoveHakukohdeFromHaku(hakukohde.getHaku().getOid())){
-            //limited editing -> no changes to koulutuslist
-            throw new NotAuthorizedException("no.permission");
-        }
+        
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
         if (hakukohde != null) {
 
@@ -1248,6 +1247,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             if (komotoToRemove.size() > 0) {
                 Collection<KoulutusmoduuliToteutus> remainingKomotos =  CollectionUtils.subtract(hakukohde.getKoulutusmoduuliToteutuses(),komotoToRemove);
 
+                List<String> remainingOids=Lists.newArrayList(Iterables.transform(remainingKomotos, new Function<KoulutusmoduuliToteutus, String>(){
+                    public String apply(@Nullable KoulutusmoduuliToteutus input) {
+                        return input.getOid();
+                    }
+                }));
+                
+                permissionChecker.checkUpdateHakukohde(hakukohdeOid, hakukohde.getHaku().getOid(), remainingOids);
 
                 LOG.debug("Removed {} koulutukses from hakukohde : {}",komotoToRemove.size(),hakukohde.getOid());
                 if (remainingKomotos.size() > 0)  {
