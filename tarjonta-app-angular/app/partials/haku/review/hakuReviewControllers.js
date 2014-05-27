@@ -26,18 +26,20 @@ app.controller('HakuReviewController',
                     LocalisationService, $q, PermissionService) {
 
                 $log = $log.getInstance("HakuReviewController");
-                $scope.isMutable=false;
-                $scope.isRemovable=false;
+                $scope.isMutable = false;
+                $scope.isRemovable = false;
 
                 var hakuOid = $route.current.params.id;
 
-                
+
                 //permissiot
-                $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
-                  $scope.isMutable=results[0];
-                  $scope.isRemovable=results[1] && results[2].result;
+                $q.all([PermissionService.haku.canEdit(hakuOid),
+                    PermissionService.haku.canDelete(hakuOid),
+                    HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+                    $scope.isMutable = results[0];
+                    $scope.isRemovable = results[1] && results[2].result;
                 });
-                
+
                 $log.info("  init, args =", $scope, $route, $routeParams);
 
                 // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve for "/haku/:id"
@@ -49,34 +51,25 @@ app.controller('HakuReviewController',
                 };
 
                 $scope.doEdit = function() {
-                  if(!$scope.isMutable) {
-                    return;
-                  }
-                  $location.path("/haku/" + hakuOid + "/edit");
+                    if (!$scope.isMutable) {
+                        return;
+                    }
+                    $location.path("/haku/" + hakuOid + "/edit");
                 };
 
                 $scope.doDelete = function(event) {
-                  if(!$scope.isRemovable) {
-                    return;
-                  }
+                    if (!$scope.isRemovable) {
+                        return;
+                    }
                     $log.info("doDelete()", event);
-                    
-                    dialogService.showSimpleDialog(
-                            LocalisationService.t("haku.delete.confirmation"),
-                            LocalisationService.t("haku.delete.confirmation.description"),
-                            LocalisationService.t("ok"),
-                            LocalisationService.t("cancel")).result.then(function(result) {
-                        $log.info("Dialog result = ", result);
+
+                    // In "hakuControllers.js"
+                    $scope.doDeleteHaku($scope.model.hakux.result, true).then(function(result) {
                         if (result) {
-                            // In "hakuControllers.js"
-                            $scope.doDeleteHaku($scope.model.hakux.result).then(function(result) {
-                                if (result) {
-                                    // OK, delete - go away
-                                    $scope.goBack();
-                                } else {
-                                    $log.info("delete failed - stay here.");
-                                }
-                            });
+                            // OK, delete done so cannot display review any more - go away
+                            $scope.goBack();
+                        } else {
+                            $log.info("delete failed - stay here.");
                         }
                     });
                 };
