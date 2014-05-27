@@ -445,6 +445,14 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpetusPaikkas(commonConverter.convertToUris(valmistavaKoulutus.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
 
+        if (valmistavaKoulutus.getLinkkiOpetussuunnitelmaan() != null) {
+            komoto.getLinkkis().clear();
+            komoto.setLinkkis(
+                    commonConverter.convertToLinkkis(WebLinkki.LinkkiTyyppi.OPETUSSUUNNITELMA,
+                            valmistavaKoulutus.getLinkkiOpetussuunnitelmaan(),
+                            komoto.getLinkkis()));
+        }
+
         convertKomotoCommonData(komoto, valmistavaKoulutus, userOid);
 
         return komoto;

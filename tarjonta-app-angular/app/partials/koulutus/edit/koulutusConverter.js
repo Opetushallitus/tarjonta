@@ -508,8 +508,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuksenAlkamisvuosi: {"default": ''},
                 toteutustyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'},
                 tila: {'default': 'LUONNOS'},
-                tunniste: {"default": ''},
-                linkkiOpetussuunnitelmaan: {"default": ''}
+                tunniste: {"default": ''}
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
@@ -545,7 +544,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
-                suunniteltuKestoArvo: {nullable: true, "default": ''}
+                suunniteltuKestoArvo: {nullable: true, "default": ''},
+                hinta : {}
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {

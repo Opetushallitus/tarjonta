@@ -438,11 +438,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 //detached komoto
                 KoulutusmoduuliToteutus vk = convertToEntity.convert(naytto.getValmistavaKoulutus(), naytto, contextDataService.getCurrentUserOid());
 
-                //join valmistava komoto to the base komoto
-                base = koulutusmoduuliToteutusDAO.findByOid(base.getOid());
-                vk = koulutusmoduuliToteutusDAO.findByOid(vk.getOid());
-                base.setNayttotutkintoValmentavaKoulutus(vk);
-                koulutusmoduuliToteutusDAO.update(base);
+                if (naytto.getValmistavaKoulutus().getOid() == null && base.getNayttotutkintoValmentavaKoulutus() == null) {
+                    //join valmistava komoto to the base komoto
+                    vk = koulutusmoduuliToteutusDAO.insert(vk);
+                    base.setNayttotutkintoValmentavaKoulutus(vk);
+                    koulutusmoduuliToteutusDAO.update(base);
+                }
             } else {//delete
                 KoulutusmoduuliToteutus vk = koulutusmoduuliToteutusDAO.findByOid(naytto.getOid());
                 if (vk != null && vk.getNayttotutkintoValmentavaKoulutus() != null) {

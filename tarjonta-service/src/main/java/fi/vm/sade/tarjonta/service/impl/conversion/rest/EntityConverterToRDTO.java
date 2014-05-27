@@ -187,12 +187,20 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
                 final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
-
-                final String maksullisuus = komoto.getMaksullisuus();
-                nayttoDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
+                nayttoDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+                nayttoDto.setAmmattinimikkeet(commonConverter.convertToKoodiUrisDTO(komoto.getAmmattinimikes(), locale, FieldNames.AMMATTINIMIKKEET, showMeta));
+                nayttoDto.setOpintojenMaksullisuus(komoto.getMaksullisuus() != null && Boolean.valueOf(komoto.getMaksullisuus()));
 
                 if (komoto.getHinta() != null) {
                     nayttoDto.setHinta(komoto.getHinta().doubleValue());
+                }
+            } else if (dto instanceof KoulutusValmistavaV1RDTO) {
+                final KoulutusValmistavaV1RDTO valmistavaDto = (KoulutusValmistavaV1RDTO) dto;
+                valmistavaDto.setOpintojenMaksullisuus(komoto.getMaksullisuus() != null && Boolean.valueOf(komoto.getMaksullisuus()));
+                valmistavaDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+
+                if (komoto.getHinta() != null) {
+                    valmistavaDto.setHinta(komoto.getHinta().doubleValue());
                 }
             }
         }

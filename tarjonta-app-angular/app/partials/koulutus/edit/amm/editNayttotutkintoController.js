@@ -58,9 +58,11 @@ app.controller('EditNayttotutkintoController',
 
                             vkUiModel.lisatietoKielet = angular.copy(vkUiModel.opetuskielis.uris);
                             for (var ki in model.kuvausKomoto) {
-                                for (var lc in model.valmistavaKoulutus.kuvausKomoto[ki].tekstis) {
-                                    if (vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
-                                        vkUiModel.lisatietoKielet.push(lc);
+                                if (angular.isDefined(model.valmistavaKoulutus.kuvausKomoto[ki])) {
+                                    for (var lc in model.valmistavaKoulutus.kuvausKomoto[ki].tekstis) {
+                                        if (vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
+                                            vkUiModel.lisatietoKielet.push(lc);
+                                        }
                                     }
                                 }
                             }
@@ -111,9 +113,11 @@ app.controller('EditNayttotutkintoController',
                     // lisätietokielivalinnat
                     uiModel.lisatietoKielet = angular.copy(uiModel.opetuskielis.uris);
                     for (var ki in model.kuvausKomo) {
-                        for (var lc in model.kuvausKomo[ki].tekstis) {
-                            if (uiModel.lisatietoKielet.indexOf(lc) == -1) {
-                                uiModel.lisatietoKielet.push(lc);
+                        if (angular.isDefined(model.kuvausKomo[ki])) {
+                            for (var lc in model.kuvausKomo[ki].tekstis) {
+                                if (uiModel.lisatietoKielet.indexOf(lc) == -1) {
+                                    uiModel.lisatietoKielet.push(lc);
+                                }
                             }
                         }
                     }

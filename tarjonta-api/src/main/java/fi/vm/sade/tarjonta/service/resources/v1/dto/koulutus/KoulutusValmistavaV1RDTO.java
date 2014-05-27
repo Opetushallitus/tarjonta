@@ -34,6 +34,9 @@ public class KoulutusValmistavaV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
     private Boolean opintojenMaksullisuus;
 
+    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
+    private String linkkiOpetussuunnitelmaan;
+
     /**
      * @return the hinta
      */
@@ -60,5 +63,19 @@ public class KoulutusValmistavaV1RDTO extends KoulutusV1RDTO {
      */
     public void setOpintojenMaksullisuus(Boolean opintojenMaksullisuus) {
         this.opintojenMaksullisuus = opintojenMaksullisuus;
+    }
+
+    /**
+     * @return the linkkiOpetussuunnitelmaan
+     */
+    public String getLinkkiOpetussuunnitelmaan() {
+        return linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
+     */
+    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
+        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
     }
 }
