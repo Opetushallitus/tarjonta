@@ -250,6 +250,11 @@ public class ResultV1RDTO<T> implements Serializable {
         return sb.toString();
     }
 
+    public static <T>ResultV1RDTO<T> create(ResultStatus status, T t, ErrorV1RDTO error) {
+        ResultV1RDTO<T> r = new ResultV1RDTO<T>(t);
+        r.addError(error);
+        return r;
+    }
 
 
 

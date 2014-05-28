@@ -203,9 +203,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto
-    ) {
+    public ResultV1RDTO<KoulutusV1RDTO> postKoulutus(KoulutusV1RDTO dto) {
 
+        //yleisiä tarkistuksia
+        //tarkista tilasiirtymä
+        if(dto.getOid()!=null) {
+            final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());
+            if(!publicationDataService.isValidStatusChange(tilamuutos)) {
+                return ResultV1RDTO.create(ResultStatus.ERROR, null, ErrorV1RDTO.createValidationError("tile", "koulutus.error.tilasiirtyma"));
+            }
+        }
+            
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
         } else if (dto.getClass() == KoulutusLukioV1RDTO.class) {
