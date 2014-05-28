@@ -89,6 +89,7 @@ app.controller('HakukohdeParentController', ['$scope',
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
         $scope.model.isDeEnabled = false;
+        $scope.model.isPartiallyDeEnabled = false;
 
 
         var parentOrgOids = new buckets.Set();
@@ -1197,6 +1198,33 @@ app.controller('HakukohdeParentController', ['$scope',
 
             return foundKoodi;
         };
+        
+        var processPermissions = function (resourcePermissions) {
+            $log.info('PROCESSPERMISSIONS : ', resourcePermissions);
+            if (resourcePermissions.hakukohde.update && resourcePermissions.hakukohde.updateLimited) {
+                $scope.model.isDeEnabled = false;
+                $scope.model.isPartiallyDeEnabled = true;
+            } else if (resourcePermissions.hakukohde.update && !resourcePermissions.hakukohde.updateLimited){
+                $scope.model.isDeEnabled = false;
+                $scope.model.isPartiallyDeEnabled = false;
+            } else if  (!resourcePermissions.hakukohde.update) {
+                $scope.model.isDeEnabled = true;
+                $scope.model.isPartiallyDeEnabled = true;
+            }
+
+        };
+        
+        $scope.checkPermissions = function (hakukohdeOid) {
+
+            var permissionPromise = PermissionService.getPermissions("hakukohde",hakukohdeOid);
+
+            permissionPromise.then(function(permissionResult) {
+
+                processPermissions(permissionResult);
+
+            });
+
+        };
 
         $scope.findKoodiWithUri = function(koodi,koodis)  {
 
@@ -1266,7 +1294,7 @@ app.controller('HakukohdeParentController', ['$scope',
                 parentOrgMap[parentOrg] = 'X';
             });
             return parentOrgMap;
-        }
+        };
 
         var checkIfOrgMatches = function(haku) {
 
