@@ -26,7 +26,7 @@
         selection="uiModel.lisatietoKielet"
         display="dualpane"></multi-select>
 </div>
- 
+
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
     <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->

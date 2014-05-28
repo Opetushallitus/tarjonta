@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,17 +44,17 @@ import org.springframework.stereotype.Component;
 public class EntityConverterToKomoRDTO {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToKomoRDTO.class);
-    private static final boolean ALLOW_NULL_KOODI_URI = true;
+    private static final KoulutusCommonConverter.Nullable YES = KoulutusCommonConverter.Nullable.YES;
+    private static final KoulutusCommonConverter.Nullable NO = KoulutusCommonConverter.Nullable.NO;
+    public static final String NO_OVERRIDE_URI = null;
 
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired(required = true)
     private KoulutusCommonConverter commonConverter;
 
-    public KomoV1RDTO convert(final Koulutusmoduuli komo, final String lang, final boolean showMeta) {
+    public KomoV1RDTO convert(final Koulutusmoduuli komo, final RestParam restParam) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komo);
-        final Locale locale = new Locale(lang);
-
         KomoV1RDTO kkDto = new KomoV1RDTO();
         if (komo == null) {
             return kkDto;
@@ -66,7 +67,7 @@ public class EntityConverterToKomoRDTO {
         kkDto.setVersion(komo.getVersion());
 
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
-        komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), showMeta));
+        komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), restParam.getShowMeta()));
         kkDto.setKuvausKomo(komoKuvaus);
 
         //KOMO
@@ -76,13 +77,13 @@ public class EntityConverterToKomoRDTO {
 
         switch (convertStringListToEnums.get(0)) {
             case KORKEAKOULUTUS:
-                kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
+                kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), FieldNames.KOULUTUSOHJELMA, restParam));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                 switch (komo.getModuuliTyyppi()) {
                     case TUTKINTO_OHJELMA:
-                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
+                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, restParam));
                         break;
                 }
 
@@ -91,38 +92,38 @@ public class EntityConverterToKomoRDTO {
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                 switch (komo.getModuuliTyyppi()) {
                     case TUTKINTO_OHJELMA:
-                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, false, showMeta));
+                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), FieldNames.LUKIOLINJA, NO, restParam));
                         break;
                 }
                 break;
             default:
                 if (komo.getKoulutusohjelmaUri() != null && !komo.getKoulutusohjelmaUri().isEmpty()) {
-                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), locale, FieldNames.KOULUTUSOHJELMA, false, showMeta));
+                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, restParam));
                 } else if (komo.getLukiolinjaUri() != null && !komo.getLukiolinjaUri().isEmpty()) {
-                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), locale, FieldNames.LUKIOLINJA, false, showMeta));
+                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), FieldNames.LUKIOLINJA, NO, restParam));
                 } else {
-                    kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), locale, FieldNames.KOULUTUSOHJELMA, showMeta));
+                    kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), FieldNames.KOULUTUSOHJELMA, restParam));
                 }
                 break;
         }
 
         kkDto.setKoulutusasteTyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
-        kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), locale, FieldNames.KOULUTUS, showMeta));
-        kkDto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), locale, FieldNames.TUTKINTO, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSARVO, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), locale, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, ALLOW_NULL_KOODI_URI, showMeta));
+        kkDto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), NO_OVERRIDE_URI, FieldNames.KOULUTUS, NO, restParam));
+        kkDto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), NO_OVERRIDE_URI, FieldNames.TUTKINTO, YES, restParam));
+        kkDto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), NO_OVERRIDE_URI, FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));
+        kkDto.setOpintojenLaajuusyksikko(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusyksikkoUri(), NO_OVERRIDE_URI, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, restParam));
         kkDto.setTunniste(komo.getUlkoinenTunniste());
-        kkDto.setKoulutusaste(commonConverter.convertToKoodiDTO(komo.getKoulutusasteUri(), locale, FieldNames.KOULUTUSASTE, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setKoulutusala(commonConverter.convertToKoodiDTO(komo.getKoulutusalaUri(), locale, FieldNames.KOULUTUSALA, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setOpintoala(commonConverter.convertToKoodiDTO(komo.getOpintoalaUri(), locale, FieldNames.OPINTOALA, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), locale, FieldNames.TUTKINTONIMIKE, showMeta));
-        kkDto.setEqf(commonConverter.convertToKoodiDTO(komo.getEqfUri(), locale, FieldNames.EQF, ALLOW_NULL_KOODI_URI, showMeta));
-        kkDto.setNqf(commonConverter.convertToKoodiDTO(komo.getNqfUri(), locale, FieldNames.NQF, ALLOW_NULL_KOODI_URI, showMeta));
+        kkDto.setKoulutusaste(commonConverter.convertToKoodiDTO(komo.getKoulutusasteUri(), NO_OVERRIDE_URI, FieldNames.KOULUTUSASTE, YES, restParam));
+        kkDto.setKoulutusala(commonConverter.convertToKoodiDTO(komo.getKoulutusalaUri(), NO_OVERRIDE_URI, FieldNames.KOULUTUSALA, YES, restParam));
+        kkDto.setOpintoala(commonConverter.convertToKoodiDTO(komo.getOpintoalaUri(), NO_OVERRIDE_URI, FieldNames.OPINTOALA, YES, restParam));
+        kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE, restParam));
+        kkDto.setEqf(commonConverter.convertToKoodiDTO(komo.getEqfUri(), NO_OVERRIDE_URI, FieldNames.EQF, YES, restParam));
+        kkDto.setNqf(commonConverter.convertToKoodiDTO(komo.getNqfUri(), NO_OVERRIDE_URI, FieldNames.NQF, YES, restParam));
 
-        kkDto.setKoulutustyyppi(splitData(komo.getKoulutustyyppiUri(), locale, FieldNames.KOULUTUSTYYPPI, showMeta));
+        kkDto.setKoulutustyyppi(splitData(komo.getKoulutustyyppiUri(), FieldNames.KOULUTUSTYYPPI, restParam));
 
         //legacy data
-        kkDto.setOppilaitostyyppis(splitData(komo.getOppilaitostyyppi(), locale, FieldNames.OPPILAITOSTYYPPI, showMeta));
+        kkDto.setOppilaitostyyppis(splitData(komo.getOppilaitostyyppi(), FieldNames.OPPILAITOSTYYPPI, restParam));
 
         LOG.debug("in EntityConverterToKomoRDTO : {}", kkDto);
         return kkDto;
@@ -131,10 +132,10 @@ public class EntityConverterToKomoRDTO {
     /*
      * Remove ppilaitostyyppi data after the Vaadin UI has been removed from tarjonta project.
      */
-    private KoodiUrisV1RDTO splitData(String str, Locale locale, FieldNames fieldName, boolean showMeta) {
+    private KoodiUrisV1RDTO splitData(String str, FieldNames fieldName, final RestParam restParam) {
         List<String> splitStringToList = EntityUtils.splitStringToList(str);
 
-        return commonConverter.convertToKoodiUrisDTO(splitStringToList, locale, fieldName, showMeta);
+        return commonConverter.convertToKoodiUrisDTO(splitStringToList, fieldName, restParam);
     }
 
     private List<ToteutustyyppiEnum> convertStringListToEnums(String str) {

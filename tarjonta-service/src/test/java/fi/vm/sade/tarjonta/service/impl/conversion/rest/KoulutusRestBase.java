@@ -46,7 +46,28 @@ abstract class KoulutusRestBase {
         KOMO,
         KOMO_CHILD,
         KOMOTO,
-        NOT_TESTED
+        NOT_TESTED,
+        RETURN_NULL
+
+    };
+
+    protected enum Nullable {
+
+        ALLOW_NULL(true),
+        NOT_NULL(false);
+
+        private boolean b;
+
+        Nullable(boolean b) {
+            this.b = b;
+        }
+
+        /**
+         * @return the b
+         */
+        public boolean isAllowed() {
+            return b;
+        }
 
     };
 

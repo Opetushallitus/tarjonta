@@ -16,11 +16,12 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import fi.vm.sade.security.SadeUserDetailsWrapper;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKomoRDTO;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
@@ -44,8 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -55,6 +54,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class KomoResourceImplV1 implements KomoV1Resource {
 
+    private static final boolean NO_IMAGE = false;
     private static final Logger LOG = LoggerFactory.getLogger(KomoResourceImplV1.class);
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
@@ -68,6 +68,8 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
+    @Autowired(required = true)
+    private ContextDataService contextDataService;
 
     @Override
     public ResultV1RDTO deleteByOid(String oid) {
@@ -136,31 +138,6 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         return meta != null ? meta : defaultValue;
     }
 
-    /**
-     * Get user's preferred language code. Default or fallback value is 'FI'.
-     */
-    private String getUserLang() {
-        Preconditions.checkNotNull(SecurityContextHolder.getContext(), "Context object cannot be null.");
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Preconditions.checkNotNull(authentication, "Authentication object cannot be null.");
-        final Object principal = authentication.getPrincipal();
-
-        if (principal != null && principal instanceof SadeUserDetailsWrapper) {
-            SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
-            LOG.info("User SadeUserDetailsWrapper : {}, user oid : {}", sadeUser, sadeUser.getUsername());
-
-            if (sadeUser.getLang() != null && !sadeUser.getLang().isEmpty()) {
-                return sadeUser.getLang(); //return an user lang code
-            } else {
-                LOG.debug("user has no lang code!");
-                return "FI";
-            }
-        }
-
-        LOG.error("Not user data found.");
-        return "FI";
-    }
-
     @Override
     public ResultV1RDTO<KomoV1RDTO> postKomo(KomoV1RDTO dto) {
         ResultV1RDTO result = new ResultV1RDTO();
@@ -180,6 +157,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
             }
             if (!result.hasErrors()) {
+
                 if (dto.getOid() != null && dto.getOid().length() > 0) {
                     //update module
                     permissionChecker.checkUpdateKoulutusmoduuli();
@@ -187,7 +165,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                     KomoValidator.validateModuleUpdate(komo, result);
                     if (!result.hasErrors()) {
                         Preconditions.checkNotNull(komo, "KOMO not found by OID : %s.", dto.getOid());
-                        result.setResult(converterKomoToRDTO.convert(conversionService.convert(dto, Koulutusmoduuli.class), getUserLang(), true));
+                        result.setResult(converterKomoToRDTO.convert(conversionService.convert(dto, Koulutusmoduuli.class), RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang())));
                     }
                 } else {
                     //create new module
@@ -196,7 +174,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
                     final Koulutusmoduuli newKomo = conversionService.convert(dto, Koulutusmoduuli.class);
                     Preconditions.checkNotNull(newKomo, "KOMO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
-                    result.setResult(converterKomoToRDTO.convert(koulutusmoduuliDAO.insert(newKomo), getUserLang(), true));
+                    result.setResult(converterKomoToRDTO.convert(koulutusmoduuliDAO.insert(newKomo), RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang())));
                 }
             }
         }
@@ -210,30 +188,22 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
         final Koulutusmoduuli komo = this.koulutusmoduuliDAO.findByOid(oid);
-
-        lang = checkArgsLangCode(lang);
-        meta = checkArgsMeta(meta);
-
         if (komo == null) {
             return resultRDTO;
         }
 
-        resultRDTO.setResult(converterKomoToRDTO.convert(komo, lang, meta));
+        resultRDTO.setResult(converterKomoToRDTO.convert(komo, RestParam.byUserRequest(meta, NO_IMAGE, lang)));
         return resultRDTO;
     }
 
     @Override
     public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(String koulutuskoodi, Boolean meta, String lang) {
-
-        lang = checkArgsLangCode(lang);
-        meta = checkArgsMeta(meta, false);
-
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutuskoodi);
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
         ArrayList<KomoV1RDTO> dtos = Lists.<KomoV1RDTO>newArrayList();
         for (Koulutusmoduuli komo : komos) {
-            dtos.add(converterKomoToRDTO.convert(komo, lang, meta));
+            dtos.add(converterKomoToRDTO.convert(komo, RestParam.byUserRequest(meta, NO_IMAGE, lang)));
         }
 
         return new ResultV1RDTO<List<KomoV1RDTO>>(dtos);

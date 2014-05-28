@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -66,6 +65,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
@@ -181,10 +181,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
-
-        userLang = checkArgsLangCode(userLang); //default fi
-        showMeta = checkArgsDefaultTrue(showMeta); //always show meta data
-        showImg = checkArgsDefaultFalse(showImg); //show images when needed
+        final RestParam instance = RestParam.byUserRequest(showMeta, showImg, userLang);
 
         if (komoto == null) {
             result.setStatus(ResultStatus.NOT_FOUND);
@@ -194,20 +191,23 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         //convert required komoto to dto rest format.
         switch (getType(komoto)) {
             case KORKEAKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, userLang, showMeta, showImg));
+                result.setResult(converterToRDTO.convert(KoulutusKorkeakouluV1RDTO.class, komoto, instance));
                 break;
             case LUKIOKOULUTUS:
-                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, userLang, showMeta));
+                result.setResult(converterToRDTO.convert(KoulutusLukioV1RDTO.class, komoto, instance));
                 break;
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
-                result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, userLang, showMeta));
+                result.setResult(converterToRDTO.convert(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, instance));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO:
-                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, userLang, showMeta));
+                result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, instance));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                 //very special case: may have a double komoto structure  
-                result.setResult(convertAmmValmentavaToDTO(komoto, userLang, showMeta));
+                result.setResult(convertAmmValmentavaToDTO(komoto, instance));
+                break;
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
+                result.setResult(converterToRDTO.convert(KoulutusValmistavaV1RDTO.class, komoto, instance));
                 break;
         }
 
@@ -272,7 +272,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, true));
+            final RestParam param = RestParam.showImageAndShowMeta(contextDataService.getCurrentUserLang());
+
+            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, param));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -329,7 +331,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
-            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, false));
+            final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
+
+            result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, param));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
             result.setResult(dto);
@@ -362,12 +366,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             Preconditions.checkNotNull(fullKomotoWithKomo.getId(), "KOMOTO ID cannot be null!");
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
 
+            final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
+
             switch (fullKomotoWithKomo.getTyyppi()) {
                 case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                    result.setResult(convertAmmValmentavaToDTO(fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true));
+                    result.setResult(convertAmmValmentavaToDTO(fullKomotoWithKomo, param));
                     break;
                 default:
-                    result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, contextDataService.getCurrentUserLang(), true, false));
+                    result.setResult(converterToRDTO.convert(dto.getClass(), fullKomotoWithKomo, param));
                     break;
             }
 
@@ -638,12 +644,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String koulutuskoodi,
             ToteutustyyppiEnum koulutustyyppiUri,
             String defaults, //new String("field:uri, field:uri, ....")
-            Boolean showMeta,
-            String userLang) {
+            Boolean showMeta, //for future use
+            String userLang //for future use
+    ) {
+
         Preconditions.checkNotNull(koulutuskoodi, "Koulutuskoodi parameter cannot be null.");
-        userLang = checkArgsLangCode(userLang);
-        showMeta = checkArgsDefaultTrue(showMeta);
         ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> result = new ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO>();
+        RestParam byUserRequest = RestParam.byUserRequest(showMeta, false, userLang);
 
         try {
             //split params, if any
@@ -693,14 +700,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
             if (koulutuskoodi.contains("_")) {
                 //Very simple parameter check, if an undescore char is in the string, then the data is koodisto service koodi URI.
-                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, koulutuskoodi, new Locale(userLang.toUpperCase()), showMeta));
+                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, koulutuskoodi, byUserRequest));
             } else {
                 SearchKoodisByKoodistoCriteriaType search = KoodiServiceSearchCriteriaBuilder.koodisByArvoAndKoodistoUri(koulutuskoodi, KoodistoURI.KOODISTO_TUTKINTO_URI);
                 List<KoodiType> searchKoodisByKoodisto = koodiService.searchKoodisByKoodisto(search);
                 if (searchKoodisByKoodisto == null || searchKoodisByKoodisto.isEmpty()) {
                     throw new TarjontaBusinessException("No koulutuskoodi koodisto KoodiType object found by '" + koulutuskoodi + "'.");
                 }
-                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, searchKoodisByKoodisto.get(0).getKoodiUri(), new Locale(userLang.toUpperCase()), showMeta));
+                result.setResult(koulutuskoodiRelations.getKomoRelationByKoulutuskoodiUri(dto.getClass(), defaultsMap.isEmpty() ? null : dto, searchKoodisByKoodisto.get(0).getKoodiUri(), byUserRequest));
             }
         } catch (InstantiationException ex) {
             LOG.error("Relation initialization error.", ex);
@@ -834,40 +841,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
         return result;
-    }
-
-    /**
-     * Validate user language code. Default or fallback value is 'FI'.
-     *
-     * @param lang
-     * @return
-     */
-    private String checkArgsLangCode(String lang) {
-        if (lang == null || lang.isEmpty() || lang.length() != 2) {
-            return "FI";
-        }
-
-        return lang;
-    }
-
-    /**
-     * Validate the show argument. Null is boolean true.
-     *
-     * @param meta
-     * @return
-     */
-    private boolean checkArgsDefaultTrue(Boolean meta) {
-        return meta != null ? meta : true;
-    }
-
-    /**
-     * Validate the show argument. Null is boolean false.
-     *
-     * @param meta
-     * @return
-     */
-    private boolean checkArgsDefaultFalse(Boolean meta) {
-        return meta != null ? meta : false;
     }
 
     /**
@@ -1033,6 +1006,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 List<String> newKomoChildOids = Lists.<String>newArrayList();
                 for (String orgOid : koulutusCopy.getOrganisationOids()) {
                     KoulutusmoduuliToteutus persisted = null;
+
                     switch (getType(komoto)) {
                         case KORKEAKOULUTUS:
                             //TODO : in a distant future, copy also komo
@@ -1052,7 +1026,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                             persisted = insertKoulutusAmmattikoulu((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
                         default:
-                            throw new RuntimeException("Not implemented type : " + getType(komoto));
+                            throw new RuntimeException(
+                                    "Not implemented type : " + getType(komoto));
                     }
 
                     if (persisted == null) {
@@ -1144,7 +1119,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private KoulutusV1RDTO koulutusDtoForCopy(Class clazz, KoulutusmoduuliToteutus komoto, String orgOid) {
         //convert entity to dto
-        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, "FI", false, true);
+        final RestParam param = RestParam.showImageAndNoMeta();
+
+        KoulutusV1RDTO copy = converterToRDTO.convert(clazz, komoto, param);
         //keep the komo oid, we do need it to search correct komo for the komoto
         copy.setOid(null);
         copy.setKomotoOid(null);
@@ -1153,24 +1130,22 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return copy;
     }
 
-    private KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convertAmmValmentavaToDTO(final KoulutusmoduuliToteutus komoto, final String userLang, final boolean showMeta) {
+    private KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convertAmmValmentavaToDTO(final KoulutusmoduuliToteutus komoto, final RestParam restParam) {
 
         KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO convert = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) converterToRDTO.convert(
                 KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
                 komoto,
-                userLang,
-                showMeta
+                restParam
         );
 
         //null == no optional inserted vamentava koulutus 
-        if (komoto.getNayttotutkintoValmentavaKoulutus() != null) {
+        if (komoto.getNayttotutkintoValmentavaKoulutus()
+                != null) {
             //convert joined optional komoto to the base komoto .
-
             convert.setValmistavaKoulutus((KoulutusValmistavaV1RDTO) converterToRDTO.convert(
                     KoulutusValmistavaV1RDTO.class,
                     komoto.getNayttotutkintoValmentavaKoulutus(),
-                    userLang,
-                    showMeta
+                    restParam
             ));
         }
 
