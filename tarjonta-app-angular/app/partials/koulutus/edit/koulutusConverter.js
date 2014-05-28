@@ -489,7 +489,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
     factory.saveModelConverter = function(tila, pmodel, uiModel, koulutusasteTyyppi) {
         var apiModel = angular.copy(pmodel);
-        apiModel.tila = tila;
+        if(apiModel.tila!=="JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
+          apiModel.tila = tila;
+        }
         factory.validateOutputData(apiModel, koulutusasteTyyppi);
         /*
          * DATA CONVERSIONS FROM UI MODEL TO API MODEL
