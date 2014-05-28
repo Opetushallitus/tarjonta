@@ -55,18 +55,6 @@ app.controller('EditNayttotutkintoController',
 
                         if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
                             $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-
-                            vkUiModel.lisatietoKielet = angular.copy(vkUiModel.opetuskielis.uris);
-                            for (var ki in model.kuvausKomoto) {
-                                if (angular.isDefined(model.valmistavaKoulutus.kuvausKomoto[ki])) {
-                                    for (var lc in model.valmistavaKoulutus.kuvausKomoto[ki].tekstis) {
-                                        if (vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
-                                            vkUiModel.lisatietoKielet.push(lc);
-                                        }
-                                    }
-                                }
-                            }
-
                             $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         }
 
@@ -76,6 +64,7 @@ app.controller('EditNayttotutkintoController',
                          * Look more info from koulutusController.js.
                          */
                         $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
+                       
 
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
@@ -111,7 +100,11 @@ app.controller('EditNayttotutkintoController',
                      * CUSTOM LOGIC
                      */
                     // lisätietokielivalinnat
-                    uiModel.lisatietoKielet = angular.copy(uiModel.opetuskielis.uris);
+                    uiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
+                    vkUiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
+                   
+                    
+ 
                     for (var ki in model.kuvausKomo) {
                         if (angular.isDefined(model.kuvausKomo[ki])) {
                             for (var lc in model.kuvausKomo[ki].tekstis) {
@@ -280,6 +273,42 @@ app.controller('EditNayttotutkintoController',
                 };
 
 
+                $scope.getValmistavaKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
+                    if (!kieliUri) {
+                        return {};
+                    }
+                    var kuvaus = null;
+                    if (typeof boolIsKomo !== 'boolean') {
+                        converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+                    }
+
+                    if (boolIsKomo) {
+                        kuvaus = $scope.model.valmistavaKoulutus.kuvausKomo;
+                    } else {
+                        kuvaus = $scope.model.valmistavaKoulutus.kuvausKomoto;
+                    }
+
+                    if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
+                        kuvaus[textEnum] = {tekstis: {}};
+                        if (!angular.isUndefined(kieliUri)) {
+                            kuvaus[textEnum].tekstis[kieliUri] = '';
+                        }
+                    }
+
+                    return kuvaus[textEnum].tekstis;
+                };
+
+
+                $scope.getValmistavaLisatietoKielet = function() {
+                    for (var i in $scope.vkUiModel.opetuskielis.uris) {
+                        var lc = $scope.vkUiModel.opetuskielis.uris[i];
+                        if ($scope.vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
+                            $scope.vkUiModel.lisatietoKielet.push(lc);
+                        }
+                    }
+                    return $scope.vkUiModel.lisatietoKielet;
+                };
+
                 $scope.getEditValmistavaKoulutusPerustiedot = function() {
                     return '/partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html';
                 };
@@ -305,13 +334,12 @@ app.controller('EditNayttotutkintoController',
                 $scope.clickShowValmistavaKoulutus = function() {
                     if ($scope.uiModel.cbShowValmistavaKoulutus) {
 
-                        var uiModel = {};
                         var model = {};
-
-                        $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        $scope.commonNewModelHandler($scope.koulutusForm, model,  $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         $scope.model.valmistavaKoulutus = model;
-                        $scope.vkUiModel = uiModel;
                         $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        $scope.vkUiModel.selectedKieliUri = "kieli_fi";
+                        
                         $scope.cbShowValmistavaKoulutus = true;
                     } else {
                         $scope.model.valmistavaKoulutus = null;

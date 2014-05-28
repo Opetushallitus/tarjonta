@@ -545,7 +545,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''},
-                hinta : {}
+                hinta : {"default": ''}
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
