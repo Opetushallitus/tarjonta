@@ -213,8 +213,6 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             }
         }
 
-        System.out.println("q:" + q);
-
         final Query query = getEntityManager().createQuery(q);
         for (int i = 0; i < criteriaList.size(); i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
