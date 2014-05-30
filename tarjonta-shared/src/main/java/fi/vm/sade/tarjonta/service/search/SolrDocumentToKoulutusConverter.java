@@ -16,7 +16,9 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSASTETYYPPI_ENUM;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TOTEUTUSTYYPPI_ENUM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TUTKINTONIMIKE_FI;
@@ -39,6 +41,7 @@ import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 public class SolrDocumentToKoulutusConverter {
 
@@ -57,20 +60,25 @@ public class SolrDocumentToKoulutusConverter {
     private KoulutusPerustieto convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutusPerustieto koulutus = new KoulutusPerustieto();
         koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutuskoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
+        koulutus.setKoulutus(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
         koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
         koulutus.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutustyyppi(createKoulutustyyppi(koulutusDoc));
-        if (koulutus.getKoulutustyyppi() != null) {
-            if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
-                    || koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
-                    || koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
-                    || koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
-                    || koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
-                    || koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
-                    || koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
-                koulutus.setKoulutusohjelmakoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
-            } else if (koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+        koulutus.setKoulutusasteTyyppi(createKoulutustyyppi(koulutusDoc));
+        koulutus.setKoulutustyyppi("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI_URI));
+        if (koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM) != null) {
+            koulutus.setToteutustyyppi(ToteutustyyppiEnum.valueOf("" + koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM)));
+        }
+
+        if (koulutus.getKoulutusasteTyyppi() != null) {
+            if (koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
+                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
+                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
+                koulutus.setKoulutusohjelma(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            } else if (koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
                 koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
             }
         }
@@ -102,13 +110,13 @@ public class SolrDocumentToKoulutusConverter {
     }
 
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
-        if (koulutusDoc.getFieldValue(KOULUTUSTYYPPI) != null) {
+        if (koulutusDoc.getFieldValue(KOULUTUSASTETYYPPI_ENUM) != null) {
             try {
                 //1st, also catch the conversion failed exception.
-                return KoulutusasteTyyppi.valueOf("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+                return KoulutusasteTyyppi.valueOf("" + koulutusDoc.getFieldValue(KOULUTUSASTETYYPPI_ENUM));
             } catch (IllegalArgumentException e) {
                 //2nd try. Throw an exception if not found .
-                return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI));
+                return KoulutusasteTyyppi.fromValue("" + koulutusDoc.getFieldValue(KOULUTUSASTETYYPPI_ENUM));
             }
         } else {
             return null;

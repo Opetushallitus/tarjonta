@@ -22,9 +22,11 @@ public class KoulutuksetKysely implements Serializable {
     private String koulutusOid;
     @Deprecated
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>(); //use the koulutustyyppi
+    private List<ToteutustyyppiEnum> totetustyyppi = new ArrayList<ToteutustyyppiEnum>(); //more detailed data than in koulutusasteTyyppi
+
     private String komoOid;
 
-    private List<ToteutustyyppiEnum> koulutustyyppi = new ArrayList<ToteutustyyppiEnum>();
+    private List<String> koulutustyyppi = new ArrayList<String>();
 
     public String getKomoOid() {
         return komoOid;
@@ -140,8 +142,22 @@ public class KoulutuksetKysely implements Serializable {
     /**
      * @return the koulutustyyppi
      */
-    public List<ToteutustyyppiEnum> getKoulutustyyppi() {
+    public List<String> getKoulutustyyppi() {
         return koulutustyyppi;
+    }
+
+    /**
+     * @return the totetustyyppi
+     */
+    public List<ToteutustyyppiEnum> getTotetustyyppi() {
+        return totetustyyppi;
+    }
+
+    /**
+     * @param totetustyyppi the totetustyyppi to set
+     */
+    public void setTotetustyyppi(List<ToteutustyyppiEnum> totetustyyppi) {
+        this.totetustyyppi = totetustyyppi;
     }
 
 }

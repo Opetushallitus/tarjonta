@@ -33,6 +33,7 @@ public class KoulutusIndexEntity {
     private String koulutusohjelmaUri;
     private String lukiolinjaUri;
     private String osaamisalaUri;
+    private String koulutustyyppiUri;
 
     @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri,
@@ -60,7 +61,8 @@ public class KoulutusIndexEntity {
             String tarjoaja,
             String pohjakoulutusVaatimus,
             String kausi,
-            Integer vuosi) {
+            Integer vuosi,
+            String koulutustyyppiUri) {
 
         this.koulutusId = id;
         this.oid = oid;
@@ -77,6 +79,7 @@ public class KoulutusIndexEntity {
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
         this.kausi = kausi;
         this.vuosi = vuosi;
+        this.koulutustyyppiUri = koulutustyyppiUri;
     }
 
     /**
@@ -156,7 +159,9 @@ public class KoulutusIndexEntity {
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
                 + ", kausi=" + kausi
                 + ", vuosi=" + vuosi
-                + ", koulutuslaji=" + koulutuslaji + "]";
+                + ", koulutuslaji=" + koulutuslaji
+                + ", koulutustyyppi=" + getKoulutustyyppiUri()
+                + "]";
     }
 
     /**
@@ -215,4 +220,17 @@ public class KoulutusIndexEntity {
         this.osaamisalaUri = osaamisalaUri;
     }
 
+    /**
+     * @return the koulutustyyppiUri
+     */
+    public String getKoulutustyyppiUri() {
+        return koulutustyyppiUri;
+    }
+
+    /**
+     * @param koulutustyyppiUri the koulutustyyppiUri to set
+     */
+    public void setKoulutustyyppiUri(String koulutustyyppiUri) {
+        this.koulutustyyppiUri = koulutustyyppiUri;
+    }
 }

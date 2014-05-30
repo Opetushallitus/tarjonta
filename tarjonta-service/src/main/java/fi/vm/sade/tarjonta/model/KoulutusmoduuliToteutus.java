@@ -74,9 +74,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
     private static final long serialVersionUID = -1278564574746813425L;
 
-    @Column(name = "tyyppi")
+    @Column(name = "toteutustyyppi")
     @Enumerated(EnumType.STRING)
-    private ToteutustyyppiEnum tyyppi;
+    private ToteutustyyppiEnum toteutustyyppi;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
@@ -1006,17 +1006,23 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * @return the tyyppi
+     * Tarjonta education identification enum, based on OPH's koulutustyyppi
+     * code uri.
+     *
+     * @return the toteutustyyppi
      */
-    public ToteutustyyppiEnum getTyyppi() {
-        return tyyppi;
+    public ToteutustyyppiEnum getToteutustyyppi() {
+        return toteutustyyppi;
     }
 
     /**
-     * @param tyyppi the tyyppi to set
+     * Tarjonta education identification enum, based on OPH's koulutustyyppi
+     * code uri.
+     *
+     * @param tyyppi the toteutustyyppi to set
      */
-    public void setTyyppi(ToteutustyyppiEnum tyyppi) {
-        this.tyyppi = tyyppi;
+    public void setToteutustyyppi(ToteutustyyppiEnum tyyppi) {
+        this.toteutustyyppi = tyyppi;
     }
 
     /**

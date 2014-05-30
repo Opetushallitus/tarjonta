@@ -196,34 +196,34 @@ public class TarjontaUIHelper {
 
         List<String> sourceKoodiUris = new ArrayList<String>();
         for (KoulutusPerustieto koulutus : vastaus.getKoulutukset()) {
-            switch (koulutus.getKoulutustyyppi()) {
+            switch (koulutus.getKoulutusasteTyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case PERUSOPETUKSEN_LISAOPETUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case VAPAAN_SIVISTYSTYON_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelmakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 case LUKIOKOULUTUS:
                     sourceKoodiUris.add(koulutus.getLukiolinjakoodi().getUri());
                     break;
                 default:
                     LOG.error("UNKNOWN KOULUTUSTYYPPI, CANNOT GET RELATED KOODIS FOR: {}", koulutus);
-                    LOG.error(" koulutustyyppi == {}", koulutus.getKoulutustyyppi());
+                    LOG.error(" koulutustyyppi == {}", koulutus.getKoulutusasteTyyppi());
                     break;
             }
         }
@@ -1097,10 +1097,10 @@ public class TarjontaUIHelper {
         final Locale locale = I18N.getLocale();
         final String pkVaatimus = curKoulutus.getPohjakoulutusvaatimus() != null ? ", " + TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getPohjakoulutusvaatimus().getNimi()) : "";
 
-        if (curKoulutus.getKoulutustyyppi() == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS) {
+        if (curKoulutus.getKoulutusasteTyyppi() == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS) {
             return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getNimi()) + pkVaatimus;
-        } else if (curKoulutus.getKoulutusohjelmakoodi() != null) {
-            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutusohjelmakoodi().getNimi()) + pkVaatimus;
+        } else if (curKoulutus.getKoulutusohjelma() != null) {
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutusohjelma().getNimi()) + pkVaatimus;
         } else if (curKoulutus.getNimi() != null) {
             return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getNimi());
         } else if (curKoulutus.getKoulutuskoodi() != null) {

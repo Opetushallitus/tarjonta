@@ -491,7 +491,7 @@ public class KoulutusDTOConverterToEntity {
         base(komoto, dto);
         komoto.setTarjoaja(organisationOId);
         commonConverter.handleDates(komoto, dto); //set dates
-        komoto.setTyyppi(dto.getToteutustyyppi());
+        komoto.setToteutustyyppi(dto.getToteutustyyppi());
 
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO, ALLOW_NULL_KOODI_URI), dto.getSuunniteltuKestoArvo());
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();

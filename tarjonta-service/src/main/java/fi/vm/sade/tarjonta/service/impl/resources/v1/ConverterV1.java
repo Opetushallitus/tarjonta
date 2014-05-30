@@ -1153,7 +1153,7 @@ public class ConverterV1 {
             ret.setKoulutuslajiUri(ht.getKoulutuslaji().getUri());
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
-        ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
+        ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
         ret.setKoulutuskoodi(ht.getKoulutuskoodi().getUri());
 
         return ret;

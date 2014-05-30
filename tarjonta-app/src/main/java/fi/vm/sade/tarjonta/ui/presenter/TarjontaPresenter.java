@@ -488,7 +488,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     private List<HakuViewModel> findMatchingHakusForHakukohde(final String currentHakuOid, ListHakuVastausTyyppi haut) {
 
-        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi();
 
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
 
@@ -516,7 +516,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
             } else if (!isKoulutusErityisopetus
-                    && getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+                    && getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
                     && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
@@ -530,7 +530,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             } else if (isVapaaSivistystyo
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
-            } else if (getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
+            } else if (getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
                     && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
@@ -702,8 +702,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
 
             nimiOid.setKoulutusNimi(nimi);
-            nimiOid.setKoulutustyyppi(tulos.getKoulutustyyppi());
-            nimiOid.setKoulutustyyppi(tulos.getKoulutustyyppi());
+            nimiOid.setKoulutustyyppi(tulos.getKoulutusasteTyyppi());
+            nimiOid.setKoulutustyyppi(tulos.getKoulutusasteTyyppi());
             result.add(nimiOid);
 
         }
@@ -1331,7 +1331,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 getTarjoaja().setSelectedResultRowOrganisationOid(firstKoulutus.getTarjoaja().getOid());
 
                 //set koulutusastetyyppi
-                getModel().getHakukohde().setKoulutusasteTyyppi(firstKoulutus.getKoulutustyyppi());
+                getModel().getHakukohde().setKoulutusasteTyyppi(firstKoulutus.getKoulutusasteTyyppi());
             } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
                 getTarjoaja().setSelectedResultRowOrganisationOid(getNavigationOrganisation().getOrganisationOid());
             }
@@ -1672,9 +1672,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         int removalLaskuri = 0;
         String errorNotes = "";
         for (KoulutusPerustieto curKoulutus : getModel().getSelectedKoulutukset()) {
-            String koulutusNimiUri = curKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
+            String koulutusNimiUri = curKoulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
                     ? curKoulutus.getKoulutuskoodi().getUri()
-                    : curKoulutus.getKoulutusohjelmakoodi().getUri();
+                    : curKoulutus.getKoulutusohjelma().getUri();
             try {
                 final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getTarjoaja().getOid());
                 TarjontaTila tila = curKoulutus.getTila();
@@ -2666,7 +2666,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     public boolean isKoulutusNivelvaihe() {
-        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi();
         return koulTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)

@@ -265,7 +265,8 @@ public interface KoulutusV1Resource {
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
-            @QueryParam("koulutustyyppi") List<ToteutustyyppiEnum> koulutustyyppi,
+            @QueryParam("koulutustyyppi") List<String> koulutustyyppi,
+            @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
             @Deprecated
             @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid

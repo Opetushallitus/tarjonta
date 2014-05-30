@@ -123,7 +123,7 @@ public class ShowKoulutuksetDialog extends ShowRelatedObjectsDialog {
     private void showSummaryView(KoulutusPerustieto koulutus) {
         final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
 
-        switch (koulutus.getKoulutustyyppi()) {
+        switch (koulutus.getKoulutusasteTyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 presenter.closeHakukohdeRemovalDialog();
                 presenter.showShowKoulutusView(komotoOid);

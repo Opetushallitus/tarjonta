@@ -168,7 +168,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
             tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getTarjoaja().getOid());
 
-            switch (koulutus.getKoulutustyyppi()) {
+            switch (koulutus.getKoulutusasteTyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
@@ -354,7 +354,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private void showSummaryView() {
         final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
 
-        switch (koulutus.getKoulutustyyppi()) {
+        switch (koulutus.getKoulutusasteTyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 tarjontaPresenter.showShowKoulutusView(komotoOid);
                 break;

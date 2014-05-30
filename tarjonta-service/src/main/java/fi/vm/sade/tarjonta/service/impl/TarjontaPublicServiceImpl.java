@@ -398,10 +398,10 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
             koulutus.setTila(tulos.getTila());
             koulutus.setKomotoOid(tulos.getKomotoOid());
-            koulutus.setKoulutustyyppi(tulos.getKoulutustyyppi());
+            koulutus.setKoulutustyyppi(tulos.getKoulutusasteTyyppi());
             koulutus.setAjankohta(tulos.getKoulutuksenAlkamiskausi().getNimi().get("fi") + " " + tulos.getKoulutuksenAlkamisVuosi());
-            if (tulos.getKoulutusohjelmakoodi() != null) {
-                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelmakoodi().getUri());
+            if (tulos.getKoulutusohjelma() != null) {
+                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelma().getUri());
             } else if (tulos.getLukiolinjakoodi() != null) {
                 koulutus.setLukiolinjakoodi(tulos.getLukiolinjakoodi().getUri());
             }
@@ -467,7 +467,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         //Asetetaan koulutusmoduuli
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         result.setKoulutustyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
-        //result.setKoulutustyyppi(komo.getKoulutustyyppi());
+        //result.setKoulutusasteTyyppi(komo.getKoulutusasteTyyppi());
 
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(komo);
 

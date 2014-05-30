@@ -219,13 +219,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         //yleisiä tarkistuksia
         //tarkista tilasiirtymä
-        if(dto.getOid()!=null) {
+        if (dto.getOid() != null) {
             final Tila tilamuutos = new Tila(Tyyppi.KOMOTO, dto.getTila(), dto.getOid());
-            if(!publicationDataService.isValidStatusChange(tilamuutos)) {
+            if (!publicationDataService.isValidStatusChange(tilamuutos)) {
                 return ResultV1RDTO.create(ResultStatus.ERROR, null, ErrorV1RDTO.createValidationError("tile", "koulutus.error.tilasiirtyma"));
             }
         }
-            
+
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
         } else if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
@@ -377,7 +377,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
 
-            switch (fullKomotoWithKomo.getTyyppi()) {
+            switch (fullKomotoWithKomo.getToteutustyyppi()) {
                 case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                     result.setResult(convertAmmValmentavaToDTO(fullKomotoWithKomo, param));
                     break;
@@ -771,7 +771,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String komotoTila,
             String alkamisKausi,
             Integer alkamisVuosi,
-            List<ToteutustyyppiEnum> koulutustyyppi,
+            List<String> koulutustyyppi,
+            List<ToteutustyyppiEnum> toteutustyyppi,
             @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
             String komoOid) {
 
@@ -787,7 +788,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutusOids().addAll(koulutusOids);
         q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
-        q.getKoulutustyyppi().addAll(koulutustyyppi); //TODO : only partially implemented
+        q.getKoulutustyyppi().addAll(koulutustyyppi);
+        q.getTotetustyyppi().addAll(toteutustyyppi);
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));
@@ -1113,8 +1115,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private static ToteutustyyppiEnum getType(KoulutusmoduuliToteutus komoto) {
-        if (komoto.getTyyppi() != null) {
-            return komoto.getTyyppi();
+        if (komoto.getToteutustyyppi() != null) {
+            return komoto.getToteutustyyppi();
         } else {
             LOG.debug("Trying to resolve type of koulutus entity, OID : {}", komoto.getOid());
             final List<String> uris = EntityUtils.splitStringToList(komoto.getKoulutusmoduuli().getKoulutustyyppiUri());

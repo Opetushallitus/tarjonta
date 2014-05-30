@@ -45,6 +45,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private static final String TARJOAJA_OID = "tarjoaja-oid";
     private static final String KAUSI_URI = "kausi_uri";
     private static final int VUOSI = 2014;
+    private static final String KOULUTUSTYYPPI_URI = SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO.uri();
 
     @Test
     public void test() {
@@ -61,7 +62,8 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 TARJOAJA_OID,
                 POHJAKOULUTUSVAATIMUS_URI,
                 KAUSI_URI,
-                VUOSI);
+                VUOSI,
+                KOULUTUSTYYPPI_URI);
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
 
@@ -75,13 +77,10 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         KoodiService koodiService = Mockito.mock(KoodiService.class);
         Whitebox.setInternalState(converter, "koodiService", koodiService);
         Mockito.reset(koodiService);
-        //stubKoodi(koodiService, TUTKINTONIMIKEKOODI);
-        // stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
         stubKoodi(koodiService, LUKIOLINJA_URI);
         stubKoodi(koodiService, KOULUTUSOHJELMA_URI);
         stubKoodi(koodiService, KOULUTUS_URI);
         stubKoodi(koodiService, POHJAKOULUTUSVAATIMUS_URI);
-        //stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
         stubKoodi(koodiService, "kausi_k");
 
         IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
@@ -130,6 +129,10 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         Assert.assertEquals(KOULUTUSOHJELMA_URI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_URI)
                 .getValue());
+        Assert.assertEquals(KOULUTUSTYYPPI_URI,
+                doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI_URI)
+                .getValue());
+
 //        Assert.assertEquals(TUTKINTONIMIKEKOODI,
 //                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_URI)
 //                .getValue());
@@ -142,12 +145,11 @@ public class KoulutusIndexEntityToSolrDocumentTest {
 //        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-FI",
 //                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_FI)
 //                .getValue());
-
         //System.out.println(doc);
         Assert.assertEquals("kausi_k#0",
                 doc.removeField(SolrFields.Koulutus.KAUSI_URI).getValue());
         Assert.assertEquals(BASE_AMM_KOULUTUSTYYPPI.getKoulutusasteTyyppi().value(),
-                doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI).getValue());
+                doc.removeField(SolrFields.Koulutus.KOULUTUSASTETYYPPI_ENUM).getValue());
         Assert.assertEquals(POHJAKOULUTUSVAATIMUS_URI + "#0",
                 doc.removeField(SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI)
                 .getValue());
@@ -171,7 +173,8 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 TARJOAJA_OID,
                 POHJAKOULUTUSVAATIMUS_URI,
                 KAUSI_URI,
-                VUOSI
+                VUOSI,
+                KOULUTUSTYYPPI_URI
         );
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();

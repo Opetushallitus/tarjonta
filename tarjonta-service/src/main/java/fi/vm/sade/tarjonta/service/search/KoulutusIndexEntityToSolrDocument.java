@@ -31,7 +31,9 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSASTETYYPPI_ENUM;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TOTEUTUSTYYPPI_ENUM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI;
@@ -101,6 +103,8 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, koulutus.getOid());
+        add(komotoDoc, KOULUTUSTYYPPI_URI, koulutus.getKoulutustyyppiUri());
+        add(komotoDoc, TOTEUTUSTYYPPI_ENUM, koulutus.getSubKoulutustyyppiEnum());
         final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
 
         if (orgs.size() == 0) {
@@ -205,7 +209,7 @@ public class KoulutusIndexEntityToSolrDocument implements
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
 
         //TODO: koulutusasteTyyppi, in future use KoulutustyyppiEnum
-        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getBaseKoulutustyyppiEnum().getKoulutusasteTyyppi().value());
+        add(komotoDoc, KOULUTUSASTETYYPPI_ENUM, koulutus.getBaseKoulutustyyppiEnum().getKoulutusasteTyyppi().value());
         IndexDataUtils.addKoodiLyhytnimiTiedot(komotoDoc, koulutus.getPohjakoulutusvaatimus(), koodiService, POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN);
 
         //XXX in DAO find koulutuslajiuris for koulutusmoduulitoteutus

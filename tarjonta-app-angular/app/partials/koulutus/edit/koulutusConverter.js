@@ -545,7 +545,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''},
-                hinta : {"default": ''}
+                hinta: {"default": ''}
             }, DATES: {
                 koulutuksenAlkamisPvms: {"default": new Date()}
             }, BOOL: {
@@ -578,8 +578,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
     factory.saveModelConverter = function(tila, pmodel, uiModel, toteutustyyppi) {
         var apiModel = angular.copy(pmodel);
-        if(apiModel.tila!=="JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
-        apiModel.tila = tila;
+        if (apiModel.tila !== "JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
+            apiModel.tila = tila;
+        }
         factory.validateOutputData(apiModel, toteutustyyppi);
         /*
          * DATA CONVERSIONS FROM UI MODEL TO API MODEL
@@ -665,8 +666,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         $log.debug(JSON.stringify(apiModel));
         return apiModel;
     };
-
-
 
     return factory;
 });

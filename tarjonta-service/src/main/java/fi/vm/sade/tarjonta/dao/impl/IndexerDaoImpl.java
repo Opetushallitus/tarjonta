@@ -80,7 +80,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                                 koodistoUri.koodiUri,
                                 komoto.pohjakoulutusvaatimusUri,
                                 komo.koulutustyyppiEnum,
-                                komoto.tyyppi));
+                                komoto.toteutustyyppi));
     }
 
     @Override
@@ -127,15 +127,15 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
-                        koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                        koulutusmoduuli.koulutustyyppiEnum, komoto.toteutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                         koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
-                        komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi
+                        komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi,komoto.koulutustyyppiUri
                 )
                 .list(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
-                                koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                                koulutusmoduuli.koulutustyyppiEnum, komoto.toteutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                                 koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
+                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi,komoto.koulutustyyppiUri)));
     }
 
     @Override
@@ -147,16 +147,16 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .join(komoto.koulutusmoduuli, koulutusmoduuli)
                 .leftJoin(komoto.koulutuksenAlkamisPvms, ALKAMISPVM).groupBy(
                         komoto.id, komoto.oid, komoto.tila,
-                        koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                        koulutusmoduuli.koulutustyyppiEnum, komoto.toteutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                         koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
-                        komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi
+                        komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutustyyppiUri
                 )
                 .where(komoto.id.eq(koulutusmoduuliToteutusId))
                 .singleResult(
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
-                                koulutusmoduuli.koulutustyyppiEnum, komoto.tyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
+                                koulutusmoduuli.koulutustyyppiEnum, komoto.toteutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                                 koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
+                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutustyyppiUri)));
     }
 
     private BooleanBuilder bb(Predicate initial) {
