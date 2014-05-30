@@ -178,7 +178,6 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertLoadData(result1);
 
         verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
     }
 
     private void assertLoadData(final KoulutusKorkeakouluV1RDTO result) {

@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.publication.model;
 
 import java.util.Locale;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
@@ -146,6 +148,32 @@ public class RestParam {
      */
     public Locale getLocale() {
         return locale;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if ((other == null) || (other.getClass() != this.getClass())) {
+            return false;
+        }
+
+        RestParam castOther = (RestParam) other;
+        return new EqualsBuilder()
+                .append(this.showImg, castOther.showImg)
+                .append(this.showMeta, castOther.showMeta)
+                .append(this.userLang, castOther.userLang)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(showImg)
+                .append(showMeta)
+                .append(userLang)
+                .toHashCode();
     }
 
     @Override

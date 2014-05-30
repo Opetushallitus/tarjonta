@@ -128,7 +128,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToTexts(EasyMock.isA(NimiV1RDTO.class), EasyMock.eq(FieldNames.KOULUTUSOHJELMA))).andReturn(new MonikielinenTeksti());
 
         //EXPECT UNTESTED KOMOTO CALLS
-        expectFieldNotTested(FieldNames.SUUNNITELTUKESTO);
+        expectFieldNullableNotTested(FieldNames.SUUNNITELTUKESTO);
         expectFieldsNotTested(FieldNames.POHJALKOULUTUSVAATIMUS);
         expectFieldsNotTested(FieldNames.AIHEES);
         expectFieldsNotTested(FieldNames.OPETUSKIELIS);
@@ -183,8 +183,8 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         komotoKuvausConvertersMock.convertTekstiDTOToMonikielinenTeksti(EasyMock.isA(KuvausV1RDTO.class), EasyMock.<Map<KomotoTeksti, MonikielinenTeksti>>anyObject());
 
         expectFieldNullable(FieldNames.TUTKINTO);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSARVO);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectField(FieldNames.OPINTOALA);
         expectField(FieldNames.KOULUTUS);
         expectFieldNimi(FieldNames.LUKIOLINJA);
@@ -195,7 +195,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expectFieldNullable(FieldNames.NQF);
         expectFieldNullable(FieldNames.EQF);
 
-        expectFieldNotTested(FieldNames.SUUNNITELTUKESTO);
+        expectFieldNullableNotTested(FieldNames.SUUNNITELTUKESTO);
         expectFieldNotTested(FieldNames.POHJALKOULUTUSVAATIMUS);
         expectFieldsNotTested(FieldNames.OPETUSKIELIS);
         expectFieldsNotTested(FieldNames.OPETUSMUODOS);
@@ -215,7 +215,6 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertLukioKomoto(result, Type.KOMOTO);
         assertLukioKomoChild(result.getKoulutusmoduuli());
     }
-
     private void expectFieldNullable(FieldNames field) {
         expect(commonConverterMock.convertToUri(EasyMock.isA(KoodiV1RDTO.class), EasyMock.eq(field), EasyMock.anyBoolean())).andReturn(testKey(Type.KOMOTO, field));
     }
@@ -236,15 +235,11 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToUri(EasyMock.isA(NimiV1RDTO.class), EasyMock.eq(field))).andReturn(testKey(Type.KOMOTO, field));
     }
 
-    private void expectFieldNimi(FieldNames field, Type returntype) {
-        expect(commonConverterMock.convertToUri(EasyMock.isA(NimiV1RDTO.class), EasyMock.eq(field))).andReturn(testKey(returntype, field));
-    }
-
     private void expectFieldNotTested(FieldNames field) {
         expect(commonConverterMock.convertToUri(null, field)).andReturn(testKey(Type.NOT_TESTED, field));
     }
 
-    private void expectFieldNotTestedNullable(FieldNames field) {
+    private void expectFieldNullableNotTested(FieldNames field) {
         expect(commonConverterMock.convertToUri(null, field, true)).andReturn(testKey(Type.NOT_TESTED, field));
     }
 
@@ -327,9 +322,10 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
 
     private void kkCommonExpect(Type type) {
         expectFieldNullable(FieldNames.TUTKINTO, type);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, type);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSARVO, type);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, type);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSARVO, type);
         expectFieldNullable(FieldNames.KOULUTUSASTE, type);
+
         expectField(FieldNames.OPINTOALA, type);
         expectField(FieldNames.KOULUTUS, type);
         expectField(FieldNames.KOULUTUSALA, type);

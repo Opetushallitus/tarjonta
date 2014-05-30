@@ -45,11 +45,6 @@ import org.powermock.reflect.Whitebox;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.anyBoolean;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * SIMPLE DATA MAPPING TEST CLASS: Test komo and komoto koodi uri override.
@@ -57,6 +52,16 @@ import org.slf4j.LoggerFactory;
  * @author jani
  */
 public class EntityConverterToRDTOTest extends KoulutusRestBase {
+
+    private static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
+    private static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
+
+    private static final RestParam PARAM = RestParam.byUserRequest(Boolean.FALSE, Boolean.FALSE, "FI");
+    private static final Type NO_URI = null;
+    private static final String NO_OVERRIDE_URI = null;
+    private static final String NULL_KOMOTO = null;
+    private static final KoulutusCommonConverter.Nullable YES = KoulutusCommonConverter.Nullable.YES;
+    private static final KoulutusCommonConverter.Nullable NO = KoulutusCommonConverter.Nullable.NO;
 
     private EntityConverterToRDTO<KoulutusKorkeakouluV1RDTO> instanceKk;
 
@@ -69,16 +74,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConvertersMock;
 
     private KoulutusmoduuliDAO koulutusmoduuliDAOMock;
-
-    private static final Set<KoodistoUri> SET_KOMOTO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE)));
-    private static final Set<KoodistoUri> SET_KOMO_TUTKINTONIMIKE = Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMO, FieldNames.TUTKINTONIMIKE)));
-
-    private RestParam PARAM = RestParam.byUserRequest(Boolean.FALSE, Boolean.FALSE, "FI");
-    private static final Type NO_URI = null;
-    private static final String NO_OVERRIDE_URI = null;
-    private static final String NULL_KOMOTO = null;
-    private static final KoulutusCommonConverter.Nullable YES = KoulutusCommonConverter.Nullable.YES;
-    private static final KoulutusCommonConverter.Nullable NO = KoulutusCommonConverter.Nullable.NO;
 
     @Before
     public void setUp() {
