@@ -5,7 +5,7 @@
         tt-create="hakukohde.create.header.title"
         tt-edit="hakukohde.edit.header.title"
         title="model.hakukohde.tekstis"
-        dto="modifiedObj">
+        dto="model.hakukohde">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
@@ -40,7 +40,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <mk-textfield model="model.hakukohde.hakukohteenNimet"></mk-textfield>
+                            <mk-textfield disabled="model.isDeEnabled" model="model.hakukohde.hakukohteenNimet"></mk-textfield>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>
@@ -50,7 +50,7 @@
                     <tr>
                         <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
                         <td>
-                            <input name="aloituspaikatlkm" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
+                            <input name="aloituspaikatlkm" maxlength="35" ng-disabled="model.isDeEnabled" class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
 
                         </td>
                     </tr>
@@ -59,7 +59,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
@@ -69,7 +69,7 @@
                     <tr data-ng-show="model.showHakuaikas">
                         <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
                         <td>
-                            <select class="wide" name="hakuaikaSelect" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
+                            <select class="wide" name="hakuaikaSelect" ng-disabled="model.isDeEnabled" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
@@ -98,7 +98,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
+                            <input name="aloituspaikatlkm" ng-disabled="model.isPartiallyDeEnabled"  class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
@@ -108,7 +108,7 @@
                     <!-- valintapalvelu -->
                     <tr>
                         <th tt="kk.hakukohde.valintapalvelu">Valintapalvelu</th>
-                        <td>
+                        <td ng-disabled="model.isDeEnabled">
                             <p tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua">Käytetään järjestelmän valintapalvelua</p>
 
                             <input type="radio" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="true"/>
@@ -129,10 +129,10 @@
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
 
-                <mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+                <mk-rich-textarea ng-disabled="model.isDeEnabled" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
 
                 <h4 tt="kk.hakukohde.hakukelpoisuusvaatimukset">Hakukelpoisuusvaatimukset</h4>
-                <mk-rich-textarea model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" max="1500"></mk-rich-textarea>
+                <mk-rich-textarea ng-disabled="model.isDeEnabled" model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" max="1500"></mk-rich-textarea>
 
                 <!--
                 <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>

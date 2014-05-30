@@ -47,7 +47,6 @@
  *
  * TODO
  *
- *   - Sivun otsikon ja muokkaustietojen (kuka ja milloin) näyttäminen headerissa.
  *   - X-nappi jolla virheviestin saa piilotettua
  *   - Virheviestien tarkennusten piilotus niiden määrän ollessa suuri (esim. näytä lisää -linkki)
  *
@@ -117,7 +116,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 return showMessage($scope.model.notifs.message, msg);
             };
 
-            $scope.dto = $scope.model.dto();
+            //$scope.dto = $scope.model.dto();
             $scope.model.metadata = [];
 
             function appendMetadata(md, key, user, timestamp) {
@@ -134,53 +133,54 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 	md.push(msg);
                 }
             }
-            //Tuomas Katva, OVT-6946  5.3.2014 watch for 'modified' property and update the layout when it is changed
-            $scope.$watch('dto.modified', function(newValue, oldValue) {
-                if (angular.isUndefined(newValue) && angular.isUndefined(oldValue)) {
-                    //missing date.
-                    return;
-                } else if (newValue !== oldValue || $scope.model.metadata.length === 0) {
-                    $scope.model.reloadDisplayControls();
-                }
-            });
+
+            $scope.$watch('model.dto', $scope.model._reloadDisplayControls);
+            /*$scope.$watch('dto.tila', $scope.model._reloadDisplayControls);
+            $scope.$watch('dto.created', $scope.model._reloadDisplayControls);
+            $scope.$watch('dto.modified', $scope.model._reloadDisplayControls);*/
+            
+            
+            $scope.model.reloadDisplayControls = function() {
+            	// TODO poista tämä delegaattifunktio kun virheelliset viittaukset on poistettu
+            	alert("reloadDisplayControls() EI OLE OSA DIREKTIIVIN JULKISTA APIA ELI ÄLÄ KÄYTÄ!!!");
+            	$scope.model._reloadDisplayControls();
+            }
 
             /*
              * Reload modified&status data.
              */
-            $scope.model.reloadDisplayControls = function() {
-                $scope.dto = $scope.model.dto();
-                
-                var userOid = $scope.dto.modifiedBy;
-                if (!angular.isUndefined($scope.dto.createdBy) && $scope.dto.createdBy !== null) {
-                    userOid = $scope.dto.createdBy;
-                }
+            $scope.model._reloadDisplayControls = function() {
+                var dto = $scope.model.dto;
+            	//console.log("FORM controlsLayout._reloadDisplayControls() ", [ dto.modified, dto.modifiedBy, dto.created, dto.createdBy ]);
 
-                if ($scope.dto.tila) {
-                    $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
-                }
+                $scope.model.metadata = [];
 
-                var date = $scope.dto.modified;
+                // oletuksenä näytetään muokkaustiedot
+                var userOid = dto.modifiedBy;
+                var date = dto.modified;
                 var lokalisointiKey = "tarjonta.metadata.modified";
-                if (!angular.isUndefined($scope.dto.created) && $scope.dto.created !== null) {
-                    date = $scope.dto.created;
+                
+                if (!date) { // ei muokkaustietoja -> näytetään luontitiedot
+                    userOid = dto.createdBy;
+                    date = dto.created;
                     lokalisointiKey = "tarjonta.metadata.created";
+                	
+                }
+
+                // tila
+                if (dto.tila) {
+                    $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + dto.tila));
                 }
 
                 //load user info by oid
-                if (!angular.isUndefined(userOid) && userOid !== null && userOid.length > 0) {
+                if (userOid) {
                     var promise = YhteyshenkiloService.haeHenkilo(userOid);
                     promise.then(function(response) {
-                        $scope.model.metadata = [];
-
-                        if ($scope.dto.tila) {
-                            $scope.model.metadata.push(LocalisationService.t("tarjonta.tila." + $scope.dto.tila));
-                        }
-
                         var name = "";
-                        if (!angular.isUndefined(response.etunimet)) {
+                        if (response.etunimet) {
                             name = response.etunimet + " ";
                         }
-                        if (!angular.isUndefined(response.sukunimi)) {
+                        if (response.sukunimi) {
                             name += response.sukunimi;
                         }
                         appendMetadata($scope.model.metadata, lokalisointiKey, name, date);
@@ -193,7 +193,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             };
 
             $scope.isNew = function() {
-                return !$scope.dto.oid && $scope.model.metadata.length==0;
+                return !$scope.model.dto.oid && $scope.model.metadata.length==0;
             }
 
             function titleText() {
@@ -252,7 +252,7 @@ app.directive('controlsModel', function($log) {
             ttCreate: "@", // otsikkoavain, jota käytetään luotaessa uutta
             ttEdit: "@", // otsikkoavain, jota käytetään muokattaessa olemassaolevaa
             title: "&", // otsikkoteksti (string tai monikielinen teksti), joka annetaan ttEdit:lle / ttCreate:lle parametriksi
-            dto: "&" // dto, josta haetaan muokkaustiedot (created, createdBy, ...); ttCreate/ttEdit valitaan näiden tietojen mukaan
+            dto: "=" // dto, josta haetaan muokkaustiedot (created, createdBy, ...); ttCreate/ttEdit valitaan näiden tietojen mukaan
         },
         controller: function($scope) {
             $scope.model.notifs = {
@@ -267,6 +267,11 @@ app.directive('controlsModel', function($log) {
             $scope.model.ttEdit = $scope.ttEdit;
             $scope.model.title = $scope.title;
             $scope.model.dto = $scope.dto;
+            
+            $scope.$watch("dto", function(){
+            	//console.log("FORM WTF dto");
+                $scope.model.dto = $scope.dto;
+            });
 
             return $scope;
         }

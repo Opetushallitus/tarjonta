@@ -146,14 +146,16 @@ app.controller('HakukohdeEditController',
         if ($scope.model.userLang === undefined) {
             $scope.model.userLang = "FI";
         }
-
+        console.log('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
+        if ($scope.model.hakukohde.oid) {
+            $scope.checkPermissions($scope.model.hakukohde.oid);
+        }
         $scope.loadHakukelpoisuusVaatimukset();
         $scope.loadKoulutukses(filterHakus);
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
         $scope.checkIsCopy();
-        $scope.updateTilaModel($scope.model.hakukohde);
 
         if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
             $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};

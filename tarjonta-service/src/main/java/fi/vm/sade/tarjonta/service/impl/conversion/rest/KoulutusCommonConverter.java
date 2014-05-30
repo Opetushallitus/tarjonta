@@ -94,6 +94,7 @@ public class KoulutusCommonConverter {
 
     public NimiV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final FieldNames msg, final RestParam param) {
         NimiV1RDTO data = new NimiV1RDTO();
+        if (mt != null) {
         for (TekstiKaannos tk : mt.getTekstis()) {
             final KoodiType koodiType = tarjontaKoodistoHelper.convertKielikoodiToKoodiType(tk.getKieliKoodi());
 
@@ -115,6 +116,7 @@ public class KoulutusCommonConverter {
                 type.setVersio(koodiType.getVersio());
                 data.getMeta().put(koodiUri, convertToKoodiDTO(new KoodiV1RDTO(), type, param.getLocale(), msg, true));
             }
+        }
         }
         return data;
     }

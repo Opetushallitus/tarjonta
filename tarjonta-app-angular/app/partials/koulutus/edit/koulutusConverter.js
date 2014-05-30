@@ -578,6 +578,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
     factory.saveModelConverter = function(tila, pmodel, uiModel, toteutustyyppi) {
         var apiModel = angular.copy(pmodel);
+        if(apiModel.tila!=="JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
         apiModel.tila = tila;
         factory.validateOutputData(apiModel, toteutustyyppi);
         /*

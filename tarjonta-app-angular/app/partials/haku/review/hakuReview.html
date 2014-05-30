@@ -17,7 +17,7 @@
                 </td>
             </tr>
 
-            <tr>
+            <tr ng-if="!isJatkuvaHaku()">
                 <th tt="haku.review.haunTiedot.hakukausi">Hakukausi ja vuosi</th>
                 <td colspan="2">
                     <div data-koodi data-uri="model.hakux.result.hakukausiUri">resolved</div>
@@ -25,7 +25,7 @@
                 </td>
             </tr>
 
-            <tr>
+            <tr ng-if="!isJatkuvaHaku()">
                 <th tt="haku.review.haunTiedot.alkamiskausi">Koulutuksen alkamiskausi</th>
                 <td colspan="2">
                     <div data-koodi data-uri="model.hakux.result.koulutuksenAlkamiskausiUri">resolved</div>
@@ -93,6 +93,28 @@
                     </div>
                 </td> 
             </tr>
+
+            <tr>
+                <th tt="haku.edit.organisaatiot.tarjoaja">Haun muokkausoikeus</th>
+                <td colspan="2">
+                    <ul>
+                        <li ng-repeat="org in model.tarjoajaOrganisations">
+                            <a href="/organisaatio-ui/html/index.html#/organisaatiot/{{ org.oid }}">{{ org.nimi }}</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>            
+            
+            <tr>
+                <th tt="haku.edit.organisaatiot.hakukohteet">Hakukohteita liittävät organisaatiot</th>
+                <td colspan="2">
+                    <ul>
+                        <li ng-repeat="org in model.hakukohdeOrganisations">
+                            <a href="/organisaatio-ui/html/index.html#/organisaatiot/{{ org.oid }}">{{ org.nimi }}</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>            
 
         </tbody>
 
@@ -253,7 +275,9 @@
         </tbody>
 
         <tr class="collapse" ng-class="model.collapse.haunHakukohteet ? '' : 'open'">
-            <th colspan="2" tt="haku.review.haunHakukohteet.otsikko" ng-click="model.collapse.haunHakukohteet = !model.collapse.haunHakukohteet">Hakukohteet</th>
+            <th colspan="2" ng-click="model.collapse.haunHakukohteet = !model.collapse.haunHakukohteet">
+                <span tt="haku.review.haunHakukohteet.otsikko">Hakukohteet</span> ({{model.hakukohteet.length}})
+            </th>
             <td>
 <!--                 <a class="btn" href data-ng-click="doCreateNewHakukohde($event)">
                     <span tt="haku.review.luoUusiHakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span>
