@@ -146,7 +146,10 @@ app.controller('HakukohdeEditController',
         if ($scope.model.userLang === undefined) {
             $scope.model.userLang = "FI";
         }
-
+        console.log('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
+        if ($scope.model.hakukohde.oid) {
+            $scope.checkPermissions($scope.model.hakukohde.oid);
+        }
         $scope.loadHakukelpoisuusVaatimukset();
         $scope.loadKoulutukses(filterHakus);
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);

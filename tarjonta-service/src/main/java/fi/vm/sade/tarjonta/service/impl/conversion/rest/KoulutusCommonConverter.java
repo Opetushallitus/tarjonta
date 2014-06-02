@@ -73,26 +73,28 @@ public class KoulutusCommonConverter {
 
     public NimiV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final Locale langCode, final FieldNames msg, final boolean showMeta) {
         NimiV1RDTO data = new NimiV1RDTO();
-        for (TekstiKaannos tk : mt.getTekstis()) {
-            final KoodiType koodiType = tarjontaKoodistoHelper.convertKielikoodiToKoodiType(tk.getKieliKoodi());
+        if (mt != null) {
+            for (TekstiKaannos tk : mt.getTekstis()) {
+                final KoodiType koodiType = tarjontaKoodistoHelper.convertKielikoodiToKoodiType(tk.getKieliKoodi());
 
-            if (koodiType == null) {
-                LOG.error("No koodisto koodi URI found for kielikoodi : '{}'", tk.getKieliKoodi());
-                continue;
-            }
-
-            final String koodiUri = koodiType.getKoodiUri();
-
-            data.getTekstis().put(koodiUri, tk.getArvo());
-            if (showMeta) {
-                if (data.getMeta() == null) {
-                    data.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                if (koodiType == null) {
+                    LOG.error("No koodisto koodi URI found for kielikoodi : '{}'", tk.getKieliKoodi());
+                    continue;
                 }
 
-                KoodiUriAndVersioType type = new KoodiUriAndVersioType();
-                type.setKoodiUri(koodiType.getKoodiUri());
-                type.setVersio(koodiType.getVersio());
-                data.getMeta().put(koodiUri, convertToKoodiDTO(new KoodiV1RDTO(), type, langCode, msg, true));
+                final String koodiUri = koodiType.getKoodiUri();
+
+                data.getTekstis().put(koodiUri, tk.getArvo());
+                if (showMeta) {
+                    if (data.getMeta() == null) {
+                        data.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                    }
+
+                    KoodiUriAndVersioType type = new KoodiUriAndVersioType();
+                    type.setKoodiUri(koodiType.getKoodiUri());
+                    type.setVersio(koodiType.getVersio());
+                    data.getMeta().put(koodiUri, convertToKoodiDTO(new KoodiV1RDTO(), type, langCode, msg, true));
+                }
             }
         }
         return data;
