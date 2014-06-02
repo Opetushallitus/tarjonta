@@ -116,8 +116,8 @@ app.service('TreeHandlers', function() {
     return singleton;
 });
 
-app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers', 'AuthService',
-    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService) {
+app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers', 'AuthService', '$log',
+    function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService,$log) {
         /*
          * Select koulutus data objects.
          */
@@ -231,6 +231,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
 
                 for (var i = 0; i < result.tulokset.length; i++) {
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
+                      if(result.tulokset[i].tulokset[c].koulutuskoodi) {
+
                         var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split("#")[0];
                         if ($scope.model.tutkinto.uri.length === 0 || $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
                             $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
@@ -241,7 +243,10 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
                                 tarjoaja: result.tulokset[i].nimi,
                                 oid: result.tulokset[i].tulokset[c].komoOid});
                         }
+                    } else {
+                      $log.error("koulutus without koulutuskoodi:", result.tulokset[i].tulokset[c]);
                     }
+                   }
                 }
 
                 angular.forEach(arr, function(value) {
