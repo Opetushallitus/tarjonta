@@ -46,7 +46,7 @@ public class KoulutusIndexEntity {
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
-        this.koulutusKoodi = koulutusKoodi != null ? koulutusKoodi
+        this.koulutusKoodi = koulutusKoodi != null && koulutusKoodi.trim().length()>0 ? koulutusKoodi
                 : komotoKoulutuskoodi;
         this.koulutustyyppiEnum = koulutustyyppiEnum;
         this.lukiolinja = lukiolinja;
