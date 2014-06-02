@@ -45,6 +45,8 @@ import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -53,6 +55,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 @Transactional
 public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(KoulutusBusinessServiceImpl.class);
+    
     @Autowired
     private OidService oidService;
     @Autowired
@@ -304,6 +308,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimusUri(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
+            
+            LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
+
+            if (parentKomoto.getPohjakoulutusvaatimusUri() != null && parentKomoto.getPohjakoulutusvaatimusUri().indexOf("#") < 0) {
+                LOG.error("*** FAILING FAST *** to see where the problem lies...OVT-7849");
+                throw new RuntimeException("parent komoto pohjakoulutusvaatimus = " + parentKomoto.getPohjakoulutusvaatimusUri());
+            }
+            
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
     }
