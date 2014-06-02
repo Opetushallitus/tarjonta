@@ -2,7 +2,7 @@
 
 	<tr ng-repeat="e in data">
 		<th>{{codes[e.uri].nimi}} <a href ng-click="removeLang(e.uri)" ng-show="e.removable">[X]</a></th>
-		<td><input type="text" ng-model="e.value" ng-change="updateModel()"/></td>
+		<td><input type="text" ng-disabled="disable" ng-model="e.value" ng-change="updateModel()"/></td>
 	</tr>
 	
 	<tr>

@@ -42,13 +42,12 @@ app.controller('BaseEditController', [
         $scope.uiModel = {};
         $scope.lisatiedot = null;
         $scope.controlModel = {
-            formStatus: {
+            /*formStatus: {
                 modifiedBy: '',
                 modified: null,
                 tila: ''
             },
-            formControls: {reloadDisplayControls: function() {
-                }}
+            formControls: {}*/
         };
 
         /*
@@ -200,7 +199,7 @@ app.controller('BaseEditController', [
                     uiModel.validationmsgs = [];
                     break;
                 case 'CLEAR':
-                    $scope.controlModel.formControls.notifs.errorDetail = [];
+                    //$scope.controlModel.formControls.notifs.errorDetail = [];
                     koulutusForm.$dirty = true;
                     koulutusForm.$invalid = false;
                     uiModel.validationmsgs = [];
@@ -259,17 +258,19 @@ app.controller('BaseEditController', [
             return fallbackFi;
         };
 
-        $scope.updateFormStatusInformation = function(model) {
+        /*$scope.updateFormStatusInformation = function(model) {
             //look more info from KoulutusRoutingController and controlLayouts.js
-            $scope.controlModel.formStatus = {
+            $scope.controlModel.formStatus = model;/*{
                 modifiedBy: model.modifiedBy,
                 modified: model.modified,
                 tila: model.tila
-            };
+            };*/
 
+            /*console.log("FORM STATUS", $scope.controlModel);
+            
             //force reload
-            $scope.controlModel.formControls.reloadDisplayControls();
-        };
+            //$scope.controlModel.formControls.reloadDisplayControls();
+        };*/
 
         $scope.saveByStatus = function(tila, form, koulutusasteTyyppi, fnCustomCallbackAfterSave) {
             $scope.controlFormMessages(form, $scope.uiModel, "CLEAR");
@@ -307,7 +308,8 @@ app.controller('BaseEditController', [
                         form.$pristine = true;
 
                         $scope.model = model;
-                        $scope.updateFormStatusInformation($scope.model);
+                        
+                        //$scope.updateFormStatusInformation($scope.model);
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
                         $scope.uiModel.tabs.lisatiedot = false;
                         $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
@@ -430,7 +432,7 @@ app.controller('BaseEditController', [
             });
 
             uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
-            $scope.updateFormStatusInformation(model);
+            //$scope.updateFormStatusInformation(model);
 
             angular.forEach(model.yhteyshenkilos, function(value, key) {
                 if (value.henkiloTyyppi === 'YHTEYSHENKILO') {

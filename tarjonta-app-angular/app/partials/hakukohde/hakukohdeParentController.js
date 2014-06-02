@@ -1,28 +1,9 @@
-/*
- * Copyright (c) 2013 The Finnish Board of Education - Opetushallitus
- *
- * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
- * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
- *
- * You may not use this work except in compliance with the Licence.
- * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- */
-
 /**
- *
- * This controller acts as routing and parent controller of all hakukohdes,
- * it contains all common controller variables and functions
- * @type {module|*}
+ * Created by Tuomas on 27.5.2014.
  */
+var app = angular.module('app.hakukohde.ctrl');
 
-var app = angular.module('app.hakukohde.ctrl', []);
-
-app.controller('HakukohdeRoutingController', ['$scope',
+app.controller('HakukohdeParentController', ['$scope',
     '$log',
     '$routeParams',
     '$route',
@@ -42,105 +23,31 @@ app.controller('HakukohdeRoutingController', ['$scope',
     'PermissionService',
     'dialogService',
     function ($scope,
-                                        $log,
-                                        $routeParams,
-                                        $route,
-                                        $q,
-                                        $modal ,
-                                        $location,
-                                        Hakukohde,
-                                        Koodisto,
-                                        AuthService,
-                                        HakuService,
-                                        LocalisationService,
-                                        OrganisaatioService,
-                                        SharedStateService,
-                                        TarjontaService,
-                                        Kuvaus,
-                                        CommonUtilService,
-                                        PermissionService,
-                                        dialogService) {
+              $log,
+              $routeParams,
+              $route,
+              $q,
+              $modal ,
+              $location,
+              Hakukohde,
+              Koodisto,
+              AuthService,
+              HakuService,
+              LocalisationService,
+              OrganisaatioService,
+              SharedStateService,
+              TarjontaService,
+              Kuvaus,
+              CommonUtilService,
+              PermissionService,
+              dialogService) {
 
-
-
-
-        $log.info("HakukohdeRoutingController()", $routeParams);
-        $log.info("$route: ", $route);
-        $log.info("$route action: ", $route.current.$$route.action);
-        $log.info("SCOPE: ", $scope);
-        $log.info("CAN EDIT : ", $route.current.locals.canEdit);
-        $log.info("CAN CREATE : ", $route.current.locals.canCreate);
 
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
         var korkeakouluTyyppi = "KORKEAKOULUTUS";
         var lukioTyyppi = "LUKIOKOULUTUS";
-
-
-        if ($route.current.locals.isCopy !== undefined) {
-
-            $scope.isCopy = $route.current.locals.isCopy;
-        } else {
-            $scope.isCopy = false;
-        }
-
-        $scope.formControls = {reloadDisplayControls: function() {
-        }}; // controls-layouttia varten
-
-
-        $scope.canCreate = $route.current.locals.canCreate;
-        $scope.canEdit =  $route.current.locals.canEdit;
-
-
-        if ($route.current.locals.hakukohdex.result === undefined) {
-
-            $scope.model = {
-                collapse: {
-                    model : true
-                },
-                hakukohdeTabsDisabled : true,
-                hakukohde : {
-                    valintaperusteKuvaukset : {},
-                    soraKuvaukset : {},
-                    kaytetaanJarjestelmanValintaPalvelua: true
-
-                }
-            }
-
-
-            $scope.model.hakukohde = $route.current.locals.hakukohdex;
-
-
-
-
-        } else {
-            var hakukohdeResource = new Hakukohde( $route.current.locals.hakukohdex.result);
-
-            if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
-                hakukohdeResource.valintaperusteKuvaukset = {};
-            }
-
-            if (hakukohdeResource.soraKuvaukset === undefined) {
-                hakukohdeResource.soraKuvaukset = {};
-            }
-
-            $scope.model = {
-                collapse: {
-                    model : true
-                },
-                hakukohdeTabsDisabled : false,
-                hakukohde : hakukohdeResource
-            }
-
-        }
-
-
-
-
-
-        $scope.hakukohdex = $route.current.locals.hakukohdex;
-        $log.info("  --> hakukohdex == ", $scope.hakukohdex);
 
         /*
          *
@@ -158,7 +65,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         };
 
         $scope.status = {dirty: false}; // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
-        
+
         $scope.model.showSuccess = false;
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
@@ -182,8 +89,9 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
         $scope.model.isDeEnabled = false;
+        $scope.model.isPartiallyDeEnabled = false;
 
-        var deferredOsoite = $q.defer();
+
         var parentOrgOids = new buckets.Set();
         var orgSet = new buckets.Set();
 
@@ -247,12 +155,12 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
                     angular.forEach(tulos.tulokset, function (koulutus) {
                         var indx = koulutus.koulutuslajiUri.indexOf(aikuUri);
-                            if(indx > -1) {
+                        if(indx > -1) {
 
-                                returnVal = true;
-                            } else {
-                                returnVal = false;
-                            }
+                            returnVal = true;
+                        } else {
+                            returnVal = false;
+                        }
 
                     })
 
@@ -270,14 +178,14 @@ app.controller('HakukohdeRoutingController', ['$scope',
             //If hakukohdex is defined then we are updating it
             //otherwise try to get selected koulutustyyppi from shared state
             if($route.current.locals && $route.current.locals.hakukohdex.result) {
-                    $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
-                    $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
-                    if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
-                        return korkeakoulutusHakukohdePartialUri;
+                $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
+                $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
+                if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
+                    return korkeakoulutusHakukohdePartialUri;
 
-                    }  else if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === "LUKIOKOULUTUS" && $route.current.locals.hakukohdex.result.koulutuslaji === "A" ) {
-                        return aikuLukioHakukohdePartialUri;
-                    }
+                }  else if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === "LUKIOKOULUTUS" && $route.current.locals.hakukohdex.result.koulutuslaji === "A" ) {
+                    return aikuLukioHakukohdePartialUri;
+                }
 
             } else {
                 var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
@@ -344,22 +252,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
             }
 
             $log.info('IS DEENABLED : ', $scope.model.isDeEnabled);
-        };
-
-        $scope.updateTilaModel = function(hakukohde) {
-
-            if (hakukohde) {
-                $scope.modifiedObj.modifiedBy = hakukohde.modifiedBy;
-                $scope.modifiedObj.modified = hakukohde.modified;
-                $scope.modifiedObj.tila = hakukohde.tila;
-            }
-            console.log('FORM CONTROLS : ', $scope.formControls);
-            if ($scope.formControls && $scope.formControls.reloadDisplayControls) {
-                $log.debug('RELOADING FORM CONTROLS : ', $scope.formControls);
-                $scope.formControls.reloadDisplayControls();
-            }
-
-
         };
 
         $scope.emptyErrorMessages = function() {
@@ -475,7 +367,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
 
             if(!$scope.model.canSaveHakukohde()) {
-               return false;
+                return false;
             }
 
             var errors = [];
@@ -580,15 +472,14 @@ app.controller('HakukohdeRoutingController', ['$scope',
                     $q.all(orgQueryPromises).then(function(orgs){
 
                         var counter = 0;
-
                         angular.forEach(orgs,function(data){
 
                             orgSet.add(data.nimi);
 
                             if (counter === 0) {
                                 var wasHakutoimistoFound = checkAndAddHakutoimisto(data);
-
                                 if (wasHakutoimistoFound) {
+
                                     deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                                 } else {
                                     $scope.tryGetParentsApplicationOffice(data);
@@ -661,9 +552,9 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.checkIfFirstArraysOneElementExistsInSecond = function(array1,array2) {
 
             angular.forEach(array1,function(element){
-               if (array2.indexOf(element) != -1) {
-                   return true;
-               }
+                if (array2.indexOf(element) != -1) {
+                    return true;
+                }
             });
 
         };
@@ -673,9 +564,9 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
             angular.forEach(hakuOrgs,function(hakuOrg){
 
-               if (hakuOrg === window.CONFIG.app['haku.hakutapa.erillishaku.uri']) {
-                   return true;
-               }
+                if (hakuOrg === window.CONFIG.app['haku.hakutapa.erillishaku.uri']) {
+                    return true;
+                }
 
             });
 
@@ -972,7 +863,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
                 });
 
                 $scope.status.dirty = true;
-                
+
             });
 
         };
@@ -1018,21 +909,21 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
 
         };
-        
+
         $scope.isHakukohdeRootScope = function(scope) {
-        	return scope==$scope;
+            return scope==$scope;
         }
-        
+
         function isDirty() {
-        	return $scope.status.dirty || ($scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty);
+            return $scope.status.dirty || ($scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty);
         }
 
         $scope.model.takaisin = function(confirm) {
-        	//console.log("LINK CONFIRM TAKAISIN", [confirm, $scope.editHakukohdeForm, $scope]);
+            //console.log("LINK CONFIRM TAKAISIN", [confirm, $scope.editHakukohdeForm, $scope]);
             if (!confirm && isDirty()) {
                 dialogService.showModifedDialog().result.then(function(result) {
                     if (result) {
-                    	$scope.model.takaisin(true);
+                        $scope.model.takaisin(true);
                     }
                 });
             } else {
@@ -1041,11 +932,11 @@ app.controller('HakukohdeRoutingController', ['$scope',
         };
 
         $scope.model.tarkastele = function(confirm) {
-        	//console.log("LINK CONFIRM TARKASTELE", [confirm, $scope.editHakukohdeForm, $scope]);
+            //console.log("LINK CONFIRM TARKASTELE", [confirm, $scope.editHakukohdeForm, $scope]);
             if (!confirm && isDirty()) {
                 dialogService.showModifedDialog().result.then(function(result) {
                     if (result) {
-                    	$scope.model.tarkastele(true);
+                        $scope.model.tarkastele(true);
                     }
                 });
             } else {
@@ -1155,7 +1046,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                                 $scope.checkIfSavingCopy($scope.model.hakukohde);
                             } else {
@@ -1184,7 +1074,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                         returnResource.then(function(hakukohde){
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                             } else {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -1236,7 +1125,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                                 $scope.checkIfSavingCopy($scope.model.hakukohde);
                             } else {
@@ -1267,8 +1155,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
                             console.log('HAKUKOHDE VALMIS UPDATE : ', hakukohde);
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-
-                                $scope.updateTilaModel($scope.model.hakukohde);
                                 $scope.showSuccess();
                             } else {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
@@ -1311,6 +1197,44 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
 
             return foundKoodi;
+        };
+        
+        var processPermissions = function (resourcePermissions) {
+            $log.info('PROCESSPERMISSIONS : ', resourcePermissions);
+            if (resourcePermissions.hakukohde.update && resourcePermissions.hakukohde.updateLimited) {
+                $log.info('TTKPP PARTIAL UPDATE');
+                $scope.model.isDeEnabled = true;
+                $scope.model.isPartiallyDeEnabled = false;
+            } else if (resourcePermissions.hakukohde.update && !resourcePermissions.hakukohde.updateLimited){
+                $log.info('TTKPP FULL UPDATE');
+                $scope.model.isDeEnabled = false;
+                $scope.model.isPartiallyDeEnabled = false;
+            } else if  (!resourcePermissions.hakukohde.update) {
+                $log.info('TTKPP NO UPDATE');
+                $scope.model.isDeEnabled = true;
+                $scope.model.isPartiallyDeEnabled = true;
+            }
+
+        };
+
+        $scope.isHkDeEnabled = function() {
+
+            console.log('HK-DE-ENABLED : ' , $scope.model.isDeEnabled);
+            return $scope.model.isDeEnabled;
+        };
+        
+        $scope.checkPermissions = function (hakukohdeOid) {
+
+
+            $log.info('HAKUKOHDE OID: ', hakukohdeOid);
+            var permissionPromise = PermissionService.getPermissions("hakukohde",hakukohdeOid);
+
+            permissionPromise.then(function(permissionResult) {
+
+                processPermissions(permissionResult);
+
+            });
+
         };
 
         $scope.findKoodiWithUri = function(koodi,koodis)  {
@@ -1381,7 +1305,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
                 parentOrgMap[parentOrg] = 'X';
             });
             return parentOrgMap;
-        }
+        };
 
         var checkIfOrgMatches = function(haku) {
 
@@ -1402,5 +1326,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
 
         };
 
-    }
-]);
+
+
+    }]);
