@@ -6,14 +6,30 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 	
 	function RichTextareaController($scope) {
 		
-		var fontSizes = [7.5,10,12,14,18,24,36];
-		var validElements = "@[style|class|align|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,dd,dl,dt,img[src],sup,sub,font[face|size|color]";
+		var validElements = "@[align|style|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,img[src],sup,sub";
 		
 		$scope.commands = {};
 		
 		function execCommand(cmd, arg) {
 			console.log("execCommand ", [cmd, arg]);
 			$scope.editor.execCommand(cmd, false, arg);
+		}
+		
+		function replaceElements(node, from, to) {
+
+			$(from, node).each(function(i, em){
+				var e = $(em);
+				// tyhjä -> poista
+				if (e.text().trim()=="") {
+					e.remove();
+					return;
+				}
+
+				e.wrap($("<"+to+"></"+to+">"));
+				e.contents().unwrap();
+
+			});
+
 		}
 		
 		$scope.tinymceOptions = {
@@ -31,7 +47,7 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			schema:"html5",
 			language:LocalisationService.getLocale(),
 			plugins:"link table paste lists advlist",
-			extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
+			//extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
 			setup: function(editor) {
@@ -82,61 +98,55 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 				console.log("Pasting:",args.content);
 			},
 			paste_postprocess: function(plugin, args) {
+				var node = $(args.node);
 				// tyhjät kappaleet rivinvaihdoiksi <p></p> -> <br/>
-				$("p", $(args.node)).each(function(i, em){
+				$("p", node).each(function(i, em){
 					var e = $(em);
 					if (e.text().trim()=="") {
 						e.replaceWith("<br/>");
 					}
 				});
 				
-				// font-tagit spaneiksi jos tyylejä määritelty
-				$("font", $(args.node)).each(function(i, em){
+				// TODO filtteröinti valid-elementsin mukaan tehdään vasta tallennettaessa joten liitettävä html
+				// olisi periaatteessa mahdollista filtteröidä jo tässä vaiheessa
+			
+				// strong -> b
+				replaceElements(node, "strong", "b");
+				
+				// em -> i
+				replaceElements(node, "em", "i");
+				
+				// tyylit
+				$("[style]", node).each(function(i, em){
 					var e = $(em);
-					if (e.text().trim()=="") {
-						e.remove();
-					} else {
-						var span = $("<span></span>");
-						var styled = false;
-						if (e.attr("face")) {
-							span.css("font-family", e.attr("face"));
-							styled = true;
-						}
-						if (e.attr("size")) {
-							span.css("font-size", fontSizes[e.attr("size")-1]+"pt");
-							styled = true;
-						}
-						if (e.attr("color")) {
-							span.css("color", e.attr("color"));
-							styled = true;
-						}
-						
-						if (styled) {
-							e.wrap(span);
-						}
-						
-						e.contents().unwrap();
-						
+					// säilytä h/v align jos td tai th, poista muut
+					if (em.localName!="th" && em.localName!="td") {
+						eattr("style", null);
+						return;
 					}
+					
+					var halign = e.css("text-align");
+					var valign = e.css("vertical-align");
+					e.attr("style", null);
+					e.css("text-align", halign);
+					e.css("vertical-align", valign);
+					
 				});
 
 				// align -> css
-				$("[align]", $(args.node)).each(function(i, em){
+				$("[align]", node).each(function(i, em){
 					var e = $(em);
 					var align = e.attr("align");
 					e.attr("align", null);
-					e.css("text-align", align);
+
+					// jos elementti on td tai th
+					if (em.localName=="td" || em.localName=="th") {
+						e.css("text-align", align);
+					}
 				});
+
 				
-				// bgcolor -> css
-				$("[bgcolor]", $(args.node)).each(function(i, em){
-					var e = $(em);
-					var bgcolor = e.attr("bgcolor");
-					e.attr("bgcolor", null);
-					e.css("background-color", bgcolor);
-				});
-				
-				console.log("Pasted:",args.node);
+				console.log("Pasted:",node);
 			},
 			toolbar: false
 			//tools:"inserttable"
