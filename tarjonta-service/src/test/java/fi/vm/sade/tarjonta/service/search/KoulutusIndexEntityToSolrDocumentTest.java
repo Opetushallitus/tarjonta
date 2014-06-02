@@ -49,7 +49,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 TarjontaTila.JULKAISTU, KOULUTUSTYYPPIKOODI, KOMO_OID,
                 KOULUTUSKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
-                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
+                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI, KOULUTUSKOODI);
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
 
@@ -151,7 +151,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 TarjontaTila.JULKAISTU, KOULUTUSTYYPPIKOODI, KOMO_OID,
                 KOULUTUSKOODI,
                 LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
-                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI);
+                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI, KOULUTUSKOODI);
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
 

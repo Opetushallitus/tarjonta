@@ -40,13 +40,14 @@ public class KoulutusIndexEntity {
     public KoulutusIndexEntity(Long id, String oid, Date koulutuksenAlkamisPvm,
             TarjontaTila tila, KoulutustyyppiEnum koulutustyyppiEnum,
             String koulutusmoduuliOid, String koulutusKoodi, String lukiolinja,
-            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi) {
+            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi, String komotoKoulutuskoodi) {
         this.koulutusId = id;
         this.oid = oid;
         this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
-        this.koulutusKoodi = koulutusKoodi;
+        this.koulutusKoodi = koulutusKoodi != null ? koulutusKoodi
+                : komotoKoulutuskoodi;
         this.koulutustyyppiEnum = koulutustyyppiEnum;
         this.lukiolinja = lukiolinja;
         this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;

@@ -127,7 +127,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppiEnum, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                                 koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
+                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutusUri)));
     }
 
     @Override
@@ -148,7 +148,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                         (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppiEnum, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                                 koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, komoto.tarjoaja,
-                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi)));
+                                komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutusUri)));
     }
 
     private BooleanBuilder bb(Predicate initial) {
