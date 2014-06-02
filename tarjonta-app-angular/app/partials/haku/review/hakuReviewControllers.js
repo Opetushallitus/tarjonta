@@ -20,63 +20,65 @@ app.controller('HakuReviewController',
             '$routeParams', 'ParameterService', '$location',
             'HakuV1Service', 'TarjontaService', 'dialogService',
             'LocalisationService', '$q', "PermissionService",
+            'OrganisaatioService',
             function HakuReviewController($scope, $route, $log,
                     $routeParams, ParameterService, $location,
                     HakuV1Service, TarjontaService, dialogService,
-                    LocalisationService, $q, PermissionService) {
+                    LocalisationService, $q, PermissionService,
+                    OrganisaatioService) {
 
                 $log = $log.getInstance("HakuReviewController");
-                $scope.isMutable=false;
-                $scope.isRemovable=false;
+                $scope.isMutable = false;
+                $scope.isRemovable = false;
 
                 var hakuOid = $route.current.params.id;
 
-                
+
                 //permissiot
-                $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
-                  $scope.isMutable=results[0];
-                  $scope.isRemovable=results[1] && results[2].result;
+                $q.all([PermissionService.haku.canEdit(hakuOid),
+                    PermissionService.haku.canDelete(hakuOid),
+                    HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+                    $scope.isMutable = results[0];
+                    $scope.isRemovable = results[1] && results[2].result;
                 });
-                
+
                 $log.info("  init, args =", $scope, $route, $routeParams);
 
                 // hakux : $route.current.locals.hakux, // preloaded, see "hakuApp.js" route resolve for "/haku/:id"
 
                 $scope.model = null;
+                
+                $scope.isJatkuvaHaku = function() {
+                    // Defined in "hakuControllers.js"
+                    var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
+                    // $log.info("isJatkuvaHaku()", result);
+                    return result;
+                };
 
                 $scope.goBack = function() {
                     $location.path("/haku");
                 };
 
                 $scope.doEdit = function() {
-                  if(!$scope.isMutable) {
-                    return;
-                  }
-                  $location.path("/haku/" + hakuOid + "/edit");
+                    if (!$scope.isMutable) {
+                        return;
+                    }
+                    $location.path("/haku/" + hakuOid + "/edit");
                 };
 
                 $scope.doDelete = function(event) {
-                  if(!$scope.isRemovable) {
-                    return;
-                  }
+                    if (!$scope.isRemovable) {
+                        return;
+                    }
                     $log.info("doDelete()", event);
-                    
-                    dialogService.showSimpleDialog(
-                            LocalisationService.t("haku.delete.confirmation"),
-                            LocalisationService.t("haku.delete.confirmation.description"),
-                            LocalisationService.t("ok"),
-                            LocalisationService.t("cancel")).result.then(function(result) {
-                        $log.info("Dialog result = ", result);
+
+                    // In "hakuControllers.js"
+                    $scope.doDeleteHaku($scope.model.hakux.result, true).then(function(result) {
                         if (result) {
-                            // In "hakuControllers.js"
-                            $scope.doDeleteHaku($scope.model.hakux.result).then(function(result) {
-                                if (result) {
-                                    // OK, delete - go away
-                                    $scope.goBack();
-                                } else {
-                                    $log.info("delete failed - stay here.");
-                                }
-                            });
+                            // OK, delete done so cannot display review any more - go away
+                            $scope.goBack();
+                        } else {
+                            $log.info("delete failed - stay here.");
                         }
                     });
                 };
@@ -102,8 +104,29 @@ app.controller('HakuReviewController',
                         },
                         haku: {todo: "TODO LOAD ME 1"},
                         hakukohteet: [],
+                        
+                        tarjoajaOrganisations: [],   // { tarjoajaOids : [...] }
+                        hakukohdeOrganisations: [],  // { organisaatioOids : [...] }
+                        
                         place: "holder"
                     };
+                    
+                    //
+                    // Get organisation information
+                    //
+                    angular.forEach($scope.model.hakux.result.organisaatioOids, function(organisationOid) {
+                        $log.info("  get [organisaatioOids] ", organisationOid);
+                        OrganisaatioService.byOid(organisationOid).then(function(organisation) {
+                          $scope.model.hakukohdeOrganisations.push(organisation);
+                        });
+                    });
+
+                    angular.forEach($scope.model.hakux.result.tarjoajaOids, function(organisationOid) {
+                        $log.info("  get [tarjoajaOids] ", organisationOid);
+                        OrganisaatioService.byOid(organisationOid).then(function(organisation) {
+                          $scope.model.tarjoajaOrganisations.push(organisation);
+                        });
+                    });
 
                     //
                     // Get hakukohdes for current haku

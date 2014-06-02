@@ -7,8 +7,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     modified: null,
                     tila: ''
                 },
-                formControls: {reloadDisplayControls: function() {
-                    }}
+                formControls: {/*reloadDisplayControls: function() {
+                    }*/}
             };
 
             $scope.ctrl = {

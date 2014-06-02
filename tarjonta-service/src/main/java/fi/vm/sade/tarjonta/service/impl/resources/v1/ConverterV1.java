@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -353,10 +354,7 @@ public class ConverterV1 {
         }
 
         valintaperusteSoraKuvaus.setViimPaivittajaOid(contextDataService.getCurrentUserOid());
-
-        if (kuvausV1RDTO.getModified() != null) {
-            valintaperusteSoraKuvaus.setViimPaivitysPvm(kuvausV1RDTO.getModified());
-        }
+        valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
 
         if (kuvausV1RDTO.getVuosi() != null) {
             valintaperusteSoraKuvaus.setVuosi(kuvausV1RDTO.getVuosi());
@@ -693,11 +691,8 @@ public class ConverterV1 {
             hakukohde.setVersion(hakukohdeRDTO.getVersion());
         }
 
-        if (hakukohdeRDTO.getModified() != null) {
-            hakukohde.setLastUpdateDate(hakukohdeRDTO.getModified());
-        }
-
         hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
+        hakukohde.setLastUpdateDate(new Date());
 
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeRDTO.getTila()));
         hakukohde.setLiitteidenToimitusPvm(hakukohdeRDTO.getLiitteidenToimitusPvm());
