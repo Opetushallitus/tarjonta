@@ -9,19 +9,75 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 		var fontSizes = [7.5,10,12,14,18,24,36];
 		var validElements = "@[style|class|align|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,dd,dl,dt,img[src],sup,sub,font[face|size|color]";
 		
-		var sizeBase = 1.2;
+		$scope.commands = {};
+		
+		function execCommand(cmd, arg) {
+			console.log("execCommand ", [cmd, arg]);
+			$scope.editor.execCommand(cmd, false, arg);
+		}
 		
 		$scope.tinymceOptions = {
 			height:"100%",
 			statusbar:false,
-			menubar:"format table insert",
+			
+			menubar: "format table insert",
+			menu:{
+				format: { title: "Format", items: "bold italic underline strikethrough | _aligns _headings | subscript superscript | removeformat" },
+				table: { title: "Table", items: "inserttable tableprops deletetable | cell row column" },
+				insert: { title: "Insert", items: "bullist numlist | link" }
+			},
+			
 			resize:false,
 			schema:"html5",
 			language:LocalisationService.getLocale(),
-			plugins:"link table paste",
+			plugins:"link table paste lists advlist",
 			extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
+			setup: function(editor) {
+				console.log("SETUP ",editor);
+				$scope.editor = editor;
+				
+				editor.addMenuItem("bullist", {
+					text: "Bullet list",
+					icon: "bullist",
+	                onclick: function() {
+	                	editor.execCommand('InsertUnorderedList');
+	                }
+				});
+
+				editor.addMenuItem("numlist", {
+					text: "Numbered list",
+					icon: "numlist",
+	                onclick: function() {
+	                	editor.execCommand('InsertOrderedList');
+	                }
+				});
+
+				editor.addMenuItem("_aligns", {
+					text: "Alignment",
+					//separator: "before",
+					menu: [
+					       {text:"Justify", icon:"alignjustify", onclick: function(){ execCommand("justifyFull"); }},
+					       {text:"Align left", icon:"alignleft", onclick: function(){ execCommand("justifyLeft"); }},
+					       {text:"Align right", icon:"alignright", onclick: function(){ execCommand("justifyRight"); }},
+					       {text:"Align center", icon:"aligncenter", onclick: function(){ execCommand("justifyCenter"); }}
+					       ]
+				});
+				
+				editor.addMenuItem("_headings", {
+					text: "Headers",
+					menu: [
+					       {text:"Header 1", onclick: function(){ execCommand("formatBlock", "h1"); }},
+					       {text:"Header 2", onclick: function(){ execCommand("formatBlock", "h2"); }},
+					       {text:"Header 3", onclick: function(){ execCommand("formatBlock", "h3"); }},
+					       {text:"Header 4", onclick: function(){ execCommand("formatBlock", "h4"); }},
+					       {text:"Header 5", onclick: function(){ execCommand("formatBlock", "h5"); }},
+					       {text:"Header 6", onclick: function(){ execCommand("formatBlock", "h6"); }}
+					       ]
+				});
+				
+			},
 			paste_preprocess: function(plugin, args) {
 				console.log("Pasting:",args.content);
 			},
@@ -82,9 +138,8 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 				
 				console.log("Pasted:",args.node);
 			},
-			toolbar: false, // tinymce4 ei tue taulukkoa toolbarissa
-				//"styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image table | media inserttable tableprops",
-			tools:"inserttable"
+			toolbar: false
+			//tools:"inserttable"
 			//toolbar_items_size:"small"
 			//content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
 		};
