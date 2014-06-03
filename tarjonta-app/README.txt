@@ -2,9 +2,21 @@
 			  Tarjonta APP (UI)
 ======================================================================
 
-Käynnistäminen:
+Käynnistäminen lokaalisti:
 
-  mvn -Pdevelopment -Dlog4j.configuration=file:src/main/profile/development/log4j.properties jetty:run
+  mvn  clean install jetty:run -Dlog4j.configuration=file:`pwd`/src/main/resources/log4j.properties 
+
+(pom.xml - log4j + slf4j scope pois testistä - älä kommitoi - muuten ei toimi muualla)
+
+
+UI:
+
+  http://localhost:8480/tarjonta-app/tarjontaapp
+
+
+#
+#  mvn -Pdevelopment -Dlog4j.configuration=file:src/main/profile/development/log4j.properties jetty:run
+#
 
 
 Proertyfilet jota ladataan
