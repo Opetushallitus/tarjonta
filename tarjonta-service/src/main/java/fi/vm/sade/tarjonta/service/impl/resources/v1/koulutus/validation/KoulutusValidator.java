@@ -133,6 +133,10 @@ public class KoulutusValidator {
         if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
             KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDTO = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
 
+            if (nayttoDTO.getJarjestavaOrganisaatio() == null || nayttoDTO.getJarjestavaOrganisaatio().getOid() == null || nayttoDTO.getJarjestavaOrganisaatio().getOid().isEmpty()) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.lower()));
+            }
+
             if (nayttoDTO.getValmistavaKoulutus() != null) {
                 final KoulutusValmistavaV1RDTO valmistavaKoulutus = nayttoDTO.getValmistavaKoulutus();
                 validateKoodiUris(result, valmistavaKoulutus.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);

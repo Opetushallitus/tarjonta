@@ -209,6 +209,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "hinta")
     private BigDecimal hinta;
 
+    @Column(name = "jarjesteja")
+    private String jarjesteja;
+
     /**
      * Populoidaan aina.
      */
@@ -1038,6 +1041,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     public void setNayttotutkintoValmentavaKoulutus(KoulutusmoduuliToteutus nayttotutkintoValmentavaKoulutus) {
         this.nayttotutkintoValmentavaKoulutus = nayttotutkintoValmentavaKoulutus;
+    }
+
+    /**
+     * @return the jarjesteja
+     */
+    public String getJarjesteja() {
+        return jarjesteja;
+    }
+
+    /**
+     * @param jarjesteja the jarjesteja to set
+     */
+    public void setJarjesteja(String jarjesteja) {
+        this.jarjesteja = jarjesteja;
     }
 
 }

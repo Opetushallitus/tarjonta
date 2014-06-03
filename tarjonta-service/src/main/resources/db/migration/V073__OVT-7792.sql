@@ -29,4 +29,6 @@ UPDATE koulutusmoduuli SET osaamisala_uri='osaamisala' || replace(koulutusohjelm
 
 --add join column 
 ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN koulutusmoduuli_toteutus_children_id int8;
+ALTER TABLE koulutusmoduuli_toteutus ADD COLUMN jarjesteja varchar(255);
+
 

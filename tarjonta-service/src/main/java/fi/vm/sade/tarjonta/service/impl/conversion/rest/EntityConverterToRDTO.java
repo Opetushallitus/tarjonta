@@ -191,6 +191,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 if (komoto.getHinta() != null) {
                     nayttoDto.setHinta(komoto.getHinta().doubleValue());
                 }
+                nayttoDto.setJarjestavaOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getJarjesteja(), param.getLocale()));
             }
         } else if (dto instanceof KoulutusValmistavaV1RDTO) {
             final KoulutusValmistavaV1RDTO valmistavaDto = (KoulutusValmistavaV1RDTO) dto;

@@ -119,21 +119,21 @@ app.controller('BaseReviewController', [
         });
 
         $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.toteutustyyppi].KUVAUS_ORDER;
-//        if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
-//            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
-//                if (kieliUri.indexOf(kieliUri) != -1) {
-//                    $scope.model.userLangUri = kieliUri;
-//                }
-//            }
-//            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
-//        } else if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
-//            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
-//                if (kieliUri.indexOf(kieliUri) != -1) {
-//                    $scope.model.userLangUri = kieliUri;
-//                }
-//            }
-//            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri].nimi;
-//        }
+        if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
+            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
+                if (kieliUri.indexOf(kieliUri) != -1) {
+                    $scope.model.userLangUri = kieliUri;
+                }
+            }
+            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
+        } else if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
+            for (var kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
+                if (kieliUri.indexOf(kieliUri) != -1) {
+                    $scope.model.userLangUri = kieliUri;
+                }
+            }
+            $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.meta[$scope.model.userLangUri].nimi;
+        }
 
         $scope.getKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
@@ -149,6 +149,22 @@ app.controller('BaseReviewController', [
 
             return kuvaus;
         };
+        
+        $scope.getValmistavaKoulutusKuvausApiModelLanguageUri = function(boolIsKomo) {
+            var kuvaus = null;
+            if (typeof boolIsKomo !== 'boolean') {
+                converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+            }
+
+            if (boolIsKomo) {
+                kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomo;
+            } else {
+                kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomoto;
+            }
+
+            return kuvaus;
+        };
+        
         $scope.doEdit = function(event, targetPart) {
             if (!$scope.isMutable) {
                 return;

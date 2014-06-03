@@ -103,7 +103,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, koulutus.getOid());
-        add(komotoDoc, KOULUTUSTYYPPI_URI, koulutus.getKoulutustyyppiUri());
+        add(komotoDoc, KOULUTUSTYYPPI_URI, koulutus.getSubKoulutustyyppiEnum().uri());
         add(komotoDoc, TOTEUTUSTYYPPI_ENUM, koulutus.getSubKoulutustyyppiEnum());
         final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
 
