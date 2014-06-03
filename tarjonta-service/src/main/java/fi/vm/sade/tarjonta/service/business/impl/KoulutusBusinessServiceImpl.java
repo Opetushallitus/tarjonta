@@ -103,6 +103,10 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             throw new TarjontaBusinessException("Undefined koulutustyyppi.");
         }
         
+        if (koulutus.getPohjakoulutusvaatimus() != null && koulutus.getPohjakoulutusvaatimus().getUri().indexOf("#") < 0) {
+            LOG.error("************* createKoulutus ********** pohjakoulutusvaatimus: " + koulutus.getPohjakoulutusvaatimus().getUri());
+        }
+
         switch (koulutus.getKoulutustyyppi()) {
             case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
             case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break.
