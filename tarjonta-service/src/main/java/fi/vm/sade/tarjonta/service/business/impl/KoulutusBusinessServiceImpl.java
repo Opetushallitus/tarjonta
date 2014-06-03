@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import org.slf4j.Logger;
@@ -102,10 +103,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             throw new TarjontaBusinessException("Undefined koulutustyyppi.");
         }
         
-        if (koulutus.getPohjakoulutusvaatimus() != null && koulutus.getPohjakoulutusvaatimus().getUri().indexOf("#") < 0) {
-            LOG.error("************* createKoulutus ********** pohjakoulutusvaatimus: " + koulutus.getPohjakoulutusvaatimus().getUri());
-        }
-
         switch (koulutus.getKoulutustyyppi()) {
             case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
             case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break.
@@ -310,9 +307,13 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
-            parentKomoto.setPohjakoulutusvaatimusUri(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
-            parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
             
+            // OVT-7849
+            //parentKomoto.setPohjakoulutusvaatimusUri(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
+            parentKomoto.setPohjakoulutusvaatimusUri(TarjontaKoodistoHelper.createKoodiUriWithVersion(koulutus.getPohjakoulutusvaatimus()));
+
+            parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
+                        
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
     }

@@ -1,4 +1,4 @@
-<div ng-cloak ng-switch="display" class="multiselect" ng-disabled="isDisabled()">
+<div ng-cloak ng-switch="display" class="multiselect" ng-disabled="disabled()">
 	
 	<!-- dualpane -->
 	<div class="dualpane" ng-switch-when="dualpane">	
@@ -7,7 +7,7 @@
 				ng-options="e.key as e.value for e in items"
                 ng-dblclick="onPreselection(preselection)"
                 ng-enter="onPreselection(preselection)"
-				ng-disabled="disabled()">
+				ng-disabled="_isDisabled()">
 	    </select>
 	    <ul class="selection">
 	    	<li ng-repeat="k in selection">
@@ -21,7 +21,7 @@
 	    <div>
 	        <input type="text"
 	                class="typeahead"
-	                ng-disabled="disabled()"
+	                ng-disabled="_isDisabled()"
 	                ng-model="combo.selection"
 	                typeahead="value for value in titles | startsWith:$viewValue | limitTo:10"
 	                typeahead-on-select="onComboSelect()"
@@ -44,7 +44,7 @@
                 ng-options="e.key as e.value for e in items"
                 ng-change="toggle(combo.selection)"
                 ng-enter="onPreselection(preselection)"
-		ng-disabled="disabled()">
+        		ng-disabled="_isDisabled()">
 	    </select>
 	
            <span ng-repeat="k in selection">
@@ -56,7 +56,7 @@
 	<table class="checklist" ng-switch-default>
 		<tr bindonce ng-repeat="r in rows">
 			<td bindonce ng-repeat="e in r">
-				<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" ng-disabled="disabled()"/> <span bo-text="e.value"/>
+				<input type="checkbox" ng-model="e.selected" ng-change="toggle(e.key)" ng-disabled="_isDisabled()"/> <span bo-text="e.value"/>
 			</td>
 		</tr>
 	</table>

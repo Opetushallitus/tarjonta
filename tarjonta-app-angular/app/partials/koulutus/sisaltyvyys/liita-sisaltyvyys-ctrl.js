@@ -147,7 +147,8 @@ app.controller('LiitaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Localis
                 oid: AuthService.getOrganisations(),
                 terms: '', //search words
                 year: targetKomo.vuosi,
-                season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio 
+                season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio,
+                koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus"]
             },
             html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
         };

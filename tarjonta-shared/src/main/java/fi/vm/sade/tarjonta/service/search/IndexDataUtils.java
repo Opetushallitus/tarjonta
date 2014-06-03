@@ -103,8 +103,12 @@ public class IndexDataUtils {
     }
 
     public static KoodiType getKoodiByUriWithVersion(String uriWithVersion, KoodiService koodiService) {
+        // log.info("getKoodiByUriWithVersion({}, {})", uriWithVersion, koodiService);
+        if (uriWithVersion == null) {
+            return null;
+        }
+        
         SearchKoodisCriteriaType searchCriteria;
-
         String[] koodiUriAndVersion = splitKoodiURI(uriWithVersion);
 
         int version = Integer.parseInt(koodiUriAndVersion[1]);

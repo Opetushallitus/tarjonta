@@ -115,7 +115,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
+            koulutusastetyyppi: args.koulutusastetyyppi||["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
         };
 
         $log.debug("haeKoulutukset()", params);
@@ -590,7 +590,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                         // TODO only single dates used as of now!!!!
                         cache[targetName][paramName] = p.date;
-                        $log.debug("    STORED ", targetName, paramName, p.date);
+                        //$log.debug("    STORED ", targetName, paramName, p.date);
                     });
                 } else {
                     $log.debug("  NOT OBJECT: ", targetName, pt);
