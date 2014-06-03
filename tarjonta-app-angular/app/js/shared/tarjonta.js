@@ -590,7 +590,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                         // TODO only single dates used as of now!!!!
                         cache[targetName][paramName] = p.date;
-                        $log.debug("    STORED ", targetName, paramName, p.date);
+                        //$log.debug("    STORED ", targetName, paramName, p.date);
                     });
                 } else {
                     $log.debug("  NOT OBJECT: ", targetName, pt);
