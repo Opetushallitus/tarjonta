@@ -178,7 +178,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     promise.then(function(response) {
                         var name = "";
                         if (response.etunimet) {
-                            name = response.etunimet + " ";
+                            name = response.kutsumanimi + " ";
                         }
                         if (response.sukunimi) {
                             name += response.sukunimi;
