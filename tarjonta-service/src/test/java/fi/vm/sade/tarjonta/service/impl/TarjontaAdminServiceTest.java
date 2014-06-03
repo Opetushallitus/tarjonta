@@ -51,7 +51,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import fi.vm.sade.koodisto.service.types.common.KoodiUriAndVersioType;
 
 import fi.vm.sade.log.client.LoggerHelper;
 import fi.vm.sade.log.client.LoggerMock;
@@ -108,7 +107,6 @@ import fi.vm.sade.tarjonta.service.types.TarkistaKoulutusKopiointiTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
@@ -709,6 +707,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         TarkistaKoulutusKopiointiTyyppi kysely1 = new TarkistaKoulutusKopiointiTyyppi();
 
         kysely1.setKoulutusAlkamisPvm(getDateFromString("01.02.2013"));
+
         kysely1.setKoulutusLuokitusKoodi("321101");
         kysely1.setKoulutusohjelmaKoodi("1603");
         kysely1.setPohjakoulutus("koulutusaste/lukio#1");
@@ -824,12 +823,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
     private static KoodistoKoodiTyyppi createKoodi(String uri) {
         KoodistoKoodiTyyppi koodi = new KoodistoKoodiTyyppi();
-
-        // Split koodi to uri and version
-        KoodiUriAndVersioType koodiUriAndVersion = TarjontaKoodistoHelper.getKoodiUriAndVersioTypeByKoodiUriAndVersion(uri);        
-        koodi.setUri(koodiUriAndVersion.getKoodiUri());
-        koodi.setVersio(koodiUriAndVersion.getVersio());
-
+        koodi.setUri(uri);
         return koodi;
     }
 
@@ -876,8 +870,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         komoto.setKoulutuslajis(EntityUtils.toKoodistoUriSet(createKoodistoList("koulutuslaji/lahiopetus")));
         komoto.setTarjoaja(tarjoajaOid);
         komoto.setKoulutuksenAlkamisPvm(Calendar.getInstance().getTime());
+        komoto.setPohjakoulutusvaatimusUri("koulutusaste/lukio#1");
         komoto.setSuunniteltuKesto("kesto/vuosi", "3");
-        // komoto.setPohjakoulutusvaatimusUri("koulutusaste/lukio#1");
         komoto.setPohjakoulutusvaatimusUri(pohjakoulutusvaatimus);
         return komoto;
     }
