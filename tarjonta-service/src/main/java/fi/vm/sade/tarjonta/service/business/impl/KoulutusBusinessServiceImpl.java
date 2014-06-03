@@ -101,6 +101,10 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         if (koulutus.getKoulutustyyppi() == null) {
             throw new TarjontaBusinessException("Undefined koulutustyyppi.");
         }
+        
+        if (koulutus.getPohjakoulutusvaatimus() != null && koulutus.getPohjakoulutusvaatimus().getUri().indexOf("#") < 0) {
+            LOG.error("************* createKoulutus ********** pohjakoulutusvaatimus: " + koulutus.getPohjakoulutusvaatimus().getUri());
+        }
 
         switch (koulutus.getKoulutustyyppi()) {
             case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
@@ -308,13 +312,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimusUri(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
-            
-            LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
-
-            if (parentKomoto.getPohjakoulutusvaatimusUri() != null && parentKomoto.getPohjakoulutusvaatimusUri().indexOf("#") < 0) {
-                LOG.error("*** FAILING FAST *** to see where the problem lies...OVT-7849");
-                throw new RuntimeException("parent komoto pohjakoulutusvaatimus = " + parentKomoto.getPohjakoulutusvaatimusUri());
-            }
             
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
