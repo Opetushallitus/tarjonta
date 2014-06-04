@@ -11,6 +11,7 @@ import fi.vm.sade.koodisto.service.types.common.SuhteenTyyppiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.view.common.OrganisaatioSelectDialog;
@@ -166,8 +167,21 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                                 || contains(type, Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS)
                                 || contains(type, Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS)
                                 || contains(type, Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
-                            presenter.showKoulutusEditView(selectedOrgs.values(), ((KoodiContainer) pohjakoulutusvaatimusCombo.getValue()).getKoodiType().getKoodiUri(), type);
-                            logger.info("ammatillinen peruskoulutus()");
+
+                            //
+                            // Get selected pohjakoulutus
+                            //
+                            KoodiContainer koodiContainer = (KoodiContainer) pohjakoulutusvaatimusCombo.getValue();
+                            String pohjakoulutusvaatimusUri = null;
+                            if (koodiContainer != null) {
+                                pohjakoulutusvaatimusUri = TarjontaKoodistoHelper.createKoodiUriWithVersion(koodiContainer.getKoodiType());
+                            }
+
+                            logger.info("Go to koulutus edit view with pk vaatimus: " + pohjakoulutusvaatimusUri);
+                            
+                            presenter.showKoulutusEditView(selectedOrgs.values(), pohjakoulutusvaatimusUri, type);
+
+                            logger.info("  closing dialog.");
                             getParent().removeWindow(UusiKoulutusDialog.this);
                         } else {
                             showNotification("Ei toteutettu");
