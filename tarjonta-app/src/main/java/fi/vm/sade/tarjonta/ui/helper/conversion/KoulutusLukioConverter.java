@@ -92,9 +92,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         convertToLukioKoulutusLisatiedotTyyppi(lisaa, kuvailevatTiedotModel);
         KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
         pohjakoulutusvaatimus.setUri(KoodistoURI.KOODI_POHJAKOULUTUS_PERUSKOULU_URI);
-
-        LOG.error("OVT-7849 *** lisaa.setPohjakoulutusvaatimus = {}", pohjakoulutusvaatimus);
-        
         lisaa.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return lisaa;
     }
@@ -118,9 +115,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         paivita.setTila(tila.toTarjontaTila(perustiedotModel.getTila()));
         KoodistoKoodiTyyppi pohjakoulutusvaatimus = new KoodistoKoodiTyyppi();
         pohjakoulutusvaatimus.setUri(KoodistoURI.KOODI_POHJAKOULUTUS_PERUSKOULU_URI);
-        
-        LOG.info("OVT-7849 *** paivita.setPohjakoulutusvaatimus = {}", pohjakoulutusvaatimus);
-        
         paivita.setPohjakoulutusvaatimus(pohjakoulutusvaatimus);
         return paivita;
     }
@@ -238,10 +232,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         //URI data example : "lukiolinja/xxxx#1"
         tyyppi.setLukiolinjaKoodi(mapToValidKoodistoKoodiTyyppi(false, model.getLukiolinja()));
         //tyyppi.setKoulutusaste(mapToValidKoodistoKoodiTyyppi(false, model.getKoulutusaste()));
-        
-        LOG.error("OVT-7849 *** tyyppi.setPohjakoulutusvaatimus = {}", model.getPohjakoulutusvaatimus());
-        LOG.error("OVT-7849 *** tyyppi.setPohjakoulutusvaatimus = mapped -> {}", mapToValidKoodistoKoodiTyyppi(true, model.getPohjakoulutusvaatimus()));
-
         tyyppi.setPohjakoulutusvaatimus(mapToValidKoodistoKoodiTyyppi(true, model.getPohjakoulutusvaatimus()));
 
         tyyppi.setKoulutuksenAlkamisPaiva(model.getKoulutuksenAlkamisPvm());
@@ -364,11 +354,9 @@ public class KoulutusLukioConverter extends KoulutusConveter {
 
         if (koulutus.getPohjakoulutusvaatimus() != null) {
             KoodiModel pohjakoulutusVaatimusKoodiModel = new KoodiModel();
-            
-            LOG.error("OVT-7849 *** UI model : {}", koulutus.getPohjakoulutusvaatimus().getUri());
-            
             pohjakoulutusVaatimusKoodiModel.setKoodi(koulutus.getPohjakoulutusvaatimus().getUri());
             perustiedot.setPohjakoulutusvaatimus(pohjakoulutusVaatimusKoodiModel);
+
         }
 
         return perustiedot;
@@ -404,9 +392,6 @@ public class KoulutusLukioConverter extends KoulutusConveter {
         final LukiolinjaModel lukiolinja = model.getLukiolinja();
         if (lukiolinja != null) {
             model.setKoulutuslaji(lukiolinja.getKoulutuslaji());
-            
-            LOG.error("OVT-7849 *** model.setPohjakoulutusvaatimus = {}", lukiolinja.getPohjakoulutusvaatimus());
-            
             model.setPohjakoulutusvaatimus(lukiolinja.getPohjakoulutusvaatimus());
         }
     }

@@ -59,7 +59,6 @@ import fi.vm.sade.tarjonta.service.types.NimettyMonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.WebLinkkiTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
@@ -171,9 +170,7 @@ public final class EntityUtils {
         }
 
         if (from.getPohjakoulutusvaatimus() != null) {
-            // OVT-7849
-            // to.setPohjakoulutusvaatimusUri(from.getPohjakoulutusvaatimus().getUri());
-            to.setPohjakoulutusvaatimusUri(TarjontaKoodistoHelper.createKoodiUriWithVersion(from.getPohjakoulutusvaatimus()));
+            to.setPohjakoulutusvaatimusUri(from.getPohjakoulutusvaatimus().getUri());
         }
 
         to.setTarjoaja(from.getTarjoaja());
@@ -247,9 +244,7 @@ public final class EntityUtils {
         }
 
         if (fromKoulutus.getPohjakoulutusvaatimus() != null) {
-            // OVT-7849
-            // toKoulutus.setPohjakoulutusvaatimusUri(fromKoulutus.getPohjakoulutusvaatimus().getUri());
-            toKoulutus.setPohjakoulutusvaatimusUri(TarjontaKoodistoHelper.createKoodiUriWithVersion(fromKoulutus.getPohjakoulutusvaatimus()));
+            toKoulutus.setPohjakoulutusvaatimusUri(fromKoulutus.getPohjakoulutusvaatimus().getUri());
         }
 
         for (YhteyshenkiloTyyppi henkiloFrom : fromKoulutus.getYhteyshenkiloTyyppi()) {

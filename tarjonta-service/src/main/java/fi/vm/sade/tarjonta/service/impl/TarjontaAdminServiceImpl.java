@@ -612,8 +612,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         checkOrganisationExists(koulutus.getTarjoaja());
         final KoulutusmoduuliToteutus toteutus = koulutusBusinessService.updateKoulutus(koulutus);
 
-        log.error("********* paivitaKoulutus() --> pohjakoulutusvaatimusUri = {}", toteutus.getPohjakoulutusvaatimusUri());
-        
         publication.sendEvent(toteutus.getTila(), toteutus.getOid(), PublicationDataService.DATA_TYPE_KOMOTO, PublicationDataService.ACTION_UPDATE);
         try {
             solrIndexer.indexKoulutukset(Lists.newArrayList(toteutus.getId()));
