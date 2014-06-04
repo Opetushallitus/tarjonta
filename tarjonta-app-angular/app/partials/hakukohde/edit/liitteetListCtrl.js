@@ -16,18 +16,25 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
 
-        console.log('LIITTEIDEN TOIMITUSOSOITTEET : ' , osoitteet);
-        for(var osoiteLang in osoitteet) {
+        if (osoitteet) {
 
-            if ($scope.liitteetModel.selectedLiite[osoiteLang] !== undefined) {
-                $scope.liitteetModel.selectedLiite[osoiteLang].liitteenToimitusOsoite = osoitteet[osoiteLang];
+            for(var osoiteLang in osoitteet) {
+
+                if ($scope.liitteetModel.selectedLiite[osoiteLang] !== undefined) {
+                    $scope.liitteetModel.selectedLiite[osoiteLang].liitteenToimitusOsoite = osoitteet[osoiteLang];
+                }
+
+
+            }
+
+            if ($scope.liitteetModel.selectedLiite) {
+
+                $scope.liitteetModel.selectedLiite[$scope.model.defaultLang].liitteenToimitusOsoite = osoitteet[$scope.model.defaultLang];
+
             }
 
 
         }
-
-        $scope.liitteetModel.selectedLiite[$scope.model.defaultLang].liitteenToimitusOsoite = osoitteet[$scope.model.defaultLang];
-
 
 
     });
