@@ -79,6 +79,12 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         if ($scope.ttShowAllHelp) {
             $scope.txtShowAllHelp = LocalisationService.t($scope.ttShowAllHelp);
         }
+        
+        $scope._isDisabled = function() {
+        	var dis = $scope.isDisabled()===true;
+        	//console.log("DIS = ",[dis, $scope.isDisabled]);
+        	return dis;
+        }
 
         $scope.combo = {selection: ""};
 
@@ -216,7 +222,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // checkbox-valinta
         $scope.toggle = function(k) {
-            if ($scope.isDisabled()) {
+            if ($scope._isDisabled()) {
                 return;
             }
             var p = $scope.selection.indexOf(k);
