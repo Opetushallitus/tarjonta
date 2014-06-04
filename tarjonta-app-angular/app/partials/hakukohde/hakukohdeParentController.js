@@ -1139,7 +1139,7 @@ app.controller('HakukohdeParentController', ['$scope',
                             }
                             $scope.canEdit = true;
                             $scope.model.continueToReviewEnabled = true;
-
+                            $scope.status.dirty = false;
                         },function(error){
 
 
@@ -1167,6 +1167,7 @@ app.controller('HakukohdeParentController', ['$scope',
                             if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                                 $scope.model.hakukohde.soraKuvaukset = {};
                             }
+                            $scope.status.dirty = false;
                         },function (error) {
                             $scope.showCommonUnknownErrorMsg();
                         });

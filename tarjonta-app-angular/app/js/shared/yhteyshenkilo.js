@@ -6,7 +6,7 @@ angular.module('Yhteyshenkilo', [ 'ngResource', 'config', 'Logging' ])
     $log = $log.getInstance("YhteyshenkiloService");
 
 	var baseUrl = Config.env['authentication-service.henkilo.rest.url'];
-	var urlEtsi = baseUrl +  Config.env['authentication-service.henkilo.search.params'];
+	var urlEtsi = baseUrl + "?count=2000&index=0&ht=VIRKAILIJA";
 	var urlHaeTiedot =baseUrl + "/:oid";
 	var urlHaeOrganisaatioHenkiloTiedot = baseUrl + "/:oid/organisaatiohenkilo";
 
