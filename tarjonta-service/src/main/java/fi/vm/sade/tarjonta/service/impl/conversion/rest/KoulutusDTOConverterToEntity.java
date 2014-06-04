@@ -299,7 +299,7 @@ public class KoulutusDTOConverterToEntity {
             komoto.setHinta(nayttoDTO.getHinta() != null ? new BigDecimal(nayttoDTO.getHinta().toString()) : null);
             komoto.setMaksullisuus(nayttoDTO.getOpintojenMaksullisuus() != null ? nayttoDTO.getOpintojenMaksullisuus().toString() : Boolean.FALSE.toString());
             komoto.setAmmattinimikes(commonConverter.convertToUris(nayttoDTO.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
-            komoto.setJarjesteja(nayttoDTO.getOid());
+            komoto.setJarjesteja(nayttoDTO.getJarjestavaOrganisaatio() != null ? nayttoDTO.getJarjestavaOrganisaatio().getOid() : null);
         }
 
         return komoto;

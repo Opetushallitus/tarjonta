@@ -31,7 +31,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
                 $scope.clearErrors();
                 console.log("HERE IS THE BEFORE SELECTION CALLBACK" + rowItem.entity.koodiUri);
                 $scope.stoModel.active = rowItem.entity;
-                TarjontaService.getKoulutuskoodiRelations({koulutus: rowItem.entity.koodiUri, koulutustyyppi : KOULUTUSTYYPPI, languageCode: $scope.koodistoLocale}, function(response) {
+                TarjontaService.getKoulutuskoodiRelations({uri: rowItem.entity.koodiUri, koulutustyyppi : KOULUTUSTYYPPI, languageCode: $scope.koodistoLocale}, function(response) {
                     $scope.stoModel.itemSelected = false;
                     if (response.status === 'OK') {
                         var relation = response.result;

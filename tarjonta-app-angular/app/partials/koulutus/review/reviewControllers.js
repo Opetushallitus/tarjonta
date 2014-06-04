@@ -149,22 +149,24 @@ app.controller('BaseReviewController', [
 
             return kuvaus;
         };
-        
+
         $scope.getValmistavaKoulutusKuvausApiModelLanguageUri = function(boolIsKomo) {
             var kuvaus = null;
-            if (typeof boolIsKomo !== 'boolean') {
-                converter.throwError('An invalid boolean variable : ' + boolIsKomo);
-            }
+            if (angular.isDefined($scope.model.koulutus.valmistavaKoulutus)) {
+                if (typeof boolIsKomo !== 'boolean') {
+                    converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+                }
 
-            if (boolIsKomo) {
-                kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomo;
-            } else {
-                kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomoto;
+                if (boolIsKomo) {
+                    kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomo;
+                } else {
+                    kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomoto;
+                }
             }
 
             return kuvaus;
         };
-        
+
         $scope.doEdit = function(event, targetPart) {
             if (!$scope.isMutable) {
                 return;

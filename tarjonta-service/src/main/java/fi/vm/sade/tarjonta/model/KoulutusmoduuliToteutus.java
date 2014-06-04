@@ -1044,14 +1044,14 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * @return the jarjesteja
+     * @return the jarjesteja OID
      */
     public String getJarjesteja() {
         return jarjesteja;
     }
 
     /**
-     * @param jarjesteja the jarjesteja to set
+     * @param jarjesteja OID the jarjesteja to set
      */
     public void setJarjesteja(String jarjesteja) {
         this.jarjesteja = jarjesteja;

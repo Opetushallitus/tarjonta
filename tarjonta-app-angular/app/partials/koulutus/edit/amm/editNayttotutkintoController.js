@@ -64,7 +64,7 @@ app.controller('EditNayttotutkintoController',
                          * Look more info from koulutusController.js.
                          */
                         $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
-                       
+
 
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
@@ -102,9 +102,9 @@ app.controller('EditNayttotutkintoController',
                     // lisätietokielivalinnat
                     uiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
                     vkUiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
-                   
-                    
- 
+
+
+
                     for (var ki in model.kuvausKomo) {
                         if (angular.isDefined(model.kuvausKomo[ki])) {
                             for (var lc in model.kuvausKomo[ki].tekstis) {
@@ -317,6 +317,25 @@ app.controller('EditNayttotutkintoController',
                     return '/partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html';
                 };
 
+                $scope.openJarjestajaDialog = function() {
+                    var copyModalDialog = $modal.open({
+                        templateUrl: 'partials/koulutus/edit/amm/jarjestaja.html',
+                        controller: 'JarjestajaCtrl',
+                        resolve: {
+                            targetOrganisaatio: function() {
+                                return  {}
+                            }
+                        }
+                    });
+
+                    copyModalDialog.result.then(function(organisaatio) {
+                        /* ok */
+                        $scope.model.jarjestavaOrganisaatio = organisaatio;
+                    }, function() {
+                        /* dismissed */
+                    });
+                };
+
                 $scope.$watch("model.opintojenMaksullisuus", function(valNew, valOld) {
                     if (!valNew && valOld) {
                         //clear price data field
@@ -325,7 +344,7 @@ app.controller('EditNayttotutkintoController',
                 });
 
                 $scope.$watch("model.valmistavaKoulutus.opintojenMaksullisuus", function(valNew, valOld) {
-                    if (!valNew && valOld) {
+                    if (!valNew && valOld && angular.isDefined($scope.model.valmistavaKoulutus) && $scope.model.valmistavaKoulutus != null) {
                         //clear price data field
                         $scope.model.valmistavaKoulutus.hinta = '';
                     }
@@ -335,11 +354,11 @@ app.controller('EditNayttotutkintoController',
                     if ($scope.uiModel.cbShowValmistavaKoulutus) {
 
                         var model = {};
-                        $scope.commonNewModelHandler($scope.koulutusForm, model,  $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        $scope.commonNewModelHandler($scope.koulutusForm, model, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         $scope.model.valmistavaKoulutus = model;
                         $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         $scope.vkUiModel.selectedKieliUri = "kieli_fi";
-                        
+
                         $scope.cbShowValmistavaKoulutus = true;
                     } else {
                         $scope.model.valmistavaKoulutus = null;
