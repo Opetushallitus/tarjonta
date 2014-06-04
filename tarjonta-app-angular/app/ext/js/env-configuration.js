@@ -129,7 +129,6 @@ window.CONFIG = {
         //henkilöhaku - CORS ongelma, siksi ohjattu tarjontaan - toimii "oikeassa" ympäristössä
         // "authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
         "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/permission/user?",
-        "authentication-service.henkilo.search.params"  : "?count=2000&index=0&ht=VIRKAILIJA",
 
         //ohjausparametrit"
         "tarjontaOhjausparametritRestUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
