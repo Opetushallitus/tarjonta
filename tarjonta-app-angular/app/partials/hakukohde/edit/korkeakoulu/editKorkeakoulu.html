@@ -83,7 +83,7 @@
                             <multi-select
                                     required
                                     model="temp"
-                                    isDisabled="isHkDeEnabled()"
+                                    is-disabled="isHkDeEnabled()"
                                     selection="model.hakukohde.hakukelpoisuusvaatimusUris"
                                     promise="model.hakukelpoisuusVaatimusPromise"
                                     display="dualpane"/>
@@ -130,10 +130,10 @@
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
 
-                <mk-rich-textarea isDisabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+                <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
 
                 <h4 tt="kk.hakukohde.hakukelpoisuusvaatimukset">Hakukelpoisuusvaatimukset</h4>
-                <mk-rich-textarea isDisabled="isHkDeEnabled()" model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" max="1500"></mk-rich-textarea>
+                <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" max="1500"></mk-rich-textarea>
 
                 <!--
                 <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>
