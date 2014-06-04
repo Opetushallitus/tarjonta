@@ -126,12 +126,14 @@ window.CONFIG = {
         // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
          "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",
-        //henkilöhaku - CORS ongelma, siksi ohjattu tarjontaan - toimii "oikeassa" ympäristössä
+        // henkilöhaku - CORS ongelma, siksi ohjattu tarjontaan - toimii "oikeassa" ympäristössä
         // "authentication-service.henkilo.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/henkilo",
         "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi/tarjonta-service/rest/v1/permission/user?",
 
-        //ohjausparametrit"
+        // Ohjausparametrit
         "tarjontaOhjausparametritRestUrlPrefix":"https://itest-virkailija.oph.ware.fi/ohjausparametrit-service",
+        // "tarjontaOhjausparametritRestUrlPrefix":"http://localhost:8085/ohjausparametrit-service",
+
         "place": "holder"
 
 
