@@ -31,6 +31,7 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.path.DateTimePath;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.QHaku;
 import fi.vm.sade.tarjonta.model.QHakuaika;
@@ -171,7 +172,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     public List<Long> findAllKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komo.nimi.isNotNull())).getValue();
+        final Predicate where = bb(komo.moduuliTyyppi.eq( KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
     }
 
@@ -230,7 +231,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate time = bb(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated)));
-        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komo.nimi.isNotNull())).and(time).getValue();
+        final Predicate where = bb(komo.moduuliTyyppi.eq( KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)).and(time).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).limit(100).list(komoto.id);
     }
 
