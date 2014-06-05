@@ -1220,7 +1220,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
         $scope.isHkDeEnabled = function() {
 
-            console.log('HK-DE-ENABLED : ' , $scope.model.isDeEnabled);
+
             return $scope.model.isDeEnabled;
         };
         
