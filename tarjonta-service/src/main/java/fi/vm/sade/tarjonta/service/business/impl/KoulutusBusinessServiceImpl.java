@@ -35,7 +35,6 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
@@ -47,6 +46,8 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
