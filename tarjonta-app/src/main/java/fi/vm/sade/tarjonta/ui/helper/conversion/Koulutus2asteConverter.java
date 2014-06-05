@@ -392,7 +392,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
                 || koulutusastetyyppi == KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
                 && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
             throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
-        } else if (koulutusastetyyppi != KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS
+        } else if (koulutusastetyyppi != KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS // XXX:tämmonen koulutus kun luodaan niin se näkyy nyt amm peruskoulutuksena: MAAHANM_LUKIO_VALMISTAVA_KOULUTUS 
                 && koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_LUKIO.getKoulutusaste())) {
             //Lukio tutkinto do not have koulutusohjema data.
             lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());
