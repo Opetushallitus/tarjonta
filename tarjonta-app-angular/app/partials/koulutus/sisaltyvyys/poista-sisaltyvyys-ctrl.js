@@ -16,8 +16,8 @@
 //location of the base module : liita-sisaltyvyys-ctrl.js
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl');
 
-app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers',
-    function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers) {
+app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomo', 'organisaatioOid', 'SisaltyvyysUtil', 'TreeHandlers', '$log',
+    function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers,$log) {
         /*
          * Select koulutus data objects.
          */
@@ -156,6 +156,7 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
                 for (var i = 0; i < result.tulokset.length; i++) {
                     //tulokset is by organisation
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
+                      if(result.tulokset[i].tulokset[c].koulutuskoodi) {
                         var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split("#")[0];
                         var item = {
                             koulutuskoodi: '',
@@ -169,6 +170,9 @@ app.controller('PoistaSisaltyvyysCtrl', ['$scope', 'Config', 'Koodisto', 'Locali
                             item.koulutuskoodi = koodi.koodiArvo;
                         });
                         searchResult.push(item);
+                      } else {
+                        $log.error("koulutus without koodi:", result.tulokset[i].tulokset[c]);
+                      }
                     }
                 }
 

@@ -134,7 +134,8 @@ app.controller('HakukohdeAikuLukioEditController',
             $scope.haeTarjoajaOppilaitosTyypit();
             $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
             $scope.checkIsCopy();
-            $scope.updateTilaModel($scope.model.hakukohde);
+
+            /*$scope.updateTilaModel($scope.model.hakukohde);*/
 
             if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
                 $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
