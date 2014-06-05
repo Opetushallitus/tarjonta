@@ -30,6 +30,16 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
     	
     	$scope.selectedTab = {"kieli_fi":true};
     	
+    	function langOfUri(lang) {
+    		if (lang && lang.uri) {
+    			var l = $scope.langs[lang.uri];
+    			if (l) {
+    				return l;
+    			}
+    		}
+    		return "";
+    	}
+    	
     	function updateLangs() {
     		var langs = [];
         	if (isEmpty($scope.model)) {
@@ -61,7 +71,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         			return 1;
         		}
         		
-        		return $scope.langs[a.uri].localeCompare($scope.langs[b.uri]);
+        		return langOfUri(a).localeCompare(langOfUri(b));
         	});
         	
     		$scope.selectedLangs = langs;
