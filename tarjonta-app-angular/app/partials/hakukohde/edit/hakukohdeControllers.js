@@ -71,7 +71,7 @@ app.controller('HakukohdeEditController',
 
     $scope.model.canSaveAsLuonnos = function() {
 
-        if ($scope.model.isDeEnabled) {
+        if ($scope.model.isDeEnabled && $scope.model.isPartiallyDeEnabled) {
             var canSave = !$scope.model.isDeEnabled;
             $log.info('CanSaveAsLuonnos, parameter says not ok');
             return canSave;
@@ -87,7 +87,7 @@ app.controller('HakukohdeEditController',
 
     $scope.model.canSaveAsValmis = function () {
 
-        return $scope.model.isDeEnabled;
+        return $scope.model.isDeEnabled && $scope.model.isPartiallyDeEnabled;
 
 
     };

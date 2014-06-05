@@ -147,7 +147,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         var arrOutputPersons = [];
         var i = 0;
         for (; i < arrPersons.length; i++) {
-            var henkilo = arrPersons[i];
+
+            var henkilo = angular.copy(arrPersons[i]);
 
             if (angular.isUndefined(henkilo.henkiloTyyppi)) {
                 throw "Unknown henkilo tyyppi";
@@ -160,7 +161,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 if (Boolean(henkilo.nimet)) {
                     var arrSeparatedNames = henkilo.nimet.split(" ");
                     for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
-                        henkilo.etunimet += arrSeparatedNames[p] + " ";
+                        henkilo.etunimet += arrSeparatedNames[p];
                     }
                     if (arrSeparatedNames.length > 1) {
                         henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];

@@ -29,12 +29,13 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
             multiSelect: false,
             beforeSelectionChange: function(rowItem, event) {
                 $scope.clearErrors();
-                console.log("HERE IS THE BEFORE SELECTION CALLBACK" + rowItem.entity.koodiUri);
+//                console.log("HERE IS THE BEFORE SELECTION CALLBACK" + rowItem.entity.koodiUri);
                 $scope.stoModel.active = rowItem.entity;
                 TarjontaService.getKoulutuskoodiRelations({uri: rowItem.entity.koodiUri, koulutustyyppi : KOULUTUSTYYPPI, languageCode: $scope.koodistoLocale}, function(response) {
                     $scope.stoModel.itemSelected = false;
                     if (response.status === 'OK') {
                         var relation = response.result;
+                        
                         if (!$scope.isRelationAvailable(relation.eqf) ||
                                 !$scope.isRelationAvailable(relation.koulutusala) ||
                                 !$scope.isRelationAvailable(relation.koulutusaste) ||
@@ -75,6 +76,13 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
             angular.forEach(targetFilters, function(value, key) {
                 promises.push(Koodisto.getYlapuolisetKoodit(value, 'FI'));
             });
+            
+            // KJOH-777 häkki
+            promises.push(Koodisto.getKoodi("koulutus","koulutus_511999", 'FI').then(function(koodi){
+              return [koodi];
+              }
+            ));
+            
             var koulutuskooditHaettu = $q.all(promises);
             koulutuskooditHaettu.then(function(koodisParam) {
 
@@ -96,7 +104,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
 
         //Haun suorittaminen
         $scope.searchTutkinnot = function() {
-            console.log("Selected koulutusala: " + $scope.stoModel.koulutusala);
+//            console.log("Selected koulutusala: " + $scope.stoModel.koulutusala);
             $scope.stoModel.itemSelected = false;
             var tempTutkinnot = [];
             //Jos kk-tutkintoja ei haettu ne haetaan ensin
@@ -104,7 +112,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
                 $scope.getKkTutkinnot();
                 //Jos koulutusalavalittu filtteroidaan koulutusala -> koulutusrelaation avulla minka jalkeen string-haku
             } else if ($scope.stoModel.koulutusala.length > 0) {
-                console.log("Koulutusalauri: " + $scope.stoModel.koulutusala);
+//                console.log("Koulutusalauri: " + $scope.stoModel.koulutusala);
                 var hakutulosPromise = Koodisto.getYlapuolisetKoodit($scope.stoModel.koulutusala, 'FI');
                 hakutulosPromise.then(function(koodisParam) {
                     tempTutkinnot = koodisParam.filter(function(koodi) {
@@ -124,7 +132,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
 
         //string-haun suorittaminen
         $scope.performStringSearch = function(tutkinnot) {
-            console.log("Performing string search");
+//            console.log("Performing string search");
             $scope.stoModel.hakutulokset = tutkinnot.filter(function(element) {
                 $scope.stoModel.searched = true;
                 return (element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1) || (element.koodiArvo.indexOf($scope.stoModel.hakulause) > -1);
@@ -139,7 +147,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
 
         //dialogin sulkeminen ok-napista, valitun hakutuloksen palauttaminen
         $scope.ok = function() {
-            console.log("CLOSING WITH SELECTION: " + $scope.stoModel.active);
+//            console.log("CLOSING WITH SELECTION: " + $scope.stoModel.active);
             $modalInstance.close($scope.stoModel.active);
         };
 
@@ -164,7 +172,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
                     });
 
                     modalInstance.result.then(function(selectedItem) {
-                        console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
+//                        console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
                         if (selectedItem.koodiUri != null) {
                             $scope.model.selected = selectedItem;
                         } else {
@@ -172,7 +180,7 @@ app.controller('SelectTutkintoOhjelmaController', ['$scope', 'targetFilters', '$
                         }
                     }, function() {
                         $scope.model.selected = null;
-                        console.log('Cancel, dialog closed');
+//                        console.log('Cancel, dialog closed');
                     });
                 };
             }]);

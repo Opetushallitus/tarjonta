@@ -72,7 +72,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14"],
+            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"],
             hakuOid: args.hakuOid
         };
 
@@ -585,7 +585,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                         // TODO only single dates used as of now!!!!
                         cache[targetName][paramName] = p.date;
-                        $log.debug("    STORED ", targetName, paramName, p.date);
+                        //$log.debug("    STORED ", targetName, paramName, p.date);
                     });
                 } else {
                     $log.debug("  NOT OBJECT: ", targetName, pt);

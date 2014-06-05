@@ -1139,7 +1139,7 @@ app.controller('HakukohdeParentController', ['$scope',
                             }
                             $scope.canEdit = true;
                             $scope.model.continueToReviewEnabled = true;
-
+                            $scope.status.dirty = false;
                         },function(error){
 
 
@@ -1167,6 +1167,7 @@ app.controller('HakukohdeParentController', ['$scope',
                             if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                                 $scope.model.hakukohde.soraKuvaukset = {};
                             }
+                            $scope.status.dirty = false;
                         },function (error) {
                             $scope.showCommonUnknownErrorMsg();
                         });
@@ -1201,21 +1202,32 @@ app.controller('HakukohdeParentController', ['$scope',
         
         var processPermissions = function (resourcePermissions) {
             $log.info('PROCESSPERMISSIONS : ', resourcePermissions);
-            if (resourcePermissions.hakukohde.update && resourcePermissions.hakukohde.updateLimited) {
-                $scope.model.isDeEnabled = false;
-                $scope.model.isPartiallyDeEnabled = true;
-            } else if (resourcePermissions.hakukohde.update && !resourcePermissions.hakukohde.updateLimited){
+            if (resourcePermissions.hakukohde &&  resourcePermissions.hakukohde.update && resourcePermissions.hakukohde.updateLimited) {
+                $log.info('TTKPP PARTIAL UPDATE');
+                $scope.model.isDeEnabled = true;
+                $scope.model.isPartiallyDeEnabled = false;
+            } else if (resourcePermissions.hakukohde && resourcePermissions.hakukohde.update && !resourcePermissions.hakukohde.updateLimited){
+                $log.info('TTKPP FULL UPDATE');
                 $scope.model.isDeEnabled = false;
                 $scope.model.isPartiallyDeEnabled = false;
-            } else if  (!resourcePermissions.hakukohde.update) {
+            } else if  (resourcePermissions.hakukohde && !resourcePermissions.hakukohde.update) {
+                $log.info('TTKPP NO UPDATE');
                 $scope.model.isDeEnabled = true;
                 $scope.model.isPartiallyDeEnabled = true;
             }
 
         };
+
+        $scope.isHkDeEnabled = function() {
+
+
+            return $scope.model.isDeEnabled;
+        };
         
         $scope.checkPermissions = function (hakukohdeOid) {
 
+
+            $log.info('HAKUKOHDE OID: ', hakukohdeOid);
             var permissionPromise = PermissionService.getPermissions("hakukohde",hakukohdeOid);
 
             permissionPromise.then(function(permissionResult) {

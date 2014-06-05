@@ -37,11 +37,13 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
@@ -90,6 +92,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     
     @Autowired(required = true)
     private PublicationDataService publication;
+    
+    @Autowired
+    ContextDataService contextDataService;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -327,28 +332,36 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     // DELETE /haku/OID
     @Override
-    public ResultV1RDTO<Boolean> deleteHaku(String oid) {
+    public ResultV1RDTO<Boolean> deleteHaku(final String oid) {
         LOG.info("deleteHaku() oid={}", oid);
 
 
-        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+        final ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
         updateRightsInformation(result, null);
 
-        Haku hakuToRemove = hakuDAO.findByOid(oid);
+        final Haku hakuToRemove = hakuDAO.findByOid(oid);
 
         permissionChecker.checkRemoveHakuWithOrgs(hakuToRemove.getTarjoajaOids());
         
         if (hakuToRemove != null) {
             if (hakuToRemove.getHakukohdes().size() > 0) {
-                // Cannot delete HAKU with hakukohdes!
-                result.setResult(false);
-                result.setStatus(ResultStatus.ERROR);
-                result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.hasExistingHakukohdes"));
-            } else {
-                hakuDAO.remove(hakuToRemove);
-                result.setResult(true);
-                result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+                //check existing ones are "deleted"
+                for(Hakukohde hk: hakuToRemove.getHakukohdes()) {
+                    if(hk.getTila()!=TarjontaTila.POISTETTU) {
+                        // Ei voida poistaa jos poistamattomia hakukohteita!
+                        result.setResult(false);
+                        result.setStatus(ResultStatus.ERROR);
+                        result.addError(ErrorV1RDTO.createValidationError(null, "haku.delete.error.hasExistingHakukohdes"));
+                        return result; //exit with error
+                    }
+                }
             }
+
+            final String userOid = contextDataService.getCurrentUserOid();
+            hakuDAO.safeDelete(hakuToRemove.getOid(), "userOid");
+            result.setResult(true);
+            result.setStatus(ResultV1RDTO.ResultStatus.OK);
         } else {
             result.setResult(false);
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
