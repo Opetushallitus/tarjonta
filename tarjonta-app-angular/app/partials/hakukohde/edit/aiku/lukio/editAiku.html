@@ -65,7 +65,7 @@
                             </td>
                         </tr>
 
-                        <tr data-ng-show="model.showHakuaikas">
+                        <tr class="required" data-ng-show="model.showHakuaikas">
                             <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
                             <td>
                                 <select class="wide" name="hakuaikaSelect" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
