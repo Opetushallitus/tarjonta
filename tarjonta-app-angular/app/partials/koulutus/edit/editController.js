@@ -108,7 +108,6 @@ app.controller('BaseEditController', [
 
         $scope.goBack = function(event, form) {
             var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
-            $log.debug("goBack(), dirty?", dirty);
 
             if (dirty) {
                 dialogService.showModifedDialog().result.then(function(result) {
@@ -141,7 +140,6 @@ app.controller('BaseEditController', [
             }
 
             var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
-            $log.debug("  dirty?", dirty);
 
             if (dirty) {
                 dialogService.showModifedDialog().result.then(function(result) {
@@ -276,20 +274,6 @@ app.controller('BaseEditController', [
 
             return fallbackFi;
         };
-
-        /*$scope.updateFormStatusInformation = function(model) {
-            //look more info from KoulutusRoutingController and controlLayouts.js
-            $scope.controlModel.formStatus = model;/*{
-                modifiedBy: model.modifiedBy,
-                modified: model.modified,
-                tila: model.tila
-            };*/
-
-            /*console.log("FORM STATUS", $scope.controlModel);
-            
-            //force reload
-            //$scope.controlModel.formControls.reloadDisplayControls();
-        };*/
 
         $scope.saveByStatus = function(tila, form, tyyppi, fnCustomCallbackAfterSave) {
             $scope.saveByStatusAndApiObject(

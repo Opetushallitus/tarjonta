@@ -43,6 +43,10 @@ app.controller('EditNayttotutkintoController',
                          *  Look more info from koulutusController.js.
                          */
                         model = $route.current.locals.koulutusModel.result;
+                        if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
+                            $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                            $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                        }
 
                         $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                         /*
@@ -53,10 +57,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
 
-                        if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
-                            $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                            $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                        }
+
 
                     } else if (!angular.isUndefined($routeParams.org)) {
                         /*
@@ -95,15 +96,12 @@ app.controller('EditNayttotutkintoController',
                      */
                     $scope.commonKoodistoLoadHandler(uiModel, $scope.CONFIG.TYYPPI);
 
-
                     /*
                      * CUSTOM LOGIC
                      */
                     // lisätietokielivalinnat
                     uiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
                     vkUiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
-
-
 
                     for (var ki in model.kuvausKomo) {
                         if (angular.isDefined(model.kuvausKomo[ki])) {
@@ -136,16 +134,16 @@ app.controller('EditNayttotutkintoController',
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, uri, tutkintoTyyppi) {
                     var strSearchKoulutuslaji = '';
-                    
-                    if(tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO){
+
+                    if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO) {
                         strSearchKoulutuslaji = 'koulutuslaji:' + (angular.isDefined($routeParams.koulutuslaji) ? $routeParams.koulutuslaji : apiModel.koulutuslaji.uri);
                     }
-                    
+
                     TarjontaService.getKoulutuskoodiRelations({
                         koulutustyyppi: $scope.CONFIG.TYYPPI,
                         uri: uri,
                         languageCode: $scope.koodistoLocale,
-                         //there is no real reation to koulutuslaji, so we will add it when module is 'TUTKINTO'
+                        //there is no real reation to koulutuslaji, so we will add it when module is 'TUTKINTO'
                         defaults: strSearchKoulutuslaji
                     }, function(response) {
                         var restRelationData = response.result;
