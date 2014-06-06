@@ -72,7 +72,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"],
+            koulutusastetyyppi: ["Korkeakoulutus", "Lukiokoulutus"],
             hakuOid: args.hakuOid
         };
 
