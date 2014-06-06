@@ -499,7 +499,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutusala: {module: 'TUTKINTO'},
                 opintoala: {module: 'TUTKINTO'},
                 tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
-                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
+                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'},
+                koulutuslaji: {module: 'TUTKINTO'}
             }, COMBO: {
                 koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
             }, MCOMBO: {

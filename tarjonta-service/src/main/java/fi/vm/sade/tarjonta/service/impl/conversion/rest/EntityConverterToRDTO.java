@@ -178,6 +178,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              */
             KoulutusAmmatillinenPerustutkintoV1RDTO ammDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getOsaamisalaUri(), FieldNames.OSAAMISALA, NO, param));
+            ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
+
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
             convertParentChildKomoHierarchyToRDTO(dto, parentKomo, komo, komoto, param);

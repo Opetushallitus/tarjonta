@@ -293,6 +293,11 @@ public class KoulutusDTOConverterToEntity {
                             komoto.getLinkkis()));
         }
 
+        if (dto.getKoulutuslaji() != null) {
+            komoto.getKoulutuslajis().clear();
+            komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
+        }
+
         /* CUSTOM DATA by object type */
         if (dto instanceof KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) {
             KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDTO = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;

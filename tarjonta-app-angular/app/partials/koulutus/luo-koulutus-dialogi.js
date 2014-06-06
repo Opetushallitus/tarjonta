@@ -260,14 +260,23 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                             })
                 })
 
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_2") { //TODO: vaihda oikea vertailu -> koulutustyyppi_14
-                //LUKIO
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
+                //LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA
                 $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/koulutustyyppi_14/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_1") { //TODO: vaihda oikea vertailu -> koulutustyyppi_4
-                //AMMATILLINEN
-                $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/koulutustyyppi_13/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
-                $scope.luoKoulutusDialog.close();
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_13") {
+                //AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA
+                var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
+
+                promise.then(function(koodis) {
+                    for (var i = 0; i < koodis.length; i++) {
+                        if (CONFIG.env["koodisto-uris.koulutuslaji"] === koodis[i].koodiKoodisto) {
+                            $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/'+ $scope.model.koulutustyyppi.koodiUri +'/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                            break;
+                        }
+                    }
+                    $scope.luoKoulutusDialog.close();
+                });
             } else {
                 eiToteutettu();
             }

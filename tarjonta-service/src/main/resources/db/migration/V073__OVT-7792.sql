@@ -15,17 +15,14 @@ UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='KORKEAKOULUTUS' FROM koul
 UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='LUKIOKOULUTUS' FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'LUKIOKOULUTUS';
 UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='AMMATILLINEN_PERUSTUTKINTO' FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'AMMATILLINEN_PERUSKOULUTUS';
 
-UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS' 
-FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS';
+UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' 
+FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS';
 
-UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='MAAHANM_AMM_VALMISTAVA_KOULUTUS' 
-FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS';
+UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' 
+FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'MAAHANM_AMM_VALMISTAVA_KOULUTUS';
 
-UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='MAAHANM_LUKIO_VALMISTAVA_KOULUTUS' 
-FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS';
-
-UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='PERUSOPETUKSEN_LISAOPETUS' 
-FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'PERUSOPETUKSEN_LISAOPETUS';
+UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' 
+FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'MAAHANM_LUKIO_VALMISTAVA_KOULUTUS';
 
 UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='PERUSOPETUKSEN_LISAOPETUS' 
 FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'PERUSOPETUKSEN_LISAOPETUS';
@@ -33,8 +30,11 @@ FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'PE
 UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='VAPAAN_SIVISTYSTYON_KOULUTUS' 
 FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'VAPAAN_SIVISTYSTYON_KOULUTUS';
 
-UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='VALMENTAVA_JA_KUNTOUTTAVA_OPETUS' 
-FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS';
+UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' 
+FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS';
+
+UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA' 
+FROM koulutusmoduuli m WHERE m.id=kt.koulutusmoduuli_id AND koulutustyyppi = 'AMMATILLINEN_PERUSKOULUTUS' AND pohjakoulutusvaatimus_uri LIKE 'pohjakoulutusvaatimustoinenaste_er%';
 
 --update correct type for aikuislukio
 UPDATE koulutusmoduuli_toteutus kt set toteutustyyppi='LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA' from koulutusmoduuli_toteutus_koulutuslaji ktk, koulutusmoduuli m 

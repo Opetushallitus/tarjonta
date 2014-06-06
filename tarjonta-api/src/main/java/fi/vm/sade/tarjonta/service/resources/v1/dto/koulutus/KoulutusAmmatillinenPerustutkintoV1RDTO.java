@@ -30,6 +30,9 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
     private String linkkiOpetussuunnitelmaan;
 
+    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
+    private KoodiV1RDTO koulutuslaji;
+
     public KoulutusAmmatillinenPerustutkintoV1RDTO() {
         super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
@@ -64,5 +67,19 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
         this.tutkintonimike = tutkintonimike;
+    }
+
+    /**
+     * @return the koulutuslaji
+     */
+    public KoodiV1RDTO getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
     }
 }

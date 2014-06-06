@@ -129,6 +129,9 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
             if (hasDefaultValueUri(defaults.getTutkinto())) {
                 dto.setTutkinto(singleKoodi(defaults.getTutkinto().getUri(), FieldNames.TUTKINTO, restParam));
             }
+            if (hasDefaultValueUri(defaults.getEqf())) {
+                dto.setEqf(singleKoodi(defaults.getEqf().getUri(), FieldNames.EQF, restParam));
+            }
 
             if (defaults instanceof KoulutusmoduuliKorkeakouluRelationV1RDTO) {
                 //TODO: add missing custom fields, if needed
@@ -147,6 +150,28 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                 }
                 if (hasDefaultValueUri(lkDefaults.getTutkintonimike())) {
                     lk.setTutkintonimike(singleKoodi(lkDefaults.getTutkintonimike().getUri(), FieldNames.TUTKINTONIMIKE, restParam));
+                }
+            } else if (dto instanceof KoulutusmoduuliAmmatillinenRelationV1RDTO && defaults instanceof KoulutusmoduuliAmmatillinenRelationV1RDTO) {
+                KoulutusmoduuliAmmatillinenRelationV1RDTO lk = (KoulutusmoduuliAmmatillinenRelationV1RDTO) dto;
+                KoulutusmoduuliAmmatillinenRelationV1RDTO lkDefaults = (KoulutusmoduuliAmmatillinenRelationV1RDTO) defaults;
+
+                if (hasDefaultValueUri(lkDefaults.getPohjakoulutusvaatimus())) {
+                    lk.setPohjakoulutusvaatimus(singleKoodi(lkDefaults.getPohjakoulutusvaatimus().getUri(), FieldNames.POHJALKOULUTUSVAATIMUS, restParam));
+                }
+                if (hasDefaultValueUri(lkDefaults.getOpintojenLaajuusarvo())) {
+                    lk.setOpintojenLaajuusarvo(singleKoodi(lkDefaults.getOpintojenLaajuusarvo().getUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, restParam));
+                }
+                if (hasDefaultValueUri(lkDefaults.getKoulutuslaji())) {
+                    lk.setKoulutuslaji(singleKoodi(lkDefaults.getKoulutuslaji().getUri(), FieldNames.KOULUTUSLAJI, restParam));
+                }
+                if (hasDefaultValueUri(lkDefaults.getTutkintonimike())) {
+                    lk.setTutkintonimike(singleKoodi(lkDefaults.getTutkintonimike().getUri(), FieldNames.TUTKINTONIMIKE, restParam));
+                }
+                if (hasDefaultValueUri(lkDefaults.getOsaamisala())) {
+                    lk.setOsaamisala(singleKoodi(lkDefaults.getOsaamisala().getUri(), FieldNames.OSAAMISALA, restParam));
+                }
+                if (hasDefaultValueUri(lkDefaults.getKoulutusohjelma())) {
+                    lk.setKoulutusohjelma(singleKoodi(lkDefaults.getKoulutusohjelma().getUri(), FieldNames.KOULUTUSOHJELMA, restParam));
                 }
             }
         }

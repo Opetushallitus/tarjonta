@@ -146,14 +146,20 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                 tt = ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS;
                 break;
-            case AMMATILLINEN_PERUSKOULUTUS:   
-                tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
+            case AMMATILLINEN_PERUSKOULUTUS:
+                if (koulutus.getPohjakoulutusvaatimus().getUri().contains("pohjakoulutusvaatimustoinenaste_er")) {
+                    //only for the 'er'
+                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA;
+                } else {
+                    //for all other code types
+                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
+                }
                 break;
             case LUKIOKOULUTUS:
                 tt = ToteutustyyppiEnum.LUKIOKOULUTUS;
                 break;
             default:
-                    throw new RuntimeException("Unsupported koulutustyyppi.");
+                throw new RuntimeException("Unsupported koulutustyyppi.");
         }
 
         KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();

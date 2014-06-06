@@ -358,6 +358,21 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
+                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi', {
+                    action: "koulutus.edit",
+                    controller: 'KoulutusRoutingController',
+                    resolve: {
+                        koulutusModel: function($log, $route) {
+                            $log.info("/koulutus/ID/edit", $route);
+                            return {
+                                'result': {
+                                    toteutustyyppi: $route.current.params.toteutustyyppi,
+                                    koulutustyyppi: $route.current.params.koulutustyyppi
+                                }
+                            };
+                        }
+                    }
+                })
                 .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW', {
                     action: "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController'

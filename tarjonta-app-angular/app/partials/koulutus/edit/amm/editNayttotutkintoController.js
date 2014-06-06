@@ -43,8 +43,8 @@ app.controller('EditNayttotutkintoController',
                          *  Look more info from koulutusController.js.
                          */
                         model = $route.current.locals.koulutusModel.result;
-                        $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
+                        $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
@@ -135,10 +135,18 @@ app.controller('EditNayttotutkintoController',
                 };
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, uri, tutkintoTyyppi) {
+                    var strSearchKoulutuslaji = '';
+                    
+                    if(tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO){
+                        strSearchKoulutuslaji = 'koulutuslaji:' + (angular.isDefined($routeParams.koulutuslaji) ? $routeParams.koulutuslaji : apiModel.koulutuslaji.uri);
+                    }
+                    
                     TarjontaService.getKoulutuskoodiRelations({
                         koulutustyyppi: $scope.CONFIG.TYYPPI,
                         uri: uri,
-                        languageCode: $scope.koodistoLocale
+                        languageCode: $scope.koodistoLocale,
+                         //there is no real reation to koulutuslaji, so we will add it when module is 'TUTKINTO'
+                        defaults: strSearchKoulutuslaji
                     }, function(response) {
                         var restRelationData = response.result;
                         angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function(value, key) {
