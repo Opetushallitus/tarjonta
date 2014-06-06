@@ -248,7 +248,10 @@ app.controller('HakuEditController',
             };
 
             $scope.checkHaunNimiValidity = function() {
-                // Count number of keys that have content
+            	if (!$scope.model.showError) {
+            		return false;
+            	}
+            	// Count number of keys that have content
                 var numKeys = 0;
 
                 var result = true;
