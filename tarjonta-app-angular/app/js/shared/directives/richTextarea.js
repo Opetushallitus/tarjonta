@@ -15,23 +15,6 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			$scope.editor.execCommand(cmd, false, arg);
 		}
 		
-		function replaceElements(node, from, to) {
-
-			$(from, node).each(function(i, em){
-				var e = $(em);
-				// tyhjä -> poista
-				if (e.text().trim()=="") {
-					e.remove();
-					return;
-				}
-
-				e.wrap($("<"+to+"></"+to+">"));
-				e.contents().unwrap();
-
-			});
-
-		}
-		
 		$scope.tinymceOptions = {
 			height:"100%",
 			statusbar:false,
@@ -47,7 +30,7 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			schema:"html5",
 			language:LocalisationService.getLocale(),
 			plugins:"link table paste lists advlist",
-			//extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
+			extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
 			setup: function(editor) {
