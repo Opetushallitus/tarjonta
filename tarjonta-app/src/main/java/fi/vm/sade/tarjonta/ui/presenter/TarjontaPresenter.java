@@ -20,6 +20,7 @@ import java.util.*;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1114,6 +1115,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             } else if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
                 tyyppiModel.setKoodi(Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri());
             }
+            
             koulutus.setKoulutuksenTyyppi(tyyppiModel);
 
             getModel().setKoulutusPerustiedotModel(koulutus);
@@ -1715,6 +1717,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws OidCreationException {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
 
+        
         String oid = null;
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
@@ -1724,6 +1727,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             //update KOMOTO
             OrganisationOidNamePair selectedOrganisation = getModel().getTarjoajaModel().getSelectedOrganisation();
             PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), selectedOrganisation, koulutusModel.getOid());
+            
             paivita.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
 
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
@@ -1752,9 +1756,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
+        
         //OVT-6477 valmentava ja kuntouttava saa olla useita
         //OVT-6676 vapaan sivistystyön koulutuksia saa olla useita
-        if (lisaa.getKoulutustyyppi() == KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || lisaa.getKoulutustyyppi() == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS || checkExistingKomoto(lisaa)) {
+        
+        
+        final Koulutustyyppi koulutusTyyppi = Koulutustyyppi.getByKoodistoUri(getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi().getKoodi());
+        
+        if (koulutusTyyppi == Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || koulutusTyyppi == Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS || checkExistingKomoto(lisaa)) {
 
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);
