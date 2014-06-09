@@ -90,13 +90,13 @@
                     <button class="btn" ng-click="doRemoveHakuaika(hakuaika, $index)"><!-- <span tt="tarjonta.toiminnot.poista">Poista</span> --> <span class="icon-remove"></span></button>
                 </td>
                 <td>
-                    <p class="error" ng-show="hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm==null" tt="haku.edit.pvms.required">
+                    <p class="error" ng-show="model.showError && hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm==null" tt="haku.edit.pvms.required">
                         Haun alkamis- ja päättymispäivät ovat pakollisia.
                     </p>
-                    <p class="error" ng-show="hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm!=null" tt="haku.edit.loppuPvm.required">
+                    <p class="error" ng-show="model.showError && hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm!=null" tt="haku.edit.loppuPvm.required">
                         Haun päättymispäivä on pakollinen.
                     </p>
-                    <p class="error" ng-show="hakuForm.$dirty && hakuaika.alkuPvm==null && (isJatkuvaHaku() || hakuaika.loppuPvm!=null)" tt="haku.edit.alkuPvm.required">
+                    <p class="error" ng-show="model.showError && hakuForm.$dirty && hakuaika.alkuPvm==null && (isJatkuvaHaku() || hakuaika.loppuPvm!=null)" tt="haku.edit.alkuPvm.required">
                         Haun alkamispäivä on pakollinen.
                     </p>
                 </td>

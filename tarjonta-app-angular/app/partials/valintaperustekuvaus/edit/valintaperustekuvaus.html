@@ -4,7 +4,7 @@
             model="formControls"
             tt-create="valintaperustekuvaus.create.header.title"
             tt-edit="valintaperustekuvaus.edit.header.title"
-            title="model.tekstis"
+            title="model.valintaperustekuvaus.kuvauksenNimet"
             dto="model.valintaperustekuvaus">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
@@ -26,33 +26,32 @@
 
                 <table class="tarjontaForm">
 
-                    <tr>
-
+                        <th></th>
                         <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help">Valintaperuste edit HELP</td>
-                        <td></td>
                     </tr>
-                    <!-- väli -->
-                    <!--<tr class="padding"><td><br/></td></tr> -->
-
+                    
                     <!-- -->
                     <tr class="required">
 
+                        <th tt="kk.valintaperustekuvaus.nimi">Kuvauksen nimi</th>
                         <td>
-                            <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet"></mk-textfield>
+                            <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet" required></mk-textfield>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
                         </td>
                     </tr>
-                    <!-- väli -->
-                    <tr class="padding"><td><br/></td></tr>
-                    <tr >
+   			        <!-- väli -->
+			        <tr class="padding"><td colspan="3"><br/></td></tr>
+                    <tr class="required">
+
+                        <th tt="kk.valintaperustekuvaus.kausivuosi">Koulutuksen alkamiskausi</th>
 
                         <td>
                             <span tt="kk.valintaperustekuvaus.kausi.title">Kausi</span>
                             <koodistocombo name="kausicombo" koodistouri="'kausi'" isrequired="true" koodiuri="model.valintaperustekuvaus.kausi" locale="model.userLang"/>
                             <span tt="kk.valintaperustekuvaus.vuosi.title">Vuosi</span>
-                            <select name="vuosiselect" data-ng-model="model.valintaperustekuvaus.vuosi" required data-ng-options="year for year in model.years"></select>
+                            <select class="thin" name="vuosiselect" data-ng-model="model.valintaperustekuvaus.vuosi" required data-ng-options="year for year in model.years"></select>
                         </td>
 
 
@@ -68,9 +67,8 @@
                         </td>
                     </tr>
 
-
                     <!-- väli -->
-                    <tr class="padding"><td><br/></td></tr>
+                    <tr class="padding"><td colspan="3"><br/></td></tr>
                 </table>
 
                 <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>

@@ -172,7 +172,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     public List<Long> findAllKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.osaamisalaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).getValue();
+        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).list(komoto.id);
     }
 
@@ -231,7 +231,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
         final Predicate time = bb(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated)));
-        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.osaamisalaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).and(time).getValue();
+        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).and(time).getValue();
         return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).limit(100).list(komoto.id);
     }
 
