@@ -988,6 +988,34 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return new ResultV1RDTO<KuvaV1RDTO>(kuva);
     }
 
+    private String findKoodistoKoodiKoulutusasteUri(KoulutusmoduuliToteutus komoto) {
+        final Koulutusmoduuli childKomo = komoto.getKoulutusmoduuli();
+        switch (childKomo.getKoulutustyyppiEnum()) {
+            case KORKEAKOULUTUS:
+                //stored into child komo and also to komoto
+                return childKomo.getKoulutusasteUri() != null && !childKomo.getKoulutusasteUri().isEmpty()
+                        ? childKomo.getKoulutusasteUri() : komoto.getKoulutusasteUri();
+            default:
+                //the uri is stored some other location
+                if (childKomo.getKoulutusasteUri() != null && !childKomo.getKoulutusasteUri().isEmpty()) {
+                    return childKomo.getKoulutusasteUri();
+                } else {
+                    //search parent komo
+                    final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(childKomo);
+                    if (parentKomo != null && parentKomo.getKoulutusasteUri() != null && !parentKomo.getKoulutusasteUri().isEmpty()) {
+                        //normal location:
+                        return parentKomo.getKoulutusasteUri();
+                    } else if (komoto.getKoulutusasteUri() != null && !komoto.getKoulutusasteUri().isEmpty()) {
+                        //latest uri location:
+                        return komoto.getKoulutusasteUri();
+                    }
+                }
+                break;
+        }
+
+        return null;
+    }
+
     @Override
     public ResultV1RDTO<KoulutusCopyResultV1RDTO> copyOrMove(final String komotoOid, KoulutusCopyV1RDTO koulutusCopy) {
         Preconditions.checkNotNull(komotoOid, "KOMOTO OID cannot be null.");
@@ -998,7 +1026,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         if (result.hasErrors()) {
             return result;
         }
-
         if (koulutusCopy == null) {
             result.addError(ErrorV1RDTO.createValidationError(null, KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING.lower()));
         } else if (koulutusCopy.getMode() == null) {
@@ -1012,7 +1039,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 } else if (!oppilaitosKoodiRelations.isKoulutusAllowedForOrganisation(
                         orgOid,
-                        komoto.getKoulutusmoduuli().getKoulutusasteUri())) {
+                        findKoodistoKoodiKoulutusasteUri(komoto))) {
                     result.addError(ErrorV1RDTO.createValidationError("organisationOids[" + orgOid + "]", KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID.lower(), orgOid));
                 }
             }
@@ -1052,6 +1079,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 //                            break;
                         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                             persisted = insertKoulutusAmmattillinenNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
+
+                            break;
                         default:
                             throw new RuntimeException(
                                     "Not implemented type : " + getType(komoto));
@@ -1155,10 +1184,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         if (clazz.equals(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class)) {
             KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) copy;
-            if (nayttoDto.getValmistavaKoulutus() != null) {
-                nayttoDto.getValmistavaKoulutus().setOid(null);
-                nayttoDto.getValmistavaKoulutus().setTila(TarjontaTila.LUONNOS);
-                nayttoDto.getValmistavaKoulutus().setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
+
+            KoulutusValmistavaV1RDTO valmistava = (KoulutusValmistavaV1RDTO) converterToRDTO.convert(clazz, komoto.getNayttotutkintoValmentavaKoulutus(), RestParam.showImageAndNoMeta());
+            if (valmistava != null) {
+                valmistava.setOid(null);
+                valmistava.setTila(TarjontaTila.LUONNOS);
+                valmistava.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
+                nayttoDto.setValmistavaKoulutus(valmistava);
             }
         }
 
