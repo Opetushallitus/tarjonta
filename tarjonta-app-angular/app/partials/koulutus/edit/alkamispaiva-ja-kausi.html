@@ -18,7 +18,7 @@
            ng-click="onAddDate()" tt="tarjonta.toiminnot.lisää">Lisää uusi</a>
     </div>
 
-    <input type="radio" name="kausiVaiPvm" ng-model="ctrl.kausi" ng-value="true" ng-click="onEnableKausi($event)"/>
+    <input type="radio" name="{{ctrl.kausiVaiPvm}}" ng-model="ctrl.kausi" ng-value="true" ng-click="onEnableKausi($event)"/>
     <span tt="koulutus.alkamispvm.enableKausi">Kausi</span>
 
     <div class="indent">
@@ -33,13 +33,12 @@
         </select>
         <span tt="koulutus.alkamispvm.vuosi">Alkamisvuosi</span>
         <input 
-            class="thin"
-            ng-required="ctrl.kausi"
-            name="alkamisvuosi" 
+            type="number"
+            ng-required="ctrl.kausi"   
+            ng-model="vuosi"
+            name="{{ctrl.alkamisvuosi}}" 
             min="{{minYear}}"
             max="{{maxYear}}"
-            type="number"
-            ng-model="vuosi"
             ng-disabled="!ctrl.kausi"/>
     </div>
 </div>

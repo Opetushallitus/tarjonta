@@ -12,10 +12,18 @@
         kausi-uri = "model.valmistavaKoulutus.koulutuksenAlkamiskausi.uri"
         kausi-ui-model="vkUiModel.koulutuksenAlkamiskausi">
     </alkamispaiva-ja-kausi>
+    
+    <alkamispaiva-ja-kausi-error></alkamispaiva-ja-kausi-error>
 </td>
 <td>
-    <p class="error" ng-show="vkUiModel.showValidationErrors && !koulutusForm.kausivuosi && koulutusForm.valmistavaKoulutusAlkamisPvm.$error.required" tt="koulutus.edit.valmistavaKoulutusAlkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
-    <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.kausivuosi && (koulutusForm.alkamiskausi.$error.required || koulutusForm.alkamisvuosi.$error.required || koulutusForm.alkamisvuosi.$error.number || koulutusForm.alkamisvuosi.$error.min || koulutusForm.alkamisvuosi.$error.max)" tt="koulutus.edit.alkamis-kausi-ja-vuosi.required">Opintojen alkamiskausi ja alkamisvuosi vaaditaan</p>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && !koulutusForm.vk_kausivuosi && koulutusForm.vk_alkamisPvm.$error.required" tt="koulutus.edit.alkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.vk_kausivuosi 
+        && (koulutusForm.vk_alkamisvuosi.$error.required 
+                || koulutusForm.vk_alkamiskausi.$error.required 
+                || koulutusForm.vk_alkamisvuosi.$error.number 
+                || koulutusForm.vk_alkamisvuosi.$error.min 
+                || koulutusForm.vk_alkamisvuosi.$error.max)" 
+                tt="koulutus.edit.alkamis-kausi-ja-vuosi.required">Opintojen alkamisvuosi vaaditaan</p>
 </td>
 </tr>
 
@@ -120,7 +128,7 @@
         <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
     </td>
     <td>
-        <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required">
+        <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.vk_hinta.$error.required" tt="koulutus.edit.maksullisuus.required">
             Maksullisuus vaaditaan
         </p>
     </td>

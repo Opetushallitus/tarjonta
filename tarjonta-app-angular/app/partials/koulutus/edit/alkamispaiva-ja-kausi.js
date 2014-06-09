@@ -19,15 +19,17 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
                 multi: $scope.pvms.length > 1,
                 koodis: [],
-                kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisPvm" : "kausiVaiPvm",
-                alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamiskausi" : "alkamiskausi"
+                kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausiVaiPvm" : "kausiVaiPvm",
+                alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamiskausi" : "alkamiskausi",
+                alkamisvuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisvuosi" : "alkamisvuosi",
+                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausivuosi" : "kausivuosi"
             };
 
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
 
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
-                $scope.form['kausivuosi'] = valNew;
+                $scope.form[$scope.ctrl.kausivuosi] = valNew;
                 if (valNew && $scope.kausi) {
                     $scope.kausiUri = '';
                 }

@@ -46,6 +46,7 @@ app.controller('EditNayttotutkintoController',
                         if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
                             $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                             $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                            vkUiModel.showValidationErrors = true;
                         }
 
                         $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
@@ -258,6 +259,8 @@ app.controller('EditNayttotutkintoController',
                 };
 
                 $scope.saveByStatus = function(tila) {
+                    $scope.vkUiModel.showValidationErrors = true;
+
                     var api = converter.saveModelConverter(tila, $scope.model, $scope.uiModel, $scope.CONFIG.TYYPPI);
                     if (angular.isDefined($scope.model.valmistavaKoulutus) && $scope.model.valmistavaKoulutus !== null && angular.isDefined($scope.model.valmistavaKoulutus.toteutustyyppi)) {
                         $scope.model.valmistavaKoulutus.organisaatio = $scope.model.organisaatio;
@@ -364,11 +367,28 @@ app.controller('EditNayttotutkintoController',
                         $scope.model.valmistavaKoulutus = model;
                         $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         $scope.vkUiModel.selectedKieliUri = "kieli_fi";
+                        $scope.vkUiModel.showValidationErrors = false;
 
                         $scope.cbShowValmistavaKoulutus = true;
                     } else {
-                        $scope.model.valmistavaKoulutus = null;
-                        $scope.cbShowValmistavaKoulutus = false;
+                        var modalInstance = $modal.open({
+                            scope: $scope,
+                            templateUrl: 'partials/koulutus/edit/amm/poista-valmistava-koulutus-dialog.html',
+                            controller: function($scope) {
+                                $scope.ok = function() {
+                                    //delete
+                                    $scope.model.valmistavaKoulutus = null;
+                                    $scope.cbShowValmistavaKoulutus = false;
+                                    modalInstance.dismiss();
+                                };
+                                $scope.cancel = function() {
+                                    //do nothing.
+                                    $scope.uiModel.cbShowValmistavaKoulutus = true;
+                                    modalInstance.dismiss();
+                                };
+                                return $scope;
+                            }
+                        });
                     }
                 };
 
