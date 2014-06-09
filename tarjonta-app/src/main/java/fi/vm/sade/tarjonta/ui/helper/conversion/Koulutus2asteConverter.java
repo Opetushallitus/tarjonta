@@ -382,17 +382,19 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             throw new RuntimeException("Data validation failed - koulutusaste numeric code is required!");
         }
 
-        final KoulutusasteTyyppi koulutusastetyyppi = lisaa.getKoulutustyyppi();
+        
+        final Koulutustyyppi koulutustyyppi = Koulutustyyppi.getByKoodistoUri(model.getKoulutuksenTyyppi().getKoodi());
+
 
         Preconditions.checkNotNull(koulutusaste, "Data validation failed - koulutustyyppi is required!");
 
         if ((koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_AMMATILLINEN_KOULUTUS.getKoulutusaste())
                 || koulutusaste.equals(KoulutusasteType.TUNTEMATON.getKoulutusaste())
                 || koulutusaste.equals(KoulutusasteType.PERUSOPETUKSEN_LISAOPETUS)
-                || koulutusastetyyppi == KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                || koulutustyyppi == Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS)
                 && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
             throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
-        } else if (koulutusastetyyppi != KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS // XXX:tämmonen koulutus kun luodaan niin se näkyy nyt amm peruskoulutuksena: MAAHANM_LUKIO_VALMISTAVA_KOULUTUS 
+        } else if (koulutustyyppi != Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS 
                 && koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_LUKIO.getKoulutusaste())) {
             //Lukio tutkinto do not have koulutusohjema data.
             lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());
