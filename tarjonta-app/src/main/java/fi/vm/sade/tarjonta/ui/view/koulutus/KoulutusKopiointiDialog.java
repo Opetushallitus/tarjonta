@@ -112,37 +112,55 @@ public class KoulutusKopiointiDialog extends OrganisaatioSelectDialog {
             public void buttonClick(Button.ClickEvent clickEvent) {
                 errorView.resetErrors();
                 if (optionGroup.getValue() != null) {
-                String value = (String)optionGroup.getValue();
-                if (value.equalsIgnoreCase(_i18n.getMessage("optionGroup.kopioidaan"))) {
-                if (selectedOrgs.values() != null && selectedOrgs.values().size() > 0) {
+                    String value = (String) optionGroup.getValue();
+                    if (value.equalsIgnoreCase(_i18n
+                            .getMessage("optionGroup.kopioidaan"))) {
+                        if (selectedOrgs.values() != null
+                                && selectedOrgs.values().size() > 0) {
 
+                            // if
+                            // (presenter.checkOrganisaatiosKoulutukses(selectedOrgs.values()))
+                            // {
+                            switch (koulutusTyyppi) {
 
-                    //if (presenter.checkOrganisaatiosKoulutukses(selectedOrgs.values())) {
-                    switch (koulutusTyyppi) {
+                            case AMMATILLINEN_PERUSKOULUTUS:
+                                String pkVaatimus = (String) kcPohjakoulutusvaatimus
+                                        .getValue();
+                                if (pkVaatimus != null) {
+                                    presenter.copyKoulutusToOrganizations(
+                                            selectedOrgs.values(), pkVaatimus);
+                                } else {
+                                    addErrorMessage(_i18n
+                                            .getMessage("valitsePohjakoulutus"));
+                                    return;
+                                }
+                                break;
+                            case LUKIOKOULUTUS:
+                                presenter
+                                        .copyLukioKoulutusToOrganization(selectedOrgs
+                                                .values());
+                                break;
 
-                    case AMMATILLINEN_PERUSKOULUTUS:
-                    String pkVaatimus = (String)kcPohjakoulutusvaatimus.getValue();
-                    if (pkVaatimus != null) {
-                        presenter.copyKoulutusToOrganizations(selectedOrgs.values(),pkVaatimus);
+                            default:
+                                presenter.copyKoulutusToOrganizations(
+                                        selectedOrgs.values(), null);
+
+                                break;
+                            }
+
+                            getParent().removeWindow(
+                                    KoulutusKopiointiDialog.this);
+                            /*
+                             * } else { addErrorMessage(_i18n.getMessage(
+                             * "koulutusOrgMismatch")); }
+                             */
+                        } else {
+                            addErrorMessage(_i18n
+                                    .getMessage("valitseOrganisaatioMessage"));
+                        }
                     } else {
-                        addErrorMessage(_i18n.getMessage("valitsePohjakoulutus"));
-                        return;
+                        addErrorMessage("Vain kopiointi toteutettu");
                     }
-                    break;
-                    case LUKIOKOULUTUS:
-                    presenter.copyLukioKoulutusToOrganization(selectedOrgs.values());
-                    break;
-                    }
-                    getParent().removeWindow(KoulutusKopiointiDialog.this);
-                    /*} else {
-addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
-}*/
-                } else {
-                    addErrorMessage(_i18n.getMessage("valitseOrganisaatioMessage"));
-                }
-                } else {
-                    addErrorMessage("Vain kopiointi toteutettu");
-                }
                 } else {
                     addErrorMessage(_i18n.getMessage("valitseToiminto"));
                 }
@@ -152,7 +170,7 @@ addErrorMessage(_i18n.getMessage("koulutusOrgMismatch"));
         peruutaBtn.addListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
-               getParent().removeWindow(KoulutusKopiointiDialog.this);
+                getParent().removeWindow(KoulutusKopiointiDialog.this);
             }
         });
     }

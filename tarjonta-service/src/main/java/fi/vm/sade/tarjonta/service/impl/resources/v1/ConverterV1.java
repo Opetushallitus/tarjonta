@@ -145,8 +145,13 @@ public class ConverterV1 {
         t.setCreatedBy(null);
         t.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
         t.setHakukausiUri(haku.getHakukausiUri());
-        t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
-        t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+        if (haku.getKoulutuksenAlkamiskausiUri() != null) {
+            t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
+        }
+        if (haku.getKoulutuksenAlkamisVuosi() != null) {
+            t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+        }
+
         t.setHakulomakeUri(haku.getHakulomakeUrl());
         t.setHakutapaUri(haku.getHakutapaUri());
         t.setHakutyyppiUri(haku.getHakutyyppiUri());
@@ -306,7 +311,7 @@ public class ConverterV1 {
     }
 
     private String getKausiForForJatkuvaHakuAloitusPvm(Date aloitusPvm) {
-        return IndexDataUtils.parseKausi(aloitusPvm);
+        return IndexDataUtils.parseKausiKoodi(aloitusPvm);
     }
 
     private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
