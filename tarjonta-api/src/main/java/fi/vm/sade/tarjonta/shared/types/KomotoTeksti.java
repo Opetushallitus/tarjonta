@@ -37,7 +37,7 @@ public enum KomotoTeksti {
 	LISATIETOA_OPETUSKIELISTA,
 	TUTKIMUKSEN_PAINOPISTEET,
         PAAAINEEN_VALINTA,
-        KOHDERYHMA, //aikuislukio
+        KOHDERYHMA, //aikuislukio + pervakot
         OPPIAINEET_JA_KURSSIT;  //aikuislukio
 	
 }
