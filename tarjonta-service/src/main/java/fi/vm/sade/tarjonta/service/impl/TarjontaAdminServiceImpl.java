@@ -892,7 +892,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setHakutyyppiUri(source.getHakutyyppiUri());
         target.setKohdejoukkoUri(source.getKohdejoukkoUri());
         target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
-        target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        if (source.getKoulutuksenAlkamisVuosi() != null) {
+            target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        }
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
         target.setVersion(source.getVersion());
