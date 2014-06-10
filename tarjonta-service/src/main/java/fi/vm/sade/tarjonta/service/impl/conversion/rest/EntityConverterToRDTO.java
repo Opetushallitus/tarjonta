@@ -203,6 +203,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             if (komoto.getHinta() != null) {
                 valmistavaDto.setHinta(komoto.getHinta().doubleValue());
             }
+            valmistavaDto.setKoulutustyyppi(null); //clear deprecated data
         }
 
         dto.setOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getTarjoaja(), param.getLocale()));
