@@ -20,6 +20,7 @@ import java.util.*;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -964,8 +965,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
             getModel().getKoulutusPerustiedotModel().setOid("-1");
             getModel().getKoulutusPerustiedotModel().setTila(TarjontaTila.LUONNOS);
-            getModel().getKoulutusPerustiedotModel()
+            if(pohjakoulutusVaatimus!=null) {
+                getModel().getKoulutusPerustiedotModel()
                     .setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
+            }
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
 
         }
@@ -1057,35 +1060,25 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     private void copyKoulutusToModel(final String koulutusOid) {
-        LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
-        try {
-            KoulutusToisenAsteenPerustiedotViewModel koulutus;
+        readKoulutusToModel(koulutusOid, KOODISTO_URIS_FROM_KOODISTO);
 
-            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
-            readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
-            getModel().setKoulutusPerustiedotModel(koulutus);
-            getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
+        final KoulutusToisenAsteenPerustiedotViewModel koulutus = getModel()
+                .getKoulutusPerustiedotModel();
 
-            //Empty previous Koodisto data from the comboboxes.
-            koulutus.getKoulutusohjelmat().clear();
-            koulutus.getKoulutuskoodit().clear();
-            koulutus.getKoulutuksenHakukohteet().clear();
+        readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
 
-            //Add selected data to the comboboxes.
-            if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
+        // Empty hakukohteet
+        koulutus.getKoulutuksenHakukohteet().clear();
 
-                getModel().getKoulutusPerustiedotModel().getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
-            }
-            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(koulutus.getKoulutuslaji());
-            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus());
-
-            getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(koulutus.getSuunniteltuKesto());
-            getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(koulutus.getSuunniteltuKestoTyyppi());
-            koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-        } catch (OidCreationException ex) {
-            LOG.error("Service call failed.", ex);
-            showMainDefaultView();
-        }
+        // Add selected data to the comboboxes.
+        getModel().getKoulutusPerustiedotModel().setKoulutuslaji(
+                koulutus.getKoulutuslaji());
+        getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(
+                koulutus.getPohjakoulutusvaatimus());
+        getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(
+                koulutus.getSuunniteltuKesto());
+        getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(
+                koulutus.getSuunniteltuKestoTyyppi());
     }
 
     private void readKoulutusToModel(final String koulutusOid, final boolean searchLatestKoodistoUris) {
@@ -1114,6 +1107,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             } else if (rawKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
                 tyyppiModel.setKoodi(Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS.getKoulutustyyppiUri());
             }
+            
             koulutus.setKoulutuksenTyyppi(tyyppiModel);
 
             getModel().setKoulutusPerustiedotModel(koulutus);
@@ -1140,6 +1134,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
             }
             koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
+            
+            
+            //fix pohjakoulutusvaatimus so it coinmtains #1
+            final String pkVaatimus = getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus();
+            if(pkVaatimus!=null && pkVaatimus.trim().length()>0 && pkVaatimus.indexOf("#")==-1){
+                getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pkVaatimus + "#1"); //this is temp fix
+            }
         } catch (OidCreationException ex) {
             LOG.error("Service call failed.", ex);
             showMainDefaultView();
@@ -1715,6 +1716,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     public void saveKoulutus(SaveButtonState tila, KoulutusActiveTab activeTab) throws OidCreationException {
         KoulutusToisenAsteenPerustiedotViewModel koulutusModel = getModel().getKoulutusPerustiedotModel();
 
+        
         String oid = null;
         if (koulutusModel.getOid() != null && koulutusModel.getOid().equalsIgnoreCase("-1")) {
             koulutusModel.setOid(null);
@@ -1724,6 +1726,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             //update KOMOTO
             OrganisationOidNamePair selectedOrganisation = getModel().getTarjoajaModel().getSelectedOrganisation();
             PaivitaKoulutusTyyppi paivita = koulutusToDTOConverter.createPaivitaKoulutusTyyppi(getModel(), selectedOrganisation, koulutusModel.getOid());
+            
             paivita.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
 
             koulutusToDTOConverter.validateSaveData(paivita, koulutusModel);
@@ -1752,9 +1755,14 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         lisaa.setTila(tila.toTarjontaTila(koulutusModel.getTila()));
         koulutusToDTOConverter.validateSaveData(lisaa, koulutusModel);
         checkKoulutusmoduuli();
+        
         //OVT-6477 valmentava ja kuntouttava saa olla useita
         //OVT-6676 vapaan sivistystyön koulutuksia saa olla useita
-        if (lisaa.getKoulutustyyppi() == KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || lisaa.getKoulutustyyppi() == KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS || checkExistingKomoto(lisaa)) {
+        
+        
+        final Koulutustyyppi koulutusTyyppi = Koulutustyyppi.getByKoodistoUri(getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi().getKoodi());
+        
+        if (koulutusTyyppi == Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS || koulutusTyyppi == Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS || checkExistingKomoto(lisaa)) {
 
             tarjontaAdminService.lisaaKoulutus(lisaa);
             koulutusModel.setDocumentStatus(DocumentStatus.SAVED);

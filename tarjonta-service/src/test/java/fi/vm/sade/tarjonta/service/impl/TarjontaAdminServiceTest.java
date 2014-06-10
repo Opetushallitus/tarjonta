@@ -217,7 +217,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         YhteyshenkiloTyyppi expectedHenkilo = createYhteyshenkilo();
 
         assertMatch(expectedHenkilo, actualHenkilo);
-        //assertTrue(toteutus.getKoulutusaste().contains("koulutusaste/lukio"));
+        //assertTrue(toteutus.getKoulutusaste().contains("koulutusaste/lukio#1"));
     }
 
     @Test
@@ -710,7 +710,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
 
         kysely1.setKoulutusLuokitusKoodi("321101");
         kysely1.setKoulutusohjelmaKoodi("1603");
-        kysely1.setPohjakoulutus("koulutusaste/lukio");
+        kysely1.setPohjakoulutus("koulutusaste/lukio#1");
         kysely1.getKoulutuslajis().add("koulutuslaji/lahiopetus");
         kysely1.getOpetuskielis().add("opetuskieli/fi");
         kysely1.setTarjoajaOid(SAMPLE_TARJOAJA);
@@ -724,7 +724,7 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         kysely2.getOpetuskielis().add("opetuskieli/fi");
         kysely2.setKoulutusAlkamisPvm(getDateFromString("02.08.2013"));
         kysely2.setTarjoajaOid(SAMPLE_TARJOAJA);
-        kysely2.setPohjakoulutus("koulutusaste/lukio");
+        kysely2.setPohjakoulutus("koulutusaste/lukio#1");
 
         boolean kopiontiSallittu2 = adminService.tarkistaKoulutuksenKopiointi(kysely2);
 
@@ -778,8 +778,8 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         lisaaKoulutus.getOpetusmuoto().add(createKoodi("opetusmuoto/aikuisopetus"));
         lisaaKoulutus.getOpetuskieli().add(createKoodi("opetuskieli/fi"));
         lisaaKoulutus.getKoulutuslaji().add(createKoodi("koulutuslaji/lahiopetus"));
-        //lisaaKoulutus.setKoulutusaste(createKoodi("koulutusaste/lukio"));
-        lisaaKoulutus.setPohjakoulutusvaatimus(createKoodi("koulutusaste/lukio"));
+        //lisaaKoulutus.setKoulutusaste(createKoodi("koulutusaste/lukio#1"));
+        lisaaKoulutus.setPohjakoulutusvaatimus(createKoodi("koulutusaste/lukio#1"));
         lisaaKoulutus.setTarjoaja(SAMPLE_TARJOAJA);
         lisaaKoulutus.setOid(SAMPLE_KOULUTUS_OID);
         lisaaKoulutus.setKoulutuksenAlkamisPaiva(getDateFromString("02.02.2013"));
@@ -864,13 +864,13 @@ public class TarjontaAdminServiceTest extends SecurityAwareTestBase {
         komoto.setOid(komotoOid);
         komoto.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.LUONNOS);
         komoto.setKoulutusmoduuli(komo);
-        komoto.setKoulutusasteUri("koulutusaste/lukio");
+        komoto.setKoulutusasteUri("koulutusaste/lukio#1");
         komoto.setOpetusmuoto(EntityUtils.toKoodistoUriSet(createKoodistoList("opetusmuoto/aikuisopetus")));
         komoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(createKoodistoList("opetuskieli/fi")));
         komoto.setKoulutuslajis(EntityUtils.toKoodistoUriSet(createKoodistoList("koulutuslaji/lahiopetus")));
         komoto.setTarjoaja(tarjoajaOid);
         komoto.setKoulutuksenAlkamisPvm(Calendar.getInstance().getTime());
-        komoto.setPohjakoulutusvaatimusUri("koulutusaste/lukio");
+        komoto.setPohjakoulutusvaatimusUri("koulutusaste/lukio#1");
         komoto.setSuunniteltuKesto("kesto/vuosi", "3");
         komoto.setPohjakoulutusvaatimusUri(pohjakoulutusvaatimus);
         return komoto;

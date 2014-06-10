@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
@@ -64,6 +66,7 @@ import fi.vm.sade.tarjonta.ui.model.org.OrganisationOidNamePair;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusKuvailevatTiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusPerustiedotView;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.EditLukioKoulutusView;
+import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.LukiolinjaPredicate;
 import fi.vm.sade.tarjonta.ui.view.koulutus.lukio.ShowKoulutusSummaryView;
 import java.util.Locale;
 
@@ -302,7 +305,7 @@ public class TarjontaLukioPresenter {
             LOG.debug("Lukiolinjas list size : {}.", perustiedot.getKoulutuskoodiModel().getKoodistoUriVersio());
             List<KoulutusmoduuliKoosteTyyppi> tyyppis = perustiedot.getQuickKomosByKoulutuskoodiUri(perustiedot.getKoulutuskoodiModel().getKoodistoUri());
 
-            final List<LukiolinjaModel> lukiolinjas = kolutusKoodistoConverter.listaaLukiolinjas(tyyppis, I18N.getLocale());
+            final List<LukiolinjaModel> lukiolinjas = Lists.newArrayList(Iterables.filter(kolutusKoodistoConverter.listaaLukiolinjas(tyyppis, I18N.getLocale()), new LukiolinjaPredicate()));
             LOG.debug("Lukiolinjas list size : {}.", lukiolinjas);
             Collections.sort(lukiolinjas, new BeanComparator("nimi"));
             perustiedot.getLukiolinjas().addAll(lukiolinjas);
