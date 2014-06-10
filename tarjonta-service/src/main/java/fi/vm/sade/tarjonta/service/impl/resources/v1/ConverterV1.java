@@ -311,7 +311,7 @@ public class ConverterV1 {
     }
 
     private String getKausiForForJatkuvaHakuAloitusPvm(Date aloitusPvm) {
-        return IndexDataUtils.parseKausi(aloitusPvm);
+        return IndexDataUtils.parseKausiKoodi(aloitusPvm);
     }
 
     private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
