@@ -965,8 +965,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
             getModel().getKoulutusPerustiedotModel().setOid("-1");
             getModel().getKoulutusPerustiedotModel().setTila(TarjontaTila.LUONNOS);
-            getModel().getKoulutusPerustiedotModel()
+            if(pohjakoulutusVaatimus!=null) {
+                getModel().getKoulutusPerustiedotModel()
                     .setPohjakoulutusvaatimus(pohjakoulutusVaatimus);
+            }
             showEditKoulutusView(koulutusOid, KoulutusActiveTab.PERUSTIEDOT);
 
         }
@@ -1058,35 +1060,25 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     private void copyKoulutusToModel(final String koulutusOid) {
-        LueKoulutusVastausTyyppi lueKoulutus = this.getKoulutusByOid(koulutusOid);
-        try {
-            KoulutusToisenAsteenPerustiedotViewModel koulutus;
+        readKoulutusToModel(koulutusOid, KOODISTO_URIS_FROM_KOODISTO);
 
-            koulutus = koulutusToDTOConverter.createKoulutusPerustiedotViewModel(getModel(), lueKoulutus, I18N.getLocale(), KOODISTO_URIS_FROM_KOODISTO);
-            readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
-            getModel().setKoulutusPerustiedotModel(koulutus);
-            getModel().setKoulutusLisatiedotModel(koulutusToDTOConverter.createKoulutusLisatiedotViewModel(lueKoulutus));
+        final KoulutusToisenAsteenPerustiedotViewModel koulutus = getModel()
+                .getKoulutusPerustiedotModel();
 
-            //Empty previous Koodisto data from the comboboxes.
-            koulutus.getKoulutusohjelmat().clear();
-            koulutus.getKoulutuskoodit().clear();
-            koulutus.getKoulutuksenHakukohteet().clear();
+        readOrgTreeToTarjoajaByModel(SelectedOrgModel.TARJOAJA);
 
-            //Add selected data to the comboboxes.
-            if (koulutus.getKoulutusohjelmaModel() != null && koulutus.getKoulutusohjelmaModel().getKoodistoUri() != null) {
+        // Empty hakukohteet
+        koulutus.getKoulutuksenHakukohteet().clear();
 
-                getModel().getKoulutusPerustiedotModel().getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
-            }
-            getModel().getKoulutusPerustiedotModel().setKoulutuslaji(koulutus.getKoulutuslaji());
-            getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(koulutus.getPohjakoulutusvaatimus());
-
-            getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(koulutus.getSuunniteltuKesto());
-            getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(koulutus.getSuunniteltuKestoTyyppi());
-            koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
-        } catch (OidCreationException ex) {
-            LOG.error("Service call failed.", ex);
-            showMainDefaultView();
-        }
+        // Add selected data to the comboboxes.
+        getModel().getKoulutusPerustiedotModel().setKoulutuslaji(
+                koulutus.getKoulutuslaji());
+        getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(
+                koulutus.getPohjakoulutusvaatimus());
+        getModel().getKoulutusPerustiedotModel().setSuunniteltuKesto(
+                koulutus.getSuunniteltuKesto());
+        getModel().getKoulutusPerustiedotModel().setSuunniteltuKestoTyyppi(
+                koulutus.getSuunniteltuKestoTyyppi());
     }
 
     private void readKoulutusToModel(final String koulutusOid, final boolean searchLatestKoodistoUris) {
@@ -1142,6 +1134,13 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 koulutus.getKoulutusohjelmat().add(koulutus.getKoulutusohjelmaModel());
             }
             koulutus.getKoulutuskoodit().add(koulutus.getKoulutuskoodiModel());
+            
+            
+            //fix pohjakoulutusvaatimus so it coinmtains #1
+            final String pkVaatimus = getModel().getKoulutusPerustiedotModel().getPohjakoulutusvaatimus();
+            if(pkVaatimus!=null && pkVaatimus.trim().length()>0 && pkVaatimus.indexOf("#")==-1){
+                getModel().getKoulutusPerustiedotModel().setPohjakoulutusvaatimus(pkVaatimus + "#1"); //this is temp fix
+            }
         } catch (OidCreationException ex) {
             LOG.error("Service call failed.", ex);
             showMainDefaultView();
