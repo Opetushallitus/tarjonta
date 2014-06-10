@@ -1235,7 +1235,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         //insert valmistava komoto to the base komoto
         //join valmistava komoto to the base komoto
         base.setNayttotutkintoValmistavaKoulutus(koulutusmoduuliToteutusDAO.insert(valmistava));
-        koulutusmoduuliToteutusDAO.update(base);
+        //koulutusmoduuliToteutusDAO.update(base);
     }
 
 }

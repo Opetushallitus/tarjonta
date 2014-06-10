@@ -125,42 +125,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         //a quick conversion to ToteutustyyppiEnum, we need it as long we use SOAP API.
-        ToteutustyyppiEnum tt = null;
-
-        switch (moduuli.getKoulutustyyppiEnum()) {
-            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-                tt = ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS;
-                break;
-            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
-                tt = ToteutustyyppiEnum.MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
-                break;
-            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
-                tt = ToteutustyyppiEnum.MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
-                break;
-            case PERUSOPETUKSEN_LISAOPETUS:
-                tt = ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS;
-                break;
-            case VAPAAN_SIVISTYSTYON_KOULUTUS:
-                tt = ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS;
-                break;
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-                tt = ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS;
-                break;
-            case AMMATILLINEN_PERUSKOULUTUS:
-                if (koulutus.getPohjakoulutusvaatimus().getUri().contains("pohjakoulutusvaatimustoinenaste_er")) {
-                    //only for the 'er'
-                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA;
-                } else {
-                    //for all other code types
-                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
-                }
-                break;
-            case LUKIOKOULUTUS:
-                tt = ToteutustyyppiEnum.LUKIOKOULUTUS;
-                break;
-            default:
-                throw new RuntimeException("Unsupported koulutustyyppi.");
-        }
+        ToteutustyyppiEnum tt = convertToTotetustyyppi(moduuli, koulutus);
 
         KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
         EntityUtils.copyFields(koulutus, komotoModel);
@@ -215,20 +180,6 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         handleParentKomoto(koulutus, moduuli);
 
         return moduuli;
-    }
-
-    private Koulutusmoduuli handleKorkeakoulumoduuli(LisaaKoulutusTyyppi koulutus) {
-        Preconditions.checkNotNull(koulutus, "LisaaKoulutusTyyppi cannot be null.");
-
-        Koulutusmoduuli komo = null;
-        if (koulutus.getKoulutusmoduuli() == null && koulutus.getKoulutusmoduuli().getOid() != null) {
-            komo = koulutusmoduuliDAO.findByOid(koulutus.getKoulutusmoduuli().getOid());
-        } else {
-            komo = koulutusmoduuliDAO.createKomoKorkeakoulu(koulutus.getKoulutusmoduuli());
-            this.koulutusmoduuliDAO.insert(komo);
-        }
-
-        return komo;
     }
 
     /**
@@ -314,11 +265,16 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
         KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
+
+        //only for future/angular use:
+        ToteutustyyppiEnum convertToTotetustyyppi = convertToTotetustyyppi(moduuli, koulutus);
+
         if (parentKomoto != null && parentKomo != null) {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
+            parentKomoto.setToteutustyyppi(convertToTotetustyyppi);//only for future/angular use
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
@@ -333,6 +289,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
+            parentKomoto.setToteutustyyppi(convertToTotetustyyppi); //only for future/angular use
             try {
                 parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
             } catch (OIDCreationException e) {
@@ -376,5 +333,45 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private boolean isNew(BaseEntity e) {
         // no good
         return (e.getId() == null);
+    }
+
+    private static ToteutustyyppiEnum convertToTotetustyyppi(final Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
+        ToteutustyyppiEnum tt = null;
+        switch (moduuli.getKoulutustyyppiEnum()) {
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                tt = ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS;
+                break;
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                tt = ToteutustyyppiEnum.MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
+                break;
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                tt = ToteutustyyppiEnum.MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
+                break;
+            case PERUSOPETUKSEN_LISAOPETUS:
+                tt = ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS;
+                break;
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                tt = ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS;
+                break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                tt = ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS;
+                break;
+            case AMMATILLINEN_PERUSKOULUTUS:
+                if (koulutus.getPohjakoulutusvaatimus().getUri().contains("pohjakoulutusvaatimustoinenaste_er")) {
+                    //only for the 'er'
+                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA;
+                } else {
+                    //for all other code types
+                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
+                }
+                break;
+            case LUKIOKOULUTUS:
+                tt = ToteutustyyppiEnum.LUKIOKOULUTUS;
+                break;
+            default:
+                throw new RuntimeException("Unsupported koulutustyyppi.");
+        }
+
+        return tt;
     }
 }
