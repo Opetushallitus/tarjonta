@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
 import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusLisatietoModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.aste2.KoulutusPerustiedotViewModel;
 import fi.vm.sade.tarjonta.ui.view.koulutus.LisatiedotTabSheet;
 import fi.vm.sade.vaadin.constants.LabelStyleEnum;
 import fi.vm.sade.vaadin.util.UiUtil;
@@ -51,12 +52,16 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
 
     private static final long serialVersionUID = -7726685044305900176L;
 
+    private boolean isToinenasteValmentava;
+    private boolean isPervako;
+
     public EditLisatiedotTabSheet(TarjontaModel tarjontaModel, TarjontaUIHelper uiHelper, UiBuilder uiBuilder) {
         super(tarjontaModel, uiHelper, uiBuilder);
     }
 
     @Override
     protected void initializeTabsheet(boolean allowDefault) {
+        
         // What languages should we have as preselection when initializing the form?
         // Current hypothesis is that we should use the opetuskielet + any possible additional languages added to additional information
         Set<String> languageUris = new HashSet<String>();
@@ -92,6 +97,10 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
     protected AbstractComponent createLanguageEditor(String uri) {
         VerticalLayout vl = UiBuilder.verticalLayout();
 
+        final String koulututuksenTyyppiUrl = getModel()!=null && getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi()!=null ? getModel().getKoulutusPerustiedotModel().getKoulutuksenTyyppi().getKoodi():null;
+        isPervako = KoulutusUtil.isPervako(koulututuksenTyyppiUrl);
+        isToinenasteValmentava = KoulutusUtil.isValmentavaJaKuntouttava(koulututuksenTyyppiUrl);
+
         String kieli = "-";
 
         vl.setSpacing(true);
@@ -119,6 +128,17 @@ public class EditLisatiedotTabSheet extends LisatiedotTabSheet {
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto"), LabelStyleEnum.H2));
             vl.addComponent(UiBuilder.label((AbstractLayout) null, T("koulutuksenSisalto.help", 5000), LabelStyleEnum.TEXT));
             vl.addComponent(rta);
+        }
+
+        if(isPervako||isToinenasteValmentava) {
+            {
+                OphRichTextArea rta = UiUtil.richTextArea(null, psi, "kohderyhma", MAX_LENGTH,
+                        T("_textTooLong", T("kohderyhma") + " (" + kieli + ")", 5000));
+                rta.setWidth(TEXT_AREA_DEFAULT_WIDTH);
+                vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kohderyhma"), LabelStyleEnum.H2));
+                vl.addComponent(UiBuilder.label((AbstractLayout) null, T("kohderyhma.help", 5000), LabelStyleEnum.TEXT));
+                vl.addComponent(rta);
+            }
         }
 
         {

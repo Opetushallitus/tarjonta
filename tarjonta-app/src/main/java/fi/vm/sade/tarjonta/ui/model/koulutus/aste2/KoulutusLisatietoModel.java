@@ -15,6 +15,11 @@
  */
 package fi.vm.sade.tarjonta.ui.model.koulutus.aste2;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.ui.model.BaseUIViewModel;
 
 /**
@@ -44,6 +49,9 @@ public class KoulutusLisatietoModel extends BaseUIViewModel {
     String _yhteistyoMuidenToimijoidenKanssa;
     
     String koulutusohjelmanValinta;
+    
+    
+    private Map<KomotoTeksti, String> komotoTekstit = Maps.newHashMap();
 
 
     public String getLanguageUri() {
@@ -100,6 +108,18 @@ public class KoulutusLisatietoModel extends BaseUIViewModel {
 
     public void setKoulutusohjelmanValinta(String koulutusohjelmanValinta) {
         this.koulutusohjelmanValinta = koulutusohjelmanValinta;
+    }
+
+    public void set(KomotoTeksti kt, String value) {
+        komotoTekstit.put(kt,  value);
+    }
+    
+    public String getKohderyhma(){
+        return komotoTekstit.get(KomotoTeksti.KOHDERYHMA);
+    }
+
+    public void setKohderyhma(String kohderyhma){
+        komotoTekstit.put(KomotoTeksti.KOHDERYHMA, kohderyhma);
     }
 
 }
