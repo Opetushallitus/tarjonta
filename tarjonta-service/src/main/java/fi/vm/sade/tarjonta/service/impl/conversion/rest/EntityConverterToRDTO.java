@@ -179,6 +179,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             KoulutusAmmatillinenPerustutkintoV1RDTO ammDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getOsaamisalaUri(), FieldNames.OSAAMISALA, NO, param));
             ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
+            ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
 
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
@@ -203,22 +204,35 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             if (komoto.getHinta() != null) {
                 valmistavaDto.setHinta(komoto.getHinta().doubleValue());
             }
-            valmistavaDto.setKoulutustyyppi(null); //clear deprecated data
+
+            dto.setTila(null);
         }
 
-        dto.setOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getTarjoaja(), param.getLocale()));
-        dto.setOpetuskielis(commonConverter.convertToKoodiUrisDTO(komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS, param));
-        dto.setOpetusmuodos(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS, param));
+        if (komoto.getTarjoaja() != null) {
+            dto.setOrganisaatio(commonConverter.searchOrganisaationNimi(komoto.getTarjoaja(), param.getLocale()));
+        }
+
+        if (komoto.getOpetuskielis() != null) {
+            dto.setOpetuskielis(commonConverter.convertToKoodiUrisDTO(komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS, param));
+        }
+
+        if (komoto.getOpetusmuotos() != null) {
+            dto.setOpetusmuodos(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS, param));
+        }
 
         if (komoto.getOpetusAikas() != null) {
             dto.setOpetusAikas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS, param));
         }
+
         if (komoto.getOpetusPaikkas() != null) {
             dto.setOpetusPaikkas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS, param));
         }
-        dto.setSuunniteltuKestoTyyppi(commonConverter.convertToKoodiDTO(komoto.getSuunniteltukestoYksikkoUri(), NO_OVERRIDE_URI, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES, param));
-        dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
 
+        if (komoto.getSuunniteltukestoYksikkoUri() != null) {
+            dto.setSuunniteltuKestoTyyppi(commonConverter.convertToKoodiDTO(komoto.getSuunniteltukestoYksikkoUri(), NO_OVERRIDE_URI, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES, param));
+        }
+
+        dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
 

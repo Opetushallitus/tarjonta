@@ -139,7 +139,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_OPETUSAIKAS);
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
-        expectMetaUri(SUUNNITELTU_KESTO);
+        expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
         expectMetaUri(TUTKINTO);
     }
 
@@ -183,7 +183,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEqualMetaDto(MAP_OPETUMUOTO, result.getOpetusmuodos());
 
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKestoArvo());
-        assertEquals(SUUNNITELTU_KESTO + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
+        assertEquals(SUUNNITELTU_KESTO_TYYPPI + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
         YhteyshenkiloTyyppi next = result.getYhteyshenkilos().iterator().next();
         assertEquals(PERSON[0], next.getHenkiloOid());
@@ -206,11 +206,10 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
     }
 
+    /*
+     * Set DTO data fields:
+     */
     private KoulutusLukioV1RDTO createDTO() {
-        /*
-         * KOMO data fields:
-         */
-
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
 
@@ -250,7 +249,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
 
-        dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO));
+        dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
 
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 

@@ -335,7 +335,8 @@ public class Koulutus2asteConverter extends KoulutusConveter {
                         klm.setKoulutusohjelmanValinta(t.getValue());
                         break;
                     default:
-                        break; //ignore
+                        klm.set(kt, t.getValue());
+                        break; 
                 }
             }
         }
@@ -424,6 +425,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             ConversionUtils.setTeksti(koulutus.getTekstit(), KomotoTeksti.KANSAINVALISTYMINEN, kieliUri, lisatieto.getKansainvalistyminen());
             ConversionUtils.setTeksti(koulutus.getTekstit(), KomotoTeksti.YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA, kieliUri, lisatieto.getYhteistyoMuidenToimijoidenKanssa());
             ConversionUtils.setTeksti(koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, kieliUri, lisatieto.getKoulutusohjelmanValinta());
+            ConversionUtils.setTeksti(koulutus.getTekstit(), KomotoTeksti.KOHDERYHMA, kieliUri, lisatieto.getKohderyhma());
         }
     }
 
