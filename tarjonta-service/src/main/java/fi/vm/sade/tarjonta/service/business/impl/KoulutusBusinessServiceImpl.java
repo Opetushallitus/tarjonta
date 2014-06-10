@@ -161,7 +161,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         //Handling the creation of the parent komoto
-        handleParentKomoto(koulutus, moduuli);
+        handleParentKomoto(koulutus, moduuli, convertToTotetustyyppi(moduuli, koulutus));
 
         return moduuli;
 
@@ -177,7 +177,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         //Handling the creation of the parent komoto
-        handleParentKomoto(koulutus, moduuli);
+        handleParentKomoto(koulutus, moduuli, convertToTotetustyyppi(moduuli, koulutus));
 
         return moduuli;
     }
@@ -243,7 +243,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
         //Handling the creation or update of the parent (tutkinto) komoto
-        handleParentKomoto(koulutus, moduuli);
+        handleParentKomoto(koulutus, moduuli, model.getToteutustyyppi());
 
         EntityUtils.copyFields(koulutus, model);
         model.setViimIndeksointiPvm(model.getUpdated());
@@ -259,22 +259,23 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     /*
      * Handling the creation or update of the parent komoto
      */
-    private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli) {
+    private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli, ToteutustyyppiEnum toteutustyyppi) {
+        Preconditions.checkNotNull(toteutustyyppi, "Toteutustyyppi enum cannot be null!");
+        
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
         String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
         List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
         KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
 
-        //only for future/angular use:
-        ToteutustyyppiEnum convertToTotetustyyppi = convertToTotetustyyppi(moduuli, koulutus);
-
         if (parentKomoto != null && parentKomo != null) {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
-            parentKomoto.setToteutustyyppi(convertToTotetustyyppi);//only for future/angular use
+            if (parentKomoto.getToteutustyyppi() == null) {
+                parentKomoto.setToteutustyyppi(toteutustyyppi);//only for future/angular use
+            }
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
@@ -289,7 +290,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
-            parentKomoto.setToteutustyyppi(convertToTotetustyyppi); //only for future/angular use
+            parentKomoto.setToteutustyyppi(toteutustyyppi); //only for future/angular use
             try {
                 parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
             } catch (OIDCreationException e) {
@@ -357,7 +358,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
                 tt = ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS;
                 break;
             case AMMATILLINEN_PERUSKOULUTUS:
-                if (koulutus.getPohjakoulutusvaatimus().getUri().contains("pohjakoulutusvaatimustoinenaste_er")) {
+                Preconditions.checkNotNull(koulutus, "KoulutusTyyppi object cannot be null.");
+
+                if (koulutus.getPohjakoulutusvaatimus() != null && koulutus.getPohjakoulutusvaatimus().getUri().contains("pohjakoulutusvaatimustoinenaste_er")) {
                     //only for the 'er'
                     tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA;
                 } else {
