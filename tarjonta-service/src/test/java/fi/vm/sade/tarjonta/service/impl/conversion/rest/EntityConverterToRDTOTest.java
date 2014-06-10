@@ -125,7 +125,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
         expect_komoto_x(returnKomoto, NO_URI, FieldNames.KOULUTUSTYYPPI, YES); //correct as the tyyppi is only in komoto
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
-        expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
+        //  expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -163,7 +163,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
         expect_komoto_x(returnKomoto, NO_URI, FieldNames.KOULUTUSTYYPPI, YES); //correct as the tyyppi is only in komoto
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
-        expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
+        //expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -201,7 +201,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomo, NO_URI, FieldNames.NQF, YES);
         expectNull(returnKomo, FieldNames.KOULUTUSTYYPPI, YES); //correct as the tyyppi is only in komoto
         expect_komo_x(returnKomo, NO_URI, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
-        expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
+        // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -255,7 +255,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.OPINTOALA, NO);
         expect_komoChild_x(returnKomoto, returnKomoto, FieldNames.EQF, YES);
         expect_komoChild_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
-        expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);
+        // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);
         EasyMock.replay(koulutusmoduuliDAOMock);
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -307,7 +307,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komoChild_x(returnKomoto, NO_URI, FieldNames.EQF, YES);
         expect_komoChild_x(returnKomoto, NO_URI, FieldNames.NQF, YES);
 
-        expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);
+        // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);
         EasyMock.replay(koulutusmoduuliDAOMock);
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
@@ -397,7 +397,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.AMMATTINIMIKKEET, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.POHJALKOULUTUSVAATIMUS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
 
-        expect(commonConverterMock.searchOrganisaationNimi(null, FI)).andReturn(new OrganisaatioV1RDTO(NOT_TESTED, NOT_TESTED, null));
+        //expect(commonConverterMock.searchOrganisaationNimi(null, FI)).andReturn(new OrganisaatioV1RDTO(NOT_TESTED, NOT_TESTED, null));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSKIELIS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSMUODOS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSPAIKKAS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
@@ -414,7 +414,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToKoodiDTO(null, NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, PARAM)).andReturn(toKoodiUri(NOT_TESTED));
         expect(commonConverterMock.convertToKoodiDTO(null, NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, PARAM)).andReturn(toKoodiUri(NOT_TESTED));
 
-        expect(commonConverterMock.searchOrganisaationNimi(null, FI)).andReturn(new OrganisaatioV1RDTO(NOT_TESTED, NOT_TESTED, null));
+        // expect(commonConverterMock.searchOrganisaationNimi(null, FI)).andReturn(new OrganisaatioV1RDTO(NOT_TESTED, NOT_TESTED, null));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSKIELIS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSMUODOS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSPAIKKAS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
