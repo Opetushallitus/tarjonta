@@ -293,7 +293,17 @@ app.controller('BaseReviewController', [
                 controller: 'CopyMoveKoulutusController',
                 resolve: {
                     targetKoulutus: function() {
-                        return [{oid: $scope.model.koulutus.oid, koulutuskoodi: $scope.model.koulutus.koulutuskoodi.arvo, nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]}];
+                        var ohjelma = $scope.model.koulutus.koulutusohjelma;
+                        var strName = '';
+                        if (angular.isDefined(ohjelma.tekstis) && ohjelma.tekstis != null && Object.keys(ohjelma.tekstis).length > 0) {
+                            //korkeakoulu etc.
+                            strName = ohjelma.tekstis['kieli_' + $scope.model.koodistoLocale];
+                        } else {
+                            //2 aste etc.
+                            strName = ohjelma.meta['kieli_' + $scope.model.koodistoLocale].nimi;
+                        }
+
+                        return [{oid: $scope.model.koulutus.oid, koulutuskoodi: $scope.model.koulutus.koulutuskoodi.arvo, nimi: strName}];
                     },
                     targetOrganisaatio: function() {
                         return  {oid: $scope.model.koulutus.organisaatio.oid, nimi: $scope.model.koulutus.organisaatio.nimi}
