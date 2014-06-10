@@ -460,8 +460,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
-        if(parameterServices.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
-            //limited editing -> no changes to koulutuslist
+        final boolean canEdit = parameterServices.parameterCanEditHakukohde(parameters.getHakukohdeOid());
+        final boolean isOphAdmin = permissionChecker.isOphCrud();
+        if(!isOphAdmin && !canEdit){
+            //no editing at all || only limited limited editing -> no changes to koulutuslist
             throw new NotAuthorizedException("no.permission");
         }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(parameters.getHakukohdeOid());
