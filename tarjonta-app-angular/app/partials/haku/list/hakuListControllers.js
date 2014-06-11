@@ -302,6 +302,15 @@ app.controller('HakuListController',
                             }
                             return ret;
                         });
+
+                        angular.forEach(haut, function (haku) {
+
+                            if(haku.koulutuksenAlkamisVuosi === 0) {
+                                haku.koulutuksenAlkamisVuosi = '';
+
+                            }
+
+                        });
                         $scope.model.hakus = haut;
                     }
                     );
