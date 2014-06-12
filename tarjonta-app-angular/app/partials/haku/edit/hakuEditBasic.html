@@ -51,7 +51,7 @@
     <tr class="required">
         <th data-tt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
         <td>
-            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
+            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" filteruris="model.kohdejoukkoFilterUris" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" field-check="model.showError"></div>
