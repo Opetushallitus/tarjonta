@@ -375,7 +375,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
         criteria.setAktiiviset(true);
         criteria.setOrganisaatioTyyppi(OrganisaatioTyyppi.KOULUTUSTOIMIJA.value());
 
-        koulutustoimijaCombo.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(criteria)));
+        koulutustoimijaCombo.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchHierarchy(criteria)));
         koulutustoimijaCombo.setItemCaptionPropertyId(CAPTION_PROPERTY_ID);
         koulutustoimijaCombo.setImmediate(true);
         koulutustoimijaCombo.addListener(new Property.ValueChangeListener() {
@@ -405,7 +405,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     private void createOppilaitosComboDatasource(String koulutustoimijaOid) {
          if (cbOppilaitos != null) {
 
-             cbOppilaitos.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(createOrganisaatioSearchCriteria(koulutustoimijaOid, OrganisaatioTyyppi.OPPILAITOS))));
+             cbOppilaitos.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchHierarchy(createOrganisaatioSearchCriteria(koulutustoimijaOid, OrganisaatioTyyppi.OPPILAITOS))));
              cbOppilaitos.setItemCaptionPropertyId(CAPTION_PROPERTY_ID);
              cbOppilaitos.setEnabled(true);
          }
@@ -424,7 +424,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
     private void createToimipisteComboDatasource(String oppilaitosOid) {
         if (cbToimipiste != null) {
 
-            cbToimipiste.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(createOrganisaatioSearchCriteria(oppilaitosOid, OrganisaatioTyyppi.TOIMIPISTE))));
+            cbToimipiste.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchExact(createOrganisaatioSearchCriteria(oppilaitosOid, OrganisaatioTyyppi.TOIMIPISTE))));
             cbToimipiste.setItemCaptionPropertyId(CAPTION_PROPERTY_ID);
             cbToimipiste.setEnabled(true);
 
@@ -518,7 +518,7 @@ public class AloituspaikatRaporttiDialog extends CustomComponent {
 
 
 
-            oppilaitosCombo.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchBasicOrganisaatiosExact(createOrganisaatioSearchCriteria(koulutustoimijaOid, OrganisaatioTyyppi.OPPILAITOS))));
+            oppilaitosCombo.setContainerDataSource(createOrganisaatioContainer(organisaatioSearchService.searchExact(createOrganisaatioSearchCriteria(koulutustoimijaOid, OrganisaatioTyyppi.OPPILAITOS))));
             oppilaitosCombo.setItemCaptionPropertyId(CAPTION_PROPERTY_ID);
 
         }
