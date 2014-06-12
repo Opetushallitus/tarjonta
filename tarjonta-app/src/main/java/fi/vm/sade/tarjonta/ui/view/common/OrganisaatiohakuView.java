@@ -349,7 +349,7 @@ public class OrganisaatiohakuView extends VerticalLayout {
                 criteria.getOidRestrictionList().addAll(userContext.getUserOrganisations());
             }
             criteria.setAktiiviset(true);
-            organisaatios = organisaatioSearchService.searchBasicOrganisaatios(criteria);
+            organisaatios = organisaatioSearchService.searchHierarchy(criteria);
         } catch (Exception ex) {
             if (ex.getMessage().contains("organisaatioSearch.tooManyResults")) {
                 this.getWindow().showNotification(T("tooManyOrganisaatioResults"), Notification.TYPE_WARNING_MESSAGE);
