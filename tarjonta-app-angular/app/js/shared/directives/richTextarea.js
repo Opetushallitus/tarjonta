@@ -199,6 +199,12 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 				$scope.edit = false;
 			}
 		}
+		
+		$scope.$watch("model", function(nv, ov){
+			if (nv!=ov) {
+				$scope.onChange(nv, ov);
+			}
+		});
 
 	}
 
@@ -214,7 +220,8 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
         				 // - jos null tai undefined, editorin näytetään klikattaessa
         				 // - jos false, editori näytetään (aina)
         				 // - jos true, editoria ei näytetä
-        	max: "@"	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
+        	max: "@",	 // maksimimerkkimäärä (ohjeellinen); jos ei määritelty, ei näytetä
+            onChange: "&" // funktio, jota kutsutaan modelin muuttuessa
         },
 		link: function(scope, element, attrs, richTextareaContainer) {
 			if (richTextareaContainer) {
