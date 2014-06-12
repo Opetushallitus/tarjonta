@@ -158,14 +158,21 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 henkilo.sukunimi = '';
                 henkilo.etunimet = '';
 
-                if (Boolean(henkilo.nimet)) {
+                if (henkilo.nimet) {
+                  
+                  if(henkilo.nimet.indexOf(" ")==-1) { //ei välilyöntiä nimessä
+                    henkilo.etunimet = henkilo.nimet;
+                  } else {
                     var arrSeparatedNames = henkilo.nimet.split(" ");
                     for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
                         henkilo.etunimet += arrSeparatedNames[p];
+                        console.log("etunimi");
                     }
                     if (arrSeparatedNames.length > 1) {
                         henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];
+                        console.log("sukunimi");
                     }
+                  }
                 }
 
                 delete henkilo.nimet;
@@ -176,6 +183,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
         return arrOutputPersons;
     };
+    
     factory.deleteMetaField = function(obj) {
         if (!factory.isNull(obj) && !factory.isNull(obj.meta)) {
             delete obj.meta;
