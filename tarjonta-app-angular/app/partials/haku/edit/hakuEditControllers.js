@@ -292,6 +292,66 @@ app.controller('HakuEditController',
                 return result;
             };
 
+            var stringContainsOther = function (fullString,otherString) {
+
+                if(fullString && otherString) {
+
+                    if(fullString.indexOf(otherString) != -1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+
+                } else {
+                    return false;
+                }
+
+            };
+
+            $scope.filterKohdejoukkos = function () {
+
+              if(!AuthService.isUserOph())
+               {
+
+
+                    var kkOppilaitosTyypit = {};
+                    kkOppilaitosTyypit["oppilaitostyyppi_42"] = "";
+                    kkOppilaitosTyypit["oppilaitostyyppi_41"] = "";
+                    kkOppilaitosTyypit["oppilaitostyyppi_43"] = "";
+
+                    var userOrgs = AuthService.getOrganisations();
+
+                    //CHeck if user has KK - orgs
+                    angular.forEach(userOrgs, function (org) {
+                        OrganisaatioService.haeOppilaitostyypit(org).then(function (oppilaitosTyypit) {
+
+                            angular.forEach(oppilaitosTyypit, function (oppilaitosTyyppi) {
+                                var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split("#");
+                                //User belongs to KK - org, check if he/she has CRUD
+                                if(oppilaitosTyyppiUriWithoutVersion[0] in kkOppilaitosTyypit) {
+                                    AuthService.crudOrg(org).then(function (isCrud) {
+                                         console.log('IS CRUD : ', isCrud);
+                                        if(isCrud) {
+                                               $scope.model.kohdejoukkoFilterUris = ["haunkohdejoukko_12"];
+
+                                        }
+
+
+
+                                    });
+
+                                }
+                            })
+
+                        });
+
+                    });
+                }
+
+
+
+            };
+
 
             $scope.isJatkuvaHaku = function() {
                 var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
@@ -454,6 +514,7 @@ app.controller('HakuEditController',
                 $log.info("init... done.");
                 $scope.model = model;
 
+
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
@@ -475,6 +536,8 @@ app.controller('HakuEditController',
                 // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
+                //Filter kohdejoukkos
+                $scope.filterKohdejoukkos();
                 checkIsOphAdmin();
             };
             $scope.init();
