@@ -2,24 +2,13 @@
 
     <tabset>
         <tab ng-repeat="kieli in liitteetModel.opetusKielet" heading="{{kieli.koodiNimi}}" active="liitteetModel.selectedTab[kieli.koodiUri]">
-        
-            <p class="float-right">
-                <button class="btn btn-primary"
-                    ng-click="createLiite(kieli.koodiUri)"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus-sign"></span></button>
-            </p>
-            
             <div ng-repeat="liite in getLiitteetByKieli(kieli.koodiUri)" class="{{liite.selected ? 'selected' : ''}}">
 
-                <hr class="clear-both"/>
-                
 	            <table class="tarjontaForm">
 	                <tr class="required">
 	                    <th tt="tarjonta.hakukohde.liite.modal.nimi"></th>
 	                    <td><input type="text" ng-model="liite.liitteenNimi" ng-change="status.dirtify()" required/></td>
-	                    <td style="vertical-align:top">
-	                        <div class="float-right">
-	                            <button ng-click="deleteLiite(liite)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
-	                        </div>
+	                    <td>
 	                    </td>
 	                </tr>
 	                
@@ -60,28 +49,20 @@
 	            
 	            </table>
 
+                <p>
+                    <button ng-click="deleteLiite(liite)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
+                </p>
+
+                <hr/>
+
             </div>
             
-            <!--  
-            <hr/>
+        
+            <p>
+                <button class="btn btn-primary"
+                    ng-click="createLiite(kieli.koodiUri)"><span tt="tarjonta.hakukohde.liite.modal.lisäys"></span> <span class="icon-plus-sign"></span></button>
+            </p>
             
-                
-            <table class="table table-hover selection">
-                <tr>
-                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.kuvaus">Liite</th>
-                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.osoite">Toimitusosoite</th>
-                    <th tt="tarjonta.hakukohde.liite.listaus.liitteen.toimitusPvm">Toimitettava viimeistään</th>
-                    <th></th>
-                </tr>
-                <tr ng-repeat="liite in getLiitteetByKieli(kieli.koodiUri)" class="{{liite.selected ? 'selected' : ''}}">
-                    <td><a href ng-click="selectLiite(liite)">{{liite.liitteenNimi}}</a></td>
-                    <td>{{liite.liitteenToimitusOsoite | osoite }}</td>
-                    <td>{{liite.toimitettavaMennessa | date:'d.M.yyyy H:mm'}}</td>
-                    <td><div class="align-right"><button ng-click="deleteLiite(liite)" class="btn"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button></div></td>
-                </tr>
-            </table>
-             -->
-                
         </tab>
         
         <tab class="addLangTab">

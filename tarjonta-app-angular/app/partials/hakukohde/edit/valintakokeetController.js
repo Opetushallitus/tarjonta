@@ -128,6 +128,9 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
 	}
     
     $scope.deleteAjankohta = function(valintakoe, ajankohta, confirm) {
+    	if (!ajankohta.alkaa && !ajankohta.loppuu && !ajankohta.osoite.osoiterivi1 && !ajankohta.osoite.postinumero) {
+    		confirm = true;
+    	}
     	if (confirm) {
         	if (ajankohta == valintakoe.selectedAjankohta) {
         		valintakoe.selectedAjankohta = newAjankohta();
@@ -143,8 +146,8 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     			title: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta.title"),
     			description: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta",
     					[valintakoe.valintakoeNimi,
-    					 $filter("date")(ajankohta.alkaa, "d.M.yyyy H:mm"),
-    					 $filter("date")(ajankohta.loppuu, "d.M.yyyy H:mm")])
+    					 $filter("date")(ajankohta.alkaa, "d.M.yyyy H:mm") || "?",
+    					 $filter("date")(ajankohta.loppuu, "d.M.yyyy H:mm") || "?"])
     		}).result.then(function(ret){
     			if (ret) {
     				$scope.deleteAjankohta(valintakoe, ajankohta, true);
@@ -188,9 +191,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     			return;
     		}
     	}*/
-    	if (!omitDirty) {
-            $scope.status.dirtify();
-    	}
+        $scope.status.dirtify();
     	
     	var vk = {
         		hakukohdeOid:$scope.model.hakukohde.oid,
