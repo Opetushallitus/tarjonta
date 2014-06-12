@@ -12,7 +12,7 @@
         <!-- 1. komponenttirivi -->
         <tr>
             <td class="query">
-                <input type="text" placeholder="{{t('haku.list.hakuehto')}}" ng-enter="doSearch()"/>
+                <input type="text" ng-model="searchParams.HAKUSANA" placeholder="{{t('haku.list.hakuehto')}}" ng-enter="doSearch()"/>
             </td>
             <td colspan="2">
                 <!-- hakutapa -->
