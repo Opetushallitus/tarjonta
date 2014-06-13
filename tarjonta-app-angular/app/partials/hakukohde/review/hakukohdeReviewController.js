@@ -33,6 +33,7 @@ app.controller('HakukohdeReviewController',
       $scope.isRemovable=false;
       $scope.showNimiUri = false;
       $scope.isAiku = false;
+      $scope.isKK = false;
 //      $log.debug("scope.model:", $scope.model);
 
       var aikuKoulutuslajiUri = "koulutuslaji_a";
@@ -404,6 +405,9 @@ app.controller('HakukohdeReviewController',
                                   if(lopullinenTulos.koulutuslajiUri && lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
                                       $scope.isAiku = true;
                                   }
+                                  
+                                  $scope.isKK=lopullinenTulos.koulutusasteTyyppi=="KORKEAKOULUTUS";
+
                                   var koulutus = {
                                       nimi : lopullinenTulos.nimi,
                                       oid : lopullinenTulos.oid

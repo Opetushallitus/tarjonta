@@ -64,7 +64,13 @@ app.controller('HakukohdeParentController', ['$scope',
 
         };
 
-        $scope.status = {dirty: false}; // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
+        $scope.status = { // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
+        		dirty: false,
+        		dirtify: function() {
+        			//console.log("DIRTIFY hakukohde");
+        			$scope.status.dirty = true;
+        		}
+			};
 
         $scope.model.showSuccess = false;
         $scope.model.showError = false;

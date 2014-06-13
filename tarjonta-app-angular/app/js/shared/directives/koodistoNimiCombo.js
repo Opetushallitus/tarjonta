@@ -192,6 +192,12 @@ app.directive('koodistocombo',function(Koodisto,$log){
             //If filter uris is changed then query only those and show those koodis
             $scope.$watch('filteruris',function(){
 
+                $scope.checkForFilterUris();
+
+            });
+
+            $scope.$watch('excludeuris',function(){
+
                 $scope.checkForExcludeUris();
 
             });

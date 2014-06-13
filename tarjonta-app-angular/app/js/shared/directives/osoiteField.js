@@ -58,7 +58,13 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
     	$scope.$watch("model", function(nv, ov){
     		$scope.postinumeroArvo = null;
     		$scope.updatePostinumero();
+			if (!angular.equals(nv,ov)) {
+				onChange();
+			}
     	});
+    	
+		/*$scope.$watch("model", function(nv, ov){
+		});*/
 
     	Koodisto.getAllKoodisWithKoodiUri('posti',LocalisationService.getLocale()).then(function(ret){
             /*for (var i in ret) {
@@ -98,7 +104,8 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
         	// angular-form-logiikkaa varten
 	        name: "@", // nimi formissa
 	        required: "@", // pakollisuus
-	        ngRequired: "&" // vastaava ng
+	        ngRequired: "&", // vastaava ng
+            onChange: "&" // funktio, jota kutsutaan modelin muuttuessa
         }
     }
 

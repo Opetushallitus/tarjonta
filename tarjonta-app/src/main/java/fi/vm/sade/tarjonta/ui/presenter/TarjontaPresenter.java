@@ -822,7 +822,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         criteria.getOidRestrictionList().addAll(organisaatioOids);
         criteria.setSuunnitellut(true);
 
-        return organisaatioSearchService.searchBasicOrganisaatios(criteria);
+        return organisaatioSearchService.searchHierarchy(criteria);
     }
 
     private List<KoulutusOidNameViewModel> getHakukohdeKoulutukses(HakukohdeViewModel hakukohdeViewModel) {
@@ -1044,7 +1044,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         dto.getOidRestrictionList().add(organisaatioOid);
         try {
-            List<OrganisaatioPerustieto> orgs = organisaatioSearchService.searchBasicOrganisaatios(dto);
+            List<OrganisaatioPerustieto> orgs = organisaatioSearchService.searchHierarchy(dto);
             List<String> organisaatioOidTree = new ArrayList<String>();
             for (OrganisaatioPerustieto perus : orgs) {
                 if (perus != null) {
@@ -2230,7 +2230,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         criteria.setAktiiviset(true);
 
         criteria.getOidRestrictionList().add(selectedOrg.getOid());
-        List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchBasicOrganisaatios(criteria);
+        List<OrganisaatioPerustieto> childOrgs = organisaatioSearchService.searchHierarchy(criteria);
         if (childOrgs != null) {
             for (OrganisaatioPerustieto curChild : childOrgs) {
                 if (curChild.getOrganisaatiotyypit().contains(OrganisaatioTyyppi.OPPILAITOS)
