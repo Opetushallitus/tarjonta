@@ -231,6 +231,10 @@ public class KoulutusCommonConverter {
         return koodiMapDto;
     }
 
+
+    /*
+     * Required koodi uri + version
+     */
     public KoodiUrisV1RDTO convertToKoodiUrisDTO(final List<String> uris, final FieldNames fieldName, final RestParam param) {
         KoodiUrisV1RDTO koodiMapDto = new KoodiUrisV1RDTO();
         if (koodiMapDto.getUris() == null) {
@@ -250,7 +254,11 @@ public class KoulutusCommonConverter {
         Preconditions.checkNotNull(locale, "Locale object cannot be null. field in " + fieldName);
         KoodiType koodiType = null;
         try {
-            koodiType = tarjontaKoodistoHelper.getKoodi(type.getKoodiUri(), type.getVersio());
+            if (type.getVersio() == -1) {
+                koodiType = tarjontaKoodistoHelper.getKoodiByUri(type.getKoodiUri());
+            } else {
+                koodiType = tarjontaKoodistoHelper.getKoodi(type.getKoodiUri(), type.getVersio());
+            }
         } catch (Exception e) {
             LOG.error("Koodisto service error.", e);
         }

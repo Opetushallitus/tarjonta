@@ -72,39 +72,40 @@ public class EntityConverterToKomoRDTO {
 
         //KOMO
         Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "KoulutustyyppiEnum cannot be null!");
-        Preconditions.checkNotNull(komo.getKoulutustyyppiUri(), "KoulutustyyppiUri cannot be null!");
         List<ToteutustyyppiEnum> convertStringListToEnums = convertStringListToEnums(komo.getKoulutustyyppiUri());
 
-        switch (convertStringListToEnums.get(0)) {
-            case KORKEAKOULUTUS:
-                kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), FieldNames.KOULUTUSOHJELMA, restParam));
-                break;
-            case AMMATILLINEN_PERUSTUTKINTO:
-            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                switch (komo.getModuuliTyyppi()) {
-                    case TUTKINTO_OHJELMA:
-                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, restParam));
-                        break;
-                }
-
-                break;
-            case LUKIOKOULUTUS:
-            case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
-                switch (komo.getModuuliTyyppi()) {
-                    case TUTKINTO_OHJELMA:
-                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), FieldNames.LUKIOLINJA, NO, restParam));
-                        break;
-                }
-                break;
-            default:
-                if (komo.getKoulutusohjelmaUri() != null && !komo.getKoulutusohjelmaUri().isEmpty()) {
-                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, restParam));
-                } else if (komo.getLukiolinjaUri() != null && !komo.getLukiolinjaUri().isEmpty()) {
-                    kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), FieldNames.LUKIOLINJA, NO, restParam));
-                } else {
+        if (!convertStringListToEnums.isEmpty()) {
+            switch (convertStringListToEnums.get(0)) {
+                case KORKEAKOULUTUS:
                     kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), FieldNames.KOULUTUSOHJELMA, restParam));
-                }
-                break;
+                    break;
+                case AMMATILLINEN_PERUSTUTKINTO:
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                    switch (komo.getModuuliTyyppi()) {
+                        case TUTKINTO_OHJELMA:
+                            kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, restParam));
+                            break;
+                    }
+
+                    break;
+                case LUKIOKOULUTUS:
+                case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                    switch (komo.getModuuliTyyppi()) {
+                        case TUTKINTO_OHJELMA:
+                            kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), FieldNames.LUKIOLINJA, NO, restParam));
+                            break;
+                    }
+                    break;
+                default:
+                    if (komo.getKoulutusohjelmaUri() != null && !komo.getKoulutusohjelmaUri().isEmpty()) {
+                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, restParam));
+                    } else if (komo.getLukiolinjaUri() != null && !komo.getLukiolinjaUri().isEmpty()) {
+                        kkDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getLukiolinjaUri(), FieldNames.LUKIOLINJA, NO, restParam));
+                    } else {
+                        kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(komo.getNimi(), FieldNames.KOULUTUSOHJELMA, restParam));
+                    }
+                    break;
+            }
         }
 
         kkDto.setKoulutusasteTyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
@@ -138,11 +139,15 @@ public class EntityConverterToKomoRDTO {
         return commonConverter.convertToKoodiUrisDTO(splitStringToList, fieldName, restParam);
     }
 
-    private List<ToteutustyyppiEnum> convertStringListToEnums(String str) {
-        String[] split = StringUtils.split(str, EntityUtils.STR_ARRAY_SEPARATOR);
+    private List<ToteutustyyppiEnum> convertStringListToEnums(final String str) {
         ArrayList<ToteutustyyppiEnum> types = Lists.<ToteutustyyppiEnum>newArrayList();
-        for (String s : split) {
-            types.add(ToteutustyyppiEnum.fromString(s));
+
+        if (str != null && !str.isEmpty()) {
+            String[] split = StringUtils.split(str, EntityUtils.STR_ARRAY_SEPARATOR);
+
+            for (String s : split) {
+                types.add(ToteutustyyppiEnum.fromString(s));
+            }
         }
 
         return types;

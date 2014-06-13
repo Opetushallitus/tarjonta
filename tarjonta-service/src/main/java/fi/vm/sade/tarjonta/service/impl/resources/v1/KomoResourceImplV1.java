@@ -212,16 +212,16 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     @Override
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
             ToteutustyyppiEnum koulutustyyppiUri,
-            String koulutuskoodiUri,
+            String koulutusUri,
             String tila) {
-        return searchModule(koulutustyyppiUri, null, koulutuskoodiUri, tila);
+        return searchModule(koulutustyyppiUri, null, koulutusUri, tila);
     }
 
     @Override
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
             ToteutustyyppiEnum koulutustyyppiUri,
             KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
-            String koulutuskoodiUri,
+            String koulutusUri,
             String tila) {
         Preconditions.checkNotNull(koulutustyyppiUri, "Koulutustyyppi URI cannot be null.");
 
@@ -230,8 +230,8 @@ public class KomoResourceImplV1 implements KomoV1Resource {
             criteria.setTila(criteria.getTila());
         }
 
-        if (koulutuskoodiUri != null) {
-            criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutuskoodiUri);
+        if (koulutusUri != null) {
+            criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutusUri);
         }
 
         if (koulutustyyppiUri != null) {
