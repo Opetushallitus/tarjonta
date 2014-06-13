@@ -200,6 +200,7 @@ describe('Edit koulutus testeja', function() {
         $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
 
         $scope.uiModel = {};
+        $scope.init($scope.uiModel);
 
         $scope.uiModel.contactPerson = {};
 
@@ -282,8 +283,8 @@ describe('Edit koulutus insert/edit/load', function() {
         routeParams = $routeParams;
         routeParams.id = null;
         routeParams.org = 'org-oid-1';
-        routeParams.toteutustyyppi="KORKEAKOULUTUS";
-        routeParams.koulutustyyppi="KORKEAKOULUTUS";
+        routeParams.toteutustyyppi = "KORKEAKOULUTUS";
+        routeParams.koulutustyyppi = "KORKEAKOULUTUS";
         cfg = Config;
 
         organisaatioService = OrganisaatioService;
