@@ -40,6 +40,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiValikoimaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -95,28 +96,28 @@ public class KoulutusCommonConverter {
     public NimiV1RDTO koulutusohjelmaUiMetaDTO(final MonikielinenTeksti mt, final FieldNames msg, final RestParam param) {
         NimiV1RDTO data = new NimiV1RDTO();
         if (mt != null) {
-        for (TekstiKaannos tk : mt.getTekstis()) {
-            final KoodiType koodiType = tarjontaKoodistoHelper.convertKielikoodiToKoodiType(tk.getKieliKoodi());
+            for (TekstiKaannos tk : mt.getTekstis()) {
+                final KoodiType koodiType = tarjontaKoodistoHelper.convertKielikoodiToKoodiType(tk.getKieliKoodi());
 
-            if (koodiType == null) {
-                LOG.error("No koodisto koodi URI found for kielikoodi : '{}'", tk.getKieliKoodi());
-                continue;
-            }
-
-            final String koodiUri = koodiType.getKoodiUri();
-
-            data.getTekstis().put(koodiUri, tk.getArvo());
-            if (param.getShowMeta()) {
-                if (data.getMeta() == null) {
-                    data.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                if (koodiType == null) {
+                    LOG.error("No koodisto koodi URI found for kielikoodi : '{}'", tk.getKieliKoodi());
+                    continue;
                 }
 
-                KoodiUriAndVersioType type = new KoodiUriAndVersioType();
-                type.setKoodiUri(koodiType.getKoodiUri());
-                type.setVersio(koodiType.getVersio());
-                data.getMeta().put(koodiUri, convertToKoodiDTO(new KoodiV1RDTO(), type, param.getLocale(), msg, true));
+                final String koodiUri = koodiType.getKoodiUri();
+
+                data.getTekstis().put(koodiUri, tk.getArvo());
+                if (param.getShowMeta()) {
+                    if (data.getMeta() == null) {
+                        data.setMeta(Maps.<String, KoodiV1RDTO>newHashMap());
+                    }
+
+                    KoodiUriAndVersioType type = new KoodiUriAndVersioType();
+                    type.setKoodiUri(koodiType.getKoodiUri());
+                    type.setVersio(koodiType.getVersio());
+                    data.getMeta().put(koodiUri, convertToKoodiDTO(new KoodiV1RDTO(), type, param.getLocale(), msg, true));
+                }
             }
-        }
         }
         return data;
     }
@@ -375,7 +376,14 @@ public class KoulutusCommonConverter {
      * @param dto
      */
     public void handleDates(KoulutusmoduuliToteutus komoto, KoulutusV1RDTO dto) {
-        final Set<Date> koulutuksenAlkamisPvms = dto.getKoulutuksenAlkamisPvms();
+        handleDates(komoto, dto.getKoulutuksenAlkamisPvms(), dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
+    }
+
+    public void handleDates(KoulutusmoduuliToteutus komoto, ValmistavaV1RDTO dto) {
+        handleDates(komoto, dto.getKoulutuksenAlkamisPvms(), dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
+    }
+
+    private void handleDates(KoulutusmoduuliToteutus komoto, Set<Date> koulutuksenAlkamisPvms, KoodiV1RDTO kausi, Integer vuosi) {
 
         if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
             //one or many dates   
@@ -388,14 +396,14 @@ public class KoulutusCommonConverter {
             komoto.setAlkamiskausiUri(IndexDataUtils.parseKausiKoodi(firstDate));
         } else {
             //allowed only one kausi and year
-            Preconditions.checkNotNull(dto.getKoulutuksenAlkamiskausi(), "Alkamiskausi cannot be null!");
-            Preconditions.checkArgument(!convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI).isEmpty(), "Alkamiskausi cannot be empty string.");
-            Preconditions.checkNotNull(dto.getKoulutuksenAlkamisvuosi(), "Alkamisvuosi cannot be null!");
+            Preconditions.checkNotNull(kausi, "Alkamiskausi cannot be null!");
+            Preconditions.checkArgument(!convertToUri(kausi, FieldNames.ALKAMISKAUSI).isEmpty(), "Alkamiskausi cannot be empty string.");
+            Preconditions.checkNotNull(vuosi, "Alkamisvuosi cannot be null!");
 
             komoto.clearKoulutuksenAlkamisPvms();
             //only kausi + year, no date objects   
-            komoto.setAlkamisVuosi(dto.getKoulutuksenAlkamisvuosi());
-            komoto.setAlkamiskausiUri(convertToUri(dto.getKoulutuksenAlkamiskausi(), FieldNames.ALKAMISKAUSI));
+            komoto.setAlkamisVuosi(vuosi);
+            komoto.setAlkamiskausiUri(convertToUri(kausi, FieldNames.ALKAMISKAUSI));
         }
     }
 

@@ -43,11 +43,11 @@ app.controller('BaseEditController', [
         $scope.lisatiedot = null;
         $scope.controlModel = {
             /*formStatus: {
-                modifiedBy: '',
-                modified: null,
-                tila: ''
-            },
-            formControls: {}*/
+             modifiedBy: '',
+             modified: null,
+             tila: ''
+             },
+             formControls: {}*/
         };
 
         /*
@@ -276,21 +276,29 @@ app.controller('BaseEditController', [
         };
 
         $scope.saveByStatus = function(tila, form, tyyppi, fnCustomCallbackAfterSave) {
-            $scope.saveByStatusAndApiObject(
-                    tila,
-                    form,
-                    tyyppi,
-                    fnCustomCallbackAfterSave,
-                    converter.saveModelConverter(tila, $scope.model, $scope.uiModel, tyyppi)
-                    );
+             $scope.saveApimodelByStatus(angular.copy($scope.model), tila, form, tyyppi, fnCustomCallbackAfterSave);
         };
 
-        $scope.saveByStatusAndApiObject = function(tila, form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
-            $scope.controlFormMessages(form, $scope.uiModel, "CLEAR");
-
+        $scope.saveApimodelByStatus = function(apiModel, tila, form, tyyppi, fnCustomCallbackAfterSave) {
             if (angular.isUndefined(tila)) {
                 converter.throwError('Undefined tila');
             }
+
+            if (apiModel.tila !== "JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
+                apiModel.tila = tila;
+            }
+
+            $scope.saveByStatusAndApiObject(
+                    form,
+                    tyyppi,
+                    fnCustomCallbackAfterSave,
+                    converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
+                    );
+        };
+
+        $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
+            $scope.controlFormMessages(form, $scope.uiModel, "CLEAR");
+
 
             if (form.$invalid || !form.$valid || (form.$pristine && !$scope.isLoaded())) {
                 //invalid form data
@@ -320,7 +328,7 @@ app.controller('BaseEditController', [
                         form.$pristine = true;
 
                         $scope.model = model;
-                        
+
                         //$scope.updateFormStatusInformation($scope.model);
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
                         $scope.uiModel.tabs.lisatiedot = false;

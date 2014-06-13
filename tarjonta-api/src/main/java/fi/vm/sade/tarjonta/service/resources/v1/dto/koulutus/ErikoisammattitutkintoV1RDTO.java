@@ -21,10 +21,10 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
  *
  * @author jani
  */
-public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends NayttotutkintoV1RDTO {
+public class ErikoisammattitutkintoV1RDTO extends NayttotutkintoV1RDTO {
 
-    public KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO() {
-        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+    public ErikoisammattitutkintoV1RDTO() {
+        super(ToteutustyyppiEnum.ERIKOISAMMATTITUTKINTO, ModuulityyppiEnum.ERIKOISAMMATTITUTKINTO);
     }
 
 }

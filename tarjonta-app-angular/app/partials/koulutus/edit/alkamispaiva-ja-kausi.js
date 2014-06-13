@@ -271,7 +271,9 @@ app.directive('alkamispaivat', ['$log', function($log) {
              * to reload by creating new array of dates.
              */
             $scope.$watch("dates", function(valNew, valOld) {
-                $scope.reset();
+                if (angular.isDefined(valNew)) {
+                    $scope.reset();
+                }
             });
 
             return $scope;

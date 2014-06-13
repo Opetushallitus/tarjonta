@@ -35,13 +35,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusBase.KAUSI_KOODI_URI;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuistenOppimaaraV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang.time.DateUtils;
 import static org.easymock.EasyMock.*;
@@ -70,6 +73,16 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
     @After
     public void tearDown() {
+    }
+    
+        private void printResultErrors(ResultV1RDTO r) {
+        if (r != null && r.getErrors() != null) {
+            List<ErrorV1RDTO> errors = r.getErrors();
+
+            for (ErrorV1RDTO e : errors) {
+                System.out.println(e.getErrorMessageKey());
+            }
+        }
     }
 
     @Test
@@ -152,7 +165,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, result.getKoulutusasteTyyppi());
-        assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS, result.getToteutustyyppi());
+        assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA, result.getToteutustyyppi());
         assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS, result.getModuulityyppi());
 
         final String key = URI_KIELI_FI + "_uri";
@@ -210,7 +223,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
      * Set DTO data fields:
      */
     private KoulutusLukioV1RDTO createDTO() {
-        KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
+        KoulutusLukioAikuistenOppimaaraV1RDTO dto = new KoulutusLukioAikuistenOppimaaraV1RDTO();
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
 
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));

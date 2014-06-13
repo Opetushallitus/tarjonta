@@ -149,7 +149,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         for (; i < arrPersons.length; i++) {
 
             var henkilo = angular.copy(arrPersons[i]);
-
+            
+            if(angular.isUndefined(henkilo)){
+                continue;
+            }
+            
             if (angular.isUndefined(henkilo.henkiloTyyppi)) {
                 throw "Unknown henkilo tyyppi";
             }
@@ -542,9 +546,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opetuskielis: {koodisto: 'koodisto-uris.kieli'},
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
-                toteutustyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA'},
-                tila: {'default': 'LUONNOS'},
-                tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''},
                 hinta: {"default": ''}
@@ -554,21 +555,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opintojenMaksullisuus: {"default": false}
             }, IMAGES: {
             }, DESC: {
-                kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
-                    ])},
-                kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
+                kuvaus: {'nullable': false, "default": factory.createBaseDescUiField([
                     ])}
             }
         }
     };
 
-    factory.validateOutputData = function(m, koulutusasteTyyppi) {
-        if (factory.isNull(m.organisaatio) || factory.isNull(m.organisaatio.oid)) {
-            factory.throwError("Organisation OID is missing.");
-        }
-
+    factory.validateOutputData = function(m, toteutustyyppi) {
         //remove all meta data fields, if any
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi], function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi], function(value, key) {
             if ('MLANG' !== key) {
                 //MLANG objects needs the meta fields                
                 angular.forEach(value, function(value, key) {
@@ -578,12 +573,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
     };
 
-    factory.saveModelConverter = function(tila, pmodel, uiModel, toteutustyyppi) {
-        var apiModel = angular.copy(pmodel);
-        if (apiModel.tila !== "JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
-            apiModel.tila = tila;
-        }
+    factory.saveModelConverter = function(apiModel, uiModel, toteutustyyppi) {
         factory.validateOutputData(apiModel, toteutustyyppi);
+
         /*
          * DATA CONVERSIONS FROM UI MODEL TO API MODEL
          * Convert person object to back-end object format.

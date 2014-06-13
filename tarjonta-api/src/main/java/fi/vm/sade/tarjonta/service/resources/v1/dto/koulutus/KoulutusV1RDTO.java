@@ -39,16 +39,14 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
  *
  * @author jwilen
  */
-@ApiModel(value = "Koulutuksien yleiset tiedot sisältä rajapintaolio")
+@ApiModel(value = "Koulutuksien yleiset tiedot sisältävä rajapintaolio")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi")
 @JsonSubTypes({
     @Type(value = KoulutusKorkeakouluV1RDTO.class, name = "KORKEAKOULUTUS"),
     @Type(value = KoulutusLukioV1RDTO.class, name = "LUKIOKOULUTUS"),
     @Type(value = KoulutusLukioAikuistenOppimaaraV1RDTO.class, name = "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA"),
     @Type(value = KoulutusAmmatillinenPerustutkintoV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO"),
-    @Type(value = KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA"),
-    @Type(value = KoulutusValmistavaV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA")
-
+    @Type(value = KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA")
 })
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
@@ -114,9 +112,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
-
-    @ApiModelProperty(value = "OPH koulutustyyppi-koodi", required = false)
-    private KoodiV1RDTO koulutustyyppi;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.toteutustyyppi = toteutustyyppi;
@@ -440,20 +435,6 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     public void setKomotoOid(String _komotoOid) {
         this.komotoOid = _komotoOid;
-    }
-
-    /**
-     * @return the koulutustyyppi
-     */
-    public KoodiV1RDTO getKoulutustyyppi() {
-        return koulutustyyppi;
-    }
-
-    /**
-     * @param koulutustyyppi the koulutustyyppi to set
-     */
-    public void setKoulutustyyppi(KoodiV1RDTO koulutustyyppi) {
-        this.koulutustyyppi = koulutustyyppi;
     }
 
     /**

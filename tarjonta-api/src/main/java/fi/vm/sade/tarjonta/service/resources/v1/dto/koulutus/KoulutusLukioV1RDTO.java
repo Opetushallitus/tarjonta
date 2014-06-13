@@ -15,7 +15,6 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;

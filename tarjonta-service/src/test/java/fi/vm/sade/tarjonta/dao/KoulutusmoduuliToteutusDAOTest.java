@@ -116,13 +116,13 @@ public class KoulutusmoduuliToteutusDAOTest {
         KoulutusmoduuliToteutus linkedKomoto1 = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto1.getOid());
         KoulutusmoduuliToteutus linkedKomoto2 = koulutusmoduuliToteutusDAO.findKomotoByOid(komoto2.getOid());
 
-        linkedKomoto1.setNayttotutkintoValmistavaKoulutus(linkedKomoto2);
+        linkedKomoto1.setValmistavaKoulutus(linkedKomoto2);
         this.koulutusmoduuliToteutusDAO.update(linkedKomoto1);
 
         linkedKomoto1 = koulutusmoduuliToteutusDAO.findByOid(linkedKomoto1.getOid());
         assertNotNull("no base link komoto object found by findByOid?", linkedKomoto1);
-        assertNotNull("no linked komoto object found by findByOid?", linkedKomoto1.getNayttotutkintoValmistavaKoulutus());
-        assertEquals(linkedKomoto2, linkedKomoto1.getNayttotutkintoValmistavaKoulutus());
+        assertNotNull("no linked komoto object found by findByOid?", linkedKomoto1.getValmistavaKoulutus());
+        assertEquals(linkedKomoto2, linkedKomoto1.getValmistavaKoulutus());
     }
 
     @Test

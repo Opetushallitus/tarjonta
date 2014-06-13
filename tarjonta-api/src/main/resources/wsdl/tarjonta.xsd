@@ -1083,6 +1083,8 @@
             <xs:enumeration value="Perusopetus" /><!-- Perusopetus / peruskoulu kotimaa -->
             <xs:enumeration value="PerusopetusUlkomainen" /><!-- Perusopetus / peruskoulu ulkomainen -->
             <xs:enumeration value="AmmatillinenPerustutkintoNayttotutkintona" /><!-- aikuiskoulutus -->
+            <xs:enumeration value="Erikoisammattitutkinto" /><!-- aikuiskoulutus -->
+            <xs:enumeration value="Ammattitutkinto" /><!-- aikuiskoulutus -->
             <xs:enumeration value="Tuntematon" /><!-- geneerinen tuntematon -->      
         </xs:restriction>
     </xs:simpleType>

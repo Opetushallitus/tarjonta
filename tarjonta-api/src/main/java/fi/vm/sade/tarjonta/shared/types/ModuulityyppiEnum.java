@@ -5,7 +5,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 /*
  * TODO: remove the KoulutusasteTyyppi xml type from all APIs as soon as you can.
  */
- public enum ModuulityyppiEnum {
+public enum ModuulityyppiEnum {
 
     AMMATILLINEN_PERUSKOULUTUS(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS,
             //subtypes of ammatillinen komo
@@ -30,6 +30,8 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
     PERUSOPETUS(KoulutusasteTyyppi.PERUSOPETUS),
     PERUSOPETUS_ULKOMAINEN(KoulutusasteTyyppi.PERUSOPETUS_ULKOMAINEN),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA(KoulutusasteTyyppi.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA),
+    ERIKOISAMMATTITUTKINTO(KoulutusasteTyyppi.ERIKOISAMMATTITUTKINTO),
+    AMMATTITUTKINTO(KoulutusasteTyyppi.AMMATTITUTKINTO),
     TUNTEMATON(KoulutusasteTyyppi.TUNTEMATON); //generic unknown type for missing data
 
     //Mostly deprecated API type, please remove it from alla APIs
@@ -61,8 +63,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
     /**
      * Search base 'koulutustyyppi' enum by detailed education type enum. When
- an array of ToteutustyyppiEnums is null, sub type is not yet
- implemented!
+     * an array of ToteutustyyppiEnums is null, sub type is not yet implemented!
      *
      * @param subTypeEnum
      * @return

@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
@@ -36,12 +37,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusBase.KAUSI_KOODI_URI;
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusBase.ORGANISATION_OID;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusValmistavaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -80,6 +82,8 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         reload();
         createJoinedParentAndChildKomos(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
         jarjestajaDTO.setOid(ORGANISATION_JARJESTAJA_OID);
+        jarjestajaDTO.setNimi(new MonikielinenTekstiTyyppi());
+        jarjestajaDTO.getNimi().getTeksti().add(new MonikielinenTekstiTyyppi.Teksti("jarjestaja", LOCALE_FI));
     }
 
     @After
@@ -112,7 +116,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
          */
         replayAll();
         ResultV1RDTO<KoulutusV1RDTO> v = instance.postKoulutus(createDTO());
-        printResultErrors(v);
         assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
         verifyAll();
 
@@ -141,7 +144,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(ORGANISATION_OID);
         expect(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).andReturn(true);
-        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(3);
+        expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(2);
         replayAll();
 
@@ -188,36 +191,10 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUSKIELI);
     }
 
-    private void assertValmentavaData(final KoulutusValmistavaV1RDTO result) {
+    private void assertValmentavaData(final ValmistavaV1RDTO result) {
         assertNotNull(result);
-
-        assertEquals(VALMENTAVA_KOMOTO_OID, result.getOid());
-        assertEquals(KOMO_CHILD_OID, result.getKomoOid());
-        assertEquals(ORGANISATION_OID, result.getOrganisaatio().getOid());
-        assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
-
-        assertEquals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS, result.getKoulutusasteTyyppi());
-        assertEquals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA, result.getToteutustyyppi());
-        assertEquals(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS, result.getModuulityyppi());
-
-        final String key = URI_KIELI_FI + "_uri";
-
-        Assert.assertTrue(result.getKoulutusohjelma().getTekstis().isEmpty());
-        Assert.assertNull(result.getKoulutusohjelma().getNimi());
-        Assert.assertNull(result.getKoulutusohjelma().getUri());
-        Assert.assertNull(result.getKoulutusaste());
-        Assert.assertNull(result.getKoulutusala());
-        Assert.assertNull(result.getOpintoala());
-        Assert.assertNull(result.getEqf());
-        Assert.assertNull(result.getNqf());
-        Assert.assertNull(result.getKoulutuskoodi());
-        Assert.assertNull(result.getOpintojenLaajuusarvo());
-        Assert.assertNull(result.getOpintojenLaajuusyksikko());
-        Assert.assertNull(result.getTutkinto());
-
-        assertEquals(null, result.getTila()); // no status for valmentava
-        assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, result.getKoulutusmoduuliTyyppi());
-        assertEquals(null, result.getTunniste());
+        assertEquals("www", result.getLinkkiOpetussuunnitelmaan());
+        assertEquals(1, result.getKoulutuksenAlkamisPvms().size());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
@@ -238,7 +215,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         assertEquals(PERSON[4], next.getSahkoposti());
         assertEquals(PERSON[5], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
-        assertEquals(USER_OID, result.getModifiedBy());
+
     }
 
     private void assertNayttoData(final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO result) {
@@ -346,21 +323,8 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     /*
      * Set optional DTO data fields:
      */
-    private KoulutusValmistavaV1RDTO createValmentavaDTO() {
-        KoulutusValmistavaV1RDTO dto = new KoulutusValmistavaV1RDTO();
-        dto.getOrganisaatio().setOid(ORGANISATION_OID);
-        dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
-        dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
-        dto.setOpintoala(toKoodiUri(OPINTOALA));
-        dto.setTutkinto(toKoodiUri(TUTKINTO));
-        dto.setEqf(toKoodiUri(EQF));
-        dto.setNqf(toKoodiUri(NQF));
-        dto.setTila(TarjontaTila.JULKAISTU);
-        dto.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.TUTKINTO);
-        dto.setTunniste(TUNNISTE);
-        dto.setKomoOid(KOMO_CHILD_OID);
-        dto.setKoulutuskoodi(toKoodiUri(KOULUTUSKOODI));
-        dto.setKoulutusohjelma(toNimiKoodiUri(KOULUTUSOHJELMA));
+    private ValmistavaV1RDTO createValmentavaDTO() {
+        ValmistavaV1RDTO dto = new ValmistavaV1RDTO();
         dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
         koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
         koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
@@ -369,8 +333,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
-        dto.setOpintojenLaajuusarvo(toKoodiUri(LAAJUUSARVO));
-        dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
+        dto.setLinkkiOpetussuunnitelmaan("www");
 
         return dto;
     }

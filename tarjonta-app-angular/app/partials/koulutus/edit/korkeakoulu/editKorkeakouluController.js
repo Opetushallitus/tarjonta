@@ -9,7 +9,7 @@ app.controller('EditKorkeakouluController',
 
                 $scope.init = function() {
                     $log.debug("init");
-                    
+
                     /*
                      * INITIALIZE PAGE CONFIG
                      */
@@ -83,7 +83,6 @@ app.controller('EditKorkeakouluController',
                      */
                     $scope.setUiModel(uiModel);
                     $scope.setModel(model);
-
                 };
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
@@ -98,10 +97,14 @@ app.controller('EditKorkeakouluController',
                         });
 
                         angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATIONS, function(value, key) {
-                            uiModel[key].meta = restRelationData[key].meta;
+                            if (angular.isDefined(restRelationData[key])) {
+                                uiModel[key].meta = restRelationData[key].meta;
 
-                            if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
-                                uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
+                                if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
+                                    uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
+                                }
+                            } else {
+                                $log.error("Error, koodisto not found : '" + key + "' = '" + angular.toJson(value) + " " +  angular.toJson(restRelationData));
                             }
                         });
                     });

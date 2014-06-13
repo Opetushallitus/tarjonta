@@ -260,18 +260,21 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                             })
                 })
 
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
+            } else if ( $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
                 //LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA
-                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/koulutustyyppi_14/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_13") {
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_13"
+                    || $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_12"
+                    || $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_11"
+                    ) {
                 //AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA
                 var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
 
                 promise.then(function(koodis) {
                     for (var i = 0; i < koodis.length; i++) {
                         if (CONFIG.env["koodisto-uris.koulutuslaji"] === koodis[i].koodiKoodisto) {
-                            $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/'+ $scope.model.koulutustyyppi.koodiUri +'/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                            $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/' + $scope.model.koulutustyyppi.koodiUri + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                             break;
                         }
                     }

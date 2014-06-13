@@ -17,14 +17,12 @@ app.controller('EditNayttotutkintoController',
                      * INITIALIZE PAGE CONFIG
                      */
                     $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
-
-                    $scope.cbShowValmistavaKoulutus = false;
-
                     var model = {
                         valmistavaKoulutus: null
                     };
                     var uiModel = {
                         //custom stuff
+                        toggleTabs: false,
                         cbShowValmistavaKoulutus: false,
                         koulutusohjelma: [],
                         tutkintoModules: {},
@@ -43,7 +41,7 @@ app.controller('EditNayttotutkintoController',
                          *  Look more info from koulutusController.js.
                          */
                         model = $route.current.locals.koulutusModel.result;
-                        if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
+                        if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null) {
                             $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                             $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                             vkUiModel.showValidationErrors = true;
@@ -57,9 +55,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
-
-
-
+                        
                     } else if (!angular.isUndefined($routeParams.org)) {
                         /*
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
@@ -124,12 +120,12 @@ app.controller('EditNayttotutkintoController',
                     //Ui model for editValmistavaKoulutusPerustiedot and eeditValmistavaKoulutusLisatiedot pages (special case)
                     $scope.vkUiModel = vkUiModel;
 
-                    if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null && angular.isDefined(model.valmistavaKoulutus.oid) && model.valmistavaKoulutus.oid !== null) {
+                    if (angular.isDefined(model.valmistavaKoulutus) && model.valmistavaKoulutus !== null) {
                         $scope.uiModel.cbShowValmistavaKoulutus = true;
-                        $scope.cbShowValmistavaKoulutus = true;
+                        $scope.uiModel.toggleTabs = true;
                     } else {
                         $scope.uiModel.cbShowValmistavaKoulutus = false;
-                        $scope.cbShowValmistavaKoulutus = false;
+                        $scope.uiModel.toggleTabs = false;
                     }
                 };
 
@@ -260,14 +256,12 @@ app.controller('EditNayttotutkintoController',
 
                 $scope.saveByStatus = function(tila) {
                     $scope.vkUiModel.showValidationErrors = true;
+                    var apiModel = angular.copy($scope.model);
 
-                    var api = converter.saveModelConverter(tila, $scope.model, $scope.uiModel, $scope.CONFIG.TYYPPI);
-                    if (angular.isDefined($scope.model.valmistavaKoulutus) && $scope.model.valmistavaKoulutus !== null && angular.isDefined($scope.model.valmistavaKoulutus.toteutustyyppi)) {
-                        $scope.model.valmistavaKoulutus.organisaatio = $scope.model.organisaatio;
-                        $scope.model.valmistavaKoulutus.tila = $scope.model.tila;
-                        api.valmistavaKoulutus = converter.saveModelConverter(tila, $scope.model.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    if (angular.isDefined(apiModel.valmistavaKoulutus) && apiModel.valmistavaKoulutus !== null) {
+                        apiModel.valmistavaKoulutus = converter.saveModelConverter(apiModel.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                     }
-                    $scope.saveByStatusAndApiObject(tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave, api);
+                    $scope.saveApimodelByStatus(apiModel, tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
                 };
 
                 $scope.onMaksullisuusChanged = function(model) {
@@ -282,22 +276,18 @@ app.controller('EditNayttotutkintoController',
                 };
 
 
-                $scope.getValmistavaKuvausApiModelLanguageUri = function(boolIsKomo, textEnum, kieliUri) {
+                $scope.getValmistavaKuvausApiModelLanguageUri = function(textEnum, kieliUri) {
                     if (!kieliUri) {
                         return {};
                     }
-                    var kuvaus = null;
-                    if (typeof boolIsKomo !== 'boolean') {
-                        converter.throwError('An invalid boolean variable : ' + boolIsKomo);
+
+                    if (!$scope.uiModel.toggleTabs || $scope.model.valmistavaKoulutus == null) {
+                        return {};
                     }
 
-                    if (boolIsKomo) {
-                        kuvaus = $scope.model.valmistavaKoulutus.kuvausKomo;
-                    } else {
-                        kuvaus = $scope.model.valmistavaKoulutus.kuvausKomoto;
-                    }
+                    var kuvaus = $scope.model.valmistavaKoulutus.kuvaus;
 
-                    if (angular.isUndefined(kuvaus) || angular.isUndefined(kuvaus[textEnum])) {
+                    if (angular.isUndefined(kuvaus[textEnum])) {
                         kuvaus[textEnum] = {tekstis: {}};
                         if (!angular.isUndefined(kieliUri)) {
                             kuvaus[textEnum].tekstis[kieliUri] = '';
@@ -369,7 +359,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.vkUiModel.selectedKieliUri = "kieli_fi";
                         $scope.vkUiModel.showValidationErrors = false;
 
-                        $scope.cbShowValmistavaKoulutus = true;
+                        $scope.uiModel.toggleTabs = true;
                     } else {
                         var modalInstance = $modal.open({
                             scope: $scope,
@@ -377,8 +367,9 @@ app.controller('EditNayttotutkintoController',
                             controller: function($scope) {
                                 $scope.ok = function() {
                                     //delete
+                                    $scope.uiModel.cbShowValmistavaKoulutus = false;
+                                    $scope.uiModel.toggleTabs = false;
                                     $scope.model.valmistavaKoulutus = null;
-                                    $scope.cbShowValmistavaKoulutus = false;
                                     modalInstance.dismiss();
                                 };
                                 $scope.cancel = function() {

@@ -194,7 +194,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "koulutusmoduuli_toteutus_children_id", nullable = true)
-    private KoulutusmoduuliToteutus nayttotutkintoValmistavaKoulutus;
+    private KoulutusmoduuliToteutus valmistavaKoulutus;
 
     @Column(name = "tarjoaja")
     private String tarjoaja;
@@ -1031,16 +1031,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     /**
      * @return the nayttotutkintoValmistavaKoulutus
      */
-    public KoulutusmoduuliToteutus getNayttotutkintoValmistavaKoulutus() {
-        return nayttotutkintoValmistavaKoulutus;
+    public KoulutusmoduuliToteutus getValmistavaKoulutus() {
+        return valmistavaKoulutus;
     }
 
     /**
-     * @param nayttotutkintoValmistavaKoulutus the
+     * @param valmistavaKoulutus the
      * nayttotutkintoValmistavaKoulutus to set
      */
-    public void setNayttotutkintoValmistavaKoulutus(KoulutusmoduuliToteutus nayttotutkintoValmistavaKoulutus) {
-        this.nayttotutkintoValmistavaKoulutus = nayttotutkintoValmistavaKoulutus;
+    public void setValmistavaKoulutus(KoulutusmoduuliToteutus valmistavaKoulutus) {
+        this.valmistavaKoulutus = valmistavaKoulutus;
     }
 
     /**

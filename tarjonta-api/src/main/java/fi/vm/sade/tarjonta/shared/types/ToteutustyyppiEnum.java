@@ -1,11 +1,15 @@
 package fi.vm.sade.tarjonta.shared.types;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+
 public enum ToteutustyyppiEnum {
 
     VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5"),
     ERIKOISAMMATTITUTKINTO("koulutustyyppi_12"),
+    ERIKOISAMMATTITUTKINTO_VALMISTAVA(null),
     VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10"),
     AMMATTITUTKINTO("koulutustyyppi_11"),
+    AMMATTITUTKINTO_VALMISTAVA(null),
     LUKIOKOULUTUS("koulutustyyppi_2"),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13"),
     AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA(null),
@@ -40,7 +44,18 @@ public enum ToteutustyyppiEnum {
                 return e;
             }
         }
-        throw new IllegalArgumentException("Koulutustyyppi enum not found by value : '" + strValue + "'");
+        throw new IllegalArgumentException("Toteutustyyppi enum not found by value : '" + strValue + "'");
+    }
+
+    public static ToteutustyyppiEnum convertToValmistava(ToteutustyyppiEnum toteutustyyppi) {
+        if (toteutustyyppi != null) {
+            for (ToteutustyyppiEnum e : ToteutustyyppiEnum.values()) {
+                if (e.koulutustyyppiUri == null && e.name().contains(toteutustyyppi.name())) {
+                    return e;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Valmistava toteutustyyppi enum not found by : '" + toteutustyyppi + "'");
     }
 
 }
