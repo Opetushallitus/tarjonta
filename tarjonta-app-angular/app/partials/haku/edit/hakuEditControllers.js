@@ -54,6 +54,24 @@ app.controller('HakuEditController',
                 $scope.model.formControls.notifs.errorDetail = [];
             };
 
+
+            var checkIsOphAdmin = function() {
+
+
+                if (AuthService.isUserOph()) {
+
+                    $scope.filteruris = undefined;
+
+                } else {
+
+                    $scope.filteruris = [];
+                    $scope.filteruris.push('hakutapa_01');
+                    $log.info('filteruris : ', $scope.filteruris);
+
+                }
+
+            };
+
             /**
              * Display form validation errors on screen
              */
@@ -230,7 +248,10 @@ app.controller('HakuEditController',
             };
 
             $scope.checkHaunNimiValidity = function() {
-                // Count number of keys that have content
+            	if (!$scope.model.showError) {
+            		return false;
+            	}
+            	// Count number of keys that have content
                 var numKeys = 0;
 
                 var result = true;
@@ -454,6 +475,7 @@ app.controller('HakuEditController',
                 // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
+                checkIsOphAdmin();
             };
             $scope.init();
             

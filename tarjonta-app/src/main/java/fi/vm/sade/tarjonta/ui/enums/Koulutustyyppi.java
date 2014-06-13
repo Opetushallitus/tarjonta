@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.enums;
 
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
+
 /**
  *
  * @author jani
@@ -32,6 +34,7 @@ public enum Koulutustyyppi {
     MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS("koulutustyyppi_8"),
     MAMU_LUKIOON_OHJAAVA_KOULUTUS("koulutustyyppi_9"),
     VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10");
+    
     private String koulutustyyppiUri;
 
     Koulutustyyppi(String koulutustyyppiUri) {
@@ -40,6 +43,22 @@ public enum Koulutustyyppi {
 
     public String getKoulutustyyppiUri() {
         return koulutustyyppiUri;
+    }
+    
+    public static Koulutustyyppi getByKoodistoUri(String uri){
+        
+        
+        if(uri == null) {
+            return null;
+        }
+        
+        for(Koulutustyyppi tyyppi:Koulutustyyppi.values()){
+            if(KoodistoURI.compareKoodi(uri, tyyppi.getKoulutustyyppiUri() )) {
+              return tyyppi;
+            }
+        }
+        
+        return null;
     }
 
     @Override

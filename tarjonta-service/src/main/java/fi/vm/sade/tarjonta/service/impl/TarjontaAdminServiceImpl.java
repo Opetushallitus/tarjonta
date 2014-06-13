@@ -460,8 +460,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
-        if(parameterServices.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
-            //limited editing -> no changes to koulutuslist
+        final boolean canEdit = parameterServices.parameterCanEditHakukohde(parameters.getHakukohdeOid());
+        final boolean isOphAdmin = permissionChecker.isOphCrud();
+        if(!isOphAdmin && !canEdit){
+            //no editing at all || only limited limited editing -> no changes to koulutuslist
             throw new NotAuthorizedException("no.permission");
         }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(parameters.getHakukohdeOid());
@@ -892,7 +894,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setHakutyyppiUri(source.getHakutyyppiUri());
         target.setKohdejoukkoUri(source.getKohdejoukkoUri());
         target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
-        target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        if (source.getKoulutuksenAlkamisVuosi() != null) {
+            target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        }
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
         target.setVersion(source.getVersion());

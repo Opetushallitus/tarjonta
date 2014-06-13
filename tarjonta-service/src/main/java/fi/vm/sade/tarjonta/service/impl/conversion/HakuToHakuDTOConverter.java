@@ -46,7 +46,9 @@ public class HakuToHakuDTOConverter extends BaseRDTOConverter<Haku, HakuDTO> {
         t.setHakutyyppiUri(s.getHakutyyppiUri());
         t.setHaunTunniste(s.getHaunTunniste());
         t.setKohdejoukkoUri(s.getKohdejoukkoUri());
-        t.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
+        if (s.getKoulutuksenAlkamisVuosi() != null) {
+            t.setKoulutuksenAlkamisVuosi(s.getKoulutuksenAlkamisVuosi());
+        }
         t.setKoulutuksenAlkamiskausiUri(s.getKoulutuksenAlkamiskausiUri());
         t.setModified(s.getLastUpdateDate());
         t.setModifiedBy(s.getLastUpdatedByOid());

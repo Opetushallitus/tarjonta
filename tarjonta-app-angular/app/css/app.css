@@ -687,7 +687,8 @@ table.seachSpecLayout td.query {
 }
 
 table.seachSpecLayout td.query input {
-	min-width:75%;
+	width:75%;
+	min-width:200px;
 	max-width:400px;
     top:-1px;
 
@@ -699,6 +700,12 @@ table.seachSpecLayout td.query input {
 
 table.seachSpecLayout td.controls {
     text-align:right;
+    min-width:160px;
+}
+
+table.seachSpecLayout td.controls button {
+    position:relative;
+    top: 0;
 }
 
 table.seachSpecLayout td.mode ul {

@@ -1,56 +1,61 @@
 <div data-ng-controller="ValintaperusteSearchController">
 
-    <div id="searchSpec">
+    <table class="seachSpecLayout">
 
+        <!-- otsikkorivi -->
+        <tr>
+            <th>&nbsp;</th>
+            <th tt="tarjonta.valintaperustekuvaus.vuosi">Vuosi</th>
+            <th tt="tarjonta.valintaperustekuvaus.kausi">Kausi</th>
+            <th tt="tarjonta.valintaperustekuvaus.oppilaitostyyppi">Oppilaitostyyppi</th>
+            <th>&nbsp;</th>
+        </tr>
 
+        <!-- kontrollit -->
+        <tr>
+            <td class="query">
+                <input type="text" ng-model="model.searchSpec.hakusana" ng-enter="search()"/>
+            </td>
+            <td>
+                <select class="thin" data-ng-model="model.searchSpec.vuosi" data-ng-options="year for year in model.years"></select>
+            </td>
+            <td>
+                <koodistocombo class="thin" koodistouri="'kausi'" koodiuri="model.searchSpec.kausiUri" locale="'fi'"/>
+            </td>
+            <td>
+                <koodistocombo koodistouri="'oppilaitostyyppi'" filteruris="model.userOrgTypes" koodiuri="model.searchSpec.oppilaitosTyyppi" locale="'fi'"/>
+            </td>
 
-        <table class="spec">
+            <td class="controls">
+                <button class="btn" type="button" tt="tarjonta.valintaperustekuvaus.tyhjenna" value="Tyhjennä" ng-click="reset()">Tyhjennä</button>
+                <button class="btn btn-primary" type="button" value="Hae" ng-click="search()"><span tt="tarjonta.valintaperustekuvaus.hae">Hae</span> <span class="icon-search"></span></button>
+            </td>
 
-            <!-- otsikkorivi -->
-            <tr>
-                <th tt="tarjonta.valintaperustekuvaus.haenimella">Hae nimellä</th>
-                <th tt="tarjonta.valintaperustekuvaus.vuosi">Vuosi</th>
-                <th tt="tarjonta.valintaperustekuvaus.kausi">Kausi</th>
-                <th tt="tarjonta.valintaperustekuvaus.oppilaitostyyppi">Oppilaitostyyppi</th>
+        </tr>
 
-                <th colspan="2">&nbsp;</th>
-            </tr>
-
-            <!-- kontrollit -->
-            <tr>
-                <td>
-                    <div class="search">
-                        <input type="text" ng-model="model.searchSpec.hakusana"/>
-                    </div>
-                </td>
-                <td>
-                    <select data-ng-model="model.searchSpec.vuosi" data-ng-options="year for year in model.years"></select>
-                </td>
-                <td>
-                    <koodistocombo koodistouri="'kausi'" koodiuri="model.searchSpec.kausiUri" locale="'fi'"/>
-                </td>
-                <td>
-                    <koodistocombo koodistouri="'oppilaitostyyppi'" filteruris="model.userOrgTypes" koodiuri="model.searchSpec.oppilaitosTyyppi" locale="'fi'"/>
-                </td>
-
-                <td class="controls">
-                    <input class="btn" type="button" tt="tarjonta.valintaperustekuvaus.tyhjenna" value="Tyhjennä" ng-click="reset()"/>
-                    <input class="btn btn-primary" type="button" tt="tarjonta.valintaperustekuvaus.hae" value="Hae" ng-click="search()"/>
-                </td>
-
-            </tr>
-
-
-
-        </table>
-
-    </div>
+    </table>
 
     <div id="searchResults">
+        
         <tabset>
             <tab heading="{{t('kk.valintaperusteet.tab.valintaperusteet')}}">
-                <input class="btn" type="button"  tt="tarjonta.valintaperustekuvaus.luouusi" value="Luo uusi" ng-click="createNew('valintaperustekuvaus')"/>
+	            <div class="controls">
+	                <button class="btn float-right" type="button" ng-click="createNew('valintaperustekuvaus')"><span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span></button>
+	            </div>
+	            
+                <results-tree-table
+                    columns="['kausi', 'oppilaitostyyppi']"
+                    column-titles="{kausi:'tarjonta.valintaperustekuvaus.list.vuosikausi', oppilaitostyyppi:'tarjonta.valintaperustekuvaus.list.oppilaitostyyppi'}"
+                    model="model.valintaperusteet"
+                    selection="selection.valintaperusteet"
+                    get-content="kuvauksetGetContent"
+                    get-identifier="kuvauksetGetIdentifier"
+                    get-link="kuvauksetGetLink"
+                    get-options="kuvauksetGetOptions"
+                    ></results-tree-table>
+                    
 
+                <!--
                 <table>
                     <tr>
                         <th tt="tarjonta.valintaperustekuvaus.list.nimi">Nimi</th>
@@ -65,10 +70,27 @@
                             <td><a href="" data-ng-click="copyKuvaus(valintaperuste)"><span tt="tarjonta.valintaperustekuvaus.kopioi.link">Kopioi</span></a> </td>
                     </tr>
                 </table>
+                -->
 
             </tab>
             <tab heading="{{t('kk.valintaperusteet.tab.sora')}}">
-                <input class="btn" type="button" tt="tarjonta.valintaperustekuvaus.luouusi" value="Luo uusi" ng-click="createNew('SORA')"/>
+                <div class="controls">
+                    <button class="btn float-right" type="button" ng-click="createNew('SORA')"><span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span></button>
+                </div>
+
+                <results-tree-table
+                    columns="['kausi', 'oppilaitostyyppi']"
+                    column-titles="{kausi:'tarjonta.valintaperustekuvaus.list.vuosikausi', oppilaitostyyppi:'tarjonta.valintaperustekuvaus.list.oppilaitostyyppi'}"
+                    model="model.sorat"
+                    selection="selection.sorat"
+                    get-content="kuvauksetGetContent"
+                    get-identifier="kuvauksetGetIdentifier"
+                    get-link="kuvauksetGetLink"
+                    get-options="kuvauksetGetOptions"
+                    ></results-tree-table>
+                    
+
+                <!--
                 <table>
                     <tr>
                         <th tt="tarjonta.valintaperustekuvaus.list.nimi">Nimi</th>
@@ -84,19 +106,10 @@
                             <td><a href="" data-ng-click="copyKuvaus(sora)"><span tt="tarjonta.valintaperustekuvaus.kopioi.link">Kopioi</span></a> </td>
                     </tr>
                 </table>
+                 -->
             </tab>
 
         </tabset>
-        <!--   TODO : This does not work replace current table with this "results-table"
-        <results-table
-                id="valintaperusteetResults"
-                prefix="valintaperuste"
-                content="model.valintaperusteet"
-                columns="valintaperusteColumns"
-                options="valintaPerusteOptions"
-                selection="model"/>     -->
-
-
 
     </div>
 

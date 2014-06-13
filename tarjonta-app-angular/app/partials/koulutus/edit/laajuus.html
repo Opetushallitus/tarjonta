@@ -2,4 +2,6 @@
               name="opintojenLaajuusarvo" 
               ng-model="arvoModel.uri" 
               ng-options="key as val.arvo for (key, val) in arvoUiModel.meta">
+    <!-- OVT-6991 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
+    <option value="" ng-disabled="arvoModel.uri"></option>
  </select><span ng-if="!ctrl.isMulti" ng-repeat="(key, val) in arvoUiModel.meta">{{val.arvo}}</span> {{yksikko.nimi}}</div>

@@ -68,11 +68,10 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "hakukausi_vuosi")
     private Integer hakukausiVuosi;
 
-    @NotNull
     @Column(name = "koulutuksen_alkamiskausi")
     private String koulutuksenAlkamiskausiUri;
 
-    @NotNull
+
     @Column(name = "koulutuksen_alkamisvuosi")
     private Integer koulutuksenAlkamisVuosi;
 

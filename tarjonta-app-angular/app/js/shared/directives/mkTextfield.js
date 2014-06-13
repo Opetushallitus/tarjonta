@@ -183,7 +183,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         },
         scope: {
             model: "=", // map jossa kieliuri -> teksti tai decode/encode -funktioiden määräämässä muodossa
-
+            disable : "=",
             // angular-form-logiikkaa varten
             name: "@", // nimi formissa
             required: "@" // jos tosi, vähintään yksi arvo vaaditaan

@@ -260,6 +260,7 @@ public class ShowKoulutusViewTab extends CustomComponent {
         layout.add(getXhtmlRow("koulutusohjelmanValinta", lisatietoForLang == null ? null : lisatietoForLang.getKoulutusohjelmanValinta()));
         layout.add(getXhtmlRow("koulutuksenSisalto", lisatietoForLang == null ? null : lisatietoForLang.getSisalto()));
         layout.add(getXhtmlRow("koulutuksenRakenne", getText(language, model.getKoulutuskoodiModel().getKoulutuksenRakenne())));
+        layout.add(getXhtmlRow("kohderyhma", lisatietoForLang == null ? null : lisatietoForLang.getKohderyhma()));
         layout.add(getXhtmlRow("tutkinnonSijoittuminenTyoelamaan", lisatietoForLang == null ? null : lisatietoForLang.getSijoittuminenTyoelamaan()));
         layout.add(getXhtmlRow("tutkinnonKansainvalistyminen", lisatietoForLang == null ? null : lisatietoForLang.getKansainvalistyminen()));
         layout.add(getXhtmlRow("tutkinnonYhteistyoMuidenKanssa", lisatietoForLang == null ? null : lisatietoForLang.getYhteistyoMuidenToimijoidenKanssa()));
