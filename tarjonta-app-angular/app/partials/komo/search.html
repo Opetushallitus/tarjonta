@@ -1,0 +1,40 @@
+<table>
+    <tr>
+        <td>Koulutustyyppi : <span style="width:450px" koodistocombo 
+                                   koodistouri="'koulutustyyppi'" 
+                                   locale="fi" 
+                                   koodiuri="ctrl.koulutustyyppiUri" 
+                                   version="false" 
+                                   isrequired="true" 
+                                   name="koulutustyyppi"></span> <br/>
+            Koulutus : <input style="width:250px" type="text" ng-model="ctrl.koulutuskoodi" /><b> <a href="" ng-click="fetchByKoulutuskoodi(ctrl.koulutuskoodi)">Hae</a></b><br/>  
+            Selkokielinen nimi : <input type="checkbox" data-ng-model="ctrl.showRealName"/> 
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <select style="width : 1000px" size="25" id="myselection" multiple 
+                    ng-multiple="true" 
+                    ng-model="ctrl.link.selectedKomoOids"  
+                    ng-options="c.oid as  c.moduuli + ' ' + c.koulutus + ' ' + c.ohjelma  for c in ctrl.link.komos | orderBy:'koulutusmoduuliTyyppi' | orderBy:'koulutuskoodiUri'">
+            </select>
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td><b>Lapseksi liitettävät koulutusmoduulit</b></td>
+    </tr>
+    <tr>
+        <td>Koulutuskoodi</td>
+        <td>Koulutusohjelma</td>
+        <td>Muokkaa</td>
+    </tr>
+    <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
+        <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+        <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+        <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
+    </tr>
+
+</table>
