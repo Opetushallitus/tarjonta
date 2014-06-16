@@ -446,7 +446,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
             TarjontaService.haeKoulutukset(spec).then(function(data){
 
-                $log.info('TARJOAJAOIDS : ',data);
+
                 var tarjoajaOidsSet = new buckets.Set();
 
 
@@ -476,7 +476,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
 
-                    $log.info('TARJOAJAOIDS : ',$scope.model.hakukohde.tarjoajaOids);
+
 
                     $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids,hakuFilterFunction);
 
@@ -670,17 +670,38 @@ app.controller('HakukohdeParentController', ['$scope',
             return paramFilteredHakus;
 
         };
+        
+        var checkIfOrgMatches = function (hakuOrganisaatioOids) {
+
+            var doesMatch = false;
+
+            angular.forEach(hakuOrganisaatioOids, function (hakuOrgOid) {
+
+                angular.forEach($scope.model.hakukohde.tarjoajaOids, function (tarjoajaOid) {
+
+                    if(hakuOrgOid === tarjoajaOid) {
+                        doesMatch = true;
+                    }
+
+                });
+
+            });
+
+
+            return doesMatch;
+
+        };
 
         $scope.filterHakusWithOrgs = function(hakus) {
 
             var filteredHakuArray = [];
 
-
+            
             angular.forEach(hakus,function(haku){
-
+                $log.info('HAKU ORGOID: ', haku.organisaatioOids);
                 if (haku.organisaatioOids && haku.organisaatioOids.length > 0) {
 
-                    if (checkIfOrgMatches(haku)) {
+                    if (checkIfOrgMatches(haku.organisaatioOids) || checkIfParentOrgMatches(haku)) {
                         filteredHakuArray.push(haku);
                     }
 
@@ -1329,7 +1350,7 @@ app.controller('HakukohdeParentController', ['$scope',
             return parentOrgMap;
         };
 
-        var checkIfOrgMatches = function(haku) {
+        var checkIfParentOrgMatches = function(haku) {
 
             var hakuOrganisaatioOids = haku.organisaatioOids;
             var orgMatches = false;
