@@ -24,17 +24,17 @@
 </table>
 <table>
     <tr>
-        <td><b>Lapseksi liitettävät koulutusmoduulit</b></td>
+        <td><b>Haun tulokset</b></td>
     </tr>
     <tr>
-        <td>Koulutuskoodi</td>
-        <td>Koulutusohjelma</td>
+        <td>Koulutus</td>
+        <td>Ohjelma</td>
         <td>Muokkaa</td>
     </tr>
     <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
         <td>{{searchKomoByOid(komoOid).koulutus}}</td>
         <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
-        <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
+        <td><a ng-click="fetchByOid(komoOid)">Valitse</a></td>
     </tr>
 
 </table>
