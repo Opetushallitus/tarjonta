@@ -614,11 +614,11 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 
 					for (var i in results) {
 						var res = results[i].result;
-						
+						console.log('RES : ', res);
 						if (koulutusTyyppi===null) {
 							koulutusTyyppi = res.koulutusasteTyyppi;
 						} else if (koulutusTyyppi != res.koulutusasteTyyppi) {
-							koulutysTyyppi = false;
+                            koulutusTyyppi = false;
 							break;
 						}
 
@@ -686,9 +686,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	return;
 	                }
                 
-
+					console.log("KOULUTUS:", $scope.selection.koulutukset);
 	                SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
 					SharedStateService.addToState('SelectedKoulutusTyyppi',koulutusTyyppi);
+                    SharedStateService.addToState('SelectedToteutusTyyppi',res.toteutustyyppi);
 					SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
 					$location.path('/hakukohde/new/edit');
 
