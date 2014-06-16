@@ -69,7 +69,10 @@ app.controller('HakukohdeParentController', ['$scope',
         		dirtify: function() {
         			//console.log("DIRTIFY hakukohde");
         			$scope.status.dirty = true;
-        		}
+        		},
+        		// alikontrollerit ylikirjoittavat nämä
+        		validateLiitteet: function() { return true; },
+        		validateValintakokeet: function() { return true; }
 			};
 
         $scope.model.showSuccess = false;
@@ -405,7 +408,14 @@ app.controller('HakukohdeParentController', ['$scope',
 
                 errors.push(err);
             }
+            
+            if (!$scope.status.validateValintakokeet()) {
+            	errors.push({errorMessageKey: "hakukohde.edit.valintakokeet.errors"});
+            }
 
+            if (!$scope.status.validateLiitteet()) {
+            	errors.push({errorMessageKey: "hakukohde.edit.liitteet.errors"});
+            }
 
             if (errors.length < 1 ) {
                 return true;
