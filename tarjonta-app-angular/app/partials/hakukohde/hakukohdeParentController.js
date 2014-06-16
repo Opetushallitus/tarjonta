@@ -69,7 +69,10 @@ app.controller('HakukohdeParentController', ['$scope',
         		dirtify: function() {
         			//console.log("DIRTIFY hakukohde");
         			$scope.status.dirty = true;
-        		}
+        		},
+        		// alikontrollerit ylikirjoittavat nämä
+        		validateLiitteet: function() { return true; },
+        		validateValintakokeet: function() { return true; }
 			};
 
         $scope.model.showSuccess = false;
@@ -405,7 +408,14 @@ app.controller('HakukohdeParentController', ['$scope',
 
                 errors.push(err);
             }
+            
+            if (!$scope.status.validateValintakokeet()) {
+            	errors.push({errorMessageKey: "hakukohde.edit.valintakokeet.errors"});
+            }
 
+            if (!$scope.status.validateLiitteet()) {
+            	errors.push({errorMessageKey: "hakukohde.edit.liitteet.errors"});
+            }
 
             if (errors.length < 1 ) {
                 return true;
@@ -436,6 +446,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
             TarjontaService.haeKoulutukset(spec).then(function(data){
 
+                $log.info('TARJOAJAOIDS : ',data);
                 var tarjoajaOidsSet = new buckets.Set();
 
 
@@ -464,6 +475,8 @@ app.controller('HakukohdeParentController', ['$scope',
 
 
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+                    $log.info('TARJOAJAOIDS : ',$scope.model.hakukohde.tarjoajaOids);
 
                     $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids,hakuFilterFunction);
 
@@ -590,6 +603,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
             hakuPromise.then(function(hakuDatas) {
                 $scope.model.hakus = [];
+                $log.info('ALL HAKUS : ', hakuDatas);
                 angular.forEach(hakuDatas,function(haku){
 
 
@@ -627,6 +641,7 @@ app.controller('HakukohdeParentController', ['$scope',
                 }
 
                 var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
+                $log.info('HAKUS FILTERED WITH GIVEN FUNCTION : ', filteredHakus);
 
                 if (selectedHaku) {
                     filteredHakus.push(selectedHaku);
@@ -1328,7 +1343,6 @@ app.controller('HakukohdeParentController', ['$scope',
                 }
 
             });
-
             return orgMatches;
 
         };

@@ -687,7 +687,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                }
                 
 					console.log("KOULUTUS:", $scope.selection.koulutukset);
-	                SharedStateService.addToState('SelectedKoulutukses', $scope.selection.kouluttukset);
+	                SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
 					SharedStateService.addToState('SelectedKoulutusTyyppi',koulutusTyyppi);
                     SharedStateService.addToState('SelectedToteutusTyyppi',res.toteutustyyppi);
 					SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
