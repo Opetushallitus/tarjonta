@@ -227,20 +227,30 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         $scope.status.dirtify();
     }
     
-    // tosi, jos formi on valiidi
-    /*$scope.canSaveLiite = function(kieliUri) {
-        // validointi manuaalisesti; angularin formi ei toimi tässä tapauksessa
-       	var liite = $scope.liitteetModel.selectedLiite[kieliUri];
-    	return liite && notEmpty(liite.liitteenNimi)
-    		&& notEmpty(liite.liitteenKuvaukset[kieliUri])
-    		&& liite.toimitettavaMennessa!=null
-    		&& (!liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite))
-    		//&& (!liite.muuOsoiteEnabled || );
-            && (liite.liitteenToimitusOsoite
-                && notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
-                    liite.liitteenToimitusOsoite.postinumero]))
+    $scope.isValidToimitusOsoite = function(liite) {
+    	return !liite.muuOsoiteEnabled
+    		|| notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
+    	                    liite.liitteenToimitusOsoite.postinumero]);
     }
-
+    
+    $scope.isValidSahkoinenOsoite = function(liite) {
+    	return !liite.sahkoinenOsoiteEnabled
+    	|| notEmpty(liite.sahkoinenToimitusOsoite);
+    }
+    
+    // kutsutaan parentista
+    $scope.status.validateLiitteet = function() {
+    	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+    		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];    		
+    		if (!notEmpty([li.liitteenNimi, li.toimitettavaMennessa])
+    				|| !$scope.isValidSahkoinenOsoite(li)
+    				|| !$scope.isValidToimitusOsoite(li)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
     function notEmpty(v) {
     	if (v instanceof Array) {
     		for (var i in v) {
@@ -252,6 +262,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	} else {
     		return v && (""+v).trim().length>0;
     	}
-    }*/
+    }
 
 });
