@@ -102,7 +102,9 @@ app.controller('HakukohdeEditController',
     var filterHakuWithAikaAndKohdejoukko = function(hakus) {
 
         var filteredHakus = [];
+        $log.info('filterHakuWithAikaAndKohdejoukko, ALL HAKUS :', hakus);
         angular.forEach(hakus,function(haku){
+
             // rajaus kk-hakukohteisiin; ks. OVT-6452
             // TODO selvitä uri valitun koulutuksen perusteella
 
@@ -123,6 +125,7 @@ app.controller('HakukohdeEditController',
 
             }
         });
+        $log.info('filterHakuWithAikaAndKohdejoukko, FILTERED HAKUS : ', filteredHakus);
         return filteredHakus;
 
     };
