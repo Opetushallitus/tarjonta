@@ -20,7 +20,6 @@ import java.util.*;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +48,7 @@ import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.SearchCriteria;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -221,6 +221,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         // OVT-4911
         getModel().setHakukohde(editHakukohdeView.getModel());
         HakukohdeTyyppi fresh;
+        
         if (getModel().getHakukohde().getOid() == null) {
 
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
@@ -242,12 +243,18 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     }
                 }
             }
-            fresh = tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
+            try {
+                fresh = tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
+                refreshHakukohdeUIModel(fresh);
+            } catch (GenericFault e) {
+                getModel().getHakukohde().setOid(null);
+                throw e;
+            }
         } else {
             updateHakukohdeKoulutusasteTyyppi(getModel().getHakukohde());
             fresh = tarjontaAdminService.paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+            refreshHakukohdeUIModel(fresh);
         }
-        refreshHakukohdeUIModel(fresh);
     }
 
     public HenkiloFatType getFatHenkiloWithOid(String oid) {
