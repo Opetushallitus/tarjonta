@@ -86,6 +86,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     kielet.then(function(ret){
     	
     	//console.log("KIELET = ", ret);
+    	if (!$scope.model.hakukohde.opetusKielet) {
+    		$scope.model.hakukohde.opetusKielet = [];
+    	}
        	
        	$scope.liitteetModel.langs = ret;
     	for (var i in ret) {
