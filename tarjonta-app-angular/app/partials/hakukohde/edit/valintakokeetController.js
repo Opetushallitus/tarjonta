@@ -42,6 +42,10 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
 
     var kielet = Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale());
     kielet.then(function(ret){
+    	
+    	if (!$scope.model.hakukohde.opetusKielet) {
+    		$scope.model.hakukohde.opetusKielet = [];
+    	}
     	    	
     	//console.log("KIELET = ", ret);
     	$scope.kokeetModel.langs = ret;
