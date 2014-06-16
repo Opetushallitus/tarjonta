@@ -80,7 +80,6 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "koulutusaste", type: "URI"},
                     {name: "eqf", type: "URI"},
                     {name: "nqf", type: "URI"},
-                    {name: "koulutustyyppi", type: "URI"},
                     {name: "organisaatio", type: "OID"},
                     {name: "koulutusala", type: "URI"},
                     {name: "tutkinto", type: "URI"},
@@ -89,8 +88,9 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "opintojenLaajuusarvo", type: "URI"},
                     {name: "koulutusohjelma", type: "URI"},
                     {name: "koulutusohjelma", type: "TEXT_MAP"},
-                    {name: "tutkintonimikes", type: "URI_MAP"},
-                    {name: "oppilaitostyyppis", type: "URI_MAP"},
+                    {name: "tutkintonimikes", type: "URI_VERSION_MAP"},
+                    {name: "oppilaitostyyppis", type: "URI_VERSION_MAP"},
+                    {name: "koulutustyyppis", type: "URI_MAP"},
                     {name: "kuvausKomo", type: "TEXT_ENUM_MAP"}
                 ]
             };

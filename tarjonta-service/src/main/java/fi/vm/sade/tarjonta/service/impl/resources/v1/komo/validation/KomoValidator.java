@@ -37,7 +37,10 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class KomoValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoValidator.class);
-    private static final int DEFAULT_MIN_NONE = 0;
+    private static final int URIS_MIN_NONE = 0;
+    private static final int URIS_MIN_ONE = 1;
+    private static final boolean KOODI_VERSION_REQUIRED = true;
+    private static final boolean NO_KOODI_VERSION = false;
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -94,7 +97,8 @@ public class KomoValidator {
     }
 
     private static void common(KomoV1RDTO dto, ResultV1RDTO result) {
-        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, DEFAULT_MIN_NONE);
+        validateKoodiUris(result, dto.getKoulutustyyppis(), KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_INVALID, URIS_MIN_ONE, NO_KOODI_VERSION);
+        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
         validateTunniste(dto, result);
         validateKoodistoRelations(dto, result);
     }
@@ -116,7 +120,7 @@ public class KomoValidator {
     }
 
     private static void validateKoodistoRelations(KomoV1RDTO dto, ResultV1RDTO result) {
-        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, DEFAULT_MIN_NONE);
+        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
 
         if (dto.getEqf() != null) {
             validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
@@ -149,12 +153,8 @@ public class KomoValidator {
             validateKoodi(result, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTO_INVALID);
         }
 
-        if (dto.getKoulutustyyppi() != null) {
-            validateKoodi(result, dto.getKoulutustyyppi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_INVALID);
-        }
-
         if (dto.getTutkintonimikes() != null) {
-            validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID, DEFAULT_MIN_NONE);
+            validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
         }
     }
 
@@ -208,6 +208,27 @@ public class KomoValidator {
         return true;
     }
 
+    /**
+     * True when valid uri. TODO: koodi uri pattern validation.
+     *
+     * min : null no limit
+     */
+    private static boolean isValidKoodiUrisWithoutVersion(Map<String, Integer> map, Integer min) {
+        if (map == null) {
+            return false;
+        } else if (min != null && min > map.size()) {
+            return false;
+        }
+
+        for (Entry<String, Integer> e : map.entrySet()) {
+            if (!notNullStrOrEmpty(e.getKey())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static boolean validateKoodi(ResultV1RDTO result, KoodiV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid) {
         if (!isValidKoodiUriWithVersion(dto)) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
@@ -217,13 +238,27 @@ public class KomoValidator {
         return true;
     }
 
-    public static boolean validateKoodiUris(ResultV1RDTO result, KoodiUrisV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid, Integer min) {
+    /**
+     * Validate list of koodi uris with or without version information.
+     *
+     * @param result
+     * @param dto
+     * @param missing
+     * @param invalid
+     * @param min
+     * @param versionRequired
+     * @return
+     */
+    public static boolean validateKoodiUris(ResultV1RDTO result, KoodiUrisV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid, Integer min, boolean versionRequired) {
         if (dto == null || dto.getUris() == null) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
             return false;
         }
 
-        if (!isValidKoodiUrisWithVersion(dto.getUris(), min)) {
+        if (versionRequired && !isValidKoodiUrisWithVersion(dto.getUris(), min)) {
+            result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
+            return false;
+        } else if (!versionRequired && !isValidKoodiUrisWithoutVersion(dto.getUris(), min)) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
             return false;
         }

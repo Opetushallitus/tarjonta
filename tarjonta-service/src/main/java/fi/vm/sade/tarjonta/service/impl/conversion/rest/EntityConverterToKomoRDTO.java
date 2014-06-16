@@ -121,7 +121,7 @@ public class EntityConverterToKomoRDTO {
         kkDto.setEqf(commonConverter.convertToKoodiDTO(komo.getEqfUri(), NO_OVERRIDE_URI, FieldNames.EQF, YES, restParam));
         kkDto.setNqf(commonConverter.convertToKoodiDTO(komo.getNqfUri(), NO_OVERRIDE_URI, FieldNames.NQF, YES, restParam));
 
-        kkDto.setKoulutustyyppi(splitData(komo.getKoulutustyyppiUri(), FieldNames.KOULUTUSTYYPPI, restParam));
+        kkDto.setKoulutustyyppis(splitData(komo.getKoulutustyyppiUri(), FieldNames.KOULUTUSTYYPPI, restParam));
 
         //legacy data
         kkDto.setOppilaitostyyppis(splitData(komo.getOppilaitostyyppi(), FieldNames.OPPILAITOSTYYPPI, restParam));
