@@ -104,7 +104,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.hakukohdeColumns = ['hakutapa', 'aloituspaikat', 'koulutuslaji'];
             $scope.koulutusColumns = ['koulutuslaji'];
-            
+
             $scope.tuloksetGetContent = function(row, col) {
             	//console.log("GET CONTENT FOR "+col,row);
             	switch (col) {

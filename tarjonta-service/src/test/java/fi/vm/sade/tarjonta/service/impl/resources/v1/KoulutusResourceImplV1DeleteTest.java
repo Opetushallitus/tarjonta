@@ -264,7 +264,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
         assertEquals(ErrorCode.VALIDATION, ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorCode());
         //assertEquals("komo.invalid.transition", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
         assertEquals("komoto.hakukohdes", ((ErrorV1RDTO) deleteResult.getErrors().get(0)).getErrorField());
-        
+
         verify(koulutusSisaltyvyysDAO);
         EasyMock.reset(koulutusSisaltyvyysDAO);
         EasyMock.reset(tarjontaSearchService);

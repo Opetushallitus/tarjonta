@@ -4,7 +4,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>9.4.2-SNAPSHOT</version>
+        <version>9.6.0</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -59,7 +59,7 @@
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
 		<scope>provided</scope>
-	</dependency>
+        </dependency>
 
 
         <dependency>
