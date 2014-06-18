@@ -670,15 +670,16 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             return false;
         }
 
-    	log.debug("TEST hakuaika {}..{}", hakukohde.getHakuaikaAlkuPvm(), hakukohde.getHakuaikaLoppuPvm());
-
         final Date now = new Date();
         if (hakukohde.getHakuaikaAlkuPvm()!=null && hakukohde.getHakuaikaAlkuPvm().after(now)) {
         	return false;
         }
         
+        if (hakukohde.getHakuaika()!=null && hakukohde.getHakuaika().getAlkamisPvm().after(now)) {
+        	return false;
+        }     
+        
         for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
-        	log.debug("TEST haku {} n={} {}..{}", curHakuaika.getId(), curHakuaika.getSisaisenHakuajanNimi(), curHakuaika.getAlkamisPvm(), curHakuaika.getPaattymisPvm());
             if (!curHakuaika.getAlkamisPvm().after(now)) {
                 return true;
             }
