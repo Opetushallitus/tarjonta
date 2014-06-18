@@ -666,20 +666,29 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private boolean hakuAlkanut(Hakukohde hakukohde) {
+    	log.debug("HAKU ALKANUT? {}", hakukohde.getId());
         if (isHakukohdeHakuErillisOrJatkuvaHaku(hakukohde)) {
             return false;
         }
+
+        log.debug("TEST1 hakuaika {}..{}", hakukohde.getHakuaikaAlkuPvm(), hakukohde.getHakuaikaLoppuPvm());
 
         final Date now = new Date();
         if (hakukohde.getHakuaikaAlkuPvm()!=null && hakukohde.getHakuaikaAlkuPvm().after(now)) {
         	return false;
         }
         
+        if (hakukohde.getHakuaika()!=null) {
+        	log.debug("TEST2 hakuaika {} n={} {}..{}", hakukohde.getHakuaika().getId(), hakukohde.getHakuaika().getSisaisenHakuajanNimi(), hakukohde.getHakuaika().getAlkamisPvm(), hakukohde.getHakuaika().getPaattymisPvm());
+        }
+        
+        
         if (hakukohde.getHakuaika()!=null && hakukohde.getHakuaika().getAlkamisPvm().after(now)) {
         	return false;
         }     
         
         for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
+        	log.debug("TEST3 haku {} n={} {}..{}", curHakuaika.getId(), curHakuaika.getSisaisenHakuajanNimi(), curHakuaika.getAlkamisPvm(), curHakuaika.getPaattymisPvm());
             if (!curHakuaika.getAlkamisPvm().after(now)) {
                 return true;
             }
