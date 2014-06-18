@@ -65,7 +65,7 @@ public class OppilaitosKoodiRelations {
      * @return
      */
     public boolean isKoulutusAllowedForOrganisation(final String organisaatioOid, final String koulutusaste) {
-        Preconditions.checkNotNull(koulutusaste, "KoulutusasteTyyppi enum cannot be null");
+        Preconditions.checkNotNull(koulutusaste, "Koulutusaste URI cannot be null");
         Preconditions.checkNotNull(organisaatioOid, "Organisaatio OID cannot be null");
         final OrganisaatioDTO orgDto = organisaatioService.findByOid(organisaatioOid);
 

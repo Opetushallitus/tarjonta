@@ -1,5 +1,5 @@
 angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisation', 'auth', 'Koodisto', 'TarjontaCache', 'TarjontaDateTime'])
-        .controller('KomoController', function($scope, $q, TarjontaService, PermissionService, LocalisationService, dialogService) {
+        .controller('KomoController', function($scope, $q, Koodisto, TarjontaService, PermissionService, LocalisationService, dialogService) {
             'use strict';
             $scope.controlModel = {
                 formStatus: {
@@ -12,6 +12,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
             };
 
             $scope.ctrl = {
+                showRealName: false,
+                koulutustyyppiUri: null,
                 showError: false,
                 showSuccess: false,
                 validationmsgs: [],
@@ -60,13 +62,13 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {enum: 'MAAHANM_AMM_VALMISTAVA_KOULUTUS', name: "MaahanmAmmValmistavaKoulutus"},
                     {enum: 'AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS', name: "AmmOhjaavaJaValmistavaKoulutus"},
                     {enum: 'MAAHANM_LUKIO_VALMISTAVA_KOULUTUS', name: "MaahanmLukioValmistavaKoulutus"},
-                    {enum: 'YLIOPISTOKOULUTUS', name: "Yliopistokoulutus"},
-                    {enum: 'AMMATTIKORKEAKOULUTUS', name: "Ammattikorkeakoulutus"},
                     {enum: 'KORKEAKOULUTUS', name: "Korkeakoulutus"},
                     {enum: 'PERUSOPETUS', name: "Perusopetus"},
                     {enum: 'PERUSOPETUS_ULKOMAINEN', name: "PerusopetusUlkomainen"},
                     {enum: 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA', name: "AmmatillinenPerustutkintoNayttotutkintona"},
-                    {enum: 'TUNTEMATON', name: "Tuntematon"}
+                    {enum: 'TUNTEMATON', name: "Tuntematon"},
+                    {enum: 'ERIKOISAMMATTITUTKINTO', name: "Erikoisammattitutkinto"},
+                    {enum: 'AMMATTITUTKINTO', name: "Ammattitutkinto"}
                 ],
                 textFields: [
                     {name: "modified", type: "DATE"},
@@ -78,7 +80,6 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "koulutusaste", type: "URI"},
                     {name: "eqf", type: "URI"},
                     {name: "nqf", type: "URI"},
-                    {name: "koulutustyyppi", type: "URI"},
                     {name: "organisaatio", type: "OID"},
                     {name: "koulutusala", type: "URI"},
                     {name: "tutkinto", type: "URI"},
@@ -87,8 +88,9 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "opintojenLaajuusarvo", type: "URI"},
                     {name: "koulutusohjelma", type: "URI"},
                     {name: "koulutusohjelma", type: "TEXT_MAP"},
-                    {name: "tutkintonimikes", type: "URI_MAP"},
-                    {name: "oppilaitostyyppis", type: "URI_MAP"},
+                    {name: "tutkintonimikes", type: "URI_VERSION_MAP"},
+                    {name: "oppilaitostyyppis", type: "URI_VERSION_MAP"},
+                    {name: "koulutustyyppis", type: "URI_MAP"},
                     {name: "kuvausKomo", type: "TEXT_ENUM_MAP"}
                 ]
             };
@@ -113,14 +115,36 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
 
             $scope.fetchByKoulutuskoodi = function(strKoulutuskoodiUri) {
                 var resource = TarjontaService.komo();
-                resource.search({koulutuskoodi: strKoulutuskoodiUri, meta: false}, function(res) {
-                    console.log("loaded", res);
-                    $scope.ctrl.link.komos = res.result;
+                if (angular.isDefined($scope.ctrl.koulutustyyppiUri) && $scope.ctrl.koulutustyyppiUri !== null) {
 
-                    for (var i = 0; i < res.result.length; i++) {
-                        $scope.ctrl.link.komosMap[res.result[i].komoOid] = res.result[i];
+                    resource.searchModules({koulutustyyppi: $scope.ctrl.koulutustyyppiUri, koulutus: strKoulutuskoodiUri, meta: false}, function(res) {
+                        console.log("loaded", res);
+                        var komos = [];
+
+                        for (var i = 0; i < res.result.length; i++) {
+                            komos.push({
+                                oid: res.result[i].oid,
+                                koulutuskoodiUri: res.result[i].koulutuskoodiUri,
+                                koulutusohjelmaUri: res.result[i].koulutusohjelmaUri,
+                                koulutusmoduuliTyyppi: res.result[i].koulutusmoduuliTyyppi,
+                                moduuli: res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO' ? 'Tutkinto' : 'Tutkinto-ohjelma',
+                                koulutus: res.result[i].koulutuskoodiUri,
+                                ohjelma: res.result[i].koulutusohjelmaUri
+                            });
+                        }
+
+                        if ($scope.ctrl.showRealName) {
+                            $scope.searchRealNames(komos);
+                        } else {
+                            $scope.ctrl.link.komos = komos;
+                        }
+
+                        for (var i = 0; i < komos.length; i++) {
+                            $scope.ctrl.link.komosMap[res.result[i].oid] = komos[i];
+                        }
                     }
-                });
+                    );
+                }
             };
 
             $scope.getField = function(field) {
@@ -366,4 +390,33 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 return copy;
             };
 
+            $scope.$watch("ctrl.showRealName", function(valNew, valOld) {
+                if (valNew) {
+                    $scope.searchRealNames($scope.ctrl.link.komos);
+                }
+            });
+
+            $scope.searchRealNames = function(modelKomos) {
+                var prosmises = []
+                var komos = angular.copy(modelKomos);
+                for (var i = 0; i < komos.length; i++) {
+                    prosmises.push($scope.searchKoodi(komos[i], 'koulutus', 'koulutus', komos[i].koulutuskoodiUri, 'FI'));
+                    if (angular.isDefined(komos[i].koulutusohjelmaUri) && komos[i].koulutusohjelmaUri !== null) {
+                        prosmises.push($scope.searchKoodi(komos[i], 'ohjelma', (komos[i].koulutusohjelmaUri.split("_"))[0], komos[i].koulutusohjelmaUri, 'FI'));
+                    }
+                }
+
+                $q.all(prosmises).then(function(values) {
+                    $scope.ctrl.link.komos = komos;
+                });
+            };
+
+
+            $scope.searchKoodi = function(obj, field, koodistouri, uri, locale) {
+                var promise = Koodisto.getKoodi(koodistouri, uri, locale);
+                promise.then(function(data) {
+                    obj[field] = data.koodiArvo + ' ' + data.koodiNimi;
+                });
+                return promise;
+            };
         });

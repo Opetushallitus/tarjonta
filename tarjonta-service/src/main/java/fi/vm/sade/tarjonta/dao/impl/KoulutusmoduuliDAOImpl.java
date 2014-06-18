@@ -48,7 +48,7 @@ import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -171,6 +171,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, ors);
         }
 
+        if (criteria.getKoulutustyyppiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiUri.like("%|" + criteria.getKoulutustyyppiUri().uri() + "|%"));
+        }
+
         if (criteria.getTila() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.tila.eq(criteria.getTila()));
         }
@@ -274,7 +278,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
         }
 
-        whereExpr.and(moduuli.koulutustyyppiEnum.eq(KoulutustyyppiEnum.LUKIOKOULUTUS));
+        whereExpr.and(moduuli.koulutustyyppiEnum.eq(ModuulityyppiEnum.LUKIOKOULUTUS));
 
         return from(moduuli).
                 where(whereExpr).
@@ -297,13 +301,11 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
-        List<KoulutustyyppiEnum> rowTypes = new ArrayList<KoulutustyyppiEnum>();
+        List<ModuulityyppiEnum> baseKoulutustyyppi = new ArrayList<ModuulityyppiEnum>();
 
-        rowTypes.add(KoulutustyyppiEnum.KORKEAKOULUTUS);
-        rowTypes.add(KoulutustyyppiEnum.AMMATTIKORKEAKOULUTUS);
-        rowTypes.add(KoulutustyyppiEnum.YLIOPISTOKOULUTUS);
+        baseKoulutustyyppi.add(ModuulityyppiEnum.KORKEAKOULUTUS);
 
-        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(rowTypes));
+        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(baseKoulutustyyppi));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {

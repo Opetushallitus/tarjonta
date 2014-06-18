@@ -31,15 +31,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
-import fi.vm.sade.authentication.service.types.dto.YhteystiedotTyyppiType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.formbinder.FormFieldMatch;
 import org.vaadin.addon.formbinder.FormView;
 import org.vaadin.addon.formbinder.PropertyId;
 
-import com.google.common.collect.Sets;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.NestedMethodProperty;
@@ -57,7 +54,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import fi.vm.sade.authentication.service.types.dto.HenkiloType;
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
+import fi.vm.sade.authentication.service.types.dto.YhteystiedotTyyppiType;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.generic.ui.component.CaptionFormatter;
@@ -66,7 +64,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.koodisto.widget.KoodistoComponent;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.ui.enums.KoulutusasteType;
-import fi.vm.sade.tarjonta.ui.enums.Koulutustyyppi;
 import fi.vm.sade.tarjonta.ui.helper.TarjontaUIHelper;
 import fi.vm.sade.tarjonta.ui.helper.UiBuilder;
 import fi.vm.sade.tarjonta.ui.model.koulutus.KoulutusKoodistoModel;
@@ -222,22 +219,6 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
     private boolean isPervako = false;
     private boolean isToinenasteValmentava = false;
 
-    private final Set<String> valmentavatTyypit = Sets
-            .newHashSet(Koulutustyyppi.PERUSOPETUKSEN_LISAOPETUS
-                    .getKoulutustyyppiUri(),
-                    Koulutustyyppi.AMMATILLISEEN_OHJAAVA_KOULUTUS
-                    .getKoulutustyyppiUri(),
-                    Koulutustyyppi.MAMU_AMMATILLISEEN_OHJAAVA_KOULUTUS
-                    .getKoulutustyyppiUri(),
-                    Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
-                    .getKoulutustyyppiUri(),
-                    Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
-                    .getKoulutustyyppiUri(),
-                    Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS
-                    .getKoulutustyyppiUri(),
-                    Koulutustyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS
-                    .getKoulutustyyppiUri());
-
     public EditKoulutusPerustiedotFormView(final TarjontaPresenter presenter, final UiBuilder uiBuilder, final KoulutusToisenAsteenPerustiedotViewModel model) {
         super(2, 1);
         setSizeFull();
@@ -252,11 +233,8 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
             model.setOpintojenLaajuusyksikkoTot("");
         }
 
-        isPervako = koulutusModel.getKoulutuksenTyyppi() != null
-                && valmentavatTyypit.contains(koulutusModel.getKoulutuksenTyyppi().getKoodi());
-
-        isToinenasteValmentava = koulutusModel.getKoulutuksenTyyppi() != null
-                && Koulutustyyppi.TOINEN_ASTE_VALMENTAVA_KOULUTUS.getKoulutustyyppiUri().equals(koulutusModel.getKoulutuksenTyyppi().getKoodi());
+        isPervako = KoulutusUtil.isPervako(koulutusModel.getKoulutuksenTyyppi().getKoodi());
+        isToinenasteValmentava = KoulutusUtil.isValmentavaJaKuntouttava(koulutusModel.getKoulutuksenTyyppi().getKoodi());
         initializeLayout();
         disableOrEnableComponents(koulutusModel.isLoaded());
         initializeDataContainers();

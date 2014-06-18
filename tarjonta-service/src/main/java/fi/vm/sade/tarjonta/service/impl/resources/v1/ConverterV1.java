@@ -14,19 +14,13 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.util.*;
 
+import fi.vm.sade.tarjonta.service.search.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -76,10 +70,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -114,6 +104,29 @@ public class ConverterV1 {
     @Autowired
     private ContextDataService contextDataService;
 
+    @Value("${koodisto.hakutapa.jatkuvaHaku.uri}")
+    private String _jatkuvaHakutapaUri;
+
+    public static boolean isJatkuvaHaku(HakuV1RDTO haku, String jatkuvaHakutapaUriParam) {
+
+        if (isEmpty(haku.getHakutapaUri())) {
+            return false;
+        }
+
+        boolean result = (haku.getHakutapaUri().equals(jatkuvaHakutapaUriParam));
+
+
+        return result;
+    }
+
+    /**
+     * @param s
+     * @return true if string s is empty or null
+     */
+    public static boolean isEmpty(String s) {
+        return (s == null || s.trim().isEmpty());
+    }
+
     public HakuV1RDTO fromHakuToHakuRDTO(String oid) {
         return fromHakuToHakuRDTO(hakuDao.findByOid(oid), true);
     }
@@ -132,8 +145,13 @@ public class ConverterV1 {
         t.setCreatedBy(null);
         t.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
         t.setHakukausiUri(haku.getHakukausiUri());
-        t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
-        t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+        if (haku.getKoulutuksenAlkamiskausiUri() != null) {
+            t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
+        }
+        if (haku.getKoulutuksenAlkamisVuosi() != null) {
+            t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+        }
+
         t.setHakulomakeUri(haku.getHakulomakeUrl());
         t.setHakutapaUri(haku.getHakutapaUri());
         t.setHakutyyppiUri(haku.getHakutyyppiUri());
@@ -183,17 +201,25 @@ public class ConverterV1 {
             }
         }
 
+        if(isJatkuvaHaku(hakuV1RDTO,_jatkuvaHakutapaUri)) {
+
+            haku.setHakukausiUri(getKausiForForJatkuvaHakuAloitusPvm(getEarliestStartDate(getAloitusPvmsFromHakuaikas(hakuV1RDTO.getHakuaikas()))));
+            haku.setHakukausiVuosi(getHakuvuosiForJatkuvaHakuAloitusPvm(getEarliestStartDate(getAloitusPvmsFromHakuaikas(hakuV1RDTO.getHakuaikas()))));
+        } else {
+            haku.setKoulutuksenAlkamiskausiUri(hakuV1RDTO.getKoulutuksenAlkamiskausiUri());
+            haku.setKoulutuksenAlkamisVuosi(hakuV1RDTO.getKoulutuksenAlkamisVuosi());
+            haku.setHakukausiUri(hakuV1RDTO.getHakukausiUri());
+            haku.setHakukausiVuosi(hakuV1RDTO.getHakukausiVuosi());
+        }
+
         haku.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
         haku.setOid(hakuV1RDTO.getOid());
-        haku.setHakukausiUri(hakuV1RDTO.getHakukausiUri());
-        haku.setHakukausiVuosi(hakuV1RDTO.getHakukausiVuosi());
         haku.setHakulomakeUrl(hakuV1RDTO.getHakulomakeUri());
         haku.setHaunTunniste(hakuV1RDTO.getHaunTunniste());
         haku.setHakutyyppiUri(hakuV1RDTO.getHakutyyppiUri());
         haku.setHakutapaUri(hakuV1RDTO.getHakutapaUri());
         haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
-        haku.setKoulutuksenAlkamiskausiUri(hakuV1RDTO.getKoulutuksenAlkamiskausiUri());
-        haku.setKoulutuksenAlkamisVuosi(hakuV1RDTO.getKoulutuksenAlkamisVuosi());
+
         haku.setKohdejoukkoUri(hakuV1RDTO.getKohdejoukkoUri());
         if (hakuV1RDTO.getTila() == null) {
             hakuV1RDTO.setTila(TarjontaTila.LUONNOS.name());
@@ -247,6 +273,45 @@ public class ConverterV1 {
         haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
 
         return haku;
+    }
+
+    private List<Date> getAloitusPvmsFromHakuaikas(List<HakuaikaV1RDTO> hakuaikaV1RDTOs) {
+        List<Date> aloitusDates = new ArrayList<Date>();
+
+        for(HakuaikaV1RDTO ha:hakuaikaV1RDTOs) {
+             aloitusDates.add(ha.getAlkuPvm());
+        }
+
+        return aloitusDates;
+    }
+
+    private Date getEarliestStartDate(List<Date> startDates) {
+
+
+        Date aloitusPvm = null;
+
+        for (Date ap:startDates) {
+            if (aloitusPvm == null) {
+                aloitusPvm = ap;
+            }
+
+            if (ap.before(aloitusPvm)) {
+                aloitusPvm = ap;
+            }
+
+        }
+
+        return aloitusPvm;
+    }
+
+    private int getHakuvuosiForJatkuvaHakuAloitusPvm(Date aloitusPvm) {
+
+        return IndexDataUtils.parseYearInt(aloitusPvm);
+
+    }
+
+    private String getKausiForForJatkuvaHakuAloitusPvm(Date aloitusPvm) {
+        return IndexDataUtils.parseKausiKoodi(aloitusPvm);
     }
 
     private HakuaikaV1RDTO convertHakuaikaToV1RDTO(Hakuaika hakuaika) {
@@ -1153,7 +1218,7 @@ public class ConverterV1 {
             ret.setKoulutuslajiUri(ht.getKoulutuslaji().getUri());
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
-        ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
+        ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
         ret.setKoulutuskoodi(ht.getKoulutuskoodi().getUri());
 
         return ret;

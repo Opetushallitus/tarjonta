@@ -100,7 +100,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         koodiUrisMap(dto.getAmmattinimikkeet(), URI_KIELI_FI, (MAP_AMMATTINIMIKE));
         koodiUrisMap(dto.getPohjakoulutusvaatimukset(), URI_KIELI_FI, MAP_POHJAKOULUTUS);
 
-        dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO));
+        dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
@@ -135,7 +135,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUSKIELI);
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_POHJAKOULUTUS);
-        expectMetaUri(SUUNNITELTU_KESTO);
+        expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
         expectMetaMapUris(MAP_AMMATTINIMIKE);
 
         /* 2nd round, convert to dto */
@@ -156,7 +156,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUSKIELI);
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_POHJAKOULUTUS);
-        expectMetaUri(SUUNNITELTU_KESTO);
+        expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
         expectMetaMapUris(MAP_AMMATTINIMIKE);
 
         //  expectKoulutusohjelmaUris(KOULUTUSOHELMA);
@@ -178,7 +178,6 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertLoadData(result1);
 
         verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
     }
 
     private void assertLoadData(final KoulutusKorkeakouluV1RDTO result) {
@@ -220,7 +219,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEqualMetaDto(MAP_TUTKINTONIMIKE, result.getTutkintonimikes());
 
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKestoArvo());
-        assertEquals(SUUNNITELTU_KESTO + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
+        assertEquals(SUUNNITELTU_KESTO_TYYPPI + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
         YhteyshenkiloTyyppi next = result.getYhteyshenkilos().iterator().next();
         assertEquals(PERSON[0], next.getHenkiloOid());

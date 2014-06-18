@@ -51,6 +51,7 @@ app.directive('koodistocombo',function(Koodisto,$log){
             usearvocombo : "=",
             parentkoodiuri : "=",
             filteruris : "=",
+            excludeuris : "=",
             prompt : "=",
             isalakoodi : "=",
             onchangecallback : "="
@@ -153,6 +154,8 @@ app.directive('koodistocombo',function(Koodisto,$log){
                            }
 
                            $scope.baseKoodis = $scope.koodis;
+                           $scope.checkForExcludeUris();
+                           $scope.checkForFilterUris();
                        });
                    } else {
                    $log.info('PARENT KOODI WAS DEFINED GETTING YLAPUOLISET KOODIT...');
@@ -166,6 +169,8 @@ app.directive('koodistocombo',function(Koodisto,$log){
                        }
                        $scope.koodis = koodisParam;
                        $scope.baseKoodis = $scope.koodis;
+                       $scope.checkForExcludeUris();
+                       $scope.checkForFilterUris();
                    });
                    }
                }
@@ -178,25 +183,67 @@ app.directive('koodistocombo',function(Koodisto,$log){
                    addVersionToKoodis(cs);
                    $scope.koodis = cs;
                    $scope.baseKoodis = $scope.koodis;
+                   $scope.checkForExcludeUris();
+                   $scope.checkForFilterUris();
+
                });
            }
 
             //If filter uris is changed then query only those and show those koodis
             $scope.$watch('filteruris',function(){
-                if ($scope.filteruris !== undefined && $scope.filteruris.length > 0) {
+
+                $scope.checkForFilterUris();
+
+            });
+
+            $scope.$watch('excludeuris',function(){
+
+                $scope.checkForExcludeUris();
+
+            });
+
+            $scope.checkForFilterUris = function () {
+                if ($scope.filteruris && $scope.filteruris.length > 0) {
+                    console.log('filterurisexists : ', $scope.baseKoodis);
                     var filteredKoodis = [];
                     angular.forEach($scope.baseKoodis,function(koodi){
 
                         angular.forEach($scope.filteruris,function(filterUri){
-                            if (koodi.koodiUri === filterUri) {
+
+                            if (koodi.koodiUri.substring(0,filterUri.length) === filterUri) {
                                 filteredKoodis.push(koodi);
-                            };
+                            }
                         });
 
                     });
+                    console.log('filterurisexists : ', filteredKoodis);
                     $scope.koodis = filteredKoodis;
+
                 }
-            });
+            };
+
+            $scope.checkForExcludeUris = function() {
+
+                if ($scope.excludeuris && $scope.excludeuris.length > 0) {
+                    console.log('excludeurisexists : ', $scope.baseKoodis);
+                    console.log('excludeurisexists : ', $scope.excludeuris);
+                    var filteredKoodis = [];
+                    angular.forEach($scope.baseKoodis,function(koodi){
+
+                        angular.forEach($scope.excludeuris,function(filterUri){
+                            if (koodi.koodiUri.substring(0,filterUri.length) !== filterUri) {
+                                filteredKoodis.push(koodi);
+                            }
+
+                        });
+
+                    });
+                    console.log('excludeurisexists : ', filteredKoodis);
+                    $scope.koodis = filteredKoodis;
+
+                }
+
+            };
 
             $scope.$watch('parentkoodiuri',function(){
                 $log.info('Parent koodi uri changed');

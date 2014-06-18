@@ -21,7 +21,7 @@ import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
@@ -46,7 +46,28 @@ abstract class KoulutusRestBase {
         KOMO,
         KOMO_CHILD,
         KOMOTO,
-        NOT_TESTED
+        NOT_TESTED,
+        RETURN_NULL
+
+    };
+
+    protected enum Nullable {
+
+        ALLOW_NULL(true),
+        NOT_NULL(false);
+
+        private boolean b;
+
+        Nullable(boolean b) {
+            this.b = b;
+        }
+
+        /**
+         * @return the b
+         */
+        public boolean isAllowed() {
+            return b;
+        }
 
     };
 
@@ -66,7 +87,7 @@ abstract class KoulutusRestBase {
         m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
         m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
         m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI));
+        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
         m.setKoulutusohjelmaUri(testKey(type, FieldNames.KOULUTUSOHJELMA));
         m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
         m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
@@ -86,7 +107,7 @@ abstract class KoulutusRestBase {
         m.setOpintoalaUri(testKey(type, FieldNames.OPINTOALA));
         m.setKoulutusalaUri(testKey(type, FieldNames.KOULUTUSALA));
         m.setKoulutusasteUri(testKey(type, FieldNames.KOULUTUSASTE));
-        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUSKOODI));
+        m.setKoulutusUri(testKey(type, FieldNames.KOULUTUS));
         m.setOpintojenLaajuusarvoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO));
         m.setOpintojenLaajuusyksikkoUri(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
         m.setUlkoinenTunniste(testKey(type, FieldNames.TUNNISTE));
@@ -99,12 +120,12 @@ abstract class KoulutusRestBase {
         Preconditions.checkNotNull(m, "Koulutusmoduuli object cannot be null.");
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         m.setOid(EntityConverterToRDTOTest.Type.KOMO_CHILD.name());
-        m.setKoulutusUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.KOULUTUSKOODI));
+        m.setKoulutusUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.KOULUTUS));
         m.setNqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.NQF));
         m.setEqfUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.EQF));
         m.setLukiolinjaUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.LUKIOLINJA));
         m.setTutkintonimikeUri(testKey(EntityConverterToRDTOTest.Type.KOMO_CHILD, FieldNames.TUTKINTONIMIKE));
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
     }
 
     protected static KoodiV1RDTO toKoodiUri(final String type) {

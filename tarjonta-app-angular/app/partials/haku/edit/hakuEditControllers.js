@@ -54,6 +54,24 @@ app.controller('HakuEditController',
                 $scope.model.formControls.notifs.errorDetail = [];
             };
 
+
+            var checkIsOphAdmin = function() {
+
+
+                if (AuthService.isUserOph()) {
+
+                    $scope.filteruris = undefined;
+
+                } else {
+
+                    $scope.filteruris = [];
+                    $scope.filteruris.push('hakutapa_01');
+                    $log.info('filteruris : ', $scope.filteruris);
+
+                }
+
+            };
+
             /**
              * Display form validation errors on screen
              */
@@ -230,7 +248,10 @@ app.controller('HakuEditController',
             };
 
             $scope.checkHaunNimiValidity = function() {
-                // Count number of keys that have content
+            	if (!$scope.model.showError) {
+            		return false;
+            	}
+            	// Count number of keys that have content
                 var numKeys = 0;
 
                 var result = true;
@@ -269,6 +290,66 @@ app.controller('HakuEditController',
                 }
 
                 return result;
+            };
+
+            var stringContainsOther = function (fullString,otherString) {
+
+                if(fullString && otherString) {
+
+                    if(fullString.indexOf(otherString) != -1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+
+                } else {
+                    return false;
+                }
+
+            };
+
+            $scope.filterKohdejoukkos = function () {
+
+              if(!AuthService.isUserOph())
+               {
+
+
+                    var kkOppilaitosTyypit = {};
+                    kkOppilaitosTyypit["oppilaitostyyppi_42"] = "";
+                    kkOppilaitosTyypit["oppilaitostyyppi_41"] = "";
+                    kkOppilaitosTyypit["oppilaitostyyppi_43"] = "";
+
+                    var userOrgs = AuthService.getOrganisations();
+
+                    //CHeck if user has KK - orgs
+                    angular.forEach(userOrgs, function (org) {
+                        OrganisaatioService.haeOppilaitostyypit(org).then(function (oppilaitosTyypit) {
+
+                            angular.forEach(oppilaitosTyypit, function (oppilaitosTyyppi) {
+                                var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split("#");
+                                //User belongs to KK - org, check if he/she has CRUD
+                                if(oppilaitosTyyppiUriWithoutVersion[0] in kkOppilaitosTyypit) {
+                                    AuthService.crudOrg(org).then(function (isCrud) {
+                                         console.log('IS CRUD : ', isCrud);
+                                        if(isCrud) {
+                                               $scope.model.kohdejoukkoFilterUris = ["haunkohdejoukko_12"];
+
+                                        }
+
+
+
+                                    });
+
+                                }
+                            })
+
+                        });
+
+                    });
+                }
+
+
+
             };
 
 
@@ -433,6 +514,7 @@ app.controller('HakuEditController',
                 $log.info("init... done.");
                 $scope.model = model;
 
+
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
@@ -454,6 +536,9 @@ app.controller('HakuEditController',
                 // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
+                //Filter kohdejoukkos
+                $scope.filterKohdejoukkos();
+                checkIsOphAdmin();
             };
             $scope.init();
             

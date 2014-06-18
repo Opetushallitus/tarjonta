@@ -344,25 +344,27 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
-    private boolean checkHakukohdeExists(String hakukohdeNimi, String term, Integer year, String providerOid) {
+    private boolean checkHakukohdeExists(String hakukohdeNimi, String term, Integer year, String providerOid, String hakuOid) {
 
 
 
            List<Hakukohde> hakukohdes =  hakukohdeDAO.findByNameTermAndYear(hakukohdeNimi,term,
                    year,providerOid);
 
-           if (hakukohdes != null && hakukohdes.size() > 0)  {
-               return true;
+           if (hakukohdes != null && hakukohdes.size() > 0) {
+               for(Hakukohde hk: hakukohdes) {
+                   System.out.println("hakuOid" + hakuOid + " existing hk hakuOid:" + hk.getHaku().getOid() );
+                   if(hk.getHaku().getOid().equals(hakuOid)) {
+                       System.out.println("returning true!");
+                       return true;
+                   }
+               }
            }
-           else {
-               return false;
-           }
-
-
-
+           
+           return false;
     }
     @Transactional(rollbackFor = Throwable.class, readOnly = true, propagation = Propagation.NOT_SUPPORTED)
-    private boolean doesHakukohdeExistAllready(final String hakukohdeName, String koulutusOid)  {
+    private boolean doesHakukohdeExistAllready(final String hakukohdeName, String koulutusOid, String hakuOid)  {
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
         if (komoto != null )  {
 
@@ -373,12 +375,13 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.debug("HAKUKOHDE KOULUTUS TERM : " + term);
         log.debug("HAKUKOHDE KOULUTUS YEAR : " + year);
         log.debug("HAKUKOHDE KOULUTUS PROVIDER : " + providerOid);
+        log.debug("HAKUKOHDE HAKU OID : " + hakuOid);
         log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppiEnum());
         if (komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
             return false;
         }
 
-        boolean doesExist =  checkHakukohdeExists(hakukohdeName,term,year,providerOid);
+        boolean doesExist =  checkHakukohdeExists(hakukohdeName,term,year,providerOid, hakuOid);
 
         log.debug("DOES EXIST HAKUKOHDE : "+ doesExist);
 
@@ -399,19 +402,17 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         final String hakuOid = hakukohde.getHakukohteenHakuOid();
 
         Preconditions.checkNotNull(hakuOid, "Haku OID (HakukohteenHakuOid) cannot be null.");
-        Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
 
+        
         if(hakukohde.getHakukohteenKoulutusOidit() != null && hakukohde.getHakukohteenKoulutusOidit().size() > 0 ) {
 
-            if (doesHakukohdeExistAllready(hakukohde.getHakukohdeNimi(),hakukohde.getHakukohteenKoulutusOidit().get(0))) {
+            if (doesHakukohdeExistAllready(hakukohde.getHakukohdeNimi(),hakukohde.getHakukohteenKoulutusOidit().get(0), hakukohde.getHakukohteenHakuOid())) {
                 log.debug("HAKUKOHDE ALLREADY EXISTS, THROWING EXCEPTION !! ");
                 throw  new HakukohdeExistsException();
             }
         }
 
-
-
-
+        Hakukohde hakuk = conversionService.convert(hakukohde, Hakukohde.class);
         Haku haku = hakuDAO.findByOid(hakuOid);
         if (!checkHakuAndHakukohdekoulutusKaudet(hakukohde, haku)) {
             throw new RuntimeException("hakukohde.koulutukses.alkamisaika.do.not.match.haku");
@@ -460,8 +461,10 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
         final Hakukohde hakukohde = hakukohdeDAO.findHakukohdeWithDepenciesByOid(parameters.getHakukohdeOid());
 
-        if(parameterServices.parameterCanEditHakukohdeLimited(hakukohde.getHaku().getOid())){
-            //limited editing -> no changes to koulutuslist
+        final boolean canEdit = parameterServices.parameterCanEditHakukohde(parameters.getHakukohdeOid());
+        final boolean isOphAdmin = permissionChecker.isOphCrud();
+        if(!isOphAdmin && !canEdit){
+            //no editing at all || only limited limited editing -> no changes to koulutuslist
             throw new NotAuthorizedException("no.permission");
         }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(parameters.getHakukohdeOid());
@@ -663,12 +666,30 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     }
 
     private boolean hakuAlkanut(Hakukohde hakukohde) {
+    	log.debug("HAKU ALKANUT? {}", hakukohde.getId());
         if (isHakukohdeHakuErillisOrJatkuvaHaku(hakukohde)) {
             return false;
         }
 
+        log.debug("TEST1 hakuaika {}..{}", hakukohde.getHakuaikaAlkuPvm(), hakukohde.getHakuaikaLoppuPvm());
+
+        final Date now = new Date();
+        if (hakukohde.getHakuaikaAlkuPvm()!=null && hakukohde.getHakuaikaAlkuPvm().after(now)) {
+        	return false;
+        }
+        
+        if (hakukohde.getHakuaika()!=null) {
+        	log.debug("TEST2 hakuaika {} n={} {}..{}", hakukohde.getHakuaika().getId(), hakukohde.getHakuaika().getSisaisenHakuajanNimi(), hakukohde.getHakuaika().getAlkamisPvm(), hakukohde.getHakuaika().getPaattymisPvm());
+        }
+        
+        
+        if (hakukohde.getHakuaika()!=null && hakukohde.getHakuaika().getAlkamisPvm().after(now)) {
+        	return false;
+        }     
+        
         for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
-            if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
+        	log.debug("TEST3 haku {} n={} {}..{}", curHakuaika.getId(), curHakuaika.getSisaisenHakuajanNimi(), curHakuaika.getAlkamisPvm(), curHakuaika.getPaattymisPvm());
+            if (!curHakuaika.getAlkamisPvm().after(now)) {
                 return true;
             }
         }
@@ -892,7 +913,9 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         target.setHakutyyppiUri(source.getHakutyyppiUri());
         target.setKohdejoukkoUri(source.getKohdejoukkoUri());
         target.setKoulutuksenAlkamiskausiUri(source.getKoulutuksenAlkamiskausiUri());
-        target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        if (source.getKoulutuksenAlkamisVuosi() != null) {
+            target.setKoulutuksenAlkamisVuosi(source.getKoulutuksenAlkamisVuosi());
+        }
         target.setSijoittelu(source.isSijoittelu());
         target.setTila(source.getTila());
         target.setVersion(source.getVersion());

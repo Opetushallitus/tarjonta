@@ -208,26 +208,68 @@ app.controller('HakuListController',
                  * @param {type} targetState
                  * @returns {Function}
                  */
-                function changeState(targetState) {
+                function changeState(targetState, prefix, confirmationDescription) {
+                  
+                  var title = LocalisationService.t(prefix + ".confirmation.title");
+                  var description = LocalisationService.t(prefix + ".confirmation.description");
+                  var okAckTitle = LocalisationService.t(prefix + ".ack.title");
+                  var okAckDescription = LocalisationService.t(prefix + ".ack.description");
+                  var errorAckTitle = LocalisationService.t(prefix + ".error.ack.title");
+                  var errorAckDescription = LocalisationService.t(prefix + ".error.ack.description");
+                  
                     return function(haku, doAfter) {
+
+                      /**
+                       * Kerro käyttäjälle että operaatio suoritettu
+                       */
+                      function after(ackTitle, ackDescription){
+                        dialogService.showSimpleDialog(
+                            ackTitle,
+                            ackDescription,
+                            LocalisationService.t("ok"))
+                            .result
+                            .then(function(ok) {
+                            });
+                      }
+
+
+                      function change(haku, doAfter) {
                         $log.debug("changing state with service call...");
                         Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
                             $log.debug("call done:", result);
                             if ("OK" === result.status) {
                                 haku.tila = targetState;
                                 doAfter();
+                                after(okAckTitle, okAckDescription);
                             } else {
                                 $log.debug("state change did not work?", result);
+                                after(errorAckTitle, errorAckDescription);
                             }
                         }, function(reason) {
-                            alert('service call failed: ' + reason);
+                          
                         });
+                      }
+                      
+                      return dialogService.showSimpleDialog(
+                          title,
+                          description,
+                          LocalisationService.t("ok"),
+                          LocalisationService.t("cancel"))
+                          .result
+                          .then(function(ok) {
+                              if (ok) {
+                                  $log.info(" -> verified.");
+                                  return change(haku, doAfter);
+                              } else {
+                                  $log.info(" -> cancelled.");
+                                  return false;
+                              }
+                          });
                     };
                 }
 
-
-                $scope.doPublish = changeState("JULKAISTU");
-                $scope.doCancel = changeState("PERUTTU");
+                $scope.doPublish = changeState("JULKAISTU", "haku.publish");
+                $scope.doCancel = changeState("PERUTTU", "haku.cancel");
 
                 $scope.hakuGetOptions = function(haku, actions) {
 
@@ -301,6 +343,15 @@ app.controller('HakuListController',
                                 ret = a.nimi.localeCompare(b.nimi);
                             }
                             return ret;
+                        });
+
+                        angular.forEach(haut, function (haku) {
+
+                            if(haku.koulutuksenAlkamisVuosi === 0) {
+                                haku.koulutuksenAlkamisVuosi = '';
+
+                            }
+
                         });
                         $scope.model.hakus = haut;
                     }

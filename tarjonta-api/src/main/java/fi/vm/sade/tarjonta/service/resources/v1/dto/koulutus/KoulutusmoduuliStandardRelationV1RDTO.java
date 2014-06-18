@@ -40,8 +40,10 @@ public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
     private KoodiV1RDTO eqf;
     @ApiModelProperty(value = "NQF-koodi", required = true)
     private KoodiV1RDTO nqf;
-    @ApiModelProperty(value = "Opintojen laajuuden yksikko", required = true)
+    @ApiModelProperty(value = "Opintojen laajusyksikko-koodi", required = true)
     private KoodiV1RDTO opintojenLaajuusyksikko;
+    @ApiModelProperty(value = "Koulutustyyppi-koodi", required = true)
+    private KoodiV1RDTO koulutustyyppi;
     
     /**
      * @return the koulutuskoodi
@@ -153,6 +155,20 @@ public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
      */
     public void setNqf(KoodiV1RDTO nqf) {
         this.nqf = nqf;
+    }
+
+    /**
+     * @return the koulutustyyppi
+     */
+    public KoodiV1RDTO getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
+
+    /**
+     * @param koulutustyyppi the koulutustyyppi to set
+     */
+    public void setKoulutustyyppi(KoodiV1RDTO koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
     }
 
 }

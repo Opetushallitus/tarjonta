@@ -12,7 +12,7 @@
             <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs, koulutusForm)" disabled="uiModel.tabs.lisatiedot"></controls-button>
 
             <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
-            <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.koulutusasteTyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
+            <controls-notify type="message" tt-expr="'koulutus.edit.header.LUKIOKOULUTUS'" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
 
             <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
             <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>

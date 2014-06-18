@@ -596,67 +596,102 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
 
             $scope.luoUusiHakukohde = function() {
-              console.log("koulutukset:", $scope.selection.koulutukset);
-              var promises=[];
-              angular.forEach($scope.selection.koulutukset, function(koulutusOid){
-                promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
-              });
-              $q.all(promises).then(function(results){
+                console.log("koulutukset:", $scope.selection.koulutukset);
+            	if ($scope.selection.koulutukset.length==0) {
+            		return; // napin pitäisi olla disabloituna, eli tätä ei pitäisi tapahtua, mutta varmuuden vuoksi..
+            	}
+				var promises=[];
+				angular.forEach($scope.selection.koulutukset, function(koulutusOid){
+				    promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
+				});
+				$q.all(promises).then(function(results){
 
-                var valid=true;
-                var koulutusTyyppi;
-                //tila
-                angular.forEach(results, function(res){
-                  var koulutus = res.result;
-
-                    //Hakukohde should not have more than one kind of koulutustyyppi
-                    //so we can get any value from the array.
-                    koulutusTyyppi = koulutus.koulutusasteTyyppi;
-                  if(koulutus.tila=="PERUTTU" || koulutus.tila=="POISTETTU") {
-                    valid=false;
-                    dialogService.showDialog({
-                      title: LocalisationService.t("koulutuksen.tila.error"),
-                      description: LocalisationService.t("koulutuksen.tila.error"),
-                      ok: LocalisationService.t("ok"),
-                      cancel: LocalisationService.t("cancel")
-                    });
-                    return;
-                  }
-                });
-
-                if($scope.selection.koulutukset.length>1) {
-                    var vuosi,kausi;
-                    angular.forEach(results, function(res){
-                      var koulutus = res.result;
-                      if(!vuosi){
-                        vuosi=koulutus.koulutuksenAlkamisvuosi;
-                        kausi=koulutus.koulutuksenAlkamiskausi.uri
-                      } else {
-                        if(vuosi!==koulutus.koulutuksenAlkamisvuosi || kausi!==koulutus.koulutuksenAlkamiskausi.uri) {
-                          valid=false;
-                        }
-                      }
-                    });
-
-                    if(!valid) {
-                      //show dialog about mismatch
-                      console.log("vuosi/kausi mismatch!");
-                      dialogService.showDialog({
-                          title: LocalisationService.t("vuosikausi.mismatch.dialog.title"),
-                          description: LocalisationService.t("vuosikausi.mismatch.dialog.description"),
-                          ok: LocalisationService.t("ok"),
-                          cancel: LocalisationService.t("cancel")
-                      });
-                    }
-                }
+					// null = ei asetettu, false -> invalid
+					var koulutusTyyppi = null; // koulutustyyppi
+					var kausi = null; // kausi
+					var vuosi = null; // vuosi
+					var invalidState = false;
                 
-                if(valid) {
-                  console.log("KOULUTUS:", $scope.selection.koulutukset);
-                  SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
-                  SharedStateService.addToState('SelectedKoulutusTyyppi',koulutusTyyppi);
-                  SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
-                  $location.path('/hakukohde/new/edit');
-                }
+					for (var i in results) {
+						var res = results[i].result;
+						console.log('RES : ', res);
+						if (koulutusTyyppi===null) {
+							koulutusTyyppi = res.koulutusasteTyyppi;
+						} else if (koulutusTyyppi != res.koulutusasteTyyppi) {
+                            koulutusTyyppi = false;
+							break;
+						}
+
+						// ei validoida kautta jos sitä ei ole määritelty
+						if (res.koulutuksenAlkamiskausi.uri) {
+							if (kausi===null) {
+								kausi = res.koulutuksenAlkamiskausi.uri;
+							} else if (kausi != res.koulutuksenAlkamiskausi.uri) {
+								kausi = false;
+								break;
+							}
+						} 
+							
+						if (vuosi===null) {
+							vuosi = res.koulutuksenAlkamisvuosi;
+						} else if (vuosi != res.koulutuksenAlkamisvuosi) {
+							vuosi = false;
+							break;
+						}
+
+						// TODO tämä logiikka kuuluu serviceen, joka puolestaan hakee logiikaan TarjontaTila-enumista
+						if (res.tila=="PERUTTU" || res.tila=="POISTETTU") {
+							invalidState = true;
+							break;
+						}
+					}
+					
+	                // kaikkien koulutusten on oltava samaa koulutustyyypiö
+	                if (koulutusTyyppi===false) {
+	                	dialogService.showDialog({
+	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
+	                        description: LocalisationService.t("hakukohde.luonti.virhe.tyyppi"),
+	                        ok: LocalisationService.t("ok")
+	                      });
+	                	return;
+	                }
+	                
+	                // kaikkien koulutusten on oltava samaa koulutustyyypiö
+	                if (kausi===false) {
+	                	dialogService.showDialog({
+	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
+	                        description: LocalisationService.t("hakukohde.luonti.virhe.kausi"), // vuosikausi.mismatch.dialog.description
+	                        ok: LocalisationService.t("ok")
+	                      });
+	                	return;
+	                }
+	                
+	                // kaikkien koulutusten on oltava samaa koulutustyyypiö
+	                if (vuosi===false) {
+	                	dialogService.showDialog({
+	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
+	                        description: LocalisationService.t("hakukohde.luonti.virhe.vuosi"),
+	                        ok: LocalisationService.t("ok")
+	                      });
+	                	return;
+	                }
+	                
+	                // vikatilaisia ei saa olla
+	                if (invalidState) {
+	                	dialogService.showDialog({
+	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
+	                        description: LocalisationService.t("hakukohde.luonti.virhe.tila"),
+	                        ok: LocalisationService.t("ok")
+	                      });
+	                	return;
+	                }
+                
+
+	                SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
+					SharedStateService.addToState('SelectedKoulutusTyyppi',koulutusTyyppi);
+                    SharedStateService.addToState('SelectedToteutusTyyppi',res.toteutustyyppi);
+					SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
+					$location.path('/hakukohde/new/edit');
 
               });
 

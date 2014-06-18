@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>9.4.2-SNAPSHOT</version>
+        <version>9.6-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -210,7 +210,7 @@
         <dependency>
             <groupId>fi.vm.sade.tarjonta</groupId>
             <artifactId>tarjonta-api</artifactId>
-            <version>9.4.2-SNAPSHOT</version>
+            <version>9.6-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>

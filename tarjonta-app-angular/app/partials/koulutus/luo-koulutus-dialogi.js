@@ -211,6 +211,23 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
         $scope.jatka = function() {
             $scope.tutkintoDialogModel = {};
 
+            /*
+             koulutustyyppi_5	Valmentava ja kuntouttava opetus ja ohjaus
+             koulutustyyppi_12	Erikoisammattitutkinto
+             koulutustyyppi_10	Vapaan sivistystyön koulutus
+             koulutustyyppi_11	Ammattitutkinto
+             koulutustyyppi_2	Lukiokoulutus
+             koulutustyyppi_13	ammatillinen perustutkinto näyttötutkintona
+             koulutustyyppi_14	Lukiokoulutus, aikuisten oppimäärä
+             koulutustyyppi_7	Ammatilliseen peruskoulutukseen ohjaava ja valmistava koulutus
+             koulutustyyppi_4	Ammatillinen peruskoulutus erityisopetuksena
+             koulutustyyppi_1	Ammatillinen perustutkinto
+             koulutustyyppi_8	Maahanmuuttajien ammatilliseen peruskoulutukseen valmistava koulutus
+             koulutustyyppi_3	Korkeakoulutus
+             koulutustyyppi_9	Maahanmuuttajien ja vieraskielisten lukiokoulutukseen valmistava koulutus
+             koulutustyyppi_6	Perusopetuksen lisäopetus
+             */
+
             //XXX nyt vain kk kovakoodattuna!!
             if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_3") {
                 var olt = OrganisaatioService.haeOppilaitostyypit($scope.model.organisaatiot[0].oid);
@@ -234,7 +251,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                                     $scope.luoKoulutusDialog.close();
                                     if (selectedItem.koodiUri != null) {
                                         $log.debug("org:", $scope.model.organisaatiot[0]);
-                                        $location.path('/koulutus/KORKEAKOULUTUS/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+                                        $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
                                     }
                                 }, function() {
                                     $scope.tutkintoDialogModel.selected = null;
@@ -243,9 +260,26 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                             })
                 })
 
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_2") {
-                $location.path('/koulutus/LUKIOKOULUTUS/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+            } else if ( $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
+                //LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA
+                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_13"
+                    || $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_12"
+                    || $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_11"
+                    ) {
+                //AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA
+                var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
+
+                promise.then(function(koodis) {
+                    for (var i = 0; i < koodis.length; i++) {
+                        if (CONFIG.env["koodisto-uris.koulutuslaji"] === koodis[i].koodiKoodisto) {
+                            $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/' + $scope.model.koulutustyyppi.koodiUri + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                            break;
+                        }
+                    }
+                    $scope.luoKoulutusDialog.close();
+                });
             } else {
                 eiToteutettu();
             }

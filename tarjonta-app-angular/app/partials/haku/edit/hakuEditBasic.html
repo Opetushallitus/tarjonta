@@ -3,7 +3,7 @@
     <tr class="required">
         <th data-tt='haku.edit.hakutapa'>Hakutapa</th>
         <td>
-            <div koodistocombo koodistouri="'hakutapa'" locale="getLocale()" koodiuri="model.hakux.result.hakutapaUri" version="true" isrequired="true" name="hakutapa"></div>
+            <div koodistocombo koodistouri="'hakutapa'" excludeuris="filteruris" locale="getLocale()" koodiuri="model.hakux.result.hakutapaUri" version="true" isrequired="true" name="hakutapa"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="hakutapa" tt-prefix="haku.edit" field-check="model.showError"></div>
@@ -51,7 +51,7 @@
     <tr class="required">
         <th data-tt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
         <td>
-            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
+            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" filteruris="model.kohdejoukkoFilterUris" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" field-check="model.showError"></div>
@@ -90,13 +90,13 @@
                     <button class="btn" ng-click="doRemoveHakuaika(hakuaika, $index)"><!-- <span tt="tarjonta.toiminnot.poista">Poista</span> --> <span class="icon-remove"></span></button>
                 </td>
                 <td>
-                    <p class="error" ng-show="hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm==null" tt="haku.edit.pvms.required">
+                    <p class="error" ng-show="model.showError && hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm==null" tt="haku.edit.pvms.required">
                         Haun alkamis- ja päättymispäivät ovat pakollisia.
                     </p>
-                    <p class="error" ng-show="hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm!=null" tt="haku.edit.loppuPvm.required">
+                    <p class="error" ng-show="model.showError && hakuForm.$dirty && !isJatkuvaHaku() && hakuaika.loppuPvm==null && hakuaika.alkuPvm!=null" tt="haku.edit.loppuPvm.required">
                         Haun päättymispäivä on pakollinen.
                     </p>
-                    <p class="error" ng-show="hakuForm.$dirty && hakuaika.alkuPvm==null && (isJatkuvaHaku() || hakuaika.loppuPvm!=null)" tt="haku.edit.alkuPvm.required">
+                    <p class="error" ng-show="model.showError && hakuForm.$dirty && hakuaika.alkuPvm==null && (isJatkuvaHaku() || hakuaika.loppuPvm!=null)" tt="haku.edit.alkuPvm.required">
                         Haun alkamispäivä on pakollinen.
                     </p>
                 </td>

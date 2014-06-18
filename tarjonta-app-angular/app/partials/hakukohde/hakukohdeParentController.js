@@ -43,11 +43,19 @@ app.controller('HakukohdeParentController', ['$scope',
               dialogService) {
 
 
+        /*
+            Routing logic vars
+
+         */
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
+        var aikuNayttoHakukohdePartialUri = "partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html";
         var korkeakouluTyyppi = "KORKEAKOULUTUS";
         var lukioTyyppi = "LUKIOKOULUTUS";
+        var ammattillinenTyyppi = "AMMATILLINEN_PERUSKOULUTUS";
+
+
 
         /*
          *
@@ -64,7 +72,16 @@ app.controller('HakukohdeParentController', ['$scope',
 
         };
 
-        $scope.status = {dirty: false}; // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
+        $scope.status = { // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
+        		dirty: false,
+        		dirtify: function() {
+        			//console.log("DIRTIFY hakukohde");
+        			$scope.status.dirty = true;
+        		},
+        		// alikontrollerit ylikirjoittavat nämä
+        		validateLiitteet: function() { return true; },
+        		validateValintakokeet: function() { return true; }
+			};
 
         $scope.model.showSuccess = false;
         $scope.model.showError = false;
@@ -169,6 +186,20 @@ app.controller('HakukohdeParentController', ['$scope',
             };
             return returnVal;
         };
+        
+        var isNayttoTutkinto = function (toteutusTyyppi) {
+
+                var toteutusTyyppiAmmatillinenNaytto = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA";
+
+                var toteutusTyyppiAmmatillinenNayttoValmistava = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA";
+
+                if (toteutusTyyppi && (toteutusTyyppi.trim() === toteutusTyyppiAmmatillinenNaytto || toteutusTyyppi.trim() === toteutusTyyppiAmmatillinenNayttoValmistava)) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+        };
 
 
         $scope.getHakukohdePartialUri = function() {
@@ -189,6 +220,8 @@ app.controller('HakukohdeParentController', ['$scope',
 
             } else {
                 var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+                var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
+
 
                 console.log('MODEL : ', $scope.model);
                 $log.info('KOULUTUSTYYPPI IS: ' , koulutusTyyppi);
@@ -204,7 +237,16 @@ app.controller('HakukohdeParentController', ['$scope',
                         $log.warn("Dont know what to todo... Only aiku is implemented in hakukohdes....");
                     }
 
-                } else {
+                } else if (koulutusTyyppi.trim() === ammattillinenTyyppi) {
+
+                    if (isKoulutusasteAiku() && isNayttoTutkinto(toteutusTyyppi)) {
+
+                        return aikuNayttoHakukohdePartialUri;
+                    }
+
+                }
+
+                else {
                     $log.info('KOULUTUSTYYPPI WAS: ' , koulutusTyyppi);
                 }
 
@@ -399,7 +441,14 @@ app.controller('HakukohdeParentController', ['$scope',
 
                 errors.push(err);
             }
+            
+            if (!$scope.status.validateValintakokeet()) {
+            	errors.push({errorMessageKey: "hakukohde.edit.valintakokeet.errors"});
+            }
 
+            if (!$scope.status.validateLiitteet()) {
+            	errors.push({errorMessageKey: "hakukohde.edit.liitteet.errors"});
+            }
 
             if (errors.length < 1 ) {
                 return true;
@@ -430,6 +479,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
             TarjontaService.haeKoulutukset(spec).then(function(data){
 
+
                 var tarjoajaOidsSet = new buckets.Set();
 
 
@@ -458,6 +508,8 @@ app.controller('HakukohdeParentController', ['$scope',
 
 
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
+
+
 
                     $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids,hakuFilterFunction);
 
@@ -584,6 +636,7 @@ app.controller('HakukohdeParentController', ['$scope',
 
             hakuPromise.then(function(hakuDatas) {
                 $scope.model.hakus = [];
+                $log.info('ALL HAKUS : ', hakuDatas);
                 angular.forEach(hakuDatas,function(haku){
 
 
@@ -621,6 +674,7 @@ app.controller('HakukohdeParentController', ['$scope',
                 }
 
                 var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
+                $log.info('HAKUS FILTERED WITH GIVEN FUNCTION : ', filteredHakus);
 
                 if (selectedHaku) {
                     filteredHakus.push(selectedHaku);
@@ -649,17 +703,38 @@ app.controller('HakukohdeParentController', ['$scope',
             return paramFilteredHakus;
 
         };
+        
+        var checkIfOrgMatches = function (hakuOrganisaatioOids) {
+
+            var doesMatch = false;
+
+            angular.forEach(hakuOrganisaatioOids, function (hakuOrgOid) {
+
+                angular.forEach($scope.model.hakukohde.tarjoajaOids, function (tarjoajaOid) {
+
+                    if(hakuOrgOid === tarjoajaOid) {
+                        doesMatch = true;
+                    }
+
+                });
+
+            });
+
+
+            return doesMatch;
+
+        };
 
         $scope.filterHakusWithOrgs = function(hakus) {
 
             var filteredHakuArray = [];
 
-
+            
             angular.forEach(hakus,function(haku){
-
+                $log.info('HAKU ORGOID: ', haku.organisaatioOids);
                 if (haku.organisaatioOids && haku.organisaatioOids.length > 0) {
 
-                    if (checkIfOrgMatches(haku)) {
+                    if (checkIfOrgMatches(haku.organisaatioOids) || checkIfParentOrgMatches(haku)) {
                         filteredHakuArray.push(haku);
                     }
 
@@ -1308,7 +1383,7 @@ app.controller('HakukohdeParentController', ['$scope',
             return parentOrgMap;
         };
 
-        var checkIfOrgMatches = function(haku) {
+        var checkIfParentOrgMatches = function(haku) {
 
             var hakuOrganisaatioOids = haku.organisaatioOids;
             var orgMatches = false;
@@ -1322,7 +1397,6 @@ app.controller('HakukohdeParentController', ['$scope',
                 }
 
             });
-
             return orgMatches;
 
         };

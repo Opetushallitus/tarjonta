@@ -343,13 +343,33 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         }
                     }
                 })
-                .when('/koulutus/:koulutusastetyyppi/edit/:org/:koulutuskoodi', {
+                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi', {
                     action: "koulutus.edit",
                     controller: 'KoulutusRoutingController',
                     resolve: {
                         koulutusModel: function($log, $route) {
                             $log.info("/koulutus/ID/edit", $route);
-                            return {'result': {koulutusasteTyyppi: $route.current.params.koulutusastetyyppi}};
+                            return {
+                                'result': {
+                                    toteutustyyppi: $route.current.params.toteutustyyppi,
+                                    koulutustyyppi: $route.current.params.koulutustyyppi
+                                }
+                            };
+                        }
+                    }
+                })
+                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi', {
+                    action: "koulutus.edit",
+                    controller: 'KoulutusRoutingController',
+                    resolve: {
+                        koulutusModel: function($log, $route) {
+                            $log.info("/koulutus/ID/edit", $route);
+                            return {
+                                'result': {
+                                    toteutustyyppi: $route.current.params.toteutustyyppi,
+                                    koulutustyyppi: $route.current.params.koulutustyyppi
+                                }
+                            };
                         }
                     }
                 })

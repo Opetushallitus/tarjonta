@@ -7,6 +7,11 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     var kausiKoodistoUri = "kausi";
 
+    $scope.selection = {
+    		valintaperusteet: [],
+    		sorat: []
+    };
+    
     $scope.model = {};
 
     $scope.model.searchSpec = {};
@@ -127,32 +132,45 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
              }
         });
     };
+    
+    function koodistoToMap(res) {
+    	var ret = {};
+    	for (var i in res) {
+    		var k = res[i];
+    		ret[k.koodiUri] = k.koodiNimi;
+    		ret[k.koodiUri+"#"+k.koodiVersio] = k.koodiNimi;
+    	}
+    	return ret;
+    }
 
-    var resolveKausi = function(kuvaukset) {
+    var resolveKausi = function(kuvaukset, doAfter) {
 
         var resolvedKuvaukset = [];
 
-        angular.forEach(kuvaukset,function(kuvaus){
-            var kausiKoodiPromise = Koodisto.getKoodi(kausiKoodistoUri,kuvaus.kausi,$scope.model.userLang);
-            kausiKoodiPromise.then(function(kausiKoodi){
-                 kuvaus.vuosikausi =    kuvaus.vuosi + " " + kausiKoodi.koodiNimi;
+        Koodisto.getAllKoodisWithKoodiUri(kausiKoodistoUri, $scope.model.userLang).then(function(res){
+        	//console.log("KAUDET",kuvaukset);
+        	var koodisto = koodistoToMap(res);
+        	for (var i in kuvaukset) {
+        		var v = kuvaukset[i];
+        		v.kausiNimi = koodisto[v.kausi] || v.kausi;
+        	}        	
+            doAfter();
+        });        
 
-            });
+    };
 
+    var resolveOppilaitosTyyppi = function(kuvaukset, doAfter) {
+
+        Koodisto.getAllKoodisWithKoodiUri(oppilaitosKoodistoUri, $scope.model.userLang).then(function(res){
+        	//console.log("OPPILAITOSTYYPIT",kuvaukset);
+        	var koodisto = koodistoToMap(res);
+        	for (var i in kuvaukset) {
+        		var v = kuvaukset[i];
+        		v.organisaatioTyyppiNimi = koodisto[v.organisaatioTyyppi] || v.organisaatioTyyppi;
+        	}        	
+            doAfter();
         });
-
-    };
-
-    var resolveOppilaitosTyyppi = function(kuvaukset) {
-
-       angular.forEach(kuvaukset,function(kuvaus){
-           var oppilaitosTyyppiKoodiPromise = Koodisto.getKoodi(oppilaitosKoodistoUri,kuvaus.organisaatioTyyppi,$scope.model.userLang);
-           oppilaitosTyyppiKoodiPromise.then(function(oppilaitosTyyppiKoodi){
-               kuvaus.organisaatioTyyppi = oppilaitosTyyppiKoodi.koodiNimi;
-           });
-       });
-
-    };
+   };
 
     var getOppilaitosTyyppis = function(organisaatiot) {
 
@@ -208,32 +226,12 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
-    var removeKuvausFromArray = function(kuvaus) {
-
-
-
-
-        if (kuvaus.kuvauksenTyyppi === $scope.model.kuvaustyyppis[1])  {
-            var index = $scope.model.sorat.indexOf(kuvaus);
-            $scope.model.sorat.splice(index,1);
-        } else if (kuvaus.kuvauksenTyyppi === $scope.model.kuvaustyyppis[0]) {
-            var index = $scope.model.valintaperusteet.indexOf(kuvaus);
-            $scope.model.valintaperusteet.splice(index,1);
-        }
-
-
-    };
-
-    var removeKuvaus = function(kuvaus) {
-
-
-        var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.kuvauksenTunniste);
+    var removeKuvaus = function(kuvaus, doAfter) {
+    	var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.kuvauksenTunniste);
         removedKuvausPromise.then(function(removedKuvaus){
             console.log('REMOVED KUVAUS: ' , removedKuvaus);
-
             if (removedKuvaus.status === "OK")  {
-
-                removeKuvausFromArray(kuvaus);
+            	doAfter();
             }
 
         });
@@ -315,41 +313,25 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
             var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec,tyyppi);
 
-            $scope.model.valintaperusteet = [];
-
-            $scope.model.sorat = [];
+            //$scope.model.valintaperusteet = [];
+            //$scope.model.sorat = [];
 
             searchPromise.then(function(resultData){
 
                 $log.info('GOT KUVAUS RESULT : ', resultData);
 
                 if (resultData.status === "OK") {
-                    if (tyyppi === $scope.model.kuvaustyyppis[0]) {
-
-
-
-                        $scope.model.valintaperusteet.push.apply($scope.model.valintaperusteet,resultData.result);
-
-                        localizeKuvausNames($scope.model.valintaperusteet);
-
-                        resolveOppilaitosTyyppi($scope.model.valintaperusteet);
-
-                        resolveKausi($scope.model.valintaperusteet);
-
-
-                    } else if (tyyppi === $scope.model.kuvaustyyppis[1]) {
-
-
-
-                        $scope.model.sorat.push.apply($scope.model.sorat,resultData.result);
-
-                        localizeKuvausNames($scope.model.sorat);
-
-                        resolveOppilaitosTyyppi($scope.model.sorat);
-
-                        resolveKausi($scope.model.sorat);
-
-                    }
+                	
+                	localizeKuvausNames(resultData.result);
+                    resolveOppilaitosTyyppi(resultData.result, function(){
+                        resolveKausi(resultData.result, function(){
+                            if (tyyppi === $scope.model.kuvaustyyppis[0]) {
+                                $scope.model.valintaperusteet = resultData.result;
+                            } else if (tyyppi === $scope.model.kuvaustyyppis[1]) {
+                                $scope.model.sorat = resultData.result;
+                            }
+                        });
+                    });
                 };
 
             });
@@ -360,13 +342,43 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
     }
-
-    $scope.valintaPerusteOptions = function() {
-        var ret = [];
-
-        ret.push({  url : "#", title : "Test" });
-
-        return ret;
+    
+    $scope.kuvauksetGetContent = function(row, col) {
+    	console.log("GET CONTENT "+col, row);
+    	switch (col) {
+    	case 'kausi':
+    		return row.kausiNimi + " " + row.vuosi;
+    	case 'oppilaitostyyppi':
+    		return row.organisaatioTyyppiNimi;
+		default:
+			return row.kuvauksenNimi;
+    	}
+    }
+    
+    $scope.kuvauksetGetIdentifier = function(row) {
+    	return row.kuvauksenTunniste;
+    }
+    
+    $scope.kuvauksetGetLink = function(row) {
+    	return "#/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+row.kuvauksenTyyppi +"/"+row.kuvauksenTunniste;
+    }
+    
+    $scope.kuvauksetGetOptions = function(row) {    	
+    	return [{
+    		title: LocalisationService.t("tarjonta.toiminnot.muokkaa"),
+    		href: $scope.kuvauksetGetLink(row)
+    	},{
+    		title: LocalisationService.t("tarjonta.toiminnot.poista"),
+    		action: function() {
+    			removeKuvaus(row, row.$delete);
+    		}
+    	},{
+    		title: LocalisationService.t("tarjonta.toiminnot.kopioi"),
+    		action: function() {
+    			copyKuvaus(row);
+    		}
+    	}
+    	];
     }
 
 });

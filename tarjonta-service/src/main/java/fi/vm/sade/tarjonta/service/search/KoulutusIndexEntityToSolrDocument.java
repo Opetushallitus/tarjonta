@@ -31,7 +31,9 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJ
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_FI;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSOHJELMA_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSASTETYYPPI_ENUM;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TOTEUTUSTYYPPI_ENUM;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI;
@@ -77,8 +79,6 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
  * Convert "Koulutus" to {@link SolrInputDocument} so that it can be indexed.
@@ -103,6 +103,11 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         final SolrInputDocument komotoDoc = new SolrInputDocument();
         add(komotoDoc, OID, koulutus.getOid());
+
+        if (koulutus.getSubKoulutustyyppiEnum() != null) {
+            add(komotoDoc, KOULUTUSTYYPPI_URI, koulutus.getSubKoulutustyyppiEnum().uri());
+            add(komotoDoc, TOTEUTUSTYYPPI_ENUM, koulutus.getSubKoulutustyyppiEnum());
+        }
         final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
 
         if (orgs.size() == 0) {
@@ -124,15 +129,26 @@ public class KoulutusIndexEntityToSolrDocument implements
             }
         }
 
-        if (koulutus.getKoulutustyyppiEnum() != null) {
-            switch (koulutus.getKoulutustyyppiEnum()) {
+        if (koulutus.getBaseKoulutustyyppiEnum() != null) {
+            switch (koulutus.getBaseKoulutustyyppiEnum()) {
                 case LUKIOKOULUTUS:
-                    //koulutusohjelma ilman pohjakoulutusta
-
+                    addKoulutusohjelmaTiedot(komotoDoc, koulutus.getLukiolinja());
+                    break;
+                case AMMATILLINEN_PERUSKOULUTUS:
+                    if (koulutus.getSubKoulutustyyppiEnum() != null) {
+                        switch (koulutus.getSubKoulutustyyppiEnum()) {
+                            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                                addKoulutusohjelmaTiedot(komotoDoc, koulutus.getOsaamisalaUri());
+                                break;
+                            default:
+                                addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
+                                break;
+                        }
+                    } else {
+                        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
+                    }
                     break;
                 case KORKEAKOULUTUS:
-                case AMMATTIKORKEAKOULUTUS:
-                case YLIOPISTOKOULUTUS:
                     //vapaavalintainen nimi
 
                     //primary name location : komoto OVT-7531
@@ -175,15 +191,14 @@ public class KoulutusIndexEntityToSolrDocument implements
 
                     break;
                 default:
+                    addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
                     //muut: koulutusohjelma, pohjakoulutus
                     break;
             }
 
         }
 
-        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutustyyppiEnum().equals(KoulutustyyppiEnum.fromEnum(KoulutusasteTyyppi.LUKIOKOULUTUS))
-                ? koulutus.getLukiolinja() : koulutus.getKoulutusohjelmaKoodi());
-        addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusKoodi());
+        addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusUri());
 
         if (koulutus.getKoulutuksenAlkamisPvm() == null) {
             IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutus.getKausi(), koodiService);
@@ -197,7 +212,7 @@ public class KoulutusIndexEntityToSolrDocument implements
         add(komotoDoc, KOULUTUSMODUULI_OID, koulutus.getKoulutusmoduuliOid());
 
         //TODO: koulutusasteTyyppi, in future use KoulutustyyppiEnum
-        add(komotoDoc, KOULUTUSTYYPPI, koulutus.getKoulutustyyppiEnum().getKoulutusasteTyyppi().value());
+        add(komotoDoc, KOULUTUSASTETYYPPI_ENUM, koulutus.getBaseKoulutustyyppiEnum().getKoulutusasteTyyppi().value());
         IndexDataUtils.addKoodiLyhytnimiTiedot(komotoDoc, koulutus.getPohjakoulutusvaatimus(), koodiService, POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN);
 
         //XXX in DAO find koulutuslajiuris for koulutusmoduulitoteutus

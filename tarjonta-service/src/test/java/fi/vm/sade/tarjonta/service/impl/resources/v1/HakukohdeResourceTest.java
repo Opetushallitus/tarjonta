@@ -34,7 +34,7 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
@@ -98,7 +98,7 @@ public class HakukohdeResourceTest {
         TarjontaSearchServiceTest.stubKoodi(koodiService, "kieli_fi", "FI");
 
         komo = new Koulutusmoduuli();
-        komo.setKoulutustyyppiEnum(KoulutustyyppiEnum.KORKEAKOULUTUS);
+        komo.setKoulutustyyppiEnum(ModuulityyppiEnum.KORKEAKOULUTUS);
         KoodistoUri koodistoUri = new KoodistoUri("koulutuslaji_n");
 
 

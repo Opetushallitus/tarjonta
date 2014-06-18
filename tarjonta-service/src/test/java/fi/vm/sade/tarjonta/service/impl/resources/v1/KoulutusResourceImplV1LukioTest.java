@@ -35,11 +35,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusBase.KAUSI_KOODI_URI;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioAikuistenOppimaaraV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang.time.DateUtils;
 import static org.easymock.EasyMock.*;
@@ -68,6 +73,16 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
     @After
     public void tearDown() {
+    }
+    
+        private void printResultErrors(ResultV1RDTO r) {
+        if (r != null && r.getErrors() != null) {
+            List<ErrorV1RDTO> errors = r.getErrors();
+
+            for (ErrorV1RDTO e : errors) {
+                System.out.println(e.getErrorMessageKey());
+            }
+        }
     }
 
     @Test
@@ -137,7 +152,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_OPETUSAIKAS);
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
-        expectMetaUri(SUUNNITELTU_KESTO);
+        expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
         expectMetaUri(TUTKINTO);
     }
 
@@ -150,6 +165,8 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEquals(ORGANISAATIO_NIMI, result.getOrganisaatio().getNimi());
 
         assertEquals(KoulutusasteTyyppi.LUKIOKOULUTUS, result.getKoulutusasteTyyppi());
+        assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA, result.getToteutustyyppi());
+        assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS, result.getModuulityyppi());
 
         final String key = URI_KIELI_FI + "_uri";
 
@@ -179,7 +196,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         assertEqualMetaDto(MAP_OPETUMUOTO, result.getOpetusmuodos());
 
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKestoArvo());
-        assertEquals(SUUNNITELTU_KESTO + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
+        assertEquals(SUUNNITELTU_KESTO_TYYPPI + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
         YhteyshenkiloTyyppi next = result.getYhteyshenkilos().iterator().next();
         assertEquals(PERSON[0], next.getHenkiloOid());
@@ -202,13 +219,11 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
     }
 
+    /*
+     * Set DTO data fields:
+     */
     private KoulutusLukioV1RDTO createDTO() {
-        /*
-         * KOMO data fields:
-         */
-
-        KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
-
+        KoulutusLukioAikuistenOppimaaraV1RDTO dto = new KoulutusLukioAikuistenOppimaaraV1RDTO();
         dto.getOrganisaatio().setOid(ORGANISATION_OID);
 
         dto.setKoulutusaste(toKoodiUri(KOULUTUSASTE));
@@ -247,7 +262,7 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
 
         koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
 
-        dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO));
+        dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
 
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
 

@@ -115,7 +115,6 @@ public class TarjontaKorkeakouluPresenter {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
-
         @Override
         public MonikielinenMetadataTyyppi tallennaMetadata(String avain, String kategoria, String kieli, String arvo) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -240,7 +239,7 @@ public class TarjontaKorkeakouluPresenter {
         /**
          * TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!
          */
-        KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS;
+        KoulutusasteTyyppi tyyppi = KoulutusasteTyyppi.KORKEAKOULUTUS;
         LOG.debug("In is loaded : {}", perustiedot.isLoaded());
 
         if (perustiedot.isLoaded()) {//update KOMOTO
@@ -485,7 +484,6 @@ public class TarjontaKorkeakouluPresenter {
 
         LueKoulutusmoduuliVastausTyyppi lueKoulutusmoduuli = tarjontaPublicService.lueKoulutusmoduuli(kysely);
         Preconditions.checkNotNull(lueKoulutusmoduuli, "Update failed, KOMO not found by OID " + komoOid);
-
 
         KoulutusmoduuliKoosteTyyppi koulutusmoduuli = lueKoulutusmoduuli.getKoulutusmoduuli();
         //persist changed data to db, after the operatio we need to reload komos to form. 

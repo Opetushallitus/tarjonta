@@ -14,16 +14,16 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
  * @author mlyly
  */
 public class KoulutusPerusopetuksenLisaopetusV1RDTO extends KoulutusV1RDTO {
-    
-    public KoulutusPerusopetuksenLisaopetusV1RDTO() {
-        super(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS);
-    }
 
+    public KoulutusPerusopetuksenLisaopetusV1RDTO() {
+        super(ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS, ModuulityyppiEnum.PERUSOPETUKSEN_LISAOPETUS);
+    }
 }
