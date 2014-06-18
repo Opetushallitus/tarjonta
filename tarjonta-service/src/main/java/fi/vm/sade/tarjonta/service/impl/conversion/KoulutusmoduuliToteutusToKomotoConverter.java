@@ -14,7 +14,9 @@
  */
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,17 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Kielivalikoima;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Conversion services for REST service.
@@ -119,17 +117,17 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
             // 1. Get "parent" komo
             Koulutusmoduuli parentKomo = s.getKoulutusmoduuli();
             if (parentKomo != null) {
-                LOG.debug("  1. parent komo = {}", parentKomo.getOid());
+                //LOG.debug("  1. parent komo = {}", parentKomo.getOid());
 
                 // 2. get "parent" parent komo
                 Koulutusmoduuli parentParentKomo = koulutusmoduuliDAO.findParentKomo(parentKomo);
                 if (parentParentKomo != null) {
-                    LOG.debug("  2. parent parent komo = {}", parentParentKomo.getOid());
+                    //LOG.debug("  2. parent parent komo = {}", parentParentKomo.getOid());
 
                     // Get komotos with same pohjakoulutus and tarjoaja
                     List<KoulutusmoduuliToteutus> parentKomotos
                             = koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentParentKomo, s.getTarjoaja(), s.getPohjakoulutusvaatimusUri());
-                    LOG.debug("  3. parent komotos = {}", parentKomotos);
+                    //LOG.debug("  3. parent komotos = {}", parentKomotos);
 
                     if (parentKomotos == null || parentKomotos.isEmpty()) {
                         // NO PARENT KOMOTO
@@ -139,7 +137,7 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
                     }
                 }
 
-                LOG.debug("  4. ---> parent komoto = {}", t.getParentKomotoOid());
+                //LOG.debug("  4. ---> parent komoto = {}", t.getParentKomotoOid());
             }
         }
 
