@@ -212,7 +212,9 @@ public class KoulutusKoodistoConverter {
 
             //review page uses one of the objects, not sure which one
             tutkinto.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
-            ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
+            if (ohjelma != null) {
+                ohjelma.setTutkintonimike(listaaKoodi(tyyppi.getTutkintonimikeUri(), koulutusKoodiToKoodiModel, locale));
+            }
         }
 
         if (ohjelma != null) {
