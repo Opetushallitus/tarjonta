@@ -15,6 +15,7 @@ host.haku.en={{host_haku_en}}
 host.haku.sv={{host_haku_sv}}
 host.haku={{host_haku}}
 host.ilb={{host_ilb}}
+host.ldap={{host_ldap}}
 host.postgresql.tarjonta={{host_postgresql_tarjonta}}
 host.postgresql.tarjonta.password={{host_postgresql_tarjonta_password}}
 host.postgresql.tarjonta.user={{host_postgresql_tarjonta_user}}
@@ -44,7 +45,12 @@ activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
 cas.callback.tarjonta-app=cas.callback.tarjonta-app=http://${server.name}:8302/tarjonta-app
 cas.callback.tarjonta-service=http://${server.name}:8302/tarjonta-service
+cas.group-role-attribute=cn
+cas.group-search-base=ou\=groups
+cas.group-search-filter=(uniqueMember\={0})
 cas.sendRenew=false
+cas.user-search-base=ou\=people
+cas.user-search-filter=(|(mail\={0})(uid\={0}))
 cas.service.koodisto-service=https://${host.virkailija}/koodisto-service
 cas.service.ohjausparametrit-service=https://${host.virkailija}/ohjausparametrit-service
 cas.service.tarjonta-app=https://${host.virkailija}/tarjonta-app
