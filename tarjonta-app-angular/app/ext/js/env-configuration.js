@@ -121,8 +121,8 @@ window.CONFIG = {
 
         // Only for development, since production reads "/cas/myroles"
         // "casUrl": "cas_me_akuankka.json",
-        //"casUrl": "cas_me_ophadmin.json",
-        "casUrl": "cas_me_juomas.json",
+        "casUrl": "cas_me_ophadmin.json",
+        //"casUrl": "cas_me_juomas.json",
         // "casUrl" : "https://itest-virkailija.oph.ware.fi/cas/myroles",
 
          "authentication-service.rest.url":"https://itest-virkailija.oph.ware.fi/authentication-service/resources/",

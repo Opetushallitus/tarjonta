@@ -43,11 +43,19 @@ app.controller('HakukohdeParentController', ['$scope',
               dialogService) {
 
 
+        /*
+            Routing logic vars
+
+         */
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
+        var aikuNayttoHakukohdePartialUri = "partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html";
         var korkeakouluTyyppi = "KORKEAKOULUTUS";
         var lukioTyyppi = "LUKIOKOULUTUS";
+        var ammattillinenTyyppi = "AMMATILLINEN_PERUSKOULUTUS";
+
+
 
         /*
          *
@@ -178,6 +186,20 @@ app.controller('HakukohdeParentController', ['$scope',
             };
             return returnVal;
         };
+        
+        var isNayttoTutkinto = function (toteutusTyyppi) {
+
+                var toteutusTyyppiAmmatillinenNaytto = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA";
+
+                var toteutusTyyppiAmmatillinenNayttoValmistava = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA";
+
+                if (toteutusTyyppi && (toteutusTyyppi.trim() === toteutusTyyppiAmmatillinenNaytto || toteutusTyyppi.trim() === toteutusTyyppiAmmatillinenNayttoValmistava)) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+        };
 
 
         $scope.getHakukohdePartialUri = function() {
@@ -198,6 +220,8 @@ app.controller('HakukohdeParentController', ['$scope',
 
             } else {
                 var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+                var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
+
 
                 console.log('MODEL : ', $scope.model);
                 $log.info('KOULUTUSTYYPPI IS: ' , koulutusTyyppi);
@@ -213,7 +237,16 @@ app.controller('HakukohdeParentController', ['$scope',
                         $log.warn("Dont know what to todo... Only aiku is implemented in hakukohdes....");
                     }
 
-                } else {
+                } else if (koulutusTyyppi.trim() === ammattillinenTyyppi) {
+
+                    if (isKoulutusasteAiku() && isNayttoTutkinto(toteutusTyyppi)) {
+
+                        return aikuNayttoHakukohdePartialUri;
+                    }
+
+                }
+
+                else {
                     $log.info('KOULUTUSTYYPPI WAS: ' , koulutusTyyppi);
                 }
 
