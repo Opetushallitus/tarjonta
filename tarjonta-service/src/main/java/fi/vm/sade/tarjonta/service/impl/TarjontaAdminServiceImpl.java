@@ -671,6 +671,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         }
 
         for (Hakuaika curHakuaika : hakukohde.getHaku().getHakuaikas()) {
+        	log.debug("TEST hakuaika {} n={} {}..{}", curHakuaika.getId(), curHakuaika.getSisaisenHakuajanNimi(), curHakuaika.getAlkamisPvm(), curHakuaika.getPaattymisPvm());
             if (!curHakuaika.getAlkamisPvm().after(Calendar.getInstance().getTime())) {
                 return true;
             }
