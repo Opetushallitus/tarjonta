@@ -99,6 +99,9 @@ public class HakukohdeValidator {
     public static List<HakukohdeValidationMessages> checkKoulutukset(Set<KoulutusmoduuliToteutus> komotot) {
         String kausi = null;
         Integer vuosi = null;
+        
+        boolean tilaOk = false;
+        
         for (KoulutusmoduuliToteutus komoto : komotot) {
             if (kausi == null) {
                 kausi = komoto.getAlkamiskausiUri();
@@ -109,11 +112,16 @@ public class HakukohdeValidator {
                } 
             }
             
-            if(komoto.getTila()==TarjontaTila.PERUTTU || komoto.getTila()==TarjontaTila.POISTETTU) {
-                return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
+            if(komoto.getTila()!=TarjontaTila.PERUTTU && komoto.getTila()!=TarjontaTila.POISTETTU) {
+            	tilaOk = true;
             }
 
         }
+        
+        if (!tilaOk) {
+            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
+        }
+        
         return Collections.EMPTY_LIST;
     }
 
