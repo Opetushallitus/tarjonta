@@ -1019,6 +1019,10 @@ app.controller('HakukohdeParentController', ['$scope',
             }
         };
 
+        $scope.aContainsB = function(a,b) {
+            return a.indexOf(b) >= 0;
+        };
+
         $scope.haeValintaPerusteKuvaus = function(){
 
             $scope.naytaHaeValintaperusteKuvaus('valintaperustekuvaus');
