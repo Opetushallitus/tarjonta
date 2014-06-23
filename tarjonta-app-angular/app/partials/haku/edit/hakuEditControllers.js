@@ -469,6 +469,12 @@ app.controller('HakuEditController',
                 });
             };
 
+            /**
+             * Kutsutaan haen edit lomakkeelta kun haun priorisoinnin tilaan halutaan vaikuttaa "ulkopuolelta"
+             * eli muuttamalla haun lomakkeen valintaa.
+             * 
+             * @returns {undefined}
+             */
             $scope.checkPriorisointi = function () {
                 $log.debug("checkPriorisointi()");
                 
@@ -479,6 +485,63 @@ app.controller('HakuEditController',
                 if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
                     $scope.model.hakux.result.usePriority = false;
                 }                
+            };
+            
+            
+            /**
+             * This method is called when halulomake selection changes.
+             * 
+             * Accepted states are: SYSTEM, OTHER, NONE
+             * 
+             * @returns {undefined}
+             */
+            $scope.updatedHakulomakeSelection = function() {
+                $log.info("updatedHakulomakeSelection() - ", $scope.model.haku.hakulomake);
+                 
+                switch ($scope.model.haku.hakulomake) {
+                    case "SYSTEM":
+                        $log.info("  handle system.");
+                        $scope.model.hakux.result.jarjestelmanHakulomake = true;
+                        $scope.model.hakux.result.hakulomakeUri = null;
+                        break;
+                    case "OTHER":
+                        $log.info("  handle other.");
+                        $scope.model.hakux.result.jarjestelmanHakulomake = false;
+                        $scope.model.hakux.result.maxHakukohdes = 0;
+                        break;
+                    case "NONE":
+                        $log.info("  handle none.");
+                        $scope.model.hakux.result.jarjestelmanHakulomake = false;
+                        $scope.model.hakux.result.maxHakukohdes = 0;
+                        $scope.model.hakux.result.hakulomakeUri = null;
+                        break;
+                    default:
+                        $log.info("  handle WTF?.");
+                        throw new Exception("INVALID HAKULOMAKE TYPE");
+                        break;
+                }
+                
+                // Update priorisointi information too
+                $scope.checkPriorisointi();
+            };
+
+            /**
+             * Use this method to sync UI state to model state
+             * 
+             * @returns {undefined}
+             */
+            $scope.updatedHakulomakeSelectionFromModelToUI = function() {
+                $log.info("updatedHakulomakeSelectionFromModelToUI()");
+
+                if ($scope.model.hakux.result.jarjestelmanHakulomake) {
+                    $scope.model.haku.hakulomake = "SYSTEM";
+                } else {
+                    if ($scope.model.hakux.result.hakulomakeUri) {
+                        $scope.model.haku.hakulomake = "OTHER";
+                    } else {
+                        $scope.model.haku.hakulomake = "NONE";
+                    }
+                }
             };
 
             /**
@@ -502,6 +565,8 @@ app.controller('HakuEditController',
                     hakux: $route.current.locals.hakux,
                     haku: {
                         // Possible UI state for Haku
+                        hakulomake : 
+                                "SYSTEM" // Possible values SYSTEM, OTHER, NONE
                     },
                     parameter: {
                         //parametrit populoituu tänne... ks. haeHaunParametrit(...)
@@ -513,8 +578,9 @@ app.controller('HakuEditController',
 
                 $log.info("init... done.");
                 $scope.model = model;
-
-
+                
+                // Update UI state for radio buttons on load
+                $scope.updatedHakulomakeSelectionFromModelToUI();                
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
