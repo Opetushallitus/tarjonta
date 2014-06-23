@@ -37,13 +37,14 @@ public class KoulutusIndexEntity {
 
     @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri,
-            ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum) {
+            ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum, String koulutusUri) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
         this.koulutuslaji = koulutuslaji;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimusUri;
         this.baseKoulutustyyppiEnum = baseKoulutustyyppiEnum;
         this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
+        this.koulutusUri = koulutusUri;
     }
 
     @QueryProjection
@@ -54,7 +55,8 @@ public class KoulutusIndexEntity {
             TarjontaTila tila,
             ModuulityyppiEnum baseKoulutustyyppiEnum,
             ToteutustyyppiEnum subKoulutustyyppiEnum,
-            String koulutusmoduuliOid, String koulutusUri,
+            String koulutusmoduuliOid,
+            String koulutusUri,
             String lukiolinjaUri,
             String koulutusohjelmaUri,
             String osaamisalaUri,

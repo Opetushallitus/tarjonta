@@ -101,6 +101,7 @@ abstract class KoulutusBase {
     protected static final String KOULUTUSALA = "koulutusala";
     protected static final String OPINTOALA = "opintoala";
     protected static final String TUTKINTO = "tutkinto";
+    protected static final String KOULUTUSTYYPPI = "koulutustyyppi";
     protected static final String POHJAKOULUTUSVAATIMUS = "pohjakoulutusvaatimus";
     protected static final String MAP_TUTKINTONIMIKE = "tutkintonimike";
     protected static final String MAP_OPETUSAIHEES = "aihees";

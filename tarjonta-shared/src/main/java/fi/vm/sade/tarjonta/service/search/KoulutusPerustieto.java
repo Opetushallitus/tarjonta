@@ -14,7 +14,7 @@ public class KoulutusPerustieto implements Serializable {
     private String koulutusmoduuliToteutus;
     private Tarjoaja tarjoaja;
     private TarjontaTila tila;
-    private KoodistoKoodi koulutus;
+    private KoodistoKoodi koulutusKoodi;
     private KoodistoKoodi koulutusohjelma;
     private KoodistoKoodi tutkintonimike;
     private String ajankohta;
@@ -79,12 +79,12 @@ public class KoulutusPerustieto implements Serializable {
         this.tila = value;
     }
 
-    public KoodistoKoodi getKoulutuskoodi() {
-        return koulutus;
+    public KoodistoKoodi getKoulutusKoodi() {
+        return koulutusKoodi;
     }
 
-    public void setKoulutus(KoodistoKoodi value) {
-        this.koulutus = value;
+    public void setKoulutusKoodi(KoodistoKoodi koulutusKoodi) {
+        this.koulutusKoodi = koulutusKoodi;
     }
 
     /*

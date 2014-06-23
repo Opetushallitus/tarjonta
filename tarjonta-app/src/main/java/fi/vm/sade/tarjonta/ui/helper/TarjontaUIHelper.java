@@ -1103,8 +1103,8 @@ public class TarjontaUIHelper {
             return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutusohjelma().getNimi()) + pkVaatimus;
         } else if (curKoulutus.getNimi() != null) {
             return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getNimi());
-        } else if (curKoulutus.getKoulutuskoodi() != null) {
-            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutuskoodi().getNimi()) + pkVaatimus;
+        } else if (curKoulutus.getKoulutusKoodi() != null) {
+            return TarjontaUIHelper.getClosestMonikielinenNimi(locale, curKoulutus.getKoulutusKoodi().getNimi()) + pkVaatimus;
         }
         return "";
     }

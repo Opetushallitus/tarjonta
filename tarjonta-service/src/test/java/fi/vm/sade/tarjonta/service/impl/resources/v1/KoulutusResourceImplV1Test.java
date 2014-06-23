@@ -81,6 +81,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         dto.setKoulutusala(toKoodiUri(KOULUTUSALA));
         dto.setOpintoala(toKoodiUri(OPINTOALA));
         dto.setTutkinto(toKoodiUri(TUTKINTO));
+        dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
 
         dto.setEqf(toKoodiUri(EQF));
         dto.setTila(TarjontaTila.JULKAISTU);
@@ -128,6 +129,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaUri(OPINTOALA);
         expectMetaMapUris(MAP_TUTKINTONIMIKE);
         expectMetaUri(EQF);
+        expectMetaUri(KOULUTUSTYYPPI);
 
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
         expectMetaMapUris(MAP_OPETUSAIKAS);
@@ -149,6 +151,7 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaUri(OPINTOALA);
         expectMetaMapUris(MAP_TUTKINTONIMIKE);
         expectMetaUri(EQF);
+        expectMetaUri(KOULUTUSTYYPPI);
 
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
         expectMetaMapUris(MAP_OPETUSAIKAS);

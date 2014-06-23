@@ -33,6 +33,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,7 @@ import org.powermock.reflect.Whitebox;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.anyBoolean;
+import static scala.reflect.runtime.SynchronizedSymbols.SynchronizedMethodSymbol$class.returnType;
 
 /**
  * SIMPLE DATA MAPPING TEST CLASS: Test komo and komoto koodi uri override.
@@ -107,6 +109,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         korkeakouluPopulateBaseValues(Type.KOMOTO, t);
         t.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(m);
+        t.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
 
         final Type returnKomoto = Type.KOMOTO;
 
@@ -122,7 +125,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.OPINTOALA, NO);
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.EQF, YES);
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
-        expect_komoto_x(returnKomoto, NO_URI, FieldNames.KOULUTUSTYYPPI, YES); //correct as the tyyppi is only in komoto
+        expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
         //  expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
@@ -145,7 +148,8 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         korkeakouluPopulateBaseValues(Type.KOMOTO, t);
         t.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(m);
-
+        t.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
+ 
         final Type returnKomoto = Type.KOMOTO;
 
         expectKorkeakoulutusNotTestedCalls();
@@ -160,7 +164,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.OPINTOALA, NO);
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.EQF, YES);
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.NQF, YES);
-        expect_komoto_x(returnKomoto, NO_URI, FieldNames.KOULUTUSTYYPPI, YES); //correct as the tyyppi is only in komoto
+        expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         expect_null_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
         //expectNull(returnKomoto, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
@@ -183,6 +187,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setKoulutusmoduuli(m);
+        t.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
 
         final Type returnKomo = Type.KOMO;
 
@@ -198,7 +203,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomo, NO_URI, FieldNames.OPINTOALA, NO);
         expect_komo_x(returnKomo, NO_URI, FieldNames.EQF, YES);
         expect_komo_x(returnKomo, NO_URI, FieldNames.NQF, YES);
-        expectNull(returnKomo, FieldNames.KOULUTUSTYYPPI, YES); //correct as the tyyppi is only in komoto
+        expect_koulutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS, returnKomo, FieldNames.KOULUTUSTYYPPI, NO);
         expect_komo_x(returnKomo, NO_URI, FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES);
         // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);  //correct as the tyyppi is only in komoto
 
@@ -233,6 +238,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         t.setLukiolinjaUri(testKey(Type.KOMOTO, FieldNames.LUKIOLINJA));
         t.setTutkintonimikes(Sets.<KoodistoUri>newHashSet(new KoodistoUri(testKey(Type.KOMOTO, FieldNames.TUTKINTONIMIKE))));
         t.setKoulutusmoduuli(ohjelmaChildKomo); //set the child 'koulutusohjelma' komo object here 
+        t.setToteutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
 
         final Type returnKomoto = Type.KOMOTO;
 
@@ -243,7 +249,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(koulutusmoduuliDAOMock.findParentKomo(ohjelmaChildKomo)).andReturn(tukintoParentKomo);
 
         //correct only one uri in komoto, data is a list of uris in komo
-        expect_komoto_x(returnKomoto, NO_URI, FieldNames.KOULUTUSTYYPPI, YES);
+        expect_koulutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         expect_komo_x(returnKomoto, returnKomoto, FieldNames.KOULUTUS, NO);
         expectNull(Type.RETURN_NULL, FieldNames.TUTKINTO, YES);
 
@@ -283,7 +289,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setKoulutusmoduuli(ohjelmaChildKomo);
-        t.setKoulutustyyppiUri(testKey(Type.KOMOTO, FieldNames.KOULUTUSTYYPPI));
+        t.setToteutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
 
         final Type returnKomoto = Type.KOMO;
 
@@ -294,7 +300,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(koulutusmoduuliDAOMock.findParentKomo(ohjelmaChildKomo)).andReturn(tukintoParentKomo);
 
         //correct only one uri in komoto, data is a list of uris in komo
-        expect_komoto_x(returnKomoto, NO_URI, FieldNames.KOULUTUSTYYPPI, YES);
+        expect_koulutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         expect_komo_x(returnKomoto, NO_URI, FieldNames.KOULUTUS, NO);
         expectNull(Type.RETURN_NULL, FieldNames.TUTKINTO, YES);
 
@@ -305,7 +311,6 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_komo_x(returnKomoto, NO_URI, FieldNames.OPINTOALA, NO);
         expect_komoChild_x(returnKomoto, NO_URI, FieldNames.EQF, YES);
         expect_komoChild_x(returnKomoto, NO_URI, FieldNames.NQF, YES);
-
         // expectNull(Type.RETURN_NULL, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES);
         EasyMock.replay(koulutusmoduuliDAOMock);
         EasyMock.replay(komoKuvausConvertersMock);
@@ -351,6 +356,17 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
     private void expectNull(Type returnType, FieldNames field, KoulutusCommonConverter.Nullable n) {
         expect(commonConverterMock.convertToKoodiDTO(null, null, field, n, PARAM)).andReturn(toKoodiUri(returnType, field));
+    }
+
+    private void expect_koulutustyyppi(ToteutustyyppiEnum koulutustyyppiUri, Type returnType, FieldNames field, KoulutusCommonConverter.Nullable n) {
+        switch (returnType) {
+            case KOMOTO:
+                expect(commonConverterMock.convertToKoodiDTO(koulutustyyppiUri.uri(), testKey(Type.KOMOTO, field), field, n, PARAM)).andReturn(toKoodiUri(returnType, field));
+                break;
+            case KOMO:
+                expect(commonConverterMock.convertToKoodiDTO(koulutustyyppiUri.uri(), null, field, n, PARAM)).andReturn(toKoodiUri(returnType, field));
+                break;
+        }
     }
 
     private void assertKk(final KoulutusKorkeakouluV1RDTO convert, final Type type) {

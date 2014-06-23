@@ -406,7 +406,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
                 koulutus.setLukiolinjakoodi(tulos.getLukiolinjakoodi().getUri());
             }
 
-            koulutus.setKoulutuskoodi(tulos.getKoulutuskoodi().getUri());
+            koulutus.setKoulutuskoodi(tulos.getKoulutusKoodi().getUri());
 
             hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
         }

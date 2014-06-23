@@ -172,6 +172,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_OPETUSAIKAS);
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
+        //expectMetaUri(KOULUTUSTYYPPI);
     }
 
     private void expectNayttoKoodis() {
@@ -189,6 +190,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectMetaUri(NQF);
         expectMetaUri(TUTKINTO);
         expectMetaMapUris(MAP_OPETUSKIELI);
+        expectMetaUri(KOULUTUSTYYPPI);
     }
 
     private void assertValmentavaData(final ValmistavaV1RDTO result) {
@@ -316,6 +318,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setKoulutuslaji(toKoodiUri(KOULUTUSLAJI));
         dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
         dto.setJarjestavaOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_JARJESTAJA_OID, null, null));
+        dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
 
         return dto;
     }

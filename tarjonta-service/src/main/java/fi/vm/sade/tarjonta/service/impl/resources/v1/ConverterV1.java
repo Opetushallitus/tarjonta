@@ -1219,7 +1219,7 @@ public class ConverterV1 {
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
         ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
-        ret.setKoulutuskoodi(ht.getKoulutuskoodi().getUri());
+        ret.setKoulutuskoodi(ht.getKoulutusKoodi().getUri());
 
         return ret;
     }

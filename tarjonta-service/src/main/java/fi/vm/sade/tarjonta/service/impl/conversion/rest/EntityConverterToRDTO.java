@@ -243,8 +243,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "KoulutusasteTyyppi cannot be null!");
 
         //FYI: Non-symmetrical data - the KOMO has string('|uri_1|uri_2|') collection of uris, put the KOMOTO has only single uri.
-        dto.setKoulutustyyppi(commonConverter.convertToKoodiDTO(komoto.getKoulutustyyppiUri(), NO_OVERRIDE_URI, FieldNames.KOULUTUSTYYPPI, YES, restParam));
-
+        dto.setKoulutustyyppi(commonConverter.convertToKoodiDTO(komoto.getToteutustyyppi() != null ? komoto.getToteutustyyppi().uri() : null, komoto.getKoulutustyyppiUri(), FieldNames.KOULUTUSTYYPPI, NO, restParam));
         dto.setKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKoulutusUri(), komoto.getKoulutusUri(), FieldNames.KOULUTUS, NO, restParam));
         dto.setTutkinto(commonConverter.convertToKoodiDTO(komo.getTutkintoUri(), komoto.getTutkintoUri(), FieldNames.TUTKINTO, YES, restParam));
         dto.setOpintojenLaajuusarvo(commonConverter.convertToKoodiDTO(komo.getOpintojenLaajuusarvoUri(), komoto.getOpintojenLaajuusarvoUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, YES, restParam));

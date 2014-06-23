@@ -58,55 +58,55 @@ public class SolrDocumentToKoulutusConverter {
     }
 
     private KoulutusPerustieto convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
-        KoulutusPerustieto koulutus = new KoulutusPerustieto();
-        koulutus.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutus(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
-        koulutus.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
-        koulutus.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
-        koulutus.setKoulutusasteTyyppi(createKoulutustyyppi(koulutusDoc));
-        koulutus.setKoulutustyyppi("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI_URI));
+        KoulutusPerustieto perustieto = new KoulutusPerustieto();
+        perustieto.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
+        perustieto.setKoulutusKoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
+        perustieto.setKoulutusmoduuli("" + koulutusDoc.getFieldValue(KOULUTUSMODUULI_OID));
+        perustieto.setKoulutusmoduuliToteutus("" + koulutusDoc.getFieldValue(OID));
+        perustieto.setKoulutusasteTyyppi(createKoulutustyyppi(koulutusDoc));
+        perustieto.setKoulutustyyppi("" + koulutusDoc.getFieldValue(KOULUTUSTYYPPI_URI));
         if (koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM) != null) {
-            koulutus.setToteutustyyppi(ToteutustyyppiEnum.valueOf("" + koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM)));
+            perustieto.setToteutustyyppi(ToteutustyyppiEnum.valueOf("" + koulutusDoc.getFieldValue(TOTEUTUSTYYPPI_ENUM)));
         }
 
-        if (koulutus.getKoulutusasteTyyppi() != null) {
-            if (koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
-                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
-                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
-                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
-                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
-                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
-                    || koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
-                koulutus.setKoulutusohjelma(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
-            } else if (koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
-                koulutus.setLukiolinjakoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+        if (perustieto.getKoulutusasteTyyppi() != null) {
+            if (perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+                    || perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
+                    || perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                    || perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                    || perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                    || perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
+                    || perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
+                perustieto.setKoulutusohjelma(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
+            } else if (perustieto.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+                perustieto.setLukiolinjakoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSOHJELMA_URI, KOULUTUSOHJELMA_FI, KOULUTUSOHJELMA_SV, KOULUTUSOHJELMA_EN, koulutusDoc));
             }
         }
-        koulutus.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URIS, KOULUTUSLAJI_FI, KOULUTUSLAJI_SV, KOULUTUSLAJI_EN, koulutusDoc));
-        copyKoulutusNimi(koulutus, koulutusDoc);
-        koulutus.setTila(IndexDataUtils.createTila(koulutusDoc));
-        koulutus.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
+        perustieto.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URIS, KOULUTUSLAJI_FI, KOULUTUSLAJI_SV, KOULUTUSLAJI_EN, koulutusDoc));
+        copyKoulutusNimi(perustieto, koulutusDoc);
+        perustieto.setTila(IndexDataUtils.createTila(koulutusDoc));
+        perustieto.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
 
-        koulutus.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
+        perustieto.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
         if (koulutusDoc.containsKey(KAUSI_URI)) {
-            koulutus.setKoulutuksenAlkamiskausiUri(IndexDataUtils.createKoodistoKoodi(KAUSI_URI, KAUSI_FI, KAUSI_SV, KAUSI_EN, koulutusDoc));
+            perustieto.setKoulutuksenAlkamiskausiUri(IndexDataUtils.createKoodistoKoodi(KAUSI_URI, KAUSI_FI, KAUSI_SV, KAUSI_EN, koulutusDoc));
         }
         if (koulutusDoc.containsKey(VUOSI_KOODI)) {
             try {
-                koulutus.setKoulutuksenAlkamisVuosi(new Integer((String) koulutusDoc.getFieldValue(VUOSI_KOODI)));
+                perustieto.setKoulutuksenAlkamisVuosi(new Integer((String) koulutusDoc.getFieldValue(VUOSI_KOODI)));
             } catch (Exception e) {
                 throw new NumberFormatException("For input string: '" + koulutusDoc.getFieldValue(VUOSI_KOODI) + "' in KOMOTO " + koulutusDoc.getFieldValue(OID));
             }
         }
 
-        if (koulutus.getTarjoaja().getNimi() == null) {
+        if (perustieto.getTarjoaja().getNimi() == null) {
             return null;
         }
 
         if (koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI) != null) {
-            koulutus.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, koulutusDoc));
+            perustieto.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, koulutusDoc));
         }
-        return koulutus;
+        return perustieto;
     }
 
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {

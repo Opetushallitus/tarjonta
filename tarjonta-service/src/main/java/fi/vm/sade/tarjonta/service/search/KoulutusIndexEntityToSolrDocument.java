@@ -198,7 +198,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 
         }
 
-        addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusUri());
+        addKoulutuskoodiTiedot(komotoDoc, koulutus.getKoulutusUri(), koulutus.getOid());
 
         if (koulutus.getKoulutuksenAlkamisPvm() == null) {
             IndexDataUtils.addKausikoodiTiedot(komotoDoc, koulutus.getKausi(), koodiService);
@@ -292,8 +292,9 @@ public class KoulutusIndexEntityToSolrDocument implements
     }
 
     private void addKoulutuskoodiTiedot(SolrInputDocument doc,
-            String koulutusKoodi) {
+            String koulutusKoodi, String oid) {
         if (koulutusKoodi == null) {
+            logger.error("Data error - koulutus URI missing by KOMOTO OID '{}'", oid);
             return;
         }
 

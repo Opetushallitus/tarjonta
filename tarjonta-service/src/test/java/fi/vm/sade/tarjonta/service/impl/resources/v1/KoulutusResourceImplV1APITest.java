@@ -154,6 +154,7 @@ public class KoulutusResourceImplV1APITest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "suunniteltu_kesto_uri", "FI");
         stubKoodi(koodiService, "ammattinimike_uri", "FI");
         stubKoodi(koodiService, "EQF_uri", "FI");
+        stubKoodi(koodiService, "koulutustyyppi_3", "FI");
         Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("komo-oid");
         Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("komoto-oid");
     }

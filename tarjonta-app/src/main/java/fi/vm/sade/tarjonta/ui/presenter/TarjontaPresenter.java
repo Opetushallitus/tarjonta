@@ -608,7 +608,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         for (KoulutusPerustieto koulutus : koulutukses) {
             koulutusAlkamiskaudes.add(koulutus.getKoulutuksenAlkamiskausi().getUri());
             koulutusAlkamisVuodes.add(koulutus.getKoulutuksenAlkamisVuosi());
-            koulutusKoodis.add(koulutus.getKoulutuskoodi().getUri());
+            koulutusKoodis.add(koulutus.getKoulutusKoodi().getUri());
             pohjakoulutukses.add(koulutus.getPohjakoulutusvaatimus().getUri());
             tarjoajaOids.add(koulutus.getTarjoaja().getOid());
         }
@@ -668,7 +668,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
-            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
+            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutusKoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri())
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
@@ -1681,7 +1681,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         String errorNotes = "";
         for (KoulutusPerustieto curKoulutus : getModel().getSelectedKoulutukset()) {
             String koulutusNimiUri = curKoulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
-                    ? curKoulutus.getKoulutuskoodi().getUri()
+                    ? curKoulutus.getKoulutusKoodi().getUri()
                     : curKoulutus.getKoulutusohjelma().getUri();
             try {
                 final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getTarjoaja().getOid());

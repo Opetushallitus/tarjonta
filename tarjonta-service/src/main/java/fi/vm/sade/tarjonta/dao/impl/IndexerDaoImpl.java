@@ -81,7 +81,8 @@ public class IndexerDaoImpl implements IndexerDAO {
                                 koodistoUri.koodiUri,
                                 komoto.pohjakoulutusvaatimusUri,
                                 komo.koulutustyyppiEnum,
-                                komoto.toteutustyyppi));
+                                komoto.toteutustyyppi,
+                                komo.koulutusUri));
     }
 
     @Override
