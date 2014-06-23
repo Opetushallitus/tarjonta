@@ -416,7 +416,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila) {
         LOG.info("setHakuState({}, {})", oid, tila);
 
-        permissionChecker.checkUpdateHaku(oid);
+        final Haku haku = hakuDAO.findByOid(oid);
+        permissionChecker.checkUpdateHaku(haku.getTarjoajaOids());
         
         Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
         Tilamuutokset tm = null;
@@ -523,7 +524,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
 
         // Sijoittelu + system application form -> priority = true
-        if (haku.isSijoittelu() && isEmpty(haku.getHakulomakeUri())) {
+        if (haku.isSijoittelu() && haku.isJarjestelmanHakulomake()) {
             haku.setUsePriority(true);
         }        
         

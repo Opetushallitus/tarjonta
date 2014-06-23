@@ -27,10 +27,33 @@ app.controller('HakukohdeAikuNayttoEditController',
         $log = $log.getInstance("HakukohdeAikuNayttoEditController");
 
 
+        $scope.ui = {
+
+            showPlaces : true
+
+        };
+
+        var POISTETTU_TILA = "POISTETTU";
+
+        var filterPoistettuHaku = function (hakusParam) {
+
+            var filteredHakus = [];
+
+            angular.forEach(hakusParam, function (haku) {
+
+                if (haku.tila !== POISTETTU_TILA) {
+                    filteredHakus.push(haku);
+                }
+
+            });
+
+            return filteredHakus;
+
+        };
         //TODO: Add naytto specific haku filtering logic
         var filterHakus = function(hakus) {
 
-            return hakus;
+            return filterPoistettuHaku(hakus);
         };
 
         /**
@@ -61,6 +84,28 @@ app.controller('HakukohdeAikuNayttoEditController',
             }
 
             $scope.enableOrDisableTabs();
+
+        };
+
+        init();
+
+        $scope.model.checkSelectedHaku = function() {
+
+
+
+            var jatkuvaHakuKoodi = "hakutapa_03";
+            angular.forEach($scope.model.hakus, function (haku) {
+
+                if (haku.oid === $scope.model.hakukohde.hakuOid) {
+                    if ($scope.aContainsB(haku.hakutapaUri,jatkuvaHakuKoodi)) {
+                        $scope.ui.showPlaces = false;
+                    }
+                }
+
+
+            });
+
+
 
         };
 

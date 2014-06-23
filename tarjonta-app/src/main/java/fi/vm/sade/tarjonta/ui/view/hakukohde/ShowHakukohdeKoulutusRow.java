@@ -55,9 +55,39 @@ public class ShowHakukohdeKoulutusRow extends HorizontalLayout {
             private static final long serialVersionUID = 5019806363620874205L;
 
             @Override
-            public void buttonClick(Button.ClickEvent event) {
-                tarjontaPresenter.showShowKoulutusView(koulutusOidNameViewModel.getKoulutusOid());
-            }
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        final String komotoOid = koulutusOidNameViewModel
+                                .getKoulutusOid();
+                        switch (koulutusOidNameViewModel.getKoulutustyyppi()) {
+                        case AMMATILLINEN_PERUSKOULUTUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case PERUSOPETUKSEN_LISAOPETUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                            tarjontaPresenter.showShowKoulutusView(komotoOid);
+                            break;
+                        case LUKIOKOULUTUS:
+                            tarjontaPresenter.getLukioPresenter()
+                                    .showSummaryKoulutusView(komotoOid);
+                            break;
+
+                        }
+                    }
         });
         nimiBtn.setStyleName("link-row");
         if (canRemoveKoulutus) {
