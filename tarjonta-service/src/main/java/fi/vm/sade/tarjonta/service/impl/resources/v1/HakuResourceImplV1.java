@@ -416,7 +416,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila) {
         LOG.info("setHakuState({}, {})", oid, tila);
 
-        permissionChecker.checkUpdateHaku(oid);
+        final Haku haku = hakuDAO.findByOid(oid);
+        permissionChecker.checkUpdateHaku(haku.getTarjoajaOids());
         
         Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
         Tilamuutokset tm = null;
