@@ -651,7 +651,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.tyyppi"),
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
@@ -661,7 +662,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.kausi"), // vuosikausi.mismatch.dialog.description
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
@@ -671,7 +673,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.vuosi"),
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
@@ -681,7 +684,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.tila"),
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
