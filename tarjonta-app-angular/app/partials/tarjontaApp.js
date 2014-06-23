@@ -101,6 +101,9 @@ angular.module('app').factory(
         function($log, $window, Config) {
 
             var serviceUrl = Config.env["tarjontaRestUrlPrefix"] + "permission/recordUiStacktrace";
+            var errorsLoggingTimeout = Config.env["errorlog.timeout"] || 60000;
+            var errorsLoggingSuspended = false;
+            var loggedErrors = [];
 
             $log.info("*** errorLogService ***", serviceUrl);
 
@@ -121,18 +124,30 @@ angular.module('app').factory(
                 M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
                 return M[1];
             }
+            
 
             // Log error to console (as normal) AND to the remote server
             function log(exception, cause) {
                 // Default behaviour, log to console
                 $log.error.apply($log, arguments);
 
+                if (Config.env["errorlog.disabled"] || errorsLoggingSuspended) {
+                	return;
+                	
+                }
                 // Try to send stacktrace event to server
                 try {
                     $log.debug("logging error to server side...");
 
                     var errorMessage = exception.toString();
                     var stackTrace = exception.stack.toString();
+                    
+                    var errorId = errorMessage + "---" +stackTrace;
+                    if (loggedErrors.indexOf(errorId)!=-1) {
+                    	// älä lähetä, jos jo lokitettu tai lokitus keskeytetty
+                    	return;
+                    }
+                    
                     var browserInfo = {
                         browser: get_browser(),
                         browserVersion: get_browser_version()
@@ -152,7 +167,18 @@ angular.module('app').factory(
                             stackTrace: stackTrace,
                             cause: (cause || ""),
                             browserInfo: browserInfo
-                        })
+                        }),
+                        success: function() {
+                        	loggedErrors.push(errorId);
+                        },
+                        error: function() {
+                        	errorsLoggingSuspended = true;
+                    		$log.debug("error logging suspended for "+errorsLoggingTimeout+" ms.");
+                        	setTimeout(function(){
+                        		$log.debug("error logging resumed.");
+                        		errorsLoggingSuspended = false;
+                        	}, errorsLoggingTimeout);
+                        }
                     });
 
                 } catch (loggingError) {
