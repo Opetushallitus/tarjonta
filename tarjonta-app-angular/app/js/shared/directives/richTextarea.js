@@ -81,13 +81,9 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			//extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
-			postFilter: function(data) {
-				var ret = postFilter(data);
-				console.log("POST FILTER", [data, ret]);
-				return ret;
-			},
+			postFilter: postFilter,
 			setup: function(editor) {
-				console.log("SETUP ",editor);
+				//console.log("SETUP ",editor);
 				$scope.editor = editor;
 				
 				editor.addMenuItem("bullist", {
