@@ -136,7 +136,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 alkamisPvmFieldName: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisPvm" : "alkamisPvm"
             };
 
-            $scope.thisYear = new Date(new Date().getFullYear(), 0, 1, 0, 0, 0, 0);
+            var now = new Date();
+            $scope.thisYear = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
 
             $scope.clickAddDate = function() {
                 $scope.ctrl.addedDates.push({id: $scope.ctrl.index++, date: null});
