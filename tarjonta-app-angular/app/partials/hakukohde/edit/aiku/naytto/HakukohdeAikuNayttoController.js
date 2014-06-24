@@ -33,27 +33,12 @@ app.controller('HakukohdeAikuNayttoEditController',
 
         };
 
-        var POISTETTU_TILA = "POISTETTU";
 
-        var filterPoistettuHaku = function (hakusParam) {
-
-            var filteredHakus = [];
-
-            angular.forEach(hakusParam, function (haku) {
-
-                if (haku.tila !== POISTETTU_TILA) {
-                    filteredHakus.push(haku);
-                }
-
-            });
-
-            return filteredHakus;
-
-        };
         //TODO: Add naytto specific haku filtering logic
         var filterHakus = function(hakus) {
+            var filteredHakus = $scope.filterHakusWithOrgs($scope.filterHakuWithKohdejoukko( $scope.filterPoistettuHaku(hakus), 'haku.kohdejoukko.aiku.uri'));
 
-            return filterPoistettuHaku(hakus);
+            return filteredHakus;
         };
 
         /**
@@ -99,6 +84,8 @@ app.controller('HakukohdeAikuNayttoEditController',
                 if (haku.oid === $scope.model.hakukohde.hakuOid) {
                     if ($scope.aContainsB(haku.hakutapaUri,jatkuvaHakuKoodi)) {
                         $scope.ui.showPlaces = false;
+                    } else {
+                        $scope.ui.showPlaces = true;
                     }
                 }
 

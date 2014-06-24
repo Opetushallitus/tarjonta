@@ -26,30 +26,6 @@ app.controller('HakukohdeAikuLukioEditController',
 
 
 
-
-        var filterHakuWithKohdejoukko = function(hakus) {
-            console.log('FILTERING HAKUS : ', hakus);
-            var filteredHakus = [];
-            angular.forEach(hakus,function(haku){
-                // rajaus kk-hakukohteisiin; ks. OVT-6452
-                // TODO selvitä uri valitun koulutuksen perusteella
-
-                var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
-
-                if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.aiku.uri']) {
-
-                        filteredHakus.push(haku);
-
-
-
-                }
-            });
-
-            console.log('FILTERED HAKUS : ', filteredHakus);
-            return filteredHakus;
-
-        };
-
         var filterHakuWithHakutapa = function(hakus) {
 
             var filteredHakus = [];
@@ -111,7 +87,7 @@ app.controller('HakukohdeAikuLukioEditController',
 
         var filterHakus = function(hakus) {
 
-            var filteredHakus =   $scope.filterHakusWithOrgs(filterHakuWithKohdejoukko(hakus));
+            var filteredHakus =   $scope.filterHakusWithOrgs($scope.filterHakuWithKohdejoukko(hakus,'haku.kohdejoukko.aiku.uri'));
 
 
             return filteredHakus;
