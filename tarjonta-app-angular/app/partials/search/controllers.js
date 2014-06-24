@@ -115,7 +115,9 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             		// HUOM! hakutulostun mukana tulevaa käännöstä ei voida käyttää koska tila voi muuttua riviä päivitettäessä
             		return LocalisationService.t("tarjonta.tila."+row.tila);
             	case "kausi":
-            		return row.kausi[LocalisationService.getLocale()] + " " + row.vuosi;
+            		var ks = row.kausi ? row.kausi[LocalisationService.getLocale()] : "";
+            		var vs = row.vuosi | "";
+            		return ks + " " + vs;
         		default:
         			return row[col];
             	}
