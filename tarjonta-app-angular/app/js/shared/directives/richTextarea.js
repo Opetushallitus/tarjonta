@@ -32,6 +32,37 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 
 		}
 		
+		function postFilterElement(em, d) {
+			
+			var align = em.css("text-align");
+			var deco = em.css("text-decoration");
+
+			// jos style:
+			// - jos elementti on span, salli yli- ja alleviivaus, muutoin -> none
+			if (em.context.tagName != "SPAN") {
+				deco = "none";
+			}
+			// - jos elementti on td tai th, salli text-align, muutoin -> start
+			if (em.context.tagName != "TD" && em.context.tagName != "TH") {
+				align = "start";
+			}
+			
+			em.css({"text-align": align, "text-decoration": deco});
+		}
+		
+		function postFilter(src) {
+			if (!src) {
+				return src;
+			}
+			var data = $("<div>"+src+"</div>");
+			data.find("[style]").each(function(i, em){
+				postFilterElement($(em));
+			});
+			
+			var htd = data.html();
+			return htd==src ? src : htd; // jos sama teksti, palauta alkuperäinen referenssi
+		}
+		
 		$scope.tinymceOptions = {
 			height:"100%",
 			statusbar:false,
@@ -50,6 +81,11 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 			//extended_valid_elements: "span[style|class|lang],div[style|class|lang]",
 			//valid_elements: validElements,
 			paste_word_valid_elements: validElements,
+			postFilter: function(data) {
+				var ret = postFilter(data);
+				console.log("POST FILTER", [data, ret]);
+				return ret;
+			},
 			setup: function(editor) {
 				console.log("SETUP ",editor);
 				$scope.editor = editor;
@@ -202,7 +238,9 @@ app.directive('richTextarea',function(LocalisationService, $log, $sce) {
 		
 		$scope.$watch("model", function(nv, ov){
 			if (nv!=ov) {
+				//nv = postFilter(nv);
 				$scope.onChange(nv, ov);
+				$scope.model = nv;
 			}
 		});
 
