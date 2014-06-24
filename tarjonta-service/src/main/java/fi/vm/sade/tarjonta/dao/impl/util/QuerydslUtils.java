@@ -35,19 +35,29 @@ public class QuerydslUtils {
     public static BooleanExpression and(BooleanExpression left, BooleanExpression right) {
         return (left == null ? right : left.and(right));
     }
-    
+
     public static BooleanExpression andAll(BooleanExpression base, BooleanExpression... optionalExpressions) {
         Preconditions.checkNotNull(base, "Base expression cannot nbe null.");
-        
+
         if (optionalExpressions == null || optionalExpressions.length == 0) {
             return base;
         }
-        
+
         for (BooleanExpression be : optionalExpressions) {
             System.err.println("be  : " + be);
             base = and(be, base);
         }
-        
+
+        return base;
+    }
+
+    public static BooleanExpression or(BooleanExpression base, BooleanExpression optionalExpressions) {
+        if (base == null) {
+            return optionalExpressions;
+        } else {
+            base.or(optionalExpressions);
+        }
+
         return base;
     }
 }

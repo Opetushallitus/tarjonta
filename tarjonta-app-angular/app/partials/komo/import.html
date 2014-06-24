@@ -1,0 +1,24 @@
+Näytä kaikki moduulit : <input type="checkbox" data-ng-model="import.showAllKomos"/> 
+<table border="1">
+    <tr ng-repeat="komo in import.uiModel| filter: import.filter">
+        <td>{{komo.koulutuskoodi.uri}}</td>
+        <td  style="width:170px">{{komo.koulutusohjelma.uri}}</td>
+        <td  style="width:120px">{{komo.osaamisala.uri}}</td>
+        <td  style="width:120px">{{komo.lukiolinjat.uri}}</td>
+        <td>{{komo.koulutusasteTyyppi}}</td>
+        <td>{{komo.eqf.uri}}</td>
+        <td>{{komo.koulutusaste.uri}}</td>
+        <td>{{komo.koulutusala.uri}}</td>
+        <td>{{komo.opintoala.uri}}</td>
+        <td>{{komo.tutkinto.uri}}</td>
+        <td>{{komo.opintojenLaajuusyksikko.uri}}</td>
+        <td>{{komo.opintojenLaajuusarvo.uri}}</td>
+        <td> <p ng-repeat="(ktKeyUri, value) in komo.koulutustyyppis.uris" > {{ktKeyUri}}</p></td>
+        <td>{{komo.oid}}</td>
+        <!--td>{{ohjelma.tutkintonimikes}}</td-->
+        <!--td>{{ohjelma.oppilaitostyyppis}}</td-->
+    </tr>
+</table>
+<a href=""  ng-click="importAllGroups()" >Lisää puutuvat koulutusmoduulit</a>
+
+

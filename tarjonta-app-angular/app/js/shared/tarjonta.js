@@ -496,6 +496,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid: koulutusoid}).$promise);
     };
 
+    dataFactory.komoImport = function(koulutusUri) {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "komo/import/"+ koulutusUri, {}, {
+            import: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
+        });
+    };
+
     /**
      * POST: Insert new KOMO. API object must be valid.
      *
@@ -515,6 +525,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 method: 'POST',
                 withCredentials: true,
                 url: Config.env.tarjontaRestUrlPrefix + "komo",
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            import: {
+                method: 'POST',
+                withCredentials: true,
+                url: Config.env.tarjontaRestUrlPrefix + "komo/import/:koulutusUri",
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
             get: {

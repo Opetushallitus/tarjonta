@@ -387,4 +387,11 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      * @return
      */
     public List<KoulutusmoduuliToteutus> findActiveKomotosByKomoOid(String oid);
+
+    public Koulutusmoduuli findModule(
+            final KoulutusmoduuliTyyppi tyyppi, 
+            final String koulutusUri,
+            final String likeKoulutusohjelmaUri,
+            final String likeOsaamisalaUri,
+            final String likeLukiolinjaUri);
 }
