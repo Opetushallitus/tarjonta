@@ -33,6 +33,8 @@ app.controller('HakukohdeAikuNayttoEditController',
 
         };
 
+        $scope.osaamisalat = ['osaamisala_1625','osaamisala_1626'];
+
 
         //TODO: Add naytto specific haku filtering logic
         var filterHakus = function(hakus) {

@@ -14,14 +14,14 @@
                     </td>
                 </tr>
                             
-                <tr>
+                <tr class="required">
                     <th tt="tarjonta.hakukohde.valintakoe.modal.kuvaus"></th>
                     <td colspan="2">
                         <rich-textarea max="5000" mode="false" model="valintakoe.valintakokeenKuvaus.teksti" on-change="status.dirtify()"></rich-textarea>
                     </td>
                 </tr>
 
-                <tr class="required">
+                <tr>
                     <th tt="tarjonta.hakukohde.valintakoe.ajankohdat.title">Valintakoetilaisuudet</th>
                     <td colspan="2">
                     
@@ -32,7 +32,7 @@
 	                                   <osoite-field model="ajankohta.osoite" on-change="status.dirtify()"></osoite-field>
 	                                </td>
 	                                <td rowspan="2" class="vkPoista">
-	                                   <button ng-disabled="valintakoe.valintakoeAjankohtas.length==1" ng-click="deleteAjankohta(valintakoe, ajankohta)" class="btn"><span class="icon-remove"></span><br/><span tt="tarjonta.toiminnot.poista"></span></button>
+	                                   <button ng-click="deleteAjankohta(valintakoe, ajankohta)" class="btn"><span class="icon-remove"></span><br/><span tt="tarjonta.toiminnot.poista"></span></button>
 	                                </td>
 	                            </tr>
 	                            <tr>
