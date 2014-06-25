@@ -118,4 +118,16 @@ public interface KomoV1Resource {
             notes = "Operaatio näyttää koulutusmoduulin monikieliset tekstit",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
+
+    @POST
+    @Path("/import/{koulutus}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Luo uuden ryhman tai lisaa puuttuvia moduuleita, seka liitää ne hierarkisesti yhteen. Toiminto ei poista eika paivita olemassa olevia moduuleita.",
+            notes = "Operaatio luo uuden ryhman tai lisaa puuttuvia moduuleita, seka liitää ne hierarkisesti yhteen. Toiminto ei poista eika paivita olemassa olevia moduuleita.",
+            response = KomoV1RDTO.class)
+    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> importModuleGroupByKoulutusUri(
+            @PathParam("koulutus") String koulutusUri,
+            List<KomoV1RDTO> dtos);
 }

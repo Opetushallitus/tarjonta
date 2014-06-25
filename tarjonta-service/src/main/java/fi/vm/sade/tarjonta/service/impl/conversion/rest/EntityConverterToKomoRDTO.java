@@ -26,11 +26,11 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNa
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,6 +46,7 @@ public class EntityConverterToKomoRDTO {
     private static final Logger LOG = LoggerFactory.getLogger(EntityConverterToKomoRDTO.class);
     private static final KoulutusCommonConverter.Nullable YES = KoulutusCommonConverter.Nullable.YES;
     private static final KoulutusCommonConverter.Nullable NO = KoulutusCommonConverter.Nullable.NO;
+    private static final String VERSION_TAG = "#";
     public static final String NO_OVERRIDE_URI = null;
 
     @Autowired(required = true)
@@ -151,5 +152,44 @@ public class EntityConverterToKomoRDTO {
         }
 
         return types;
+    }
+
+    public static ModuuliTuloksetV1RDTO convertToModuuliTuloksetV1RDTO(Koulutusmoduuli m, final ToteutustyyppiEnum toteutustyyppiEnum) {
+        ModuuliTuloksetV1RDTO dto = new ModuuliTuloksetV1RDTO(m.getOid(),
+                fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(m.getModuuliTyyppi().name()),
+                removeVersionTag(m.getKoulutusUri()),
+                null, //any of the bottom
+                removeVersionTag(m.getKoulutusohjelmaUri()),
+                removeVersionTag(m.getLukiolinjaUri()),
+                removeVersionTag(m.getOsaamisalaUri())
+        );
+
+        //set one of the 'ohjelma' uris as the primary uri, if any
+        if (toteutustyyppiEnum != null) {
+            switch (toteutustyyppiEnum) {
+                case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                case LUKIOKOULUTUS:
+                    dto.setOhjelmaUri(dto.getLukiolinjaUri());
+                    break;
+                case ERIKOISAMMATTITUTKINTO:
+                case AMMATTITUTKINTO:
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
+                    dto.setOhjelmaUri(dto.getOsaamisalaUri());
+                    break;
+                default:
+                    dto.setOhjelmaUri(dto.getKoulutusohjelmaUri());
+                    break;
+            }
+        }
+
+        return dto;
+    }
+
+    private static String removeVersionTag(String uri) {
+        if (uri != null && !uri.isEmpty()) {
+            return uri.substring(0, uri.indexOf(VERSION_TAG));
+        }
+        return null;
     }
 }

@@ -724,6 +724,46 @@ app.controller('HakukohdeParentController', ['$scope',
             return doesMatch;
 
         };
+        
+        $scope.filterHakuWithKohdejoukko = function (hakus,kohdejoukkoUriNimi) {
+
+            var filteredHakus = [];
+            angular.forEach(hakus,function(haku){
+                // rajaus kk-hakukohteisiin; ks. OVT-6452
+                // TODO selvitä uri valitun koulutuksen perusteella
+
+                var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
+
+                if (kohdeJoukkoUriNoVersion==window.CONFIG.app[kohdejoukkoUriNimi]) {
+
+                    filteredHakus.push(haku);
+
+
+
+                }
+            });
+
+            return filteredHakus;
+
+        };
+
+        $scope.filterPoistettuHaku = function (hakusParam) {
+
+            var POISTETTU_TILA = "POISTETTU";
+
+            var filteredHakus = [];
+
+            angular.forEach(hakusParam, function (haku) {
+
+                if (haku.tila !== POISTETTU_TILA) {
+                    filteredHakus.push(haku);
+                }
+
+            });
+
+            return filteredHakus;
+
+        };
 
         $scope.filterHakusWithOrgs = function(hakus) {
 

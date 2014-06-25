@@ -20,23 +20,42 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 
 public class ModuuliTuloksetV1RDTO extends BaseV1RDTO {
-    
+
     private static final long serialVersionUID = 1L;
-    
-    @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
+
+    @ApiModelProperty(value = "Koulutusmoduulin tyyppi", required = true)
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
-    
-    @ApiModelProperty(value = "Koulutuksen koulutusohjelma uri", required = true)
+
+    @ApiModelProperty(value = "Koulutusmoduulin käyttämä ohjelma uri (koulutusohjelma, lukiolinja tai osaamisala)", required = true)
+    private String ohjelmaUri;
+
+    @ApiModelProperty(value = "Koulutusmoduulin koulutusohjelma uri, jos olemassa", required = false)
     private String koulutusohjelmaUri;
-    
+
+    @ApiModelProperty(value = "Koulutusmoduulin lukiolinja uri, jos olemassa", required = false)
+    private String lukiolinjaUri;
+
+    @ApiModelProperty(value = "Koulutusmoduulin osaamisala uri, jos olemassa", required = false)
+    private String osaamisalaUri;
+
     @ApiModelProperty(value = "Kuusinumeroinen tilastokeskuksen koulutuskoodin uri", required = true)
     private String koulutuskoodiUri;
-    
-    public ModuuliTuloksetV1RDTO(String oid, KoulutusmoduuliTyyppi koulutusmoduuliTyyppi, String koulutuskoodiUri, String koulutusohjelmaUri) {
+
+    public ModuuliTuloksetV1RDTO(String oid,
+            KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            String koulutuskoodiUri,
+            String ohjelmaUri,
+            String koulutusohjelmaUri,
+            String lukiolinjaUri,
+            String osaamisalaUri
+    ) {
         setOid(oid);
         this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
-        this.koulutusohjelmaUri = koulutusohjelmaUri;
+        this.ohjelmaUri = ohjelmaUri;
         this.koulutuskoodiUri = koulutuskoodiUri;
+        this.koulutusohjelmaUri = koulutusohjelmaUri;
+        this.lukiolinjaUri = lukiolinjaUri;
+        this.osaamisalaUri = osaamisalaUri;
     }
 
     /**
@@ -80,5 +99,47 @@ public class ModuuliTuloksetV1RDTO extends BaseV1RDTO {
     public void setKoulutuskoodiUri(String koulutuskoodiUri) {
         this.koulutuskoodiUri = koulutuskoodiUri;
     }
-    
+
+    /**
+     * @return the ohjelmaUri
+     */
+    public String getOhjelmaUri() {
+        return ohjelmaUri;
+    }
+
+    /**
+     * @param ohjelmaUri the ohjelmaUri to set
+     */
+    public void setOhjelmaUri(String ohjelmaUri) {
+        this.ohjelmaUri = ohjelmaUri;
+    }
+
+    /**
+     * @return the lukiolinjaUri
+     */
+    public String getLukiolinjaUri() {
+        return lukiolinjaUri;
+    }
+
+    /**
+     * @param lukiolinjaUri the lukiolinjaUri to set
+     */
+    public void setLukiolinjaUri(String lukiolinjaUri) {
+        this.lukiolinjaUri = lukiolinjaUri;
+    }
+
+    /**
+     * @return the osaamisalaUri
+     */
+    public String getOsaamisalaUri() {
+        return osaamisalaUri;
+    }
+
+    /**
+     * @param osaamisalaUri the osaamisalaUri to set
+     */
+    public void setOsaamisalaUri(String osaamisalaUri) {
+        this.osaamisalaUri = osaamisalaUri;
+    }
+
 }

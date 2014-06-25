@@ -99,7 +99,13 @@ public enum KoulutusValidationMessages {
     KOULUTUS_OPPILAITOSTYYPPI_MISSING("oppilaitostyyppi"),
     KOULUTUS_OPPILAITOSTYYPPI_INVALID("oppilaitostyyppi"),
     KOULUTUS_MODUULI_TYYPPI_MISSING("moduuliTyyppi"),
-    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi");
+    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi"),
+    KOULUTUS_IMPORT_INVALID_GROUP("koulutuskoodi"),
+    KOULUTUS_IMPORT_INVALID_MODULE_TUTKINTO_("koulutusmoduuliTyyppi"),
+    KOULUTUS_IMPORT_INVALID_TUTKINTO("oid"),
+    KOULUTUS_IMPORT_INVALID_OID("oid"),
+    KOULUTUS_IMPORT_INVALID_COUNT(""),
+    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT("");
 
     private String fieldName;
 

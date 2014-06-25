@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -33,6 +34,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.List;
 
 public class KomoValidator {
 
@@ -83,7 +85,8 @@ public class KomoValidator {
     public static ResultV1RDTO validateModuleLukioAndAmm(KomoV1RDTO dto, ResultV1RDTO result) {
         switch (dto.getKoulutusmoduuliTyyppi()) {
             case TUTKINTO_OHJELMA:
-                validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
+                List<KoodiV1RDTO> ohjelmas = Lists.<KoodiV1RDTO>newArrayList(dto.getKoulutusohjelma(), dto.getOsaamisala(), dto.getLukiolinja());
+                validateKoodisMoreThanOne(result, ohjelmas, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
                 break;
         }
 
@@ -121,6 +124,10 @@ public class KomoValidator {
 
     private static void validateKoodistoRelations(KomoV1RDTO dto, ResultV1RDTO result) {
         validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
+
+        if (dto.getKoulutuskoodi() != null) {
+            validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
+        }
 
         if (dto.getEqf() != null) {
             validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
@@ -233,6 +240,28 @@ public class KomoValidator {
         if (!isValidKoodiUriWithVersion(dto)) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
             return false;
+        }
+
+        return true;
+    }
+
+    private static boolean validateKoodisMoreThanOne(ResultV1RDTO result, List<KoodiV1RDTO> dtos, KoulutusValidationMessages missing, KoulutusValidationMessages invalid) {
+        List<Boolean> valids = Lists.<Boolean>newArrayList();
+
+        for (KoodiV1RDTO dto : dtos) {
+            if (dto == null) {
+                continue;
+            }
+
+            valids.add(notNullStrOrEmpty(dto.getUri()) && isPositiveInteger(dto.getVersio()));
+
+        }
+
+        for (Boolean b : valids) {
+            if (!b || valids.isEmpty()) {
+                result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
+                return false;
+            }
         }
 
         return true;

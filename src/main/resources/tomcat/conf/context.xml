@@ -21,7 +21,7 @@
     <!-- Default set of monitored resources -->
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
 
-    <Resource name="jdbc/authentication" auth="Container" type="javax.sql.DataSource"
+    <Resource name="jdbc/tarjonta" auth="Container" type="javax.sql.DataSource"
               maxActive="{{ host_postgresql_tarjonta_maxActive | default(250) }}" 
               maxIdle="{{ host_postgresql_tarjonta_maxIdle | default(30) }}" 
               maxWait="{{ host_postgresql_tarjonta_maxWait | default(10000) }}"
