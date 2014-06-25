@@ -75,7 +75,7 @@ app.controller('HakukohdeParentController', ['$scope',
         $scope.status = { // ÄLÄ LAITA MODELIIN (pitää näkyä alikontrollereille)
         		dirty: false,
         		dirtify: function() {
-        			//console.log("DIRTIFY hakukohde");
+        			console.log("DIRTIFY hakukohde");
         			$scope.status.dirty = true;
         		},
         		// alikontrollerit ylikirjoittavat nämä
@@ -896,47 +896,41 @@ app.controller('HakukohdeParentController', ['$scope',
             modalInstance.result.then(function(kuvaukset){
 
                 $log.debug('GOT KUVAUKSET : ', kuvaukset);
-                if ($scope.model.hakukohde.valintaPerusteKuvausKielet === undefined) {
+                if (!$scope.model.hakukohde.valintaPerusteKuvausKielet) {
                     $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
-
                 }
 
-                if ($scope.model.hakukohde.soraKuvausKielet === undefined) {
+                if (!$scope.model.hakukohde.soraKuvausKielet) {
                     $scope.model.hakukohde.soraKuvausKielet = [];
                 }
+                
+                var nkuvaukset = {};
+                var nkuvausKielet = [];
+                var nkuvausTunniste = undefined;
 
-                angular.forEach(kuvaukset,function(kuvaus){
+                for (var i in kuvaukset) {
+                	var kuvaus = kuvaukset[i];
+                	nkuvausTunniste = kuvaus.toimintoTyyppi == "link" ? kuvaus.tunniste : undefined;
+                	nkuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
+                	nkuvausKielet.push(kuvaus.kieliUri);
+                }
 
-                    if (type === "valintaperustekuvaus") {
+                if (type === "valintaperustekuvaus") {
 
-                        $scope.model.hakukohde.valintaperusteKuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
-                        $scope.model.hakukohde.valintaPerusteKuvausKielet.push(kuvaus.kieliUri);
+                	$scope.model.hakukohde.valintaperusteKuvaukset = nkuvaukset;
+                    $scope.model.hakukohde.valintaPerusteKuvausKielet = nkuvausKielet;
+                	$scope.model.hakukohde.valintaPerusteKuvausTunniste = nkuvausTunniste;
 
-                        if (kuvaus.toimintoTyyppi === "link") {
-                            $scope.model.hakukohde.valintaPerusteKuvausTunniste = kuvaus.tunniste;
-                        } else if (kuvaus.toimintoTyyppi === "copy") {
-                            $scope.model.hakukohde.valintaPerusteKuvausTunniste = undefined;
-                        }
+                } else if (type === "SORA") {
 
+                	$scope.model.hakukohde.soraKuvaukset = nkuvaukset;
+                    $scope.model.hakukohde.soraKuvausKielet = nkuvausKielet;
+                	$scope.model.hakukohde.soraKuvausTunniste = nkuvausTunniste;
 
-                    } else if (type === "SORA") {
-
-                        $scope.model.hakukohde.soraKuvaukset[kuvaus.kieliUri] = kuvaus.teksti;
-                        $scope.model.hakukohde.soraKuvausKielet.push(kuvaus.kieliUri);
-
-                        if (kuvaus.toimintoTyyppi === "link") {
-                            $scope.model.hakukohde.soraKuvausTunniste = kuvaus.tunniste;
-                        }  else if (kuvaus.toimintoTyyppi === "copy") {
-                            $scope.model.hakukohde.soraKuvausTunniste = undefined;
-                        }
-
-
-                    } else {
-                        throw ("'valintaperustekuvaus' | 'SORA' != "+type);
-                    }
-
-                });
-
+                } else {
+                    throw ("'valintaperustekuvaus' | 'SORA' != "+type);
+                }
+                
                 $scope.status.dirty = true;
 
             });
@@ -945,28 +939,11 @@ app.controller('HakukohdeParentController', ['$scope',
 
 
         $scope.model.isSoraEditable = function() {
-
-            var retval = true;
-
-            if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.soraKuvausTunniste !== undefined) {
-                retval = false;
-            }
-
-
-            return retval;
-
+            return $scope.model.hakukohde && !$scope.model.hakukohde.soraKuvausTunniste;
         };
 
         $scope.model.isValintaPerusteEditable = function() {
-
-            var retval = true;
-
-            if ($scope.model.hakukohde !== undefined  && $scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
-                retval = false;
-            }
-
-
-            return retval;
+            return $scope.model.hakukohde && !$scope.model.hakukohde.valintaPerusteKuvausTunniste;
         };
 
         $scope.loadHakukelpoisuusVaatimukset = function () {
