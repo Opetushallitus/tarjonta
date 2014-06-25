@@ -198,7 +198,7 @@ app.controller('EditLukioController',
                                 for (var il = 0; il < kRes.uris.length; il++) {
 
                                     for (var cl = 0; cl < tRes.result.length; cl++) {
-                                        if (!angular.isDefined($scope.uiModel.koulutusohjelmaModules [ kRes.uris[il] ]) && kRes.uris[il] === tRes.result[cl].koulutusohjelmaUri) {
+                                        if (!angular.isDefined($scope.uiModel.koulutusohjelmaModules [ kRes.uris[il] ]) && kRes.uris[il] === tRes.result[cl].ohjelmaUri) {
                                             $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]] = kRes.map[ kRes.uris[il]];
                                             $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]].oid = tRes.result[cl].oid;
                                             $scope.uiModel.koulutusohjelmaModules [ kRes.uris[il]].koulutuskoodi = tRes.result[cl].koulutuskoodiUri;
