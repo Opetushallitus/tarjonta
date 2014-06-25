@@ -85,6 +85,9 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     		if (!notEmpty(li.valintakoeNimi)) {
     			return false;
     		}
+    		if (!notEmpty($("<div>"+li.valintakokeenKuvaus.teksti+"</div>").text().trim())) {
+    			return false;
+    		}
     		for (var j in li.valintakoeAjankohtas) {
     			if (!$scope.isValidAjankohta(li.valintakoeAjankohtas[j])) {
     				return false;
@@ -156,7 +159,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
         		kieliUri:lc,
         		valintakoeNimi:"",
         		valintakokeenKuvaus: {uri: lc, teksti: ""},
-        		valintakoeAjankohtas: [newAjankohta()]
+        		valintakoeAjankohtas: []
         	};
     	$scope.model.hakukohde.valintakokeet.push(vk);
     	return vk;
