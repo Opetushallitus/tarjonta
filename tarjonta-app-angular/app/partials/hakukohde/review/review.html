@@ -44,12 +44,28 @@
                     </div>
                 </td>
             </tr>
+		    <tr ng-show="isKK">
+		        <th tt="hakukohde.review.perustiedot.ulkoinenTunniste"></th>
+		        <td colspan="2">
+		            {{ model.hakukohde.ulkoinenTunniste }}
+		        </td>
+		    </tr>
+            
             <tr>
                 <th tt="hakukohde.review.perustiedot.haku"/>
                 <td colspan="2">
                     {{ model.hakuNimi }}
                 </td>
             </tr>
+
+		    <tr ng-show="!isAiku">
+		        <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
+		        <td colspan="2">
+		            <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
+		                {{ hakukelpoisuusvaatimus }}
+		            </span>
+		        </td>
+		    </tr>
 		
 		    <tr>
 		        <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
@@ -65,15 +81,13 @@
 		        </td>
 		    </tr>
 		
-		    <tr ng-show="!isAiku">
-		        <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
-		        <td colspan="2">
-		            <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
-		                {{ hakukelpoisuusvaatimus }}
-		            </span>
-		        </td>
-		    </tr>
-            
+            <tr>
+                <th tt="hakukohde.review.perustiedot.lisatiedot"/>
+                <td colspan="2">
+                    <mk-text model="model.hakukohde.lisatiedot" display="tabs"/>
+                </td>
+            </tr>
+
             <tr>
                 <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
                 <td colspan="2">
@@ -81,13 +95,7 @@
                 </td>
             </tr>
             
-            <tr>
-                <th tt="hakukohde.review.perustiedot.lisatiedot"/>
-                <td colspan="2">
-                    <mk-text model="model.hakukohde.lisatiedot" display="tabs"/>
-                </td>
-            </tr>
-        	 
+       	 
 	    </tbody>
 	
 	

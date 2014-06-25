@@ -5,13 +5,18 @@ app.controller('EditLukioController',
             function EditLukioController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, Koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
 
-                var ENUM_LUKIOKOULUTUS = 'LUKIOKOULUTUS';
                 var ENUM_KOMO_MODULE_TUTKINTO = 'TUTKINTO';
                 var ENUM_KOMO_MODULE_TUTKINTO_OHJELMA = 'TUTKINTO_OHJELMA';
                 $log = $log.getInstance("LukioEditController");
 
                 $scope.init = function() {
                     $log.debug("init");
+
+                    /*
+                     * INITIALIZE PAGE CONFIG
+                     */
+                    $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
+
                     var model = {};
                     var uiModel = {
                         loadedKoulutuslaji: null, //a hack : esta nuorten lukiokoulutuksen tallennus
@@ -31,12 +36,12 @@ app.controller('EditLukioController',
                          */
                         model = $route.current.locals.koulutusModel.result;
                         uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
-                        $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, ENUM_LUKIOKOULUTUS);
+                        $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
-                        $scope.lisatiedot = converter.STRUCTURE[ENUM_LUKIOKOULUTUS].KUVAUS_ORDER;
+                        $scope.lisatiedot = converter.STRUCTURE[$scope.CONFIG.TYYPPI].KUVAUS_ORDER;
                         $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                         $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
@@ -47,7 +52,7 @@ app.controller('EditLukioController',
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
                          * Look more info from koulutusController.js.
                          */
-                        $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, ENUM_LUKIOKOULUTUS);
+                        $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
@@ -55,7 +60,7 @@ app.controller('EditLukioController',
                         var resource = TarjontaService.komo();
                         var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit(['koulutustyyppi_2'], 'koulutus', $scope.koodistoLocale);
                         tutkintoPromise.then(function(kRes) {
-                            resource.searchModules({koulutusasteTyyppi: 'Lukiokoulutus', koulutusmoduuliTyyppi: ENUM_KOMO_MODULE_TUTKINTO}, function(tRes) {
+                            resource.searchModules({koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI, moduuli: ENUM_KOMO_MODULE_TUTKINTO}, function(tRes) {
                                 for (var i = 0; i < kRes.uris.length; i++) {
                                     for (var c = 0; c < tRes.result.length; c++) {
                                         if (!angular.isDefined(uiModel['tutkintoModules'][ kRes.uris[i] ]) && kRes.uris[i] === tRes.result[c].koulutuskoodiUri) {
@@ -76,7 +81,7 @@ app.controller('EditLukioController',
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
-                    $scope.commonKoodistoLoadHandler(uiModel, ENUM_LUKIOKOULUTUS);
+                    $scope.commonKoodistoLoadHandler(uiModel, $scope.CONFIG.TYYPPI);
 
                     /*
                      * CUSTOM LOGIC
@@ -98,16 +103,16 @@ app.controller('EditLukioController',
                     $scope.setModel(model);
                 };
 
-                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi, tutkintoTyyppi) {
+                $scope.loadRelationKoodistoData = function(apiModel, uiModel, koodiUri, tutkintoTyyppi) {
                     TarjontaService.getKoulutuskoodiRelations(
                             {
-                                koulutusasteTyyppi: 'Lukiokoulutus',
-                                koulutuskoodiUri: koulutuskoodi,
-                                defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1",
+                                koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
+                                uri: koodiUri,
+                                defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1,koulutustyyppi:" + $scope.CONFIG.KOULUTUSTYYPPI,
                                 languageCode: $scope.koodistoLocale
                             }, function(data) {
                         var restRelationData = data.result;
-                        angular.forEach(converter.STRUCTURE[ENUM_LUKIOKOULUTUS].RELATION, function(value, key) {
+                        angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function(value, key) {
                             if (angular.isDefined(value.module) && tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO && tutkintoTyyppi === value.module) {
                                 apiModel[key] = restRelationData[key];
                             } else if (angular.isDefined(value.module) && tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && tutkintoTyyppi === value.module) {
@@ -127,26 +132,6 @@ app.controller('EditLukioController',
                     $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                     $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
                 }
-
-                $scope.tutkintoDialogModel = {};
-                $scope.tutkintoDialogModel.open = function() {
-
-                    var modalInstance = $modal.open({
-                        scope: $scope,
-                        templateUrl: 'partials/koulutus/edit/korkeakoulu/selectTutkintoOhjelma.html',
-                        controller: 'SelectTutkintoOhjelmaController'
-                    });
-                    modalInstance.result.then(function(selectedItem) {
-                        $log.debug('Ok, dialog closed: ' + selectedItem.koodiNimi);
-                        $log.debug('Koodiarvo is: ' + selectedItem.koodiArvo);
-                        if (!converter.isNull(selectedItem)) {
-                            //$scope.model.koulutuskoodi = selectedItem;
-                            $scope.model.koulutuskoodi.koodi.arvo = selectedItem.koodiArvo;
-                        }
-                    }, function() {
-                        $log.debug('Cancel, dialog closed');
-                    });
-                };
 
                 $scope.loadKomoKuvausTekstis = function(komoOid, uiModel, kuvausKomoto) {
                     if (angular.isDefined(kuvausKomoto) && komoOid === null && kuvausKomoto) {
@@ -202,13 +187,13 @@ app.controller('EditLukioController',
                             return num;
                         });
 
-                        var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, 'lukiolinjat', $scope.koodistoLocale);
+                        var lukiolinjaPromise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, null, $scope.koodistoLocale);
                         lukiolinjaPromise.then(function(kRes) {
                             resource.searchModules(
                                     {
-                                        koulutuskoodiUri: uriNew,
-                                        koulutusasteTyyppi: 'Lukiokoulutus',
-                                        koulutusmoduuliTyyppi: ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
+                                        koulutus: uriNew,
+                                        koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
+                                        moduuli: ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
                                     }, function(tRes) {
                                 for (var il = 0; il < kRes.uris.length; il++) {
 
@@ -229,10 +214,10 @@ app.controller('EditLukioController',
                 });
 
                 $scope.saveLuonnos = function() {
-                    $scope.saveByStatus('LUONNOS', $scope.koulutusForm, ENUM_LUKIOKOULUTUS, $scope.customCallbackAfterSave);
+                    $scope.saveByStatus('LUONNOS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
                 };
                 $scope.saveValmis = function() {
-                    $scope.saveByStatus('VALMIS', $scope.koulutusForm, ENUM_LUKIOKOULUTUS, $scope.customCallbackAfterSave);
+                    $scope.saveByStatus('VALMIS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
                 };
 
                 $scope.init();

@@ -51,12 +51,16 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import static fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli.TILA_COLUMN_NAME;
 import static fi.vm.sade.tarjonta.model.Koulutusmoduuli.TABLE_NAME;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import javax.persistence.Enumerated;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -69,6 +73,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public static final String TABLE_NAME = "koulutusmoduuli_toteutus";
     private static final long serialVersionUID = -1278564574746813425L;
+
+    @Column(name = "toteutustyyppi")
+    @Enumerated(EnumType.STRING)
+    private ToteutustyyppiEnum toteutustyyppi;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
@@ -178,6 +187,15 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "alkamispvm")
     private Set<Date> koulutuksenAlkamisPvms = new HashSet<Date>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
+
+    @OneToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "koulutusmoduuli_toteutus_children_id", nullable = true)
+    private KoulutusmoduuliToteutus valmistavaKoulutus;
+
     @Column(name = "tarjoaja")
     private String tarjoaja;
 
@@ -190,6 +208,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name = "hinta")
     private BigDecimal hinta;
+
+    @Column(name = "jarjesteja")
+    private String jarjesteja;
 
     /**
      * Populoidaan aina.
@@ -226,11 +247,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      */
     @Column(name = "suunniteltukesto_arvo")
     private String suunniteltukestoArvo;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = TABLE_NAME + "_tutkintonimike", joinColumns
-            = @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoodistoUri> tutkintonimikes = new HashSet<KoodistoUri>();
 
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
@@ -589,8 +605,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return suunniteltukestoYksikkoUri;
     }
 
- 
-
     /**
      * Sanallinen kuvaus arviointikriteereistä.
      *
@@ -852,7 +866,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public boolean isKuva(String kielikoodi) {
         return kuvat.containsKey(kielikoodi);
     }
-    
+
     public final void setKuvaByUri(String kielikoodi, BinaryData binaryData) {
         kuvat.put(kielikoodi, binaryData);
     }
@@ -992,6 +1006,55 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             EntityUtils.keepSelectedKoodistoUri(this.tutkintonimikes, koodistoUri);
             tutkintonimikes.add(koodistoUri);
         }
+    }
+
+    /**
+     * Tarjonta education identification enum, based on OPH's koulutustyyppi
+     * code uri.
+     *
+     * @return the toteutustyyppi
+     */
+    public ToteutustyyppiEnum getToteutustyyppi() {
+        return toteutustyyppi;
+    }
+
+    /**
+     * Tarjonta education identification enum, based on OPH's koulutustyyppi
+     * code uri.
+     *
+     * @param tyyppi the toteutustyyppi to set
+     */
+    public void setToteutustyyppi(ToteutustyyppiEnum tyyppi) {
+        this.toteutustyyppi = tyyppi;
+    }
+
+    /**
+     * @return the nayttotutkintoValmistavaKoulutus
+     */
+    public KoulutusmoduuliToteutus getValmistavaKoulutus() {
+        return valmistavaKoulutus;
+    }
+
+    /**
+     * @param valmistavaKoulutus the
+     * nayttotutkintoValmistavaKoulutus to set
+     */
+    public void setValmistavaKoulutus(KoulutusmoduuliToteutus valmistavaKoulutus) {
+        this.valmistavaKoulutus = valmistavaKoulutus;
+    }
+
+    /**
+     * @return the jarjesteja OID
+     */
+    public String getJarjesteja() {
+        return jarjesteja;
+    }
+
+    /**
+     * @param jarjesteja OID the jarjesteja to set
+     */
+    public void setJarjesteja(String jarjesteja) {
+        this.jarjesteja = jarjesteja;
     }
 
 }

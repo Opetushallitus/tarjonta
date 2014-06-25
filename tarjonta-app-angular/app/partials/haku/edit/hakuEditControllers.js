@@ -292,6 +292,66 @@ app.controller('HakuEditController',
                 return result;
             };
 
+            var stringContainsOther = function (fullString,otherString) {
+
+                if(fullString && otherString) {
+
+                    if(fullString.indexOf(otherString) != -1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+
+                } else {
+                    return false;
+                }
+
+            };
+
+            $scope.filterKohdejoukkos = function () {
+
+              if(!AuthService.isUserOph())
+               {
+
+
+                    var kkOppilaitosTyypit = {};
+                    kkOppilaitosTyypit["oppilaitostyyppi_42"] = "";
+                    kkOppilaitosTyypit["oppilaitostyyppi_41"] = "";
+                    kkOppilaitosTyypit["oppilaitostyyppi_43"] = "";
+
+                    var userOrgs = AuthService.getOrganisations();
+
+                    //CHeck if user has KK - orgs
+                    angular.forEach(userOrgs, function (org) {
+                        OrganisaatioService.haeOppilaitostyypit(org).then(function (oppilaitosTyypit) {
+
+                            angular.forEach(oppilaitosTyypit, function (oppilaitosTyyppi) {
+                                var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split("#");
+                                //User belongs to KK - org, check if he/she has CRUD
+                                if(oppilaitosTyyppiUriWithoutVersion[0] in kkOppilaitosTyypit) {
+                                    AuthService.crudOrg(org).then(function (isCrud) {
+                                         console.log('IS CRUD : ', isCrud);
+                                        if(isCrud) {
+                                               $scope.model.kohdejoukkoFilterUris = ["haunkohdejoukko_12"];
+
+                                        }
+
+
+
+                                    });
+
+                                }
+                            })
+
+                        });
+
+                    });
+                }
+
+
+
+            };
+
 
             $scope.isJatkuvaHaku = function() {
                 var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
@@ -409,6 +469,12 @@ app.controller('HakuEditController',
                 });
             };
 
+            /**
+             * Kutsutaan haen edit lomakkeelta kun haun priorisoinnin tilaan halutaan vaikuttaa "ulkopuolelta"
+             * eli muuttamalla haun lomakkeen valintaa.
+             * 
+             * @returns {undefined}
+             */
             $scope.checkPriorisointi = function () {
                 $log.debug("checkPriorisointi()");
                 
@@ -419,6 +485,63 @@ app.controller('HakuEditController',
                 if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
                     $scope.model.hakux.result.usePriority = false;
                 }                
+            };
+            
+            
+            /**
+             * This method is called when halulomake selection changes.
+             * 
+             * Accepted states are: SYSTEM, OTHER, NONE
+             * 
+             * @returns {undefined}
+             */
+            $scope.updatedHakulomakeSelection = function() {
+                $log.info("updatedHakulomakeSelection() - ", $scope.model.haku.hakulomake);
+                 
+                switch ($scope.model.haku.hakulomake) {
+                    case "SYSTEM":
+                        $log.info("  handle system.");
+                        $scope.model.hakux.result.jarjestelmanHakulomake = true;
+                        $scope.model.hakux.result.hakulomakeUri = null;
+                        break;
+                    case "OTHER":
+                        $log.info("  handle other.");
+                        $scope.model.hakux.result.jarjestelmanHakulomake = false;
+                        $scope.model.hakux.result.maxHakukohdes = 0;
+                        break;
+                    case "NONE":
+                        $log.info("  handle none.");
+                        $scope.model.hakux.result.jarjestelmanHakulomake = false;
+                        $scope.model.hakux.result.maxHakukohdes = 0;
+                        $scope.model.hakux.result.hakulomakeUri = null;
+                        break;
+                    default:
+                        $log.info("  handle WTF?.");
+                        throw new Exception("INVALID HAKULOMAKE TYPE");
+                        break;
+                }
+                
+                // Update priorisointi information too
+                $scope.checkPriorisointi();
+            };
+
+            /**
+             * Use this method to sync UI state to model state
+             * 
+             * @returns {undefined}
+             */
+            $scope.updatedHakulomakeSelectionFromModelToUI = function() {
+                $log.info("updatedHakulomakeSelectionFromModelToUI()");
+
+                if ($scope.model.hakux.result.jarjestelmanHakulomake) {
+                    $scope.model.haku.hakulomake = "SYSTEM";
+                } else {
+                    if ($scope.model.hakux.result.hakulomakeUri) {
+                        $scope.model.haku.hakulomake = "OTHER";
+                    } else {
+                        $scope.model.haku.hakulomake = "NONE";
+                    }
+                }
             };
 
             /**
@@ -442,6 +565,8 @@ app.controller('HakuEditController',
                     hakux: $route.current.locals.hakux,
                     haku: {
                         // Possible UI state for Haku
+                        hakulomake : 
+                                "SYSTEM" // Possible values SYSTEM, OTHER, NONE
                     },
                     parameter: {
                         //parametrit populoituu tänne... ks. haeHaunParametrit(...)
@@ -453,7 +578,9 @@ app.controller('HakuEditController',
 
                 $log.info("init... done.");
                 $scope.model = model;
-
+                
+                // Update UI state for radio buttons on load
+                $scope.updatedHakulomakeSelectionFromModelToUI();                
                 
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
@@ -475,6 +602,8 @@ app.controller('HakuEditController',
                 // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
+                //Filter kohdejoukkos
+                $scope.filterKohdejoukkos();
                 checkIsOphAdmin();
             };
             $scope.init();

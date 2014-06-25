@@ -97,14 +97,12 @@ public class ShowHakukohdeTab extends VerticalLayout {
         //persvaos.add(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
         KoulutusasteTyyppi koulutusasteTyyppi = vm.getKoulutusasteTyyppi();
 
-
         if (persvaos.contains(koulutusasteTyyppi)) {
             return true;
         } else if (koulutusasteTyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
-            return  checkErKomotos(loadHakukohdeKomotos(vm.getKomotoOids()));
+            return checkErKomotos(loadHakukohdeKomotos(vm.getKomotoOids()));
 
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -112,7 +110,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
 
     private boolean checkErKomotos(List<LueKoulutusVastausTyyppi> koulutukses) {
 
-        for(LueKoulutusVastausTyyppi koulutus: koulutukses) {
+        for (LueKoulutusVastausTyyppi koulutus : koulutukses) {
             if (koulutus.getPohjakoulutusvaatimus().getUri().trim().equalsIgnoreCase(pohjakoulutusVaatimusEr)) {
                 return true;
             }
@@ -124,8 +122,8 @@ public class ShowHakukohdeTab extends VerticalLayout {
     private List<LueKoulutusVastausTyyppi> loadHakukohdeKomotos(List<String> komotoOids) {
         List<LueKoulutusVastausTyyppi> koulutukses = new ArrayList<LueKoulutusVastausTyyppi>();
         for (String komotoOid : komotoOids) {
-          LueKoulutusVastausTyyppi koulutusVastausTyyppi =  presenter.getKoulutusByOid(komotoOid);
-          koulutukses.add(koulutusVastausTyyppi);
+            LueKoulutusVastausTyyppi koulutusVastausTyyppi = presenter.getKoulutusByOid(komotoOid);
+            koulutukses.add(koulutusVastausTyyppi);
 
         }
         return koulutukses;
@@ -144,41 +142,40 @@ public class ShowHakukohdeTab extends VerticalLayout {
     }
 
     private void buildKuvauksetLayout(VerticalLayout layout) {
-        
+
         //tyypit joille valintaperustekuvaukset näytetään hakukohteessa...
-        final List<KoulutusasteTyyppi> showValintaperusteetForTypes=Lists.newArrayList(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, KoulutusasteTyyppi.YLIOPISTOKOULUTUS, KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS );
+        final List<KoulutusasteTyyppi> showValintaperusteetForTypes = Lists.newArrayList(KoulutusasteTyyppi.KORKEAKOULUTUS, KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
 
         //tyypit joille sorakuvaukset näytetään hakukohteessa...
-        final List<KoulutusasteTyyppi> showSoraForTypes=Lists.newArrayList(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS, KoulutusasteTyyppi.YLIOPISTOKOULUTUS);
+        final List<KoulutusasteTyyppi> showSoraForTypes = Lists.newArrayList(KoulutusasteTyyppi.KORKEAKOULUTUS);
 
         if (!showValintaperusteetForTypes.contains(presenter.getModel().getHakukohde().getKoulutusasteTyyppi())) {
-           return;
+            return;
         }
-    	
+
         //if (presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus() != null && !presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus().isEmpty()) {
         VerticalLayout valintaperusteetLayout = new VerticalLayout();
         valintaperusteetLayout.setMargin(true);
         final boolean canUserUpdateHakukohde = presenter.isHakukohdeEditableForCurrentUser();
         //if (checkForHaunAlkaminenAndType()) {
-            valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("vapeSoraKuvauksetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                    new ClickListener() {
-                private static final long serialVersionUID = 5019806363620874205L;
+        valintaperusteetLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("vapeSoraKuvauksetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
 
-                @Override
-                public void buttonClick(ClickEvent clickEvent) {
-                    getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
-                }
-            }, null, null,canUserUpdateHakukohde));
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        getWindow().showNotification("Toiminnallisuutta ei ole viela toteuttettu");
+                    }
+                }, null, null, canUserUpdateHakukohde));
         //}
 
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
 
-        
         addRichTextToGrid(grid, "valintaPerusteetTeksti", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus(), MetaCategory.VALINTAPERUSTEKUVAUS));
         if (showSoraForTypes.contains(presenter.getModel().getHakukohde().getKoulutusasteTyyppi())) {
-                addRichTextToGrid(grid, "soraKuvausTeksti", getLanguageString(presenter.getModel().getHakukohde().getSoraKuvaus(), MetaCategory.SORA_KUVAUS));
+            addRichTextToGrid(grid, "soraKuvausTeksti", getLanguageString(presenter.getModel().getHakukohde().getSoraKuvaus(), MetaCategory.SORA_KUVAUS));
         }
 
         grid.setColumnExpandRatio(1, 1f);
@@ -204,16 +201,16 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
 
         //if (checkForHaunAlkaminenAndType()) {
-            liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                    new ClickListener() {
-                private static final long serialVersionUID = 5019806363620874205L;
+        liiteLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("liitteetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
 
-                @Override
-                public void buttonClick(ClickEvent clickEvent) {
-                    presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                            presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
-                }
-            }, lastUpdated, lastupdateBy, presenter.isHakukohdeEditableForCurrentUser()));
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                                presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.LIITTEET_TAB_SELECT);
+                    }
+                }, lastUpdated, lastupdateBy, presenter.isHakukohdeEditableForCurrentUser()));
         //}
 
         final GridLayout grid = new GridLayout(2, 1);
@@ -336,16 +333,16 @@ public class ShowHakukohdeTab extends VerticalLayout {
             }
         }
         //if (checkForHaunAlkaminenAndType()) {
-            valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
-                    new ClickListener() {
-                private static final long serialVersionUID = 5019806363620874205L;
+        valintakoeLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("valintakokeetTitle"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
+                new ClickListener() {
+                    private static final long serialVersionUID = 5019806363620874205L;
 
-                @Override
-                public void buttonClick(ClickEvent clickEvent) {
-                    presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                            presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
-                }
-            }, lastUpdated,presenter.getModel().getHakukohde().getViimeisinPaivittaja(), presenter.isHakukohdeEditableForCurrentUser()));
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                                presenter.getModel().getHakukohde().getOid(), null, TarjontaPresenter.VALINTAKOE_TAB_SELECT);
+                    }
+                }, lastUpdated, presenter.getModel().getHakukohde().getViimeisinPaivittaja(), presenter.isHakukohdeEditableForCurrentUser()));
         //}
 
         VerticalLayout yetAnotherLayout = new VerticalLayout();
@@ -354,7 +351,6 @@ public class ShowHakukohdeTab extends VerticalLayout {
         if (checkLukioKoulutus()) {
             Label pisterajaLbl = new Label(i18n.getMessage("valinnoissaKaytettavatPisterajatLbl"));
             pisterajaLbl.setStyleName(Oph.LABEL_H2);
-
 
             Table pisterajatTable = new Table();
             pisterajatTable.setContainerDataSource(createPisterajatContainer());
@@ -367,40 +363,40 @@ public class ShowHakukohdeTab extends VerticalLayout {
             pisterajatTable.setColumnHeader("alinHyvaksyttyPistemaara", i18n.getMessage("alinHyvaksyttyPistemaaraLbl"));
             pisterajatTable.setPageLength(pisterajatTable.getContainerDataSource().size());
             if (showPisterajaTable) {
-            yetAnotherLayout.addComponent(pisterajaLbl);
-            yetAnotherLayout.addComponent(pisterajatTable);
+                yetAnotherLayout.addComponent(pisterajaLbl);
+                yetAnotherLayout.addComponent(pisterajatTable);
             }
         }
 
-        if (checkValintakoeAjat(loadHakukohdeValintaKokees))  {
-        for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
-            final GridLayout grid = new GridLayout(2, 1);
-            grid.setWidth("100%");
-            Label piesykoeLbl = new Label(i18n.getMessage("paasykoeTitle"));
-            piesykoeLbl.setStyleName(Oph.LABEL_H2);
-            addTwoColumnRowToGrid(grid,piesykoeLbl);
+        if (checkValintakoeAjat(loadHakukohdeValintaKokees)) {
+            for (ValintakoeViewModel valintakoe : loadHakukohdeValintaKokees) {
+                final GridLayout grid = new GridLayout(2, 1);
+                grid.setWidth("100%");
+                Label piesykoeLbl = new Label(i18n.getMessage("paasykoeTitle"));
+                piesykoeLbl.setStyleName(Oph.LABEL_H2);
+                addTwoColumnRowToGrid(grid, piesykoeLbl);
 
-            addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(valintakoe.getValintakoeTyyppi(), I18N.getLocale())));
-            addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(valintakoe.getSanallisetKuvaukset())));
+                addTwoColumnRowToGrid(grid, getOphH2Label(uiHelper.getKoodiNimi(valintakoe.getValintakoeTyyppi(), I18N.getLocale())));
+                addTwoColumnRowToGrid(grid, getRichTxtLbl(getLanguageString(valintakoe.getSanallisetKuvaukset())));
 
-            addTwoColumnRowToGrid(grid, buildValintakoeAikaTable(valintakoe));
+                addTwoColumnRowToGrid(grid, buildValintakoeAikaTable(valintakoe));
 
-            String lisanayttoKuvaus = getLanguageString(valintakoe.getLisanayttoKuvaukset());
-            if (lisanayttoKuvaus != null && lisanayttoKuvaus.trim().length() > 0) {
+                String lisanayttoKuvaus = getLanguageString(valintakoe.getLisanayttoKuvaukset());
+                if (lisanayttoKuvaus != null && lisanayttoKuvaus.trim().length() > 0) {
 
-                VerticalLayout vl = new VerticalLayout();
-                vl.setMargin(true, false, false, false);
-                vl.addComponent(getHdrH2Label("lisanaytotLabel"));
+                    VerticalLayout vl = new VerticalLayout();
+                    vl.setMargin(true, false, false, false);
+                    vl.addComponent(getHdrH2Label("lisanaytotLabel"));
 
-                vl.addComponent(getRichTxtLbl(lisanayttoKuvaus));
-                addTwoColumnRowToGrid(grid, vl);
+                    vl.addComponent(getRichTxtLbl(lisanayttoKuvaus));
+                    addTwoColumnRowToGrid(grid, vl);
+
+                }
+                grid.setColumnExpandRatio(1, 1f);
+                grid.setMargin(true, false, false, false);
+                yetAnotherLayout.addComponent(grid);
 
             }
-            grid.setColumnExpandRatio(1, 1f);
-            grid.setMargin(true, false, false, false);
-            yetAnotherLayout.addComponent(grid);
-
-        }
         }
 
         valintakoeLayout.addComponent(yetAnotherLayout);
@@ -410,9 +406,9 @@ public class ShowHakukohdeTab extends VerticalLayout {
 
     private boolean checkValintakoeAjat(List<ValintakoeViewModel> hakukohdeValintaKokees) {
         boolean returnVal = true;
-        if (hakukohdeValintaKokees != null ) {
+        if (hakukohdeValintaKokees != null) {
 
-            for (ValintakoeViewModel valintakoeViewModel:hakukohdeValintaKokees) {
+            for (ValintakoeViewModel valintakoeViewModel : hakukohdeValintaKokees) {
                 if (valintakoeViewModel.getValintakoeAjat() != null && valintakoeViewModel.getValintakoeAjat().size() > 0) {
                     returnVal = true;
                 } else {
@@ -425,7 +421,6 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
         return returnVal;
     }
-
 
     private Table buildValintakoeAikaTable(ValintakoeViewModel valintakoe) {
         Table valintakoeAikaTable = new Table();
@@ -463,7 +458,6 @@ public class ShowHakukohdeTab extends VerticalLayout {
         Label koulutuksetTitle = new Label(i18n.getMessage("koulutuksetTitle"));
         koulutuksetTitle.setStyleName(Oph.LABEL_H2);
         koulutuksesLayout.addComponent(koulutuksetTitle);
-
 
         CategoryTreeView categoryTree = new CategoryTreeView();
         categoryTree.setHeight("100px");
@@ -549,8 +543,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
         for (ValintakoeViewModel valintakoeV : valintakokees) {
             if (valintakoeV.getPkAlinPM() != null && valintakoeV.getPkYlinPM() != null || valintakoeV.getLpAlinPM() != null && valintakoeV.getLpYlinPM() != null) {
                 showPisterajaTable = true;
-            }
-            else {
+            } else {
                 showPisterajaTable = false;
             }
             PisterajaRow paasyKoePisteraja = new PisterajaRow();
@@ -558,7 +551,7 @@ public class ShowHakukohdeTab extends VerticalLayout {
             paasyKoePisteraja.setAlinPistemaara(valintakoeV.getPkAlinPM());
             paasyKoePisteraja.setYlinPistemaara(valintakoeV.getPkYlinPM());
             paasyKoePisteraja.setAlinHyvaksyttyPistemaara(valintakoeV.getPkAlinHyvaksyttyPM());
-            
+
             pisterajaRows.add(paasyKoePisteraja);
 
             PisterajaRow lisaNaytotRow = new PisterajaRow();
@@ -566,15 +559,14 @@ public class ShowHakukohdeTab extends VerticalLayout {
             lisaNaytotRow.setAlinPistemaara(valintakoeV.getLpAlinPM());
             lisaNaytotRow.setYlinPistemaara(valintakoeV.getLpYlinPM());
             lisaNaytotRow.setAlinHyvaksyttyPistemaara(valintakoeV.getLpAlinHyvaksyttyPM());
-            
-            
+
             pisterajaRows.add(lisaNaytotRow);
 
             PisterajaRow kokonaisPisteet = new PisterajaRow();
             kokonaisPisteet.setPisteRajaTyyppi(i18n.getMessage("kokonaispisteet"));
             kokonaisPisteet.setYlinPistemaara(i18n.getMessage("ylinPisteMaara"));
             kokonaisPisteet.setAlinHyvaksyttyPistemaara(valintakoeV.getKpAlinHyvaksyttyPM());
-            
+
             pisterajaRows.add(kokonaisPisteet);
 
             pisterajaRows.add(lisaNaytotRow);
@@ -600,8 +592,6 @@ public class ShowHakukohdeTab extends VerticalLayout {
         return rows;
     }
 
-
-
     private Label buildTallennettuLabel(Date date, String viimPaivOid) {
         SimpleDateFormat sdp = new SimpleDateFormat(datePattern);
         String viimPaivittaja = null;
@@ -610,25 +600,24 @@ public class ShowHakukohdeTab extends VerticalLayout {
             viimPaivittaja = uiHelper.tryGetViimPaivittaja(viimPaivOid);
         } catch (Exception ep) {
 
-
         }
         Label lastUpdLbl = null;
         if (viimPaivittaja != null) {
-            lastUpdLbl  = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
+            lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ", " + viimPaivittaja + " )");
         } else {
             lastUpdLbl = new Label("( " + i18n.getMessage("tallennettuLbl") + " " + sdp.format(date) + ")");
         }
 
         return lastUpdLbl;
     }
-    
+
     private String getHakuaikaStr() {
-    	HakukohdeViewModel hm = presenter.getModel().getHakukohde();
-    	if (hm.getHakuaikaAlkuPvm() != null && hm.getHakuaikaLoppuPvm() != null) {
-    	    return HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm());
-    	}
-    	HakuaikaViewModel hvm = hm.getHakuaika();
-    	return hvm==null ? HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm()): hvm.toString();
+        HakukohdeViewModel hm = presenter.getModel().getHakukohde();
+        if (hm.getHakuaikaAlkuPvm() != null && hm.getHakuaikaLoppuPvm() != null) {
+            return HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm());
+        }
+        HakuaikaViewModel hvm = hm.getHakuaika();
+        return hvm == null ? HakuaikaViewModel.toString(hm.getHakuaikaAlkuPvm(), hm.getHakuaikaLoppuPvm()) : hvm.toString();
     }
 
     private void buildPerustiedotLayout(VerticalLayout layout) {
@@ -637,35 +626,36 @@ public class ShowHakukohdeTab extends VerticalLayout {
         //if (checkForHaunAlkaminenAndType()) {
         hdrLayout.addComponent(buildHeaderLayout(this.i18n.getMessage("perustiedot"), i18n.getMessage(CommonTranslationKeys.MUOKKAA),
                 new ClickListener() {
-            private static final long serialVersionUID = 5019806363620874205L;
-            @Override
-            public void buttonClick(ClickEvent clickEvent) {
-                presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
-                        presenter.getModel().getHakukohde().getOid(), null, null);
-            }
-        }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(),presenter.getModel().getHakukohde().getViimeisinPaivittaja() ,presenter.isHakukohdeEditableForCurrentUser()));
+                    private static final long serialVersionUID = 5019806363620874205L;
+
+                    @Override
+                    public void buttonClick(ClickEvent clickEvent) {
+                        presenter.showHakukohdeEditView(presenter.getModel().getHakukohde().getKomotoOids(),
+                                presenter.getModel().getHakukohde().getOid(), null, null);
+                    }
+                }, presenter.getModel().getHakukohde().getViimeisinPaivitysPvm(), presenter.getModel().getHakukohde().getViimeisinPaivittaja(), presenter.isHakukohdeEditableForCurrentUser()));
         //}
         final GridLayout grid = new GridLayout(2, 1);
         grid.setWidth("100%");
         grid.setMargin(true);
         KoulutusasteTyyppi kTyyppi = presenter.getModel().getHakukohde().getKoulutusasteTyyppi();
-        String hakukohdeNimiStr = kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) ?  presenter.getModel().getHakukohde().getEditedHakukohdeNimi() : uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null);
+        String hakukohdeNimiStr = kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) ? presenter.getModel().getHakukohde().getEditedHakukohdeNimi() : uiHelper.getKoodiNimi(presenter.getModel().getHakukohde().getHakukohdeNimi(), null);
         addItemToGrid(grid, "hakukohdeNimi", hakukohdeNimiStr);
-        String yhTunnus = kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) ? "-" :  uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo();
+        String yhTunnus = kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS) ? "-" : uiHelper.getKoodis(presenter.getModel().getHakukohde().getHakukohdeNimi()).get(0).getKoodiArvo();
         addItemToGrid(grid, "yhteishaunKoulutustunnus", yhTunnus);
         addItemToGrid(grid, "haku", tryGetLocalizedHakuNimi(presenter.getModel().getHakukohde().getHakuViewModel()));
         addItemToGrid(grid, "hakuaika", getHakuaikaStr());
         addItemToGrid(grid, "hakijoilleIlmoitetutAloituspaikat", new Integer(presenter.getModel().getHakukohde().getAloitusPaikat()).toString());
         addItemToGrid(grid, "valinnoissaKaytettavatAloituspaikat", new Integer(presenter.getModel().getHakukohde().getValinnoissaKaytettavatPaikat()).toString());
-        if(kTyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
-            addItemToGrid(grid,"kaksoistutkino", presenter.getModel().getHakukohde().isKaksoisTutkinto() ? this.i18n.getMessage("kylla") : i18n.getMessage("ei"));
+        if (kTyyppi.equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+            addItemToGrid(grid, "kaksoistutkino", presenter.getModel().getHakukohde().isKaksoisTutkinto() ? this.i18n.getMessage("kylla") : i18n.getMessage("ei"));
         }
 
         if (checkLukioKoulutus()) {
-            
+
             addItemToGrid(grid, "alinHyvaksyttyvaKeskiarvo", presenter.getModel().getHakukohde().getAlinHyvaksyttavaKeskiarvo());
             addItemToGrid(grid, "painotettavatOppiaineet", getHakukohdeOppiaineet());
-            
+
         }
         //addRichTextToGrid(grid, "hakukelpoisuusVaatimukset", getLanguageString(presenter.getModel().getHakukohde().getValintaPerusteidenKuvaus()));
         addRichTextToGrid(grid, "lisatietojaHakemisesta", getLanguageString(presenter.getModel().getHakukohde().getLisatiedot()));
@@ -682,21 +672,21 @@ public class ShowHakukohdeTab extends VerticalLayout {
         }
         //grid.setColumnExpandRatio(0,0.2f);
         grid.setColumnExpandRatio(1, 1f);
-        
+
         hdrLayout.addComponent(grid);
         hdrLayout.setComponentAlignment(grid, Alignment.TOP_LEFT);
         layout.addComponent(hdrLayout);
-        
+
     }
-        
-        private boolean isHakukohdeNivelvaihe() {
-            KoulutusasteTyyppi kTyyppi = presenter.getModel().getHakukohde().getKoulutusasteTyyppi();
-            return kTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
-                    || kTyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
-                    || kTyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
-                    || kTyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
-                    || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
-        }
+
+    private boolean isHakukohdeNivelvaihe() {
+        KoulutusasteTyyppi kTyyppi = presenter.getModel().getHakukohde().getKoulutusasteTyyppi();
+        return kTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
+                || kTyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
+                || kTyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)
+                || kTyyppi.equals(KoulutusasteTyyppi.PERUSOPETUKSEN_LISAOPETUS)
+                || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
+    }
 
     private String getHakukohdeOppiaineet() {
         StringBuilder sb = new StringBuilder();
@@ -796,21 +786,19 @@ public class ShowHakukohdeTab extends VerticalLayout {
     }
 
     private String getLanguageString(LinkitettyTekstiModel teksti, MetaCategory mc) {
-    	if (teksti.getUri()==null) {
-    		return getLanguageString(teksti.getKaannokset());
-    	} else {
-    		for (MonikielinenMetadataTyyppi mt : presenter.haeMetadata(teksti.getUri(), mc.toString())) {
-    			if (mt.getKieli().equals(language)) {
-    				return mt.getArvo();
-    			}
-    		}
-    		return "-"; // TODO pitäiskö näyttää "ei kuvausta tällä kielellä tjsp.."
-    	}
+        if (teksti.getUri() == null) {
+            return getLanguageString(teksti.getKaannokset());
+        } else {
+            for (MonikielinenMetadataTyyppi mt : presenter.haeMetadata(teksti.getUri(), mc.toString())) {
+                if (mt.getKieli().equals(language)) {
+                    return mt.getArvo();
+                }
+            }
+            return "-"; // TODO pitäiskö näyttää "ei kuvausta tällä kielellä tjsp.."
+        }
     }
-    
-    	
-    private String getLanguageString(List<KielikaannosViewModel> tekstit) {
 
+    private String getLanguageString(List<KielikaannosViewModel> tekstit) {
 
         for (KielikaannosViewModel teksti : tekstit) {
             if (teksti.getKielikoodi().trim().equalsIgnoreCase(this.language)) {
@@ -829,13 +817,12 @@ public class ShowHakukohdeTab extends VerticalLayout {
         parent.addComponent(split);
     }
 
-    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Date lastUpdatedLabel, String lastUpdateBy , boolean showButton) {
+    private HorizontalLayout buildHeaderLayout(String title, String btnCaption, Button.ClickListener listener, Date lastUpdatedLabel, String lastUpdateBy, boolean showButton) {
         HorizontalLayout headerLayout = UiUtil.horizontalLayout(true, UiMarginEnum.NONE);
         final Label titleLabel = UiUtil.label(headerLayout, title);
         titleLabel.setStyleName(Oph.LABEL_H2);
 
         final Label buildTallennettuLabel = lastUpdatedLabel != null ? buildTallennettuLabel(lastUpdatedLabel, lastUpdateBy) : null;
-
 
         if (btnCaption != null) {
             headerLayout.addComponent(titleLabel);

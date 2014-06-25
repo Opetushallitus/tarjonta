@@ -24,3 +24,4 @@ tarjonta-app-angular/nbproject
 
 /build
 /.gradle
+/tarjonta-service/nbactions.xml

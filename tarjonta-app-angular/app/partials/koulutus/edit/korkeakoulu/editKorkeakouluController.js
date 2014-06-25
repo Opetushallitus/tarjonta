@@ -4,13 +4,17 @@ app.controller('EditKorkeakouluController',
             '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
             function EditKorkeakouluController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
                     $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
-
-                var ENUM_KORKEAKOULUTUS = 'KORKEAKOULUTUS';
                 $log = $log.getInstance("EditKorkeakouluController");
                 $scope.tutkintoDialogModel = {};
 
                 $scope.init = function() {
                     $log.debug("init");
+
+                    /*
+                     * INITIALIZE PAGE CONFIG
+                     */
+                    $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
+
                     var model = {};
 
                     var uiModel = {
@@ -26,7 +30,7 @@ app.controller('EditKorkeakouluController',
                          *  Look more info from koulutusController.js.
                          */
                         model = $route.current.locals.koulutusModel.result;
-                        $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, ENUM_KORKEAKOULUTUS);
+                        $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
                         /*
                          * CUSTOM LOGIC
@@ -37,7 +41,7 @@ app.controller('EditKorkeakouluController',
                          * Load data to multiselect fields
                          * remove version data from the list
                          */
-                        angular.forEach(converter.STRUCTURE[ENUM_KORKEAKOULUTUS].MCOMBO, function(value, key) {
+                        angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].MCOMBO, function(value, key) {
                             if (angular.isDefined(model[key]) && angular.isDefined(model[key].uris)) {
                                 uiModel[key].uris = _.keys(model[key].uris);
                             } else {
@@ -50,7 +54,7 @@ app.controller('EditKorkeakouluController',
                          * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
                          * Look more info from koulutusController.js.
                          */
-                        $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, ENUM_KORKEAKOULUTUS);
+                        $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                         $scope.loadRelationKoodistoData(model, uiModel, $routeParams.koulutuskoodi);
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
@@ -59,7 +63,7 @@ app.controller('EditKorkeakouluController',
                     /*
                      * SHOW ALL KOODISTO KOODIS
                      */
-                    $scope.commonKoodistoLoadHandler(uiModel, ENUM_KORKEAKOULUTUS);
+                    $scope.commonKoodistoLoadHandler(uiModel, $scope.CONFIG.TYYPPI);
 
                     /*
                      * CUSTOM LOGIC
@@ -79,21 +83,28 @@ app.controller('EditKorkeakouluController',
                      */
                     $scope.setUiModel(uiModel);
                     $scope.setModel(model);
-
                 };
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, koulutuskoodi) {
-                    TarjontaService.getKoulutuskoodiRelations({koulutuskoodiUri: koulutuskoodi, languageCode: $scope.koodistoLocale}, function(data) {
+                    TarjontaService.getKoulutuskoodiRelations({
+                        uri: koulutuskoodi,
+                        koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
+                        defaults: "koulutustyyppi:" + $scope.CONFIG.KOULUTUSTYYPPI,
+                        languageCode: $scope.koodistoLocale}, function(data) {
                         var restRelationData = data.result;
-                        angular.forEach(converter.STRUCTURE[ENUM_KORKEAKOULUTUS].RELATION, function(value, key) {
+                        angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function(value, key) {
                             apiModel[key] = restRelationData[key];
                         });
 
-                        angular.forEach(converter.STRUCTURE[ENUM_KORKEAKOULUTUS].RELATIONS, function(value, key) {
-                            uiModel[key].meta = restRelationData[key].meta;
+                        angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATIONS, function(value, key) {
+                            if (angular.isDefined(restRelationData[key])) {
+                                uiModel[key].meta = restRelationData[key].meta;
 
-                            if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
-                                uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
+                                if (angular.isUndefined(value.skipApiModel) && !angular.isUndefined(apiModel[key]) && !angular.isUndefined(apiModel[key].uris)) {
+                                    uiModel[key].uris = _.keys(apiModel[key].uris); //load uris
+                                }
+                            } else {
+                                $log.error("Error, koodisto not found : '" + key + "' = '" + angular.toJson(value) + " " +  angular.toJson(restRelationData));
                             }
                         });
                     });
@@ -103,10 +114,10 @@ app.controller('EditKorkeakouluController',
                  * TODO: strict data validation, exception handling and optimistic locking
                  */
                 $scope.saveLuonnos = function() {
-                    $scope.saveByStatus('LUONNOS', $scope.koulutusForm, ENUM_KORKEAKOULUTUS, $scope.customCallbackAfterSave);
+                    $scope.saveByStatus('LUONNOS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
                 };
                 $scope.saveValmis = function() {
-                    $scope.saveByStatus('VALMIS', $scope.koulutusForm, ENUM_KORKEAKOULUTUS, $scope.customCallbackAfterSave);
+                    $scope.saveByStatus('VALMIS', $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
                 };
 
                 $scope.customCallbackAfterSave = function(saveResponse) {

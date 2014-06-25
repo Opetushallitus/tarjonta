@@ -48,8 +48,9 @@ import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -171,6 +172,10 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, ors);
         }
 
+        if (criteria.getKoulutustyyppiUri() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutustyyppiUri.like("%|" + criteria.getKoulutustyyppiUri().uri() + "|%"));
+        }
+
         if (criteria.getTila() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.tila.eq(criteria.getTila()));
         }
@@ -274,7 +279,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             whereExpr = QuerydslUtils.and(whereExpr, moduuli.lukiolinjaUri.isEmpty().or(moduuli.lukiolinjaUri.isNull()));
         }
 
-        whereExpr.and(moduuli.koulutustyyppiEnum.eq(KoulutustyyppiEnum.LUKIOKOULUTUS));
+        whereExpr.and(moduuli.koulutustyyppiEnum.eq(ModuulityyppiEnum.LUKIOKOULUTUS));
 
         return from(moduuli).
                 where(whereExpr).
@@ -297,13 +302,11 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         if (lastModifiedAfter != null) {
             whereExpr = QuerydslUtils.and(whereExpr, komo.updated.after(lastModifiedAfter));
         }
-        List<KoulutustyyppiEnum> rowTypes = new ArrayList<KoulutustyyppiEnum>();
+        List<ModuulityyppiEnum> baseKoulutustyyppi = new ArrayList<ModuulityyppiEnum>();
 
-        rowTypes.add(KoulutustyyppiEnum.KORKEAKOULUTUS);
-        rowTypes.add(KoulutustyyppiEnum.AMMATTIKORKEAKOULUTUS);
-        rowTypes.add(KoulutustyyppiEnum.YLIOPISTOKOULUTUS);
+        baseKoulutustyyppi.add(ModuulityyppiEnum.KORKEAKOULUTUS);
 
-        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(rowTypes));
+        whereExpr = QuerydslUtils.and(whereExpr, komo.koulutustyyppiEnum.notIn(baseKoulutustyyppi));
 
         JPAQuery q = from(komo);
         if (whereExpr != null) {
@@ -349,5 +352,56 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         findByOid.setTila(TarjontaTila.POISTETTU);
         //TODO: add field for the entity 
         //findByOid.setLastUpdatedByOid(userOid);
+    }
+
+    /**
+     * 24.06.2014, a method for searching 'tutkinto' or 'tutkinto-ohjelma'
+     * modules.
+     *
+     * @param tyyppi
+     * @param koulutusUri
+     * @param likeKoulutusohjelmaUri
+     * @param likeOsaamisalaUri
+     * @param likeLukiolinjaUri
+     * @return
+     */
+    @Override
+    public Koulutusmoduuli findModule(final KoulutusmoduuliTyyppi tyyppi, final String koulutusUri,
+            final String likeKoulutusohjelmaUri,
+            final String likeOsaamisalaUri,
+            final String likeLukiolinjaUri) {
+
+        Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi cannot be null!");
+        Preconditions.checkNotNull(koulutusUri, "Koulutus uri cannot be null!");
+
+        QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
+
+        BooleanExpression whereExpr = moduuli.moduuliTyyppi.eq(tyyppi);
+        whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "%"));
+
+        BooleanExpression like = null;
+
+        if (likeKoulutusohjelmaUri != null) {
+            QuerydslUtils.or(like, moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "%"));
+        }
+
+        if (likeOsaamisalaUri != null) {
+            QuerydslUtils.or(like, moduuli.osaamisalaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeOsaamisalaUri) + "%"));
+        }
+
+        if (likeLukiolinjaUri != null) {
+            QuerydslUtils.or(like, moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "%"));
+        }
+
+        if (like != null) {
+            whereExpr.and(like);
+        } else if (tyyppi.equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+            throw new RuntimeException("An invalid query, missing 'ohjelma' parameter(s)!");
+        }
+
+        return from(moduuli).
+                where(whereExpr).
+                singleResult(moduuli);
+
     }
 }

@@ -14,68 +14,17 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
-import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
  * @author jani
  */
-public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends KoulutusV1RDTO {
-
-    @ApiModelProperty(value = "Tutkintonimike", required = true)
-    private KoodiV1RDTO tutkintonimike;
-
-    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
-    private String linkkiOpetussuunnitelmaan;
-
-    @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi", required = false)
-    private Double hinta;
+public class KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO extends NayttotutkintoV1RDTO {
 
     public KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO() {
-        super(KoulutusasteTyyppi.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
-    }
-
-    /**
-     * @return the linkkiOpetussuunnitelmaan
-     */
-    public String getLinkkiOpetussuunnitelmaan() {
-        return linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
-     */
-    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
-        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @return the tutkintonimike
-     */
-    public KoodiV1RDTO getTutkintonimike() {
-        return tutkintonimike;
-    }
-
-    /**
-     * @param tutkintonimike the tutkintonimike to set
-     */
-    public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
-        this.tutkintonimike = tutkintonimike;
-    }
-
-    /**
-     * @return the hinta
-     */
-    public Double getHinta() {
-        return hinta;
-    }
-
-    /**
-     * @param hinta the hinta to set
-     */
-    public void setHinta(Double hinta) {
-        this.hinta = hinta;
+        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
 
 }

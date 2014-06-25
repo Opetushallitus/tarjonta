@@ -149,7 +149,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         for (; i < arrPersons.length; i++) {
 
             var henkilo = angular.copy(arrPersons[i]);
-
+            
+            if(angular.isUndefined(henkilo)){
+                continue;
+            }
+            
             if (angular.isUndefined(henkilo.henkiloTyyppi)) {
                 throw "Unknown henkilo tyyppi";
             }
@@ -158,14 +162,21 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 henkilo.sukunimi = '';
                 henkilo.etunimet = '';
 
-                if (Boolean(henkilo.nimet)) {
+                if (henkilo.nimet) {
+                  
+                  if(henkilo.nimet.indexOf(" ")==-1) { //ei välilyöntiä nimessä
+                    henkilo.etunimet = henkilo.nimet;
+                  } else {
                     var arrSeparatedNames = henkilo.nimet.split(" ");
                     for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
                         henkilo.etunimet += arrSeparatedNames[p];
+                        console.log("etunimi");
                     }
                     if (arrSeparatedNames.length > 1) {
                         henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];
+                        console.log("sukunimi");
                     }
+                  }
                 }
 
                 delete henkilo.nimet;
@@ -176,22 +187,23 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
         return arrOutputPersons;
     };
+    
     factory.deleteMetaField = function(obj) {
         if (!factory.isNull(obj) && !factory.isNull(obj.meta)) {
             delete obj.meta;
         }
     };
-    factory.createUiModels = function(uiModel, koulutusastetyyppi) {
+    factory.createUiModels = function(uiModel, tyyppi) {
         //single select nodels
         uiModel['contactPerson'] = {henkiloTyyppi: 'YHTEYSHENKILO'};
         uiModel['ectsCoordinator'] = {henkiloTyyppi: 'ECTS_KOORDINAATTORI'};
         uiModel['tabs'] = {lisatiedot: true}; //lisatiedot tab disabled=true
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].COMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].COMBO, function(value, key) {
             uiModel[key] = factory.createUiKoodistoSingleModel();
         });
         //multi select models
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].MCOMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].MCOMBO, function(value, key) {
 
             if (angular.isDefined(value.types)) {
                 uiModel[key] = {};
@@ -204,13 +216,13 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].DATES, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].DATES, function(value, key) {
             if (angular.isUndefined(uiModel[key])) {
                 uiModel[key] = [];
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].RELATIONS, function(value, key) {
+        angular.forEach(factory.STRUCTURE[tyyppi].RELATIONS, function(value, key) {
             uiModel[key] = factory.createUiMetaMultiModel();
         });
 
@@ -267,60 +279,68 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
      * @param {type} apiModel
      * @returns {undefined}
      */
-    factory.createAPIModel = function(apiModel, languages, koulutusastetyyppi) {
-        if (angular.isUndefined(languages) || !angular.isArray(languages) || languages.length === 0 || angular.isUndefined(koulutusastetyyppi) || koulutusastetyyppi === null) {
+    factory.createAPIModel = function(apiModel, languages, toteutustyyppi) {
+        if (angular.isUndefined(languages) || !angular.isArray(languages) || languages.length === 0 || angular.isUndefined(toteutustyyppi) || toteutustyyppi === null) {
             factory.throwError("No default language uris, array must have at least one language uri.");
         }
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].MLANG, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].MLANG, function(value, key) {
             apiModel[key] = {'tekstis': {}};
             angular.forEach(languages, function(lang) {
                 apiModel[key].tekstis[lang] = '';
             });
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].RELATION, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].RELATION, function(value, key) {
             apiModel[key] = factory.createKoodiUriBase('', -1);
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].RELATIONS, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].RELATIONS, function(value, key) {
             if (angular.isUndefined(value.skipApiModel) && !value.skipApiModel) {
                 apiModel[key] = {'uris': {}};
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].COMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].COMBO, function(value, key) {
             apiModel[key] = factory.createKoodiUriBase('', -1);
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].MCOMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].MCOMBO, function(value, key) {
             if (angular.isDefined(value.types)) {
                 apiModel[key] = {};
                 angular.forEach(value.types, function(valType, keyType) {
-                    apiModel[key][keyType] = {'uris': {}};
+                    if (angular.isDefined(value.default)) {
+                        apiModel[key][keyType] = value.default;
+                    } else {
+                        apiModel[key][keyType] = {'uris': {}};
+                    }
                 });
             } else {
-                apiModel[key] = {'uris': {}};
+                if (angular.isDefined(value.default)) {
+                    apiModel[key] = value.default;
+                } else {
+                    apiModel[key] = {'uris': {}};
+                }
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].DATES, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].DATES, function(value, key) {
             apiModel[key] = [];
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].STR, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].STR, function(value, key) {
             apiModel[key] = value.default;
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].IMAGES, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].IMAGES, function(value, key) {
             apiModel[key] = value.default;
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].BOOL, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].BOOL, function(value, key) {
             apiModel[key] = value.default;
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusastetyyppi].DESC, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].DESC, function(value, key) {
             apiModel[key] = value.default;
             // factory.addLangForDescUiFields(apiModel[key], languages);
         });
@@ -362,7 +382,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opintoala: {},
                 eqf: {},
                 tutkinto: {},
-                opintojenLaajuusyksikko: {}
+                opintojenLaajuusyksikko: {},
+                koulutustyyppi: {}
             },
             RELATIONS: {
                 tutkintonimikes: {},
@@ -383,7 +404,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
                 koulutusmoduuliTyyppi: {"default": 'TUTKINTO'},
-                koulutusasteTyyppi: {"default": 'KORKEAKOULUTUS'},
+                toteutustyyppi: {"default": 'KORKEAKOULUTUS'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''}
@@ -420,8 +441,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* LUKIOKOULUTUS INITIALIZATION PARAMETERS */
         /*******************************************/
-        LUKIOKOULUTUS: {
+        LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: {
             KUVAUS_ORDER: [
+                {type: "TAVOITTEET", isKomo: true, length: 2000},
+                {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true, length: 2000},
+                {type: "KOULUTUKSEN_RAKENNE", isKomo: true, length: 2000},
                 {type: "SISALTO", isKomo: false, length: 2000},
                 {type: "KOHDERYHMA", isKomo: false, length: 2000},
                 {type: "OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
@@ -438,7 +462,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'},
                 opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
                 opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
-                tutkintonimike: {module: 'TUTKINTO_OHJELMA'}
+                tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
+                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
             }, COMBO: {
                 suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
                 koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
@@ -454,7 +479,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
             }, STR: {
                 koulutuksenAlkamisvuosi: {"default": ''},
-                koulutusasteTyyppi: {"default": 'LUKIOKOULUTUS'},
+                toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'},
                 tila: {'default': 'LUONNOS'},
                 tunniste: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
@@ -469,18 +494,89 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
                     ])}
             }
+        },
+        /*******************************************/
+        /* AMMATILLINEN INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: {
+            KUVAUS_ORDER: [
+                {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
+                {type: "NAYTTOTUTKINNON_SUORITTAMINEN", isKomo: false, length: 1500},
+                {type: "MAKSULLISUUS", isKomo: false, length: 1500},
+                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 1500},
+                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500}
+            ],
+            MLANG: {},
+            RELATION: {
+                koulutusaste: {module: 'TUTKINTO'},
+                koulutuskoodi: {module: 'TUTKINTO'},
+                koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
+                koulutusala: {module: 'TUTKINTO'},
+                opintoala: {module: 'TUTKINTO'},
+                tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
+                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'},
+                koulutuslaji: {module: 'TUTKINTO'}
+            }, COMBO: {
+                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
+            }, MCOMBO: {
+                opetuskielis: {koodisto: 'koodisto-uris.kieli', "default": {uris: {'kieli_fi': 1}}},
+                ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
+            }, STR: {
+                koulutuksenAlkamisvuosi: {"default": ''},
+                toteutustyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'},
+                tila: {'default': 'LUONNOS'},
+                tunniste: {"default": ''}
+            }, DATES: {
+                koulutuksenAlkamisPvms: {"default": new Date()}
+            }, BOOL: {
+                opintojenMaksullisuus: {"default": false}
+            }, IMAGES: {
+            }, DESC: {
+                kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
+                    ])},
+                kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
+                    ])}
+            }
+        },
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA: {
+            KUVAUS_ORDER: [
+                {type: "SISALTO", isKomo: false, length: 1500},
+                {type: "KOHDERYHMA", isKomo: false, length: 1500},
+                {type: "OPISKELUN_HENKILOKOHTAISTAMINEN", isKomo: false, length: 1500},
+                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 1500}
+            ],
+            MLANG: {},
+            RELATION: {
+            }, COMBO: {
+                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
+                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
+            }, MCOMBO: {
+                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+                opetuskielis: {koodisto: 'koodisto-uris.kieli'},
+            }, STR: {
+                koulutuksenAlkamisvuosi: {"default": ''},
+                linkkiOpetussuunnitelmaan: {"default": ''},
+                suunniteltuKestoArvo: {nullable: true, "default": ''},
+                hinta: {"default": ''}
+            }, DATES: {
+                koulutuksenAlkamisPvms: {"default": new Date()}
+            }, BOOL: {
+                opintojenMaksullisuus: {"default": false}
+            }, IMAGES: {
+            }, DESC: {
+                kuvaus: {'nullable': false, "default": factory.createBaseDescUiField([
+                    ])}
+            }
         }
     };
 
-    factory.validateOutputData = function(m, koulutusasteTyyppi) {
-        if (factory.isNull(m.organisaatio) || factory.isNull(m.organisaatio.oid)) {
-            factory.throwError("Organisation OID is missing.");
-        }
-
+    factory.validateOutputData = function(m, toteutustyyppi) {
         //remove all meta data fields, if any
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi], function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi], function(value, key) {
             if ('MLANG' !== key) {
-                //MLANG objects needs the meta fields
+                //MLANG objects needs the meta fields                
                 angular.forEach(value, function(value, key) {
                     factory.deleteMetaField(m[key]);
                 });
@@ -488,12 +584,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
     };
 
-    factory.saveModelConverter = function(tila, pmodel, uiModel, koulutusasteTyyppi) {
-        var apiModel = angular.copy(pmodel);
-        if(apiModel.tila!=="JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
-          apiModel.tila = tila;
-        }
-        factory.validateOutputData(apiModel, koulutusasteTyyppi);
+    factory.saveModelConverter = function(apiModel, uiModel, toteutustyyppi) {
+        factory.validateOutputData(apiModel, toteutustyyppi);
+
         /*
          * DATA CONVERSIONS FROM UI MODEL TO API MODEL
          * Convert person object to back-end object format.
@@ -506,7 +599,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
 
         //for single select models
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].COMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].COMBO, function(value, key) {
             //search version information for list of uris;
 
             var koodis = uiModel[key].koodis;
@@ -521,7 +614,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }
         });
 
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].RELATIONS, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].RELATIONS, function(value, key) {
             if (angular.isUndefined(value.skipApiModel)) {
                 apiModel[key] = {'uris': {}};
                 //search version information for list of uris;
@@ -537,7 +630,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
 
         //multi-select models, add version to the koodi
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].MCOMBO, function(value, key) {
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].MCOMBO, function(value, key) {
 
             if (angular.isDefined(value.types)) {
                 apiModel[key] = {};
@@ -553,7 +646,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                         apiModel[key][type].uris[uri] = map[uri];
                     });
                 });
-            } else {
+            } else if (angular.isDefined(uiModel[key].uris) && Object.keys(uiModel[key].uris).length > 0) {
                 apiModel[key] = {'uris': {}};
                 //search version information for list of uris;
                 var map = {};
@@ -566,8 +659,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 });
             }
         });
-        
-        angular.forEach(factory.STRUCTURE[koulutusasteTyyppi].IMAGES, function(value, key) {
+
+        angular.forEach(factory.STRUCTURE[toteutustyyppi].IMAGES, function(value, key) {
             for (var i in apiModel[key]) {
                 if (angular.isUndefined(apiModel[key][i].base64data) || apiModel[key][i].base64data === null) {
                     apiModel[key][i] = null;
@@ -578,8 +671,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         $log.debug(JSON.stringify(apiModel));
         return apiModel;
     };
-
-
 
     return factory;
 });

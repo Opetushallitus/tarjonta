@@ -69,7 +69,9 @@ public enum KoulutusValidationMessages {
     KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING("koulutusohjelma"),
     //other & common
-    KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING("koulu"),
+    KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING("toteutustyyppi"),
+    KOULUTUS_MODUULITYYPPI_ENUM_MISSING("moduulityyppi"),
+    KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING("koulutusasteTyyppi"),
     KOULUTUS_TILA_ENUM_MISSING("tila"),
     KOULUTUS_INPUT_OBJECT_MISSING(""),
     KOULUTUS_INPUT_PARAM_MISSING(""), //generic data error
@@ -78,6 +80,8 @@ public enum KoulutusValidationMessages {
     KOULUTUS_NIMI_MISSING(""),
     KOULUTUS_TARJOAJA_MISSING("organisaatio.oid"),
     KOULUTUS_TARJOAJA_INVALID("organisaatio.oid"),
+    KOULUTUS_JARJESTAJA_MISSING("organisaatio.oid"),
+    KOULUTUS_JARJESTAJA_INVALID("organisaatio.oid"),
     KOULUTUS_INVALID_TRANSITION(""),
     //kesto 
     KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING("suunniteltuKestoArvo"),
@@ -95,7 +99,13 @@ public enum KoulutusValidationMessages {
     KOULUTUS_OPPILAITOSTYYPPI_MISSING("oppilaitostyyppi"),
     KOULUTUS_OPPILAITOSTYYPPI_INVALID("oppilaitostyyppi"),
     KOULUTUS_MODUULI_TYYPPI_MISSING("moduuliTyyppi"),
-    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi");
+    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi"),
+    KOULUTUS_IMPORT_INVALID_GROUP("koulutuskoodi"),
+    KOULUTUS_IMPORT_INVALID_MODULE_TUTKINTO_("koulutusmoduuliTyyppi"),
+    KOULUTUS_IMPORT_INVALID_TUTKINTO("oid"),
+    KOULUTUS_IMPORT_INVALID_OID("oid"),
+    KOULUTUS_IMPORT_INVALID_COUNT(""),
+    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT("");
 
     private String fieldName;
 

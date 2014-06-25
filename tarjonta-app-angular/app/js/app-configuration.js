@@ -33,5 +33,7 @@ window.CONFIG.app = {
     "haku.hakutapa.jatkuvahaku.uri" : "hakutapa_03",
     "root.organisaatio.oid":"1.2.246.562.10.00000000001",
     "ui.timeout.short": 10000,
-    "ui.timeout.long": 60000
+    "ui.timeout.long": 60000,
+    "errorlog.disabled": false,
+    "errorlog.timeout": 60000
 };

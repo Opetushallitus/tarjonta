@@ -35,7 +35,6 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.business.KoulutusBusinessService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusTyyppi;
@@ -44,7 +43,9 @@ import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi.Teksti;
 import fi.vm.sade.tarjonta.service.types.PaivitaKoulutusTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaVirheKoodi;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusBusinessServiceImpl.class);
-    
+
     @Autowired
     private OidService oidService;
     @Autowired
@@ -102,24 +103,19 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             throw new TarjontaBusinessException("Undefined koulutustyyppi.");
         }
 
-        switch (koulutus.getKoulutustyyppi()) {
-            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS: //no break.
-            case MAAHANM_AMM_VALMISTAVA_KOULUTUS: //no break.
-            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS: //no break.
-            case PERUSOPETUKSEN_LISAOPETUS: //no break.
-            case VAPAAN_SIVISTYSTYON_KOULUTUS: //no break.
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS://no break.
+        switch (ModuulityyppiEnum.fromEnum(koulutus.getKoulutustyyppi())) {
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+            case PERUSOPETUKSEN_LISAOPETUS:
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
             case AMMATILLINEN_PERUSKOULUTUS:
                 moduuli = handleToisenAsteenModuuli(koulutus);
                 break;
             case LUKIOKOULUTUS:
                 moduuli = handleLukiomoduuli(koulutus);
                 break;
-            case AMMATTIKORKEAKOULUTUS:
-            case YLIOPISTOKOULUTUS:
-                moduuli = handleKorkeakoulumoduuli(koulutus);
-                break;
-
             default:
                 throw new RuntimeException("Unsupported koulutustyyppi.");
         }
@@ -128,12 +124,16 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             throw new TarjontaBusinessException(TarjontaVirheKoodi.KOULUTUSTA_EI_OLEMASSA.value());
         }
 
+        //a quick conversion to ToteutustyyppiEnum, we need it as long we use SOAP API.
+        ToteutustyyppiEnum tt = convertToTotetustyyppi(moduuli, koulutus);
+
         KoulutusmoduuliToteutus komotoModel = new KoulutusmoduuliToteutus();
         EntityUtils.copyFields(koulutus, komotoModel);
 
         komotoModel.setViimIndeksointiPvm(komotoModel.getUpdated());
         komotoModel.setKoulutusmoduuli(moduuli);
         moduuli.addKoulutusmoduuliToteutus(komotoModel);
+        komotoModel.setToteutustyyppi(tt);
         komotoModel.setAlkamiskausiUri(getKausiFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
         komotoModel.setAlkamisVuosi(getYearFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
         KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoModel);
@@ -161,7 +161,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         //Handling the creation of the parent komoto
-        handleParentKomoto(koulutus, moduuli);
+        handleParentKomoto(koulutus, moduuli, convertToTotetustyyppi(moduuli, koulutus));
 
         return moduuli;
 
@@ -177,23 +177,9 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         }
 
         //Handling the creation of the parent komoto
-        handleParentKomoto(koulutus, moduuli);
+        handleParentKomoto(koulutus, moduuli, convertToTotetustyyppi(moduuli, koulutus));
 
         return moduuli;
-    }
-
-    private Koulutusmoduuli handleKorkeakoulumoduuli(LisaaKoulutusTyyppi koulutus) {
-        Preconditions.checkNotNull(koulutus, "LisaaKoulutusTyyppi cannot be null.");
-
-        Koulutusmoduuli komo = null;
-        if (koulutus.getKoulutusmoduuli() == null && koulutus.getKoulutusmoduuli().getOid() != null) {
-            komo = koulutusmoduuliDAO.findByOid(koulutus.getKoulutusmoduuli().getOid());
-        } else {
-            komo = koulutusmoduuliDAO.createKomoKorkeakoulu(koulutus.getKoulutusmoduuli());
-            this.koulutusmoduuliDAO.insert(komo);
-        }
-
-        return komo;
     }
 
     /**
@@ -257,7 +243,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
 
         Koulutusmoduuli moduuli = model.getKoulutusmoduuli();
         //Handling the creation or update of the parent (tutkinto) komoto
-        handleParentKomoto(koulutus, moduuli);
+        handleParentKomoto(koulutus, moduuli, model.getToteutustyyppi());
 
         EntityUtils.copyFields(koulutus, model);
         model.setViimIndeksointiPvm(model.getUpdated());
@@ -273,17 +259,23 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     /*
      * Handling the creation or update of the parent komoto
      */
-    private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli) {
+    private void handleParentKomoto(KoulutusTyyppi koulutus, Koulutusmoduuli moduuli, ToteutustyyppiEnum toteutustyyppi) {
+        Preconditions.checkNotNull(toteutustyyppi, "Toteutustyyppi enum cannot be null!");
+        
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
         String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
         List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(parentKomo, koulutus.getTarjoaja(), pohjakoulutusUri);
         KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
         //If the komoto for the parentKomo already exists it is updated according to the values given in koulutus
+
         if (parentKomoto != null && parentKomo != null) {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva()); koulutuksen alkamispäivä is no longer saved in parent komoto
             EntityUtils.copyFields(parentKomoto.getTekstit(), koulutus.getTekstit(), KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
             //parentKomoto.setKoulutusohjelmanValinta(EntityUtils.copyFields(koulutus.getKoulutusohjelmanValinta(), parentKomoto.getKoulutusohjelmanValinta()));
             //parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
+            if (parentKomoto.getToteutustyyppi() == null) {
+                parentKomoto.setToteutustyyppi(toteutustyyppi);//only for future/angular use
+            }
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
 
             //Start date is updated to siblings of the komoto given in koulutus. The start date is 
@@ -294,10 +286,11 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         } else if (parentKomo != null) {
             parentKomoto = new KoulutusmoduuliToteutus();
             generateOidForKomoto(parentKomoto);
-           // parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
+            // parentKomoto.setOpetuskieli(EntityUtils.toKoodistoUriSet(koulutus.getOpetuskieli()));
             parentKomoto.setTarjoaja(koulutus.getTarjoaja());
             parentKomoto.setTila(EntityUtils.convertTila(koulutus.getTila()));
             parentKomoto.setKoulutusmoduuli(parentKomo);
+            parentKomoto.setToteutustyyppi(toteutustyyppi); //only for future/angular use
             try {
                 parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
             } catch (OIDCreationException e) {
@@ -308,14 +301,14 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
             //parentKomoto.setKoulutuksenAlkamisPvm(koulutus.getKoulutuksenAlkamisPaiva());
             parentKomoto.setPohjakoulutusvaatimusUri(koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null);
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
-            
+
             LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
 
             if (parentKomoto.getPohjakoulutusvaatimusUri() != null && parentKomoto.getPohjakoulutusvaatimusUri().indexOf("#") < 0) {
                 LOG.error("*** FAILING FAST *** to see where the problem lies...OVT-7849");
                 throw new RuntimeException("parent komoto pohjakoulutusvaatimus = " + parentKomoto.getPohjakoulutusvaatimusUri());
             }
-            
+
             this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
         }
     }
@@ -341,5 +334,47 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
     private boolean isNew(BaseEntity e) {
         // no good
         return (e.getId() == null);
+    }
+
+    private static ToteutustyyppiEnum convertToTotetustyyppi(final Koulutusmoduuli moduuli, KoulutusTyyppi koulutus) {
+        ToteutustyyppiEnum tt = null;
+        switch (moduuli.getKoulutustyyppiEnum()) {
+            case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                tt = ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS;
+                break;
+            case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
+                tt = ToteutustyyppiEnum.MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
+                break;
+            case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
+                tt = ToteutustyyppiEnum.MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS;
+                break;
+            case PERUSOPETUKSEN_LISAOPETUS:
+                tt = ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS;
+                break;
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                tt = ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS;
+                break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                tt = ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS;
+                break;
+            case AMMATILLINEN_PERUSKOULUTUS:
+                Preconditions.checkNotNull(koulutus, "KoulutusTyyppi object cannot be null.");
+
+                if (koulutus.getPohjakoulutusvaatimus() != null && koulutus.getPohjakoulutusvaatimus().getUri().contains("pohjakoulutusvaatimustoinenaste_er")) {
+                    //only for the 'er'
+                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA;
+                } else {
+                    //for all other code types
+                    tt = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
+                }
+                break;
+            case LUKIOKOULUTUS:
+                tt = ToteutustyyppiEnum.LUKIOKOULUTUS;
+                break;
+            default:
+                throw new RuntimeException("Unsupported koulutustyyppi.");
+        }
+
+        return tt;
     }
 }

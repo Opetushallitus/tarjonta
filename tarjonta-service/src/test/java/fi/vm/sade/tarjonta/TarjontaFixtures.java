@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -119,7 +119,7 @@ public class TarjontaFixtures {
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(randomOid("koulutusmoduuli"));
         m.setNimi(createText("Koulutusmoduulinimi (fi)", "Koulutusmoduulinimi (sv)", "Koulutusmoduulinimi (en)"));
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+        m.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
 
         //KJOH-764 renamed fields
         m.setKoulutusalaUri(randomUri("koulutusala"));
@@ -132,7 +132,7 @@ public class TarjontaFixtures {
         m.setOpintojenLaajuusarvoUri(randomUri("laajuus_arvo"));
         m.setOpintojenLaajuusyksikkoUri(randomUri("laajuus_yksikko"));
         m.setLukiolinjaUri(randomUri("lukiolinja"));
-        m.setKoulutustyyppiUri(randomUri("koulutustyyppi"));
+        m.setKoulutustyyppiUri("|koulutustyyppi_1|koulutustyyppi_13|");
         m.setOpintoalaUri(randomUri("opintoala"));
         m.setTutkintonimikeUri(randomUri("tutkintonimike"));
 
@@ -154,7 +154,7 @@ public class TarjontaFixtures {
 
         Koulutusmoduuli m = new Koulutusmoduuli(tyyppi);
         m.setOid(oid);
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.fromEnum(koulutustyyppi));
+        m.setKoulutustyyppiEnum(ModuulityyppiEnum.fromEnum(koulutustyyppi));
 
         return m;
     }

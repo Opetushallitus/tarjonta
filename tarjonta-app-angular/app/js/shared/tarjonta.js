@@ -72,7 +72,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"],
+            koulutusastetyyppi: ["Korkeakoulutus", "Lukiokoulutus"],
             hakuOid: args.hakuOid
         };
 
@@ -115,7 +115,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: args.koulutusastetyyppi||["Korkeakoulutus", "Ammattikorkeakoulutus", "Yliopistokoulutus", "Lukiokoulutus"]
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14"]
         };
 
         $log.debug("haeKoulutukset()", params);
@@ -307,18 +307,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koulutuskoodi/:koulutuskoodiUri/:koulutusasteTyyppi?meta=false&lang=:languageCode",
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koodisto/:uri/:koulutustyyppi?meta=false&lang=:languageCode",
                 {
-                    koulutusasteTyyppi: '@koulutusasteTyyppi',
-                    koulutuskoodiUri: '@koulutuskoodiUri',
+                    koulutustyyppi: '@koulutustyyppi',
+                    uri: '@uri',
                     defaults: '@defaults', //optional data : string like 'object-field1:uri, object-field2:uri, ...';
                     languageCode: '@languageCode'
                 });
-        if (angular.isUndefined(arg.koulutusasteTyyppi)) {
-            //todo : remove
-            arg.koulutusasteTyyppi = 'Korkeakoulutus';
-        }
-
         return koulutus.get(arg, func);
     };
 
@@ -501,6 +496,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({oid: koulutusoid}).$promise);
     };
 
+    dataFactory.komoImport = function(koulutusUri) {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "komo/import/"+ koulutusUri, {}, {
+            import: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
+        });
+    };
+
     /**
      * POST: Insert new KOMO. API object must be valid.
      *
@@ -522,6 +527,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 url: Config.env.tarjontaRestUrlPrefix + "komo",
                 headers: {'Content-Type': 'application/json; charset=UTF-8'}
             },
+            import: {
+                method: 'POST',
+                withCredentials: true,
+                url: Config.env.tarjontaRestUrlPrefix + "komo/import/:koulutusUri",
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
             get: {
                 method: 'GET'
             },
@@ -531,7 +542,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             },
             searchModules: {
                 method: 'GET',
-                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutusasteTyyppi?koulutusmoduuliTyyppi=:koulutusmoduuliTyyppi"
+                url: Config.env.tarjontaRestUrlPrefix + "komo/search/:koulutustyyppi/:moduuli",
             },
             tekstis: {
                 method: 'GET',
@@ -561,7 +572,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 isArray: false
             }
         }).get(function(results) {
-            
+
             // NOTE: now "ALL" parameters is an object like:
             // {
             //   target1: {
@@ -571,12 +582,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             // }
             // 
             // FIXME *** Only "date" value cached... *** Use the server side permission checker!
-            
+
             var cache = dataFactory.ohjausparametritCache;
             var targetNames = Object.keys(results);
-            
+
             // $log.debug("Processing targets: ", targetNames);
-            
+
             angular.forEach(targetNames, function(targetName) {
                 var pt = results[targetName];
                 // $log.debug("  Processing target parameters for : ", targetName, pt);
@@ -584,7 +595,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 if (angular.isDefined(pt) && typeof pt === 'object') {
                     cache[targetName] = cache[targetName] ? cache[targetName] : {};
                     var paramNames = Object.keys(pt);
-                
+
                     angular.forEach(paramNames, function(paramName) {
                         var p = results[targetName][paramName];
 

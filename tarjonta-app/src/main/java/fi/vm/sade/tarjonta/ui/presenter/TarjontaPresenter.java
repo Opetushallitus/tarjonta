@@ -20,7 +20,6 @@ import java.util.*;
 
 import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +48,7 @@ import fi.vm.sade.organisaatio.api.model.types.YhteystietoDTO;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.SearchCriteria;
+import fi.vm.sade.tarjonta.service.GenericFault;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -221,6 +221,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         // OVT-4911
         getModel().setHakukohde(editHakukohdeView.getModel());
         HakukohdeTyyppi fresh;
+        
         if (getModel().getHakukohde().getOid() == null) {
 
             HakukohdeTyyppi hakukohdeTyyppi = hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde());
@@ -242,12 +243,18 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     }
                 }
             }
-            fresh = tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
+            try {
+                fresh = tarjontaAdminService.lisaaHakukohde(hakukohdeTyyppi);
+                refreshHakukohdeUIModel(fresh);
+            } catch (GenericFault e) {
+                getModel().getHakukohde().setOid(null);
+                throw e;
+            }
         } else {
             updateHakukohdeKoulutusasteTyyppi(getModel().getHakukohde());
             fresh = tarjontaAdminService.paivitaHakukohde(hakukohdeToDTOConverter.convertHakukohdeViewModelToDTO(getModel().getHakukohde()));
+            refreshHakukohdeUIModel(fresh);
         }
-        refreshHakukohdeUIModel(fresh);
     }
 
     public HenkiloFatType getFatHenkiloWithOid(String oid) {
@@ -489,7 +496,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      */
     private List<HakuViewModel> findMatchingHakusForHakukohde(final String currentHakuOid, ListHakuVastausTyyppi haut) {
 
-        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi();
 
         List<HakuViewModel> foundHaut = new ArrayList<HakuViewModel>();
 
@@ -517,7 +524,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
             } else if (!isKoulutusErityisopetus
-                    && getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
+                    && getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)
                     && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
@@ -531,7 +538,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             } else if (isVapaaSivistystyo
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
-            } else if (getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
+            } else if (getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
                     && foundHaku.getHakutapaUri().equals(KoodistoURI.KOODI_YHTEISHAKU_URI)
                     && foundHaku.getKohdejoukkoUri().equals(KoodistoURI.KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI)) {
                 foundHaut.add(new HakuViewModel(foundHaku));
@@ -601,7 +608,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         for (KoulutusPerustieto koulutus : koulutukses) {
             koulutusAlkamiskaudes.add(koulutus.getKoulutuksenAlkamiskausi().getUri());
             koulutusAlkamisVuodes.add(koulutus.getKoulutuksenAlkamisVuosi());
-            koulutusKoodis.add(koulutus.getKoulutuskoodi().getUri());
+            koulutusKoodis.add(koulutus.getKoulutusKoodi().getUri());
             pohjakoulutukses.add(koulutus.getPohjakoulutusvaatimus().getUri());
             tarjoajaOids.add(koulutus.getTarjoaja().getOid());
         }
@@ -661,7 +668,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
-            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutuskoodi().getUri().equals(koulutuskoodi.getUri())
+            if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutusKoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri())
                     && curKoulutus.getKoulutuksenAlkamisVuosi().equals(hakuT.getKoulutuksenAlkamisVuosi())) {
@@ -703,8 +710,8 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             }
 
             nimiOid.setKoulutusNimi(nimi);
-            nimiOid.setKoulutustyyppi(tulos.getKoulutustyyppi());
-            nimiOid.setKoulutustyyppi(tulos.getKoulutustyyppi());
+            nimiOid.setKoulutustyyppi(tulos.getKoulutusasteTyyppi());
+            nimiOid.setKoulutustyyppi(tulos.getKoulutusasteTyyppi());
             result.add(nimiOid);
 
         }
@@ -1332,7 +1339,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 getTarjoaja().setSelectedResultRowOrganisationOid(firstKoulutus.getTarjoaja().getOid());
 
                 //set koulutusastetyyppi
-                getModel().getHakukohde().setKoulutusasteTyyppi(firstKoulutus.getKoulutustyyppi());
+                getModel().getHakukohde().setKoulutusasteTyyppi(firstKoulutus.getKoulutusasteTyyppi());
             } else if (koulutusOids != null && !koulutusOids.isEmpty()) {
                 getTarjoaja().setSelectedResultRowOrganisationOid(getNavigationOrganisation().getOrganisationOid());
             }
@@ -1673,9 +1680,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         int removalLaskuri = 0;
         String errorNotes = "";
         for (KoulutusPerustieto curKoulutus : getModel().getSelectedKoulutukset()) {
-            String koulutusNimiUri = curKoulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
-                    ? curKoulutus.getKoulutuskoodi().getUri()
-                    : curKoulutus.getKoulutusohjelmakoodi().getUri();
+            String koulutusNimiUri = curKoulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)
+                    ? curKoulutus.getKoulutusKoodi().getUri()
+                    : curKoulutus.getKoulutusohjelma().getUri();
             try {
                 final OrganisaatioContext context = OrganisaatioContext.getContext(curKoulutus.getTarjoaja().getOid());
                 TarjontaTila tila = curKoulutus.getTila();
@@ -2674,7 +2681,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     }
 
     public boolean isKoulutusNivelvaihe() {
-        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        KoulutusasteTyyppi koulTyyppi = getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi();
         return koulTyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)
                 || koulTyyppi.equals(KoulutusasteTyyppi.MAAHANM_LUKIO_VALMISTAVA_KOULUTUS)

@@ -136,6 +136,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     public final static String KOULUTUSLAJI_KEY = "koulutuslaji";
 
+    public final static String KOULUTUS_TOTEUTUS_TYYPPI = "toteutustyyppi";
+
     public final static String KOULUTUSLAJI_AIKUISET = "A";
 
 
@@ -400,7 +402,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             HashMap<String,String> kouluslajiAndKoulutusaste = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeRDTO.getHakukohdeKoulutusOids());
             hakukohdeRDTO.setKoulutusAsteTyyppi(kouluslajiAndKoulutusaste.get(KOULUTUSASTE_KEY));
             hakukohdeRDTO.setKoulutuslaji(kouluslajiAndKoulutusaste.get(KOULUTUSLAJI_KEY));
-
+            hakukohdeRDTO.setToteutusTyyppi(kouluslajiAndKoulutusaste.get(KOULUTUS_TOTEUTUS_TYYPPI));
             ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
             result.setResult(hakukohdeRDTO);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -444,6 +446,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         koulutusAstetyyppi.put(KOULUTUSASTE_KEY,(komoto.getKoulutusmoduuli() != null && komoto.getKoulutusmoduuli().getKoulutustyyppiEnum() != null)
                 ? komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().getKoulutusasteTyyppi().name() : null );
 
+        koulutusAstetyyppi.put(KOULUTUS_TOTEUTUS_TYYPPI,komoto.getToteutustyyppi().name());
         //TKatva, just get the first koulutuslaji because koulutus cannot have many koulutuslajis (aikuisten,nuorten)
         //or can it ?
         if (komoto.getKoulutuslajis() != null && komoto.getKoulutuslajis().size() > 0) {
