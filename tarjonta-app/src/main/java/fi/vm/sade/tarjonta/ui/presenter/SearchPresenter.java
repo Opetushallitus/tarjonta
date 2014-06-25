@@ -123,7 +123,7 @@ public class SearchPresenter implements SimpleAutocompleteTextField.IAutocomplet
         List<TutkintoohjelmaModel> tutkintoohjelmas = Lists.<TutkintoohjelmaModel>newArrayList();
 
         HaeKoulutusmoduulitKyselyTyyppi tyyppi = new HaeKoulutusmoduulitKyselyTyyppi();
-        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.AMMATTIKORKEAKOULUTUS); //TODO : add koulutusaste
+        tyyppi.setKoulutustyyppi(KoulutusasteTyyppi.KORKEAKOULUTUS); //TODO : add koulutusaste
         HaeKoulutusmoduulitVastausTyyppi haeKoulutusmoduulit = tarjontaPublicService.haeKoulutusmoduulit(tyyppi);
 
         List<KoulutusmoduuliTulos> koulutusmoduuliTulos = haeKoulutusmoduulit.getKoulutusmoduuliTulos();

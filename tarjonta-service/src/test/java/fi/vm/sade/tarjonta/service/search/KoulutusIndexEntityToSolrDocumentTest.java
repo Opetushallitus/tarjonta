@@ -25,7 +25,8 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.impl.IndexerDaoImpl;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class KoulutusIndexEntityToSolrDocumentTest {
@@ -33,23 +34,36 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     private static final String KOMO_OID = "komo-oid";
     private static final String OID = "oid";
     private static final String TUTKINTONIMIKEKOODI = "tutkintonimikekoodi";
-    private static final KoulutustyyppiEnum KOULUTUSTYYPPIKOODI = KoulutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS;
-    private static final String LUKIOLINJAKOODI = "lukiolinjakoodi";
-    private static final String KOULUTUSOHJELMAKOODI = "koulutusohjelmakoodi";
-    private static final String KOULUTUSKOODI = "koulutuskoodi";
-    private static final String POHJAKOULUTUSVAATIMUSKOODI = "pohjakoulutusvaatimuskoodi";
+    private static final ModuulityyppiEnum BASE_AMM_KOULUTUSTYYPPI = ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS;
+    private static final ToteutustyyppiEnum SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
+    private static final String LUKIOLINJA_URI = "lukiolinjakoodi";
+    private static final String KOULUTUSOHJELMA_URI = "koulutusohjelmakoodi";
+    private static final String OSAAMISALA_URI = "osaamisala_uri";
+
+    private static final String KOULUTUS_URI = "koulutuskoodi";
+    private static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimuskoodi";
     private static final String TARJOAJA_OID = "tarjoaja-oid";
     private static final String KAUSI_URI = "kausi_uri";
     private static final int VUOSI = 2014;
+    private static final String KOULUTUSTYYPPI_URI = SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO.uri();
 
     @Test
     public void test() {
         Date d = new GregorianCalendar(VUOSI, 1, 1).getTime();
         KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d,
-                TarjontaTila.JULKAISTU, KOULUTUSTYYPPIKOODI, KOMO_OID,
-                KOULUTUSKOODI,
-                LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
-                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI, KOULUTUSKOODI);
+                TarjontaTila.JULKAISTU,
+                BASE_AMM_KOULUTUSTYYPPI,
+                SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO,
+                KOMO_OID,
+                KOULUTUS_URI,
+                LUKIOLINJA_URI,
+                KOULUTUSOHJELMA_URI,
+                OSAAMISALA_URI,
+                TARJOAJA_OID,
+                POHJAKOULUTUSVAATIMUS_URI,
+                KAUSI_URI,
+                VUOSI,
+                KOULUTUSTYYPPI_URI);
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
 
@@ -63,13 +77,10 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         KoodiService koodiService = Mockito.mock(KoodiService.class);
         Whitebox.setInternalState(converter, "koodiService", koodiService);
         Mockito.reset(koodiService);
-        //stubKoodi(koodiService, TUTKINTONIMIKEKOODI);
-       // stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
-        stubKoodi(koodiService, LUKIOLINJAKOODI);
-        stubKoodi(koodiService, KOULUTUSOHJELMAKOODI);
-        stubKoodi(koodiService, KOULUTUSKOODI);
-        stubKoodi(koodiService, POHJAKOULUTUSVAATIMUSKOODI);
-        //stubKoodi(koodiService, KOULUTUSTYYPPIKOODI);
+        stubKoodi(koodiService, LUKIOLINJA_URI);
+        stubKoodi(koodiService, KOULUTUSOHJELMA_URI);
+        stubKoodi(koodiService, KOULUTUS_URI);
+        stubKoodi(koodiService, POHJAKOULUTUSVAATIMUS_URI);
         stubKoodi(koodiService, "kausi_k");
 
         IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
@@ -93,31 +104,35 @@ public class KoulutusIndexEntityToSolrDocumentTest {
 
         Assert.assertEquals(VUOSI + "",
                 doc.removeField(SolrFields.Koulutus.VUOSI_KOODI).getValue());
-        Assert.assertEquals(KOULUTUSKOODI + "-nimi-EN",
+        Assert.assertEquals(KOULUTUS_URI + "-nimi-EN",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_EN)
                 .getValue());
-        Assert.assertEquals(KOULUTUSKOODI + "-nimi-FI",
+        Assert.assertEquals(KOULUTUS_URI + "-nimi-FI",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_FI)
                 .getValue());
-        Assert.assertEquals(KOULUTUSKOODI + "-nimi-SV",
+        Assert.assertEquals(KOULUTUS_URI + "-nimi-SV",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_SV)
                 .getValue());
-        Assert.assertEquals(KOULUTUSKOODI,
+        Assert.assertEquals(KOULUTUS_URI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_URI)
                 .getValue());
 
-        Assert.assertEquals(KOULUTUSOHJELMAKOODI + "-nimi-EN",
+        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-EN",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_EN)
                 .getValue());
-        Assert.assertEquals(KOULUTUSOHJELMAKOODI + "-nimi-SV",
+        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-SV",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_SV)
                 .getValue());
-        Assert.assertEquals(KOULUTUSOHJELMAKOODI + "-nimi-FI",
+        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-FI",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_FI)
                 .getValue());
-        Assert.assertEquals(KOULUTUSOHJELMAKOODI,
+        Assert.assertEquals(KOULUTUSOHJELMA_URI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_URI)
                 .getValue());
+        Assert.assertEquals(KOULUTUSTYYPPI_URI,
+                doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI_URI)
+                .getValue());
+
 //        Assert.assertEquals(TUTKINTONIMIKEKOODI,
 //                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_URI)
 //                .getValue());
@@ -130,13 +145,12 @@ public class KoulutusIndexEntityToSolrDocumentTest {
 //        Assert.assertEquals(TUTKINTONIMIKEKOODI + "-nimi-FI",
 //                doc.removeField(SolrFields.Koulutus.TUTKINTONIMIKE_FI)
 //                .getValue());
-
         //System.out.println(doc);
         Assert.assertEquals("kausi_k#0",
                 doc.removeField(SolrFields.Koulutus.KAUSI_URI).getValue());
-        Assert.assertEquals(KOULUTUSTYYPPIKOODI.getKoulutusasteTyyppi().value(),
-                doc.removeField(SolrFields.Koulutus.KOULUTUSTYYPPI).getValue());
-        Assert.assertEquals(POHJAKOULUTUSVAATIMUSKOODI + "#0",
+        Assert.assertEquals(BASE_AMM_KOULUTUSTYYPPI.getKoulutusasteTyyppi().value(),
+                doc.removeField(SolrFields.Koulutus.KOULUTUSASTETYYPPI_ENUM).getValue());
+        Assert.assertEquals(POHJAKOULUTUSVAATIMUS_URI + "#0",
                 doc.removeField(SolrFields.Koulutus.POHJAKOULUTUSVAATIMUS_URI)
                 .getValue());
 
@@ -148,10 +162,20 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     @Test
     public void testNullAlkamispvm() {
         KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null,
-                TarjontaTila.JULKAISTU, KOULUTUSTYYPPIKOODI, KOMO_OID,
-                KOULUTUSKOODI,
-                LUKIOLINJAKOODI, KOULUTUSOHJELMAKOODI, TARJOAJA_OID,
-                POHJAKOULUTUSVAATIMUSKOODI, KAUSI_URI, VUOSI, KOULUTUSKOODI);
+                TarjontaTila.JULKAISTU,
+                BASE_AMM_KOULUTUSTYYPPI,
+                SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO,
+                KOMO_OID,
+                KOULUTUS_URI,
+                LUKIOLINJA_URI,
+                KOULUTUSOHJELMA_URI,
+                OSAAMISALA_URI,
+                TARJOAJA_OID,
+                POHJAKOULUTUSVAATIMUS_URI,
+                KAUSI_URI,
+                VUOSI,
+                KOULUTUSTYYPPI_URI
+        );
 
         KoulutusIndexEntityToSolrDocument converter = new KoulutusIndexEntityToSolrDocument();
 

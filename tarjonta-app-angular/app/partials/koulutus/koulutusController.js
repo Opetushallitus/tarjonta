@@ -26,10 +26,27 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
 
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
-                var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA)");
+                /*
+                 VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5"), Valmentava ja kuntouttava opetus ja ohjaus
+                 ERIKOISAMMATTITUTKINTO("koulutustyyppi_12"), Erikoisammattitutkinto
+                 VAPAAN_SIVISTYSTYON_KOULUTUS("koulutustyyppi_10"), Vapaan sivistystyön koulutus
+                 AMMATTITUTKINTO("koulutustyyppi_11"), Ammattitutkinto
+                 LUKIOKOULUTUS("koulutustyyppi_2"), Lukiokoulutus
+                 AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA("koulutustyyppi_13"), ammatillinen perustutkinto näyttötutkintona
+                 LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA("koulutustyyppi_14"), Lukiokoulutus, aikuisten oppimäärä
+                 AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS("koulutustyyppi_7"), Ammatilliseen peruskoulutukseen ohjaava ja valmistava koulutus
+                 AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA("koulutustyyppi_4"), Ammatillinen peruskoulutus erityisopetuksena
+                 AMMATILLINEN_PERUSTUTKINTO("koulutustyyppi_1"), Ammatillinen perustutkinto
+                 MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_8"), Maahanmuuttajien ammatilliseen peruskoulutukseen valmistava koulutus
+                 KORKEAKOULUTUS("koulutustyyppi_3"), Korkeakoulutus
+                 MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_9"), Maahanmuuttajien ja vieraskielisten lukiokoulutukseen valmistava koulutus
+                 PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6"), Perusopetuksen lisäopetus
+                 */
+
+                var type = $route.current.locals.koulutusModel.result.toteutustyyppi;
+                var patt = new RegExp("(AMMATILLINEN_PERUSTUTKINTO|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA|KORKEAKOULUTUS|LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA)");
                 if (patt.test(type)) {
-                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
+                    $scope.resultPageUri = "partials/koulutus/" + actionType  + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }

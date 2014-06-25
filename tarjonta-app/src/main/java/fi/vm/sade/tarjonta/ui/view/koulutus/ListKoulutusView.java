@@ -346,7 +346,7 @@ public class ListKoulutusView extends VerticalLayout {
                         getWindow().showNotification(i18n.getMessage("yksiKopioitavaKoulutus"));
                     } else {
                         presenter.getModel().setSelectedKoulutusOid(valitutKoulutukset.get(0).getKomotoOid());
-                        KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "550px", valitutKoulutukset.get(0).getKoulutustyyppi());
+                        KoulutusKopiointiDialog kopiointiDialog = new KoulutusKopiointiDialog("600px", "550px", valitutKoulutukset.get(0).getKoulutusasteTyyppi());
 
                         getWindow().addWindow(synchronizer.synchronize(kopiointiDialog));
 
@@ -426,7 +426,7 @@ public class ListKoulutusView extends VerticalLayout {
         int koulutusCounter = 0;
         for (KoulutusPerustieto koulutus : presenter.getSelectedKoulutukset()) {
             koulutusCounter++;
-            if (koulutus.getKoulutustyyppi() != null && koulutus.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
+            if (koulutus.getKoulutusasteTyyppi() != null && koulutus.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {
                 lukioKoulutusCounter++;
             }
         }

@@ -24,6 +24,7 @@ public class SolrFields {
      * Field names for koulutus docs
      */
     public static class Koulutus {
+
         protected static final String NIMET = "nimi_ss";
         protected static final String NIMIEN_KIELET = "nimikieli_ss";
         protected static final String OID = "id";
@@ -45,7 +46,10 @@ public class SolrFields {
         protected static final String KAUSI_URI = "kausiuri_s";                                  //this is used in search
         protected static final String TILA = "tila_s";
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
-        protected static final String KOULUTUSTYYPPI = "koulutustyyppi_s";
+        protected static final String KOULUTUSASTETYYPPI_ENUM = "koulutustyyppi_s";
+        protected static final String KOULUTUSTYYPPI_URI = "koulutustyyppiuri_s";
+        protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppiuri_s";
+
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_EN = "pohjakoulutusvaatimussv_s";
@@ -53,18 +57,19 @@ public class SolrFields {
         protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String HAKUKOHDE_OIDS = "hakukohdeoids_ss";        //this is used in search
         protected static final String KOULUTUSLAJI_URIS = "koulutuslajiuri_ss";
-        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
+        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
-        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";   
+        protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";
     }
-    
+
     /**
      * Field names for hakukohde docs
      */
     public static class Hakukohde {
+
         protected static final String NIMET = "nimi_ss";
         protected static final String NIMIEN_KIELET = "nimikieli_ss";
-        protected static final String OID="id";
+        protected static final String OID = "id";
         protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
@@ -72,14 +77,14 @@ public class SolrFields {
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
         protected static final String POHJAKOULUTUSVAATIMUS_EN = "pohjakoulutusvaatimussv_s";
         protected static final String POHJAKOULUTUSVAATIMUS_SV = "pohjakoulutusvaatimusen_s";
-        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";    
+        protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
-        protected static final String KOULUTUSLAJI_EN = "koulutuslajen_s";   
-        protected static final String KOULUTUSLAJI_URI = "koulutuslajiuri_s";   
-        protected static final String KAUSI_URI = "kausiuri_s";    
-        protected static final String KAUSI_FI = "kausifi_s";    
+        protected static final String KOULUTUSLAJI_EN = "koulutuslajen_s";
+        protected static final String KOULUTUSLAJI_URI = "koulutuslajiuri_s";
+        protected static final String KAUSI_URI = "kausiuri_s";
+        protected static final String KAUSI_FI = "kausifi_s";
         protected static final String KAUSI_SV = "kausisv_s";
-        protected static final String KAUSI_EN = "kausien_s";    
+        protected static final String KAUSI_EN = "kausien_s";
         protected static final String HAKUTAPA_FI = "hakutapafi_s";
         protected static final String HAKUTAPA_SV = "hakutapasv_s";
         protected static final String HAKUTAPA_EN = "hakutapaen_s";
@@ -95,8 +100,8 @@ public class SolrFields {
         protected static final String HAUN_OID = "hakuoid_s";
         protected static final String TEKSTIHAKU = "tekstihaku_tnws";        //this is used in search
         protected static final String KOULUTUS_OIDS = "koulutusoids_ss";        //this is used in search
-        protected static final String HAKUTYYPPI_URI = "hakutyyppiuri_s";        
-        protected static final String KOULUTUSASTETYYPPI = "koulutusastetyyppi_s";        
+        protected static final String HAKUTYYPPI_URI = "hakutyyppiuri_s";
+        protected static final String KOULUTUSASTETYYPPI = "koulutusastetyyppi_s";
     }
-    
+
 }

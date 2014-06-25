@@ -45,6 +45,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Date liitteidenToimitusPvm;
     private String ulkoinenTunniste;
     private String koulutusAsteTyyppi;
+    private String toteutusTyyppi;
     private String koulutuslaji;
     private Map<String,String> lisatiedot;
     private Map<String,String> valintaperusteKuvaukset;
@@ -436,5 +437,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setKoulutuslaji(String koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
+    }
+
+    public String getToteutusTyyppi() {
+        return toteutusTyyppi;
+    }
+
+    public void setToteutusTyyppi(String toteutusTyyppi) {
+        this.toteutusTyyppi = toteutusTyyppi;
     }
 }

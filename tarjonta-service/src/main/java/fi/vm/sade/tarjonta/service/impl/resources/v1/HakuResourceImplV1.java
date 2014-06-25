@@ -524,7 +524,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
 
         // Sijoittelu + system application form -> priority = true
-        if (haku.isSijoittelu() && isEmpty(haku.getHakulomakeUri())) {
+        if (haku.isSijoittelu() && haku.isJarjestelmanHakulomake()) {
             haku.setUsePriority(true);
         }        
         

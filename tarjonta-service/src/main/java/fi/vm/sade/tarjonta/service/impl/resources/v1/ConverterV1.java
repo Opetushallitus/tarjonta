@@ -1218,8 +1218,8 @@ public class ConverterV1 {
             ret.setKoulutuslajiUri(ht.getKoulutuslaji().getUri());
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
-        ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
-        ret.setKoulutuskoodi(ht.getKoulutuskoodi().getUri());
+        ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
+        ret.setKoulutuskoodi(ht.getKoulutusKoodi().getUri());
 
         return ret;
     }

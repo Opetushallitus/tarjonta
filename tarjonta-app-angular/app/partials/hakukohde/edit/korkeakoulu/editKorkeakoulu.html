@@ -26,7 +26,7 @@
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
-
+    
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
 
@@ -40,7 +40,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <mk-textfield disable="model.isDeEnabled" model="model.hakukohde.hakukohteenNimet"></mk-textfield>
+                            <mk-textfield disable="model.isDeEnabled" model="model.hakukohde.hakukohteenNimet" required></mk-textfield>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>

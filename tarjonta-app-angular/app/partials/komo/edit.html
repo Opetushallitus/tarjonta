@@ -1,8 +1,6 @@
-<div style="background: #62c462; padding: 10px" ng-show="ctrl.saved">Tallennettu</div>
-
-<table  style="vertical-align: top">
-    <tr>
-        <td  style="vertical-align: top">
+<table style="vertical-align: top">
+    <tr style="vertical-align: top">
+        <td style="vertical-align: top">
             <table  style="vertical-align: top">
                 <tr>
                     <td>KOMO OID</td>
@@ -34,11 +32,25 @@
                     </td>
                     <td ng-if="obj.type === 'DATE'">
                         {{ctrl.result[obj.name]| date:'dd.MM.yyyy HH:mm:ss'}}</td>
-                    <td ng-if="obj.type === 'URI_MAP'">
+                    <td ng-if="obj.type === 'URI_VERSION_MAP'">
                         <hr />
                         <table>
                             <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
                                 <td><input type="text" ng-model="key" /><input  style="width:50px" type="text" ng-model="ctrl.result[obj.name].uris[key]" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b><input type="text" ng-model="ctrl.apiKeys[obj.name]" /><a href="" ng-click="addUriVersio(ctrl.apiKeys[obj.name], 1, obj.name)">Lisää {{obj.name}}</b>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                    </td>
+                      <td ng-if="obj.type === 'URI_MAP'">
+                        <hr />
+                        <table>
+                            <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
+                                <td><input type="text" ng-model="key" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
                             </tr>
                             <tr>
                                 <td>
@@ -92,77 +104,60 @@
                 </tr>
             </table>
         </td>
-        <td  style="vertical-align: top">
-
-            Hae koulutuskoodilla <input style="width:350px" type="text" ng-model="ctrl.koulutuskoodi" /> 
-            <b><a href="" ng-click="fetchByKoulutuskoodi(ctrl.koulutuskoodi)">Hae</a></b><br/>  
-            <select style="width : 600px" size="25" id="myselection" multiple 
-                    ng-multiple="true" 
-                    ng-model="ctrl.link.selectedKomoOids"  
-                    ng-options="c.oid as  c.koulutuskoodi.arvo + ' ' + c.koulutusohjelma.arvo + ' ' + c.koulutusasteTyyppi + ' ' + c.koulutusmoduuliTyyppi for c in ctrl.link.komos">
-            </select><br/>
-
-            <table>
+        <td style="vertical-align: top">
+            &nbsp; &nbsp; &nbsp;
+        </td>
+        <td style="vertical-align: top">
+            <table style="vertical-align: top">
                 <tr>
                     <td><b>Lapseksi liitettävät koulutusmoduulit</b></td>
                 </tr>
                 <tr>
                     <td>Koulutuskoodi</td>
                     <td>Koulutusohjelma</td>
-                    <td>Muokattu</td>
-                    <td>Muokkaa</td>
                 </tr>
                 <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
-                    <td>{{searchKomoByOid(komoOid).koulutuskoodi.arvo}}</td>
-                    <td>{{searchKomoByOid(komoOid).koulutusohjelma.arvo}}</td>
-                    <td>{{searchKomoByOid(komoOid).modified | date:'dd.MM.yyyy HH:mm:ss'}}</td>
-                    <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
+                    <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+                    <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+                    
                 </tr>
-
+                <tr>
+                    <td colspan="2"> <b><a href="" ng-click="addChilds(ctrl.result.komoOid, ctrl.link.selectedKomoOids)">Liitä lapsiksi</a></b></td>
+                </tr>
             </table>
-
-            <b><a href="" ng-click="addChilds(ctrl.result.komoOid, ctrl.link.selectedKomoOids)">Liitä lapsiksi</a></b><br/><br/>
-
-            <table>
+            <table style="vertical-align: top">
                 <tr>
                     <td><b>Koulutusmoduulin alamoduulit (lapset)</b></td>
                 </tr>
                 <tr>
                     <td>Koulutuskoodi</td>
                     <td>Koulutusohjelma</td>
-                    <td>Muokkaa</td>
-                    <td>Poista</td>
+                    <td>Poista liitos</td>
                 </tr>
                 <tr ng-repeat="komoOid in ctrl.link.selectedLinkOids">
-                    <td>{{searchKomoByOid(komoOid).koulutuskoodi.arvo}}</td>
-                    <td>{{searchKomoByOid(komoOid).koulutusohjelma.arvo}}</td>
-                    <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
-                    <td><b><a ng-click="removeLink(ctrl.result.komoOid, komoOid)">X</a></b></td>
+                    <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+                    <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+                    <td><b><a ng-click="removeLink(ctrl.result.komoOid, komoOid)">Poista</a></b></td>
                 </tr>
 
             </table>
 
             <br/><br/>
-            <table>
+            <table style="vertical-align: top">
                 <tr>
                     <td><b>Koulutusmoduulin ylämoduulit</b></td>
                 </tr>
                 <tr>
                     <td>Koulutuskoodi</td>
                     <td>Koulutusohjelma</td>
-                    <td>Muokkaa</td>
-                    <td>Poista</td>
+                    <td>Poista liitos</td>
                 </tr>
                 <tr ng-repeat="komoOid in ctrl.link.selectedParentLinkOids">
-                    <td>{{searchKomoByOid(komoOid).koulutuskoodi.arvo}}</td>
-                    <td>{{searchKomoByOid(komoOid).koulutusohjelma.arvo}}</td>
-                    <td><a ng-click="fetchByOid(komoOid)">Hae muokattavaksi</a></td>
-                    <td><b><a ng-click="removeLink(ctrl.komoOid, komoOid)">X</a></b></td>
+                    <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+                    <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+                    <td><b><a ng-click="removeLink(ctrl.komoOid, komoOid)">Poista</a></b></td>
                 </tr>
-
             </table>
         </td>
-    </tr>
+    </tr>            
 </table>
-
-

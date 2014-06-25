@@ -24,7 +24,7 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
@@ -100,7 +100,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         dto.setKoulutusala(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSALA));
         dto.setKoulutusaste(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSASTE));
         dto.setTutkintonimikes(toKoodiUris(Type.BOTH, FieldNames.TUTKINTONIMIKE));
-        dto.setKoulutuskoodi(toKoodiUri(Type.BOTH, FieldNames.KOULUTUSKOODI));
+        dto.setKoulutuskoodi(toKoodiUri(Type.BOTH, FieldNames.KOULUTUS));
         dto.setKoulutusohjelma(toKoodiUriNimi(Type.BOTH, FieldNames.KOULUTUSOHJELMA));
         dto.setOpintojenLaajuusarvo(toKoodiUri(Type.BOTH, FieldNames.OPINTOJEN_LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(Type.BOTH, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
@@ -128,7 +128,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToTexts(EasyMock.isA(NimiV1RDTO.class), EasyMock.eq(FieldNames.KOULUTUSOHJELMA))).andReturn(new MonikielinenTeksti());
 
         //EXPECT UNTESTED KOMOTO CALLS
-        expectFieldNotTested(FieldNames.SUUNNITELTUKESTO);
+        expectFieldNullableNotTested(FieldNames.SUUNNITELTUKESTO);
         expectFieldsNotTested(FieldNames.POHJALKOULUTUSVAATIMUS);
         expectFieldsNotTested(FieldNames.AIHEES);
         expectFieldsNotTested(FieldNames.OPETUSKIELIS);
@@ -157,7 +157,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
     public void testLukioCopyCommonUrisToKomoto() throws OIDCreationException {
         Koulutusmoduuli m = new Koulutusmoduuli();
         m.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        m.setKoulutustyyppiEnum(KoulutustyyppiEnum.LUKIOKOULUTUS);
+        m.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
 
         KoulutusLukioV1RDTO dto = new KoulutusLukioV1RDTO();
         dto.setOrganisaatio(new OrganisaatioV1RDTO("org_oid", "org_name", null));
@@ -166,7 +166,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         dto.setKoulutusala(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUSALA));
         dto.setKoulutusaste(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUSASTE));
         dto.setTutkintonimike(toKoodiUri(Type.KOMOTO, FieldNames.TUTKINTONIMIKE));
-        dto.setKoulutuskoodi(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUSKOODI));
+        dto.setKoulutuskoodi(toKoodiUri(Type.KOMOTO, FieldNames.KOULUTUS));
         dto.setKoulutusohjelma(toKoodiUriNimi(Type.KOMOTO, FieldNames.LUKIOLINJA));
         dto.setOpintojenLaajuusarvo(toKoodiUri(Type.KOMOTO, FieldNames.OPINTOJEN_LAAJUUSARVO));
         dto.setOpintojenLaajuusyksikko(toKoodiUri(Type.KOMOTO, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO));
@@ -183,10 +183,10 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         komotoKuvausConvertersMock.convertTekstiDTOToMonikielinenTeksti(EasyMock.isA(KuvausV1RDTO.class), EasyMock.<Map<KomotoTeksti, MonikielinenTeksti>>anyObject());
 
         expectFieldNullable(FieldNames.TUTKINTO);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSARVO);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSARVO);
         expectField(FieldNames.OPINTOALA);
-        expectField(FieldNames.KOULUTUSKOODI);
+        expectField(FieldNames.KOULUTUS);
         expectFieldNimi(FieldNames.LUKIOLINJA);
         expectField(FieldNames.KOULUTUSALA);
         expectFieldNullable(FieldNames.KOULUTUSASTE);
@@ -195,7 +195,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expectFieldNullable(FieldNames.NQF);
         expectFieldNullable(FieldNames.EQF);
 
-        expectFieldNotTested(FieldNames.SUUNNITELTUKESTO);
+        expectFieldNullableNotTested(FieldNames.SUUNNITELTUKESTO);
         expectFieldNotTested(FieldNames.POHJALKOULUTUSVAATIMUS);
         expectFieldsNotTested(FieldNames.OPETUSKIELIS);
         expectFieldsNotTested(FieldNames.OPETUSMUODOS);
@@ -215,7 +215,6 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertLukioKomoto(result, Type.KOMOTO);
         assertLukioKomoChild(result.getKoulutusmoduuli());
     }
-
     private void expectFieldNullable(FieldNames field) {
         expect(commonConverterMock.convertToUri(EasyMock.isA(KoodiV1RDTO.class), EasyMock.eq(field), EasyMock.anyBoolean())).andReturn(testKey(Type.KOMOTO, field));
     }
@@ -236,15 +235,11 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToUri(EasyMock.isA(NimiV1RDTO.class), EasyMock.eq(field))).andReturn(testKey(Type.KOMOTO, field));
     }
 
-    private void expectFieldNimi(FieldNames field, Type returntype) {
-        expect(commonConverterMock.convertToUri(EasyMock.isA(NimiV1RDTO.class), EasyMock.eq(field))).andReturn(testKey(returntype, field));
-    }
-
     private void expectFieldNotTested(FieldNames field) {
         expect(commonConverterMock.convertToUri(null, field)).andReturn(testKey(Type.NOT_TESTED, field));
     }
 
-    private void expectFieldNotTestedNullable(FieldNames field) {
+    private void expectFieldNullableNotTested(FieldNames field) {
         expect(commonConverterMock.convertToUri(null, field, true)).andReturn(testKey(Type.NOT_TESTED, field));
     }
 
@@ -263,7 +258,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.KOULUTUSALA), komoto.getKoulutusalaUri());
         assertEquals(testKey(type, FieldNames.KOULUTUSASTE), komoto.getKoulutusasteUri());
         assertEquals(testKey(type, FieldNames.TUTKINTONIMIKE), komoto.getTutkintonimikeUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI), komoto.getKoulutusUri());
+        assertEquals(testKey(type, FieldNames.KOULUTUS), komoto.getKoulutusUri());
         assertEquals(testKey(type, FieldNames.LUKIOLINJA), komoto.getLukiolinjaUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), komoto.getOpintojenLaajuusarvoUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), komoto.getOpintojenLaajuusyksikkoUri());
@@ -308,12 +303,16 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         assertEquals(testKey(type, FieldNames.KOULUTUSALA), komo.getKoulutusalaUri());
         assertEquals(testKey(type, FieldNames.KOULUTUSASTE), komo.getKoulutusasteUri());
 
-        assertEquals(testKey(type, FieldNames.KOULUTUSKOODI), komo.getKoulutusUri());
+        assertEquals(testKey(type, FieldNames.KOULUTUS), komo.getKoulutusUri());
         assertEquals(null, komo.getKoulutusohjelmaUri());
         assertEquals(null, komo.getLukiolinjaUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSARVO), komo.getOpintojenLaajuusarvoUri());
         assertEquals(testKey(type, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO), komo.getOpintojenLaajuusyksikkoUri());
-        assertEquals(testKey(type, FieldNames.KOULUTUSTYYPPI), komo.getKoulutustyyppiUri());
+        if (Type.KOMO == type) {
+            assertEquals("|koulutustyyppi_3|", komo.getKoulutustyyppiUri());
+        } else {
+            assertEquals(testKey(type, FieldNames.KOULUTUSTYYPPI), komo.getKoulutustyyppiUri());
+        }
         assertEquals(testKey(type, FieldNames.TUTKINTO), komo.getTutkintoUri());
         assertEquals(testKey(Type.BOTH, FieldNames.TUNNISTE), komo.getUlkoinenTunniste());
         assertEquals(testKey(type, FieldNames.NQF), komo.getNqfUri());
@@ -323,11 +322,12 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
 
     private void kkCommonExpect(Type type) {
         expectFieldNullable(FieldNames.TUTKINTO, type);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, type);
-        expectField(FieldNames.OPINTOJEN_LAAJUUSARVO, type);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, type);
+        expectFieldNullable(FieldNames.OPINTOJEN_LAAJUUSARVO, type);
         expectFieldNullable(FieldNames.KOULUTUSASTE, type);
+
         expectField(FieldNames.OPINTOALA, type);
-        expectField(FieldNames.KOULUTUSKOODI, type);
+        expectField(FieldNames.KOULUTUS, type);
         expectField(FieldNames.KOULUTUSALA, type);
         expectFieldNullable(FieldNames.NQF, type);
         expectFieldNullable(FieldNames.EQF, type);

@@ -282,7 +282,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     }
 
     private boolean doesHakukohdeNeedCustomhakuaika() {
-        KoulutusasteTyyppi kTyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        KoulutusasteTyyppi kTyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi();
         boolean isErityisopetus = (pkVaatimus != null && pkVaatimus.contains(KoodistoURI.KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI))
                 || kTyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
                 || kTyyppi.equals(KoulutusasteTyyppi.VAPAAN_SIVISTYSTYON_KOULUTUS);
@@ -304,7 +304,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
                     ? presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri() : null;
             final KoulutusPerustieto koulutus = presenter.getModel()
                     .getSelectedKoulutukset().get(0);
-            koulutusastetyyppi = koulutus.getKoulutustyyppi();
+            koulutusastetyyppi = koulutus.getKoulutusasteTyyppi();
         }
 
         //Build main item container
@@ -1176,7 +1176,7 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
             //the same pohjakoulutus
             if (presenter.getModel().getSelectedKoulutukset() != null
                     && !presenter.getModel().getSelectedKoulutukset().isEmpty()
-                    && !presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
+                    && !presenter.getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS)) {//getKoulutustyyppi() ei viittaa koulutustyyppi-koodiston arvoihin vaan on oma enumeraatio
                 //String pkVaatimus = presenter.getModel().getSelectedKoulutukset().get(0).getPohjakoulutusvaatimus().getUri();
                 Collection<KoodiType> pkHakukohdeKoodis = tarjontaUIHelper.getKoodistoRelations(pkVaatimus, KoodistoURI.KOODISTO_HAKUKOHDE_URI, false, SuhteenTyyppiType.SISALTYY);
                 hakukohdeKoodis.retainAll(pkHakukohdeKoodis);

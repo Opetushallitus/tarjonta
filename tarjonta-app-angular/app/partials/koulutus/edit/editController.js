@@ -43,11 +43,11 @@ app.controller('BaseEditController', [
         $scope.lisatiedot = null;
         $scope.controlModel = {
             /*formStatus: {
-                modifiedBy: '',
-                modified: null,
-                tila: ''
-            },
-            formControls: {}*/
+             modifiedBy: '',
+             modified: null,
+             tila: ''
+             },
+             formControls: {}*/
         };
 
         /*
@@ -70,6 +70,25 @@ app.controller('BaseEditController', [
             return $scope.uiModel;
         };
 
+        $scope.commonCreatePageConfig = function(routeParams, result) {
+            if (angular.isDefined(routeParams) && angular.isDefined(routeParams.toteutustyyppi)) {
+                //create new 
+                $scope.CONFIG = {
+                    TYYPPI: routeParams.toteutustyyppi,
+                    KOULUTUSTYYPPI: routeParams.koulutustyyppi
+                };
+            } else if (angular.isDefined(result.toteutustyyppi)) {
+                //page load
+                $scope.CONFIG = {
+                    TYYPPI: result.toteutustyyppi,
+                    KOULUTUSTYYPPI: result.koulutustyyppi.uri
+                };
+            } else {
+                // error, missing required page type
+                throw new Error('Tarjonta application error - missing the page configuration data!');
+            }
+        };
+
 
         $scope.canSaveAsLuonnos = function() {
             if ($scope.getModel().tila !== 'LUONNOS' || $scope.getModel().tila === 'POISTETTU') {
@@ -89,7 +108,6 @@ app.controller('BaseEditController', [
 
         $scope.goBack = function(event, form) {
             var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
-            $log.debug("goBack(), dirty?", dirty);
 
             if (dirty) {
                 dialogService.showModifedDialog().result.then(function(result) {
@@ -122,7 +140,6 @@ app.controller('BaseEditController', [
             }
 
             var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
-            $log.debug("  dirty?", dirty);
 
             if (dirty) {
                 dialogService.showModifedDialog().result.then(function(result) {
@@ -258,26 +275,30 @@ app.controller('BaseEditController', [
             return fallbackFi;
         };
 
-        /*$scope.updateFormStatusInformation = function(model) {
-            //look more info from KoulutusRoutingController and controlLayouts.js
-            $scope.controlModel.formStatus = model;/*{
-                modifiedBy: model.modifiedBy,
-                modified: model.modified,
-                tila: model.tila
-            };*/
+        $scope.saveByStatus = function(tila, form, tyyppi, fnCustomCallbackAfterSave) {
+             $scope.saveApimodelByStatus(angular.copy($scope.model), tila, form, tyyppi, fnCustomCallbackAfterSave);
+        };
 
-            /*console.log("FORM STATUS", $scope.controlModel);
-            
-            //force reload
-            //$scope.controlModel.formControls.reloadDisplayControls();
-        };*/
-
-        $scope.saveByStatus = function(tila, form, koulutusasteTyyppi, fnCustomCallbackAfterSave) {
-            $scope.controlFormMessages(form, $scope.uiModel, "CLEAR");
-
+        $scope.saveApimodelByStatus = function(apiModel, tila, form, tyyppi, fnCustomCallbackAfterSave) {
             if (angular.isUndefined(tila)) {
                 converter.throwError('Undefined tila');
             }
+
+            if (apiModel.tila !== "JULKAISTU") { //julkaistua tallennettaessa tila ei muutu
+                apiModel.tila = tila;
+            }
+
+            $scope.saveByStatusAndApiObject(
+                    form,
+                    tyyppi,
+                    fnCustomCallbackAfterSave,
+                    converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
+                    );
+        };
+
+        $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
+            $scope.controlFormMessages(form, $scope.uiModel, "CLEAR");
+
 
             if (form.$invalid || !form.$valid || (form.$pristine && !$scope.isLoaded())) {
                 //invalid form data
@@ -295,7 +316,6 @@ app.controller('BaseEditController', [
                 }
 
                 var KoulutusRes = TarjontaService.koulutus();
-                var apiModelReadyForSave = converter.saveModelConverter(tila, $scope.model, $scope.uiModel, koulutusasteTyyppi);
 
                 KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
                     var model = saveResponse.result;
@@ -308,11 +328,11 @@ app.controller('BaseEditController', [
                         form.$pristine = true;
 
                         $scope.model = model;
-                        
+
                         //$scope.updateFormStatusInformation($scope.model);
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
                         $scope.uiModel.tabs.lisatiedot = false;
-                        $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
+                        $scope.lisatiedot = converter.STRUCTURE[tyyppi].KUVAUS_ORDER;
                         // OVT-7421 / etusivun hakutuloskakun tyhjentäminen jotta muutokset näkyvät varmasti hakutuloslissa
                         // - parempi ratkaisu olisi toki tallentaa muutokset kakutettuihin hakutuloksiin, jos sellaisia on
                         CacheService.evict(new RegExp("/koulutus/.*"));
@@ -325,8 +345,8 @@ app.controller('BaseEditController', [
             });
         };
 
-        $scope.commonKoodistoLoadHandler = function(uiModel, koulutusasteTyyppi) {
-            angular.forEach(converter.STRUCTURE[koulutusasteTyyppi].COMBO, function(value, key) {
+        $scope.commonKoodistoLoadHandler = function(uiModel, tyyppi) {
+            angular.forEach(converter.STRUCTURE[tyyppi].COMBO, function(value, key) {
                 if (angular.isUndefined(value.skipUiModel)) {
                     var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.koodistoLocale);
                     uiModel[key].promise = koodisPromise;
@@ -335,7 +355,7 @@ app.controller('BaseEditController', [
                     });
                 }
             });
-            angular.forEach(converter.STRUCTURE[koulutusasteTyyppi].MCOMBO, function(value, key) {
+            angular.forEach(converter.STRUCTURE[tyyppi].MCOMBO, function(value, key) {
                 if (angular.isUndefined(Config.env[value.koodisto])) {
                     throw new Error("No koodisto URI for key : " + key + ", property : '" + value.koodisto + "'");
                 }
@@ -356,7 +376,7 @@ app.controller('BaseEditController', [
             });
         };
 
-        $scope.commonNewModelHandler = function(form, model, uiModel, koulutusasteTyyppi) {
+        $scope.commonNewModelHandler = function(form, model, uiModel, tyyppi) {
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
@@ -365,27 +385,28 @@ app.controller('BaseEditController', [
                 converter.throwError("UI model object cannot be null or undefined");
             }
 
-            if (angular.isUndefined(koulutusasteTyyppi) || koulutusasteTyyppi === null) {
+            if (angular.isUndefined(tyyppi) || tyyppi === null) {
                 converter.throwError("KoulutusasteTyyppi string enum cannot be null or undefined");
             }
 
             uiModel.isMutable = false;
             uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
-            $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
+            $scope.lisatiedot = converter.STRUCTURE[tyyppi].KUVAUS_ORDER;
 
-            converter.createUiModels(uiModel, koulutusasteTyyppi);
+            converter.createUiModels(uiModel, tyyppi);
             uiModel.isMutable = true;
             $scope.controlFormMessages(form, uiModel, "INIT");
-            converter.createAPIModel(model, Config.app.userLanguages, koulutusasteTyyppi);
+            converter.createAPIModel(model, Config.app.userLanguages, tyyppi);
 
-            var promiseOrg = organisaatioService.nimi($routeParams.org);
-            promiseOrg.then(function(vastaus) {
-                converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-            });
-
+            if (angular.isDefined($routeParams.org) || (angular.isDefined(model.organisaatio) && angular.isDefined(model.organisaatio.oid))) {
+                var promiseOrg = organisaatioService.nimi(angular.isDefined($routeParams.org) ? $routeParams.org : model.organisaatio.oid);
+                promiseOrg.then(function(vastaus) {
+                    converter.updateOrganisationApiModel(model, $routeParams.org, vastaus);
+                });
+            }
         };
 
-        $scope.commonLoadModelHandler = function(form, model, uiModel, koulutusasteTyyppi) {
+        $scope.commonLoadModelHandler = function(form, model, uiModel, tyyppi) {
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
@@ -394,15 +415,15 @@ app.controller('BaseEditController', [
                 converter.throwError("UI model object cannot be null or undefined");
             }
 
-            if (angular.isUndefined(koulutusasteTyyppi) || koulutusasteTyyppi === null) {
-                converter.throwError("KoulutusasteTyyppi string enum cannot be null or undefined");
+            if (angular.isUndefined(tyyppi) || tyyppi === null) {
+                converter.throwError("Tyyppi string enum cannot be null or undefined");
             }
 
             uiModel.isMutable = false;
             uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
-            $scope.lisatiedot = converter.STRUCTURE[koulutusasteTyyppi].KUVAUS_ORDER;
+            $scope.lisatiedot = converter.STRUCTURE[tyyppi].KUVAUS_ORDER;
 
-            converter.createUiModels(uiModel, koulutusasteTyyppi);
+            converter.createUiModels(uiModel, tyyppi);
             $scope.controlFormMessages(form, uiModel, "SHOW");
 
             if (angular.isUndefined(model) || model === null) {
@@ -418,7 +439,7 @@ app.controller('BaseEditController', [
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;
 
-                if (model.koulutusasteTyyppi === 'LUKIOKOULUTUS') {
+                if (model.toteutustyyppi === 'LUKIOKOULUTUS') {
                     //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
                     if (angular.isDefined(uiModel.loadedKoulutuslaji) &&
                             KoodistoURI.compareKoodi(
@@ -448,7 +469,7 @@ app.controller('BaseEditController', [
              * Load data to mltiselect fields
              * remove version data from the list
              */
-            angular.forEach(converter.STRUCTURE[koulutusasteTyyppi].MCOMBO, function(value, key) {
+            angular.forEach(converter.STRUCTURE[tyyppi].MCOMBO, function(value, key) {
                 if (angular.isDefined(model[key])) {
                     if (angular.isDefined(value.types)) {
                         uiModel[key] = {};
@@ -499,7 +520,7 @@ app.controller('BaseEditController', [
             if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === Object(kieliUri)) {
                 return kieliUri;
             }
-            
+
             var ret = $scope.model.opintojenRakenneKuvas[kieliUri];
             if (!ret) {
                 ret = {};

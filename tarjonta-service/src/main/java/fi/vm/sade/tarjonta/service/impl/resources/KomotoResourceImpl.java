@@ -62,10 +62,10 @@ public class KomotoResourceImpl implements KomotoResource {
     // GET /komoto/{oid}
     @Override
     public KomotoDTO getByOID(String oid) {
-        LOG.debug("getByOID() -- /komoto/{}", oid);
+        //LOG.debug("getByOID() -- /komoto/{}", oid);
         KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(oid);
         KomotoDTO result = conversionService.convert(komoto, KomotoDTO.class);
-        LOG.debug("  result={}", result);
+        //LOG.debug("  result={}", result);
         return result;
     }
 
@@ -81,7 +81,7 @@ public class KomotoResourceImpl implements KomotoResource {
 
         List<OidRDTO> result
                 = HakuResourceImpl.convertOidList(koulutusmoduuliToteutusDAO.findOIDsBy(tarjontaTila, count, startIndex, lastModifiedBefore, lastModifiedSince));
-        LOG.debug("  result={}", result);
+        //LOG.debug("  result={}", result);
         return result;
     }
 
@@ -94,7 +94,7 @@ public class KomotoResourceImpl implements KomotoResource {
         if (komoto != null) {
             result = conversionService.convert(komoto.getKoulutusmoduuli(), KomoDTO.class);
         }
-        LOG.debug("  result={}", result);
+        //LOG.debug("  result={}", result);
         return result;
     }
 
@@ -112,7 +112,7 @@ public class KomotoResourceImpl implements KomotoResource {
             }
         }
 
-        LOG.debug("  result={}", result);
+        //LOG.debug("  result={}", result);
         return result;
     }
 

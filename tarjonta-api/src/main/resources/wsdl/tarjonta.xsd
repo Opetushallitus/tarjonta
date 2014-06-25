@@ -1074,8 +1074,6 @@
             <xs:enumeration value="AmmatillinenPeruskoulutus" />
             <xs:enumeration value="Lukiokoulutus"/>
             <xs:enumeration value="Korkeakoulutus"/>
-            <xs:enumeration value="Ammattikorkeakoulutus"/>
-            <xs:enumeration value="Yliopistokoulutus"/>
             <xs:enumeration value="PerusopetuksenLisaopetus"/>   
             <xs:enumeration value="ValmentavaJaKuntouttavaOpetus" />
             <xs:enumeration value="AmmOhjaavaJaValmistavaKoulutus" /><!-- Ammatilliseen koulutukseen ohjaava ja valmistava koulutus -->
@@ -1085,6 +1083,8 @@
             <xs:enumeration value="Perusopetus" /><!-- Perusopetus / peruskoulu kotimaa -->
             <xs:enumeration value="PerusopetusUlkomainen" /><!-- Perusopetus / peruskoulu ulkomainen -->
             <xs:enumeration value="AmmatillinenPerustutkintoNayttotutkintona" /><!-- aikuiskoulutus -->
+            <xs:enumeration value="Erikoisammattitutkinto" /><!-- aikuiskoulutus -->
+            <xs:enumeration value="Ammattitutkinto" /><!-- aikuiskoulutus -->
             <xs:enumeration value="Tuntematon" /><!-- geneerinen tuntematon -->      
         </xs:restriction>
     </xs:simpleType>

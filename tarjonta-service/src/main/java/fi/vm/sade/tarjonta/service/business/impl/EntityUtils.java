@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 
@@ -43,7 +44,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.WebLinkki;
 import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonFromDTOConverter;
 import fi.vm.sade.tarjonta.service.types.KoodistoKoodiTyyppi;
@@ -506,7 +507,7 @@ public final class EntityUtils {
          * Required type data:
          */
         target.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(source.getKoulutusmoduuliTyyppi().value()));
-        target.setKoulutustyyppiEnum(KoulutustyyppiEnum.fromEnum(source.getKoulutustyyppi()));
+        target.setKoulutustyyppiEnum(ModuulityyppiEnum.fromEnum(source.getKoulutustyyppi()));
         /*
          * OID and other keys:
          */
@@ -529,7 +530,7 @@ public final class EntityUtils {
         target.setNqfUri(source.getNqfLuokitus());
         target.setOppilaitostyyppi(joinListToString(source.getOppilaitostyyppi()));
         target.setNimi(copyFields(source.getNimi(), target.getNimi()));
-        target.setKoulutustyyppiEnum(KoulutustyyppiEnum.fromEnum(source.getKoulutustyyppi()));
+        target.setKoulutustyyppiEnum(ModuulityyppiEnum.fromEnum(source.getKoulutustyyppi()));
 
         return target;
     }
@@ -737,6 +738,10 @@ public final class EntityUtils {
             kielet.add(newKieli);
         }
         return kielet;
+    }
+
+    public static String joinListToString(String item) {
+        return joinListToString(Lists.<String>newArrayList(item));
     }
 
     public static String joinListToString(Collection<String> list) {

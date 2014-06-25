@@ -22,7 +22,7 @@ import java.util.HashMap;
  *
  * @author jani
  */
-@ApiModel(value = "Tilastokeskuksen korkeakoulun koulutuskoodiin liittyvät relaatiot")
+@ApiModel(value = "Tilastokeskuksen koulutuskoodiin liittyvät relaatiot")
 public class KoulutusmoduuliLukioRelationV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
     //KOODISTO KOMO DATA OBJECTS:

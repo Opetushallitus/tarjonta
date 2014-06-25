@@ -115,7 +115,9 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             		// HUOM! hakutulostun mukana tulevaa käännöstä ei voida käyttää koska tila voi muuttua riviä päivitettäessä
             		return LocalisationService.t("tarjonta.tila."+row.tila);
             	case "kausi":
-            		return row.kausi[LocalisationService.getLocale()] + " " + row.vuosi;
+            		var ks = row.kausi ? row.kausi[LocalisationService.getLocale()] : "";
+            		var vs = row.vuosi | "";
+            		return ks + " " + vs;
         		default:
         			return row[col];
             	}
@@ -651,7 +653,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.tyyppi"),
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
@@ -661,7 +664,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.kausi"), // vuosikausi.mismatch.dialog.description
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
@@ -671,7 +675,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.vuosi"),
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
@@ -681,12 +686,13 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 	                	dialogService.showDialog({
 	                        title: LocalisationService.t("hakukohde.luonti.virhe"),
 	                        description: LocalisationService.t("hakukohde.luonti.virhe.tila"),
-	                        ok: LocalisationService.t("ok")
+	                        ok: LocalisationService.t("ok"),
+	                        cancel: null
 	                      });
 	                	return;
 	                }
                 
-					console.log("KOULUTUS:", $scope.selection.koulutukset);
+
 	                SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
 					SharedStateService.addToState('SelectedKoulutusTyyppi',koulutusTyyppi);
                     SharedStateService.addToState('SelectedToteutusTyyppi',res.toteutustyyppi);

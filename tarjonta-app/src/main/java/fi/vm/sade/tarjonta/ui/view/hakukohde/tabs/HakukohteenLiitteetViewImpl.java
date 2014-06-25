@@ -166,7 +166,7 @@ public class HakukohteenLiitteetViewImpl extends CustomComponent implements Prop
     }
     
     private boolean isKoulutusSortOfErityisopetus() {
-        KoulutusasteTyyppi koulutustyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi();
+        KoulutusasteTyyppi koulutustyyppi = presenter.getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi();
         return koulutustyyppi.equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS)
                 || koulutustyyppi.equals(KoulutusasteTyyppi.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS)
                 || koulutustyyppi.equals(KoulutusasteTyyppi.MAAHANM_AMM_VALMISTAVA_KOULUTUS)

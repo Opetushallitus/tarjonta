@@ -14,3 +14,4 @@ VALUES
 (nextval('hibernate_sequence'), 1, '1.2.246.562.13.86722481404', 'JULKAISTU', null, null, 
 'koulutus_999999#1', null, null, null, null, 'TUTKINTO', null, null, null,'PERUSOPETUS_ULKOMAINEN', 
 null,'2014-05-15 15:37:56.3880000');
+
