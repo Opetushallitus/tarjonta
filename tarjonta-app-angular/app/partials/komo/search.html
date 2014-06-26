@@ -1,16 +1,14 @@
 <table>
     <tr>
         <td>
-            <a ng-click="searchAllMissingModulesByKoulutustyyppi()">Import</a>
-            
             Koulutustyyppi : <span style="width:450px" koodistocombo 
                                    koodistouri="'koulutustyyppi'" 
                                    locale="fi" 
                                    koodiuri="ctrl.koulutustyyppiUri" 
                                    version="false" 
                                    isrequired="true" 
-                                   name="koulutustyyppi"></span> <br/>
-            Koulutus : <input style="width:250px" type="text" ng-model="ctrl.koulutuskoodi" /><b> <a href="" ng-click="fetchByKoulutuskoodi(ctrl.koulutuskoodi)">Hae</a></b><br/>  
+                                   name="koulutustyyppi"></span> <a ng-if="ctrl.koulutustyyppiUri" ng-click="searchAllMissingModulesByKoulutustyyppi()">Hae sisäänvietävät moduulit</a> <br/>
+            Koulutus : <input style="width:250px" type="text" ng-model="ctrl.koulutuskoodi" /><b> <a ng-if="ctrl.koulutustyyppiUri" href="" ng-click="fetchByKoulutuskoodi(ctrl.koulutuskoodi)">Hae tietokannasta</a></b><br/>  
             Selkokielinen nimi : <input type="checkbox" data-ng-model="ctrl.showRealName"/> 
 
         </td>
@@ -25,19 +23,19 @@
         </td>
     </tr>
 </table>
-<table>
+<table ng-if="ctrl.link.selectedKomoOids.length > 0">
     <tr>
         <td><b>Haun tulokset</b></td>
     </tr>
     <tr>
         <td>Koulutus</td>
         <td>Ohjelma</td>
-        <td>Muokkaa</td>
+        <td>Muokkaa moduulia</td>
     </tr>
     <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
         <td>{{searchKomoByOid(komoOid).koulutus}}</td>
         <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
-        <td><a ng-click="fetchByOid(komoOid)">Valitse</a></td>
+        <td><a ng-click="fetchByOid(komoOid)">Valitse muokattavaksi</a></td>
     </tr>
 
 </table>

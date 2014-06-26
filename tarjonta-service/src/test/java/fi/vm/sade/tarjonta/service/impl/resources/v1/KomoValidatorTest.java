@@ -35,12 +35,13 @@ import static org.junit.Assert.*;
 public class KomoValidatorTest extends KoulutusBase {
 
     private static final String KOULUTUSOHJELMA = "koulutus_koulutusohjelma_missing";
+    private static final String OHJELMA = "koulutus_tutkinto_ohjelma_uri_required";
 
     @Test
     public void testValidateModuleLukioAndAmmTutkinto() {
         KomoV1RDTO tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO);
         ResultV1RDTO result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(null, result.getErrors());
     }
 
@@ -51,28 +52,28 @@ public class KomoValidatorTest extends KoulutusBase {
         tutkinto.setOsaamisala(null);
         tutkinto.setLukiolinja(null);
         ResultV1RDTO result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
-        assertEquals(KOULUTUSOHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
+        KomoValidator.validateModuleGeneric(tutkinto, result);
+        assertEquals(OHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
     }
 
     @Test
     public void testValidateModuleLukioAndAmmTutkintoOhjelma() {
         KomoV1RDTO tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         ResultV1RDTO result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(null, result.getErrors());
 
         tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         tutkinto.setOsaamisala(toKoodiUri(FieldNames.OSAAMISALA.toString()));
         result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(null, result.getErrors());
 
         tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
         tutkinto.setKoulutusohjelma(null);
         tutkinto.setOsaamisala(toKoodiUri(FieldNames.OSAAMISALA.toString()));
         result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(null, result.getErrors());
 
         tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
@@ -81,7 +82,7 @@ public class KomoValidatorTest extends KoulutusBase {
         tutkinto.setKoulutusohjelma(nimi);
         tutkinto.setOsaamisala(null);
         result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(KOULUTUSOHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
 
         tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
@@ -90,7 +91,7 @@ public class KomoValidatorTest extends KoulutusBase {
         tutkinto.setKoulutusohjelma(nimi);
         tutkinto.setOsaamisala(null);
         result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(KOULUTUSOHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
 
         tutkinto = createDTO(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
@@ -99,7 +100,7 @@ public class KomoValidatorTest extends KoulutusBase {
         tutkinto.setKoulutusohjelma(nimi);
         tutkinto.setOsaamisala(toKoodiUri(FieldNames.OSAAMISALA.toString()));
         result = new ResultV1RDTO();
-        KomoValidator.validateModuleLukioAndAmm(tutkinto, result);
+        KomoValidator.validateModuleGeneric(tutkinto, result);
         assertEquals(KOULUTUSOHJELMA, ((ErrorV1RDTO) result.getErrors().get(0)).getErrorMessageKey());
     }
 
