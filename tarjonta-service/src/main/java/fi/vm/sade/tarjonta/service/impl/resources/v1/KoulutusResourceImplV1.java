@@ -794,12 +794,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
             alkamisPvm = new Date(tsRequired);
         }
-
-        LOG.info("/koulutus/search - searchInfo()");
-        LOG.info("  alkamisPvmAlkaenTs = {}", alkamisPvm);        
         
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
+        LOG.debug("/koulutus/search - searchInfo(st={}, orgOids={}, oids={}, tila={}, aKausi={}, aVuosi={}, " + 
+                "koulTyyppi={}, totTyyppi={}, komoOid={}, alkPvmTs={})", 
+                new Object[] {
+                    searchTerms, organisationOids, koulutusOids, komotoTila, alkamisKausi, alkamisVuosi,
+                    koulutustyyppi, toteutustyyppi, komoOid, alkamisPvmAlkaenTs
+                });
+        
         KoulutuksetKysely q = new KoulutuksetKysely();
 
         q.setNimi(searchTerms);
@@ -889,7 +893,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
         Preconditions.checkNotNull(body, "MultipartBody cannot be null.");
-        LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
+        LOG.debug("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
         ResultV1RDTO<KuvaV1RDTO> result = new ResultV1RDTO<KuvaV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
 
