@@ -388,8 +388,11 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
      */
     public List<KoulutusmoduuliToteutus> findActiveKomotosByKomoOid(String oid);
 
+    /*
+     * Search a module by given parameters, koulutusohjelma, osaamisala anf lukiolinja URIs are optional.
+     */
     public Koulutusmoduuli findModule(
-            final KoulutusmoduuliTyyppi tyyppi, 
+            final KoulutusmoduuliTyyppi tyyppi,
             final String koulutusUri,
             final String likeKoulutusohjelmaUri,
             final String likeOsaamisalaUri,

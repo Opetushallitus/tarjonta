@@ -250,10 +250,6 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
      * @return the koulutusohjelma
      */
     public NimiV1RDTO getKoulutusohjelma() {
-        if (koulutusohjelma == null) {
-            koulutusohjelma = new NimiV1RDTO();
-        }
-
         return koulutusohjelma;
     }
 
@@ -286,6 +282,10 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
      * @return the koulutustyyppis
      */
     public KoodiUrisV1RDTO getKoulutustyyppis() {
+        if (koulutustyyppis == null) {
+            koulutustyyppis = new KoodiUrisV1RDTO();
+        }
+
         return koulutustyyppis;
     }
 
@@ -293,10 +293,6 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
      * @param koulutustyyppis the koulutustyyppis to set
      */
     public void setKoulutustyyppis(KoodiUrisV1RDTO koulutustyyppis) {
-        if (koulutustyyppis == null) {
-            koulutustyyppis = new KoodiUrisV1RDTO();
-        }
-
         this.koulutustyyppis = koulutustyyppis;
     }
 
@@ -318,6 +314,7 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
      * @return the osaamisala
      */
     public KoodiV1RDTO getOsaamisala() {
+
         return osaamisala;
     }
 
