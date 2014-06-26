@@ -29,6 +29,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.BooleanBuilder;
+import com.mysema.query.SearchResults;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
@@ -356,7 +357,7 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
 
     /**
      * 24.06.2014, a method for searching 'tutkinto' or 'tutkinto-ohjelma'
-     * modules.
+     * modules. All version information from query parameters will be removed.
      *
      * @param tyyppi
      * @param koulutusUri
@@ -370,19 +371,15 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             final String likeKoulutusohjelmaUri,
             final String likeOsaamisalaUri,
             final String likeLukiolinjaUri) {
-
         Preconditions.checkNotNull(tyyppi, "KoulutusmoduuliTyyppi cannot be null!");
         Preconditions.checkNotNull(koulutusUri, "Koulutus uri cannot be null!");
 
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
 
-        BooleanExpression whereExpr = moduuli.moduuliTyyppi.eq(tyyppi);
-        whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "#%"));
-
         BooleanExpression like = null;
 
         if (likeKoulutusohjelmaUri != null) {
-            like = QuerydslUtils.or(like, moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "#%"));
+            like = moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "#%");
         }
 
         if (likeOsaamisalaUri != null) {
@@ -390,18 +387,19 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         }
 
         if (likeLukiolinjaUri != null) {
-            like = QuerydslUtils.or(like, moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "#%"));
+            like = moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "#%");
         }
 
-        if (like != null) {
-            whereExpr.and(like);
-        } else if (tyyppi.equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
-            throw new RuntimeException("An invalid query, missing 'ohjelma' parameter(s)!");
+        SearchResults<Koulutusmoduuli> modules = from(moduuli).where(
+                moduuli.moduuliTyyppi.eq(tyyppi)
+                .and(moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "#%"))
+                .and(like)).listResults(moduuli);
+
+        //result of the query should aways be unique, or there is somekind of data error. 
+        if (modules.getTotal() > 1) {
+            throw new RuntimeException("Possible data error - result contains too many modules, koulutus uri : '" + koulutusUri + "'." + " ohjelma : " + likeKoulutusohjelmaUri + '/' + likeOsaamisalaUri + '/' + likeLukiolinjaUri + '/');
         }
 
-        return from(moduuli).
-                where(whereExpr).
-                singleResult(moduuli);
-
+        return !modules.isEmpty() ? modules.getResults().get(0) : null;
     }
 }
