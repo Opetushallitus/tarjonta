@@ -94,6 +94,7 @@ abstract class KoulutusBase {
     protected static final String LAAJUUSARVO = "laajuusarvo";
     protected static final String URI_KIELI_FI = "kieli_fi";
     protected static final String LOCALE_FI = "FI";
+    protected static final String OPPILAITOSTYYPPI = "oppilaitostyyppi";
     protected static final String KOULUTUSKOODI = "koulutuskoodi";
     protected static final String KOULUTUSASTE = "koulutusaste";
     protected static final String KOULUTUSLAJI = "koulutuslaji";

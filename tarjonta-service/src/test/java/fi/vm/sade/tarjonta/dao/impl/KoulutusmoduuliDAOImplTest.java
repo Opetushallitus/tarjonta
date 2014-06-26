@@ -18,21 +18,18 @@ package fi.vm.sade.tarjonta.dao.impl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 
 import java.util.List;
 import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -62,14 +59,21 @@ import org.springframework.transaction.annotation.Transactional;
 //@Ignore
 public class KoulutusmoduuliDAOImplTest {
 
-    private static final String LUKIOLINJA_URI = "uri_lukiolinja";
-    private static final String KOULUTUSOHJELMA_URI = "uri_koulutusohjelma";
+    private static final String KOULUTUS_URI = "uri_koulutus#1";
+    private static final String LUKIOLINJA_URI = "uri_lukiolinja#5";
+    private static final String KOULUTUSOHJELMA_URI1 = "uri_koulutusohjelma";
+    private static final String OSAAMISALA_URI1 = "uri_osaamisala_1#1";
+    private static final String OSAAMISALA_URI2 = "uri_osaamisala_2#2";
+    private static final String OSAAMISALA_URI3 = "uri_osaamisala_3#100";
+    private static final String VALUE = "123456";
+    private static final String TWIN_VALUE_OSAAMISALA_URI = "uri_osaamisala_" + VALUE + "#5";
+    private static final String TWIN_VALUE_KOULUTUSOHJELMA_URI = "uri_koulutusohjelma_" + VALUE + "#1";
     private static final String SEARCH_BY_URI_A = "uri_170";
     private static final String SEARCH_BY_URI_B = "uri_2";
     private static final String SEARCH_BY_URI_C = "uri_a";
     @Autowired(required = true)
     private KoulutusmoduuliDAOImpl instance;
-    private Koulutusmoduuli komo1, komo2, komo3;
+    private Koulutusmoduuli komo1, komo2, komo3, komo4, komo5, komo6;
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
@@ -82,33 +86,64 @@ public class KoulutusmoduuliDAOImplTest {
         remove(komo1);
         remove(komo2);
         remove(komo3);
+        remove(komo4);
+        remove(komo5);
+        remove(komo6);
+
         if (em != null) {
             em.clear();
         }
 
-        //RE-INITIALIZE ENITMANAGER:
+        //RE-INITIALIZE ENITITYMANAGER:
         final String sep = EntityUtils.STR_ARRAY_SEPARATOR;
 
         em = instance.getEntityManager();
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOppilaitostyyppi(sep + "uri_1" + sep + SEARCH_BY_URI_B + sep + SEARCH_BY_URI_A + sep);
-        komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
+        komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI1);
         komo1.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
-
         persist(komo1);
 
         komo2 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo2.setOppilaitostyyppi(sep + SEARCH_BY_URI_C + sep);
-        komo2.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
+        komo2.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI1);
+        komo2.setOsaamisalaUri(OSAAMISALA_URI1);
         komo2.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
         persist(komo2);
 
         komo3 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
+        komo3.setKoulutusUri(KOULUTUS_URI);
         komo3.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
         komo3.setLukiolinjaUri(LUKIOLINJA_URI);
         komo3.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
-
         persist(komo3);
+
+        komo4 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, "OID_1", KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        komo4.setKoulutusUri(KOULUTUS_URI);
+        komo4.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
+        komo4.setOsaamisalaUri(OSAAMISALA_URI2);
+        komo4.setKoulutusohjelmaUri(null);
+        komo4.setLukiolinjaUri(null);
+        komo4.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+        persist(komo4);
+
+        komo5 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, "OID_2", KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        komo5.setKoulutusUri(KOULUTUS_URI);
+        komo5.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
+        komo5.setOsaamisalaUri(OSAAMISALA_URI3);
+        komo5.setKoulutusohjelmaUri(null);
+        komo5.setLukiolinjaUri(null);
+        komo5.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+        persist(komo5);
+
+        komo6 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, "OID_3", KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS);
+        komo6.setKoulutusUri(KOULUTUS_URI);
+        komo6.setOppilaitostyyppi(sep + "uri_fuubar" + sep);
+        komo6.setOsaamisalaUri(TWIN_VALUE_OSAAMISALA_URI);
+        komo6.setKoulutusohjelmaUri(TWIN_VALUE_KOULUTUSOHJELMA_URI);
+        komo6.setLukiolinjaUri(null);
+        komo6.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+        persist(komo6);
     }
 
     /**
@@ -158,25 +193,25 @@ public class KoulutusmoduuliDAOImplTest {
     @Test
     public void testSearchByKoulutusohjelma() {
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI1);
         List result = instance.search(criteria);
         assertEquals(2, result.size());
 
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI1);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
         result = instance.search(criteria);
         assertEquals(1, result.size());
 
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI1);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
         criteria.setKoulutustyyppi(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
         result = instance.search(criteria);
         assertEquals(1, result.size());
 
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI);
+        criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI1);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
         criteria.setKoulutustyyppi(ModuulityyppiEnum.LUKIOKOULUTUS);
 
@@ -190,9 +225,9 @@ public class KoulutusmoduuliDAOImplTest {
         komo1 = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         komo1.setOid("xss-1");
         komo1.setOppilaitostyyppi("zz");
-        komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI);
+        komo1.setKoulutusohjelmaUri(KOULUTUSOHJELMA_URI1);
         komo1.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
-        
+
         komo1.setNimi(new MonikielinenTeksti("fi", "ei saa muuttaa & merkkiä!"));
         komo1.getTekstit().put(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET, new MonikielinenTeksti("fi", "jatko-opinto"));
         komo1.getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi", "<table><a href='window.alert(\"hello\")'>foo</a></table>"));
@@ -204,6 +239,57 @@ public class KoulutusmoduuliDAOImplTest {
         Assert.assertEquals("jatko-opinto", komo1.getTekstit().get(KomoTeksti.JATKOOPINTO_MAHDOLLISUUDET).getTekstiForKieliKoodi("fi"));
     }
 
+    @Test
+    public void searchModuleForImportProcess() {
+        Koulutusmoduuli m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, "uri_koulutus", null, "uri_osaamisala_3", null);
+        Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
+        Assert.assertEquals(null, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(OSAAMISALA_URI3, m.getOsaamisalaUri());
+        Assert.assertEquals(m.getLukiolinjaUri(), null);
+
+        m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOULUTUS_URI, null, OSAAMISALA_URI2, null);
+        Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
+        Assert.assertEquals(null, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(OSAAMISALA_URI2, m.getOsaamisalaUri());
+        Assert.assertEquals(null, m.getLukiolinjaUri());
+
+        m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOULUTUS_URI, null, TWIN_VALUE_OSAAMISALA_URI, null);
+        Assert.assertEquals("OID_3", m.getOid());
+        Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
+        Assert.assertEquals(TWIN_VALUE_OSAAMISALA_URI, m.getOsaamisalaUri());
+        Assert.assertEquals(TWIN_VALUE_KOULUTUSOHJELMA_URI, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(null, m.getLukiolinjaUri());
+
+        m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOULUTUS_URI, TWIN_VALUE_KOULUTUSOHJELMA_URI, null, null);
+        Assert.assertEquals("OID_3", m.getOid());
+        Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
+        Assert.assertEquals(TWIN_VALUE_OSAAMISALA_URI, m.getOsaamisalaUri());
+        Assert.assertEquals(TWIN_VALUE_KOULUTUSOHJELMA_URI, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(null, m.getLukiolinjaUri());
+
+        m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOULUTUS_URI, TWIN_VALUE_KOULUTUSOHJELMA_URI, TWIN_VALUE_OSAAMISALA_URI, null);
+        Assert.assertEquals("OID_3", m.getOid());
+        Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
+        Assert.assertEquals(TWIN_VALUE_OSAAMISALA_URI, m.getOsaamisalaUri());
+        Assert.assertEquals(TWIN_VALUE_KOULUTUSOHJELMA_URI, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(null, m.getLukiolinjaUri());
+
+        m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO, KOULUTUS_URI, null, null, LUKIOLINJA_URI);
+        Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
+        Assert.assertEquals(null, m.getOsaamisalaUri());
+        Assert.assertEquals(LUKIOLINJA_URI, m.getLukiolinjaUri());
+
+        //no results
+        m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO, KOULUTUS_URI, null, null, "foobar");
+        Assert.assertEquals(null, m);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void searchModuleForImportProcessTooManyResults() {
+        //unique result test
+        instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, "uri_koulutus", null, null, null);
+        fail("expect error");
+    }
 
     /*
      *
