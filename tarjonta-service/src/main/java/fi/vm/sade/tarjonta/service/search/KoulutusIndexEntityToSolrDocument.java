@@ -368,7 +368,7 @@ public class KoulutusIndexEntityToSolrDocument implements
      * @param koulutus 
      */
     private void addKoulutusAlkamisPvm(SolrInputDocument komotoDoc, KoulutusIndexEntity koulutus) {
-        logger.info("addKoulutusAlkamisPvm(min={}, max={})", koulutus.getKoulutuksenAlkamisPvmMin(), koulutus.getKoulutuksenAlkamisPvmMax());
+//        logger.debug("addKoulutusAlkamisPvm(min={}, max={})", koulutus.getKoulutuksenAlkamisPvmMin(), koulutus.getKoulutuksenAlkamisPvmMax());
         
         add(komotoDoc, SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN, koulutus.getKoulutuksenAlkamisPvmMin());
         add(komotoDoc, SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX, koulutus.getKoulutuksenAlkamisPvmMax());

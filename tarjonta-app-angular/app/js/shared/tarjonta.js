@@ -634,7 +634,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             result = defaultValue;
         }
 
-        $log.debug("getParameter()", target, name, result, cache[target]);
+       // $log.debug("getParameter()", target, name, result, cache[target]);
 
         return result;
     };
@@ -684,7 +684,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
         if (ph_hklpt && ph_hkmt) {
             result = (now <= ph_hklpt) && (now <= ph_hkmt);
-            $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            //$log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
             return result;
         } else {
             return true;

@@ -187,6 +187,15 @@ public class ResultV1RDTO<T> implements Serializable {
             setStatus(ResultStatus.ERROR);
         }
     }
+    
+    public void addTechnicalError(Throwable t) {
+        setStatus(ResultV1RDTO.ResultStatus.ERROR);
+        ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
+        //t.printStackTrace();
+        errorRDTO.setErrorTechnicalInformation(t.toString());
+        errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
+        addError(errorRDTO);
+    }
 
     /**
      * Returns true if any "errors" added. ie. getErrors() returns nonempty collection.

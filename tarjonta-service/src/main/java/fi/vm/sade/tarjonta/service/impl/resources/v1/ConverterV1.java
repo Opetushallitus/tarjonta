@@ -234,11 +234,11 @@ public class ConverterV1 {
 
         // Process UI hakuaikas.
         for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
-            LOG.info("hakuaika: ", hakuaikaDTO);
+            LOG.debug("hakuaika: ", hakuaikaDTO);
 
             Hakuaika ha = haku.getHakuaikaById(hakuaikaDTO.getHakuaikaId());
             if (ha == null) {
-                LOG.info(" == new hakuaika");
+                LOG.debug(" == new hakuaika");
 
                 // NEW hakuaika
                 ha = new Hakuaika();
@@ -248,7 +248,7 @@ public class ConverterV1 {
 
                 haku.addHakuaika(ha);
             } else {
-                LOG.info(" == old hakuaika TODO");
+                LOG.debug(" == old hakuaika TODO");
 
                 ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
                 ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
@@ -261,7 +261,7 @@ public class ConverterV1 {
 
         // Remove hakuaikas that are deleted.
         for (Hakuaika hakuaika : tmpHakuaikas) {
-            LOG.info("DELETED hakuaika: ", hakuaika);
+            LOG.debug("DELETED hakuaika: ", hakuaika);
             haku.removeHakuaika(hakuaika);
         }
 
@@ -1222,8 +1222,8 @@ public class ConverterV1 {
         ret.setKoulutuksenAlkamisPvmMin(ht.getKoulutuksenAlkamisPvmMin());
         ret.setKoulutuksenAlkamisPvmMax(ht.getKoulutuksenAlkamisPvmMax());
 
-        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
-        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
+//        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
+//        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
         
         return ret;
     }
