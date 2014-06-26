@@ -795,6 +795,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             alkamisPvm = new Date(tsRequired);
         }
 
+        LOG.info("/koulutus/search - searchInfo()");
+        LOG.info("  alkamisPvmAlkaenTs = {}", alkamisPvm);        
         
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 

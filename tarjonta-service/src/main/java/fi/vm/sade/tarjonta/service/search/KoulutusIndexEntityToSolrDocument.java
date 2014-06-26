@@ -87,7 +87,7 @@ import java.util.Date;
 @Component
 public class KoulutusIndexEntityToSolrDocument implements
         Function<KoulutusIndexEntity, List<SolrInputDocument>> {
-
+    
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
     @Autowired
@@ -368,6 +368,8 @@ public class KoulutusIndexEntityToSolrDocument implements
      * @param koulutus 
      */
     private void addKoulutusAlkamisPvm(SolrInputDocument komotoDoc, KoulutusIndexEntity koulutus) {
+        logger.info("addKoulutusAlkamisPvm(min={}, max={})", koulutus.getKoulutuksenAlkamisPvmMin(), koulutus.getKoulutuksenAlkamisPvmMax());
+        
         add(komotoDoc, SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN, koulutus.getKoulutuksenAlkamisPvmMin());
         add(komotoDoc, SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX, koulutus.getKoulutuksenAlkamisPvmMax());
     }
