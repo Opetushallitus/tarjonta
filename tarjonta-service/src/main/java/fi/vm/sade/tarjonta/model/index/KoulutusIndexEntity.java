@@ -7,6 +7,7 @@ import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.List;
 
 /**
  * Entity containing all fields from database needed for indexing
@@ -18,7 +19,6 @@ public class KoulutusIndexEntity {
     private String tarjoaja;
     private ModuulityyppiEnum baseKoulutustyyppiEnum;
     private ToteutustyyppiEnum subKoulutustyyppiEnum;
-    private Date koulutuksenAlkamisPvm;
     private TarjontaTila tila;
     private String koulutusmoduuliOid;
     private String pohjakoulutusVaatimus;
@@ -34,7 +34,9 @@ public class KoulutusIndexEntity {
     private String lukiolinjaUri;
     private String osaamisalaUri;
     private String koulutustyyppiUri;
-
+    private Date koulutuksenAlkamisPvmMin;
+    private Date koulutuksenAlkamisPvmMax;
+    
     @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri,
             ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum, String koulutusUri) {
@@ -51,7 +53,8 @@ public class KoulutusIndexEntity {
     public KoulutusIndexEntity(
             Long id,
             String oid,
-            Date koulutuksenAlkamisPvm,
+            Date koulutuksenAlkamisPvmMin,
+            Date koulutuksenAlkamisPvmMax,
             TarjontaTila tila,
             ModuulityyppiEnum baseKoulutustyyppiEnum,
             ToteutustyyppiEnum subKoulutustyyppiEnum,
@@ -68,7 +71,8 @@ public class KoulutusIndexEntity {
 
         this.koulutusId = id;
         this.oid = oid;
-        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
         this.koulutusUri = koulutusUri;
@@ -127,10 +131,6 @@ public class KoulutusIndexEntity {
         return koulutusUri;
     }
 
-    public Date getKoulutuksenAlkamisPvm() {
-        return koulutuksenAlkamisPvm;
-    }
-
     public TarjontaTila getTila() {
         return tila;
     }
@@ -155,8 +155,9 @@ public class KoulutusIndexEntity {
                 + "subKoulutusTyyppi=" + subKoulutustyyppiEnum
                 + ", koulutusohjelmaKoodi="
                 + koulutusohjelmaUri + ", lukiolinja=" + lukiolinjaUri
-                + ", koulutusKoodi=" + koulutusUri + ", koulutuksenAlkamisPvm="
-                + koulutuksenAlkamisPvm + ", tila=" + tila
+                + ", koulutusKoodi=" + koulutusUri + ", koulutuksenAlkamisPvmMin="
+                + koulutuksenAlkamisPvmMin + ", koulutuksenAlkamisPvmMax="
+                + koulutuksenAlkamisPvmMax + ", tila=" + tila
                 + ", koulutusmoduuliOid=" + koulutusmoduuliOid
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
                 + ", kausi=" + kausi
@@ -235,4 +236,21 @@ public class KoulutusIndexEntity {
     public void setKoulutustyyppiUri(String koulutustyyppiUri) {
         this.koulutustyyppiUri = koulutustyyppiUri;
     }
+
+    public void setKoulutuksenAlkamisPvmMax(Date koulutuksenAlkamisPvmMax) {
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
+    }
+    
+    public Date getKoulutuksenAlkamisPvmMax() {
+        return koulutuksenAlkamisPvmMax;
+    }
+
+    public void setKoulutuksenAlkamisPvmMin(Date koulutuksenAlkamisPvmMin) {
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+    }
+    
+    public Date getKoulutuksenAlkamisPvmMin() {
+        return koulutuksenAlkamisPvmMin;
+    }
+    
 }

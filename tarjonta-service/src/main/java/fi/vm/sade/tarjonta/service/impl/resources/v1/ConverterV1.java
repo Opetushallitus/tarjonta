@@ -1189,8 +1189,7 @@ public class ConverterV1 {
         Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>>();
 
         for (KoulutusPerustieto ht : source.getKoulutukset()) {
-            TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> rets = getTarjoaja(
-                    ret, tarjoajat, ht);
+            TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> rets = getTarjoaja(ret, tarjoajat, ht);
             rets.getTulokset().add(convert(ht));
         }
 
@@ -1210,8 +1209,7 @@ public class ConverterV1 {
         ret.setKausiUri(ht.getKoulutuksenAlkamiskausi() == null ? null : ht.getKoulutuksenAlkamiskausi().getUri());
         ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
         if (ht.getPohjakoulutusvaatimus() != null) {
-            ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus()
-                    .getNimi());
+            ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus().getNimi());
         }
         if (ht.getKoulutuslaji() != null) {
             ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
@@ -1221,6 +1219,12 @@ public class ConverterV1 {
         ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
         ret.setKoulutuskoodi(ht.getKoulutusKoodi().getUri());
 
+        ret.setKoulutuksenAlkamisPvmMin(ht.getKoulutuksenAlkamisPvmMin());
+        ret.setKoulutuksenAlkamisPvmMax(ht.getKoulutuksenAlkamisPvmMax());
+
+        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
+        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
+        
         return ret;
     }
 
@@ -1228,8 +1232,7 @@ public class ConverterV1 {
             HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> tulos,
             Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat,
             KoulutusPerustieto ht) {
-        TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht
-                .getTarjoaja().getOid());
+        TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht.getTarjoaja().getOid());
         if (ret == null) {
             ret = new TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>();
             tarjoajat.put(ht.getTarjoaja().getOid(), ret);

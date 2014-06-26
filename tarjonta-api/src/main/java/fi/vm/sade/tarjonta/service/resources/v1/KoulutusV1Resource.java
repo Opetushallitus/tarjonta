@@ -243,19 +243,26 @@ public interface KoulutusV1Resource {
 
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
-     *
+     * 
      * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given
-     * organisations
-     * @param hakukohdeTilas filter result to be only in states given
-     * @return
+     * @param organisationOids filter result to be in or "under" given organisations
+     * @param koulutusOids
+     * @param koulutusTila filter result to be only in states given
+     * @param alkamisKausi
+     * @param alkamisVuosi
+     * @param koulutustyyppi
+     * @param toteutustyyppi
+     * @param koulutusastetyyppi (deprecated)
+     * @param komoOid
+     * @param alkamisPvmAlkaenTs not supported
+     * @return 
      */
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Näyttää listausivun tulosjoukon annetuilla parametreillä",
-            notes = "Operaatio näyttää listausivun tulosjoukon annetuilla parametreillä",
+            notes = "Operaatio näyttää listausivun tulosjoukon annetuilla parametreillä (alkamisPvmAlkaen ei vielä tuettu)",
             response = HakutuloksetV1RDTO.class)
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
@@ -267,7 +274,8 @@ public interface KoulutusV1Resource {
             @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
             @Deprecated
             @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
-            @QueryParam("komoOid") String komoOid
+            @QueryParam("komoOid") String komoOid,
+            @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs
     );
 
     /**

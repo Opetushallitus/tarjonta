@@ -42,9 +42,14 @@ import org.apache.solr.common.SolrDocumentList;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SolrDocumentToKoulutusConverter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SolrDocumentToKoulutusConverter.class);
+    
     public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
@@ -106,9 +111,26 @@ public class SolrDocumentToKoulutusConverter {
         if (koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI) != null) {
             perustieto.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, koulutusDoc));
         }
+
+        createKoulutuksenAlkamisPvm(koulutusDoc, perustieto);
+
         return perustieto;
     }
 
+    /**
+     * Extract koulutus alkamis pvm (min/max) information from solr document.
+     * 
+     * @param koulutusDoc
+     * @param perustieto 
+     */
+    private void createKoulutuksenAlkamisPvm(SolrDocument koulutusDoc, KoulutusPerustieto perustieto) {
+        LOG.info("createKoulutuksenAlkamisPvm() alkamisPvmMin = {}", koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN));
+        LOG.info("createKoulutuksenAlkamisPvm() alkamisPvmMax = {}", koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX));
+
+        perustieto.setKoulutuksenAlkamisPvmMin((Date) koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN));
+        perustieto.setKoulutuksenAlkamisPvmMax((Date) koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX));
+    }
+    
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
         if (koulutusDoc.getFieldValue(KOULUTUSASTETYYPPI_ENUM) != null) {
             try {

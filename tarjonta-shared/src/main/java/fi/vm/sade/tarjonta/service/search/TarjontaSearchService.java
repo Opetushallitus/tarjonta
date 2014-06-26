@@ -271,8 +271,7 @@ public class TarjontaSearchService {
         queryParts.clear();
     }
 
-    public KoulutuksetVastaus haeKoulutukset(
-            final KoulutuksetKysely kysely) {
+    public KoulutuksetVastaus haeKoulutukset(final KoulutuksetKysely kysely) {
 
         KoulutuksetVastaus response = new KoulutuksetVastaus();
 

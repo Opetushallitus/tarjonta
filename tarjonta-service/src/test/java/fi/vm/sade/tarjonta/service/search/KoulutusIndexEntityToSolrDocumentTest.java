@@ -50,7 +50,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     @Test
     public void test() {
         Date d = new GregorianCalendar(VUOSI, 1, 1).getTime();
-        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d,
+        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d, d,
                 TarjontaTila.JULKAISTU,
                 BASE_AMM_KOULUTUSTYYPPI,
                 SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO,
@@ -161,7 +161,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
 
     @Test
     public void testNullAlkamispvm() {
-        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null,
+        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null, null,
                 TarjontaTila.JULKAISTU,
                 BASE_AMM_KOULUTUSTYYPPI,
                 SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO,

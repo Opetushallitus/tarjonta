@@ -254,7 +254,6 @@ public class KomoValidator {
             }
 
             valids.add(notNullStrOrEmpty(dto.getUri()) && isPositiveInteger(dto.getVersio()));
-
         }
 
         for (Boolean b : valids) {
@@ -264,7 +263,11 @@ public class KomoValidator {
             }
         }
 
-        return true;
+        if (valids.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
+        }
+
+        return !valids.isEmpty();
     }
 
     /**
