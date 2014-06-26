@@ -377,20 +377,20 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
         QKoulutusmoduuli moduuli = QKoulutusmoduuli.koulutusmoduuli;
 
         BooleanExpression whereExpr = moduuli.moduuliTyyppi.eq(tyyppi);
-        whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "%"));
+        whereExpr = QuerydslUtils.and(whereExpr, moduuli.koulutusUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(koulutusUri) + "#%"));
 
         BooleanExpression like = null;
 
         if (likeKoulutusohjelmaUri != null) {
-            QuerydslUtils.or(like, moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "%"));
+            like = QuerydslUtils.or(like, moduuli.koulutusohjelmaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeKoulutusohjelmaUri) + "#%"));
         }
 
         if (likeOsaamisalaUri != null) {
-            QuerydslUtils.or(like, moduuli.osaamisalaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeOsaamisalaUri) + "%"));
+            like = QuerydslUtils.or(like, moduuli.osaamisalaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeOsaamisalaUri) + "#%"));
         }
 
         if (likeLukiolinjaUri != null) {
-            QuerydslUtils.or(like, moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "%"));
+            like = QuerydslUtils.or(like, moduuli.lukiolinjaUri.like(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(likeLukiolinjaUri) + "#%"));
         }
 
         if (like != null) {
