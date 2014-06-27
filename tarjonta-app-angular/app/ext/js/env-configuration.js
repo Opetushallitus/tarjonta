@@ -85,6 +85,7 @@ window.CONFIG = {
         "ui.timeout.short": 10000,
         "ui.timeout.long": 60000,
         "web.url.oppija.preview" : "https://itest-oppija.oph.ware.fi/app/preview.html#!/korkeakoulu/",
+        "koodisto-uris.osaamisala": "osaamisala",
 
         //
         // Uri to "Jatkuva Haku" - UI changes according to this

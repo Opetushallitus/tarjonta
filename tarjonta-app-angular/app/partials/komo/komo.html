@@ -8,41 +8,12 @@
             <tab heading="Moduulin muokkaus"   
                  disabled="ctrl.komoOid === null || angular.isUndefined(ctrl.komoOid) || ctrl.komoOid.length === 0"
                  ng-disabled="ctrl.komoOid === null || angular.isUndefined(ctrl.komoOid) || ctrl.komoOid.length === 0"  >
-                <display-controls model="controlModel.formControls" display="header"></display-controls>
-
-                <controls-model
-                    model="controlModel.formControls"
-                    tt-create="koulutus.edit.header.title"
-                    title="model.koulutusohjelma.tekstis"
-                    dto="controlModel.formStatus">
-
-                    <controls-button tt-key="koulutus.edit.tallenna" action="update()" disabled="!canUpdate()" primary="true"></controls-button>
-                    <controls-button tt-key="koulutus.edit.kopioi" action="create()"  disabled="!canCreate()" primary="true"></controls-button>
-
-                    <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="ctrl.showSuccess"></controls-notify>
-                    <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="ctrl.showError"></controls-notify>
-                    <controls-notify type="error-detail" ng-repeat="e in ctrl.validationmsgs" tt-expr="e" show="ctrl.showError"></controls-notify>
-                </controls-model>
-
                 <div ng-include="'partials/komo/edit.html'"></div>
-
-                <display-controls model="controlModel.formControls" display="footer"></display-controls>
             </tab>
-            <tab heading="Automaatinen luonti">
-                <display-controls model="controlModel.formControls" display="header"></display-controls>
-                <controls-model
-                    model="controlModel.formControls"
-                    tt-create="koulutus.edit.header.title"
-                    title="model.koulutusohjelma.tekstis"
-                    dto="controlModel.formStatus">
-
-                    <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="ctrl.showSuccess"></controls-notify>
-                    <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="ctrl.showError"></controls-notify>
-                    <controls-notify type="error-detail" ng-repeat="e in ctrl.validationmsgs" tt-expr="e" show="ctrl.showError"></controls-notify>
-                </controls-model>
-
-                <div ng-include="'partials/komo/import.html'"></div>
-                <display-controls model="controlModel.formControls" display="footer"></display-controls>
+            <tab heading="Moduulien sisäänvienti"
+                  disabled="import.uiModel.length === 0"
+                  ng-disabled="import.uiModel.length === 0"
+                 ><div ng-include="'partials/komo/import.html'"></div>
             </tab>
         </tabset>   
     </form>

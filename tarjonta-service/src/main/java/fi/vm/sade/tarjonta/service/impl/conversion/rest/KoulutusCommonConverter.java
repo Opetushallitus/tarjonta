@@ -275,8 +275,6 @@ public class KoulutusCommonConverter {
             final FieldNames fieldName,
             final Nullable nullable,
             final RestParam param) {
-        Preconditions.checkNotNull(fromKoodiUri, "Koodi URI cannot be null in field : " + fieldName);
-        Preconditions.checkNotNull(koodiDto, "KoodiV1RDTO object cannot be null in field " + fieldName);
 
         final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
 

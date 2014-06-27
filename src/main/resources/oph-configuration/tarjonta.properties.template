@@ -23,6 +23,7 @@ host.virkailija={{host_virkailija}}
 ldap.manager.password={{ldap_manager_password}}
 ldap.manager-password={{ldap_manager_password}}
 ldap.manager.userdn={{ldap_manager_userdn}}
+organisaatio.solr.url={{organisaatio_solr_url}}
 port.organisaatio-service={{port_organisaatio_service}}
 port.koodisto-service={{port_koodisto_service}}
 port.postgresql={{port_postgresql}}

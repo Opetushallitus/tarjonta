@@ -135,12 +135,8 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                 case KORKEAKOULUTUS:
                     KomoValidator.validateModuleKorkeakoulu(dto, result);
                     break;
-                case TUNTEMATON:
-                case PERUSOPETUS_ULKOMAINEN:
-                    KomoValidator.validateModuleGeneric(dto, result);
-                    break;
                 default:
-                    KomoValidator.validateModuleLukioAndAmm(dto, result);
+                    KomoValidator.validateModuleGeneric(dto, result);
                     break;
             }
 
@@ -298,12 +294,8 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                 case KORKEAKOULUTUS:
                     KomoValidator.validateModuleKorkeakoulu(dto, result);
                     break;
-                case TUNTEMATON:
-                case PERUSOPETUS_ULKOMAINEN:
-                    KomoValidator.validateModuleGeneric(dto, result);
-                    break;
                 default:
-                    KomoValidator.validateModuleLukioAndAmm(dto, result);
+                    KomoValidator.validateModuleGeneric(dto, result);
                     break;
 
             }
