@@ -202,10 +202,33 @@ app.directive('koodistocombo',function(Koodisto,$log,$q){
                        }
 
                    } else {
-                   $log.info('PARENT KOODI WAS DEFINED GETTING YLAPUOLISET KOODIT...');
-                   var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
-                   koodisPromise.then(processYlapuolisetKoodit);
-                   }
+
+                       if(angular.isArray($scope.parentkoodiuri)) {
+
+                           var koodiPromises = [];
+
+                           angular.forEach($scope.parentkoodiuri, function (parentKoodiUri) {
+
+                               koodiPromises.push(Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale));
+
+                               var allPromises = $q.all(koodiPromises);
+                               allPromises.then(function (data) {
+
+                                   angular.forEach(data, function (koodis) {
+
+                                       processYlapuolisetKoodit(koodis);
+                                   })
+                               })
+
+                           });
+
+                       } else {
+                           var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
+                           koodisPromise.then(processYlapuolisetKoodit);
+                       }
+                       }
+
+
                }
 
 
@@ -287,36 +310,56 @@ app.directive('koodistocombo',function(Koodisto,$log,$q){
                         $scope.isalakoodi = true;
                     }
                     if ($scope.isalakoodi) {
+                        if (angular.isArray($scope.parentkoodiuri)) {
 
-                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
-                        koodisPromise.then(function(koodisParam){
+                            var koodiPromises = [];
 
-                            if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri) {
-                                if ($scope.version !== undefined && $scope.version) {
-                                    addVersionToKoodis(koodisParam);
-                                }
-                                $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam);
+                            angular.forEach($scope.parentkoodiuri, function (parentKoodiUri) {
 
-                            } else {
-                                addVersionToKoodis(koodisParam);
-                                $scope.koodis = koodisParam;
-                            }
+                                koodiPromises.push(Koodisto.getAlapuolisetKoodit(parentKoodiUri,$scope.locale));
 
-                        });
+                                var allPromises = $q.all(koodiPromises);
+                                allPromises.then(function (data) {
+
+                                    angular.forEach(data, function (koodis) {
+
+                                        processAlapuolisetKoodit(koodis);
+                                    })
+                                })
+
+                            });
+
+                        } else {
+
+                            var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
+
+                            koodisPromise.then(processAlapuolisetKoodit);
+
+                        }
                     } else {
-                        var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
-                        koodisPromise.then(function(koodisParam){
+                        if(angular.isArray($scope.parentkoodiuri)) {
 
-                            if ($scope.filterwithkoodistouri !== undefined || $scope.koodistouri){
-                                addVersionToKoodis(koodisParam);
-                               $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri,koodisParam,koodisParam);
-                            } else {
-                                addVersionToKoodis(koodisParam);
-                                $scope.koodis = koodisParam;
-                            }
+                            var koodiPromises = [];
 
+                            angular.forEach($scope.parentkoodiuri, function (parentKoodiUri) {
 
-                        });
+                                koodiPromises.push(Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale));
+
+                                var allPromises = $q.all(koodiPromises);
+                                allPromises.then(function (data) {
+
+                                    angular.forEach(data, function (koodis) {
+
+                                        processYlapuolisetKoodit(koodis);
+                                    })
+                                })
+
+                            });
+
+                        } else {
+                            var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri,$scope.locale);
+                            koodisPromise.then(processYlapuolisetKoodit);
+                        }
                     }
                 }
             });

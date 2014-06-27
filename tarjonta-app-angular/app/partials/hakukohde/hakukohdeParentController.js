@@ -105,6 +105,9 @@ app.controller('HakukohdeParentController', ['$scope',
         $scope.model.collapse.model = true;
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
+
+        //TODO: Sami tähän tuodaan hakukohteen koulutukset ja niistä kerätään osaamisalat joilla filtteröidään aiku näyttö hakukohteen nimi
+        $scope.model.hakukohdeKoulutukses = [];
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
 

@@ -21,7 +21,8 @@ app.controller('HakukohdeAikuNayttoEditController',
              TarjontaService,
              Kuvaus,
              CommonUtilService,
-             PermissionService) {
+             PermissionService,
+             SharedStateService) {
 
 
         $log = $log.getInstance("HakukohdeAikuNayttoEditController");
@@ -35,7 +36,13 @@ app.controller('HakukohdeAikuNayttoEditController',
 
         $scope.osaamisalat = ['osaamisala_1625','osaamisala_1626'];
 
+        var readOsaamisAlat = function () {
 
+           var koulutukses =  SharedStateService.getFromState('SelectedKoulutukses');
+
+           console.log('KOULUTUKSES : ', koulutukses);
+
+        };
         //TODO: Add naytto specific haku filtering logic
         var filterHakus = function(hakus) {
             var filteredHakus = $scope.filterHakusWithOrgs($scope.filterHakuWithKohdejoukko( $scope.filterPoistettuHaku(hakus), 'haku.kohdejoukko.aiku.uri'));
@@ -71,7 +78,7 @@ app.controller('HakukohdeAikuNayttoEditController',
             }
 
             $scope.enableOrDisableTabs();
-
+            readOsaamisAlat();
         };
 
         init();
