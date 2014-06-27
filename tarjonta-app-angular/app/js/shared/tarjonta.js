@@ -136,7 +136,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = r.oid;
                     } else {
-                        r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
+                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi!=="LUKIOKOULUTUS" && r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
                     }
 
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
