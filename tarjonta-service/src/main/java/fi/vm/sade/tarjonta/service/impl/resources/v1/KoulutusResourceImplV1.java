@@ -118,6 +118,7 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import java.util.Date;
 
 /**
  *
@@ -779,10 +780,30 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             List<String> koulutustyyppi,
             List<ToteutustyyppiEnum> toteutustyyppi,
             @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
-            String komoOid) {
-
+            String komoOid,
+            String alkamisPvmAlkaenTs) {
+        
+        // Process alkamispvm search criteria
+        // TODO alkamispvm not used yet!
+        Date alkamisPvm = null;
+        if (alkamisPvmAlkaenTs != null) {
+            Long tsRequired = Long.parseLong(alkamisPvmAlkaenTs);
+            if (tsRequired < 0) {
+                // Go back in time the required amaount
+                tsRequired = System.currentTimeMillis() + tsRequired;
+            }
+            alkamisPvm = new Date(tsRequired);
+        }
+        
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
+        LOG.debug("/koulutus/search - searchInfo(st={}, orgOids={}, oids={}, tila={}, aKausi={}, aVuosi={}, " + 
+                "koulTyyppi={}, totTyyppi={}, komoOid={}, alkPvmTs={})", 
+                new Object[] {
+                    searchTerms, organisationOids, koulutusOids, komotoTila, alkamisKausi, alkamisVuosi,
+                    koulutustyyppi, toteutustyyppi, komoOid, alkamisPvmAlkaenTs
+                });
+        
         KoulutuksetKysely q = new KoulutuksetKysely();
 
         q.setNimi(searchTerms);
@@ -872,7 +893,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Preconditions.checkNotNull(kieliUri, "Koodisto language URI cannot be null.");
         Preconditions.checkNotNull(body, "MultipartBody cannot be null.");
-        LOG.info("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
+        LOG.debug("in saveKuva - komoto OID : {}, kieliUri : {}, bodyType : {}", oid, kieliUri, body.getType());
         ResultV1RDTO<KuvaV1RDTO> result = new ResultV1RDTO<KuvaV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
 

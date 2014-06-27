@@ -4,10 +4,11 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Date;
 
 public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private String oid;
     private Map<String, String> nimi;
@@ -20,7 +21,9 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private KoulutusasteTyyppi koulutusasteTyyppi;
     private Map<String, String> pohjakoulutusvaatimus;
     private String koulutuskoodi;
-
+    private Date koulutuksenAlkamisPvmMin = null;
+    private Date koulutuksenAlkamisPvmMax = null;
+    
     private String komoOid;
 
     public String getKomoOid() {
@@ -132,5 +135,20 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
         this.koulutuslajiUri = koulutuslajiUri;
     }
 
+    public Date getKoulutuksenAlkamisPvmMax() {
+        return koulutuksenAlkamisPvmMax;
+    }
+
+    public void setKoulutuksenAlkamisPvmMax(Date koulutuksenAlkamisPvmMax) {
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
+    }
+
+    public Date getKoulutuksenAlkamisPvmMin() {
+        return koulutuksenAlkamisPvmMin;
+    }
+
+    public void setKoulutuksenAlkamisPvmMin(Date koulutuksenAlkamisPvmMin) {
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+    }
   
 }

@@ -134,7 +134,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                         komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutustyyppiUri
                 )
                 .list(
-                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
+                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.min(), ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppiEnum, komoto.toteutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                                 koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
                                 komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutustyyppiUri)));
@@ -155,7 +155,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 )
                 .where(komoto.id.eq(koulutusmoduuliToteutusId))
                 .singleResult(
-                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.max(), komoto.tila,
+                        (new QKoulutusIndexEntity(komoto.id, komoto.oid, ALKAMISPVM.min(), ALKAMISPVM.max(), komoto.tila,
                                 koulutusmoduuli.koulutustyyppiEnum, komoto.toteutustyyppi, koulutusmoduuli.oid, koulutusmoduuli.koulutusUri,
                                 koulutusmoduuli.lukiolinjaUri, koulutusmoduuli.koulutusohjelmaUri, koulutusmoduuli.osaamisalaUri, komoto.tarjoaja,
                                 komoto.pohjakoulutusvaatimusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi, komoto.koulutustyyppiUri)));

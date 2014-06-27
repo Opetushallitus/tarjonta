@@ -5,6 +5,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -44,6 +45,14 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 public class HakukohdeResourceTest {
+
+    private static final String KOMOTO_PERUTTU = "komoto-peruttu";
+
+    private static final String KOMOTO_3 = "komoto-3";
+
+    private static final String KOMOTO_2 = "komoto-2";
+
+    private static final String KOMOTO_1 = "komoto-1";
 
     private static final Logger LOG = LoggerFactory
             .getLogger(HakukohdeResourceTest.class);
@@ -109,13 +118,13 @@ public class HakukohdeResourceTest {
         komoto1.setAlkamisVuosi(2005);
         komoto1.setKoulutusmoduuli(komo);
         komoto1.getKoulutuslajis().add(koodistoUri);
-        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-1")).toReturn(komoto1);
+//        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid(KOMOTO_1)).toReturn(komoto1);
         komoto2 = new KoulutusmoduuliToteutus();
         komoto2.setAlkamiskausiUri("kausi");
         komoto2.setAlkamisVuosi(2006);
         komoto2.setKoulutusmoduuli(komo);
         komoto2.getKoulutuslajis().add(koodistoUri);
-        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-2")).toReturn(komoto2);
+//        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid(KOMOTO_2)).toReturn(komoto2);
         komoto3 = new KoulutusmoduuliToteutus();
         komoto3.setAlkamiskausiUri("kausi2");
         komoto3.setKoulutusmoduuli(komo);
@@ -127,10 +136,38 @@ public class HakukohdeResourceTest {
         komotoPeruttu.setAlkamiskausiUri("kausi2");
         komotoPeruttu.setAlkamisVuosi(2005);
         
-        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-3")).toReturn(komoto3);
+//        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid(KOMOTO_3)).toReturn(komoto3);
+//
+//        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid(KOMOTO_PERUTTU)).toReturn(komotoPeruttu);
+
+        
+        Mockito.stub(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Mockito.anyList())).toAnswer(new Answer<List<KoulutusmoduuliToteutus>>() {
+            @Override
+            public List<KoulutusmoduuliToteutus> answer(
+                    InvocationOnMock invocation) throws Throwable {
+                List<KoulutusmoduuliToteutus> response = Lists.newArrayList();
+                List<String> oidit = (List<String>)invocation.getArguments()[0];
+                for(String oid:oidit) {
+                    if(KOMOTO_1.equals(oid)) {
+                        response.add(komoto1);
+                    }
+                    if(KOMOTO_2.equals(oid)) {
+                        response.add(komoto2);
+                    }
+                    if(KOMOTO_3.equals(oid)) {
+                        response.add(komoto3);
+                    }
+
+                    if(KOMOTO_PERUTTU.equals(oid)) {
+                        response.add(komotoPeruttu);
+                    }
+}
+                return response;
+            }
+        });
+        
         Whitebox.setInternalState(hakukohdeResource, "koulutusmoduuliToteutusDAO", koulutusmoduuliToteutusDAO);
         Whitebox.setInternalState(hakukohdeResource, "permissionChecker", permissionChecker);
-        Mockito.stub(koulutusmoduuliToteutusDAO.findByOid("komoto-peruttu")).toReturn(komotoPeruttu);
 
         Mockito.stub(converterV1.toHakukohde(Mockito.any(HakukohdeV1RDTO.class))).toAnswer(new Answer<Hakukohde>() {
             //mockaa convertteria sen mitä tarvii:
@@ -172,7 +209,7 @@ public class HakukohdeResourceTest {
     public void testOVT7385(){
         HakukohdeV1RDTO hk = getHakukohde();
         hk.getHakukohdeKoulutusOids().clear();
-        hk.getHakukohdeKoulutusOids().add("komoto-peruttu");
+        hk.getHakukohdeKoulutusOids().add(KOMOTO_PERUTTU);
         ResultV1RDTO<HakukohdeV1RDTO>res = hakukohdeResource.createHakukohde(hk);
         Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
         Assert.assertEquals("HAKUKOHDE_KOULUTUS_TILA_INVALID", res.getErrors().get(0).getErrorMessageKey());
@@ -191,14 +228,14 @@ public class HakukohdeResourceTest {
 
         //koulutukset joissa vuosi ei mätsää
         hk = getHakukohde();
-        hk.getHakukohdeKoulutusOids().add("komoto-2");
+        hk.getHakukohdeKoulutusOids().add(KOMOTO_2);
         res = hakukohdeResource.createHakukohde(hk);
         Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
         Assert.assertEquals("HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID", res.getErrors().get(0).getErrorMessageKey());
 
         //koulutukset joissa kausi ei mätsää
         hk = getHakukohde();
-        hk.getHakukohdeKoulutusOids().add("komoto-3");
+        hk.getHakukohdeKoulutusOids().add(KOMOTO_3);
         res = hakukohdeResource.createHakukohde(hk);
         Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
         Assert.assertEquals("HAKUKOHDE_KOULUTUS_VUOSI_KAUSI_INVALID", res.getErrors().get(0).getErrorMessageKey());
@@ -253,7 +290,7 @@ public class HakukohdeResourceTest {
     // palauta hakukohde joka menee läpi rajapinnasta ilman virheitä
     private HakukohdeV1RDTO getHakukohde(){
         HakukohdeV1RDTO hk = new HakukohdeV1RDTO();
-        hk.setHakukohdeKoulutusOids(Lists.newArrayList("komoto-1"));
+        hk.setHakukohdeKoulutusOids(Lists.newArrayList(KOMOTO_1));
         hk.setHakuOid("haku-1");
         hk.setTarjoajaOids(Sets.newHashSet("org-1"));
         hk.setHakukohteenNimet(ImmutableMap.<String, String>builder().put("fi", "nimi").build());
