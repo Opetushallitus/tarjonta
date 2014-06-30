@@ -513,7 +513,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
                 koulutusala: {module: 'TUTKINTO'},
                 opintoala: {module: 'TUTKINTO'},
-                tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
+                tutkintonimike: {},
                 koulutustyyppi: {module: 'TUTKINTO_OHJELMA'},
                 koulutuslaji: {module: 'TUTKINTO'}
             }, COMBO: {

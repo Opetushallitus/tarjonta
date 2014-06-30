@@ -18,7 +18,7 @@
             <select style="width : 1000px" size="25" id="myselection" multiple 
                     ng-multiple="true" 
                     ng-model="ctrl.link.selectedKomoOids"  
-                    ng-options="c.oid as  c.moduuli + ' ' + c.koulutus + ' ' + c.ohjelma  for c in ctrl.link.komos | orderBy:'koulutusmoduuliTyyppi' | orderBy:'koulutuskoodiUri'">
+                    ng-options="c.oid as  + c.koulutus + ' ' + c.ohjelma  for c in ctrl.link.komos | orderBy:'koulutusmoduuliTyyppi' | orderBy:'koulutuskoodiUri'">
             </select>
         </td>
     </tr>

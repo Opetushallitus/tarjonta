@@ -23,7 +23,6 @@ public class KoulutusPerustieto implements Serializable {
     private KoodistoKoodi pohjakoulutusvaatimus;
     private KoodistoKoodi koulutuslaji;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    private KoodistoKoodi lukiolinjakoodi;
     private KoodistoKoodi koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisVuosi;
     private String koulutustyyppi; //real uri not enum
@@ -140,15 +139,7 @@ public class KoulutusPerustieto implements Serializable {
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi value) {
         this.koulutusasteTyyppi = value;
     }
-
-    public KoodistoKoodi getLukiolinjakoodi() {
-        return lukiolinjakoodi;
-    }
-
-    public void setLukiolinjakoodi(KoodistoKoodi value) {
-        this.lukiolinjakoodi = value;
-    }
-
+    
     public KoodistoKoodi getKoulutuksenAlkamiskausi() {
         return koulutuksenAlkamiskausi;
     }

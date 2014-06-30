@@ -402,9 +402,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             koulutus.setAjankohta(tulos.getKoulutuksenAlkamiskausi().getNimi().get("fi") + " " + tulos.getKoulutuksenAlkamisVuosi());
             if (tulos.getKoulutusohjelma() != null) {
                 koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelma().getUri());
-            } else if (tulos.getLukiolinjakoodi() != null) {
-                koulutus.setLukiolinjakoodi(tulos.getLukiolinjakoodi().getUri());
-            }
+            } 
 
             koulutus.setKoulutuskoodi(tulos.getKoulutusKoodi().getUri());
 

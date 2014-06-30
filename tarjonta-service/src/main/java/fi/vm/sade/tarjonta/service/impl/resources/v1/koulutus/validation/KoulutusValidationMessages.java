@@ -113,7 +113,8 @@ public enum KoulutusValidationMessages {
     KOULUTUS_IMPORT_INVALID_DATA(""),
     KOULUTUS_IMPORT_FAILED("oid"),
     KOULUTUS_IMPORT_INVALID_COUNT(""),
-    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT("");
+    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT(""),
+    KOULUTUS_MODULE_NOT_FOUND("komoOid");
 
     private String fieldName;
 

@@ -35,13 +35,7 @@
                 <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
                     <div ng-include="'partials/koulutus/edit/amm/editLisatiedot.html'"></div>
                 </tab>
-                 
-                <tab heading="{{t('koulutus.edit.perustiedot-valmistava-koulutus')}}" disabled="uiModel.tabs.lisatiedot" 
-                     ng-disabled="uiModel.tabs.lisatiedot && uiModel.cbShowValmistavaKoulutus"
-                     ng-show="uiModel.toggleTabs">
-                    <div ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html'"></div>
-                </tab>
-               
+                
                 <tab heading="{{t('koulutus.edit.lisatiedot-valmistava-koulutus')}}" disabled="uiModel.tabs.lisatiedot" 
                      ng-disabled="uiModel.tabs.lisatiedot && uiModel.cbShowValmistavaKoulutus" 
                      ng-show="uiModel.toggleTabs">

@@ -240,15 +240,23 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         }
 
         if (dto.getClass() == KoulutusKorkeakouluV1RDTO.class) {
+            //TODO: currently no komo validation, when invalid throws exception
             return postKorkeakouluKoulutus((KoulutusKorkeakouluV1RDTO) dto);
-        } else if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
-            return postNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto);
-        } else if (dto.getClass() == AmmattitutkintoV1RDTO.class) {
-            return postNayttotutkintona((AmmattitutkintoV1RDTO) dto);
-        } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
-            return postNayttotutkintona((ErikoisammattitutkintoV1RDTO) dto);
-        } else if (dto.getClass() == KoulutusLukioAikuistenOppimaaraV1RDTO.class) {
-            return postLukioKoulutus((KoulutusLukioAikuistenOppimaaraV1RDTO) dto);
+        } else {
+            //Cannot be created without module. null komo => validation error
+            Koulutusmoduuli komo = null;
+            if (dto.getKomoOid() != null) {
+                komo = this.koulutusmoduuliDAO.findByOid(dto.getKomoOid());
+            }
+            if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
+                return postNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo);
+            } else if (dto.getClass() == AmmattitutkintoV1RDTO.class) {
+                return postNayttotutkintona((AmmattitutkintoV1RDTO) dto, komo);
+            } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
+                return postNayttotutkintona((ErikoisammattitutkintoV1RDTO) dto, komo);
+            } else if (dto.getClass() == KoulutusLukioAikuistenOppimaaraV1RDTO.class) {
+                return postLukioKoulutus((KoulutusLukioAikuistenOppimaaraV1RDTO) dto, komo);
+            }
         }
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>(null, ResultStatus.ERROR);
@@ -336,11 +344,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return false;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postLukioKoulutus(KoulutusLukioV1RDTO dto) {
+    private ResultV1RDTO<KoulutusV1RDTO> postLukioKoulutus(KoulutusLukioV1RDTO dto, Koulutusmoduuli komo) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        KoulutusValidator.validateKoulutusLukio(dto, result);
+        KoulutusValidator.validateKoulutusLukio(dto, komo, result);
 
         if (!result.hasErrors() && validateOrganisation(
                 dto.getOrganisaatio(), result,
@@ -372,11 +380,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(NayttotutkintoV1RDTO dto) {
+    private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(NayttotutkintoV1RDTO dto, final Koulutusmoduuli komo) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        KoulutusValidator.validateKoulutusNayttotutkinto(dto, result);
+        KoulutusValidator.validateKoulutusNayttotutkinto(dto, komo, result);
 
         if (!result.hasErrors()
                 && validateOrganisation(dto.getOrganisaatio(),
@@ -401,6 +409,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             Preconditions.checkNotNull(fullKomotoWithKomo, "KOMOTO object cannot be null!");
             Preconditions.checkNotNull(fullKomotoWithKomo.getId(), "KOMOTO ID cannot be null!");
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
+            if (fullKomotoWithKomo.getValmistavaKoulutus() != null) {
+                indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getValmistavaKoulutus().getId()));
+            }
 
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
             result.setResult(converterToRDTO.convert(
@@ -680,15 +691,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                         dto = KoulutusmoduuliLukioRelationV1RDTO.class.newInstance();
                         break;
-                    case AMMATILLINEN_PERUSTUTKINTO:
-                    case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
-                    case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                        dto = KoulutusmoduuliAmmatillinenRelationV1RDTO.class.newInstance();
-                        break;
                     default:
-                        /*
-                         * return standard relations
-                         */
+                        dto = KoulutusmoduuliAmmatillinenRelationV1RDTO.class.newInstance();
                         break;
                 }
             }
@@ -782,7 +786,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
             String komoOid,
             String alkamisPvmAlkaenTs) {
-        
+
         // Process alkamispvm search criteria
         // TODO alkamispvm not used yet!
         Date alkamisPvm = null;
@@ -794,16 +798,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
             alkamisPvm = new Date(tsRequired);
         }
-        
+
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
 
-        LOG.debug("/koulutus/search - searchInfo(st={}, orgOids={}, oids={}, tila={}, aKausi={}, aVuosi={}, " + 
-                "koulTyyppi={}, totTyyppi={}, komoOid={}, alkPvmTs={})", 
-                new Object[] {
+        LOG.debug("/koulutus/search - searchInfo(st={}, orgOids={}, oids={}, tila={}, aKausi={}, aVuosi={}, "
+                + "koulTyyppi={}, totTyyppi={}, komoOid={}, alkPvmTs={})",
+                new Object[]{
                     searchTerms, organisationOids, koulutusOids, komotoTila, alkamisKausi, alkamisVuosi,
                     koulutustyyppi, toteutustyyppi, komoOid, alkamisPvmAlkaenTs
                 });
-        
+
         KoulutuksetKysely q = new KoulutuksetKysely();
 
         q.setNimi(searchTerms);

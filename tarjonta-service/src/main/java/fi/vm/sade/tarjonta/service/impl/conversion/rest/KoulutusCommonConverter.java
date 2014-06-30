@@ -564,4 +564,12 @@ public class KoulutusCommonConverter {
         return mt;
     }
 
+    public boolean isOsaamisala(final NimiV1RDTO dto) {
+        KoodiType koodi = tarjontaKoodistoHelper.getKoodi(dto.getUri(), dto.getVersio());
+        if (koodi == null) {
+            throw new RuntimeException("Koodi not found by uri : '" + dto.getUri() + "' versio : " + dto.getVersio());
+        }
+
+        return KoodistoURI.KOODISTO_OSAAMISALA_URI.equals(koodi.getKoodisto().getKoodistoUri());
+    }
 }

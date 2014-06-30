@@ -197,6 +197,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                     //in lukio : 'koulutusohjelma' == 'lukiolinja'
                     lk.setKoulutusohjelma(singleKoodi(type.getKoodiUri(), FieldNames.LUKIOLINJA, restParam));
                     lk.setLukiolinja(singleKoodi(type.getKoodiUri(), FieldNames.LUKIOLINJA, restParam));
+                    multipleKoodis(type, lk.getOhjelmas(), FieldNames.LUKIOLINJA, restParam);
                 }
 
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSARVO_URI)) {
@@ -206,8 +207,10 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                 } else if (dto instanceof KoulutusmoduuliLukioRelationV1RDTO) {
                     KoulutusmoduuliLukioRelationV1RDTO lk = (KoulutusmoduuliLukioRelationV1RDTO) dto;
                     lk.setOpintojenLaajuusarvo(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, restParam));
+                } else if (dto instanceof KoulutusmoduuliAmmatillinenRelationV1RDTO) {
+                    KoulutusmoduuliAmmatillinenRelationV1RDTO ka = (KoulutusmoduuliAmmatillinenRelationV1RDTO) dto;
+                    ka.setOpintojenLaajuusarvo(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOJEN_LAAJUUSARVO, restParam));
                 }
-
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_OPINTOJEN_LAAJUUSYKSIKKO_URI)) {
                 dto.setOpintojenLaajuusyksikko(singleKoodi(type.getKoodiUri(), FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, restParam));
 
@@ -257,11 +260,13 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                     KoulutusmoduuliAmmatillinenRelationV1RDTO lk = (KoulutusmoduuliAmmatillinenRelationV1RDTO) dto;
                     lk.setKoulutusohjelma(singleKoodi(type.getKoodiUri(), FieldNames.OSAAMISALA, restParam));
                     lk.setOsaamisala(singleKoodi(type.getKoodiUri(), FieldNames.OSAAMISALA, restParam));
+                    multipleKoodis(type, lk.getOhjelmas(), FieldNames.OSAAMISALA, restParam);
                 }
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI)) {
                 if (dto instanceof KoulutusmoduuliAmmatillinenRelationV1RDTO) {
                     KoulutusmoduuliAmmatillinenRelationV1RDTO lk = (KoulutusmoduuliAmmatillinenRelationV1RDTO) dto;
                     lk.setKoulutusohjelma(singleKoodi(type.getKoodiUri(), FieldNames.KOULUTUSOHJELMA, restParam));
+                    multipleKoodis(type, lk.getOhjelmas(), FieldNames.KOULUTUSOHJELMA, restParam);
                 }
             } else {
                 LOG.trace("Ignored koodisto relation : '{}'", type.getKoodisto().getKoodistoUri());

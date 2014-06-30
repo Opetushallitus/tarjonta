@@ -31,7 +31,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NayttotutkintoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Map;
@@ -171,7 +173,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
-            convertParentChildKomoHierarchyToRDTO(dto, parentKomo, komo, komoto, param);
+            mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         } else if (dto instanceof NayttotutkintoV1RDTO) {
             /**
              * Nayttotutkinto:
@@ -179,13 +181,31 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              * AmmattitutkintoV1RDTO and ErikoisammattitutkintoV1RDTO
              */
             NayttotutkintoV1RDTO ammDto = (NayttotutkintoV1RDTO) dto;
-            ammDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getOsaamisalaUri(), FieldNames.OSAAMISALA, NO, param));
+
+            switch (komo.getModuuliTyyppi()) {
+                case TUTKINTO_OHJELMA:
+                    //primary 'tutkinto-ohjelma'
+                    NimiV1RDTO ohjelma = commonConverter.convertToNimiDTO(komo.getOsaamisalaUri(), komoto.getOsaamisalaUri(), FieldNames.OSAAMISALA, YES, param);
+
+                    //secondary or old type of 'tutkinto-ohjelma'
+                    if (ohjelma == null || ohjelma.getUri() == null) {
+                        //required osaamiala or koulutusohjelma data
+                        ohjelma = commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param);
+                    }
+
+                    ammDto.setKoulutusohjelma(ohjelma);
+
+                    break;
+            }
+
             ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
             ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
 
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
-            convertParentChildKomoHierarchyToRDTO(dto, parentKomo, komo, komoto, param);
+
+            //at least in some cases, the education erikoisammattitutkinto do not have parent komo
+            mergeParentAndChildDataToRDTO(dto, parentKomo != null ? parentKomo : komo, komo, komoto, param);
 
             final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
             //nayttoDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
@@ -276,10 +296,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     }
 
     /**
-     * Need pre-generated parent and child komo hierarchy, currenly only for
-     * lukio.
+     * Flatten parent and child hierarchy.
      */
-    private void convertParentChildKomoHierarchyToRDTO(TYPE dto, Koulutusmoduuli komoParent, Koulutusmoduuli komoChild, KoulutusmoduuliToteutus komoto, final RestParam restParam) {
+    private void mergeParentAndChildDataToRDTO(TYPE dto, Koulutusmoduuli komoParent, Koulutusmoduuli komoChild, KoulutusmoduuliToteutus komoto, final RestParam restParam) {
         Preconditions.checkNotNull(komoParent, "Koulutusmoduuli parent object cannot be null!");
         Preconditions.checkNotNull(komoChild, "Koulutusmoduuli child object cannot be null!");
         Preconditions.checkNotNull(komoChild.getKoulutustyyppiEnum(), "Koulutustyyppi enum cannot be null!");

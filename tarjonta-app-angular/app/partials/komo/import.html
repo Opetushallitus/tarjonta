@@ -1,24 +1,29 @@
-<display-controls model="controlModel.formControls" display="header"></display-controls>
-
-<controls-model
-    model="controlModel.formControls"
-    tt-create="koulutus.edit.header.title"
-    title="model.koulutusohjelma.tekstis"
-    dto="controlModel.formStatus">
-
-    <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="ctrl.showSuccess"></controls-notify>
-    <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="ctrl.showError"></controls-notify>
-    <controls-notify type="error-detail" ng-repeat="e in ctrl.validationmsgs" tt-expr="e" show="ctrl.showError"></controls-notify>
-</controls-model>
-
 Näytä kaikki moduulit : <input type="checkbox" data-ng-model="import.showAllKomos"/> 
+Näytä koodi : <input type="checkbox" data-ng-model="import.showUris"/> 
+
 <table border="1">
-    <tr ng-repeat="komo in import.uiModel| filter: import.filter">
+    <tr>
+        <td>Koulutus</td>
+        <td>Koulutusohjelma</td>
+        <td>Osaamisala</td>
+        <td>Lukiolinja</td>
+        <td>EQF</td>
+        <td>Koulutusaste</td>
+        <td>Koulutusala</td>
+        <td>Opintoala</td>
+        <td>Tutkinto</td>
+        <td>Laajuusyksikko</td>
+        <td>Laajuusarvo</td>
+        <td>Koulutustyyppi</p></td>
+        <td>Tutkintonimikes</td>
+        <td>KOMO OID</td>
+        <td>Viennin tila</td>
+    </tr>
+    <tr ng-if="import.showUris" ng-repeat="komo in import.uiModel| filter: import.filter">
         <td>{{komo.koulutuskoodi.uri}}</td>
-        <td  style="width:170px">{{komo.koulutusohjelma.uri}}</td>
-        <td  style="width:120px">{{komo.osaamisala.uri}}</td>
-        <td  style="width:120px">{{komo.lukiolinja.uri}}</td>
-        <td>{{komo.koulutusasteTyyppi}}</td>
+        <td>{{komo.koulutusohjelma.uri}}</td>
+        <td>{{komo.osaamisala.uri}}</td>
+        <td>{{komo.lukiolinja.uri}}</td>
         <td>{{komo.eqf.uri}}</td>
         <td>{{komo.koulutusaste.uri}}</td>
         <td>{{komo.koulutusala.uri}}</td>
@@ -26,13 +31,31 @@ Näytä kaikki moduulit : <input type="checkbox" data-ng-model="import.showAllKo
         <td>{{komo.tutkinto.uri}}</td>
         <td>{{komo.opintojenLaajuusyksikko.uri}}</td>
         <td>{{komo.opintojenLaajuusarvo.uri}}</td>
-        <td> <p ng-repeat="(ktKeyUri, value) in komo.koulutustyyppis.uris" > {{ktKeyUri}}</p></td>
+        <td> <p ng-repeat="(ktKeyUriTyyppi, value1) in komo.koulutustyyppis.uris" > {{ktKeyUriTyyppi}}</p></td>
+        <td> <p ng-repeat="(ktKeyUriTutkintonimike, value2) in komo.tutkintonimikes.uris" > {{ktKeyUriTutkintonimike}}</p></td>
         <td>{{komo.oid}}</td>
         <td>{{komo.status}}</td>
-        <!--td>{{ohjelma.tutkintonimikes}}</td-->
-        <!--td>{{ohjelma.oppilaitostyyppis}}</td-->
+        <!--td>showFiltered(ohjelma.tutkintonimikes}}</td-->
+        <!--td>showFiltered(ohjelma.oppilaitostyyppis}}</td-->
+    </tr>
+    <tr ng-if="!import.showUris" ng-repeat="komo in import.uiModel| filter: import.filter">
+        <td>{{komo.koulutuskoodi.arvo}}</td>
+        <td>{{komo.koulutusohjelma.arvo}}</td>
+        <td>{{komo.osaamisala.arvo}}</td>
+        <td>{{komo.lukiolinja.arvo}}</td>
+        <td>{{komo.eqf.arvo}}</td>
+        <td>{{komo.koulutusaste.arvo}}</td>
+        <td>{{komo.koulutusala.arvo}}</td>
+        <td>{{komo.opintoala.arvo}}</td>
+        <td>{{komo.tutkinto.arvo}}</td>
+        <td>{{komo.opintojenLaajuusyksikko.arvo}}</td>
+        <td>{{komo.opintojenLaajuusarvo.arvo}}</td>
+        <td> <p ng-repeat="(ktKeyUriTyyppi, value1) in komo.koulutustyyppis.uris" > {{ktKeyUriTyyppi}}</p></td>
+        <td> <p ng-repeat="(ktKeyUriTutkintonimike, value2) in komo.tutkintonimikes.uris" > {{ktKeyUriTutkintonimike}}</p></td>
+        <td>{{komo.oid}}</td>
+        <td>{{komo.status}}</td>
+        <!--td>showFiltered(ohjelma.tutkintonimikes}}</td-->
+        <!--td>showFiltered(ohjelma.oppilaitostyyppis}}</td-->
     </tr>
 </table>
-<a href=""  ng-click="importAllGroups()" >Lisää puutuvat koulutusmoduulit</a>
-
-<display-controls model="controlModel.formControls" display="footer"></display-controls>
+<a href=""  ng-click="importAllGroups()" >Lisää puuttuvat koulutusmoduulit</a>

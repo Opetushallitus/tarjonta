@@ -1,181 +1,168 @@
 <table style="vertical-align: top">
     <tr style="vertical-align: top">
         <td style="vertical-align: top">
-    <display-controls model="controlModel.formControls" display="header"></display-controls>
+            <a href="" class="btn" ng-click="update()"  primary="true">Tallenna</a>
+            <a href="" class="btn" ng-click="create()"  primary="true">Kopioi uudeksi</a>
 
-    <controls-model
-        model="controlModel.formControls"
-        tt-create="koulutus.edit.header.title"
-        title="model.koulutusohjelma.tekstis"
-        dto="controlModel.formStatus">
+            <table  style="vertical-align: top">
+                <tr>
+                    <td>KOMO OID</td>
+                    <td>
+                        <input style="width:350px" type="text" ng-model="ctrl.komoOid" /> 
+                        <b><a href="" ng-click="fetchByOid(ctrl.komoOid)">Hae</a></b>
+                    </td>
+                </tr>
+                <tr ng-repeat="obj in ctrl.textFields">
+                    <td>{{obj.name}}</td>
+                    <td ng-if="obj.type === 'URI'">
+                        <input type="text" ng-model="ctrl.result[obj.name].uri" />
+                        <input style="width:50px" type="text" ng-focus="initUri(obj.name)" ng-model="ctrl.result[obj.name].versio" /><a href="" ng-click="removeField(obj.name)">Tyhjennä</a>
+                    </td>
+                    <td ng-if="obj.type === 'OID'">
+                        <input type="text" ng-model="ctrl.result[obj.name].oid" /> 
+                    </td>
+                    <td ng-if="obj.type === 'STR'">
+                        <input type="text" ng-model="ctrl.result[obj.name]" />  
+                    </td>
+                    <td ng-if="obj.type === 'ENUM_TUTKINTO'">
+                        <select ng-model="ctrl.result[obj.name]" ng-options="c.enum as c.name for c in ctrl.typeOptions"></select>
+                    </td>
+                    <td ng-if="obj.type === 'ENUM_STATUS'">
+                        <select ng-model="ctrl.result[obj.name]" ng-options="c.enum as c.name for c in ctrl.statusOptions"></select>
+                    </td>
+                    <td ng-if="obj.type === 'ENUM_KOULUTUS'">
+                        <select ng-model="ctrl.result[obj.name]" ng-options="c.enum as c.name for c in ctrl.koulutusOptions"></select>
+                    </td>
+                    <td ng-if="obj.type === 'DATE'">
+                        {{ctrl.result[obj.name]| date:'dd.MM.yyyy HH:mm:ss'}}</td>
+                    <td ng-if="obj.type === 'URI_VERSION_MAP'">
+                        <hr />
+                        <table>
+                            <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
+                                <td><input type="text" ng-model="key" /><input  style="width:50px" type="text" ng-model="ctrl.result[obj.name].uris[key]" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b><input type="text" ng-model="ctrl.apiKeys[obj.name]" /><a href="" ng-click="addUriVersio(ctrl.apiKeys[obj.name], 1, obj.name)">Lisää {{obj.name}}</b>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                    </td>
+                    <td ng-if="obj.type === 'URI_MAP'">
+                        <hr />
+                        <table>
+                            <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
+                                <td><input type="text" ng-model="key" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b><input type="text" ng-model="ctrl.apiKeys[obj.name]" /><a href="" ng-click="addUriVersio(ctrl.apiKeys[obj.name], 1, obj.name)">Lisää {{obj.name}}</b>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                    </td>
 
-        <controls-button tt-key="komo.edit.tallenna" action="update()" disabled="!canUpdate()" primary="true"></controls-button>
-        <controls-button tt-key="komo.edit.kopioi" action="create()"  disabled="!canCreate()" primary="true"></controls-button>
+                    <td ng-if="obj.type === 'TEXT_MAP'">
+                        <hr />
+                        <table>
+                            <tr ng-repeat="(key, value) in ctrl.result[obj.name].tekstis">
+                                <td>
+                                    <input type="text" ng-model=" ctrl.result[obj.name].tekstis[key]" /> {{key}} <a href="" ng-click="removeLanguageToFieldTekstis(key, ctrl.result[obj.name].tekstis)">X</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select style="width : 100px" ng-model="ctrl.selectedLang" ng-options="c.enum as c.name for c in ctrl.langOptions"></select>
+                                    <b><a href="" ng-click="addLanguageToFieldTekstis(ctrl.selectedLang, obj.name)">Lisää {{obj.name}} kieli</a></b>
 
-        <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="ctrl.showSuccess"></controls-notify>
-        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="ctrl.showError"></controls-notify>
-        <controls-notify type="error-detail" ng-repeat="e in ctrl.validationmsgs" tt-expr="e" show="ctrl.showError"></controls-notify>
-    </controls-model>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
+                    </td>
 
-    <table  style="vertical-align: top">
-        <tr>
-            <td>KOMO OID</td>
-            <td>
-                <input style="width:350px" type="text" ng-model="ctrl.komoOid" /> 
-                <b><a href="" ng-click="fetchByOid(ctrl.komoOid)">Hae</a></b>
-            </td>
-        </tr>
-        <tr ng-repeat="obj in ctrl.textFields">
-            <td>{{obj.name}}</td>
-            <td ng-if="obj.type === 'URI'">
-                <input type="text" ng-model="ctrl.result[obj.name].uri" />
-                <input style="width:50px" type="text" ng-focus="initUri(obj.name)" ng-model="ctrl.result[obj.name].versio" /><a href="" ng-click="removeField(obj.name)">Tyhjennä</a>
-            </td>
-            <td ng-if="obj.type === 'OID'">
-                <input type="text" ng-model="ctrl.result[obj.name].oid" /> 
-            </td>
-            <td ng-if="obj.type === 'STR'">
-                <input type="text" ng-model="ctrl.result[obj.name]" />  
-            </td>
-            <td ng-if="obj.type === 'ENUM_TUTKINTO'">
-                <select ng-model="ctrl.result[obj.name]" ng-options="c.enum as c.name for c in ctrl.typeOptions"></select>
-            </td>
-            <td ng-if="obj.type === 'ENUM_STATUS'">
-                <select ng-model="ctrl.result[obj.name]" ng-options="c.enum as c.name for c in ctrl.statusOptions"></select>
-            </td>
-            <td ng-if="obj.type === 'ENUM_KOULUTUS'">
-                <select ng-model="ctrl.result[obj.name]" ng-options="c.enum as c.name for c in ctrl.koulutusOptions"></select>
-            </td>
-            <td ng-if="obj.type === 'DATE'">
-                {{ctrl.result[obj.name]| date:'dd.MM.yyyy HH:mm:ss'}}</td>
-            <td ng-if="obj.type === 'URI_VERSION_MAP'">
-                <hr />
-                <table>
-                    <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
-                        <td><input type="text" ng-model="key" /><input  style="width:50px" type="text" ng-model="ctrl.result[obj.name].uris[key]" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b><input type="text" ng-model="ctrl.apiKeys[obj.name]" /><a href="" ng-click="addUriVersio(ctrl.apiKeys[obj.name], 1, obj.name)">Lisää {{obj.name}}</b>
-                        </td>
-                    </tr>
-                </table>
-                <br/>
-            </td>
-            <td ng-if="obj.type === 'URI_MAP'">
-                <hr />
-                <table>
-                    <tr ng-repeat="(key, value) in ctrl.result[obj.name].uris">
-                        <td><input type="text" ng-model="key" /></a> <a ng-click="removeUriVersio(key, obj.name)">X</a></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b><input type="text" ng-model="ctrl.apiKeys[obj.name]" /><a href="" ng-click="addUriVersio(ctrl.apiKeys[obj.name], 1, obj.name)">Lisää {{obj.name}}</b>
-                        </td>
-                    </tr>
-                </table>
-                <br/>
-            </td>
+                    <td ng-if="obj.type === 'TEXT_ENUM_MAP'">
+                        <hr />
 
-            <td ng-if="obj.type === 'TEXT_MAP'">
-                <hr />
-                <table>
-                    <tr ng-repeat="(key, value) in ctrl.result[obj.name].tekstis">
-                        <td>
-                            <input type="text" ng-model=" ctrl.result[obj.name].tekstis[key]" /> {{key}} <a href="" ng-click="removeLanguageToFieldTekstis(key, ctrl.result[obj.name].tekstis)">X</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select style="width : 100px" ng-model="ctrl.selectedLang" ng-options="c.enum as c.name for c in ctrl.langOptions"></select>
-                            <b><a href="" ng-click="addLanguageToFieldTekstis(ctrl.selectedLang, obj.name)">Lisää {{obj.name}} kieli</a></b>
+                        <select style="width : 100px" ng-model="ctrl.selectedKomoEnum" ng-options="c.enum as c.name for c in ctrl.komoOptions"></select>
+                        <select style="width : 100px" ng-model="ctrl.selectedLang" ng-options="c.enum as c.name for c in ctrl.langOptions"></select>                     
+                        <b><a href="" ng-click="addLanguageToEnumFieldTekstis(ctrl.selectedLang, ctrl.selectedKomoEnum, obj.name)">Lisää {{obj.name}} kieli</a></b>
 
-                        </td>
-                    </tr>
-                </table>
-                <br/>
-            </td>
+                        <table>
+                            <tr ng-repeat="(key, value) in ctrl.result[obj.name]">
+                                <td>{{key}}     
+                                    <table>
+                                        <tr ng-repeat="(a, b) in ctrl.result[obj.name][key].tekstis">
+                                            <td> <textarea style="width: 500px; height : 200px" type="text" ng-model="ctrl.result[obj.name][key].tekstis[a]" /> {{a}} <a href="" ng-click="removeLanguageToEnumFieldTekstis(a, ctrl.result[obj.name][key].tekstis)">X</a></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <br/>
 
-            <td ng-if="obj.type === 'TEXT_ENUM_MAP'">
-                <hr />
+                    </td>
+                </tr>
+            </table>
 
-                <select style="width : 100px" ng-model="ctrl.selectedKomoEnum" ng-options="c.enum as c.name for c in ctrl.komoOptions"></select>
-                <select style="width : 100px" ng-model="ctrl.selectedLang" ng-options="c.enum as c.name for c in ctrl.langOptions"></select>                     
-                <b><a href="" ng-click="addLanguageToEnumFieldTekstis(ctrl.selectedLang, ctrl.selectedKomoEnum, obj.name)">Lisää {{obj.name}} kieli</a></b>
+        </td>
+        <td style="vertical-align: top">
+            &nbsp; &nbsp; &nbsp;
+        </td>
+        <td style="vertical-align: top">
+            <table style="vertical-align: top">
+                <tr>
+                    <td><b>Lapseksi liitettävät koulutusmoduulit</b></td>
+                </tr>
+                <tr>
+                    <td>Koulutuskoodi</td>
+                    <td>Koulutusohjelma</td>
+                </tr>
+                <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
+                    <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+                    <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
 
-                <table>
-                    <tr ng-repeat="(key, value) in ctrl.result[obj.name]">
-                        <td>{{key}}     
-                            <table>
-                                <tr ng-repeat="(a, b) in ctrl.result[obj.name][key].tekstis">
-                                    <td> <textarea style="width: 500px; height : 200px" type="text" ng-model="ctrl.result[obj.name][key].tekstis[a]" /> {{a}} <a href="" ng-click="removeLanguageToEnumFieldTekstis(a, ctrl.result[obj.name][key].tekstis)">X</a></td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-                <br/>
+                </tr>
+                <tr>
+                    <td colspan="2"> <b><a href="" ng-click="addChilds(ctrl.result.komoOid, ctrl.link.selectedKomoOids)">Liitä lapsiksi</a></b></td>
+                </tr>
+            </table>
+            <table style="vertical-align: top">
+                <tr>
+                    <td><b>Koulutusmoduulin alamoduulit (lapset)</b></td>
+                </tr>
+                <tr>
+                    <td>Koulutuskoodi</td>
+                    <td>Koulutusohjelma</td>
+                    <td>Poista liitos</td>
+                </tr>
+                <tr ng-repeat="komoOid in ctrl.link.selectedLinkOids">
+                    <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+                    <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+                    <td><b><a ng-click="removeLink(ctrl.result.komoOid, komoOid)">Poista</a></b></td>
+                </tr>
 
-            </td>
-        </tr>
-    </table>
-    <display-controls model="controlModel.formControls" display="footer"></display-controls>
-</td>
-<td style="vertical-align: top">
-    &nbsp; &nbsp; &nbsp;
-</td>
-<td style="vertical-align: top">
-    <table style="vertical-align: top">
-        <tr>
-            <td><b>Lapseksi liitettävät koulutusmoduulit</b></td>
-        </tr>
-        <tr>
-            <td>Koulutuskoodi</td>
-            <td>Koulutusohjelma</td>
-        </tr>
-        <tr ng-repeat="komoOid in ctrl.link.selectedKomoOids">
-            <td>{{searchKomoByOid(komoOid).koulutus}}</td>
-            <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+            </table>
 
-        </tr>
-        <tr>
-            <td colspan="2"> <b><a href="" ng-click="addChilds(ctrl.result.komoOid, ctrl.link.selectedKomoOids)">Liitä lapsiksi</a></b></td>
-        </tr>
-    </table>
-    <table style="vertical-align: top">
-        <tr>
-            <td><b>Koulutusmoduulin alamoduulit (lapset)</b></td>
-        </tr>
-        <tr>
-            <td>Koulutuskoodi</td>
-            <td>Koulutusohjelma</td>
-            <td>Poista liitos</td>
-        </tr>
-        <tr ng-repeat="komoOid in ctrl.link.selectedLinkOids">
-            <td>{{searchKomoByOid(komoOid).koulutus}}</td>
-            <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
-            <td><b><a ng-click="removeLink(ctrl.result.komoOid, komoOid)">Poista</a></b></td>
-        </tr>
+            <br/><br/>
+            <table style="vertical-align: top">
+                <tr>
+                    <td><b>Koulutusmoduulin ylämoduulit</b></td>
+                </tr>
+                <tr>
+                    <td>Koulutuskoodi</td>
+                    <td>Koulutusohjelma</td>
+                    <td>Poista liitos</td>
+                </tr>
+                <tr ng-repeat="komoOid in ctrl.link.selectedParentLinkOids">
+                    <td>{{searchKomoByOid(komoOid).koulutus}}</td>
+                    <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
+                    <td><b><a ng-click="removeLink(ctrl.komoOid, komoOid)">Poista</a></b></td>
+                </tr>
+            </table>
 
-    </table>
-
-    <br/><br/>
-    <table style="vertical-align: top">
-        <tr>
-            <td><b>Koulutusmoduulin ylämoduulit</b></td>
-        </tr>
-        <tr>
-            <td>Koulutuskoodi</td>
-            <td>Koulutusohjelma</td>
-            <td>Poista liitos</td>
-        </tr>
-        <tr ng-repeat="komoOid in ctrl.link.selectedParentLinkOids">
-            <td>{{searchKomoByOid(komoOid).koulutus}}</td>
-            <td>{{searchKomoByOid(komoOid).ohjelma}}</td>
-            <td><b><a ng-click="removeLink(ctrl.komoOid, komoOid)">Poista</a></b></td>
-        </tr>
-    </table>
-
-</td>
-</tr>            
+        </td>
+    </tr>            
 </table>
