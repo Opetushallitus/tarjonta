@@ -50,6 +50,7 @@ app.controller('HakukohdeParentController', ['$scope',
         var routing={
             "KORKEAKOULUTUS":korkeakoulutusHakukohdePartialUri,
             "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA":aikuLukioHakukohdePartialUri,
+            "LUKIOKOULUTUS":aikuLukioHakukohdePartialUri,
             "AMMATILLINEN_PERUSKOULUTUS":aikuNayttoHakukohdePartialUri
         };
         
@@ -211,13 +212,15 @@ app.controller('HakukohdeParentController', ['$scope',
                 $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
                 $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
                 
-                var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+                var koulutusTyyppi = $route.current.locals.hakukohdex.result.koulutusAsteTyyppi;
 
                 var uri = routing[koulutusTyyppi];
                 
                 if(uri) {
                   return uri;
                 }
+                $log.info('KOULUTUSTYYPPI WAS: ' , koulutusTyyppi, " not returning template!!");
+                $log.info('TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
 
             } else {
                 var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
@@ -228,11 +231,12 @@ app.controller('HakukohdeParentController', ['$scope',
                 if(uri) {
                   return uri;
                 }
-                
                 $log.info('KOULUTUSTYYPPI WAS: ' , koulutusTyyppi, " not returning template!!");
-
+                
                 //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
             }
+            
+
 
         };
 
