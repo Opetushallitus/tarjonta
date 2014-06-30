@@ -669,7 +669,7 @@ app.controller('HakukohdeParentController', ['$scope',
                     $scope.model.hakus.push(haku);
                 });
 
-                if ($scope.model.hakukohde.hakuOid !== undefined) {
+                if ($scope.model.hakukohde.hakuOid !== undefined && $scope.model.hakuChanged) {
                     $scope.model.hakuChanged();
                 }
             });
