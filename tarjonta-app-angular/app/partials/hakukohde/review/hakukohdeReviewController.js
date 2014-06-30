@@ -353,14 +353,22 @@ app.controller('HakukohdeReviewController',
 
     var loadHakukelpoisuusVaatimukses = function() {
 
-        angular.forEach($scope.model.hakukohde.hakukelpoisuusvaatimusUris,function(hakukelpoisuusVaatimusUri){
+      var koodistot={
+          LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:"hakukelpoisuusvaatimusta",
+          KORKEAKOULUTUS:"pohjakoulutusvaatimuskorkeakoulut"
+      };
+      
+      var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];
+      if(!koodisto){
+        $log.error("don't know which koodisto to use??!? toteutusTyyppi:", $scope.model.hakukohde.toteutusTyyppi);
+      }
 
-            getKoodiWithUri('pohjakoulutusvaatimuskorkeakoulut',hakukelpoisuusVaatimusUri,function(hakukelpoisuusVaatimusKoodi){
-                   $scope.model.hakukelpoisuusVaatimukses.push(hakukelpoisuusVaatimusKoodi.koodiNimi);
+      angular.forEach($scope.model.hakukohde.hakukelpoisuusvaatimusUris,function(hakukelpoisuusVaatimusUri){
+          getKoodiWithUri(koodisto,hakukelpoisuusVaatimusUri,function(hakukelpoisuusVaatimusKoodi){
+                 $scope.model.hakukelpoisuusVaatimukses.push(hakukelpoisuusVaatimusKoodi.koodiNimi);
 
-               });
-
-        });
+          });
+      });
 
     };
 
