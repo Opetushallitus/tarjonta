@@ -109,6 +109,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
         permissionChecker.checkCreateKoulutus(ORGANISATION_OID);
 
+        //extra koulutusohjelma uri check
+        expect(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).andReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA)).times(1);
+
         expectNayttoKoodis();  /* 1th round koodisto calls, convert result to dto */
 
         /*
@@ -146,6 +149,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expect(publicationDataService.isValidStatusChange(isA(fi.vm.sade.tarjonta.publication.Tila.class))).andReturn(true);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(2);
         expect(organisaatioServiceMock.findByOid(ORGANISATION_JARJESTAJA_OID)).andReturn(jarjestajaDTO).times(2);
+        //extra koulutusohjelma uri check
+        expect(tarjontaKoodistoHelperMock.getKoodi("koulutusohjelma_uri", 1)).andReturn(createKoodiType(KOULUTUSOHJELMA, "x" + KOULUTUSOHJELMA)).times(1);
+
         replayAll();
 
         /*
@@ -176,6 +182,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     }
 
     private void expectNayttoKoodis() {
+
         expectKausiNaytto();
         expectMetaUri(KOULUTUSOHJELMA);
         expectMetaUri(KOULUTUSKOODI);
