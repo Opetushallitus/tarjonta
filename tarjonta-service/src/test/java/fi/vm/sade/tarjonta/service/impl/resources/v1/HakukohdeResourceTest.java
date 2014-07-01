@@ -280,6 +280,16 @@ public class HakukohdeResourceTest {
         hk = getHakukohde();
         res = hakukohdeResource.createHakukohde(hk);
         Assert.assertEquals(ResultStatus.OK, res.getStatus());
+
+        // KJOH-810, organisaatioryhmät hakukohteelle
+        Assert.assertEquals(res.getResult().getOrganisaatioRyhmaOids().length, hk.getOrganisaatioRyhmaOids().length);
+        for (String oid : hk.getOrganisaatioRyhmaOids()) {
+            boolean tmp = false;
+            for (String oidResult : res.getResult().getOrganisaatioRyhmaOids()) {
+                tmp = tmp || oid.equalsIgnoreCase(oidResult);
+            }
+            Assert.assertTrue("Organisaatioryhmä oid täytyy olla olemassa!", tmp);
+        }
         
         //luotiin oidi?
         Assert.assertNotNull(res.getResult().getOid());
@@ -295,6 +305,7 @@ public class HakukohdeResourceTest {
         hk.setTarjoajaOids(Sets.newHashSet("org-1"));
         hk.setHakukohteenNimet(ImmutableMap.<String, String>builder().put("fi", "nimi").build());
         hk.setTila(TarjontaTila.LUONNOS.toString());
+        hk.setOrganisaatioRyhmaOids(new String[] {"1.2.3.4", "5.6.7.8"});        
         return hk;
     }
     

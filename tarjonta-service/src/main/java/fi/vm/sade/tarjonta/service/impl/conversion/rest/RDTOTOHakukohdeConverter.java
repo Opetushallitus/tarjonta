@@ -96,6 +96,9 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
 
         hakukohde.getValintakoes().addAll(convertValintakoeRDTOToValintakoe(hakukohdeRDTO.getValintakokeet()));
 
+        // KJOH-810
+        hakukohde.setOrganisaatioRyhmaOids(hakukohdeRDTO.getOrganisaatioRyhmaOids());
+        
         return hakukohde;
     }
 
