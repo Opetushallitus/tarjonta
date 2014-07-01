@@ -79,6 +79,6 @@ organisaatio.webservice.url.backend=https://${host.virkailija}/organisaatio-serv
 root.organisaatio.oid=1.2.246.562.10.00000000001
 tarjonta.admin.webservice.url.backend=https://${host.virkailija}/tarjonta-service/services/tarjontaAdminService
 tarjonta.public.webservice.url.backend=https://${host.virkailija}/tarjonta-service/services/tarjontaPublicService
-user.home.conf=${user.home}/oph-configuration
+user.home.conf=/data00/oph/tarjonta/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
 web.url.cas=https\://${host.cas}/cas
