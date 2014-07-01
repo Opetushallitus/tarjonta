@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class SolrDocumentToKoulutusConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrDocumentToKoulutusConverter.class);
-    
+
     public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, Map<String, OrganisaatioPerustieto> orgs) {
         KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
@@ -107,9 +107,9 @@ public class SolrDocumentToKoulutusConverter {
 
     /**
      * Extract koulutus alkamis pvm (min/max) information from solr document.
-     * 
+     *
      * @param koulutusDoc
-     * @param perustieto 
+     * @param perustieto
      */
     private void createKoulutuksenAlkamisPvm(SolrDocument koulutusDoc, KoulutusPerustieto perustieto) {
         LOG.info("createKoulutuksenAlkamisPvm() alkamisPvmMin = {}", koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN));
@@ -118,7 +118,7 @@ public class SolrDocumentToKoulutusConverter {
         perustieto.setKoulutuksenAlkamisPvmMin((Date) koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN));
         perustieto.setKoulutuksenAlkamisPvmMax((Date) koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX));
     }
-    
+
     private KoulutusasteTyyppi createKoulutustyyppi(SolrDocument koulutusDoc) {
         if (koulutusDoc.getFieldValue(KOULUTUSASTETYYPPI_ENUM) != null) {
             try {
@@ -140,10 +140,14 @@ public class SolrDocumentToKoulutusConverter {
             for (int i = 0; i < nimet.size(); i++) {
                 asetaNimiArvosta(koulutus.getNimi(), koulutusDoc, (String) nimienKielet.get(i), (String) nimet.get(i));
             }
-        } else { //no name set
+        } else if (koulutusDoc.getFieldValues(KOULUTUSOHJELMA_URI) != null) { //no name set
             asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.FI, KOULUTUSOHJELMA_FI);
             asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.SV, KOULUTUSOHJELMA_SV);
             asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.EN, KOULUTUSOHJELMA_EN);
+        } else {
+            asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.FI, KOULUTUSKOODI_FI);
+            asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.SV, KOULUTUSKOODI_SV);
+            asetaNimi(koulutus.getNimi(), koulutusDoc, Nimi.EN, KOULUTUSKOODI_EN);
         }
     }
 

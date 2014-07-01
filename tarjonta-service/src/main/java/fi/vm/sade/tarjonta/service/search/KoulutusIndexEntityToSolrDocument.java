@@ -87,7 +87,7 @@ import java.util.Date;
 @Component
 public class KoulutusIndexEntityToSolrDocument implements
         Function<KoulutusIndexEntity, List<SolrInputDocument>> {
-    
+
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
     @Autowired
@@ -134,20 +134,6 @@ public class KoulutusIndexEntityToSolrDocument implements
                 case LUKIOKOULUTUS:
                     addKoulutusohjelmaTiedot(komotoDoc, koulutus.getLukiolinja());
                     break;
-                case AMMATILLINEN_PERUSKOULUTUS:
-                    if (koulutus.getSubKoulutustyyppiEnum() != null) {
-                        switch (koulutus.getSubKoulutustyyppiEnum()) {
-                            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                                addKoulutusohjelmaTiedot(komotoDoc, koulutus.getOsaamisalaUri());
-                                break;
-                            default:
-                                addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
-                                break;
-                        }
-                    } else {
-                        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
-                    }
-                    break;
                 case KORKEAKOULUTUS:
                     //vapaavalintainen nimi
 
@@ -191,7 +177,11 @@ public class KoulutusIndexEntityToSolrDocument implements
 
                     break;
                 default:
-                    addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
+                    if (koulutus.getOsaamisalaUri() != null) {
+                        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getOsaamisalaUri());
+                    } else if (koulutus.getKoulutusohjelmaKoodi() != null) {
+                        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
+                    } 
                     //muut: koulutusohjelma, pohjakoulutus
                     break;
             }
@@ -210,7 +200,7 @@ public class KoulutusIndexEntityToSolrDocument implements
             } else {
                 // exact dates given
                 IndexDataUtils.addKausikoodiTiedot(komotoDoc, IndexDataUtils.parseKausiKoodi(d), koodiService);
-                add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(d));                
+                add(komotoDoc, VUOSI_KOODI, IndexDataUtils.parseYear(d));
             }
         }
 
@@ -229,11 +219,10 @@ public class KoulutusIndexEntityToSolrDocument implements
         addTekstihaku(komotoDoc);
 
         addKoulutusAlkamisPvm(komotoDoc, koulutus);
-        
+
         docs.add(komotoDoc);
         return docs;
     }
-    
 
     private void addKoulutusLajis(SolrInputDocument doc, List<String> koodistoUris) {
         if (koodistoUris == null) {
@@ -300,7 +289,6 @@ public class KoulutusIndexEntityToSolrDocument implements
 //            add(doc, TUTKINTONIMIKE_URI, tutkintonimike);
 //        }
 //    }
-
     private void addKoulutuskoodiTiedot(SolrInputDocument doc,
             String koulutusKoodi, String oid) {
         if (koulutusKoodi == null) {
@@ -363,13 +351,13 @@ public class KoulutusIndexEntityToSolrDocument implements
 
     /**
      * Add min, max info to solr doc.
-     * 
+     *
      * @param komotoDoc
-     * @param koulutus 
+     * @param koulutus
      */
     private void addKoulutusAlkamisPvm(SolrInputDocument komotoDoc, KoulutusIndexEntity koulutus) {
 //        logger.debug("addKoulutusAlkamisPvm(min={}, max={})", koulutus.getKoulutuksenAlkamisPvmMin(), koulutus.getKoulutuksenAlkamisPvmMax());
-        
+
         add(komotoDoc, SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN, koulutus.getKoulutuksenAlkamisPvmMin());
         add(komotoDoc, SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX, koulutus.getKoulutuksenAlkamisPvmMax());
     }
