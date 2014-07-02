@@ -21,6 +21,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRyhmaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
@@ -261,4 +262,13 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Tutkii onko esitetty tilamuutos mahdollinen", response = Boolean.class)
     public ResultV1RDTO<Boolean> isStateChangePossible(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
+    
+    @POST
+    @Path("/ryhmat/lisaa")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Liittää/poistaa annetut ryhmat hakukohteelle, ei muuta olemassaolevia liitoksia")
+    public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(
+            @ApiParam(value = "Lista hakukohteiden liittamis/poistamis toimintoja", required = true)
+            List<HakukohdeRyhmaV1RDTO> data);
+    
 }

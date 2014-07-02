@@ -60,6 +60,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRyhmaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
@@ -1232,6 +1233,25 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             TarjontaTila tila) {
         Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
         return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
+    }
+
+    // POST /hakukohde/ryhmat/lisaa
+    @Override
+    public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(List<HakukohdeRyhmaV1RDTO> data) {
+        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+        LOG.info("lisaaRyhmatHakukohteille()");
+
+        result.setResult(Boolean.FALSE);
+
+        for (HakukohdeRyhmaV1RDTO hakukohdeRyhmaV1RDTO : data) {
+            result.addError(ErrorV1RDTO.createValidationError(
+                    "none",
+                    "hakukohde.permissionDenied",
+                    hakukohdeRyhmaV1RDTO.getHakukohdeOid(),
+                    hakukohdeRyhmaV1RDTO.getRyhmaOid()));
+        }
+
+        return result;
     }
 
 }
