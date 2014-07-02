@@ -64,7 +64,6 @@ app.controller('EditNayttotutkintoController',
                          */
                         $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
-
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
@@ -85,6 +84,9 @@ app.controller('EditNayttotutkintoController',
                                 });
                             });
                         });
+
+                        //activate valmistava koulutus 
+                       $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
 
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
@@ -128,8 +130,9 @@ app.controller('EditNayttotutkintoController',
                         $scope.uiModel.toggleTabs = true;
                     } else {
                         $scope.uiModel.cbShowValmistavaKoulutus = false;
-                        $scope.uiModel.toggleTabs = false;
                     }
+
+
                 };
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, uri, tutkintoTyyppi) {
@@ -376,16 +379,20 @@ app.controller('EditNayttotutkintoController',
                     }
                 });
 
+                $scope.initValmistavaKoulutus = function(apimodel, uiModel, vkUiModel) {
+                    var model = {};
+                    $scope.commonNewModelHandler($scope.koulutusForm, model, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    apimodel.valmistavaKoulutus = model;
+                    $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    vkUiModel.selectedKieliUri = "kieli_fi";
+                    vkUiModel.showValidationErrors = false;
+                    uiModel.toggleTabs = true;
+                };
+
                 $scope.$watch("uiModel.cbShowValmistavaKoulutus", function(valNew, valOld) {
                     if (valNew && ($scope.model.valmistavaKoulutus === null || !angular.isDefined($scope.model.valmistavaKoulutus))) {
-                        var model = {};
-                        $scope.commonNewModelHandler($scope.koulutusForm, model, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                        $scope.model.valmistavaKoulutus = model;
-                        $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                        $scope.vkUiModel.selectedKieliUri = "kieli_fi";
-                        $scope.vkUiModel.showValidationErrors = false;
 
-                        $scope.uiModel.toggleTabs = true;
+                        $scope.initValmistavaKoulutus($scope.model, $scope.uiModel, $scope.vkUiModel);
                     } else if (valNew !== valOld && angular.isDefined($scope.model.valmistavaKoulutus)) {
                         var modalInstance = $modal.open({
                             scope: $scope,
