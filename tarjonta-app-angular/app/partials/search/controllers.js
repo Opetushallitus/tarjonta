@@ -809,6 +809,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                             
                             $log.info("  valitut ryhmät: ", valitutRyhmat);
 
+                            // Create request data
+                            var requestData = [];
+                            angular.forEach(valitutRyhmat, function (ryhma) {
+                                angular.forEach($scope.model.hakukohteet, function(hakukohdeOid) {
+                                    requestData.push({ toiminto: "LISAA", hakukohdeOid: hakukohdeOid, ryhmaOid: ryhma.oid});
+                                });
+                            });
+                            
+                            // Tee pyyntö
+                            $log.info("SERVER SIDE CALL: ", requestData);
+
                             // TODO Liitä hakukohteet valittuihin ryhmiin                            
                             
                             $scope.model.completed = true;
