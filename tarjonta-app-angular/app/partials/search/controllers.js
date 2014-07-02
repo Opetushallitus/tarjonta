@@ -765,7 +765,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     };
 
                     //
-                    // Valittujen hakukohteiden liittaminen (tyhmiin?) ryhmiin
+                    // KJOH-810 Valittujen hakukohteiden liittaminen (tyhmiin?) ryhmiin
                     //
 
                     var AddHakukohdeToGroupController = function($scope, $modalInstance, valitutHakukohteet, ryhmat) {
@@ -773,19 +773,70 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         
                         var init = function() {
                             $log.info("AddHakukohdeToGroupController.init()", valitutHakukohteet, ryhmat);
-//                            $scope.oid = ns.oid;
+                               
+                            $scope.model = $scope.model ? $scope.model : {};
+                            $scope.model.hakukohteet = valitutHakukohteet;
+                            $scope.model.ryhmat = ryhmat;
+                            $scope.model.completed = false;
                         };
 
                         init();
 
+                        /**
+                         * Valitsee ryhmän nimen.
+                         * 
+                         * TODO käyttäjän kieli ryhmön nimen näyttäminen...
+                         */
+                        $scope.getNimi = function(ryhma) {
+                            var nimi;
+                            nimi = nimi ? nimi : ryhma.nimi.fi;
+                            nimi = nimi ? nimi : ryhma.nimi.sv;
+                            nimi = nimi ? nimi : ryhma.nimi.en;
+                            nimi = nimi ? nimi : "SIN NOMBRE?";
+
+                            return nimi;
+                        }
+
+                        /**
+                         * Liitä valitut hakukohteet valittuihin ryhmiin.
+                         */
                         $scope.ok = function() {
                             $log.info("AddHakukohdeToGroupController.ok()");
-                            $modalInstance.close();
+
+                            var valitutRyhmat = $scope.model.ryhmat.filter(function(ryhma) {
+                                return ryhma.selected;
+                            });
+                            
+                            $log.info("  valitut ryhmät: ", valitutRyhmat);
+
+                            // TODO Liitä hakukohteet valittuihin ryhmiin                            
+                            
+                            $scope.model.completed = true;
+                            $scope.model.result = {
+                                status: "ERROR",
+                                errors : [
+                                    {
+                                        hakukohde: "Aalto yliopisto / XXXX",
+                                        error: "Ei muokkaus oikeutta"
+                                    },
+                                    {
+                                        hakukohde: "Helsingin yliopisto / YYYY",
+                                        error: "Ei muokkaus oikeutta"
+                                    }
+                                ]
+                            };
+                            
+                            //$modalInstance.close();
                         };
 
                         $scope.cancel = function() {
                             $log.info("AddHakukohdeToGroupController.cancel()");
                             $modalInstance.dismiss();
+                        };
+
+                        $scope.close = function() {
+                            $log.info("AddHakukohdeToGroupController.close()");
+                            $modalInstance.close();
                         };
                     };
 
@@ -800,14 +851,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                                     return $scope.selection.hakukohteet; 
                                 },
                                 ryhmat: function() {
-                                    return  [
-                                        {
-                                            oid : "123", nimi : "Test A"
-                                        },
-                                        {
-                                            oid : "456", nimi : "Test B"
-                                        }
-                                    ];
+                                    return OrganisaatioService.getRyhmat();
                                 }
                             }
                         });
