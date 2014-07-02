@@ -253,11 +253,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 komo = this.koulutusmoduuliDAO.findByOid(dto.getKomoOid());
             }
             if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
-                return postNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo);
+                return postNayttotutkintona(dto.getClass(), (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo);
             } else if (dto.getClass() == AmmattitutkintoV1RDTO.class) {
-                return postNayttotutkintona((AmmattitutkintoV1RDTO) dto, komo);
+                return postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo);
             } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
-                return postNayttotutkintona((ErikoisammattitutkintoV1RDTO) dto, komo);
+                return postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo);
             } else if (dto.getClass() == KoulutusLukioAikuistenOppimaaraV1RDTO.class) {
                 return postLukioKoulutus((KoulutusLukioAikuistenOppimaaraV1RDTO) dto, komo);
             }
@@ -384,7 +384,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-    private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(NayttotutkintoV1RDTO dto, final Koulutusmoduuli komo) {
+    private ResultV1RDTO<KoulutusV1RDTO> postNayttotutkintona(Class clazz, NayttotutkintoV1RDTO dto, final Koulutusmoduuli komo) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
@@ -418,10 +418,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
 
             final RestParam param = RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang());
-            result.setResult(converterToRDTO.convert(
-                    KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
-                    fullKomotoWithKomo,
-                    param
+            result.setResult(converterToRDTO.convert(clazz, fullKomotoWithKomo, param
             ));
         } else {
             result.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
