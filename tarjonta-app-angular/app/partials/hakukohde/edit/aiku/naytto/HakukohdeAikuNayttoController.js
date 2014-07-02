@@ -23,7 +23,10 @@ app.controller('HakukohdeAikuNayttoEditController',
              CommonUtilService,
              PermissionService,
              SharedStateService) {
-
+    
+        //koulutusohjelmasta tai koulutuskoodista populoidaan tämä
+        $scope.osaamisalat=[];
+    
         $log = $log.getInstance("HakukohdeAikuNayttoEditController");
 
         $scope.ui = {
@@ -78,8 +81,6 @@ app.controller('HakukohdeAikuNayttoEditController',
 
            var koulutukses =  SharedStateService.getFromState('SelectedKoulutukses');
 
-           //koulutusohjelmasta tai koulutuskoodista populoidaan tämä
-           $scope.osaamisalat = [];//'osaamisala_1625','osaamisala_1626'];
 
            var koulutusPromiset = [];
            for(var i=0;i<koulutukses.length;i++){
@@ -89,15 +90,43 @@ app.controller('HakukohdeAikuNayttoEditController',
 
 
            $q.all(koulutusPromiset).then(function(results){
+             //koulutuskoodit/koulutusohjelmat
+             var context={
+                 arvot:[],
+                 koulutukset:[]
+             };
+             
              for(var j=0;j<results.length;j++) {
-               var tmp=[];
-               var koulutus = results[j].result; 
+               var koulutus = results[j].result;
+               context.koulutukset.push(koulutus);
                var arvo = koulutus.koulutuskoodi?koulutus.koulutuskoodi.uri:koulutus.koulutusohjelma;
-               tmp.push(arvo);
-               return tmp;
+               context.arvot.push(arvo);
              }
-           }).then(function(array){
-             $scope.osaamisalat =array;
+             return context;
+           }).then(function(context){
+             var koulutukset = context.koulutukset;
+             //osaamisalat
+             var deferred = $q.defer();
+             var koulutuskoodit=[];
+             for(var j=0;j<koulutukset.length;j++) {
+               var koulutus = koulutukset[j];
+               if(koulutus.koulutuskoodi){
+                 koulutuskoodit.push(koulutus.koulutuskoodi.uri);
+               }
+             }
+             
+             Koodisto.getAlapuolisetKoodiUrit(koulutuskoodit, "osaamisala","FI").then(function(osaamisalat){
+               for(var j=0;j<osaamisalat.uris.length;j++) {
+                 context.arvot.push(osaamisalat.uris[j]);
+               }
+               
+               deferred.resolve(context);
+             });
+
+             return deferred.promise;;
+           }).then(function(context){
+             //asetetaan malliin
+             $scope.osaamisalat = context.arvot;
            });
 
 
