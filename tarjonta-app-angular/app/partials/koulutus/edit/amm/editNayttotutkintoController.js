@@ -115,6 +115,7 @@ app.controller('EditNayttotutkintoController',
                     /*
                      * INIT SCOPES FOR RENDERER IN koulutusController.js
                      */
+                    model.toteutustyyppi = $scope.CONFIG.TYYPPI;
                     $scope.setModel(model);
 
                     //Ui model for editPerustiedot and editLisatiedot pages (normal case)
