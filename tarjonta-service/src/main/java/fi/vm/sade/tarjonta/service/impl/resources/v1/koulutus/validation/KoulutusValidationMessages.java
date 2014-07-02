@@ -64,10 +64,14 @@ public enum KoulutusValidationMessages {
     KOULUTUS_KOULUTUSASTE_MISSING("koulutusaste"),
     KOULUTUS_KOULUTUSASTE_INVALID("koulutusaste"),
     //name
+    KOULUTUS_LUKIOLINJA_MISSING("lukiolinja"),
+    KOULUTUS_OSAAMISALA_MISSING("osaamisala"),
     KOULUTUS_KOULUTUSOHJELMA_MISSING("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_INVALID("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING("koulutusohjelma"),
+    KOULUTUS_TUTKINTO_OHJELMA_URI_REQUIRED(""),
+    
     //other & common
     KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING("toteutustyyppi"),
     KOULUTUS_MODUULITYYPPI_ENUM_MISSING("moduulityyppi"),
@@ -109,7 +113,8 @@ public enum KoulutusValidationMessages {
     KOULUTUS_IMPORT_INVALID_DATA(""),
     KOULUTUS_IMPORT_FAILED("oid"),
     KOULUTUS_IMPORT_INVALID_COUNT(""),
-    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT("");
+    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT(""),
+    KOULUTUS_MODULE_NOT_FOUND("komoOid");
 
     private String fieldName;
 

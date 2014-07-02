@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
@@ -19,10 +21,11 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import java.util.Map;
 
 public class KoulutusValidatorTest {
+
+    private static final Koulutusmoduuli KOULUTUS_OHJELMA = new Koulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
 
     @Test
     public void testTunniste() {
@@ -57,7 +60,7 @@ public class KoulutusValidatorTest {
     @Test
     public void testValidationLukioNullObject() {
         ResultV1RDTO result = new ResultV1RDTO();
-        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusLukio(null, result);
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusLukio(null, KOULUTUS_OHJELMA, result);
         org.junit.Assert.assertTrue("errors", v.hasErrors());
         org.junit.Assert.assertEquals("errors count", 1, v.getErrors().size());
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING);
@@ -85,7 +88,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        checkMissingErrors(KoulutusValidator.validateKoulutusLukio(dto, result), 19);
+        checkMissingErrors(KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, result), 19);
     }
 
     @Test
@@ -119,7 +122,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusLukio(dto, new ResultV1RDTO());
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         checkMissingErrors(v, 18);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TILA_ENUM_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING);
@@ -153,7 +156,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        v = KoulutusValidator.validateKoulutusLukio(dto, new ResultV1RDTO());
+        v = KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         checkMissingErrors(v, 16);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
 
@@ -185,7 +188,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        v = KoulutusValidator.validateKoulutusLukio(dto, new ResultV1RDTO());
+        v = KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         org.junit.Assert.assertFalse("not success?", v.hasErrors());
     }
 

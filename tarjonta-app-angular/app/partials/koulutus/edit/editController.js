@@ -276,7 +276,7 @@ app.controller('BaseEditController', [
         };
 
         $scope.saveByStatus = function(tila, form, tyyppi, fnCustomCallbackAfterSave) {
-             $scope.saveApimodelByStatus(angular.copy($scope.model), tila, form, tyyppi, fnCustomCallbackAfterSave);
+            $scope.saveApimodelByStatus(angular.copy($scope.model), tila, form, tyyppi, fnCustomCallbackAfterSave);
         };
 
         $scope.saveApimodelByStatus = function(apiModel, tila, form, tyyppi, fnCustomCallbackAfterSave) {
@@ -533,12 +533,12 @@ app.controller('BaseEditController', [
         $scope.onLisatietoLangSelection = function() {
             for (var ki in $scope.model.kuvausKomo) {
                 for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
-                    if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1
+                    if ($scope.uiModel.lisatietoKielet.indexOf(lc) === -1
                             && $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length > 0) {
                         // palautetaan listaan jottei angular digestoi ennen dialogia
                         $scope.uiModel.lisatietoKielet.push(lc);
 
-                        if ($scope.uiModel.opetuskielis.uris.indexOf(lc) == -1) {
+                        if ($scope.uiModel.opetuskielis.uris.indexOf(lc) === -1) {
                             // ei opetuskieli -> varmista poisto dialogilla
                             dialogService.showDialog({
                                 ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
@@ -551,6 +551,12 @@ app.controller('BaseEditController', [
                     }
                 }
             }
+        };
+
+        $scope.isTutkintoOhjelmaKoodisto = function(tarjontaKoodistoObj) {
+            return window.CONFIG.env["koodisto-uris.koulutusohjelma"] === tarjontaKoodistoObj.koodiKoodisto ||
+                    window.CONFIG.env["koodisto-uris.lukiolinja"] === tarjontaKoodistoObj.koodiKoodisto ||
+                    window.CONFIG.env["koodisto-uris.osaamisala"] === tarjontaKoodistoObj.koodiKoodisto;
         };
 
         return $scope;

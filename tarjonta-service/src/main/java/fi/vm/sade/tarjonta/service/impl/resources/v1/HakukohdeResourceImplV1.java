@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -37,9 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -78,6 +79,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
@@ -233,9 +235,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
        }else {
            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
        }
-
         return resultV1RDTO;
-
     }
 
     @Override
@@ -257,11 +257,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return  result;
         } catch (Exception exp) {
             ResultV1RDTO<HashMap<String,String>> errorResult = new ResultV1RDTO<HashMap<String,String>>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            errorResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            errorResult.addTechnicalError(exp);
             return errorResult;
         }
-
     }
 
 
@@ -284,7 +282,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         } catch (Exception exp) {
             ResultV1RDTO<HashMap<String,String>> errorResult = new ResultV1RDTO<HashMap<String,String>>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             errorResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
             return errorResult;
         }
@@ -312,40 +309,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         } catch (Exception exp) {
             ResultV1RDTO<HashMap<String,String>> exceptionResult = new ResultV1RDTO<HashMap<String, String>>();
-            exceptionResult.addError(ErrorV1RDTO.createSystemError(exp, null, null));
-            exceptionResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            exceptionResult.addTechnicalError(exp);
             return exceptionResult;
         }
     }
-
-    private boolean checkForExistingUlkoinenTunniste(String tunniste,String tarjoajaOid,String hakukohdeOid) {
-
-        Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByUlkoinenTunniste(tunniste,tarjoajaOid);
-
-        if (hakukohde != null) {
-
-            if (hakukohdeOid != null) {
-                //If tunniste exists for another hakukohde then user cannot update this hakukohde to user the same
-                //"ulkoinen tunniste".
-                if (hakukohde.getOid().trim().equals(hakukohdeOid)) {
-
-                  return false;
-
-                } else {
-                    return true;
-                }
-
-            } else {
-                return true;
-            }
-
-        } else {
-            return false;
-        }
-
-    }
-
-
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search() {
@@ -369,11 +336,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
-
-
     }
-
-
 
     @Override
     @Transactional(readOnly = true)
@@ -458,7 +421,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             koulutusAstetyyppi.put(KOULUTUSLAJI_KEY,null);
         }
 
-
         return koulutusAstetyyppi;
     }
 
@@ -475,15 +437,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     if (kieli.trim().equals(meta.getKieli().trim())) {
                         kuvaukset.put(meta.getKieli(),meta.getArvo());
                     }
-
                 }
-
             }
         }
 
-
         return kuvaukset;
-
     }
 
 
@@ -547,33 +505,45 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     }
 
-    private List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeV1RDTO) {
+    private List<HakukohdeValidationMessages> validateHakukohde(
+            HakukohdeV1RDTO hakukohdeV1RDTO) {
 
-        /**
-         * Add other validation cases here, currently only aikuiskoulustus has different validation cases.
-         * Toinen aste will bring more.
-         *
-         */
-        List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+        final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+        
+        ToteutustyyppiEnum toteutustyyppi;
 
-        HashMap<String,String> hakukohdeKoulutusAstes = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeV1RDTO.getHakukohdeKoulutusOids());
-
-        //First check for KK KOULUTUSASTE it does not have koulutuslaji so if koulutusaste is KK then just skip to validation
-        if (hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUSTUSASTE_KK)) {
-            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+        Preconditions.checkNotNull(hakukohdeV1RDTO.getToteutusTyyppi(), "toteutustyuyppi null");
+        try{
+            toteutustyyppi = ToteutustyyppiEnum.valueOf(hakukohdeV1RDTO.getToteutusTyyppi());
+        } catch (IllegalArgumentException iae) {
+            LOG.error("Toteutustyyppi:" + hakukohdeV1RDTO.getToteutusTyyppi() + " is unknown?!");
+            validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_UNKNOWN_TOTEUTUSTYYPPI);
+            return validationMessageses;
         }
-        //Aiku lukio has different validation
-        else if ( (hakukohdeKoulutusAstes.containsKey(KOULUTUSLAJI_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSLAJI_KEY).trim().equalsIgnoreCase(KOULUTUSLAJI_AIKUISET)) && (
-                hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUTUSASTE_LUKIO)
-        )) {
+        
+        //validointi
+        switch (toteutustyyppi) {
 
-            validationMessageses = HakukohdeValidator.validateAikuLukioHakukohde(hakukohdeV1RDTO);
+        case KORKEAKOULUTUS:
+            validationMessageses.addAll(HakukohdeValidator
+                    .validateHakukohde(hakukohdeV1RDTO));
+            break;
 
-        }
-        //Default validation is now the same as KK
-         else {
+        case AMMATILLINEN_PERUSTUTKINTO:
+        case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
+        case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+        case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+            validationMessageses.addAll(HakukohdeValidator
+                    .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+            break;
 
-            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+        default:
+            LOG.error("Toteutustyyppi:" + toteutustyyppi + " validation rules not implemented");
+            validationMessageses
+                    .add(HakukohdeValidationMessages.HAKUKOHDE_NOT_IMPLEMENTED);
+            break;
 
         }
 
@@ -592,7 +562,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             LOG.warn("HAKUKOHDE KOULUTUS OIDS SHOULD NOT BE NULL!!!");
         }
         
-        Set<KoulutusmoduuliToteutus> komotot = findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids());
+        Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
 
         validationMessageses.addAll(HakukohdeValidator.checkKoulutukset(komotot));
         
@@ -601,13 +571,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         
         if (validationMessageses.size() > 0) {
-            ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-            for (HakukohdeValidationMessages message: validationMessageses) {
-                errorResult.addError(ErrorV1RDTO.createValidationError(null,message.name(),null));
-            }
-            errorResult.setResult(hakukohdeRDTO);
-            return errorResult;
+            return populateValidationErrors(hakukohdeRDTO, validationMessageses);
         }
 
         Hakukohde hakukohde = converterV1.toHakukohde(hakukohdeRDTO);
@@ -677,19 +641,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             List<HakukohdeValidationMessages> validationMessagesList = validateHakukohde(hakukohdeRDTO);
 
-            Set<KoulutusmoduuliToteutus> komotot = findKoulutusModuuliToteutus(hakukohdeRDTO.getHakukohdeKoulutusOids());
+            Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
             
             validationMessagesList.addAll(HakukohdeValidator.checkKoulutukset(komotot));
 
             if (validationMessagesList.size() > 0) {
-                ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-                errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-                for (HakukohdeValidationMessages message : validationMessagesList) {
-                    errorResult.addError(ErrorV1RDTO.createValidationError(
-                            null, message.name(), null));
-                }
-                errorResult.setResult(hakukohdeRDTO);
-                return errorResult;
+                return populateValidationErrors(hakukohdeRDTO, validationMessagesList);
             }
 
             Hakukohde hakukohde = converterV1.toHakukohde(hakukohdeRDTO);
@@ -754,21 +711,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 result.setResult(hakukohdeRDTO);
                 return result;
             } else {
-                ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-                errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-                errorResult.addError(ErrorV1RDTO.createValidationError(null,HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG.name(),null));
-                errorResult.setResult(hakukohdeRDTO);
-                return errorResult;
+                return populateValidationErrors(hakukohdeRDTO,  Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG));
             }
-
-		} catch (Exception e) {
-			LOG.warn("Exception occured while updating hakukohde "+hakukohdeOid, e);
+        } catch (Exception e) {
+            LOG.warn("Exception occured while updating hakukohde "+hakukohdeOid, e);
             ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            errorResult.addError(ErrorV1RDTO.createSystemError(e,null));
-            errorResult.setResult(hakukohdeRDTO);
+            errorResult.addTechnicalError(e);
             return errorResult;
-		}
+        }
     }
 
     @Override
@@ -785,7 +735,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 return errorResult;
             }
             hakukohdeDAO.safeDelete(hakukohde.getOid(),contextDataService.getCurrentUserOid());
-
             List<Long> hakukohdeIds = new ArrayList<Long>();
             hakukohdeIds.add(hakukohde.getId());
             indexerResource.indexHakukohteet(hakukohdeIds);
@@ -793,14 +742,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             result.setResult(true);
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
             return  result;
-
         } catch (Exception exp) {
             LOG.warn("Exception occured when removing hakukohde {}, exception : {}" , oid,exp.toString());
             ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            errorResult.addError(ErrorV1RDTO.createSystemError(exp,null));
+            errorResult.addTechnicalError(exp);
             return errorResult;
-
         }
     }
 
@@ -836,12 +782,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         resultRDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         } catch (Exception exp) {
-            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-            exp.printStackTrace();
-            errorRDTO.setErrorTechnicalInformation(exp.toString());
-            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-            resultRDTO.addError(errorRDTO);
+            resultRDTO.addTechnicalError(exp);
         }
         return resultRDTO;
 
@@ -883,13 +824,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         } catch (Exception exp) {
            ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
-           rdtoResultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-           ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-           exp.printStackTrace();
-           errorRDTO.setErrorTechnicalInformation(exp.toString());
-           errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-           rdtoResultRDTO.addError(errorRDTO);
-
+           rdtoResultRDTO.addTechnicalError(exp);
            return rdtoResultRDTO;
         }
 
@@ -926,16 +861,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return valintakoeResult;
 
         } catch (Exception exp) {
-           ResultV1RDTO<ValintakoeV1RDTO> errorResult = new ResultV1RDTO<ValintakoeV1RDTO>();
-
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-            exp.printStackTrace();
-            errorRDTO.setErrorTechnicalInformation(exp.toString());
-            errorResult.addError(errorRDTO);
-
-           return errorResult;
+           ResultV1RDTO<ValintakoeV1RDTO> rdtoResultRDTO = new ResultV1RDTO<ValintakoeV1RDTO>();
+           rdtoResultRDTO.addTechnicalError(exp);
+           return rdtoResultRDTO;
         }
     }
 
@@ -957,16 +885,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         } catch (Exception exp) {
             ResultV1RDTO<Boolean> resultRDTO = new ResultV1RDTO<Boolean>();
             resultRDTO.setResult(false);
-            resultRDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-
-            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-            exp.printStackTrace();
-            errorRDTO.setErrorTechnicalInformation(exp.toString());
-
-            resultRDTO.addError(errorRDTO);
+            resultRDTO.addTechnicalError(exp);
             return resultRDTO;
-
         }
     }
 
@@ -994,12 +914,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         } catch (Exception exp) {
             ResultV1RDTO<List<HakukohdeLiiteV1RDTO>> errorResult = new ResultV1RDTO<List<HakukohdeLiiteV1RDTO>>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            exp.printStackTrace();
-            ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-            errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-            errorRDTO.setErrorTechnicalInformation(exp.toString());
-            errorResult.addError(errorRDTO);
+            errorResult.addTechnicalError(exp);
             return errorResult;
         }
         } else {
@@ -1018,13 +933,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
              List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateLiite(liiteV1RDTO);
              if (validationMessageses.size() > 0) {
-                 ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
-                 errorResult.setResult(liiteV1RDTO);
-                 errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-                 for (HakukohdeValidationMessages msg : validationMessageses) {
-                     errorResult.addError(ErrorV1RDTO.createValidationError(null, msg.name(), null));
-                 }
-                return errorResult;
+                 return populateValidationErrors(liiteV1RDTO, validationMessageses);
              }
 
              ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
@@ -1039,14 +948,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
          } catch (Exception exp) {
              ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
-             errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-             ErrorV1RDTO errorRDTO = new ErrorV1RDTO();
-             errorRDTO.setErrorCode(ErrorV1RDTO.ErrorCode.ERROR);
-             exp.printStackTrace();
-             errorRDTO.setErrorTechnicalInformation(exp.toString());
-             errorResult.addError(errorRDTO);
+             errorResult.addTechnicalError(exp);
              return errorResult;
-
          }
     }
 
@@ -1060,13 +963,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             List<HakukohdeValidationMessages> validationMessageses = HakukohdeValidator.validateLiite(liiteV1RDTO);
             if (validationMessageses.size() > 0) {
-                ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResult = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
-                errorResult.setResult(liiteV1RDTO);
-                errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
-                for (HakukohdeValidationMessages msg : validationMessageses) {
-                    errorResult.addError(ErrorV1RDTO.createValidationError(null, msg.name(), null));
-                }
-                return errorResult;
+                return populateValidationErrors(liiteV1RDTO, validationMessageses);
             }
 
             ResultV1RDTO<HakukohdeLiiteV1RDTO> resultRDTO = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
@@ -1083,15 +980,31 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             return resultRDTO;
 
         } catch (Exception exp) {
-
-
            ResultV1RDTO<HakukohdeLiiteV1RDTO> errorResultDto = new ResultV1RDTO<HakukohdeLiiteV1RDTO>();
-           errorResultDto.setStatus(ResultV1RDTO.ResultStatus.OK);
-           errorResultDto.addError(ErrorV1RDTO.createSystemError(exp,"system.error",hakukohdeOid));
+           errorResultDto.addTechnicalError(exp);
+           errorResultDto.setStatus(ResultV1RDTO.ResultStatus.OK); //why oh why?
            return errorResultDto;
-
         }
 
+    }
+    
+
+    /**
+     * Populate response with result and validation error messages.
+     * @param result
+     * @param validationMessageses
+     * @return
+     */
+    private <T>ResultV1RDTO<T> populateValidationErrors(
+            T result,
+            List<HakukohdeValidationMessages> validationMessageses) {
+        ResultV1RDTO<T> errorResult = new ResultV1RDTO<T>();
+        errorResult.setResult(result);
+        errorResult.setStatus(ResultV1RDTO.ResultStatus.VALIDATION);
+        for (HakukohdeValidationMessages msg : validationMessageses) {
+            errorResult.addError(ErrorV1RDTO.createValidationError(null, msg.name(), null));
+        }
+        return errorResult;
     }
 
     @Override
@@ -1124,26 +1037,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         } catch (Exception exp) {
             ResultV1RDTO<Boolean> errorResult = new ResultV1RDTO<Boolean>();
-            errorResult.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             errorResult.setResult(false);
-            errorResult.addError(ErrorV1RDTO.createSystemError(exp, "system.error", hakukohdeOid));
+            errorResult.addTechnicalError(exp);
             return errorResult;
-
         }
 
     }
 
-    private Set<KoulutusmoduuliToteutus> findKoulutusModuuliToteutus(List<String> komotoOids) {
-        Set<KoulutusmoduuliToteutus> komotos = new HashSet<KoulutusmoduuliToteutus>();
-
-        for (String komotoOid : komotoOids) {
-            KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(komotoOid);
-            komotos.add(komoto);
-        }
-
-        return komotos;
-    }
-    
     private void setHakukohde(Set<KoulutusmoduuliToteutus> komotot, Hakukohde hk){
         for (KoulutusmoduuliToteutus komoto:komotot) {
             komoto.addHakukohde(hk);
@@ -1188,6 +1088,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Transactional(readOnly = false)
     public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(String hakukohdeOid, List<String> koulutukses) {
         
+        LOG.info("lisätään koulutuksia ghakukohteelle" + koulutukses);
+        
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
 
         
@@ -1197,9 +1099,18 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         } 
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
         
-        List<KoulutusmoduuliToteutus> liitettavatKomotot = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(koulutukses);
-
+        Set<KoulutusmoduuliToteutus> liitettavatKomotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(koulutukses));
+        Set<KoulutusmoduuliToteutus> kaikkiKoulutukset = Sets.newHashSet(liitettavatKomotot);
+        kaikkiKoulutukset.addAll(hakukohde.getKoulutusmoduuliToteutuses());
+        
+        List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.checkKoulutukset(kaikkiKoulutukset);
+        if(validationMessages.size()>0) {
+            System.out.println("validation:" + validationMessages);
+            return populateValidationErrors(null, validationMessages);
+        }
+        
         if (liitettavatKomotot != null && liitettavatKomotot.size() > 0) {
+
 
             for (KoulutusmoduuliToteutus komoto : liitettavatKomotot) {
 
@@ -1209,10 +1120,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                 koulutusmoduuliToteutusDAO.update(komoto);
 
+                LOG.info("indexing koulutukset");
                 indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
             }
 
             hakukohdeDAO.update(hakukohde);
+            LOG.info("indexing hakukohde");
             indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -1268,11 +1181,13 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         hakukohde.removeKoulutusmoduuliToteutus(komoto);
 
                         koulutusmoduuliToteutusDAO.update(komoto);
+                        LOG.info("indexing koulutus");
                         indexerResource.indexKoulutukset(Lists.newArrayList(komoto.getId()));
                     }
 
                     LOG.debug("Hakukohde has more koulutukses, updating it");
                     hakukohdeDAO.update(hakukohde);
+                    LOG.info("indexing hk");
                     indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                 } else {
 

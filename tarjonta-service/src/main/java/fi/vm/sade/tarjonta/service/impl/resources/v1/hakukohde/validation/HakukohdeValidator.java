@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -96,11 +97,14 @@ public class HakukohdeValidator {
      * Tarkista että kaikilla koulutuksilla sama vuosi/kausi ja että niiden tila ei ole peruttu, poistettu
      * @param komotot
      */
-    public static List<HakukohdeValidationMessages> checkKoulutukset(Set<KoulutusmoduuliToteutus> komotot) {
+    public static List<HakukohdeValidationMessages> checkKoulutukset(Collection<KoulutusmoduuliToteutus> komotot) {
         String kausi = null;
         Integer vuosi = null;
         
         boolean tilaOk = false;
+        if(komotot.size()==0) {
+            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
+        }
         
         for (KoulutusmoduuliToteutus komoto : komotot) {
             if (kausi == null) {
@@ -124,8 +128,8 @@ public class HakukohdeValidator {
         
         return Collections.EMPTY_LIST;
     }
-
-
+    
+    
     public static List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite) {
 
         Set<HakukohdeValidationMessages> liiteValidationMsgs = new HashSet<HakukohdeValidationMessages>();

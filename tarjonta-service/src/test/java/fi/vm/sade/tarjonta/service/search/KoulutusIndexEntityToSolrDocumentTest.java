@@ -50,7 +50,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
     @Test
     public void test() {
         Date d = new GregorianCalendar(VUOSI, 1, 1).getTime();
-        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d,
+        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, d, d,
                 TarjontaTila.JULKAISTU,
                 BASE_AMM_KOULUTUSTYYPPI,
                 SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO,
@@ -79,6 +79,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
         Mockito.reset(koodiService);
         stubKoodi(koodiService, LUKIOLINJA_URI);
         stubKoodi(koodiService, KOULUTUSOHJELMA_URI);
+        stubKoodi(koodiService, OSAAMISALA_URI);
         stubKoodi(koodiService, KOULUTUS_URI);
         stubKoodi(koodiService, POHJAKOULUTUSVAATIMUS_URI);
         stubKoodi(koodiService, "kausi_k");
@@ -117,16 +118,16 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_URI)
                 .getValue());
 
-        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-EN",
+        Assert.assertEquals(OSAAMISALA_URI  + "-nimi-EN",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_EN)
                 .getValue());
-        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-SV",
+        Assert.assertEquals(OSAAMISALA_URI + "-nimi-SV",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_SV)
                 .getValue());
-        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-FI",
+        Assert.assertEquals(OSAAMISALA_URI + "-nimi-FI",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_FI)
                 .getValue());
-        Assert.assertEquals(KOULUTUSOHJELMA_URI,
+        Assert.assertEquals(OSAAMISALA_URI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_URI)
                 .getValue());
         Assert.assertEquals(KOULUTUSTYYPPI_URI,
@@ -161,7 +162,7 @@ public class KoulutusIndexEntityToSolrDocumentTest {
 
     @Test
     public void testNullAlkamispvm() {
-        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null,
+        KoulutusIndexEntity e = new KoulutusIndexEntity(1l, OID, null, null,
                 TarjontaTila.JULKAISTU,
                 BASE_AMM_KOULUTUSTYYPPI,
                 SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO,

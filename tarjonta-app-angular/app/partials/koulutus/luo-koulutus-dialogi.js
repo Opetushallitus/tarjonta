@@ -260,7 +260,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                             })
                 })
 
-            } else if ( $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
+            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
                 //LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA
                 $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                 $scope.luoKoulutusDialog.close();
@@ -270,11 +270,23 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                     ) {
                 //AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA
                 var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
+                var toteutustyyppi = null
+                switch ($scope.model.koulutustyyppi.koodiUri) {
+                    case "koulutustyyppi_13":
+                        toteutustyyppi = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA"
+                        break;
+                    case "koulutustyyppi_12":
+                        toteutustyyppi = "ERIKOISAMMATTITUTKINTO"
+                        break;
+                    case "koulutustyyppi_11":
+                        toteutustyyppi = "AMMATTITUTKINTO"
+                        break;
+                }
 
                 promise.then(function(koodis) {
                     for (var i = 0; i < koodis.length; i++) {
                         if (CONFIG.env["koodisto-uris.koulutuslaji"] === koodis[i].koodiKoodisto) {
-                            $location.path('/koulutus/AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA/' + $scope.model.koulutustyyppi.koodiUri + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                            $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                             break;
                         }
                     }

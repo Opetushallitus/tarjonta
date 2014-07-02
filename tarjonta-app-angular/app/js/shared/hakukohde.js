@@ -122,7 +122,7 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
                     withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
                 }).success(function(data){
-                    return true;
+                    return data;
                 }).error(function(data){
                         return false;
                     });
@@ -137,7 +137,7 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
                     withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
                 }).success(function(data){
-                    promise.resolve(true);
+                      promise.resolve("OK"===data.status); 
                 }).error(function(data){
                     promise.resolve(false);
                     });

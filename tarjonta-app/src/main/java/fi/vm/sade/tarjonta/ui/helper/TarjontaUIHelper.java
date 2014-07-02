@@ -198,28 +198,14 @@ public class TarjontaUIHelper {
         for (KoulutusPerustieto koulutus : vastaus.getKoulutukset()) {
             switch (koulutus.getKoulutusasteTyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case MAAHANM_AMM_VALMISTAVA_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case MAAHANM_LUKIO_VALMISTAVA_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case PERUSOPETUKSEN_LISAOPETUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case VAPAAN_SIVISTYSTYON_KOULUTUS:
-                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
-                    break;
                 case LUKIOKOULUTUS:
-                    sourceKoodiUris.add(koulutus.getLukiolinjakoodi().getUri());
+                    sourceKoodiUris.add(koulutus.getKoulutusohjelma().getUri());
                     break;
                 default:
                     LOG.error("UNKNOWN KOULUTUSTYYPPI, CANNOT GET RELATED KOODIS FOR: {}", koulutus);
@@ -759,7 +745,7 @@ public class TarjontaUIHelper {
             //name fallback, name do not match any language code
             return monikielinenTeksti.entrySet().iterator().next().getValue();
         }
-        
+
         //happens when map is empty?
         return null;
     }

@@ -60,6 +60,10 @@ public class SolrFields {
         protected static final String KOULUTUSLAJI_FI = "koulutuslajifi_s";
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
         protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";
+
+//        protected static final String KOULUTUALKAMISPVM = "koulutusalkamispvm_dt";
+        protected static final String KOULUTUALKAMISPVM_MIN = "koulutusalkamispvm_min_dt";
+        protected static final String KOULUTUALKAMISPVM_MAX = "koulutusalkamispvm_max_dt";
     }
 
     /**

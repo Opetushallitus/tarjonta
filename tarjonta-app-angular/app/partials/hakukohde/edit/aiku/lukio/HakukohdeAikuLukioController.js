@@ -68,12 +68,12 @@ app.controller('HakukohdeAikuLukioEditController',
                 errors.push(err);
             }
 
-            if(!$scope.model.hakukohde.aloituspaikatLkm || $scope.model.hakukohde.aloituspaikatLkm < 1) {
-                var err = {};
-                err.errorMessageKey = 'hakukohde.edit.aloituspaikat.missing';
-
-                errors.push(err);
-            }
+//            if(!$scope.model.hakukohde.aloituspaikatLkm || $scope.model.hakukohde.aloituspaikatLkm < 1) {
+//                var err = {};
+//                err.errorMessageKey = 'hakukohde.edit.aloituspaikat.missing';
+//
+//                errors.push(err);
+//            }
 
             if (errors.length < 1 ) {
                 return true;

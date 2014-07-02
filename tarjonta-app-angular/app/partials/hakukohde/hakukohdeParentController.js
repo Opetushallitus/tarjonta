@@ -43,20 +43,20 @@ app.controller('HakukohdeParentController', ['$scope',
               dialogService) {
 
 
-        /*
-            Routing logic vars
-
-         */
-
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
         var aikuNayttoHakukohdePartialUri = "partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html";
-        var korkeakouluTyyppi = "KORKEAKOULUTUS";
-        var lukioTyyppi = "LUKIOKOULUTUS";
-        var ammattillinenTyyppi = "AMMATILLINEN_PERUSKOULUTUS";
 
-
-
+        var routing={
+            "KORKEAKOULUTUS":korkeakoulutusHakukohdePartialUri,
+            "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA":aikuLukioHakukohdePartialUri,
+            "LUKIOKOULUTUS":aikuLukioHakukohdePartialUri,
+            "AMMATILLINEN_PERUSKOULUTUS":aikuNayttoHakukohdePartialUri,
+            "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA":aikuNayttoHakukohdePartialUri,
+            "ERIKOISAMMATTITUTKINTO":aikuNayttoHakukohdePartialUri,
+            "AMMATTITUTKINTO":aikuNayttoHakukohdePartialUri
+        };
+        
         /*
          *
          * Common hakukohde controller variables
@@ -105,6 +105,9 @@ app.controller('HakukohdeParentController', ['$scope',
         $scope.model.collapse.model = true;
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
+
+        //TODO: Sami tähän tuodaan hakukohteen koulutukset ja niistä kerätään osaamisalat joilla filtteröidään aiku näyttö hakukohteen nimi
+        $scope.model.hakukohdeKoulutukses = [];
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
 
@@ -142,117 +145,36 @@ app.controller('HakukohdeParentController', ['$scope',
             $scope.model.validationmsgs.splice(0,$scope.model.validationmsgs.length);
 
             angular.forEach(errorArray,function(error) {
-
-
                 $scope.model.validationmsgs.push(error.errorMessageKey);
-
-
             });
             $scope.model.showError = true;
             $scope.model.showSuccess = false;
         };
 
-        /**
-         *
-         * This is the routing function which determines which hakukohde page to render
-         *
-         */
-
-        var isKoulutusasteAiku = function() {
-
-            var aikuUri = "koulutuslaji_a";
-
-            var nuorisoUri = "koulutuslaji_n";
-
-            var returnVal = false;
-
-            if ($route.current.locals.hakukohdeKoulutuksesx) {
-
-                angular.forEach($route.current.locals.hakukohdeKoulutuksesx.tulokset, function (tulos) {
-
-                    angular.forEach(tulos.tulokset, function (koulutus) {
-                        var indx = koulutus.koulutuslajiUri.indexOf(aikuUri);
-                        if(indx > -1) {
-
-                            returnVal = true;
-                        } else {
-                            returnVal = false;
-                        }
-
-                    })
-
-                })
-
-            };
-            return returnVal;
-        };
-        
-        var isNayttoTutkinto = function (toteutusTyyppi) {
-
-                var toteutusTyyppiAmmatillinenNaytto = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA";
-
-                var toteutusTyyppiAmmatillinenNayttoValmistava = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA";
-
-                if (toteutusTyyppi && (toteutusTyyppi.trim() === toteutusTyyppiAmmatillinenNaytto || toteutusTyyppi.trim() === toteutusTyyppiAmmatillinenNayttoValmistava)) {
-                    return true;
-                } else {
-                    return false;
-                }
-
-        };
-
-
         $scope.getHakukohdePartialUri = function() {
-
-            //var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
 
             //If hakukohdex is defined then we are updating it
             //otherwise try to get selected koulutustyyppi from shared state
-            if($route.current.locals && $route.current.locals.hakukohdex.result) {
-                $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
-                $log.info('WITH KOULUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.koulutusAsteTyyppi);
-                if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === korkeakouluTyyppi) {
-                    return korkeakoulutusHakukohdePartialUri;
-
-                }  else if ($route.current.locals.hakukohdex.result.koulutusAsteTyyppi === "LUKIOKOULUTUS" && $route.current.locals.hakukohdex.result.koulutuslaji === "A" ) {
-                    return aikuLukioHakukohdePartialUri;
-                }
-
+          
+            if($route.current.locals && $route.current.locals.hakukohdex.result && $route.current.locals.hakukohdex.result.toteutusTyyppi) {
+              $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
+              $log.info('WITH TOTEUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.toteutusTyyppi);
+                
+              var toteutusTyyppi = $route.current.locals.hakukohdex.result.toteutusTyyppi;
+              var uri = routing[toteutusTyyppi];
+              if(uri) {
+                return uri;
+              }
+              $log.error('TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
             } else {
-                var koulutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
-                var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
-
-
-                console.log('MODEL : ', $scope.model);
-                $log.info('KOULUTUSTYYPPI IS: ' , koulutusTyyppi);
-                if (koulutusTyyppi.trim() === korkeakouluTyyppi) {
-                    return korkeakoulutusHakukohdePartialUri;
-                } else if (koulutusTyyppi.trim() === lukioTyyppi) {
-
-                    if (isKoulutusasteAiku()) {
-
-
-                        return aikuLukioHakukohdePartialUri;
-                    } else {
-                        $log.warn("Dont know what to todo... Only aiku is implemented in hakukohdes....");
-                    }
-
-                } else if (koulutusTyyppi.trim() === ammattillinenTyyppi) {
-
-                    if (isKoulutusasteAiku() && isNayttoTutkinto(toteutusTyyppi)) {
-
-                        return aikuNayttoHakukohdePartialUri;
-                    }
-
-                }
-
-                else {
-                    $log.info('KOULUTUSTYYPPI WAS: ' , koulutusTyyppi);
-                }
-
-                //TODO: if not "KORKEAKOULUTUS" then check for "koulutuslaji" to determine if koulutus if "AIKU" or not
+              var toteutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+              $scope.model.hakukohde.toteutusTyyppi=toteutusTyyppi;
+              var uri = routing[toteutusTyyppi];
+              if(uri) {
+                return uri;
+              }
+              $log.error('TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
             }
-
         };
 
 
@@ -684,7 +606,7 @@ app.controller('HakukohdeParentController', ['$scope',
                     $scope.model.hakus.push(haku);
                 });
 
-                if ($scope.model.hakukohde.hakuOid !== undefined) {
+                if ($scope.model.hakukohde.hakuOid !== undefined && $scope.model.hakuChanged) {
                     $scope.model.hakuChanged();
                 }
             });

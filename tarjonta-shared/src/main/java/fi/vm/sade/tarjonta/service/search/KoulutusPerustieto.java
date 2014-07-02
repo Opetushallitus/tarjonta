@@ -5,6 +5,7 @@ import java.io.Serializable;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import java.util.Date;
 
 public class KoulutusPerustieto implements Serializable {
 
@@ -22,11 +23,12 @@ public class KoulutusPerustieto implements Serializable {
     private KoodistoKoodi pohjakoulutusvaatimus;
     private KoodistoKoodi koulutuslaji;
     private KoulutusasteTyyppi koulutusasteTyyppi;
-    private KoodistoKoodi lukiolinjakoodi;
     private KoodistoKoodi koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisVuosi;
     private String koulutustyyppi; //real uri not enum
     private ToteutustyyppiEnum toteutustyyppi;
+    private Date koulutuksenAlkamisPvmMin;
+    private Date koulutuksenAlkamisPvmMax;
 
     /**
      * oikeasti tämä on koulutusohjelman nimi
@@ -137,15 +139,7 @@ public class KoulutusPerustieto implements Serializable {
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi value) {
         this.koulutusasteTyyppi = value;
     }
-
-    public KoodistoKoodi getLukiolinjakoodi() {
-        return lukiolinjakoodi;
-    }
-
-    public void setLukiolinjakoodi(KoodistoKoodi value) {
-        this.lukiolinjakoodi = value;
-    }
-
+    
     public KoodistoKoodi getKoulutuksenAlkamiskausi() {
         return koulutuksenAlkamiskausi;
     }
@@ -188,6 +182,22 @@ public class KoulutusPerustieto implements Serializable {
      */
     public void setToteutustyyppi(ToteutustyyppiEnum toteutustyyppi) {
         this.toteutustyyppi = toteutustyyppi;
+    }
+
+    public void setKoulutuksenAlkamisPvmMax(Date koulutuksenAlkamisPvmMax) {
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
+    }
+
+    public Date getKoulutuksenAlkamisPvmMax() {
+        return koulutuksenAlkamisPvmMax;
+    }
+
+    public void setKoulutuksenAlkamisPvmMin(Date koulutuksenAlkamisPvmMin) {
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+    }
+
+    public Date getKoulutuksenAlkamisPvmMin() {
+        return koulutuksenAlkamisPvmMin;
     }
 
 }

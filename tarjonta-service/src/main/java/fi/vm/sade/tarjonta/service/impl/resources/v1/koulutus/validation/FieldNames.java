@@ -52,5 +52,6 @@ public enum FieldNames {
     KIELIVALIKOIMA,
     LUKIOLINJA,
     //amm
-    OSAAMISALA;
+    OSAAMISALA,
+    NIMI;
 }

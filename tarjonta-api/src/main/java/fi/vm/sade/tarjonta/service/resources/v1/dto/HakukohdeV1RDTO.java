@@ -63,6 +63,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Set<String> opetusKielet;
     private Set<String> valintaPerusteKuvausKielet;
     private Set<String> soraKuvausKielet;
+    
+    // KJOH-810
+    private String[] organisaatioRyhmaOids;
 
     public String getHakukohteenNimi() {
         return hakukohteenNimi;
@@ -445,5 +448,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setToteutusTyyppi(String toteutusTyyppi) {
         this.toteutusTyyppi = toteutusTyyppi;
+    }
+
+    public String[] getOrganisaatioRyhmaOids() {
+        return organisaatioRyhmaOids;
+    }
+
+    public void setOrganisaatioRyhmaOids(String[] organisaatioRyhmat) {
+        this.organisaatioRyhmaOids = organisaatioRyhmat;
     }
 }

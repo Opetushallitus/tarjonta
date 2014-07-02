@@ -206,9 +206,9 @@ public class KomoRDTOConverterToEntity {
 
         komoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomo(), komo.getTekstit());
 
-        if (dto.getKoulutusohjelma() != null && dto.getKoulutusohjelma().getTekstis() != null && !dto.getKoulutusohjelma().getTekstis().isEmpty()) {
+        if (dto.getNimi() != null && dto.getNimi().getTekstis() != null && !dto.getNimi().getTekstis().isEmpty()) {
             //text name for module, not uri
-            komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
+            komo.setNimi(convertToTexts(dto.getNimi(), FieldNames.NIMI));
         }
 
         //can have multiple types, at least one required
@@ -240,7 +240,7 @@ public class KomoRDTOConverterToEntity {
         komo.setModuuliTyyppi(KoulutusmoduuliTyyppi.valueOf(dto.getKoulutusmoduuliTyyppi().name()));
         komo.setKoulutusUri(convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUS));
 
-        komo.setNimi(convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
+        komo.setNimi(convertToTexts(dto.getNimi(), FieldNames.NIMI));
         komo.setUlkoinenTunniste(dto.getTunniste());
 
         Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
@@ -284,7 +284,8 @@ public class KomoRDTOConverterToEntity {
     }
 
     /*
-     * Set uris to entity object.
+     * Merge imported uris to entity object.
+     * Only one rule, do not overwrite old data.
      */
     public void mergeEntityImportModifications(Koulutusmoduuli m,
             final KoodiV1RDTO koulutusohjelma,

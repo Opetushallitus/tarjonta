@@ -2,7 +2,7 @@
     <tr>
         <th></th>
         <td>
-            <input ng-disabled="uiModel.tabs.lisatiedot"  type="checkbox" ng-model="uiModel.cbShowValmistavaKoulutus" ng-change="clickShowValmistavaKoulutus()" />
+            <input type="checkbox" ng-model="uiModel.cbShowValmistavaKoulutus" />
             <span tt="koulutus.edit.sisaltyy-valmistava-koulutus">Tutkintoon sisältyy valmistava koulutus</span>
         </td>
         <td></td>
@@ -25,7 +25,7 @@
     </tr>
 
     <!-- koulutusohjelma -->
-    <tr class="required">
+    <tr class="required" ng-if="uiModel.disableOsaamisala">
         <th tt="koulutus.edit.osaamisala">Osaamisala</th>
         <td>
             <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
@@ -33,7 +33,6 @@
                 <option value="" ng-disabled="model.koulutusohjelma.uri"></option>
             </select>
             <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
-
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
@@ -152,3 +151,5 @@
 <tr class="padding"><td colspan="3"></td></tr>
 
 </table>
+
+<div ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html'">

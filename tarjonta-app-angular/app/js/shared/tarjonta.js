@@ -115,7 +115,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14"]
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11","koulutustyyppi_12"]
         };
 
         $log.debug("haeKoulutukset()", params);
@@ -136,7 +136,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = r.oid;
                     } else {
-                        r.nimi = localize(r.nimi) + (r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
+                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi!=="LUKIOKOULUTUS" && r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
                     }
 
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
@@ -634,7 +634,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             result = defaultValue;
         }
 
-        $log.debug("getParameter()", target, name, result, cache[target]);
+       // $log.debug("getParameter()", target, name, result, cache[target]);
 
         return result;
     };
@@ -684,7 +684,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         var ph_hkmt = dataFactory.getParameter(hakuOid, "PH_HKMT", "LONG", now);
         if (ph_hklpt && ph_hkmt) {
             result = (now <= ph_hklpt) && (now <= ph_hkmt);
-            $log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
+            //$log.debug("parameterCanRemoveHakukohdeFromHaku: ", hakuOid, ph_hklpt, ph_hkmt, result);
             return result;
         } else {
             return true;

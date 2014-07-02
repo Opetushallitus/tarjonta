@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.BaseV1RDTO;
+import java.util.HashMap;
 
 /**
  *
@@ -44,7 +45,10 @@ public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
     private KoodiV1RDTO opintojenLaajuusyksikko;
     @ApiModelProperty(value = "Koulutustyyppi-koodi", required = true)
     private KoodiV1RDTO koulutustyyppi;
-    
+
+    @ApiModelProperty(value = "Kaikki haettuun koodiin sisaltyvat koulutusohjelma-, osaamisala- tai lukiolinja-tyyppiset koodit.")
+    private KoodiUrisV1RDTO ohjelmas;
+
     /**
      * @return the koulutuskoodi
      */
@@ -169,6 +173,25 @@ public class KoulutusmoduuliStandardRelationV1RDTO extends BaseV1RDTO {
      */
     public void setKoulutustyyppi(KoodiV1RDTO koulutustyyppi) {
         this.koulutustyyppi = koulutustyyppi;
+    }
+
+    /**
+     * @return the ohjelmas
+     */
+    public KoodiUrisV1RDTO getOhjelmas() {
+        if (ohjelmas == null) {
+            ohjelmas = new KoodiUrisV1RDTO();
+            ohjelmas.setUris(new HashMap<String, Integer>());
+        }
+
+        return ohjelmas;
+    }
+
+    /**
+     * @param ohjelmas the ohjelmas to set
+     */
+    public void setOhjelmas(KoodiUrisV1RDTO ohjelmas) {
+        this.ohjelmas = ohjelmas;
     }
 
 }

@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -48,6 +50,8 @@ public class KoulutusValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusValidator.class);
     private static final int DEFAULT_MIN = 1;
+    private static final boolean REQUIRE_KOMO_VALIDATION = true;
+    private static final boolean NO_KOMO_VALIDATION = false;
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -56,7 +60,12 @@ public class KoulutusValidator {
      * @param result
      * @return validation flag: full stop == true
      */
-    public static boolean validateBaseKoulutusData(KoulutusV1RDTO koulutus, ResultV1RDTO result) {
+    public static boolean validateBaseKoulutusData(KoulutusV1RDTO koulutus, Koulutusmoduuli komo, ResultV1RDTO result, boolean komoRequired) {
+        if (komoRequired && komo == null) {
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_MODULE_NOT_FOUND.getFieldName(), KoulutusValidationMessages.KOULUTUS_MODULE_NOT_FOUND.lower()));
+            return true;
+        }
+
         if (koulutus == null) {
             result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING.lower()));
             return true;
@@ -82,7 +91,7 @@ public class KoulutusValidator {
     }
 
     public static ResultV1RDTO validateKoulutusKorkeakoulu(KoulutusKorkeakouluV1RDTO dto, ResultV1RDTO result) {
-        if (validateBaseKoulutusData(dto, result)) {
+        if (validateBaseKoulutusData(dto, null, result, NO_KOMO_VALIDATION)) {
             //a major validation error, validation must stop now!
             return result;
         }
@@ -102,8 +111,8 @@ public class KoulutusValidator {
         return result;
     }
 
-    public static ResultV1RDTO validateKoulutusLukio(KoulutusLukioV1RDTO dto, ResultV1RDTO result) {
-        if (validateBaseKoulutusData(dto, result)) {
+    public static ResultV1RDTO validateKoulutusLukio(KoulutusLukioV1RDTO dto, Koulutusmoduuli komo, ResultV1RDTO result) {
+        if (validateBaseKoulutusData(dto, komo, result, REQUIRE_KOMO_VALIDATION)) {
             //a major validation error, validation must stop now!
             return result;
         }
@@ -119,24 +128,22 @@ public class KoulutusValidator {
         return result;
     }
 
-    public static ResultV1RDTO validateKoulutusNayttotutkinto(NayttotutkintoV1RDTO dto, ResultV1RDTO result) {
-        if (validateBaseKoulutusData(dto, result)) {
+    public static ResultV1RDTO validateKoulutusNayttotutkinto(NayttotutkintoV1RDTO dto, Koulutusmoduuli komo, ResultV1RDTO result) {
+        if (validateBaseKoulutusData(dto, komo, result, true)) {
             //a major validation error, validation must stop now!
             return result;
         }
 
-        validateKoodistoRelationsNaytto(dto, result);
+        validateKoulutusWithOrWithoutKoulutusohjelma(dto, komo.getModuuliTyyppi(), result);
 
         validateKoodiUris(result, dto.getOpetuskielis(), KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSKIELI_INVALID, DEFAULT_MIN);
 
-        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDTO = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
-
-        if (nayttoDTO.getJarjestavaOrganisaatio() == null || nayttoDTO.getJarjestavaOrganisaatio().getOid() == null || nayttoDTO.getJarjestavaOrganisaatio().getOid().isEmpty()) {
+        if (dto.getJarjestavaOrganisaatio() == null || dto.getJarjestavaOrganisaatio().getOid() == null || dto.getJarjestavaOrganisaatio().getOid().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING.lower()));
         }
 
-        if (nayttoDTO.getValmistavaKoulutus() != null) {
-            final ValmistavaV1RDTO valmistavaKoulutus = nayttoDTO.getValmistavaKoulutus();
+        if (dto.getValmistavaKoulutus() != null) {
+            final ValmistavaV1RDTO valmistavaKoulutus = dto.getValmistavaKoulutus();
             validateKoodiUris(result, valmistavaKoulutus.getOpetusmuodos(), KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSMUOTO_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, valmistavaKoulutus.getOpetusAikas(), KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSAIKA_INVALID, DEFAULT_MIN);
             validateKoodiUris(result, valmistavaKoulutus.getOpetusPaikkas(), KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_MISSING, KoulutusValidationMessages.KOULUTUS_OPETUSPAIKKA_INVALID, DEFAULT_MIN);
@@ -200,9 +207,19 @@ public class KoulutusValidator {
         validateKoodi(result, dto.getPohjakoulutusvaatimus(), KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_MISSING, KoulutusValidationMessages.KOULUTUS_POHJAKOULUTUSVAATIMUS_INVALID);
     }
 
+    private static void validateKoulutusWithOrWithoutKoulutusohjelma(NayttotutkintoV1RDTO dto, KoulutusmoduuliTyyppi koulutusmoduuliTyyppi, ResultV1RDTO result) {
+        switch (koulutusmoduuliTyyppi) {
+            case TUTKINTO_OHJELMA:
+                validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
+                break;
+            default:
+                //no validation
+                break;
+        }
+    }
+
     private static void validateKoodistoRelationsNaytto(NayttotutkintoV1RDTO dto, ResultV1RDTO result) {
         // TODO:  kun relaatiot on tehty koodistoon;
-        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
         validateKoodi(result, dto.getOpintoala(), KoulutusValidationMessages.KOULUTUS_OPINTOALA_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOALA_INVALID);
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);

@@ -12,8 +12,9 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
 
             $scope.import = {
                 showAllKomos: false,
+                showUris: false,
                 filter: {oid: null},
-                uiModel: {}
+                uiModel: []
             };
 
             $scope.ctrl = {
@@ -92,7 +93,9 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     {name: "opintoala", type: "URI"},
                     {name: "opintojenLaajuusarvo", type: "URI"},
                     {name: "koulutusohjelma", type: "URI"},
-                    {name: "koulutusohjelma", type: "TEXT_MAP"},
+                    {name: "osaamisala", type: "URI"},
+                    {name: "lukiolinja", type: "URI"},
+                    {name: "nimi", type: "TEXT_MAP"},
                     {name: "tutkintonimikes", type: "URI_VERSION_MAP"},
                     {name: "oppilaitostyyppis", type: "URI_VERSION_MAP"},
                     {name: "koulutustyyppis", type: "URI_MAP"},
@@ -119,6 +122,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
             };
 
             $scope.fetchByKoulutuskoodi = function(strKoulutuskoodiUri) {
+                $scope.ctrl.link.selectedKomoOids = []; //clear selected array
                 var resource = TarjontaService.komo();
                 if (angular.isDefined($scope.ctrl.koulutustyyppiUri) && $scope.ctrl.koulutustyyppiUri !== null) {
 
@@ -130,11 +134,11 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                             komos.push({
                                 oid: res.result[i].oid,
                                 koulutuskoodiUri: res.result[i].koulutuskoodiUri,
-                                koulutusohjelmaUri: res.result[i].koulutusohjelmaUri,
+                                ohjelmaUri: res.result[i].ohjelmaUri,
                                 koulutusmoduuliTyyppi: res.result[i].koulutusmoduuliTyyppi,
                                 moduuli: res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO' ? 'Tutkinto' : 'Tutkinto-ohjelma',
                                 koulutus: res.result[i].koulutuskoodiUri,
-                                ohjelma: res.result[i].koulutusohjelmaUri
+                                ohjelma: res.result[i].ohjelmaUri
                             });
                         }
 
@@ -156,10 +160,19 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 return  $scope.ctrl.result[field];
             };
 
+            $scope.removeField = function(field) {
+                return $scope.ctrl.result[field] = {uri: null, versio: -1};
+            };
+
+            $scope.initUri = function(fieldName) {
+                if (!angular.isDefined($scope.ctrl.result[fieldName]) || !angular.isDefined($scope.ctrl.result[fieldName].uri)) {
+                    $scope.ctrl.result[fieldName] = {uri: '', versio: -1};
+                }
+            };
 
             $scope.removeLanguageToFieldTekstis = function(langKey, fieldName) {
                 delete fieldName[langKey];
-            }
+            };
 
             $scope.addLanguageToFieldTekstis = function(langKey, fieldName) {
                 if (angular.isUndefined(fieldName)) {
@@ -406,8 +419,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 var komos = angular.copy(modelKomos);
                 for (var i = 0; i < komos.length; i++) {
                     prosmises.push($scope.searchKoodi(komos[i], 'koulutus', 'koulutus', komos[i].koulutuskoodiUri, 'FI'));
-                    if (angular.isDefined(komos[i].koulutusohjelmaUri) && komos[i].koulutusohjelmaUri !== null) {
-                        prosmises.push($scope.searchKoodi(komos[i], 'ohjelma', (komos[i].koulutusohjelmaUri.split("_"))[0], komos[i].koulutusohjelmaUri, 'FI'));
+                    if (angular.isDefined(komos[i].ohjelmaUri) && komos[i].ohjelmaUri !== null) {
+                        prosmises.push($scope.searchKoodi(komos[i], 'ohjelma', (komos[i].ohjelmaUri.split("_"))[0], komos[i].ohjelmaUri, 'FI'));
                     }
                 }
 
@@ -437,63 +450,35 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 function resolvePromise(koulutuUri, koodis, count) {
                     var deffered = $q.defer();
 
-                    var ohjelma = Koodisto.getAlapuolisetKoodiUrit([koodis.uris[count]], null, $scope.koodistoLocale);
-                    ohjelma.then(function(ohjelmaRes) {
-                        deffered.resolve({koulutus: koulutuUri, res: ohjelmaRes});
+                    TarjontaService.getKoulutuskoodiRelations({
+                        uri: koodis.uris[count],
+                        koulutustyyppi: koulutustyyppiUri,
+                        languageCode: $scope.koodistoLocale,
+                        meta: false,
+                        defaults: "tutkintonimike:tutkintonimikkeet_00000,eqf:eqf_4,tutkinto:tutkinto_xx"
+                    }, function(data) {
+                        deffered.resolve({koulutus: koulutuUri, res: data});
                     });
+
+//                    var ohjelma = Koodisto.getAlapuolisetKoodiUrit([koodis.uris[count]], null, $scope.koodistoLocale);
+//                    ohjelma.then(function(ohjelmaRes) {
+//                        deffered.resolve({koulutus: koulutuUri, res: ohjelmaRes});
+//                    });
                     return deffered.promise;
                 }
 
                 koulutus.then(function(koulutusRes) {
                     var promises = [];
-                    var koulutusMap = {komo: {}};
+                    var koulutusMap = {};
                     for (var ik = 0; ik < koulutusRes.uris.length; ik++) {
                         promises.push(resolvePromise(koulutusRes.uris[ik], koulutusRes, ik));
                     }
                     var p = $q.all(promises);
                     p.then(function(result) {
-
                         for (var i = 0; i < result.length; i++) {
-                            for (var io = 0; io < result[i].res.uris.length; io++) {
-
-                                if (angular.isUndefined(koulutusMap[result[i].koulutus])) {
-                                    koulutusMap[result[i].koulutus] = {ohjelmas: []};
-                                }
-
-                                var obj = koulutusMap[result[i].koulutus];
-
-                                obj.uri = {};
-
-                                //filter all useless uris for komo import
-                                if ($scope.isRequiredKoodisto("tutkintotyyppi", result[i].res.uris[io])) {
-                                    koulutusMap.komo.tutkintotyyppi = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("koulutustyyppi", result[i].res.uris[io])) {
-                                    koulutusMap.komo.koulutustyyppi = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("koulutusasteoph2002", result[i].res.uris[io])) {
-                                    koulutusMap.komo.koulutusaste = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("opintojenlaajuus_", result[i].res.uris[io])) {
-                                    koulutusMap.komo.opintojenLaajuusarvo = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("opintojenlaajuusyksikko", result[i].res.uris[io])) {
-                                    koulutusMap.komo.opintojenLaajuusyksikko = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("eqf", result[i].res.uris[io])) {
-                                    koulutusMap.komo.eqf = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("opintoalaoph2002", result[i].res.uris[io])) {
-                                    koulutusMap.komo.opintoala = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("koulutusalaoph2002", result[i].res.uris[io])) {
-                                    koulutusMap.komo.koulutusala = result[i].res.uris[io];
-                                } else if ($scope.isRequiredKoodisto("osaamisala", result[i].res.uris[io])) {
-                                    obj.ohjelmas.push(result[i].res.uris[io]);
-                                } else if ($scope.isRequiredKoodisto("koulutusohjelmaamm", result[i].res.uris[io])) {
-                                    obj.ohjelmas.push(result[i].res.uris[io]);
-                                } else if ($scope.isRequiredKoodisto("lukiolinjat", result[i].res.uris[io])) {
-                                    obj.ohjelmas.push(result[i].res.uris[io]);
-                                } else {
-                                    // console.log("skipped : " + result[i].res.uris[io]);
-                                }
-                            }
+                            koulutusMap[result[i].koulutus] = result[i].res.result;
+                            searchResult.resolve(koulutusMap);
                         }
-
-                        searchResult.resolve(koulutusMap);
                     });
                 });
 
@@ -502,109 +487,109 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
 
             /* koodisto import*/
             $scope.searchAllMissingModulesByKoulutustyyppi = function() {
+                $scope.import.uiModel = [];
                 var promise = $scope.searchUris($scope.ctrl.koulutustyyppiUri);
                 var mapKomos = {};
                 var uiModel = [];
                 var resource = TarjontaService.komo();
 
                 promise.then(function(result) {
-                    angular.forEach(result, function(value, koulutusUri) {
-                        if (koulutusUri !== 'komo') {
-                            resource.searchModules({
-                                koulutus: koulutusUri,
-                                koulutustyyppi: $scope.ctrl.koulutustyyppiUri
-                            }, function(res) {
-                                /*
-                                 * mapLoaded:
-                                 * 
-                                 * koulutus_123456 : {
-                                 * oid : 12345,
-                                 * mapOhjelmas : {
-                                 *      ohjelmauri_a = {oid : 12345},
-                                 *      ohjelmauri_b = {oid : 12345}
-                                 *      ...
-                                 *  }
-                                 * }
-                                 * ...
-                                 */
+                    angular.forEach(result, function(relatios, koulutusUri) {
 
-                                //LOAD
+                        resource.searchModules({
+                            koulutus: koulutusUri,
+                            koulutustyyppi: $scope.ctrl.koulutustyyppiUri
+                        }, function(res) {
+                            /*
+                             * mapLoaded:
+                             * 
+                             * koulutus_123456 : {
+                             * oid : 12345,
+                             * mapOhjelmas : {
+                             *      ohjelmauri_a = {oid : 12345},
+                             *      ohjelmauri_b = {oid : 12345}
+                             *      ...
+                             *  }
+                             * }
+                             * ...
+                             */
 
-                                var mapLoaded = {};
-                                for (var i = 0; i < res.result.length; i++) {
-                                    if (angular.isUndefined(mapLoaded[res.result[i].koulutuskoodiUri])) {
-                                        mapLoaded[res.result[i].koulutuskoodiUri] = {
-                                            mapOhjelmas: {}
-                                        };
-                                    }
-
-                                    if (angular.isUndefined(res.result[i].ohjelma) && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
-                                        if (angular.isDefined(res.result[i].koulutusohjelmaUri)) {
-                                            mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].koulutusohjelmaUri] = {oid: res.result[i].oid};
-                                        }
-                                        if (angular.isDefined(res.result[i].osaamisalaUri)) {
-                                            mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].osaamisalaUri] = {oid: res.result[i].oid};
-                                        }
-                                        if (angular.isDefined(res.result[i].lukiolinjaUri)) {
-                                            mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].lukiolinjaUri] = {oid: res.result[i].oid};
-                                        }
-                                    } else if (res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO') {
-                                        mapLoaded[res.result[i].koulutuskoodiUri].oid = res.result[i].oid;
-                                    } else {
-                                        console.log("???", res.result[i]);
-                                    }
+                            var mapLoaded = {};
+                            for (var i = 0; i < res.result.length; i++) {
+                                if (angular.isUndefined(mapLoaded[res.result[i].koulutuskoodiUri])) {
+                                    mapLoaded[res.result[i].koulutuskoodiUri] = {
+                                        mapOhjelmas: {}
+                                    };
                                 }
 
+                                if (angular.isUndefined(res.result[i].ohjelma) && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
+                                    if (angular.isDefined(res.result[i].koulutusohjelmaUri)) {
+                                        mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].koulutusohjelmaUri] = {oid: res.result[i].oid};
+                                    }
+                                    if (angular.isDefined(res.result[i].osaamisalaUri)) {
+                                        mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].osaamisalaUri] = {oid: res.result[i].oid};
+                                    }
+                                    if (angular.isDefined(res.result[i].lukiolinjaUri)) {
+                                        mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].lukiolinjaUri] = {oid: res.result[i].oid};
+                                    }
+                                } else if (res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO') {
+                                    mapLoaded[res.result[i].koulutuskoodiUri].oid = res.result[i].oid;
+                                } else {
+                                    console.log("???", res.result[i]);
+                                }
+                            }
 
-                                if (angular.isUndefined(mapKomos[koulutusUri])) {
-                                    var tutkintoApiModel = {
-                                        oid: angular.isDefined(mapLoaded[koulutusUri]) ? mapLoaded[koulutusUri].oid : null
-                                    };
 
-                                    var tutkintoModel = $scope.createModel(tutkintoApiModel, "TUTKINTO", koulutusUri, {}, result.komo);
+                            if (angular.isUndefined(mapKomos[koulutusUri])) {
+                                var tutkintoApiModel = {
+                                    oid: angular.isDefined(mapLoaded[koulutusUri]) ? mapLoaded[koulutusUri].oid : null
+                                };
 
-                                    mapKomos[koulutusUri] = {
-                                        tutkinto: tutkintoModel,
-                                        ohjelmas: [],
-                                    };
-                                    uiModel.push(tutkintoModel);
+                                var tutkintoModel = $scope.createModel(tutkintoApiModel, "TUTKINTO", koulutusUri, {}, relatios);
+
+                                mapKomos[koulutusUri] = {
+                                    tutkinto: tutkintoModel,
+                                    ohjelmas: [],
+                                };
+                                uiModel.push(tutkintoModel);
+                            }
+
+                            //MERGE
+
+                            var mergeDublicate = {};
+                            var ohjelmaKeys = _.keys(relatios.ohjelmas.uris);
+
+                            for (var i = 0; i < ohjelmaKeys.length; i++) {
+                                //merge by ohjelma.arvo, because the koodiuri can be different, but value in some cases is same.
+                                var ohjArvo = relatios.ohjelmas.meta[ohjelmaKeys[i]].arvo;
+
+                                if (angular.isUndefined(mergeDublicate[ohjArvo])) {
+                                    mergeDublicate[ohjArvo] = {arvo: ohjArvo};
                                 }
 
-                                //MERGE
-
-                                var mergeDublicate = {};
-                                for (var i = 0; i < value.ohjelmas.length; i++) {
-                                    var ohjVal = value.ohjelmas[i].split("_")[1];
-                                    if (angular.isUndefined(mergeDublicate[ohjVal])) {
-                                        mergeDublicate[ohjVal] = {};
-                                    }
-
-                                    if ($scope.isRequiredKoodisto("osaamisala", value.ohjelmas[i])) {
-                                        mergeDublicate[ohjVal].osaamisala = value.ohjelmas[i];
-                                        mergeDublicate[ohjVal].ohjelma = value.ohjelmas[i];
-                                    } else if ($scope.isRequiredKoodisto("koulutusohjelmaamm", value.ohjelmas[i])) {
-                                        mergeDublicate[ohjVal].koulutusohjelma = value.ohjelmas[i];
-                                        mergeDublicate[ohjVal].ohjelma = value.ohjelmas[i];
-                                    } else if ($scope.isRequiredKoodisto("lukiolinjat", value.ohjelmas[i])) {
-                                        mergeDublicate[ohjVal].lukiolinja = value.ohjelmas[i];
-                                        mergeDublicate[ohjVal].ohjelma = value.ohjelmas[i];
-                                    }
+                                if ($scope.isRequiredKoodisto("osaamisala", ohjelmaKeys[i])) {
+                                    mergeDublicate[ohjArvo].osaamisala = ohjelmaKeys[i];
+                                } else if ($scope.isRequiredKoodisto("koulutusohjelmaamm", ohjelmaKeys[i])) {
+                                    mergeDublicate[ohjArvo].koulutusohjelma = ohjelmaKeys[i];
+                                } else if ($scope.isRequiredKoodisto("lukiolinjat", ohjelmaKeys[i])) {
+                                    mergeDublicate[ohjArvo].lukiolinja = ohjelmaKeys[i];
                                 }
+                                mergeDublicate[ohjArvo].ohjelma = ohjelmaKeys[i];
+                            }
 
-                                //CONVERT TO API MODEL
+                            //CONVERT TO API MODEL
+                            angular.forEach(mergeDublicate, function(value, key) {
+                                var ohjelmaApiModel = {
+                                    oid: angular.isDefined(mapLoaded[koulutusUri]) && angular.isDefined(mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma]) ? mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma].oid : null
+                                };
 
-                                angular.forEach(mergeDublicate, function(value, key) {
-                                    var ohjelmaApiModel = {
-                                        oid: angular.isDefined(mapLoaded[koulutusUri]) && angular.isDefined(mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma]) ? mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma].oid : null
-                                    };
+                                var ohjelmaModel = $scope.createModel(ohjelmaApiModel, "TUTKINTO_OHJELMA", koulutusUri, mergeDublicate[key], relatios);
 
-                                    var ohjelmaModel = $scope.createModel(ohjelmaApiModel, "TUTKINTO_OHJELMA", koulutusUri, mergeDublicate[key], result.komo)
-
-                                    mapKomos[koulutusUri].ohjelmas.push(ohjelmaModel);
-                                    uiModel.push(ohjelmaModel);
-                                });
+                                mapKomos[koulutusUri].ohjelmas.push(ohjelmaModel);
+                                uiModel.push(ohjelmaModel);
                             });
-                        }
+                        });
+
                     });
 
                     $scope.import.uiModel = uiModel;
@@ -656,9 +641,23 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 return $scope.updateApiModel(apiModel, koulutusUri, objOhjelmat, moduleType, asteEnum, data);
             };
 
-            $scope.updateApiModel = function(apiModel, koulutusUri, objOhjelmat, moduleTypeEnum, asteEnum, data) {
-                console.log(objOhjelmat.osaamisala);
+            $scope.getUri = function(obj) {
+                return angular.isDefined(obj) ? obj.uri : null;
+            };
 
+            $scope.getArvo = function(obj) {
+                return angular.isDefined(obj) ? obj.arvo : null;
+            };
+
+            $scope.getTutkintonimike = function(obj) {
+                if (angular.isDefined(obj.tutkintonimikes) && angular.isDefined(obj.tutkintonimikes.uris)) {
+                    return _.keys(obj.tutkintonimikes.uris);
+                } else {
+                    return [$scope.getUri(obj.tutkintonimike)];
+                }
+            };
+
+            $scope.updateApiModel = function(apiModel, koulutusUri, objOhjelmat, moduleTypeEnum, asteEnum, data) {
                 var STRUCTURE = {
                     ENUMS: {
                         "koulutusmoduuliTyyppi": moduleTypeEnum,
@@ -668,11 +667,11 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     URIS: {
                         "koulutustyyppis": {
                             "module": "BOTH",
-                            "uris": [data.koulutustyyppi]
+                            "uris": [$scope.ctrl.koulutustyyppiUri]
                         },
                         "tutkintonimikes": {
                             "module": "TUTKINTO",
-                            "uris": []
+                            "uris": $scope.getTutkintonimike(data)
                         },
                         "oppilaitostyyppis": {
                             "module": "TUTKINTO",
@@ -682,51 +681,62 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     URI: {
                         "koulutusaste": {
                             module: "TUTKINTO",
-                            "uri": data.koulutusaste
+                            "arvo": $scope.getArvo(data.koulutusaste),
+                            "uri": $scope.getUri(data.koulutusaste)
                         },
                         "eqf": {
                             module: "BOTH",
-                            "uri": data.eqf
+                            "arvo": $scope.getArvo(data.eqf),
+                            "uri": $scope.getUri(data.eqf)
                         },
                         "koulutusala": {
                             module: "TUTKINTO",
-                            "uri": data.koulutusala
+                            "arvo": $scope.getArvo(data.koulutusala),
+                            "uri": $scope.getUri(data.koulutusala)
                         },
                         "tutkinto": {
                             module: "TUTKINTO",
-                            "uri": data.tutkinto
+                            "arvo": $scope.getArvo(data.tutkinto),
+                            "uri": $scope.getUri(data.tutkinto)
                         },
                         "opintojenLaajuusyksikko": {
                             module: "TUTKINTO",
-                            "uri": data.opintojenLaajuusyksikko
+                            "arvo": $scope.getArvo(data.opintojenLaajuusyksikko),
+                            "uri": $scope.getUri(data.opintojenLaajuusyksikko)
                         },
                         "opintoala": {
                             module: "TUTKINTO",
-                            "uri": data.opintoala
+                            "arvo": $scope.getArvo(data.opintoala),
+                            "uri": $scope.getUri(data.opintoala)
                         },
                         "koulutusohjelma": {
                             module: "TUTKINTO_OHJELMA",
+                            "arvo": objOhjelmat.arvo,
                             "uri": objOhjelmat.koulutusohjelma
                         },
-                        "lukiolinjat": {
+                        "lukiolinja": {
                             module: "TUTKINTO_OHJELMA",
+                            "arvo": objOhjelmat.arvo,
                             "uri": objOhjelmat.lukiolinja
                         },
                         "osaamisala": {
                             module: "TUTKINTO_OHJELMA",
+                            "arvo": objOhjelmat.arvo,
                             "uri": objOhjelmat.osaamisala
                         },
                         "koulutuskoodi": {
                             module: "BOTH",
-                            "uri": koulutusUri
+                            "arvo": $scope.getArvo(data.koulutuskoodi),
+                            "uri": $scope.getUri(data.koulutuskoodi)
                         },
                         "opintojenLaajuusarvo": {
                             module: "TUTKINTO",
-                            "uri": data.opintojenLaajuusarvo
+                            "arvo": $scope.getArvo(data.opintojenLaajuusarvo),
+                            "uri": $scope.getUri(data.opintojenLaajuusarvo)
                         },
                         "nqf": {
                             module: "BOTH",
-                            "uri": data.nqf
+                            "uri": $scope.getUri(data.nqf)
                         }
                     }
                 };
@@ -760,6 +770,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                                     && STRUCTURE.URI[key].uri.length > 0) {
 
                                 apiModel[key] = {
+                                    arvo: STRUCTURE.URI[key].arvo,
                                     uri: STRUCTURE.URI[key].uri,
                                     versio: 1
                                 };
@@ -785,6 +796,8 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 }
             });
 
+
+
             $scope.importAllGroups = function() {
                 $scope.ctrl.showError = false;
                 $scope.ctrl.showSuccess = false;
@@ -796,65 +809,61 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                         arrByKoulutusUri.push(value.tutkinto);
                         console.log("--------------------------");
                         console.log(keyKoulutusUri);
-                        for (var i = 0; i < arrByKoulutusUri.length; i++) {
 
+                        TarjontaService.komoImport(keyKoulutusUri).import(arrByKoulutusUri, function(res) {
+                            //result handler for ui model
+                            if (res.status === 'OK') {
+                                $scope.ctrl.showSuccess = true;
+                                console.log("SUCCESS: ", res);
+                            } else {
+                                $scope.ctrl.showError = true;
 
-                            TarjontaService.komoImport(keyKoulutusUri).import(arrByKoulutusUri, function(res) {
-                                //result handler for ui model
-                                if (res.status === 'OK') {
-                                    $scope.ctrl.showSuccess = true;
-                                    console.log("SUCCESS: ", res);
-                                } else {
-                                    $scope.ctrl.showError = true;
-
-                                    if (angular.isDefined(res.errors)) {
-                                        var mapErrors = {};
-                                        for (var i = 0; i < res.errors.length; i++) {
-                                            mapErrors[res.errors[i].errorMessageKey] = {};
-                                        }
-
-                                        angular.forEach(mapErrors, function(value, key) {
-                                            $scope.ctrl.validationmsgs.push(key);
-                                        });
+                                if (angular.isDefined(res.errors)) {
+                                    var mapErrors = {};
+                                    for (var i = 0; i < res.errors.length; i++) {
+                                        mapErrors[res.errors[i].errorMessageKey] = {};
                                     }
-                                    console.error("FAILED : ", res);
+
+                                    angular.forEach(mapErrors, function(value, key) {
+                                        $scope.ctrl.validationmsgs.push(key);
+                                    });
                                 }
+                                console.error("FAILED : ", res);
+                            }
 
 
-                                var koulutus = []
-                                if (res.result[0].koulutuskoodiUri === keyKoulutusUri) {
-                                    for (var i = 0; i < $scope.import.uiModel.length; i++) {
-                                        var o = $scope.import.uiModel[i];
-                                        koulutus.push({
-                                            index: i,
-                                            osaamisalaUri: angular.isDefined(o.osaamisala) && angular.isDefined(o.osaamisala.uri) ? o.osaamisala.uri : null,
-                                            koulutusohjelmaUri: angular.isDefined(o.koulutusohjelma) && angular.isDefined(o.koulutusohjelma.uri) ? o.koulutusohjelma.uri : null,
-                                            lukiolinjaUri: angular.isDefined(o.lukiolinja) && angular.isDefined(o.lukiolinja.uri) ? o.lukiolinja.uri : null
-                                        });
-                                    }
+                            var koulutus = []
+                            if (res.result[0].koulutuskoodiUri === keyKoulutusUri) {
+                                for (var i = 0; i < $scope.import.uiModel.length; i++) {
+                                    var o = $scope.import.uiModel[i];
+                                    koulutus.push({
+                                        index: i,
+                                        osaamisalaUri: angular.isDefined(o.osaamisala) && angular.isDefined(o.osaamisala.uri) ? o.osaamisala.uri : null,
+                                        koulutusohjelmaUri: angular.isDefined(o.koulutusohjelma) && angular.isDefined(o.koulutusohjelma.uri) ? o.koulutusohjelma.uri : null,
+                                        lukiolinjaUri: angular.isDefined(o.lukiolinja) && angular.isDefined(o.lukiolinja.uri) ? o.lukiolinja.uri : null
+                                    });
                                 }
+                            }
 
-                                for (var i = 0; i < res.result.length; i++) {
-                                    for (var c = 0; c < koulutus.length; c++) {
-                                        if (res.result[i].koulutuskoodiUri === keyKoulutusUri && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO') {
+                            for (var i = 0; i < res.result.length; i++) {
+                                for (var c = 0; c < koulutus.length; c++) {
+                                    if (res.result[i].koulutuskoodiUri === keyKoulutusUri && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO') {
+                                        $scope.import.uiModel[koulutus[c].index].status = res.status;
+                                    } else if (res.result[i].koulutuskoodiUri === keyKoulutusUri && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
+                                        if (res.result[i].osaamisalaUri === koulutus[c].osaamisalaUri) {
                                             $scope.import.uiModel[koulutus[c].index].status = res.status;
-                                        } else if (res.result[i].koulutuskoodiUri === keyKoulutusUri && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
-                                            if (res.result[i].osaamisalaUri === koulutus[c].osaamisalaUri) {
-                                                $scope.import.uiModel[koulutus[c].index].status = res.status;
-                                                console.log("SUCCESS: osaamisala", koulutus[c]);
-                                            } else if (res.result[i].koulutusohjelmaUri === koulutus[c].koulutusohjelmaUri) {
-                                                $scope.import.uiModel[koulutus[c].index].status = res.status;
-                                                console.log("SUCCESS: koulutusohjelma", koulutus[c]);
-                                            } else if (res.result[i].lukiolinjaUri === koulutus[c].lukiolinjaUri) {
-                                                $scope.import.uiModel[koulutus[c].index].status = res.status;
-                                                console.log("SUCCESS: lukiolinja", koulutus[c]);
-                                            }
+                                            console.log("SUCCESS: osaamisala", koulutus[c]);
+                                        } else if (res.result[i].koulutusohjelmaUri === koulutus[c].koulutusohjelmaUri) {
+                                            $scope.import.uiModel[koulutus[c].index].status = res.status;
+                                            console.log("SUCCESS: koulutusohjelma", koulutus[c]);
+                                        } else if (res.result[i].lukiolinjaUri === koulutus[c].lukiolinjaUri) {
+                                            $scope.import.uiModel[koulutus[c].index].status = res.status;
+                                            console.log("SUCCESS: lukiolinja", koulutus[c]);
                                         }
                                     }
                                 }
-                            });
-                        }
-
+                            }
+                        });
                     });
                 });
             };

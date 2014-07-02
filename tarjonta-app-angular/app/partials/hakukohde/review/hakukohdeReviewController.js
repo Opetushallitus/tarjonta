@@ -353,14 +353,22 @@ app.controller('HakukohdeReviewController',
 
     var loadHakukelpoisuusVaatimukses = function() {
 
-        angular.forEach($scope.model.hakukohde.hakukelpoisuusvaatimusUris,function(hakukelpoisuusVaatimusUri){
+      var koodistot={
+          LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:"hakukelpoisuusvaatimusta",
+          KORKEAKOULUTUS:"pohjakoulutusvaatimuskorkeakoulut"
+      };
+      
+      var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];
+      if(!koodisto){
+        $log.error("don't know which koodisto to use??!? toteutusTyyppi:", $scope.model.hakukohde.toteutusTyyppi);
+      }
 
-            getKoodiWithUri('pohjakoulutusvaatimuskorkeakoulut',hakukelpoisuusVaatimusUri,function(hakukelpoisuusVaatimusKoodi){
-                   $scope.model.hakukelpoisuusVaatimukses.push(hakukelpoisuusVaatimusKoodi.koodiNimi);
+      angular.forEach($scope.model.hakukohde.hakukelpoisuusvaatimusUris,function(hakukelpoisuusVaatimusUri){
+          getKoodiWithUri(koodisto,hakukelpoisuusVaatimusUri,function(hakukelpoisuusVaatimusKoodi){
+                 $scope.model.hakukelpoisuusVaatimukses.push(hakukelpoisuusVaatimusKoodi.koodiNimi);
 
-               });
-
-        });
+          });
+      });
 
     };
 
@@ -826,13 +834,9 @@ app.controller('HakukohdeReviewController',
             return $scope.model.hakukohde.soraKuvaukset[kieliUri];
         }
 
-
-
     };
 
     $scope.openLiitaKoulutusModal = function() {
-
-
 
         var modalInstance = $modal.open({
             templateUrl: 'partials/hakukohde/review/hakukohdeLiitaKoulutus.html',
@@ -848,7 +852,6 @@ app.controller('HakukohdeReviewController',
                 selectedKoulutukses : function() {
                     return $scope.model.hakukohde.hakukohdeKoulutusOids;
                 }
-
             }
         });
 
@@ -878,9 +881,7 @@ app.controller('HakukohdeReviewController',
                  }
              });
         });
-
     };
-
 });
 
 
@@ -921,8 +922,6 @@ app.controller('ShowKoulutusHakukohtees',
         $modalInstance.dismiss('cancel');
     };
 
-
-
 });
 
 /*
@@ -945,7 +944,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',
 
     $log = $log.getInstance("HakukohdeLiitaKoulutusModalCtrl");
     $log.debug("init...");
-
+    
     /*
 
         ----------> Init controller variables etc. <--------------
@@ -954,17 +953,15 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',
 
 
 
-    $scope.model = {};
+    $scope.model = {
+    };
 
     $scope.model.helper = {
-
         functions : {},
         allKoulutuksesMap : {}
-
     };
 
     $scope.model.translations = {
-
           title : LocalisationService.t('hakukohde.review.liita.koulutus.title'),
           poistaBtn : LocalisationService.t('hakukohde.review.liita.koulutus.poistaBtn'),
           cancelBtn : LocalisationService.t('tarjonta.hakukohde.liite.modal.peruuta.button'),
@@ -985,8 +982,6 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',
         ----------> Define "initialization functions <------------
 
      */
-
-
     var loadKomotos = function() {
 
         $scope.model.spec =  {//search parameter object
@@ -997,156 +992,77 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl',
             season: null
         };
 
-    /*
+      $scope.model.selectedKoulutukses=[];
+      $scope.gridOptions = {
+          data: 'model.hakutulos',
+          selectedItems: $scope.model.selectedKoulutukses,
+          // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
+          columnDefs: [
+              {field: 'koulutuskoodi', displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale), width: "20%"},
+              {field: 'nimi', displayName: LocalisationService.t('sisaltyvyys.koulutus.nimi', $scope.koodistoLocale), width: "40%"},
+              {field: 'tarjoaja', displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale), width: "40%"}
+          ],
+          showSelectionCheckbox: false,
+          multiSelect: true};
 
-        -----> Helper functions
-
-    */
-
-        $scope.model.helper.functions.checkSelectedKoulutukses = function(selectedKoulutusOids,orgKoulutukses){
-
-
-          var matchingKoulutukses = [];
-
-
-         angular.forEach(orgKoulutukses,function(koulutus){
-
-             angular.forEach(selectedKoulutusOids,function(koulutusOid){
-
-                 if (koulutus.komotoOid === koulutusOid) {
-                     matchingKoulutukses.push(koulutus);
-
-                 }
-
-             });
-
-         });
-
-
-
-         return matchingKoulutukses;
-
-     };
-
-
-      $scope.model.helper.functions.checkIfKoulutusIsSelected = function(koulutus,koulutukses) {
-
-            var isSelected = false;
-
-            angular.forEach(koulutukses,function(i){
-                if (i.komotoOid === koulutus.komotoOid) {
-                    isSelected = true;
-                }
-            });
-
-            return isSelected;
-
-      }
-
-
-        /*
-
-            -----> Get koulutukses with given koulutus oids
-
-         */
-
+      
+      TarjontaService.haeKoulutukset({koulutusOid:selectedKoulutukses[0]}).then(function(result){
+        //vuosi/kausi rajoite
+        $scope.model.spec.season = result.tulokset[0].tulokset[0].kausiUri;
+        $scope.model.spec.year = result.tulokset[0].tulokset[0].vuosi;
 
         TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
-
-
-
-            var tempArray = [];
-
-            angular.forEach(result.tulokset,function(results){
-
-
-
-                angular.forEach(results.tulokset,function(tulos){
-
-
-                    var koulutuskoodiUri = tulos.koulutuskoodi.split("#")[0];
-
-                    tempArray.push(tulos.komoOid);
-
-                    var koulutusObj =   {
-                        koulutuskoodi: koulutuskoodiUri,
-                        nimi: tulos.nimi,
-                        tarjoaja: tulos.nimi,
-                        oid: tulos.komoOid,
-                        komotoOid : tulos.oid
-                    };
-
-                    $scope.model.hakutulos.push(koulutusObj);
-                    $scope.model.helper.allKoulutuksesMap[koulutusObj.oid] = koulutusObj;
-
-
-                })
+          
+          $scope.model.hakutulos=result.tulokset.map(function(result,index){
+            return result;
+          }).reduce(function(list, entry){
+            entry.tulokset.map(function(current){
+              list.push({
+                koulutuskoodi: current.koulutuskoodi.split("#")[0].split("_")[1],
+                nimi: current.nimi,
+                tarjoaja: entry.nimi,
+                oid: current.oid});
             });
+            return list;
+          }, []);
 
-            $scope.model.searchKomoOids = tempArray;
-
-            $scope.model.selectedKoulutukses = $scope.model.helper.functions.checkSelectedKoulutukses(selectedKoulutukses,$scope.model.hakutulos);
+          
+          //poimi hakutuloksesta koulutukset joit aei ole vielä liitettynä
+          $scope.model.hakutulos=$scope.model.hakutulos.reduce(function(prev, koulutus){
+            if(selectedKoulutukses.indexOf(koulutus.oid)==-1) {
+              prev.push(koulutus);
+            }
+            return prev;
+          },[]);
 
         });
+      });
 
     };
-
-
-    /*
-
-        --------> Call "initialization" functions <---------------
-
-     */
 
     loadKomotos();
-
-
-    /*
-
-        ------> Define "event handlers" etc. <-------------------
-
-     */
-
-    $scope.selectTreeHandler = function(selectedObject,event) {
-
-
-        var selectedKoulutusObj =  $scope.model.helper.allKoulutuksesMap[selectedObject.oid];
-
-        if (!$scope.model.helper.functions.checkIfKoulutusIsSelected(selectedKoulutusObj,$scope.model.selectedKoulutukses)) {
-            $scope.model.selectedKoulutukses.push(selectedKoulutusObj);
-        }
-
-
-    };
-
-    $scope.removeItem = function(selectedKoulutus){
-        $log.debug("removeItem()", selectedKoulutus);
-
-        var index = $scope.model.selectedKoulutukses.indexOf(selectedKoulutus);
-
-        $scope.model.selectedKoulutukses.splice(index,1);
-
-    };
 
     $scope.model.cancel = function() {
         $log.debug("cancel()");
         $modalInstance.dismiss('cancel');
     };
 
-
+    /**
+     * Kerää ja palauta setti koulutus-oideja jotka valittu + vanhat
+     */
     $scope.model.save = function() {
         $log.debug("save()");
 
-        var selectedKoulutusOids = [];
+        var selectedKoulutusOids = selectedKoulutukses.reduce(function(list, oid){
+          list.push(oid);
+          return list;
+        },[]);
 
         angular.forEach($scope.model.selectedKoulutukses,function(koulutus){
-
-            selectedKoulutusOids.push(koulutus.komotoOid);
-
+            selectedKoulutusOids.push(koulutus.oid);
         });
 
         $modalInstance.close(selectedKoulutusOids);
     };
-
 
 });

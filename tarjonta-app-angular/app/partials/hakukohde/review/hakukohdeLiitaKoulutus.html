@@ -1,27 +1,22 @@
 <div>
-    <div class="modal-header">
-
-        <h3>{{model.translations.title}}</h3>
-    </div>
-
-    <div class="modal-body">
-        <tree-field
-                style="overflow: scroll; height:200px"
-                names="model.hakutulos"
-                oids="model.searchKomoOids"
-                review-oids="null"
-                fn-click-handler="selectTreeHandler"
-                lang="koodistoLocale"></tree-field>
-
-
-        <div style="overflow: scroll; height:100px">
-            <ul><li ng-repeat="obj in model.selectedKoulutukses">{{obj.nimi}} <a href="" ng-click="removeItem(obj)">{{model.translations.poistaBtn}}</a> </li></ul>
-        </div>
-    </div>
-
-    <div class="modal-footer">
-
-        <button class="btn btn-warning" ng-click="model.cancel()">{{ model.translations.cancelBtn }}</button>
-        <button class="btn btn-primary" ng-click="model.save()">{{ model.translations.saveBtn }}</button>
-    </div>
+	<div class="modal-header">
+		<h3>{{model.translations.title}}</h3>
+	</div>
+	<div class="modal-body">
+		<div style="height: 200px" ng-grid="gridOptions"></div>
+		<div style="overflow: scroll; height: 100px">
+			<ul>
+				<li ng-repeat="obj in model.selectedKoulutukses|orderBy:'nimi'">{{obj.nimi}}
+					<!-- <a href="" ng-click="removeItem(obj)">{{model.translations.poistaBtn}}</a> -->
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-warning" ng-click="model.cancel()">{{
+			model.translations.cancelBtn }}</button>
+			{{model.selectedKoulutukses.length>0}}
+		<button class="btn btn-primary" ng-disabled="model.selectedKoulutukses.length==0" ng-click="model.save()">{{
+			model.translations.saveBtn }}</button>
+	</div>
 </div>

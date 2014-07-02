@@ -8,8 +8,8 @@
             dto="model.hakukohde">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAikuLukioAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveAikuLukioAsValmis()" primary="true"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveAsValmis()" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
 
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
@@ -46,13 +46,15 @@
                         </td>
                     </tr>
 
+<!-- 
                     <tr>
                         <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
                         <td>
-                            <input name="aloituspaikatlkm" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
+                            <input name="ulkoinentunniste" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
 
                         </td>
                     </tr>
+                     -->
 
                     <!-- haku -->
                     <tr class="required">
@@ -86,12 +88,6 @@
                             <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
                         </td>
                     </tr>
-
-
-
-
-
-
 
 
                 </table>

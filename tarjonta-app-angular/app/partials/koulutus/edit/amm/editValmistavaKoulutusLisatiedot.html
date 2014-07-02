@@ -16,7 +16,7 @@
         display="dualpane"></multi-select>
 </div>
  
-<div ng-if="cbShowValmistavaKoulutus" class="mkTabsContent" ng-show="vkUiModel.selectedKieliUri">
+<div ng-if="uiModel.cbShowValmistavaKoulutus" class="mkTabsContent" ng-show="vkUiModel.selectedKieliUri">
     <div ng-if="vkUiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.valmistavaKoulutus.opintojenMaksullisuus">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>

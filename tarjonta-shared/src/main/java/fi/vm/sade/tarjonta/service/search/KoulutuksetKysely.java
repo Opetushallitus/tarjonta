@@ -7,6 +7,7 @@ import java.util.List;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import java.util.Date;
 
 public class KoulutuksetKysely implements Serializable {
 
@@ -23,10 +24,9 @@ public class KoulutuksetKysely implements Serializable {
     @Deprecated
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>(); //use the koulutustyyppi
     private List<ToteutustyyppiEnum> totetustyyppi = new ArrayList<ToteutustyyppiEnum>(); //more detailed data than in koulutusasteTyyppi
-
     private String komoOid;
-
     private List<String> koulutustyyppi = new ArrayList<String>();
+    private Date koulutuksenAlkamisPvmAlkaen = null;
 
     public String getKomoOid() {
         return komoOid;
@@ -53,7 +53,15 @@ public class KoulutuksetKysely implements Serializable {
      * Fully-initialising value constructor
      *
      */
-    public KoulutuksetKysely(final String nimi, final List<String> tarjoajaOids, final List<String> koulutusOids, final TarjontaTila koulutuksenTila, final Integer koulutuksenAlkamisvuosi, final String koulutuksenAlkamiskausi, final String koulutusKoodi, final List<String> hakukohdeOids) {
+    public KoulutuksetKysely(
+            final String nimi,
+            final List<String> tarjoajaOids,
+            final List<String> koulutusOids,
+            final TarjontaTila koulutuksenTila,
+            final Integer koulutuksenAlkamisvuosi,
+            final String koulutuksenAlkamiskausi,
+            final String koulutusKoodi,
+            final List<String> hakukohdeOids) {
         this.nimi = nimi;
         this.tarjoajaOids = tarjoajaOids;
         this.koulutusOids = koulutusOids;
@@ -158,6 +166,14 @@ public class KoulutuksetKysely implements Serializable {
      */
     public void setTotetustyyppi(List<ToteutustyyppiEnum> totetustyyppi) {
         this.totetustyyppi = totetustyyppi;
+    }
+
+    public Date getKoulutuksenAlkamisPvmAlkaen() {
+        return koulutuksenAlkamisPvmAlkaen;
+    }
+
+    public void setKoulutuksenAlkamisPvmAlkaen(Date koulutuksenAlkamisPvmAlkaen) {
+        this.koulutuksenAlkamisPvmAlkaen = koulutuksenAlkamisPvmAlkaen;
     }
 
 }

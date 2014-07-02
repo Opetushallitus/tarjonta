@@ -68,13 +68,13 @@ public class KoulutusDTOConverterToEntity {
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
-    @Autowired
+    @Autowired(required = true)
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired
+    @Autowired(required = true)
     private OidService oidService;
-    @Autowired
+    @Autowired(required = true)
     private KoulutusCommonConverter commonConverter;
-    @Autowired
+    @Autowired(required = true)
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired(required = true)
     private IndexerResource indexerResource;
@@ -266,7 +266,14 @@ public class KoulutusDTOConverterToEntity {
         /*
          * KOMOTO custom data conversion
          */
-        komoto.setOsaamisalaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.OSAAMISALA));
+        if (komo.getModuuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+            if (commonConverter.isOsaamisala(dto.getKoulutusohjelma())) {
+                komoto.setOsaamisalaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.OSAAMISALA));
+            } else {
+                komoto.setKoulutusohjelmaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
+            }
+        }
+
         komoto.setTutkintonimikeUri(commonConverter.convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE, ALLOW_NULL_KOODI_URI));
 
         if (dto.getOpetuskielis() != null) {
@@ -288,10 +295,10 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getValmistavaKoulutus() == null) { //delete if any
             //delete row from db
             final KoulutusmoduuliToteutus valmistava = komoto.getValmistavaKoulutus();
-            if (valmistava != null && valmistava.getId() != null) {
+            if (valmistava != null && valmistava.getId() != null && valmistava.getOid() != null) {
                 //remove child komoto from base komoto
                 try {
-                    indexerResource.deleteKoulutus(Lists.<String>newArrayList(valmistava.getValmistavaKoulutus().getOid()));
+                    indexerResource.deleteKoulutus(Lists.<String>newArrayList(valmistava.getOid()));
                 } catch (IOException ex) {
                     LOG.error("Index delete failed by OID : {}", valmistava.getOid(), ex);
                 }

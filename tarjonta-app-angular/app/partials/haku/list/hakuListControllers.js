@@ -324,7 +324,7 @@ app.controller('HakuListController',
                     var params = angular.copy($scope.searchParams);
 
                     if (params.KAUSIVUOSI && params.KAUSI) {
-                        params[params.KAUSIVUOSI + "KAUSI"] = params.KAUSI.kausi;
+                        params[params.KAUSIVUOSI + "KAUSI"] = params.KAUSI;
                     }
                     if (params.KAUSIVUOSI && params.VUOSI) {
                         params[params.KAUSIVUOSI + "VUOSI"] = params.VUOSI;

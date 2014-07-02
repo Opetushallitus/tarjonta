@@ -109,7 +109,14 @@
                     
 	        </tab>
 	        <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{getHakukohdeResultCount()}}">
-	        
+
+           	<div class="controls">
+                    <button class="btn"
+                            ng-disabled="selection.hakukohteet.length == 0"
+                            ng-click="liitaHakukohteetRyhmaan()"
+                            ><span tt="tarjonta.toiminnot.lisaa_hakukohteet_ryhmaan">Lisää valitut hakukohteet ryhmään...</span> <span class="icon-plus-sign"></span></button>
+                </div>
+                    
                 <results-tree-table
                     columns="['kausi', 'hakutapa', 'aloituspaikat', 'koulutuslaji', 'tila']"
                     column-titles="{kausi:'tarjonta.hakutulokset.kausi', hakutapa:'tarjonta.hakutulokset.hakutapa', aloituspaikat:'tarjonta.hakutulokset.aloituspaikat', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
