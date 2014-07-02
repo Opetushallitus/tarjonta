@@ -92,10 +92,10 @@
         <tr>
             <th tt="koulutus.review.perustiedot.nayttotutkinnon-jarjestaja">Näyttötutkinnon järjestäjä</th>
             <td colspan="2">
-                {{model.koulutus.valmistavaKoulutus.organisaatio.nimi}}
+                {{model.koulutus.organisaatio.nimi}}
             </td>
         </tr>
-        
+
         <tr>
             <th tt="koulutus.review.perustiedot.nayttotutkinnon-yhteyshenkilo">Näyttotutkinnon yhteyshenkilö</th>
             <td colspan="2">
@@ -123,7 +123,40 @@
                 </span>
             </td>
         </tr>
-         <tr>
+
+        <!-- opetuskielet -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetuskielet">Opetuskielet</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.opetuskielis.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
+        <!-- opetusajat -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetusajat">Opetusajat</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.opetusAikas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
+        <!-- opetusmuodot -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetusmuodot">Opetusmuodot</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.opetusmuodos.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
+        <!-- opetuspaikat -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetuspaikat">Opetuspaikat</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.opetusPaikkas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
+        <tr>
             <th></th>
             <td colspan="2"><br/></td>
         </tr>
@@ -147,6 +180,8 @@
             <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
             <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
         </tr>
+
+
         <tr>
             <th></th>
             <td colspan="2"><br/></td>
@@ -161,20 +196,7 @@
     </tr>
 
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
-        <!-- alkamispvm -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.alkamispvm">Alkamispäivämäärä</th>
-            <td colspan="2">
-                <span ng-switch="model.koulutus.valmistavaKoulutus.koulutuksenAlkamisPvms.length">
-                    <span ng-switch-when="0">
-                        {{model.koulutus.valmistavaKoulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].nimi}} {{model.koulutus.valmistavaKoulutus.koulutuksenAlkamisvuosi}}
-                    </span>
-                    <span ng-switch-default>
-                        <p data-ng-repeat='pvm in  model.koulutus.valmistavaKoulutus.koulutuksenAlkamisPvms'> {{ pvm | date:'dd.MM.yyyy' }}</p>
-                    </span>
-                </span>
-            </td>
-        </tr>
+
 
         <!-- suunniteltu kesto -->
         <tr>
@@ -184,29 +206,15 @@
             </td>
         </tr>
 
-        <!-- opetuskielet -->
+
         <tr>
-            <th tt="koulutus.review.perustiedot.opetuskielet">Opetuskielet</th>
-            <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetuskielis.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            <th tt="koulutus.review.perustiedot.maksullisuus">Maksullisuus</th>
+            <td colspan="2" >
+                <span ng-show="model.koulutus.valmistavaKoulutus.opintojenMaksullisuus">{{model.koulutus.valmistavaKoulutus.hinta}} €</span>
+                <span ng-show="!model.koulutus.valmistavaKoulutus.opintojenMaksullisuus">{{model.koulutus.valmistavaKoulutus.opintojenMaksullisuus ? t("yes") : t("no")}}</span>
             </td>
         </tr>
 
-        <!-- opetusajat -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.opetusajat">Opetusajat</th>
-            <td colspan="2">
-                <span data-ng-repeat='o in model.koulutus.valmistavaKoulutus.opetusAikas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
-            </td>
-        </tr>
-
-        <!-- opetusmuodot -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.opetusmuodot">Opetusmuodot</th>
-            <td colspan="2">
-                <span data-ng-repeat='o in model.koulutus.valmistavaKoulutus.opetusmuodos.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
-            </td>
-        </tr>
 
         <!-- linkki opetusuunnitelmaan -->
 
@@ -217,13 +225,7 @@
             </td>
         </tr>
 
-        <!-- opetuspaikat -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.opetuspaikat">Opetuspaikat</th>
-            <td colspan="2">
-                <span data-ng-repeat='o in model.koulutus.valmistavaKoulutus.opetusPaikkas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
-            </td>
-        </tr>
+
 
         <tr>
             <th tt="koulutus.review.perustiedot.nayttotutkinnon-yhteyshenkilo">Näyttotutkinnon yhteyshenkilö</th>

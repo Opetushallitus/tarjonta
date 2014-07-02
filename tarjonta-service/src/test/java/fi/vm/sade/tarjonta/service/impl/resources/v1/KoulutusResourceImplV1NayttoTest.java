@@ -172,18 +172,18 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     }
 
     private void expectValmistavaKoodis() {
-        expectKausiNaytto();
+        // expectKausiNaytto();
         expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
+    }
+
+    private void expectNayttoKoodis() {
+        expectKausiNaytto();
+
         expectMetaMapUris(MAP_OPETUSKIELI);
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_OPETUSAIKAS);
         expectMetaMapUris(MAP_OPETUSPAIKKAS);
-        //expectMetaUri(KOULUTUSTYYPPI);
-    }
 
-    private void expectNayttoKoodis() {
-
-        expectKausiNaytto();
         expectMetaUri(KOULUTUSOHJELMA);
         expectMetaUri(KOULUTUSKOODI);
         expectMetaUri(LAAJUUSARVO);
@@ -196,23 +196,12 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectMetaUri(EQF);
         expectMetaUri(NQF);
         expectMetaUri(TUTKINTO);
-        expectMetaMapUris(MAP_OPETUSKIELI);
         expectMetaUri(KOULUTUSTYYPPI);
     }
 
     private void assertValmentavaData(final ValmistavaV1RDTO result) {
         assertNotNull(result);
         assertEquals("www", result.getLinkkiOpetussuunnitelmaan());
-        assertEquals(1, result.getKoulutuksenAlkamisPvms().size());
-        assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
-        assertEqualDtoKoodi(KAUSI_KOODI_URI, result.getKoulutuksenAlkamiskausi(), true);
-        assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
-
-        assertEqualMetaDto(MAP_OPETUSKIELI, result.getOpetuskielis());
-        assertEqualMetaDto(MAP_OPETUMUOTO, result.getOpetusmuodos());
-        assertEqualMetaDto(MAP_OPETUSPAIKKAS, result.getOpetusPaikkas());
-        assertEqualMetaDto(MAP_OPETUSAIKAS, result.getOpetusAikas());
-
         assertEquals(SUUNNITELTU_KESTO_VALUE, result.getSuunniteltuKestoArvo());
         assertEquals(SUUNNITELTU_KESTO_TYYPPI + "_uri", result.getSuunniteltuKestoTyyppi().getUri());
         assertEquals(new Integer(1), result.getSuunniteltuKestoTyyppi().getVersio());
@@ -224,7 +213,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         assertEquals(PERSON[4], next.getSahkoposti());
         assertEquals(PERSON[5], next.getPuhelin());
         assertEquals(HenkiloTyyppi.YHTEYSHENKILO, next.getHenkiloTyyppi());
-
     }
 
     private void assertNayttoData(final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO result) {
@@ -265,9 +253,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
 
         assertEqualMetaDto(MAP_OPETUSKIELI, result.getOpetuskielis());
-        Assert.assertTrue(result.getOpetusmuodos().getUris().isEmpty());
-        Assert.assertTrue(result.getOpetusPaikkas().getUris().isEmpty());
-        Assert.assertTrue(result.getOpetusAikas().getUris().isEmpty());
+        Assert.assertFalse(result.getOpetusmuodos().getUris().isEmpty());
+        Assert.assertFalse(result.getOpetusPaikkas().getUris().isEmpty());
+        Assert.assertFalse(result.getOpetusAikas().getUris().isEmpty());
 
         assertEquals(null, result.getSuunniteltuKestoArvo());
         assertEquals(null, result.getSuunniteltuKestoTyyppi());
@@ -326,7 +314,6 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
         dto.setJarjestavaOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_JARJESTAJA_OID, null, null));
         dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
-
         return dto;
     }
 
@@ -335,11 +322,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
      */
     private ValmistavaV1RDTO createValmentavaDTO() {
         ValmistavaV1RDTO dto = new ValmistavaV1RDTO();
-        dto.getKoulutuksenAlkamisPvms().add(DATE.toDate());
-        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
-        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
-        koodiUrisMap(dto.getOpetuskielis(), URI_KIELI_FI, MAP_OPETUSKIELI);
-        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
+
         dto.setSuunniteltuKestoTyyppi(toKoodiUri(SUUNNITELTU_KESTO_TYYPPI));
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));

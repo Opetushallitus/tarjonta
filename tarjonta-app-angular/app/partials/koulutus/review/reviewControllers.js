@@ -412,7 +412,7 @@ app.controller('BaseReviewController', [
             var userLangUri = "kieli_" + AuthService.getLanguage();
             $scope.model.userLangUri = userLangUri;
 
-            var result = "XXX";
+            var result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
 
             if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
                 if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {

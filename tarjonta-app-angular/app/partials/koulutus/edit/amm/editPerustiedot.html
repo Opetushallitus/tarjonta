@@ -1,4 +1,4 @@
-<table class="tarjontaForm"><!--pre>{{model.koulutuskoodi| json }}</pre-->
+<table class="tarjontaForm">
     <tr>
         <th></th>
         <td>
@@ -66,8 +66,8 @@
         <td>{{model.tutkintonimike.nimi}}</td>
         <td></td>
     </tr>
-    
-     <!-- koulutuslaji -->
+
+    <!-- koulutuslaji -->
     <tr>
         <th tt="koulutus.edit.koulutuslaji">Koulutuslaji</th>
         <td>{{model.koulutuslaji.nimi}}</td>
@@ -113,12 +113,101 @@
 </td>
 </tr>
 
+
+<!-- suunniteltu kesto -->
+<tr ng-if="uiModel.toggleTabs" class="required">
+    <th tt="koulutus.edit.suunniteltu-kesto">Suunniteltu kesto</th>
+    <td>
+        <input required name="suunniteltuKestoArvo" class="thin" type="text" data-ng-model="model.valmistavaKoulutus.suunniteltuKestoArvo" required />
+        <select required name="suunniteltuKestoTyyppi" class="thin" ng-model="model.valmistavaKoulutus.suunniteltuKestoTyyppi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in vkUiModel.suunniteltuKestoTyyppi.koodis | orderBy:'koodiNimi'">
+            <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
+            <option value="" ng-disabled="model.valmistavaKoulutus.suunniteltuKestoTyyppi.uri"></option>
+        </select>
+    </td>
+    <td>
+        <p class="error" ng-show="vkUiModel.showValidationErrors && (koulutusForm.suunniteltuKestoArvo.$error.required || koulutusForm.suunniteltuKestoTyyppi.$error.required)"
+           tt="koulutus.edit.suunniteltu-kesto.required">Suunniteltu kesto vaaditaan</p>
+    </td>
+</tr>
+
+<!-- opetuskielet -->
+<tr class="required">
+    <th tt="koulutus.edit.opetuskielet">Opetuskielet</th>
+    <td>
+
+<multi-select
+    order-with="userLanguages"
+    selection="uiModel.opetuskielis.uris"
+    promise="uiModel.opetuskielis.promise"
+    display="combobox"
+    name="opetuskielis" required/>
+
+</td>
+<td>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required">
+        Opetuskielet vaaditaan
+    </p>
+</td>
+</tr>
+
+<tr class="required">
+    <th tt="koulutus.edit.nayttotutkinnon-jarjestaja">Näyttötutkinnon järjestäjä</th>
+    <td> {{model.jarjestavaOrganisaatio.nimi}}  <a href="" ng-click="openJarjestajaDialog()" tt="koulutus.edit.valitse-listalta">Valitse listalta</a></td>
+    <td></td>
+</tr>
+
+
+<!-- opetusaikas -->
+<tr class="required">
+    <th tt="koulutus.edit.opetusaikas">Opetusajat</th>
+    <td>
+<multi-select
+    selection="uiModel.opetusAikas.uris"
+    promise="uiModel.opetusAikas.promise"
+    columns="2"
+    name="opetusAikas" required/>
+</td>
+<td>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required">Opetusajat vaaditaan</p>
+</td>
+</tr>
+
+<!-- opetusmuodot -->
+<tr class="required">
+    <th tt="koulutus.edit.opetusmuodot">Opetusmuodot</th>
+    <td>
+<multi-select
+    selection="uiModel.opetusmuodos.uris"
+    promise="uiModel.opetusmuodos.promise"
+    columns="2"
+    name="opetusmuodos" required/>
+</td>
+<td>
+    <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required">Opetusmuodot vaaditaan</p>
+</td>
+</tr>
+
+<!-- opetuspaikka -->
+<tr class="required">
+    <th tt="koulutus.edit.opetusPaikkas">Opetuspaikat</th>
+    <td>
+<multi-select
+    selection="uiModel.opetusPaikkas.uris"
+    promise="uiModel.opetusPaikkas.promise"
+    columns="2"
+    name="opetusPaikkas" required/>
+</td>
+<td>
+    <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required">Opetuspaikat vaaditaan</p>
+</td>
+</tr>
+
 <!-- k. maksullisuus -->
 <tr>
-    <th tt="koulutus.edit.maksullisuus">Maksullisuus</th>
+    <th tt="koulutus.edit.maksullisuus.tutkinto">Maksullisuus</th>
     <td>
         <input type="checkbox" data-ng-model="model.opintojenMaksullisuus"/>
-        <span tt="koulutus.edit.maksullisuus.valinta">Maksullisuuden valinta</span>
+        <span tt="koulutus.edit.maksullisuus.valinta.tutkinto">tutkinto on maksullista</span>
     </td>
     <td></td>
 </tr>
@@ -136,11 +225,40 @@
     </td>
 </tr>
 
-<tr class="required">
-    <th tt="koulutus.edit.nayttotutkinnon-jarjestaja">Näyttötutkinnon järjestäjä</th>
-    <td> {{model.jarjestavaOrganisaatio.nimi}}  <a href="" ng-click="openJarjestajaDialog()" tt="koulutus.edit.valitse-listalta">Valitse listalta</a></td>
+
+<!-- k. maksullisuus -->
+<tr  ng-if="uiModel.toggleTabs">
+    <th></th>
+    <td>
+        <input type="checkbox" data-ng-model="model.valmistavaKoulutus.opintojenMaksullisuus"/>
+        <span tt="koulutus.edit.maksullisuus.valinta.valmistava">valmistava koulutus on maksullista</span>
+    </td>
     <td></td>
 </tr>
+<tr  ng-if="uiModel.toggleTabs">
+    <th></th>
+    <td>
+        <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
+        <input ng-required="model.valmistavaKoulutus.opintojenMaksullisuus" name="vk_hinta" ng-disabled="!model.valmistavaKoulutus.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.valmistavaKoulutus.hinta" ng-change="onMaksullisuusChanged(model.valmistavaKoulutus)"  />
+        <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
+    </td>
+    <td>
+        <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.vk_hinta.$error.required" tt="koulutus.edit.maksullisuus.required">
+            Maksullisuus vaaditaan
+        </p>
+    </td>
+</tr>
+
+<tr ng-if="uiModel.toggleTabs">
+    <th tt="koulutus.edit.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
+    <td><input class="wide" name="linkkiOpetussuunnitelmaan" type="text" data-ng-model="model.valmistavaKoulutus.linkkiOpetussuunnitelmaan" /></td>
+    <td>
+
+    </td>
+</tr>
+
+
+
 
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
@@ -150,6 +268,10 @@
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
 
+<tbody ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusYhteyshenkilo.html'"></tbody>
+
+<!-- väli -->
+<tr class="padding"><td colspan="3"></td></tr>
+
 </table>
 
-<div ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html'">

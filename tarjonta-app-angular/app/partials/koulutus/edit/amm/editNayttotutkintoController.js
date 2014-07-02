@@ -64,7 +64,6 @@ app.controller('EditNayttotutkintoController',
                          */
                         $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
 
-
                         /*
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
@@ -85,6 +84,9 @@ app.controller('EditNayttotutkintoController',
                                 });
                             });
                         });
+
+                        //activate valmistava koulutus 
+                       $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
 
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
@@ -115,6 +117,7 @@ app.controller('EditNayttotutkintoController',
                     /*
                      * INIT SCOPES FOR RENDERER IN koulutusController.js
                      */
+                    model.toteutustyyppi = $scope.CONFIG.TYYPPI;
                     $scope.setModel(model);
 
                     //Ui model for editPerustiedot and editLisatiedot pages (normal case)
@@ -126,8 +129,10 @@ app.controller('EditNayttotutkintoController',
                         $scope.uiModel.cbShowValmistavaKoulutus = true;
                         $scope.uiModel.toggleTabs = true;
                     } else {
-                        $scope.uiModel.toggleTabs = false;
+                        $scope.uiModel.cbShowValmistavaKoulutus = false;
                     }
+
+
                 };
 
                 $scope.loadRelationKoodistoData = function(apiModel, uiModel, uri, tutkintoTyyppi) {
@@ -138,7 +143,7 @@ app.controller('EditNayttotutkintoController',
                     }
 
                     TarjontaService.getKoulutuskoodiRelations({
-                        koulutustyyppi:  $scope.CONFIG.KOULUTUSTYYPPI,
+                        koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         uri: uri,
                         languageCode: $scope.koodistoLocale,
                         //there is no real reation to koulutuslaji, so we will add it when module is 'TUTKINTO'
@@ -148,7 +153,7 @@ app.controller('EditNayttotutkintoController',
                         angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function(value, key) {
                             if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
                                 apiModel[key] = restRelationData[key];
-                            } else if ( tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
+                            } else if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
                                 apiModel[key] = restRelationData[key];
                             }
                         });
@@ -324,10 +329,10 @@ app.controller('EditNayttotutkintoController',
 
 
                 $scope.getValmistavaLisatietoKielet = function() {
-                    for (var i in $scope.vkUiModel.opetuskielis.uris) {
-                        var lc = $scope.vkUiModel.opetuskielis.uris[i];
-                        if ($scope.vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
-                            $scope.vkUiModel.lisatietoKielet.push(lc);
+                    for (var i in $scope.uiModel.opetuskielis.uris) {
+                        var lc = $scope.uiModel.opetuskielis.uris[i];
+                        if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
+                            $scope.uiModel.lisatietoKielet.push(lc);
                         }
                     }
                     return $scope.vkUiModel.lisatietoKielet;
@@ -374,17 +379,21 @@ app.controller('EditNayttotutkintoController',
                     }
                 });
 
-                $scope.$watch("uiModel.cbShowValmistavaKoulutus", function(valNew, valOld) {
-                    if (valNew && $scope.model.valmistavaKoulutus === null) {
-                        var model = {};
-                        $scope.commonNewModelHandler($scope.koulutusForm, model, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                        $scope.model.valmistavaKoulutus = model;
-                        $scope.commonKoodistoLoadHandler($scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                        $scope.vkUiModel.selectedKieliUri = "kieli_fi";
-                        $scope.vkUiModel.showValidationErrors = false;
+                $scope.initValmistavaKoulutus = function(apimodel, uiModel, vkUiModel) {
+                    var model = {};
+                    $scope.commonNewModelHandler($scope.koulutusForm, model, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    apimodel.valmistavaKoulutus = model;
+                    $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    vkUiModel.selectedKieliUri = "kieli_fi";
+                    vkUiModel.showValidationErrors = false;
+                    uiModel.toggleTabs = true;
+                };
 
-                        $scope.uiModel.toggleTabs = true;
-                    } else if (valNew !== valOld) {
+                $scope.$watch("uiModel.cbShowValmistavaKoulutus", function(valNew, valOld) {
+                    if (valNew && ($scope.model.valmistavaKoulutus === null || !angular.isDefined($scope.model.valmistavaKoulutus))) {
+
+                        $scope.initValmistavaKoulutus($scope.model, $scope.uiModel, $scope.vkUiModel);
+                    } else if (valNew !== valOld && angular.isDefined($scope.model.valmistavaKoulutus)) {
                         var modalInstance = $modal.open({
                             scope: $scope,
                             templateUrl: 'partials/koulutus/edit/amm/poista-valmistava-koulutus-dialog.html',

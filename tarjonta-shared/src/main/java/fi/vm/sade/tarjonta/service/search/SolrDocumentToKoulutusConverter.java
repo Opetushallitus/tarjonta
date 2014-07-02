@@ -112,9 +112,6 @@ public class SolrDocumentToKoulutusConverter {
      * @param perustieto
      */
     private void createKoulutuksenAlkamisPvm(SolrDocument koulutusDoc, KoulutusPerustieto perustieto) {
-        LOG.info("createKoulutuksenAlkamisPvm() alkamisPvmMin = {}", koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN));
-        LOG.info("createKoulutuksenAlkamisPvm() alkamisPvmMax = {}", koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX));
-
         perustieto.setKoulutuksenAlkamisPvmMin((Date) koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MIN));
         perustieto.setKoulutuksenAlkamisPvmMax((Date) koulutusDoc.get(SolrFields.Koulutus.KOULUTUALKAMISPVM_MAX));
     }
