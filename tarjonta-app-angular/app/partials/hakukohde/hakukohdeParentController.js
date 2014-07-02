@@ -52,7 +52,9 @@ app.controller('HakukohdeParentController', ['$scope',
             "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA":aikuLukioHakukohdePartialUri,
             "LUKIOKOULUTUS":aikuLukioHakukohdePartialUri,
             "AMMATILLINEN_PERUSKOULUTUS":aikuNayttoHakukohdePartialUri,
-            "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA":aikuNayttoHakukohdePartialUri
+            "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA":aikuNayttoHakukohdePartialUri,
+            "ERIKOISAMMATTITUTKINTO":aikuNayttoHakukohdePartialUri,
+            "AMMATTITUTKINTO":aikuNayttoHakukohdePartialUri
         };
         
         /*
