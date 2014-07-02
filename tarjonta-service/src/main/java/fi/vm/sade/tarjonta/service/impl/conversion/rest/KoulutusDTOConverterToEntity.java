@@ -281,6 +281,21 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpetuskieli(commonConverter.convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
         }
 
+        if (dto.getOpetusmuodos() != null) {
+            komoto.getOpetusmuotos().clear();
+            komoto.setOpetusmuoto(commonConverter.convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
+        }
+
+        if (dto.getOpetusAikas() != null) {
+            komoto.getOpetusAikas().clear();
+            komoto.setOpetusAikas(commonConverter.convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
+        }
+
+        if (dto.getOpetusPaikkas() != null) {
+            komoto.getOpetusPaikkas().clear();
+            komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
+        }
+
         if (dto.getKoulutuslaji() != null) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
@@ -440,26 +455,6 @@ public class KoulutusDTOConverterToEntity {
         komoto.setHinta(dto.getHinta() != null ? new BigDecimal(dto.getHinta().toString()) : null);
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus() != null ? dto.getOpintojenMaksullisuus().toString() : Boolean.FALSE.toString());
 
-        if (dto.getOpetuskielis() != null) {
-            komoto.getOpetuskielis().clear();
-            komoto.setOpetuskieli(commonConverter.convertToUris(dto.getOpetuskielis(), komoto.getOpetuskielis(), FieldNames.OPETUSKIELIS));
-        }
-
-        if (dto.getOpetusmuodos() != null) {
-            komoto.getOpetusmuotos().clear();
-            komoto.setOpetusmuoto(commonConverter.convertToUris(dto.getOpetusmuodos(), komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS));
-        }
-
-        if (dto.getOpetusAikas() != null) {
-            komoto.getOpetusAikas().clear();
-            komoto.setOpetusAikas(commonConverter.convertToUris(dto.getOpetusAikas(), komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS));
-        }
-
-        if (dto.getOpetusPaikkas() != null) {
-            komoto.getOpetusPaikkas().clear();
-            komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
-        }
-
         if (dto.getLinkkiOpetussuunnitelmaan() != null) {
             komoto.getLinkkis().clear();
             komoto.setLinkkis(
@@ -468,7 +463,6 @@ public class KoulutusDTOConverterToEntity {
                             komoto.getLinkkis()));
         }
 
-        commonConverter.handleDates(komoto, dto); //set dates
         HashSet<Yhteyshenkilo> yhteyshenkilos = Sets.<Yhteyshenkilo>newHashSet();
         EntityUtils.copyYhteyshenkilos(dto.getYhteyshenkilos(), yhteyshenkilos);
         komoto.setYhteyshenkilos(yhteyshenkilos);

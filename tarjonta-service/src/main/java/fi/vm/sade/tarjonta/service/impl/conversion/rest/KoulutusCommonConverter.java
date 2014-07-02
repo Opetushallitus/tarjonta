@@ -385,10 +385,6 @@ public class KoulutusCommonConverter {
         handleDates(komoto, dto.getKoulutuksenAlkamisPvms(), dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
     }
 
-    public void handleDates(KoulutusmoduuliToteutus komoto, ValmistavaV1RDTO dto) {
-        handleDates(komoto, dto.getKoulutuksenAlkamisPvms(), dto.getKoulutuksenAlkamiskausi(), dto.getKoulutuksenAlkamisvuosi());
-    }
-
     private void handleDates(KoulutusmoduuliToteutus komoto, Set<Date> koulutuksenAlkamisPvms, KoodiV1RDTO kausi, Integer vuosi) {
 
         if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {

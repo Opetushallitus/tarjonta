@@ -126,6 +126,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.uiModel.cbShowValmistavaKoulutus = true;
                         $scope.uiModel.toggleTabs = true;
                     } else {
+                        $scope.uiModel.cbShowValmistavaKoulutus = false;
                         $scope.uiModel.toggleTabs = false;
                     }
                 };
@@ -138,7 +139,7 @@ app.controller('EditNayttotutkintoController',
                     }
 
                     TarjontaService.getKoulutuskoodiRelations({
-                        koulutustyyppi:  $scope.CONFIG.KOULUTUSTYYPPI,
+                        koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         uri: uri,
                         languageCode: $scope.koodistoLocale,
                         //there is no real reation to koulutuslaji, so we will add it when module is 'TUTKINTO'
@@ -148,7 +149,7 @@ app.controller('EditNayttotutkintoController',
                         angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function(value, key) {
                             if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
                                 apiModel[key] = restRelationData[key];
-                            } else if ( tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
+                            } else if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
                                 apiModel[key] = restRelationData[key];
                             }
                         });
@@ -324,10 +325,10 @@ app.controller('EditNayttotutkintoController',
 
 
                 $scope.getValmistavaLisatietoKielet = function() {
-                    for (var i in $scope.vkUiModel.opetuskielis.uris) {
-                        var lc = $scope.vkUiModel.opetuskielis.uris[i];
-                        if ($scope.vkUiModel.lisatietoKielet.indexOf(lc) == -1) {
-                            $scope.vkUiModel.lisatietoKielet.push(lc);
+                    for (var i in $scope.uiModel.opetuskielis.uris) {
+                        var lc = $scope.uiModel.opetuskielis.uris[i];
+                        if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
+                            $scope.uiModel.lisatietoKielet.push(lc);
                         }
                     }
                     return $scope.vkUiModel.lisatietoKielet;
@@ -375,7 +376,7 @@ app.controller('EditNayttotutkintoController',
                 });
 
                 $scope.$watch("uiModel.cbShowValmistavaKoulutus", function(valNew, valOld) {
-                    if (valNew && $scope.model.valmistavaKoulutus === null) {
+                    if (valNew && ($scope.model.valmistavaKoulutus === null || !angular.isDefined($scope.model.valmistavaKoulutus))) {
                         var model = {};
                         $scope.commonNewModelHandler($scope.koulutusForm, model, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                         $scope.model.valmistavaKoulutus = model;
@@ -384,7 +385,7 @@ app.controller('EditNayttotutkintoController',
                         $scope.vkUiModel.showValidationErrors = false;
 
                         $scope.uiModel.toggleTabs = true;
-                    } else if (valNew !== valOld) {
+                    } else if (valNew !== valOld && angular.isDefined($scope.model.valmistavaKoulutus)) {
                         var modalInstance = $modal.open({
                             scope: $scope,
                             templateUrl: 'partials/koulutus/edit/amm/poista-valmistava-koulutus-dialog.html',

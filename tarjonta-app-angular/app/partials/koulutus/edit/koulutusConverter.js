@@ -375,7 +375,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }, COMBO: {
             koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
         }, MCOMBO: {
-            opetuskielis: {koodisto: 'koodisto-uris.kieli', "default": {uris: {'kieli_fi': 1}}},
+            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+            opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+            opetuskielis: {koodisto: 'koodisto-uris.kieli'},
             ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
             koulutuksenAlkamisvuosi: {"default": ''},
@@ -557,19 +560,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             RELATION: {
             }, COMBO: {
                 suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
-                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
             }, MCOMBO: {
-                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
-                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
-                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
-                opetuskielis: {koodisto: 'koodisto-uris.kieli'},
             }, STR: {
-                koulutuksenAlkamisvuosi: {"default": ''},
                 linkkiOpetussuunnitelmaan: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''},
                 hinta: {"default": ''}
-            }, DATES: {
-                koulutuksenAlkamisPvms: {"default": new Date()}
+            }, DATES: {     
             }, BOOL: {
                 opintojenMaksullisuus: {"default": false}
             }, IMAGES: {
