@@ -25,6 +25,9 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
     @Autowired
     private OidService oidService;
 
+    // FIXME - v1 converter and v0 HakukohdeDTO?
+    // TODO - v1 converter and v0 HakukohdeDTO?
+    
     @Override
     public Hakukohde convert(HakukohdeDTO hakukohdeDTO) {
         Hakukohde hakukohde = new Hakukohde();
@@ -80,7 +83,9 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
 
         hakukohde.setLastUpdateDate(new Date());
 
-
+        // TODO  organisaatio ryhmät!
+        // FIXME organisaatio ryhmät
+        hakukohde.setOrganisaatioRyhmaOids(hakukohdeDTO.getOrganisaatioRyhmaOids());
 
         return hakukohde;
     }

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import fi.vm.sade.koodisto.service.KoodiService;
@@ -43,6 +45,7 @@ import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.it.TarjontaSearchServiceTest;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 public class HakukohdeResourceTest {
 
@@ -280,6 +283,16 @@ public class HakukohdeResourceTest {
         hk = getHakukohde();
         res = hakukohdeResource.createHakukohde(hk);
         Assert.assertEquals(ResultStatus.OK, res.getStatus());
+
+        // KJOH-810, organisaatioryhmät hakukohteelle
+        Assert.assertEquals(res.getResult().getOrganisaatioRyhmaOids().length, hk.getOrganisaatioRyhmaOids().length);
+        for (String oid : hk.getOrganisaatioRyhmaOids()) {
+            boolean tmp = false;
+            for (String oidResult : res.getResult().getOrganisaatioRyhmaOids()) {
+                tmp = tmp || oid.equalsIgnoreCase(oidResult);
+            }
+            Assert.assertTrue("Organisaatioryhmä oid täytyy olla olemassa!", tmp);
+        }
         
         //luotiin oidi?
         Assert.assertNotNull(res.getResult().getOid());
@@ -291,10 +304,15 @@ public class HakukohdeResourceTest {
     private HakukohdeV1RDTO getHakukohde(){
         HakukohdeV1RDTO hk = new HakukohdeV1RDTO();
         hk.setHakukohdeKoulutusOids(Lists.newArrayList(KOMOTO_1));
+        hk.setToteutusTyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS.name());
         hk.setHakuOid("haku-1");
         hk.setTarjoajaOids(Sets.newHashSet("org-1"));
         hk.setHakukohteenNimet(ImmutableMap.<String, String>builder().put("fi", "nimi").build());
         hk.setTila(TarjontaTila.LUONNOS.toString());
+        hk.setOrganisaatioRyhmaOids(new String[] {"1.2.3.4", "5.6.7.8"});        
+        Map<String, String> nimi = Maps.newHashMap();
+        nimi.put("foo","bar");
+        hk.setHakukohteenNimet(nimi);
         return hk;
     }
     

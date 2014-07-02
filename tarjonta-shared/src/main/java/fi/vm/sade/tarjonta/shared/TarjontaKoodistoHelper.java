@@ -111,7 +111,7 @@ public class TarjontaKoodistoHelper {
             }
         }
 
-        LOG.debug("convertKielikoodiToKieliUri({}) --> '{}'", kieli, result);
+//        LOG.debug("convertKielikoodiToKieliUri({}) --> '{}'", kieli, result);
 
         return result;
     }

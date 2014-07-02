@@ -44,6 +44,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -181,7 +182,11 @@ public class Hakukohde extends TarjontaBaseEntity {
     @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns =
     @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> soraKuvausKielet = new HashSet<String>();
-    
+
+    /**
+     * KJOH-810 Hakukohteen ryhmän valinta
+     */
+    private String organisaatioRyhmaOids;
     
     @PreRemove
     public void detachOnDelete() {
@@ -668,4 +673,20 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setUlkoinenTunniste(String ulkoinenTunniste) {
         this.ulkoinenTunniste = ulkoinenTunniste;
     }
+
+    public String[] getOrganisaatioRyhmaOids() {
+        if (organisaatioRyhmaOids == null || organisaatioRyhmaOids.isEmpty()) {
+            return new String[0];
+        }
+        return organisaatioRyhmaOids.split(",");
+    }
+
+    public void setOrganisaatioRyhmaOids(String[] organisationOids) {
+        if (organisationOids == null || organisationOids.length == 0) {
+            this.organisaatioRyhmaOids = null;
+        } else {
+            this.organisaatioRyhmaOids = StringUtils.join(organisationOids, ",");
+        }
+    }
+
 }
