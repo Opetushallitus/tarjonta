@@ -211,13 +211,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         komoto,
                         restParam));
                 break;
-            case AMMATTITUTKINTO_VALMISTAVA: //no break
+            case AMMATTITUTKINTO: //no break
                 result.setResult(converterToRDTO.convert(
-                        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class,
+                        AmmattitutkintoV1RDTO.class,
                         komoto,
                         restParam));
                 break;
-            case ERIKOISAMMATTITUTKINTO_VALMISTAVA: // no break
+            case ERIKOISAMMATTITUTKINTO: // no break
+                result.setResult(converterToRDTO.convert(
+                        ErikoisammattitutkintoV1RDTO.class,
+                        komoto,
+                        restParam));
                 break;
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
                 result.setResult(converterToRDTO.convert(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, restParam));

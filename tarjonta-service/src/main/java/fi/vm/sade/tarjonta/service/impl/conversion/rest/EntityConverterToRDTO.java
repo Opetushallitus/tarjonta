@@ -207,7 +207,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             //at least in some cases, the education erikoisammattitutkinto do not have parent komo
             mergeParentAndChildDataToRDTO(dto, parentKomo != null ? parentKomo : komo, komo, komoto, param);
 
-            final KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO nayttoDto = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto;
+            final NayttotutkintoV1RDTO nayttoDto = (NayttotutkintoV1RDTO) dto;
             //nayttoDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             nayttoDto.setAmmattinimikkeet(commonConverter.convertToKoodiUrisDTO(komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET, param));
             nayttoDto.setOpintojenMaksullisuus(komoto.getMaksullisuus() != null && Boolean.valueOf(komoto.getMaksullisuus()));
@@ -260,7 +260,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
      */
     private void convertCommonToRDTO(TYPE dto, Koulutusmoduuli komo, KoulutusmoduuliToteutus komoto, final RestParam restParam) {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null!");
-        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "KoulutusasteTyyppi cannot be null!");
+        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "Koulutustyyppi enum cannot be null!");
 
         //FYI: Non-symmetrical data - the KOMO has string('|uri_1|uri_2|') collection of uris, put the KOMOTO has only single uri.
         dto.setKoulutustyyppi(commonConverter.convertToKoodiDTO(komoto.getToteutustyyppi() != null ? komoto.getToteutustyyppi().uri() : null, komoto.getKoulutustyyppiUri(), FieldNames.KOULUTUSTYYPPI, NO, restParam));
@@ -283,7 +283,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
      */
     private void convertFlatKomoToRDTO(TYPE dto, Koulutusmoduuli komo, KoulutusmoduuliToteutus komoto, final RestParam restParam) {
         Preconditions.checkNotNull(komo, "Koulutusmoduuli object cannot be null!");
-        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "KoulutusasteTyyppi cannot be null!");
+        Preconditions.checkNotNull(komo.getKoulutustyyppiEnum(), "Koulutustyyppi enum cannot be null!");
 
         //1. return komoto uri
         //2. fallback : return parent (tutkinto) komo uri, when no komoto uri

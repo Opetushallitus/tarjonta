@@ -149,11 +149,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         for (; i < arrPersons.length; i++) {
 
             var henkilo = angular.copy(arrPersons[i]);
-            
-            if(angular.isUndefined(henkilo)){
+
+            if (angular.isUndefined(henkilo)) {
                 continue;
             }
-            
+
             if (angular.isUndefined(henkilo.henkiloTyyppi)) {
                 throw "Unknown henkilo tyyppi";
             }
@@ -163,20 +163,20 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 henkilo.etunimet = '';
 
                 if (henkilo.nimet) {
-                  
-                  if(henkilo.nimet.indexOf(" ")==-1) { //ei välilyöntiä nimessä
-                    henkilo.etunimet = henkilo.nimet;
-                  } else {
-                    var arrSeparatedNames = henkilo.nimet.split(" ");
-                    for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
-                        henkilo.etunimet += arrSeparatedNames[p];
-                        console.log("etunimi");
+
+                    if (henkilo.nimet.indexOf(" ") == -1) { //ei välilyöntiä nimessä
+                        henkilo.etunimet = henkilo.nimet;
+                    } else {
+                        var arrSeparatedNames = henkilo.nimet.split(" ");
+                        for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
+                            henkilo.etunimet += arrSeparatedNames[p];
+                            console.log("etunimi");
+                        }
+                        if (arrSeparatedNames.length > 1) {
+                            henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];
+                            console.log("sukunimi");
+                        }
                     }
-                    if (arrSeparatedNames.length > 1) {
-                        henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];
-                        console.log("sukunimi");
-                    }
-                  }
                 }
 
                 delete henkilo.nimet;
@@ -187,7 +187,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
         return arrOutputPersons;
     };
-    
+
     factory.deleteMetaField = function(obj) {
         if (!factory.isNull(obj) && !factory.isNull(obj.meta)) {
             delete obj.meta;
@@ -350,8 +350,53 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     };
 
     /*************************************************/
-    /* INITIALIZATION PARAMETES BY KOULUTUSASTETYPPI */
+    /* INITIALIZATION PARAMETERS BY TOTEUTUSTYYPPI */
     /*************************************************/
+
+    var GENERIC_VALMISTAVA_STRUCTURE = {
+        page: 'nayttotutkinto',
+        KUVAUS_ORDER: [
+            {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
+            {type: "NAYTTOTUTKINNON_SUORITTAMINEN", isKomo: false, length: 1500},
+            {type: "MAKSULLISUUS", isKomo: false, length: 1500},
+            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 1500},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500}
+        ],
+        MLANG: {},
+        RELATION: {
+            koulutusaste: {module: 'TUTKINTO'},
+            koulutuskoodi: {module: 'TUTKINTO'},
+            koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
+            koulutusala: {module: 'TUTKINTO'},
+            opintoala: {module: 'TUTKINTO'},
+            tutkintonimike: {},
+            koulutustyyppi: {module: 'TUTKINTO_OHJELMA'},
+            koulutuslaji: {module: 'TUTKINTO'}
+        }, COMBO: {
+            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
+        }, MCOMBO: {
+            opetuskielis: {koodisto: 'koodisto-uris.kieli', "default": {uris: {'kieli_fi': 1}}},
+            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
+        }, STR: {
+            koulutuksenAlkamisvuosi: {"default": ''},
+            toteutustyyppi: {"default": null}, //no default value!
+            tila: {'default': 'LUONNOS'},
+            tunniste: {"default": ''}
+        }, DATES: {
+            koulutuksenAlkamisPvms: {"default": new Date()}
+        }, BOOL: {
+            opintojenMaksullisuus: {"default": false}
+        }, IMAGES: {
+        }, DESC: {
+            kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
+                ])},
+            kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
+                ])}
+        }
+    }
+
+
+
     factory.STRUCTURE = {
         /*********************************************/
         /*  KORKEAKOULUTUS INITIALIZATION PARAMETERS */
@@ -498,47 +543,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: {
-            KUVAUS_ORDER: [
-                {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
-                {type: "NAYTTOTUTKINNON_SUORITTAMINEN", isKomo: false, length: 1500},
-                {type: "MAKSULLISUUS", isKomo: false, length: 1500},
-                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 1500},
-                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500}
-            ],
-            MLANG: {},
-            RELATION: {
-                koulutusaste: {module: 'TUTKINTO'},
-                koulutuskoodi: {module: 'TUTKINTO'},
-                koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
-                koulutusala: {module: 'TUTKINTO'},
-                opintoala: {module: 'TUTKINTO'},
-                tutkintonimike: {},
-                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'},
-                koulutuslaji: {module: 'TUTKINTO'}
-            }, COMBO: {
-                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
-            }, MCOMBO: {
-                opetuskielis: {koodisto: 'koodisto-uris.kieli', "default": {uris: {'kieli_fi': 1}}},
-                ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
-            }, STR: {
-                koulutuksenAlkamisvuosi: {"default": ''},
-                toteutustyyppi: {"default": 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'},
-                tila: {'default': 'LUONNOS'},
-                tunniste: {"default": ''}
-            }, DATES: {
-                koulutuksenAlkamisPvms: {"default": new Date()}
-            }, BOOL: {
-                opintojenMaksullisuus: {"default": false}
-            }, IMAGES: {
-            }, DESC: {
-                kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
-                    ])},
-                kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
-                    ])}
-            }
-        },
-        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA: {
+        AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
+        ERIKOISAMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: GENERIC_VALMISTAVA_STRUCTURE,
+        AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA: {//not enum
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 1500},
                 {type: "KOHDERYHMA", isKomo: false, length: 1500},

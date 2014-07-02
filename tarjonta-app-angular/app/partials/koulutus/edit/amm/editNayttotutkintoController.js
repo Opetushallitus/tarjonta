@@ -7,7 +7,7 @@ app.controller('EditNayttotutkintoController',
 
                 var ENUM_KOMO_MODULE_TUTKINTO = 'TUTKINTO';
                 var ENUM_KOMO_MODULE_TUTKINTO_OHJELMA = 'TUTKINTO_OHJELMA';
-                var ENUM_OPTIONAL_TOTEUTUS = 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA';
+                var ENUM_OPTIONAL_TOTEUTUS = 'AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA';
                 $log = $log.getInstance("EditNayttotutkintoController");
 
                 $scope.init = function() {
@@ -280,6 +280,8 @@ app.controller('EditNayttotutkintoController',
                 $scope.saveByStatus = function(tila) {
                     $scope.vkUiModel.showValidationErrors = true;
                     var apiModel = angular.copy($scope.model);
+
+                    apiModel.toteutustyyppi = $scope.CONFIG.TYYPPI;
 
                     if (angular.isDefined(apiModel.valmistavaKoulutus) && apiModel.valmistavaKoulutus !== null) {
                         apiModel.valmistavaKoulutus = converter.saveModelConverter(apiModel.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);

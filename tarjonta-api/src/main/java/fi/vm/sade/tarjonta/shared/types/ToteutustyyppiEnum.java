@@ -1,7 +1,5 @@
 package fi.vm.sade.tarjonta.shared.types;
 
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-
 public enum ToteutustyyppiEnum {
 
     VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS("koulutustyyppi_5"),

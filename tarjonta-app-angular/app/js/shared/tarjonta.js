@@ -115,7 +115,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14"]
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11","koulutustyyppi_12"]
         };
 
         $log.debug("haeKoulutukset()", params);
