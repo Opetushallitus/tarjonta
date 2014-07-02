@@ -22,8 +22,8 @@ describe('Edit koulutus testeja', function() {
     var CONFIG_ENV_MOCK = {
         "env": {
             "authentication-service.henkilo.rest.url": "https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo",
-            "authentication-service.henkilo.search.params":"?count=2000&index=0&ht=VIRKAILIJA",
-            "tarjontaOhjausparametritRestUrlPrefix" : "PARAMETRIT",
+            "authentication-service.henkilo.search.params": "?count=2000&index=0&ht=VIRKAILIJA",
+            "tarjontaOhjausparametritRestUrlPrefix": "PARAMETRIT",
         }, "app": {
             "key-app-1": "mock-value-app-1",
             "userLanguages": ['kieli_fi', 'kieli_sv', 'kieli_en']
@@ -101,10 +101,10 @@ describe('Edit koulutus testeja', function() {
 
     it('Testing the EditYhteyshenkiloCtrl selectHenkilo', inject(function($controller, $httpBackend) {
 
-      var $route = {current:{locals:{koulutusModel:{result:{organisaatio:{oid:"org-oid-1.2.3.4"}}}}}}; // this is where the ctrl reads org oid
+        var $route = {current: {locals: {koulutusModel: {result: {organisaatio: {oid: "org-oid-1.2.3.4"}}}}}}; // this is where the ctrl reads org oid
 
-      var $scope={};
-      
+        var $scope = {};
+
         $controller('EditYhteyshenkiloCtrl', {
             $route: $route,
             $scope: $scope
@@ -200,6 +200,7 @@ describe('Edit koulutus testeja', function() {
         $httpBackend.whenGET('https://itest-virkailija.oph.ware.fi:443/authentication-service/resources/henkilo/1.2.246.562.24.91121139885/organisaatiohenkilo').respond(organisaatiohenkilo);
 
         $scope.uiModel = {};
+        $scope.init($scope.uiModel);
 
         $scope.uiModel.contactPerson = {};
 
@@ -231,8 +232,7 @@ describe('Edit koulutus insert/edit/load', function() {
         module(function($provide) {
             $provide.value('globalConfig', {
                 env: {
-                   "tarjontaOhjausparametritRestUrlPrefix" : "/",
-                   
+                    "tarjontaOhjausparametritRestUrlPrefix": "/",
                     "koodisto-uris.pohjakoulutusvaatimus": "",
                     "koodisto-uris.postinumero": "",
                     "koodisto-uris.suunniteltuKesto": "",
@@ -283,6 +283,8 @@ describe('Edit koulutus insert/edit/load', function() {
         routeParams = $routeParams;
         routeParams.id = null;
         routeParams.org = 'org-oid-1';
+        routeParams.toteutustyyppi = "KORKEAKOULUTUS";
+        routeParams.koulutustyyppi = "KORKEAKOULUTUS";
         cfg = Config;
 
         organisaatioService = OrganisaatioService;
@@ -299,11 +301,18 @@ describe('Edit koulutus insert/edit/load', function() {
 
 
     it('Testing the BaseEditController.init', inject(function($controller) {
+        var $route = {current: {locals: {koulutusModel: {result: {
+                            organisaatio: {oid: "org-oid-1.2.3.4"}
+                        }}}}}; // this is where the ctrl reads org oid
+
+
         var a = $controller('BaseEditController', {
+            $route: $route,
             $scope: scope
         });
 
         $controller('EditKorkeakouluController', {
+            $route: $route,
             "$scope": scope,
             "tarjontaService": tarjontaService,
             "cfg": cfg,
@@ -333,7 +342,7 @@ describe('Edit koulutus insert/edit/load', function() {
         expect(scope.model.opetusmuodos).toEqual(EMPTY_META_UI_MODEL);
 
         expect(scope.model.koulutusmoduuliTyyppi).toEqual('TUTKINTO');
-        expect(scope.model.koulutusasteTyyppi).toEqual('KORKEAKOULUTUS');
+        expect(scope.model.toteutustyyppi).toEqual('KORKEAKOULUTUS');
         expect(scope.model.tila).toEqual('LUONNOS');
 
         expect(scope.uiModel.contactPerson).toEqual({henkiloTyyppi: 'YHTEYSHENKILO'});

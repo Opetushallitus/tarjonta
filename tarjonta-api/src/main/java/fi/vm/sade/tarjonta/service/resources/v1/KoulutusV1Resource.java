@@ -23,20 +23,19 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO1;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliKorkeakouluRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliStandardRelationV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import java.util.List;
-import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -89,7 +88,7 @@ public interface KoulutusV1Resource {
     @ApiOperation(
             value = "Kopioi tai siirtää monta koulutusta",
             notes = "Operaatio kopioi tai siirtää monta koulutusta")
-    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO1 koulutusMultiCopy);
+    public ResultV1RDTO copyOrMoveMultiple(KoulutusMultiCopyV1RDTO koulutusMultiCopy);
 
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -110,15 +109,28 @@ public interface KoulutusV1Resource {
     public KuvausV1RDTO loadTekstis(@PathParam("oid") String oid);
 
     @GET
-    @Path("/koulutuskoodi/{koulutuskoodi}/{koulutusasteTyyppi}")
+    @Path("/koodisto/{value}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
-            notes = "Operaatio näyttää koodisto palvelun koulutuksen tarvitsemat koulutuskoodin relaatiot annetulla kuusinumeroisella tilastokeskuksen koulutuskoodilla tai koulutus-koodiston koodi uri:lla",
-            response = KoulutusmoduuliKorkeakouluRelationV1RDTO.class)
-    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoulutusRelation(
-            @PathParam("koulutuskoodi") String koulutuskoodi,
-            @PathParam("koulutusasteTyyppi") KoulutusasteTyyppi koulutusasteTyyppi,
+            value = "Näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
+            notes = "Operaatio näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
+            response = KoulutusmoduuliStandardRelationV1RDTO.class)
+    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
+            @PathParam("value") String value,
+            @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
+            @QueryParam("meta") Boolean showMeta,
+            @QueryParam("lang") String userLang);
+
+    @GET
+    @Path("/koodisto/{value}/{koulutustyyppi}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
+            notes = "Operaatio näyttää koodisto palvelun tarjontatiedon vaatimat relaatiot annettulla koodisto urilla tai koodin arvolla",
+            response = KoulutusmoduuliStandardRelationV1RDTO.class)
+    public ResultV1RDTO<KoulutusmoduuliStandardRelationV1RDTO> getKoodistoRelations(
+            @PathParam("value") String value,
+            @PathParam("koulutustyyppi") ToteutustyyppiEnum koulutustyyppiUri,
             @QueryParam("defaults") String defaults, //an example new String("field:uri, field:uri, ....")
             @QueryParam("meta") Boolean showMeta,
             @QueryParam("lang") String userLang);
@@ -231,19 +243,26 @@ public interface KoulutusV1Resource {
 
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
-     *
+     * 
      * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given
-     * organisations
-     * @param hakukohdeTilas filter result to be only in states given
-     * @return
+     * @param organisationOids filter result to be in or "under" given organisations
+     * @param koulutusOids
+     * @param koulutusTila filter result to be only in states given
+     * @param alkamisKausi
+     * @param alkamisVuosi
+     * @param koulutustyyppi
+     * @param toteutustyyppi
+     * @param koulutusastetyyppi (deprecated)
+     * @param komoOid
+     * @param alkamisPvmAlkaenTs not supported
+     * @return 
      */
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Näyttää listausivun tulosjoukon annetuilla parametreillä",
-            notes = "Operaatio näyttää listausivun tulosjoukon annetuilla parametreillä",
+            notes = "Operaatio näyttää listausivun tulosjoukon annetuilla parametreillä (alkamisPvmAlkaen ei vielä tuettu)",
             response = HakutuloksetV1RDTO.class)
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(@QueryParam("searchTerms") String searchTerms,
             @QueryParam("organisationOid") List<String> organisationOids,
@@ -251,8 +270,12 @@ public interface KoulutusV1Resource {
             @QueryParam("tila") String koulutusTila,
             @QueryParam("alkamisKausi") String alkamisKausi,
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+            @QueryParam("koulutustyyppi") List<String> koulutustyyppi,
+            @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
+            @Deprecated
             @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
-            @QueryParam("komoOid") String komoOid
+            @QueryParam("komoOid") String komoOid,
+            @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs
     );
 
     /**

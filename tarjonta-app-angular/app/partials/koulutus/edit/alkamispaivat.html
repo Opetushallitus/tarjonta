@@ -4,7 +4,7 @@
             <t-date-time 
                 type="object" 
                 ng-required="enabled"
-	        name="alkamisPvm" 
+	        name="{{ctrl.alkamisPvmFieldName}}" 
 	        ng-model="pvm.date"
 	        ng-disabled="!enabled"
 	        ng-change="onDateAdded()"

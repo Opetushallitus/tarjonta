@@ -13,6 +13,38 @@ angular
           var orgLuku = $resource(Config.env["organisaatio.api.rest.url"]
               + "organisaatio/:oid");
 
+          function getRyhmat() {
+              $log.info("getRyhmat()");
+              var ret = $q.defer();
+              
+              var orgRyhmat =                      
+                      $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/:oid/ryhmat",
+                          { oid : "@oid", },
+                          {
+                              get: {
+                                  method: 'GET',
+                                  withCredentials: true,
+                                  isArray: true
+                              }
+                          });
+
+              orgRyhmat.get({
+                  oid : "perse",
+                  noCache: new Date().getTime()
+              },
+              function(result) {
+                  $log.info("  got result", result);
+                  ret.resolve(result);
+              },
+              function(err) {
+                  $log.error("  got error", err);
+                  ret.reject(err);
+              });
+              
+              return ret.promise;
+          }
+
+
           function localize(organisaatio) {
             // TODO olettaa että käyttäjä suomenkielinen
             organisaationimi = organisaatio.nimi.fi || organisaatio.nimi.sv
@@ -59,7 +91,6 @@ angular
               oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
             }
           }
-          ;
 
           /**
            * Koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan
@@ -177,7 +208,12 @@ angular
                 console.log("res:", result);
                 return localize(result);
               });
-            }
+            },
+
+            /**
+             * Palauttaa organisaatioryhmat. (organisaatioita)
+             */
+            getRyhmat: getRyhmat
 
           };
         });

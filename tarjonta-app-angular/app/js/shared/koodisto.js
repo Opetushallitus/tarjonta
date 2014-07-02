@@ -112,8 +112,6 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                         throw new Error('Tarjonta application error - invalid koodi array object! ' + koodis);
                     }
 
-                    console.log(koodis);
-
                     for (var i = 0; i < koodis.length; i++) {
                         //is active and on date range
                         if (!koodistoUri || koodis[i].koodisto.koodistoUri === koodistoUri) {

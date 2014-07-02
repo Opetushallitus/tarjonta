@@ -15,8 +15,8 @@
 
 var app = angular.module('app.koulutus.ctrl', []);
 
-app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService',
-    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
+app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService', 'KoulutusConverterFactory',
+    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService, converter) {
         $log = $log.getInstance("KoulutusRoutingController");
 
         /*
@@ -26,9 +26,8 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
 
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
-                var type = $route.current.locals.koulutusModel.result.koulutusasteTyyppi;
-                var patt = new RegExp("(LUKIOKOULUTUS|KORKEAKOULUTUS|AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA)");
-                if (patt.test(type)) {
+                var type = $route.current.locals.koulutusModel.result.toteutustyyppi;
+                if (angular.isDefined(converter.STRUCTURE[type])) {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";

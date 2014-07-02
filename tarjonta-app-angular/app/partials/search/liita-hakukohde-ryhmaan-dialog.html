@@ -1,0 +1,35 @@
+<div id="liitaRyhmaanDialog">
+
+    <div class="modal-header">
+        <h3 data-tt="search.ryhmat.liita.otsikko">Liitä valitut hakukohteen ryhmiin</h3>
+    </div>
+
+    <div class="modal-body">
+        <p class="help" data-tt="search.ryhmat.liita.help">Valitse ryhmä(t) joihin haluat annetut hakukohteet liittää.</p>
+
+        <div ng-show="!model.completed">
+            <span ng-repeat="ryhma in model.ryhmat">
+              <input type="checkbox" ng-model="ryhma.selected"> {{ getNimi(ryhma) }}<br/>
+            </span>
+        </div>
+
+        <div ng-show="model.completed && model.result.errors">
+            Valmis, virheitä:
+            <span ng-repeat="virhe in model.result.errors">
+                {{ virhe | json }} <br/>
+            </span>            
+        </div>
+
+        <div ng-show="model.completed && !model.result.errors">
+            Valmis, ei virheitä.
+        </div>
+        
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn" ng-click="cancel()" ng-show="!model.completed" tt="tarjonta.toiminnot.cancel">Peruuta</button>
+        <button class="btn btn-primary" ng-click="ok()" ng-show="!model.completed" tt="tarjonta.toiminnot.ok">OK</button>
+        <button class="btn" ng-click="close()" ng-show="model.completed" tt="tarjonta.toiminnot.lopeta">Lopeta</button>
+    </div>
+
+</div>

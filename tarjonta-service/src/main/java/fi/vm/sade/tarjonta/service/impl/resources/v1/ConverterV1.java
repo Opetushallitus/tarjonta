@@ -234,11 +234,11 @@ public class ConverterV1 {
 
         // Process UI hakuaikas.
         for (HakuaikaV1RDTO hakuaikaDTO : hakuV1RDTO.getHakuaikas()) {
-            LOG.info("hakuaika: ", hakuaikaDTO);
+            LOG.debug("hakuaika: ", hakuaikaDTO);
 
             Hakuaika ha = haku.getHakuaikaById(hakuaikaDTO.getHakuaikaId());
             if (ha == null) {
-                LOG.info(" == new hakuaika");
+                LOG.debug(" == new hakuaika");
 
                 // NEW hakuaika
                 ha = new Hakuaika();
@@ -248,7 +248,7 @@ public class ConverterV1 {
 
                 haku.addHakuaika(ha);
             } else {
-                LOG.info(" == old hakuaika TODO");
+                LOG.debug(" == old hakuaika TODO");
 
                 ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
                 ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
@@ -261,7 +261,7 @@ public class ConverterV1 {
 
         // Remove hakuaikas that are deleted.
         for (Hakuaika hakuaika : tmpHakuaikas) {
-            LOG.info("DELETED hakuaika: ", hakuaika);
+            LOG.debug("DELETED hakuaika: ", hakuaika);
             haku.removeHakuaika(hakuaika);
         }
 
@@ -1189,8 +1189,7 @@ public class ConverterV1 {
         Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>>();
 
         for (KoulutusPerustieto ht : source.getKoulutukset()) {
-            TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> rets = getTarjoaja(
-                    ret, tarjoajat, ht);
+            TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> rets = getTarjoaja(ret, tarjoajat, ht);
             rets.getTulokset().add(convert(ht));
         }
 
@@ -1210,17 +1209,22 @@ public class ConverterV1 {
         ret.setKausiUri(ht.getKoulutuksenAlkamiskausi() == null ? null : ht.getKoulutuksenAlkamiskausi().getUri());
         ret.setVuosi(ht.getKoulutuksenAlkamisVuosi());
         if (ht.getPohjakoulutusvaatimus() != null) {
-            ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus()
-                    .getNimi());
+            ret.setPohjakoulutusvaatimus(ht.getPohjakoulutusvaatimus().getNimi());
         }
         if (ht.getKoulutuslaji() != null) {
             ret.setKoulutuslaji(ht.getKoulutuslaji().getNimi());
             ret.setKoulutuslajiUri(ht.getKoulutuslaji().getUri());
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
-        ret.setKoulutusasteTyyppi(ht.getKoulutustyyppi());
-        ret.setKoulutuskoodi(ht.getKoulutuskoodi().getUri());
+        ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
+        ret.setKoulutuskoodi(ht.getKoulutusKoodi().getUri());
 
+        ret.setKoulutuksenAlkamisPvmMin(ht.getKoulutuksenAlkamisPvmMin());
+        ret.setKoulutuksenAlkamisPvmMax(ht.getKoulutuksenAlkamisPvmMax());
+
+//        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
+//        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
+        
         return ret;
     }
 
@@ -1228,8 +1232,7 @@ public class ConverterV1 {
             HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> tulos,
             Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat,
             KoulutusPerustieto ht) {
-        TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht
-                .getTarjoaja().getOid());
+        TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht.getTarjoaja().getOid());
         if (ret == null) {
             ret = new TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>();
             tarjoajat.put(ht.getTarjoaja().getOid(), ret);

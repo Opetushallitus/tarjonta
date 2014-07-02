@@ -16,37 +16,41 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import fi.vm.sade.security.SadeUserDetailsWrapper;
+import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToKomoRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KomoRDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.komo.validation.KomoValidator;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.resources.v1.KomoV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -55,33 +59,37 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Transactional(readOnly = false)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class KomoResourceImplV1 implements KomoV1Resource {
-    
+
+    private static final boolean NO_IMAGE = false;
+
     private static final Logger LOG = LoggerFactory.getLogger(KomoResourceImplV1.class);
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
     @Autowired
-    private ConversionService conversionService;
+    private KomoRDTOConverterToEntity convertToEntity;
     @Autowired
     private PermissionChecker permissionChecker;
     @Autowired
-    private EntityConverterToKomoRDTO converterKomoToRDTO;
+    private EntityConverterToKomoRDTO converterToRDTO;
     @Autowired
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
     @Autowired(required = true)
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
-    
+    @Autowired(required = true)
+    private ContextDataService contextDataService;
+
     @Override
     public ResultV1RDTO deleteByOid(String oid) {
         permissionChecker.checkCreateKoulutusmoduuli();
-        
+
         final Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
         ResultV1RDTO dto = new ResultV1RDTO();
-        
+
         if (komo == null) {
             dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return dto;
         }
-        
+
         if (!komo.getKoulutusmoduuliToteutusList().isEmpty()) {
             dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             ArrayList<ErrorV1RDTO> newArrayList = Lists.<ErrorV1RDTO>newArrayList();
@@ -91,9 +99,9 @@ public class KomoResourceImplV1 implements KomoV1Resource {
             dto.setErrors(newArrayList);
             return dto;
         }
-        
+
         final List<String> children = koulutusSisaltyvyysDAO.getChildren(oid);
-        
+
         if (!children.isEmpty()) {
             dto.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             ArrayList<ErrorV1RDTO> newArrayList = Lists.<ErrorV1RDTO>newArrayList();
@@ -104,83 +112,195 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         } else {
             koulutusmoduuliDAO.remove(komo);
         }
-        
+
         return dto;
     }
 
-    /**
-     * Validate user language code. Default or fallback value is 'FI'.
-     *
-     * @param lang
-     * @return
-     */
-    private String checkArgsLangCode(String lang) {
-        if (lang == null || lang.isEmpty() || lang.length() != 2) {
-            return "FI";
-        }
-        
-        return lang;
-    }
-
-    /**
-     * Validate the show meta argument. No argument, then show all meta data
-     * objects.
-     *
-     * @param meta
-     * @return
-     */
-    private boolean checkArgsMeta(Boolean meta) {
-        return checkArgsMeta(meta, true);
-    }
-    
-    private boolean checkArgsMeta(Boolean meta, boolean defaultValue) {
-        return meta != null ? meta : defaultValue;
-    }
-
-    /**
-     * Get user's preferred language code. Default or fallback value is 'FI'.
-     */
-    private String getUserLang() {
-        Preconditions.checkNotNull(SecurityContextHolder.getContext(), "Context object cannot be null.");
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Preconditions.checkNotNull(authentication, "Authentication object cannot be null.");
-        final Object principal = authentication.getPrincipal();
-        
-        if (principal != null && principal instanceof SadeUserDetailsWrapper) {
-            SadeUserDetailsWrapper sadeUser = (SadeUserDetailsWrapper) principal;
-            LOG.info("User SadeUserDetailsWrapper : {}, user oid : {}", sadeUser, sadeUser.getUsername());
-            
-            if (sadeUser.getLang() != null && !sadeUser.getLang().isEmpty()) {
-                return sadeUser.getLang(); //return an user lang code
-            } else {
-                LOG.debug("user has no lang code!");
-                return "FI";
-            }
-        }
-        
-        LOG.error("Not user data found.");
-        return "FI";
-    }
-    
     @Override
-    public ResultV1RDTO<KomoV1RDTO> postKomo(KomoV1RDTO dto) {
-        ResultV1RDTO result = new ResultV1RDTO();
-        
-        if (!KomoValidator.validateBaseData(dto, result)) {
-            switch (KoulutustyyppiEnum.fromEnum(dto.getKoulutusasteTyyppi())) {
+    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> importModuleGroupByKoulutusUri(String koulutusUri, List<KomoV1RDTO> dtos) {
+        permissionChecker.checkCreateKoulutusmoduuli();
+        ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> result = new ResultV1RDTO<List<ModuuliTuloksetV1RDTO>>();
+
+        if (dtos == null || dtos.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_COUNT.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_COUNT.lower()));
+            return result;
+        }
+
+        Set<String> uniqueKoulutusohjelma = Sets.<String>newHashSet();
+        Set<String> uniqueOsaamisala = Sets.<String>newHashSet();
+        Set<String> uniqueLukiolinja = Sets.<String>newHashSet();
+
+        for (KomoV1RDTO dto : dtos) {
+            switch (ModuulityyppiEnum.fromEnum(dto.getKoulutusasteTyyppi())) {
                 case KORKEAKOULUTUS:
                     KomoValidator.validateModuleKorkeakoulu(dto, result);
                     break;
-                case TUNTEMATON:
-                case PERUSOPETUS_ULKOMAINEN:
+                default:
                     KomoValidator.validateModuleGeneric(dto, result);
                     break;
-                default:
-                    KomoValidator.validateModuleLukioAndAmm(dto, result);
+            }
+
+            if (!EntityConverterToKomoRDTO.isUri(dto.getKoulutuskoodi()) && !koulutusUri.equals(EntityConverterToKomoRDTO.getUri(dto.getKoulutuskoodi()))) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_GROUP.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_GROUP.lower()));
+            }
+
+            /*
+             * Test unique tutkinto-ohjelma
+             */
+            if (uniqueKoulutusohjelma.contains(EntityConverterToKomoRDTO.getUri(dto.getKoulutusohjelma()))) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_NON_UNIQUE_KOULUTUSOHJELMA.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_NON_UNIQUE_KOULUTUSOHJELMA.lower(), EntityConverterToKomoRDTO.getUri(dto.getKoulutusohjelma())));
+            }
+
+            if (uniqueOsaamisala.contains(EntityConverterToKomoRDTO.getUri(dto.getOsaamisala()))) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_NON_UNIQUE_OSAAMISALA.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_NON_UNIQUE_OSAAMISALA.lower(), EntityConverterToKomoRDTO.getUri(dto.getOsaamisala())));
+            }
+
+            if (uniqueLukiolinja.contains(EntityConverterToKomoRDTO.getUri(dto.getLukiolinja()))) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_NON_UNIQUE_LUKIOLINJA.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_NON_UNIQUE_LUKIOLINJA.lower(), EntityConverterToKomoRDTO.getUri(dto.getLukiolinja())));
+            }
+
+            if (EntityConverterToKomoRDTO.isUri(dto.getKoulutusohjelma())) {
+                uniqueKoulutusohjelma.add(EntityConverterToKomoRDTO.getUri(dto.getKoulutusohjelma()));
+            }
+
+            if (EntityConverterToKomoRDTO.isUri(dto.getOsaamisala())) {
+                uniqueOsaamisala.add(EntityConverterToKomoRDTO.getUri(dto.getOsaamisala()));
+            }
+
+            if (EntityConverterToKomoRDTO.isUri(dto.getLukiolinja())) {
+                uniqueLukiolinja.add(EntityConverterToKomoRDTO.getUri(dto.getLukiolinja()));
+            }
+        }
+
+        List<KomoV1RDTO> tutkintoDtos = Lists.<KomoV1RDTO>newArrayList(); //only one required
+        List<KomoV1RDTO> tutkintoOhjelmaDtos = Lists.<KomoV1RDTO>newArrayList(); //zero or more
+
+        if (!result.hasErrors()) {
+            for (KomoV1RDTO dto : dtos) {
+                if (dto.getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO)
+                        && !EntityConverterToKomoRDTO.isUri(dto.getKoulutusohjelma())
+                        && !EntityConverterToKomoRDTO.isUri(dto.getOsaamisala())
+                        && !EntityConverterToKomoRDTO.isUri(dto.getLukiolinja())) {
+                    tutkintoDtos.add(dto);
+                } else if (dto.getKoulutusmoduuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)
+                        && (EntityConverterToKomoRDTO.isUri(dto.getKoulutusohjelma())
+                        || EntityConverterToKomoRDTO.isUri(dto.getOsaamisala())
+                        || EntityConverterToKomoRDTO.isUri(dto.getLukiolinja()))) {
+                    tutkintoOhjelmaDtos.add(dto);
+                } else {
+                    result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_DATA.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_DATA.lower()));
+                }
+            }
+
+            if (tutkintoDtos.size() != 1) {
+                result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT.lower()));
+            }
+
+            if (!result.hasErrors()) {
+                result.setResult(Lists.<ModuuliTuloksetV1RDTO>newArrayList());
+                final KomoV1RDTO tutkintoDto = tutkintoDtos.get(0); //only one required parent per a group
+                List<Koulutusmoduuli> successfullyImportedModules = Lists.<Koulutusmoduuli>newArrayList();
+                try {
+                    Koulutusmoduuli mTutkinto = searchAndModifyModule(tutkintoDto.getOid(),
+                            fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO,
+                            koulutusUri, null, null, null, tutkintoDto.getKoulutustyyppis());
+
+                    if (mTutkinto == null) {
+                        //persist new tutkinto module
+                        mTutkinto = koulutusmoduuliDAO.insert(convertToEntity.convert(tutkintoDto));
+                    }
+
+                    successfullyImportedModules.add(mTutkinto);
+                    for (KomoV1RDTO ohjelmaDto : tutkintoOhjelmaDtos) {
+                        Koulutusmoduuli mTutkintoOhjelma = searchAndModifyModule(ohjelmaDto.getOid(),
+                                fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, koulutusUri,
+                                ohjelmaDto.getKoulutusohjelma(),
+                                ohjelmaDto.getOsaamisala(),
+                                ohjelmaDto.getLukiolinja(),
+                                ohjelmaDto.getKoulutustyyppis());
+                        if (mTutkintoOhjelma == null) {
+                            //persist new tutkinto-ohjema module
+                            mTutkintoOhjelma = koulutusmoduuliDAO.insert(convertToEntity.convert(ohjelmaDto));
+                        }
+
+                        //link: a parent module can have many childrens
+                        KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(
+                                mTutkinto, mTutkintoOhjelma, KoulutusSisaltyvyys.ValintaTyyppi.SOME_OFF);
+                        koulutusSisaltyvyysDAO.insert(sisaltyvyys);
+
+                        successfullyImportedModules.add(mTutkintoOhjelma);
+                    }
+
+                    //convert all the handled group of objects to output DTO:
+                    for (Koulutusmoduuli m : successfullyImportedModules) {
+                        result.getResult().add(EntityConverterToKomoRDTO.convertEntityToModuuliTuloksetV1RDTO(m, null));
+                    }
+                } catch (Exception e) {
+                    LOG.error("Module import failed by group of '" + koulutusUri + "'", e);
+                    result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_IMPORT_FAILED.getFieldName(), KoulutusValidationMessages.KOULUTUS_IMPORT_FAILED.lower(), e.getMessage()));
+
+                    //convert all the give group of objects to output DTO:
+                    for (KomoV1RDTO dto : dtos) {
+                        result.getResult().add(EntityConverterToKomoRDTO.convertKomoV1RDTOToModuuliTuloksetV1RDTO(dto, null));
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /*
+     * Search module from DB by koulutus and 'tutkinto-ohjelma' uris.  
+     */
+    private Koulutusmoduuli searchAndModifyModule(final String oid, fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi tyyppi,
+            final String koulutusUri,
+            final KoodiV1RDTO koulutusohjelma,
+            final KoodiV1RDTO osaamisala,
+            final KoodiV1RDTO lukiolinja,
+            final KoodiUrisV1RDTO koulutustyyppis) {
+        Koulutusmoduuli m = null;
+
+        if (oid != null && !oid.isEmpty()) {
+            //Load by komo oid
+            m = koulutusmoduuliDAO.findByOid(oid);
+
+            if (m == null || !m.getModuuliTyyppi().equals(tyyppi)) {
+                LOG.error("Module search failed by oid : {}, {}", oid, m != null ? m.getModuuliTyyppi() : m);
+                throw new RuntimeException(oid);
+            }
+        } else if (koulutusUri != null && !koulutusUri.isEmpty()) {
+            //Load by uris
+            m = koulutusmoduuliDAO.findModule(tyyppi, koulutusUri,
+                    EntityConverterToKomoRDTO.getUri(koulutusohjelma),
+                    EntityConverterToKomoRDTO.getUri(osaamisala),
+                    EntityConverterToKomoRDTO.getUri(lukiolinja));
+        } else {
+            LOG.info("No komo found for koulutus : '{}' ohjelma : '{}'", koulutusUri, koulutusohjelma + "/" + osaamisala + "/" + lukiolinja);
+        }
+
+        //add data only to null ohjelma fields
+        convertToEntity.mergeEntityImportModifications(m, koulutusohjelma, osaamisala, lukiolinja, koulutustyyppis);
+
+        return m;
+    }
+
+    @Override
+    public ResultV1RDTO<KomoV1RDTO> postKomo(KomoV1RDTO dto) {
+        ResultV1RDTO result = new ResultV1RDTO();
+
+        if (!KomoValidator.validateBaseData(dto, result)) {
+            switch (ModuulityyppiEnum.fromEnum(dto.getKoulutusasteTyyppi())) {
+                case KORKEAKOULUTUS:
+                    KomoValidator.validateModuleKorkeakoulu(dto, result);
                     break;
-                
+                default:
+                    KomoValidator.validateModuleGeneric(dto, result);
+                    break;
+
             }
             if (!result.hasErrors()) {
+
                 if (dto.getOid() != null && dto.getOid().length() > 0) {
                     //update module
                     permissionChecker.checkUpdateKoulutusmoduuli();
@@ -188,130 +308,115 @@ public class KomoResourceImplV1 implements KomoV1Resource {
                     KomoValidator.validateModuleUpdate(komo, result);
                     if (!result.hasErrors()) {
                         Preconditions.checkNotNull(komo, "KOMO not found by OID : %s.", dto.getOid());
-                        result.setResult(converterKomoToRDTO.convert(conversionService.convert(dto, Koulutusmoduuli.class), getUserLang(), true));
+                        result.setResult(converterToRDTO.convert(convertToEntity.convert(dto), RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang())));
                     }
                 } else {
                     //create new module
                     permissionChecker.checkCreateKoulutusmoduuli();
                     Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
-                    
-                    final Koulutusmoduuli newKomo = conversionService.convert(dto, Koulutusmoduuli.class);
+
+                    final Koulutusmoduuli newKomo = convertToEntity.convert(dto);
                     Preconditions.checkNotNull(newKomo, "KOMO conversion to database object failed : object : %s.", ReflectionToStringBuilder.toString(dto));
-                    result.setResult(converterKomoToRDTO.convert(koulutusmoduuliDAO.insert(newKomo), getUserLang(), true));
+                    result.setResult(converterToRDTO.convert(koulutusmoduuliDAO.insert(newKomo), RestParam.noImageAndShowMeta(contextDataService.getCurrentUserLang())));
                 }
             }
         }
-        
+
         return result;
     }
-    
+
     @Override
     public ResultV1RDTO<KomoV1RDTO> findKomoByOid(String oid, Boolean meta, String lang) {
         Preconditions.checkNotNull(oid, "KOMO OID cannot be null.");
-        
+
         ResultV1RDTO resultRDTO = new ResultV1RDTO();
         final Koulutusmoduuli komo = this.koulutusmoduuliDAO.findByOid(oid);
-        
-        lang = checkArgsLangCode(lang);
-        meta = checkArgsMeta(meta);
-        
         if (komo == null) {
             return resultRDTO;
         }
-        
-        resultRDTO.setResult(converterKomoToRDTO.convert(komo, lang, meta));
+
+        resultRDTO.setResult(converterToRDTO.convert(komo, RestParam.byUserRequest(meta, NO_IMAGE, lang)));
         return resultRDTO;
     }
-    
+
     @Override
     public ResultV1RDTO<List<KomoV1RDTO>> searchInfo(String koulutuskoodi, Boolean meta, String lang) {
-        
-        lang = checkArgsLangCode(lang);
-        meta = checkArgsMeta(meta, false);
-        
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutuskoodi);
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
         ArrayList<KomoV1RDTO> dtos = Lists.<KomoV1RDTO>newArrayList();
         for (Koulutusmoduuli komo : komos) {
-            dtos.add(converterKomoToRDTO.convert(komo, lang, meta));
+            dtos.add(converterToRDTO.convert(komo, RestParam.byUserRequest(meta, NO_IMAGE, lang)));
         }
-        
+
         return new ResultV1RDTO<List<KomoV1RDTO>>(dtos);
     }
-    
+
     @Override
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
-            KoulutusasteTyyppi koulutusastetyyppi,
-            KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
-            String koulutuskoodiUri,
+            ToteutustyyppiEnum koulutustyyppiUri,
+            String koulutusUri,
             String tila) {
-        Preconditions.checkNotNull(koulutusastetyyppi, "Koulutusastetyyppi enum cannot be null.");
-        
+        return searchModule(koulutustyyppiUri, null, koulutusUri, tila);
+    }
+
+    @Override
+    public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
+            ToteutustyyppiEnum koulutustyyppiUri,
+            KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
+            String koulutusUri,
+            String tila) {
+        Preconditions.checkNotNull(koulutustyyppiUri, "Koulutustyyppi URI cannot be null.");
+
         KoulutusmoduuliDAO.SearchCriteria criteria = new KoulutusmoduuliDAO.SearchCriteria();
-        criteria.setKoulutustyyppi(KoulutustyyppiEnum.fromEnum(koulutusastetyyppi));
-        
-        if (koulutusmoduuliTyyppi != null) {
-            criteria.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(koulutusmoduuliTyyppi.name()));
-        }
-        
         if (tila != null) {
             criteria.setTila(criteria.getTila());
         }
-        
-        if (koulutuskoodiUri != null) {
-            criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutuskoodiUri);
+
+        if (koulutusUri != null) {
+            criteria.setLikeKoulutusKoodiUriWithoutVersion(koulutusUri);
         }
-        
+
+        if (koulutustyyppiUri != null) {
+            criteria.setKoulutustyyppiUri(koulutustyyppiUri);
+        }
+
+        if (koulutusmoduuliTyyppi != null) {
+            criteria.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.valueOf(koulutusmoduuliTyyppi.name()));
+        }
+
         List<Koulutusmoduuli> komos = this.koulutusmoduuliDAO.search(criteria);
         List<ModuuliTuloksetV1RDTO> searchResults = Lists.<ModuuliTuloksetV1RDTO>newArrayList();
         ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> result = new ResultV1RDTO<List<ModuuliTuloksetV1RDTO>>();
         result.setResult(searchResults);
-        
+
         if (komos == null || komos.isEmpty()) {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
-        
+
         for (Koulutusmoduuli m : komos) {
             //Result objects do not have version information on the URIs.
-
-            ModuuliTuloksetV1RDTO dto = new ModuuliTuloksetV1RDTO(m.getOid(),
-                    fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.valueOf(m.getModuuliTyyppi().name()),
-                    m.getKoulutusUri().substring(0, m.getKoulutusUri().indexOf("#")),
-                    null);
-            
-            switch (koulutusastetyyppi) {
-                case LUKIOKOULUTUS:
-                    if (m.getLukiolinjaUri() != null && !m.getLukiolinjaUri().isEmpty()) {
-                        dto.setKoulutusohjelmaUri(m.getLukiolinjaUri().substring(0, m.getLukiolinjaUri().indexOf("#")));
-                    }
-                    break;
-                default:
-                    if (m.getKoulutusohjelmaUri() != null && !m.getKoulutusohjelmaUri().isEmpty()) {
-                        dto.setKoulutusohjelmaUri(m.getKoulutusohjelmaUri().substring(0, m.getKoulutusohjelmaUri().indexOf("#")));
-                    }
-                    break;
-            }
-            searchResults.add(dto);
+            searchResults.add(EntityConverterToKomoRDTO.convertEntityToModuuliTuloksetV1RDTO(m, koulutustyyppiUri));
         }
-        
+
         result.setResult(searchResults);
         return result;
     }
-    
+
     @Override
     public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(String oid) {
         Preconditions.checkNotNull(oid, "KOMOTO OID cannot be null.");
         Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
-        
+
         ResultV1RDTO<KuvausV1RDTO> result = new ResultV1RDTO<KuvausV1RDTO>();
         if (komo == null) {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
-        
+
         result.setResult(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), true));
         return result;
     }
+
 }

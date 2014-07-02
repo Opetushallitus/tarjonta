@@ -49,6 +49,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.helper.OrganisaatioDisplayHelper;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 @Component
 public class TarjontaSearchService {
@@ -184,11 +185,10 @@ public class TarjontaSearchService {
 
         if (tilat.size() > 0) {
             q.addFilterQuery(String.format("%s:(%s)", Hakukohde.TILA, Joiner.on(' ').skipNulls().join(tilat)));
-        }else {
+        } else {
             //when an empty search, do not show koulutus status of deleted
             q.addFilterQuery(String.format("%s:%s", "-" + Hakukohde.TILA, TarjontaTila.POISTETTU));
         }
-
 
         if (kysely.getHakuOid() != null) {
             addFilterForHakuOid(kysely.getHakuOid(), q);
@@ -271,8 +271,7 @@ public class TarjontaSearchService {
         queryParts.clear();
     }
 
-    public KoulutuksetVastaus haeKoulutukset(
-            final KoulutuksetKysely kysely) {
+    public KoulutuksetVastaus haeKoulutukset(final KoulutuksetKysely kysely) {
 
         KoulutuksetVastaus response = new KoulutuksetVastaus();
 
@@ -364,15 +363,40 @@ public class TarjontaSearchService {
             addFilterForHakukohdes(hakukohdeOids, queryParts, q);
         }
 
-        //restrict with koulutusastetyyppi
+        //restrict with deprecated koulutusastetyyppi, use koulutustyyppi instead of the koulutusastetyyppi
         if (kysely.getKoulutusasteTyypit().size() > 0) {
             final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutusasteTyypit(), new Function<KoulutusasteTyyppi, String>() {
+                @Override
                 public String apply(KoulutusasteTyyppi src) {
                     return src.value();
 
                 }
             }));
-            q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSTYYPPI, Joiner.on(" ").join(tyypit)));
+            q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSASTETYYPPI_ENUM, Joiner.on(" ").join(tyypit)));
+        }
+
+        //restrict with koulutustyyppi-uri
+        if (kysely.getKoulutustyyppi().size() > 0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutustyyppi(), new Function<String, String>() {
+                @Override
+                public String apply(String src) {
+                    return src;
+
+                }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSTYYPPI_URI, Joiner.on(" ").join(tyypit)));
+        }
+
+        //restrict with getTotetustyyppi enum
+        if (kysely.getTotetustyyppi().size() > 0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getTotetustyyppi(), new Function<ToteutustyyppiEnum, String>() {
+                @Override
+                public String apply(ToteutustyyppiEnum src) {
+                    return src.name();
+
+                }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", Koulutus.TOTEUTUSTYYPPI_ENUM, Joiner.on(" ").join(tyypit)));
         }
 
         //restrict by koulutus

@@ -3,9 +3,11 @@ package fi.vm.sade.tarjonta.model.index;
 import java.util.Date;
 
 import com.mysema.query.annotations.QueryProjection;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.List;
 
 /**
  * Entity containing all fields from database needed for indexing
@@ -15,11 +17,8 @@ public class KoulutusIndexEntity {
     private Long koulutusId;
     private final String oid;
     private String tarjoaja;
-    private KoulutustyyppiEnum koulutustyyppiEnum;
-    private String koulutusohjelmaKoodi;
-    private String lukiolinja;
-    private String koulutusKoodi;
-    private Date koulutuksenAlkamisPvm;
+    private ModuulityyppiEnum baseKoulutustyyppiEnum;
+    private ToteutustyyppiEnum subKoulutustyyppiEnum;
     private TarjontaTila tila;
     private String koulutusmoduuliOid;
     private String pohjakoulutusVaatimus;
@@ -27,34 +26,66 @@ public class KoulutusIndexEntity {
     private String kausi;
     private Integer vuosi;
 
+    //required uri for all data objects
+    private String koulutusUri;
+
+    //child komo/komoto name data fields:
+    private String koulutusohjelmaUri;
+    private String lukiolinjaUri;
+    private String osaamisalaUri;
+    private String koulutustyyppiUri;
+    private Date koulutuksenAlkamisPvmMin;
+    private Date koulutuksenAlkamisPvmMax;
+    
     @QueryProjection
-    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri, KoulutustyyppiEnum koulutustyyppiEnum) {
+    public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri,
+            ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum, String koulutusUri) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
         this.koulutuslaji = koulutuslaji;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimusUri;
-        this.koulutustyyppiEnum = koulutustyyppiEnum;
+        this.baseKoulutustyyppiEnum = baseKoulutustyyppiEnum;
+        this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
+        this.koulutusUri = koulutusUri;
     }
 
     @QueryProjection
-    public KoulutusIndexEntity(Long id, String oid, Date koulutuksenAlkamisPvm,
-            TarjontaTila tila, KoulutustyyppiEnum koulutustyyppiEnum,
-            String koulutusmoduuliOid, String koulutusKoodi, String lukiolinja,
-            String koulutusohjelmaKoodi, String tarjoaja, String pohjakoulutusVaatimus, String kausi, Integer vuosi, String komotoKoulutuskoodi) {
+    public KoulutusIndexEntity(
+            Long id,
+            String oid,
+            Date koulutuksenAlkamisPvmMin,
+            Date koulutuksenAlkamisPvmMax,
+            TarjontaTila tila,
+            ModuulityyppiEnum baseKoulutustyyppiEnum,
+            ToteutustyyppiEnum subKoulutustyyppiEnum,
+            String koulutusmoduuliOid,
+            String koulutusUri,
+            String lukiolinjaUri,
+            String koulutusohjelmaUri,
+            String osaamisalaUri,
+            String tarjoaja,
+            String pohjakoulutusVaatimus,
+            String kausi,
+            Integer vuosi,
+            String koulutustyyppiUri) {
+
         this.koulutusId = id;
         this.oid = oid;
-        this.koulutuksenAlkamisPvm = koulutuksenAlkamisPvm;
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
         this.tila = tila;
         this.koulutusmoduuliOid = koulutusmoduuliOid;
-        this.koulutusKoodi = koulutusKoodi != null && koulutusKoodi.trim().length()>0 ? koulutusKoodi
-                : komotoKoulutuskoodi;
-        this.koulutustyyppiEnum = koulutustyyppiEnum;
-        this.lukiolinja = lukiolinja;
-        this.koulutusohjelmaKoodi = koulutusohjelmaKoodi;
+        this.koulutusUri = koulutusUri;
+        this.baseKoulutustyyppiEnum = baseKoulutustyyppiEnum;
+        this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
+        this.lukiolinjaUri = lukiolinjaUri;
+        this.koulutusohjelmaUri = koulutusohjelmaUri;
+        this.osaamisalaUri = osaamisalaUri;
         this.tarjoaja = tarjoaja;
         this.pohjakoulutusVaatimus = pohjakoulutusVaatimus;
         this.kausi = kausi;
         this.vuosi = vuosi;
+        this.koulutustyyppiUri = koulutustyyppiUri;
     }
 
     /**
@@ -84,24 +115,20 @@ public class KoulutusIndexEntity {
         return tarjoaja;
     }
 
-    public KoulutustyyppiEnum getKoulutustyyppiEnum() {
-        return koulutustyyppiEnum;
+    public ModuulityyppiEnum getBaseKoulutustyyppiEnum() {
+        return baseKoulutustyyppiEnum;
     }
 
     public String getKoulutusohjelmaKoodi() {
-        return koulutusohjelmaKoodi;
+        return koulutusohjelmaUri;
     }
 
     public String getLukiolinja() {
-        return lukiolinja;
+        return lukiolinjaUri;
     }
 
-    public String getKoulutusKoodi() {
-        return koulutusKoodi;
-    }
-
-    public Date getKoulutuksenAlkamisPvm() {
-        return koulutuksenAlkamisPvm;
+    public String getKoulutusUri() {
+        return koulutusUri;
     }
 
     public TarjontaTila getTila() {
@@ -123,16 +150,21 @@ public class KoulutusIndexEntity {
     @Override
     public String toString() {
         return "KoulutusIndexEntity [koulutusId=" + koulutusId + ", oid=" + oid
-                + ", tarjoaja=" + tarjoaja + ", koulutusTyyppi="
-                + koulutustyyppiEnum + ", koulutusohjelmaKoodi="
-                + koulutusohjelmaKoodi + ", lukiolinja=" + lukiolinja
-                + ", koulutusKoodi=" + koulutusKoodi + ", koulutuksenAlkamisPvm="
-                + koulutuksenAlkamisPvm + ", tila=" + tila
+                + ", tarjoaja=" + tarjoaja + ", "
+                + "baseKoulutusTyyppi=" + baseKoulutustyyppiEnum
+                + "subKoulutusTyyppi=" + subKoulutustyyppiEnum
+                + ", koulutusohjelmaKoodi="
+                + koulutusohjelmaUri + ", lukiolinja=" + lukiolinjaUri
+                + ", koulutusKoodi=" + koulutusUri + ", koulutuksenAlkamisPvmMin="
+                + koulutuksenAlkamisPvmMin + ", koulutuksenAlkamisPvmMax="
+                + koulutuksenAlkamisPvmMax + ", tila=" + tila
                 + ", koulutusmoduuliOid=" + koulutusmoduuliOid
                 + ", pohjakoulutusVaatimus=" + pohjakoulutusVaatimus
                 + ", kausi=" + kausi
                 + ", vuosi=" + vuosi
-                + ", koulutuslaji=" + koulutuslaji + "]";
+                + ", koulutuslaji=" + koulutuslaji
+                + ", koulutustyyppi=" + getKoulutustyyppiUri()
+                + "]";
     }
 
     /**
@@ -163,4 +195,62 @@ public class KoulutusIndexEntity {
         this.vuosi = vuosi;
     }
 
+    /**
+     * @return the subKoulutustyyppiEnum
+     */
+    public ToteutustyyppiEnum getSubKoulutustyyppiEnum() {
+        return subKoulutustyyppiEnum;
+    }
+
+    /**
+     * @param subKoulutustyyppiEnum the subKoulutustyyppiEnum to set
+     */
+    public void setSubKoulutustyyppiEnum(ToteutustyyppiEnum subKoulutustyyppiEnum) {
+        this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
+    }
+
+    /**
+     * @return the osaamisalaUri
+     */
+    public String getOsaamisalaUri() {
+        return osaamisalaUri;
+    }
+
+    /**
+     * @param osaamisalaUri the osaamisalaUri to set
+     */
+    public void setOsaamisalaUri(String osaamisalaUri) {
+        this.osaamisalaUri = osaamisalaUri;
+    }
+
+    /**
+     * @return the koulutustyyppiUri
+     */
+    public String getKoulutustyyppiUri() {
+        return koulutustyyppiUri;
+    }
+
+    /**
+     * @param koulutustyyppiUri the koulutustyyppiUri to set
+     */
+    public void setKoulutustyyppiUri(String koulutustyyppiUri) {
+        this.koulutustyyppiUri = koulutustyyppiUri;
+    }
+
+    public void setKoulutuksenAlkamisPvmMax(Date koulutuksenAlkamisPvmMax) {
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
+    }
+    
+    public Date getKoulutuksenAlkamisPvmMax() {
+        return koulutuksenAlkamisPvmMax;
+    }
+
+    public void setKoulutuksenAlkamisPvmMin(Date koulutuksenAlkamisPvmMin) {
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+    }
+    
+    public Date getKoulutuksenAlkamisPvmMin() {
+        return koulutuksenAlkamisPvmMin;
+    }
+    
 }

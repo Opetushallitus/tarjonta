@@ -66,33 +66,63 @@ app.directive('resultsTreeTable',function(LocalisationService, loadingService, $
 		
 		function getLink(row) {
 			//console.log("DELEGATE getLink", $scope.getLink);
-			return $scope.getLink() && $scope.getLink()(row);
+			try {
+				return $scope.getLink() && $scope.getLink()(row);
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		}
 		
 		function getIdentifier(row) {
 			//console.log("DELEGATE getIdentifier", $scope.getIdentifier);
-			return $scope.getIdentifier() && $scope.getIdentifier()(row);
+			try {
+				return $scope.getIdentifier() && $scope.getIdentifier()(row);
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		}
 
 		function getChildren(row) {
 			//console.log("DELEGATE getChildren", $scope.getChildren);
-			return $scope.getChildren() && $scope.getChildren()(row);
+			try {
+				return $scope.getChildren() && $scope.getChildren()(row);
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		}
 
 		function getContent(row, col) {
 			//console.log("DELEGATE getContent", $scope.getContent);
 			var ret = $scope.getContent() && $scope.getContent()(row, col);
-			return (ret==null || ret==undefined) ? "" : ret;
+			try {
+				return (ret==null || ret==undefined) ? "" : ret;
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		}
 
 		function getOptions(row, actions) {
 			//console.log("DELEGATE getOptions", $scope.getOptions);
-			return $scope.getOptions() && $scope.getOptions()(row, actions);
+			try {
+				return $scope.getOptions() && $scope.getOptions()(row, actions);
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		}
 
 		function getCssClass(row, col) {
 			//console.log("DELEGATE getCssClass", $scope.getCssClass);
-			return $scope.getCssClass() && $scope.getCssClass()(row, col);
+			try {
+				return $scope.getCssClass() && $scope.getCssClass()(row, col);
+			} catch (err) {
+				console.log(err);
+				return null;
+			}
 		}
 		
 		// KIRJAPINOVALIKKO

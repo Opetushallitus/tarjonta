@@ -110,7 +110,7 @@ public class HakukohdeValintakoeViewImpl extends VerticalLayout implements Prope
     @Override
     public void attach() {
         super.attach();
-        if (presenter.getModel().getSelectedKoulutukset().get(0).getKoulutustyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
+        if (presenter.getModel().getSelectedKoulutukset().get(0).getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.AMMATILLINEN_PERUSKOULUTUS)) {
             filterKooditBasedOnPohjakoulutus();
         }
     }

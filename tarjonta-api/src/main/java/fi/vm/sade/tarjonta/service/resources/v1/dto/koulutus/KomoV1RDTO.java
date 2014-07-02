@@ -40,8 +40,8 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     @ApiModelProperty(value = "Tutkinto-ohjelman tunniste, oppilaitoksen oma tunniste järjestettävälle koulutukselle", required = true)
     private String tunniste;
 
-    @ApiModelProperty(value = "Tutkinto-ohjelman nimi monella kielella, ainakin yksi kieli pitää olla täytetty", required = false)
-    private NimiV1RDTO koulutusohjelma;
+    @ApiModelProperty(value = "Nimi monella kielella", required = false)
+    private NimiV1RDTO nimi;
 
     //OTHER DATA
     @ApiModelProperty(value = "Moduulin julkaisun tila", required = true) // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
@@ -68,8 +68,17 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
 
-    @ApiModelProperty(value = "OPH koulutustyyppi-koodi", required = false)
-    private KoodiV1RDTO koulutustyyppi;
+    @ApiModelProperty(value = "OPH koulutustyyppi-koodit", required = false)
+    private KoodiUrisV1RDTO koulutustyyppis;
+
+    @ApiModelProperty(value = "OPH lukiolinja-koodi", required = false)
+    private KoodiV1RDTO lukiolinja;
+
+    @ApiModelProperty(value = "OPH osaamisala-koodi", required = false)
+    private KoodiV1RDTO osaamisala;
+
+    @ApiModelProperty(value = "OPH koulutusohjelma-koodi", required = false)
+    private KoodiV1RDTO koulutusohjelma;
 
     public KomoV1RDTO() {
     }
@@ -241,24 +250,6 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     }
 
     /**
-     * @return the koulutusohjelma
-     */
-    public NimiV1RDTO getKoulutusohjelma() {
-        if (koulutusohjelma == null) {
-            koulutusohjelma = new NimiV1RDTO();
-        }
-
-        return koulutusohjelma;
-    }
-
-    /**
-     * @param koulutusohjelma the koulutusohjelma to set
-     */
-    public void setKoulutusohjelma(NimiV1RDTO koulutusohjelma) {
-        this.koulutusohjelma = koulutusohjelma;
-    }
-
-    /**
      * @return the organisaatio
      */
     public OrganisaatioV1RDTO getOrganisaatio() {
@@ -277,16 +268,81 @@ public class KomoV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
     }
 
     /**
-     * @return the koulutustyyppi
+     * @return the koulutustyyppis
      */
-    public KoodiV1RDTO getKoulutustyyppi() {
-        return koulutustyyppi;
+    public KoodiUrisV1RDTO getKoulutustyyppis() {
+        if (koulutustyyppis == null) {
+            koulutustyyppis = new KoodiUrisV1RDTO();
+        }
+
+        return koulutustyyppis;
     }
 
     /**
-     * @param koulutustyyppi the koulutustyyppi to set
+     * @param koulutustyyppis the koulutustyyppis to set
      */
-    public void setKoulutustyyppi(KoodiV1RDTO koulutustyyppi) {
-        this.koulutustyyppi = koulutustyyppi;
+    public void setKoulutustyyppis(KoodiUrisV1RDTO koulutustyyppis) {
+        this.koulutustyyppis = koulutustyyppis;
     }
+
+    /**
+     * @return the lukiolinja
+     */
+    public KoodiV1RDTO getLukiolinja() {
+        return lukiolinja;
+    }
+
+    /**
+     * @param lukiolinja the lukiolinja to set
+     */
+    public void setLukiolinja(KoodiV1RDTO lukiolinja) {
+        this.lukiolinja = lukiolinja;
+    }
+
+    /**
+     * @return the osaamisala
+     */
+    public KoodiV1RDTO getOsaamisala() {
+        return osaamisala;
+    }
+
+    /**
+     * @param osaamisala the osaamisala to set
+     */
+    public void setOsaamisala(KoodiV1RDTO osaamisala) {
+        this.osaamisala = osaamisala;
+    }
+
+    /**
+     * @return the nimi
+     */
+    public NimiV1RDTO getNimi() {
+        if (nimi == null) {
+            nimi = new NimiV1RDTO();
+        }
+
+        return nimi;
+    }
+
+    /**
+     * @param nimi the nimi to set
+     */
+    public void setNimi(NimiV1RDTO nimi) {
+        this.nimi = nimi;
+    }
+
+    /**
+     * @return the koulutusohjelma
+     */
+    public KoodiV1RDTO getKoulutusohjelma() {
+        return koulutusohjelma;
+    }
+
+    /**
+     * @param koulutusohjelma the koulutusohjelma to set
+     */
+    public void setKoulutusohjelma(KoodiV1RDTO koulutusohjelma) {
+        this.koulutusohjelma = koulutusohjelma;
+    }
+
 }

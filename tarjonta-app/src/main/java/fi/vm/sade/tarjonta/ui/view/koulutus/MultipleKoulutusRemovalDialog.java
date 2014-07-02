@@ -102,9 +102,9 @@ public class MultipleKoulutusRemovalDialog extends RemovalConfirmationDialog {
         //Set all selected as default
         for (Object obj: koulutusOptions.getItemIds()) {
         	KoulutusPerustieto curKoul = (KoulutusPerustieto)obj;
-        	String nimi = curKoul.getKoulutustyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) 
-        			? getKoodiNimi(curKoul.getKoulutuskoodi()) 
-        					: getKoodiNimi(curKoul.getKoulutusohjelmakoodi());
+        	String nimi = curKoul.getKoulutusasteTyyppi().equals(KoulutusasteTyyppi.LUKIOKOULUTUS) 
+        			? getKoodiNimi(curKoul.getKoulutusKoodi()) 
+        					: getKoodiNimi(curKoul.getKoulutusohjelma());
         	koulutusOptions.setItemCaption(obj, nimi);
             koulutusOptions.select(obj);
         }

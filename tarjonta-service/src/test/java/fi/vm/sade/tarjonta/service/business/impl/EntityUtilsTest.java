@@ -98,7 +98,7 @@ public class EntityUtilsTest {
         komoto.setOpintoalaUri(FieldNames.OPINTOALA.name());
         komoto.setKoulutusalaUri(FieldNames.KOULUTUSALA.name());
         komoto.setKoulutusasteUri(FieldNames.KOULUTUSASTE.name());
-        komoto.setKoulutusUri(FieldNames.KOULUTUSKOODI.name());
+        komoto.setKoulutusUri(FieldNames.KOULUTUS.name());
         komoto.setOpintojenLaajuusarvoUri(FieldNames.OPINTOJEN_LAAJUUSARVO.name());
         komoto.setOpintojenLaajuusyksikkoUri(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO.name());
         komoto.setUlkoinenTunniste(FieldNames.TUNNISTE.name());
@@ -114,7 +114,7 @@ public class EntityUtilsTest {
         assertEquals(FieldNames.OPINTOALA.name(), t.getOpintoalaUri());
         assertEquals(FieldNames.KOULUTUSALA.name(), t.getKoulutusalaUri());
         assertEquals(FieldNames.KOULUTUSASTE.name(), t.getKoulutusasteUri());
-        assertEquals(FieldNames.KOULUTUSKOODI.name(), t.getKoulutuskoodiUri());
+        assertEquals(FieldNames.KOULUTUS.name(), t.getKoulutuskoodiUri());
         assertEquals(FieldNames.OPINTOJEN_LAAJUUSARVO.name(), t.getLaajuusarvoUri());
         assertEquals(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO.name(), t.getLaajuusyksikkoUri());
         assertEquals(FieldNames.TUNNISTE.name(), t.getUlkoinenTunniste());
@@ -156,7 +156,7 @@ public class EntityUtilsTest {
         t.setOpintoalaUri(FieldNames.OPINTOALA.name());
         t.setKoulutusalaUri(FieldNames.KOULUTUSALA.name());
         t.setKoulutusasteUri(FieldNames.KOULUTUSASTE.name());
-        t.setKoulutuskoodiUri(FieldNames.KOULUTUSKOODI.name());
+        t.setKoulutuskoodiUri(FieldNames.KOULUTUS.name());
         t.setLaajuusarvoUri(FieldNames.OPINTOJEN_LAAJUUSARVO.name());
         t.setLaajuusyksikkoUri(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO.name());
         t.setUlkoinenTunniste(FieldNames.TUNNISTE.name());
@@ -171,7 +171,7 @@ public class EntityUtilsTest {
         assertEquals(FieldNames.OPINTOALA.name(), komoto.getOpintoalaUri());
         assertEquals(FieldNames.KOULUTUSALA.name(), komoto.getKoulutusalaUri());
         assertEquals(FieldNames.KOULUTUSASTE.name(), komoto.getKoulutusasteUri());
-        assertEquals(FieldNames.KOULUTUSKOODI.name(), komoto.getKoulutusUri());
+        assertEquals(FieldNames.KOULUTUS.name(), komoto.getKoulutusUri());
         assertEquals(FieldNames.OPINTOJEN_LAAJUUSARVO.name(), komoto.getOpintojenLaajuusarvoUri());
         assertEquals(FieldNames.OPINTOJEN_LAAJUUSYKSIKKO.name(), komoto.getOpintojenLaajuusyksikkoUri());
         assertEquals(FieldNames.TUNNISTE.name(), komoto.getUlkoinenTunniste());

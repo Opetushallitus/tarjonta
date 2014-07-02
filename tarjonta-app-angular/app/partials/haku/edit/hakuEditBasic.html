@@ -51,7 +51,7 @@
     <tr class="required">
         <th data-tt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
         <td>
-            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
+            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" filteruris="model.kohdejoukkoFilterUris" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" field-check="model.showError"></div>
@@ -113,9 +113,105 @@
     </tr>
     <tr>
         <th></th>
-        <td colspan="2" class="help" tt="haku.edit.hakuaika.help"></td>
+        <td colspan="2" class="help" data-tt="haku.edit.hakuaika.help"></td>
     </tr>
 
+    <!-- Sijoittelu -->
+    
+    <tr>
+        <th data-tt='haku.edit.sijoittelu'>Sijoittelu</th>
+        <td>
+            <input type="checkbox" ng-model="model.hakux.result.sijoittelu" ng-change="checkPriorisointi()">
+            <span data-tt="haku.edit.kaytetaanSijoittelua">Haussa käytetään sijoittelua</span>
+        </td>
+        <td>
+        </td>
+    </tr>
+
+    <!-- Priorisointi -->
+    
+    <tr>
+        <th data-tt='haku.edit.priorisointi'>Priorisointi</th>
+        <td>
+            <input type="checkbox" ng-model="model.hakux.result.usePriority"
+                   ng-disabled="model.hakux.result.jarjestelmanHakulomake && model.hakux.result.sijoittelu">
+            <span data-tt="haku.edit.kaytetaanPriorisointia">Haussa käytetään hakukohteiden priorisointia</span>
+        </td>
+        <td>
+        </td>
+    </tr>
+    
+    <!-- Hakulomake -->
+    
+    <tr class="required">
+        <th data-tt='haku.edit.hakulomake'>Hakulomake</th>
+        <td>
+            <input type="radio" ng-model="model.haku.hakulomake" value="SYSTEM" ng-change="updatedHakulomakeSelection()">
+            <span data-tt='haku.edit.hakulomake.jarjestelman'>
+                Käytetään järjestelmän hakulomaketta.
+                Hakutoiveiden enimmäismäärä hakulomakkeella:
+            </span>
+            <input type="number" 
+                   ng-model="model.hakux.result.maxHakukohdes"
+                   name="maxHakukohdes" 
+                   ng-required="model.hakux.result.jarjestelmanHakulomake"
+                   ng-disabled='model.haku.hakulomake != "SYSTEM"' 
+                   min="0">
+        </td>
+        <td>
+            <div show-errors form="hakuForm" field="maxHakukohdes" tt-prefix="haku.edit" field-check="model.showError"></div>
+        </td>
+    </tr>
+    
+    <tr>
+        <th></th>
+        <td>
+            <input type="radio" ng-model="model.haku.hakulomake" value="OTHER" ng-change="updatedHakulomakeSelection()">
+            <span data-tt='haku.edit.hakulomake.muu'>
+                Käytetään muuta hakulomaketta. Anna hakulomakkeen www-osoite:
+            </span>
+            <input type="url" 
+                   ng-model="model.hakux.result.hakulomakeUri"
+                   placeholder="http://haku.lomake.uri.com" 
+                   name="hakulomakeUrl" 
+                   ng-disabled='model.haku.hakulomake != "OTHER"'
+                   ng-required='model.haku.hakulomake == "OTHER"'>
+        </td>
+        <td>
+            <div show-errors form="hakuForm" field="hakulomakeUrl" tt-prefix="haku.edit"
+                 field-check="model.showError && !model.hakux.result.jarjestelmanHakulomake"></div>
+        </td>
+    </tr>
+    <tr>
+        <th></th>
+        <td colspan="2" class="help"  data-tt='haku.edit.hakulomake.muu.help'>
+            Opintopolussa tarjotaan "Hae koulutukseen"-linkki tässä annetulle sivulle
+            hakupainikkeen asemesta. Linkki voi olla myös sivulle, jossa kerrotaan hakemisesta tarkemmin.</td>
+    </tr>
+
+    
+    <tr>
+        <th></th>
+        <td>
+            <input type="radio" ng-model="model.haku.hakulomake" value="NONE" ng-change="updatedHakulomakeSelection()">
+            <span data-tt='haku.edit.hakulomake.none'>
+                Ei sähköistä hakua. Lisätietoa hakemisesta tarjotaan hakukohteen tiedoissa.
+            </span>
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <th></th>
+        <td colspan="2" class="help" data-tt='haku.edit.hakulomake.none.help'>
+            Opintopolun hakutulos- tai muistilistalla ei tarjota painiketta tai linkkiä hakemiseen.
+        </td>
+    </tr>
+    
+    
+    
+    <!-- TO BE REMOVED -->
+<!--    
     <tr>
         <th></th>
         <td>
@@ -156,6 +252,8 @@
             </div>
         </td>
     </tr>
+-->
+    <!-- / TO BE REMOVED -->
 
     <tr>
         <th data-tt='haku.edit.organisaatiot.tarjoaja'>Tarjoaja organisaatiot</th>
@@ -169,7 +267,7 @@
             </ul>
 
             <button class="btn" ng-click="doSelectTarjoajaOrganisations()">
-                 <span tt="haku.edit.valitse.organisaatio">Muokkaa valittuja organisaatioita</span> <span class="icon-plus"></span>
+                 <span data-tt="haku.edit.valitse.organisaatio">Muokkaa valittuja organisaatioita</span> <span class="icon-plus"></span>
             </button>
         </td>
     </tr>
@@ -186,7 +284,7 @@
             </ul>
 
             <button class="btn" ng-click="doSelectOrganisations()">
-                 <span tt="haku.edit.valitse.organisaatio">Muokkaa valittuja organisaatioita</span> <span class="icon-plus"></span>
+                 <span data-tt="haku.edit.valitse.organisaatio">Muokkaa valittuja organisaatioita</span> <span class="icon-plus"></span>
             </button>
         </td>
     </tr>

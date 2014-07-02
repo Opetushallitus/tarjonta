@@ -93,9 +93,9 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
 
         if (hakukohde.getValintakoes() != null) {
             hakukohdeRDTO.setValintakokeet(convertValintakokeet(hakukohde.getValintakoes()));
-
         }
-
+        
+        hakukohdeRDTO.setOrganisaatioRyhmaOids(hakukohde.getOrganisaatioRyhmaOids());
 
         return hakukohdeRDTO;
     }
@@ -106,7 +106,6 @@ public class HakukohdeToRDTOConverter  extends BaseRDTOConverter<Hakukohde,Hakuk
         for (TekstiKaannos tekstiKaannos : teksti.getKaannoksetAsList()) {
             LOG.debug("TEKSTIKAANNOS KIELI : {} ARVO : {} ", tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
             returnValue.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
-
         }
 
         return returnValue;

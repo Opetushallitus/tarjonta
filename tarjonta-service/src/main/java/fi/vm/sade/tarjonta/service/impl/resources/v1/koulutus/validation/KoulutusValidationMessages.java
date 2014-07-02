@@ -64,12 +64,18 @@ public enum KoulutusValidationMessages {
     KOULUTUS_KOULUTUSASTE_MISSING("koulutusaste"),
     KOULUTUS_KOULUTUSASTE_INVALID("koulutusaste"),
     //name
+    KOULUTUS_LUKIOLINJA_MISSING("lukiolinja"),
+    KOULUTUS_OSAAMISALA_MISSING("osaamisala"),
     KOULUTUS_KOULUTUSOHJELMA_MISSING("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_INVALID("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_INVALID_VALUE("koulutusohjelma"),
     KOULUTUS_KOULUTUSOHJELMA_NAME_MISSING("koulutusohjelma"),
+    KOULUTUS_TUTKINTO_OHJELMA_URI_REQUIRED(""),
+    
     //other & common
-    KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING("koulu"),
+    KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING("toteutustyyppi"),
+    KOULUTUS_MODUULITYYPPI_ENUM_MISSING("moduulityyppi"),
+    KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING("koulutusasteTyyppi"),
     KOULUTUS_TILA_ENUM_MISSING("tila"),
     KOULUTUS_INPUT_OBJECT_MISSING(""),
     KOULUTUS_INPUT_PARAM_MISSING(""), //generic data error
@@ -78,6 +84,8 @@ public enum KoulutusValidationMessages {
     KOULUTUS_NIMI_MISSING(""),
     KOULUTUS_TARJOAJA_MISSING("organisaatio.oid"),
     KOULUTUS_TARJOAJA_INVALID("organisaatio.oid"),
+    KOULUTUS_JARJESTAJA_MISSING("organisaatio.oid"),
+    KOULUTUS_JARJESTAJA_INVALID("organisaatio.oid"),
     KOULUTUS_INVALID_TRANSITION(""),
     //kesto 
     KOULUTUS_SUUNNITELTU_KESTO_VALUE_MISSING("suunniteltuKestoArvo"),
@@ -95,7 +103,18 @@ public enum KoulutusValidationMessages {
     KOULUTUS_OPPILAITOSTYYPPI_MISSING("oppilaitostyyppi"),
     KOULUTUS_OPPILAITOSTYYPPI_INVALID("oppilaitostyyppi"),
     KOULUTUS_MODUULI_TYYPPI_MISSING("moduuliTyyppi"),
-    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi");
+    KOULUTUS_MODUULI_TYYPPI_INVALID("moduuliTyyppi"),
+    KOULUTUS_IMPORT_INVALID_GROUP("koulutuskoodi"),
+    KOULUTUS_IMPORT_NON_UNIQUE_KOULUTUSOHJELMA("koulutusohjelma"),
+    KOULUTUS_IMPORT_NON_UNIQUE_OSAAMISALA("osaamisala"),
+    KOULUTUS_IMPORT_NON_UNIQUE_LUKIOLINJA("lukiolinja"),
+    KOULUTUS_IMPORT_INVALID_MODULE_TUTKINTO_("koulutusmoduuliTyyppi"),
+    KOULUTUS_IMPORT_INVALID_TUTKINTO("oid"),
+    KOULUTUS_IMPORT_INVALID_DATA(""),
+    KOULUTUS_IMPORT_FAILED("oid"),
+    KOULUTUS_IMPORT_INVALID_COUNT(""),
+    KOULUTUS_IMPORT_INVALID_TUTKINTO_COUNT(""),
+    KOULUTUS_MODULE_NOT_FOUND("komoOid");
 
     private String fieldName;
 

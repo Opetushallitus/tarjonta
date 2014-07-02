@@ -1,5 +1,5 @@
 <div id="edit" ng-controller="BaseEditController">
-    <div id="editKoulutus" ng-controller="EditLukioController">
+    <div id="editKoulutus" ng-controller="EditNayttotutkintoController">
         <controls-model
             model="controlModel"
             tt-create="koulutus.edit.header.title"
@@ -12,7 +12,7 @@
             <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs, koulutusForm)" disabled="uiModel.tabs.lisatiedot"></controls-button>
 
             <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
-            <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.koulutusasteTyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
+            <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.toteutustyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
 
             <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
             <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
@@ -30,11 +30,18 @@
             <button ng-click="" class="hidden"></button>
             <tabset>
                 <tab heading="{{t('koulutus.edit.perustiedot')}}">
-                    <div ng-include="'partials/koulutus/edit/lukio/editPerustiedot.html'"></div>
+                    <div ng-include="'partials/koulutus/edit/amm/editPerustiedot.html'"></div>
                 </tab>
                 <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
-                    <div ng-include="'partials/koulutus/edit/lukio/editLisatiedot.html'"></div>
+                    <div ng-include="'partials/koulutus/edit/amm/editLisatiedot.html'"></div>
                 </tab>
+                
+                <tab heading="{{t('koulutus.edit.lisatiedot-valmistava-koulutus')}}" disabled="uiModel.tabs.lisatiedot" 
+                     ng-disabled="uiModel.tabs.lisatiedot && uiModel.cbShowValmistavaKoulutus" 
+                     ng-show="uiModel.toggleTabs">
+                    <div ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusLisatiedot.html'"></div>
+                </tab>
+             
             </tabset>
         </form>
 

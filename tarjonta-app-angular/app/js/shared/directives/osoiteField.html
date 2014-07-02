@@ -5,6 +5,7 @@
 	   ng-required="isRequired()"
 	   placeholder="{{tt.osoite}}"
 	   data-ng-model="model.osoiterivi1"
+	   ng-change="onChange()"
 	   />
 	<br/>
 
@@ -16,6 +17,7 @@
 	   typeahead-editable="false"
 	   typeahead-on-select="updatePostinumero()"
 	   typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
+       ng-change="onChange()"
 	   />
 
     <input type="text" class="postitoimipaikka" disabled

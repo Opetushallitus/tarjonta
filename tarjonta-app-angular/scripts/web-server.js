@@ -14,8 +14,8 @@ var port = 8888;
 
 var env={
 	remote:USE_ENV,
-user:'user',
-pass:'pass'
+user:'ophadmin',
+pass:'ilonkautta!'
 }
 var ticketUrl = env.remote + "/service-access/accessTicket?client_id=" + env.user + "&client_secret=" + env.pass + "&service_url=" + env.remote + "/authentication-service";
 var orgTicketUrl = env.remote + "/service-access/accessTicket?client_id=" + env.user + "&client_secret=" + env.pass + "&service_url=" + env.remote + "/organisaatio-service";

@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
@@ -33,11 +35,15 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.List;
 
 public class KomoValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoValidator.class);
-    private static final int DEFAULT_MIN_NONE = 0;
+    private static final int URIS_MIN_NONE = 0;
+    private static final int URIS_MIN_ONE = 1;
+    private static final boolean KOODI_VERSION_REQUIRED = true;
+    private static final boolean NO_KOODI_VERSION = false;
 
     /**
      * Required data validation for koulutus -type of objects.
@@ -57,7 +63,7 @@ public class KomoValidator {
         }
 
         if (dto.getKoulutusasteTyyppi() == null) {
-            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.lower()));
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_KOULUTUSASTETYYPPI_ENUM_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TOTEUTUSTYYPPI_ENUM_MISSING.lower()));
         }
 
         if (dto.getTila() == null) {
@@ -74,27 +80,32 @@ public class KomoValidator {
             result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING.getFieldName(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING.lower()));
         }
 
-        return result;
-    }
+        validateTextOneOrMany(result, dto.getNimi(), KoulutusValidationMessages.KOULUTUS_NIMI_MISSING, KoulutusValidationMessages.KOULUTUS_NIMI_MISSING, false);
 
-    public static ResultV1RDTO validateModuleLukioAndAmm(KomoV1RDTO dto, ResultV1RDTO result) {
-        switch (dto.getKoulutusmoduuliTyyppi()) {
-            case TUTKINTO_OHJELMA:
-                validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
-                break;
-        }
-
-        common(dto, result);
         return result;
     }
 
     public static ResultV1RDTO validateModuleGeneric(KomoV1RDTO dto, ResultV1RDTO result) {
+        switch (dto.getKoulutusmoduuliTyyppi()) {
+            case TUTKINTO_OHJELMA:
+                Map<KoulutusValidationMessages, KoodiV1RDTO> map = Maps.<KoulutusValidationMessages, KoodiV1RDTO>newEnumMap(KoulutusValidationMessages.class);
+
+                map.put(KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, dto.getKoulutusohjelma());
+                map.put(KoulutusValidationMessages.KOULUTUS_OSAAMISALA_MISSING, dto.getOsaamisala());
+                map.put(KoulutusValidationMessages.KOULUTUS_LUKIOLINJA_MISSING, dto.getLukiolinja());
+
+                validateKoodisMoreThanOne(result, map);
+                break;
+        }
+
+        validateTextOneOrMany(result, dto.getNimi(), KoulutusValidationMessages.KOULUTUS_NIMI_MISSING, KoulutusValidationMessages.KOULUTUS_NIMI_MISSING, true);
         common(dto, result);
         return result;
     }
 
     private static void common(KomoV1RDTO dto, ResultV1RDTO result) {
-        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, DEFAULT_MIN_NONE);
+        validateKoodiUris(result, dto.getKoulutustyyppis(), KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_INVALID, URIS_MIN_ONE, NO_KOODI_VERSION);
+        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
         validateTunniste(dto, result);
         validateKoodistoRelations(dto, result);
     }
@@ -116,7 +127,11 @@ public class KomoValidator {
     }
 
     private static void validateKoodistoRelations(KomoV1RDTO dto, ResultV1RDTO result) {
-        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, DEFAULT_MIN_NONE);
+        validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_OPPILAITOSTYYPPI_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
+
+        if (dto.getKoulutuskoodi() != null) {
+            validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
+        }
 
         if (dto.getEqf() != null) {
             validateKoodi(result, dto.getEqf(), KoulutusValidationMessages.KOULUTUS_EQF_MISSING, KoulutusValidationMessages.KOULUTUS_EQF_INVALID);
@@ -149,12 +164,8 @@ public class KomoValidator {
             validateKoodi(result, dto.getTutkinto(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTO_INVALID);
         }
 
-        if (dto.getKoulutustyyppi() != null) {
-            validateKoodi(result, dto.getKoulutustyyppi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSTYYPPI_INVALID);
-        }
-
         if (dto.getTutkintonimikes() != null) {
-            validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID, DEFAULT_MIN_NONE);
+            validateKoodiUris(result, dto.getTutkintonimikes(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID, URIS_MIN_NONE, KOODI_VERSION_REQUIRED);
         }
     }
 
@@ -208,6 +219,27 @@ public class KomoValidator {
         return true;
     }
 
+    /**
+     * True when valid uri. TODO: koodi uri pattern validation.
+     *
+     * min : null no limit
+     */
+    private static boolean isValidKoodiUrisWithoutVersion(Map<String, Integer> map, Integer min) {
+        if (map == null) {
+            return false;
+        } else if (min != null && min > map.size()) {
+            return false;
+        }
+
+        for (Entry<String, Integer> e : map.entrySet()) {
+            if (!notNullStrOrEmpty(e.getKey())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static boolean validateKoodi(ResultV1RDTO result, KoodiV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid) {
         if (!isValidKoodiUriWithVersion(dto)) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
@@ -217,13 +249,49 @@ public class KomoValidator {
         return true;
     }
 
-    public static boolean validateKoodiUris(ResultV1RDTO result, KoodiUrisV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid, Integer min) {
+    private static boolean validateKoodisMoreThanOne(ResultV1RDTO result, Map<KoulutusValidationMessages, KoodiV1RDTO> map) {
+        List<Boolean> valids = Lists.<Boolean>newArrayList();
+
+        for (Entry<KoulutusValidationMessages, KoodiV1RDTO> e : map.entrySet()) {
+            if (e.getValue() == null) {
+                continue;
+            }
+
+            if (!isValidKoodiUriWithVersion(e.getValue())) {
+                result.addError(ErrorV1RDTO.createValidationError(e.getKey().getFieldName(), e.getKey().lower()));
+            } else {
+                valids.add(NO_KOODI_VERSION);
+            }
+        }
+
+        if (valids.isEmpty()) {
+            result.addError(ErrorV1RDTO.createValidationError(KoulutusValidationMessages.KOULUTUS_TUTKINTO_OHJELMA_URI_REQUIRED.getFieldName(), KoulutusValidationMessages.KOULUTUS_TUTKINTO_OHJELMA_URI_REQUIRED.lower()));
+        }
+
+        return !valids.isEmpty();
+    }
+
+    /**
+     * Validate list of koodi uris with or without version information.
+     *
+     * @param result
+     * @param dto
+     * @param missing
+     * @param invalid
+     * @param min
+     * @param versionRequired
+     * @return
+     */
+    public static boolean validateKoodiUris(ResultV1RDTO result, KoodiUrisV1RDTO dto, KoulutusValidationMessages missing, KoulutusValidationMessages invalid, Integer min, boolean versionRequired) {
         if (dto == null || dto.getUris() == null) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
             return false;
         }
 
-        if (!isValidKoodiUrisWithVersion(dto.getUris(), min)) {
+        if (versionRequired && !isValidKoodiUrisWithVersion(dto.getUris(), min)) {
+            result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
+            return false;
+        } else if (!versionRequired && !isValidKoodiUrisWithoutVersion(dto.getUris(), min)) {
             result.addError(ErrorV1RDTO.createValidationError(missing.getFieldName(), missing.lower()));
             return false;
         }
@@ -237,19 +305,20 @@ public class KomoValidator {
      "koodi" : {
      "uri" : "kieli_sv",
      "versio" : "1",
-     "arvo" : "koulutusohjelma xxx"
+     "arvo" : "uri_xxx"
      },
      }
      */
     private static void validateTextOneOrMany(ResultV1RDTO result, NimiV1RDTO dto,
             KoulutusValidationMessages missing,
-            KoulutusValidationMessages invalid,
-            KoulutusValidationMessages invalidTextValue) {
+            KoulutusValidationMessages invalid, final boolean allowEmpty) {
         Set<KoulutusValidationMessages> tempError = Sets.<KoulutusValidationMessages>newHashSet();
 
         if (dto.getTekstis().isEmpty()) {
             //no items
-            result.addError(ErrorV1RDTO.createValidationError(invalid.getFieldName(), invalid.lower()));
+            if (!allowEmpty) {
+                result.addError(ErrorV1RDTO.createValidationError(invalid.getFieldName(), invalid.lower()));
+            }
         } else {
             for (Entry<String, String> e : dto.getTekstis().entrySet()) {
                 if (notNullStrOrEmpty(e.getValue())) {

@@ -37,7 +37,6 @@ import com.vaadin.ui.Window;
 import fi.vm.sade.generic.common.I18N;
 import fi.vm.sade.generic.common.I18NHelper;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaltoTyyppi;
 import fi.vm.sade.tarjonta.shared.auth.OrganisaatioContext;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -169,7 +168,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
             tarjontaPresenter.getTarjoaja().setSelectedResultRowOrganisationOid(koulutus.getTarjoaja().getOid());
 
-            switch (koulutus.getKoulutustyyppi()) {
+            switch (koulutus.getKoulutusasteTyyppi()) {
                 case AMMATILLINEN_PERUSKOULUTUS:
                     tarjontaPresenter.showKoulutustEditView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
@@ -193,10 +192,6 @@ public class KoulutusResultRow extends HorizontalLayout {
                     break;
                 case LUKIOKOULUTUS:
                     tarjontaPresenter.getLukioPresenter().showEditKoulutusView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
-                    break;
-                case YLIOPISTOKOULUTUS:
-                case AMMATTIKORKEAKOULUTUS:
-                    tarjontaPresenter.getKorkeakouluPresenter().showEditKoulutusView(komotoOid, KoulutusActiveTab.PERUSTIEDOT);
                     break;
             }
 
@@ -359,7 +354,7 @@ public class KoulutusResultRow extends HorizontalLayout {
     private void showSummaryView() {
         final String komotoOid = koulutus.getKoulutusmoduuliToteutus();
 
-        switch (koulutus.getKoulutustyyppi()) {
+        switch (koulutus.getKoulutusasteTyyppi()) {
             case AMMATILLINEN_PERUSKOULUTUS:
                 tarjontaPresenter.showShowKoulutusView(komotoOid);
                 break;
@@ -384,9 +379,7 @@ public class KoulutusResultRow extends HorizontalLayout {
             case LUKIOKOULUTUS:
                 tarjontaPresenter.getLukioPresenter().showSummaryKoulutusView(komotoOid);
                 break;
-            case AMMATTIKORKEAKOULUTUS:
-                tarjontaPresenter.getKorkeakouluPresenter().showSummaryKoulutusView(komotoOid);
-                break;
+
         }
     }
 

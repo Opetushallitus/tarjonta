@@ -52,7 +52,7 @@ import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.business.impl.HakuService;
-import fi.vm.sade.tarjonta.service.enums.KoulutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
@@ -398,15 +398,13 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             KoulutusKoosteTyyppi koulutus = new KoulutusKoosteTyyppi();
             koulutus.setTila(tulos.getTila());
             koulutus.setKomotoOid(tulos.getKomotoOid());
-            koulutus.setKoulutustyyppi(tulos.getKoulutustyyppi());
+            koulutus.setKoulutustyyppi(tulos.getKoulutusasteTyyppi());
             koulutus.setAjankohta(tulos.getKoulutuksenAlkamiskausi().getNimi().get("fi") + " " + tulos.getKoulutuksenAlkamisVuosi());
-            if (tulos.getKoulutusohjelmakoodi() != null) {
-                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelmakoodi().getUri());
-            } else if (tulos.getLukiolinjakoodi() != null) {
-                koulutus.setLukiolinjakoodi(tulos.getLukiolinjakoodi().getUri());
-            }
+            if (tulos.getKoulutusohjelma() != null) {
+                koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelma().getUri());
+            } 
 
-            koulutus.setKoulutuskoodi(tulos.getKoulutuskoodi().getUri());
+            koulutus.setKoulutuskoodi(tulos.getKoulutusKoodi().getUri());
 
             hakukohdeTyyppi.getHakukohdeKoulutukses().add(koulutus);
         }
@@ -467,7 +465,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         //Asetetaan koulutusmoduuli
         Koulutusmoduuli komo = komoto.getKoulutusmoduuli();
         result.setKoulutustyyppi(komo.getKoulutustyyppiEnum().getKoulutusasteTyyppi());
-        //result.setKoulutustyyppi(komo.getKoulutustyyppi());
+        //result.setKoulutusasteTyyppi(komo.getKoulutusasteTyyppi());
 
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(komo);
 
@@ -682,7 +680,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         if (kysely.getKoulutustyyppi() != null) {
-            criteria.setKoulutustyyppi(KoulutustyyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
+            criteria.setKoulutustyyppi(ModuulityyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
         }
 
         if (kysely.getHakusana() != null) {
@@ -726,7 +724,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
         if (kysely.getKoulutustyyppi() != null) {
-            criteria.setKoulutustyyppi(KoulutustyyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
+            criteria.setKoulutustyyppi(ModuulityyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
         }
         criteria.setOppilaitostyyppis(kysely.getOppilaitostyyppiUris());
 

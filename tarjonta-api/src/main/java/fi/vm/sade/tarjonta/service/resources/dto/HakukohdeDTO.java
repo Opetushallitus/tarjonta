@@ -65,6 +65,8 @@ public class HakukohdeDTO extends BaseRDTO {
 
     // NOTE: this is deducted from the komotos this hakukohde is nailed to
     private List<String> _opetuskielet;
+    
+    private String[] organisaatioRyhmaOids;
 
     public String getHakuOid() {
         return _hakuOid;
@@ -348,4 +350,16 @@ public class HakukohdeDTO extends BaseRDTO {
     public void setKaksoisTutkinto(boolean kaksoisTutkinto) {
         this.kaksoisTutkinto = kaksoisTutkinto;
     }
+
+    //
+    // KJOH-810 FIXME - missä tämä asettetaan tänne?
+    //
+    public String[] getOrganisaatioRyhmaOids() {
+        return organisaatioRyhmaOids;
+    }
+
+    public void setOrganisaatioRyhmaOids(String[] organisaatioRyhmaOids) {
+        this.organisaatioRyhmaOids = organisaatioRyhmaOids;
+    }
+
 }

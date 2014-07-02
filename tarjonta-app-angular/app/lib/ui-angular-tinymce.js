@@ -15,7 +15,11 @@ angular.module('ui.tinymce', [])
     	function updateView() {
         	clearInterval(interval);
         	interval = setTimeout(function(){
-        		ngModel.$setViewValue(elm.val());
+        		var ret = postFilter(elm.val());
+        		ngModel.$setViewValue(ret);
+        		if (elm.val() != ret) {
+        			updateContent(ret);
+        		}
                 if (!scope.$root.$$phase) {
                 	scope.$apply();
                 }
@@ -37,6 +41,8 @@ angular.module('ui.tinymce', [])
         
         var exprSetup = expression.setup;
         delete expression.setup;
+        
+        var postFilter = expression.postFilter || function(data) { return data; };
         
         options = {
           // Update model when calling setContent (such as from the source editor popup)
@@ -86,7 +92,7 @@ angular.module('ui.tinymce', [])
 				tinyInstance = tinymce.get(attrs.id);
 			}
 			if (tinyInstance && tinyInstance.getContent() != content) {
-				tinyInstance.setContent(content);
+				tinyInstance.setContent(postFilter(content));
 			}
         }
         
@@ -95,6 +101,7 @@ angular.module('ui.tinymce', [])
         };
 
         scope.$watch(attrs.ngModel, function(nv, ov) {
+        	//console.log("UPDATE ", [interval, nv, ov]);
         	if (interval==null) {
                 updateContent(nv);
         	}

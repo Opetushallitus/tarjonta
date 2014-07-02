@@ -146,15 +146,6 @@
             </td>
         </tr>
 
-        <!-- linkki opetusuunnitelmaan -->
-
-        <tr>
-            <th tt="koulutus.review.perustiedot.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
-            <td colspan="2">
-                {{model.koulutus.linkkiOpetussuunnitelmaan}}
-            </td>
-        </tr>
-
         <!-- opetuspaikat -->
         <tr>
             <th tt="koulutus.review.perustiedot.opetuspaikat">Opetuspaikat</th>
@@ -163,6 +154,13 @@
             </td>
         </tr>
 
+        <!-- linkki opetusuunnitelmaan -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.linkki-opetussuunnitelmaan">Linkki opetussuunnitelmaan</th>
+            <td colspan="2">
+                {{model.koulutus.linkkiOpetussuunnitelmaan}}
+            </td>
+        </tr>
     </tbody>
 
     <!-- YHTEYSHENKILÖT -->
@@ -220,8 +218,7 @@
 
     <tr class="collapse" ng-class="model.collapse.hakukohteet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.hakukohteet.otsikko" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet">Hakukohteet</th>
-        <td><a class="btn" ng-disabled="true" href data-ng-click="addHakukohde()"><span tt="koulutus.review.luo.hakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span></a></td>
-        <!--td><a class="btn" ng-disabled="!isMutable" href data-ng-click="addHakukohde()"><span tt="koulutus.review.luo.hakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span></a></td-->
+        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="addHakukohde()"><span tt="koulutus.review.luo.hakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span></a></td>
     </tr>
 
     <tbody ng-show="!model.collapse.hakukohteet">

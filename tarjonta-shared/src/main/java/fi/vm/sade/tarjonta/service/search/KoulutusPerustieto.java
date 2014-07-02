@@ -1,14 +1,13 @@
-
 package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import java.util.Date;
 
-
-public class KoulutusPerustieto implements Serializable
-{
+public class KoulutusPerustieto implements Serializable {
 
     private final static long serialVersionUID = 100L;
     private Nimi nimi = new Nimi();
@@ -16,21 +15,24 @@ public class KoulutusPerustieto implements Serializable
     private String koulutusmoduuliToteutus;
     private Tarjoaja tarjoaja;
     private TarjontaTila tila;
-    private KoodistoKoodi koulutuskoodi;
-    private KoodistoKoodi koulutusohjelmakoodi;
+    private KoodistoKoodi koulutusKoodi;
+    private KoodistoKoodi koulutusohjelma;
     private KoodistoKoodi tutkintonimike;
     private String ajankohta;
     private String komotoOid;
     private KoodistoKoodi pohjakoulutusvaatimus;
     private KoodistoKoodi koulutuslaji;
-    private KoulutusasteTyyppi koulutustyyppi;
-    private KoodistoKoodi lukiolinjakoodi;
+    private KoulutusasteTyyppi koulutusasteTyyppi;
     private KoodistoKoodi koulutuksenAlkamiskausi;
     private Integer koulutuksenAlkamisVuosi;
-
+    private String koulutustyyppi; //real uri not enum
+    private ToteutustyyppiEnum toteutustyyppi;
+    private Date koulutuksenAlkamisPvmMin;
+    private Date koulutuksenAlkamisPvmMax;
 
     /**
      * oikeasti tämä on koulutusohjelman nimi
+     *
      * @return
      */
     public Nimi getNimi() {
@@ -39,6 +41,7 @@ public class KoulutusPerustieto implements Serializable
 
     /**
      * Anna nimi
+     *
      * @param locale (sv, fi, en);
      * @return nimi tai null jos ei määritelty
      */
@@ -78,20 +81,23 @@ public class KoulutusPerustieto implements Serializable
         this.tila = value;
     }
 
-    public KoodistoKoodi getKoulutuskoodi() {
-        return koulutuskoodi;
+    public KoodistoKoodi getKoulutusKoodi() {
+        return koulutusKoodi;
     }
 
-    public void setKoulutuskoodi(KoodistoKoodi value) {
-        this.koulutuskoodi = value;
+    public void setKoulutusKoodi(KoodistoKoodi koulutusKoodi) {
+        this.koulutusKoodi = koulutusKoodi;
     }
 
-    public KoodistoKoodi getKoulutusohjelmakoodi() {
-        return koulutusohjelmakoodi;
+    /*
+     * Data field for koulutusohjelma, lukiolinja and opintoala uris.
+     */
+    public KoodistoKoodi getKoulutusohjelma() {
+        return koulutusohjelma;
     }
 
-    public void setKoulutusohjelmakoodi(KoodistoKoodi value) {
-        this.koulutusohjelmakoodi = value;
+    public void setKoulutusohjelma(KoodistoKoodi value) {
+        this.koulutusohjelma = value;
     }
 
     public KoodistoKoodi getTutkintonimike() {
@@ -126,22 +132,14 @@ public class KoulutusPerustieto implements Serializable
         this.koulutuslaji = value;
     }
 
-    public KoulutusasteTyyppi getKoulutustyyppi() {
-        return koulutustyyppi;
+    public KoulutusasteTyyppi getKoulutusasteTyyppi() {
+        return koulutusasteTyyppi;
     }
 
-    public void setKoulutustyyppi(KoulutusasteTyyppi value) {
-        this.koulutustyyppi = value;
+    public void setKoulutusasteTyyppi(KoulutusasteTyyppi value) {
+        this.koulutusasteTyyppi = value;
     }
-
-    public KoodistoKoodi getLukiolinjakoodi() {
-        return lukiolinjakoodi;
-    }
-
-    public void setLukiolinjakoodi(KoodistoKoodi value) {
-        this.lukiolinjakoodi = value;
-    }
-
+    
     public KoodistoKoodi getKoulutuksenAlkamiskausi() {
         return koulutuksenAlkamiskausi;
     }
@@ -156,6 +154,50 @@ public class KoulutusPerustieto implements Serializable
 
     public void setKoulutuksenAlkamisVuosi(Integer value) {
         this.koulutuksenAlkamisVuosi = value;
+    }
+
+    /**
+     * @return the koulutustyyppi
+     */
+    public String getKoulutustyyppi() {
+        return koulutustyyppi;
+    }
+
+    /**
+     * @param koulutustyyppi the koulutustyyppi to set
+     */
+    public void setKoulutustyyppi(String koulutustyyppi) {
+        this.koulutustyyppi = koulutustyyppi;
+    }
+
+    /**
+     * @return the toteutustyyppi
+     */
+    public ToteutustyyppiEnum getToteutustyyppi() {
+        return toteutustyyppi;
+    }
+
+    /**
+     * @param toteutustyyppi the toteutustyyppi to set
+     */
+    public void setToteutustyyppi(ToteutustyyppiEnum toteutustyyppi) {
+        this.toteutustyyppi = toteutustyyppi;
+    }
+
+    public void setKoulutuksenAlkamisPvmMax(Date koulutuksenAlkamisPvmMax) {
+        this.koulutuksenAlkamisPvmMax = koulutuksenAlkamisPvmMax;
+    }
+
+    public Date getKoulutuksenAlkamisPvmMax() {
+        return koulutuksenAlkamisPvmMax;
+    }
+
+    public void setKoulutuksenAlkamisPvmMin(Date koulutuksenAlkamisPvmMin) {
+        this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
+    }
+
+    public Date getKoulutuksenAlkamisPvmMin() {
+        return koulutuksenAlkamisPvmMin;
     }
 
 }
