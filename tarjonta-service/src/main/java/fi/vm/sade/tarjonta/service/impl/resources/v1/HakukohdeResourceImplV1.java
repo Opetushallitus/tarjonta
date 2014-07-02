@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -78,6 +79,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
@@ -503,33 +505,45 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     }
 
-    private List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeV1RDTO) {
+    private List<HakukohdeValidationMessages> validateHakukohde(
+            HakukohdeV1RDTO hakukohdeV1RDTO) {
 
-        /**
-         * Add other validation cases here, currently only aikuiskoulustus has different validation cases.
-         * Toinen aste will bring more.
-         *
-         */
-        List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+        final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
+        
+        ToteutustyyppiEnum toteutustyyppi;
 
-        HashMap<String,String> hakukohdeKoulutusAstes = getKoulutusAstetyyppiAndLajiForKoulutukses(hakukohdeV1RDTO.getHakukohdeKoulutusOids());
-
-        //First check for KK KOULUTUSASTE it does not have koulutuslaji so if koulutusaste is KK then just skip to validation
-        if (hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUSTUSASTE_KK)) {
-            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+        Preconditions.checkNotNull(hakukohdeV1RDTO.getToteutusTyyppi(), "toteutustyuyppi null");
+        try{
+            toteutustyyppi = ToteutustyyppiEnum.valueOf(hakukohdeV1RDTO.getToteutusTyyppi());
+        } catch (IllegalArgumentException iae) {
+            LOG.error("Toteutustyyppi:" + hakukohdeV1RDTO.getToteutusTyyppi() + " is unknown?!");
+            validationMessageses.add(HakukohdeValidationMessages.HAKUKOHDE_UNKNOWN_TOTEUTUSTYYPPI);
+            return validationMessageses;
         }
-        //Aiku lukio has different validation
-        else if ( (hakukohdeKoulutusAstes.containsKey(KOULUTUSLAJI_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSLAJI_KEY).trim().equalsIgnoreCase(KOULUTUSLAJI_AIKUISET)) && (
-                hakukohdeKoulutusAstes.containsKey(KOULUTUSASTE_KEY) && hakukohdeKoulutusAstes.get(KOULUTUSASTE_KEY).trim().equalsIgnoreCase(KOULUTUSASTE_LUKIO)
-        )) {
+        
+        //validointi
+        switch (toteutustyyppi) {
 
-            validationMessageses = HakukohdeValidator.validateAikuLukioHakukohde(hakukohdeV1RDTO);
+        case KORKEAKOULUTUS:
+            validationMessageses.addAll(HakukohdeValidator
+                    .validateHakukohde(hakukohdeV1RDTO));
+            break;
 
-        }
-        //Default validation is now the same as KK
-         else {
+        case AMMATILLINEN_PERUSTUTKINTO:
+        case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
+        case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+        case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+            validationMessageses.addAll(HakukohdeValidator
+                    .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+            break;
 
-            validationMessageses = HakukohdeValidator.validateHakukohde(hakukohdeV1RDTO);
+        default:
+            LOG.error("Toteutustyyppi:" + toteutustyyppi + " validation rules not implemented");
+            validationMessageses
+                    .add(HakukohdeValidationMessages.HAKUKOHDE_NOT_IMPLEMENTED);
+            break;
 
         }
 

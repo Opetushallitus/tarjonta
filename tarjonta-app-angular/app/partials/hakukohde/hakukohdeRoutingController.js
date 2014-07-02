@@ -70,15 +70,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $log.info("CAN CREATE : ", $route.current.locals.canCreate);
         $log.info("HAKUKOHDEX RESULT : ", $route.current.locals.hakukohdex.result);
 
-
-        var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
-        var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
-        var korkeakouluTyyppi = "KORKEAKOULUTUS";
-        var lukioTyyppi = "LUKIOKOULUTUS";
-
-
         if ($route.current.locals.isCopy !== undefined) {
-
             $scope.isCopy = $route.current.locals.isCopy;
         } else {
             $scope.isCopy = false;
@@ -89,9 +81,7 @@ app.controller('HakukohdeRoutingController', ['$scope',
         $scope.canCreate = $route.current.locals.canCreate;
         $scope.canEdit = $route.current.locals.canEdit;
 
-
         if ($route.current.locals.hakukohdex.result === undefined) {
-
             $scope.model = {
                 collapse: {
                     model: true
@@ -100,14 +90,11 @@ app.controller('HakukohdeRoutingController', ['$scope',
                 hakukohde: {
                     valintaperusteKuvaukset: {},
                     soraKuvaukset: {},
-                    kaytetaanJarjestelmanValintaPalvelua: true
-
+                    kaytetaanJarjestelmanValintaPalvelua: false,
                 }
             }
 
-
             $scope.model.hakukohde = $route.current.locals.hakukohdex;
-
 
         } else {
             var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
@@ -129,7 +116,6 @@ app.controller('HakukohdeRoutingController', ['$scope',
             }
 
         }
-
 
         $scope.hakukohdex = $route.current.locals.hakukohdex;
         $log.info("  --> hakukohdex == ", $scope.hakukohdex);
