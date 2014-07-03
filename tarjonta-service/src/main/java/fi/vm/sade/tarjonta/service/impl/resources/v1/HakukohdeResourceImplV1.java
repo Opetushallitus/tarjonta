@@ -81,6 +81,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  *
@@ -1237,21 +1239,79 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     // POST /hakukohde/ryhmat/lisaa
     @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
     public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(List<HakukohdeRyhmaV1RDTO> data) {
-        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
         LOG.info("lisaaRyhmatHakukohteille()");
 
+        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+
+        // By default we fail :)
         result.setResult(Boolean.FALSE);
 
-        for (HakukohdeRyhmaV1RDTO hakukohdeRyhmaV1RDTO : data) {
-            result.addError(ErrorV1RDTO.createValidationError(
-                    "none",
-                    "hakukohde.permissionDenied",
-                    hakukohdeRyhmaV1RDTO.getHakukohdeOid(),
-                    hakukohdeRyhmaV1RDTO.getRyhmaOid()));
+        for (HakukohdeRyhmaV1RDTO operation : data) {
+
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(operation.getHakukohdeOid());
+            
+            if (hakukohde == null) {
+                result.addError(ErrorV1RDTO.createValidationError(
+                        "none",
+                        "hakukohde.notFound",
+                        operation.getHakukohdeOid()
+                ));
+                
+                // Hmm...
+                continue;
+            }
+            
+            // Security!
+            try {
+              permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(operation.getHakukohdeOid());
+            } catch (Throwable ex) {
+                result.addError(ErrorV1RDTO.createValidationError(
+                        "none",
+                        "hakukohde.permissionDenied",
+                        operation.getHakukohdeOid(),
+                        operation.getRyhmaOid()));
+                // Skip this hakukohde
+                continue;
+            }
+
+            switch (operation.getToiminto()) {
+                case LISAA:
+                    hakukohde.setOrganisaatioRyhmaOids(addToArray(hakukohde.getOrganisaatioRyhmaOids(), operation.getRyhmaOid()));
+                    break;
+                case POISTA:
+                    hakukohde.setOrganisaatioRyhmaOids(removeFromArray(hakukohde.getOrganisaatioRyhmaOids(), operation.getRyhmaOid()));
+                    break;
+                default:
+                    LOG.warn("UNKNOWN OPERATION: {}", operation.getToiminto());
+                    result.addError(ErrorV1RDTO.createValidationError(
+                            "none",
+                            "hakukohde.permissionDenied",
+                            operation.getHakukohdeOid(),
+                            operation.getRyhmaOid()));
+                    // Skip this hakukohde
+                    continue;
+            }
+            
+            hakukohdeDAO.update(hakukohde);
         }
 
         return result;
+    }
+
+    private String[] addToArray(String source[], String newValue) {
+        List<String> tmp = new ArrayList<String>(Arrays.asList(source));
+        if (!tmp.contains(newValue)) {
+            tmp.add(newValue);
+        }
+        return tmp.toArray(new String[tmp.size()]);
+    }
+
+    private String[] removeFromArray(String source[], String newValue) {
+        List<String> tmp = new ArrayList<String>(Arrays.asList(source));
+        tmp.remove(newValue);
+        return tmp.toArray(new String[tmp.size()]);
     }
 
 }

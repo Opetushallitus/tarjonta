@@ -264,7 +264,7 @@ public interface HakukohdeV1Resource {
 
     
     @POST
-    @Path("/ryhmat/lisaa")
+    @Path("/ryhmat/operate")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää/poistaa annetut ryhmat hakukohteelle, ei muuta olemassaolevia liitoksia")
     public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(

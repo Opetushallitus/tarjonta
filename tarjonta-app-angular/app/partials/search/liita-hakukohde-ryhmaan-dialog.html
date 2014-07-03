@@ -1,11 +1,11 @@
 <div id="liitaRyhmaanDialog">
 
     <div class="modal-header">
-        <h3 data-tt="search.ryhmat.liita.otsikko">Liitä valitut hakukohteen ryhmiin</h3>
+        <h3 data-tt="search.ryhmat.liita.otsikko">Liitä tai poista valitut hakukohteen ryhmiin/ryhmistä</h3>
     </div>
 
     <div class="modal-body">
-        <p class="help" data-tt="search.ryhmat.liita.help">Valitse ryhmä(t) joihin haluat annetut hakukohteet liittää.</p>
+        <p class="help" data-tt="search.ryhmat.liita.help">Valitse ryhmä(t) joihin haluat annetut hakukohteet liittää tai niistä poistaa.</p>
 
         <div ng-show="!model.completed">
             <span ng-repeat="ryhma in model.ryhmat">
@@ -14,21 +14,30 @@
         </div>
 
         <div ng-show="model.completed && model.result.errors">
-            Valmis, virheitä:
-            <span ng-repeat="virhe in model.result.errors">
-                {{ virhe | json }} <br/>
-            </span>            
+            <p data-tt="search.ryhmat.liita.valimisErrors">
+                Valitut hakukohteet on liitetty haluttuihin ryhmiin. 
+                Liittäessä tapahtui seuraavat virheet:
+            </p>
+
+            <ul ng-repeat="virhe in model.result.errors">
+                <li>
+                    {{ virhe | json }}
+                </li>
+            </ul>            
         </div>
 
         <div ng-show="model.completed && !model.result.errors">
-            Valmis, ei virheitä.
+            <p data-tt="search.ryhmat.liita.valimisNoErrors">
+                Valitut hakukohteet on liitetty haluttuihin ryhmiin. Ei virheitä.
+            </p>
         </div>
         
     </div>
 
     <div class="modal-footer">
         <button class="btn" ng-click="cancel()" ng-show="!model.completed" tt="tarjonta.toiminnot.cancel">Peruuta</button>
-        <button class="btn btn-primary" ng-click="ok()" ng-show="!model.completed" tt="tarjonta.toiminnot.ok">OK</button>
+        <button class="btn btn-primary" ng-click="okLiita()" ng-show="!model.completed" tt="tarjonta.toiminnot.liita">Liitä ryhmiin</button>
+        <button class="btn btn-primary" ng-click="okPoista()" ng-show="!model.completed" tt="tarjonta.toiminnot.poista">Poista ryhmistä</button>
         <button class="btn" ng-click="close()" ng-show="model.completed" tt="tarjonta.toiminnot.lopeta">Lopeta</button>
     </div>
 

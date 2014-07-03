@@ -797,45 +797,73 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                             return nimi;
                         }
 
+                        $scope.okLiita = function() {
+                            $scope.teeLiitosRyhmaan("LISAA");
+                        }
+
+                        $scope.okPoista = function() {
+                            $scope.teeLiitosRyhmaan("POISTA");
+                        }
+
                         /**
-                         * Liitä valitut hakukohteet valittuihin ryhmiin.
+                         * Liitä valitut hakukohteet valittuihin ryhmiin TAI poistaa ne niistä.
                          */
-                        $scope.ok = function() {
-                            $log.info("AddHakukohdeToGroupController.ok()");
+                        $scope.teeLiitosRyhmaan = function(tyyppi) {
+                            $log.info("AddHakukohdeToGroupController.teeLiitosRyhmaan()", tyyppi);
 
                             var valitutRyhmat = $scope.model.ryhmat.filter(function(ryhma) {
                                 return ryhma.selected;
                             });
                             
-                            $log.info("  valitut ryhmät: ", valitutRyhmat);
+                            $log.debug("  valitut ryhmät: ", valitutRyhmat);
 
                             // Create request data
                             var requestData = [];
                             angular.forEach(valitutRyhmat, function (ryhma) {
                                 angular.forEach($scope.model.hakukohteet, function(hakukohdeOid) {
-                                    requestData.push({ toiminto: "LISAA", hakukohdeOid: hakukohdeOid, ryhmaOid: ryhma.oid});
+                                    requestData.push({ toiminto: tyyppi, hakukohdeOid: hakukohdeOid, ryhmaOid: ryhma.oid});
                                 });
                             });
                             
                             // Tee pyyntö
-                            $log.info("SERVER SIDE CALL: ", requestData);
+                            $log.debug("call server with data", requestData);
 
-                            // TODO Liitä hakukohteet valittuihin ryhmiin                            
-                            
+                            TarjontaService.hakukohdeRyhmaOperaatiot(
+                                    requestData,
+                                    function(res) {
+                                        $log.info("RESULT OK", res);
+                                        $scope.model.completed = true;
+                                        $scope.model.result.status = res.status;
+                                        $scope.model.result.errors = res.errors;
+                                    },
+                                    function(err) {
+                                        $log.info("RESULT ERROR", err);
+                                        // TODO disable error dialog!
+                                        $scope.model.completed = true;
+                                        $scope.model.result.status = "ERROR";
+                                        $scope.model.result.errors = [{errorCode: "ERROR", errorField: "none", errorMessageKey: "system.error"}];
+                                    }
+                            );
+
                             $scope.model.completed = true;
                             $scope.model.result = {
-                                status: "ERROR",
-                                errors : [
-                                    {
-                                        hakukohde: "Aalto yliopisto / XXXX",
-                                        error: "Ei muokkaus oikeutta"
-                                    },
-                                    {
-                                        hakukohde: "Helsingin yliopisto / YYYY",
-                                        error: "Ei muokkaus oikeutta"
-                                    }
-                                ]
+                                status: "OK",
+                                errors: []
                             };
+                            
+//                            {
+//                                status: "ERROR",
+//                                errors : [
+//                                    {
+//                                        hakukohde: "Aalto yliopisto / XXXX",
+//                                        error: "Ei muokkaus oikeutta"
+//                                    },
+//                                    {
+//                                        hakukohde: "Helsingin yliopisto / YYYY",
+//                                        error: "Ei muokkaus oikeutta"
+//                                    }
+//                                ]
+//                            };
                             
                             //$modalInstance.close();
                         };
