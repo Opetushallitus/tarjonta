@@ -164,8 +164,6 @@ app.controller('HakukohdeAikuNayttoEditController',
                 $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
             }
 
-            $scope.model.hakukohde.toteutusTyyppi=
-            
             $scope.enableOrDisableTabs();
             readOsaamisAlat();
         };
