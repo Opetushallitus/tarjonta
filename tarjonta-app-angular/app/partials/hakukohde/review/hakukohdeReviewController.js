@@ -360,6 +360,7 @@ app.controller('HakukohdeReviewController',
       
       var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];
       if(!koodisto){
+        console.log($scope.model.hakukohde);
         $log.error("don't know which koodisto to use??!? toteutusTyyppi:", $scope.model.hakukohde.toteutusTyyppi);
       }
 
