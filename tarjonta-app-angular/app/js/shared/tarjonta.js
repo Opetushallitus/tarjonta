@@ -254,11 +254,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
         return ret.$promise;
     };
-    dataFactory.insertHakukohde = function(hakukohde, func) {
-        $log.debug('Inserting hakukohde : ', hakukohde);
-
-        return ret.promise;
-    };
 
     dataFactory.saveKomoTekstis = function(oid) {
         var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': '@oid'});
@@ -266,10 +261,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         });
 
         return Tekstis;
-    };
-
-    dataFactory.insertHakukohde = function(hakukohde, func) {
-        $log.info('Inserting hakukohde : ', hakukohde);
     };
 
     dataFactory.getHakukohde = function(id) {
@@ -691,6 +682,36 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
     };
 
+    /**
+     * Kutsuu "/hakukohde/ryhmat/operate" POST metodia parametreilla:
+     * <pre>
+     * [
+     *   {
+     *      hakukohdeOid: "1.2.3.4",
+     *      ryhmaOid: "5.6.7.8",
+     *      toiminto: "LISAA"
+     *   },
+     *   {
+     *      hakukohdeOid: "1.2.3.4",
+     *      ryhmaOid: "5.6.7.8",
+     *      toiminto: "POISTA"
+     *   },
+     *   ...
+     * ]
+     * </pre>
+     * 
+     * @param {type} params
+     * @param {type} successcb
+     * @param {type} errorcb
+     * @returns {unresolved}
+     */
+    dataFactory.hakukohdeRyhmaOperaatiot = function(params, successcb, errorcb) {
+        $log.debug("hakukohdeRyhmaOperaatiot()");
+        var resource = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/ryhmat/operate", {}, {
+            post: {method: 'POST', withCredentials: true}            
+        });
+        return resource.post(params, successcb, errorcb);
+    };
 
     return dataFactory;
 });

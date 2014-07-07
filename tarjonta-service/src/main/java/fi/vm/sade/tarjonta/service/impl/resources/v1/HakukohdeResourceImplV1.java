@@ -60,6 +60,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRyhmaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
@@ -80,6 +81,8 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  *
@@ -534,6 +537,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
         case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+        case ERIKOISAMMATTITUTKINTO:
+        case AMMATTITUTKINTO:
         case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
             validationMessageses.addAll(HakukohdeValidator
                     .validateAikuLukioHakukohde(hakukohdeV1RDTO));
@@ -1230,6 +1235,83 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             TarjontaTila tila) {
         Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
         return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
+    }
+
+    // POST /hakukohde/ryhmat/lisaa
+    @Override
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(List<HakukohdeRyhmaV1RDTO> data) {
+        LOG.info("lisaaRyhmatHakukohteille()");
+
+        ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
+
+        // By default we fail :)
+        result.setResult(Boolean.FALSE);
+
+        for (HakukohdeRyhmaV1RDTO operation : data) {
+
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(operation.getHakukohdeOid());
+            
+            if (hakukohde == null) {
+                result.addError(ErrorV1RDTO.createValidationError(
+                        "none",
+                        "hakukohde.notFound",
+                        operation.getHakukohdeOid()
+                ));
+                
+                // Hmm...
+                continue;
+            }
+            
+            // Security!
+            try {
+              permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(operation.getHakukohdeOid());
+            } catch (Throwable ex) {
+                result.addError(ErrorV1RDTO.createValidationError(
+                        "none",
+                        "hakukohde.permissionDenied",
+                        operation.getHakukohdeOid(),
+                        operation.getRyhmaOid()));
+                // Skip this hakukohde
+                continue;
+            }
+
+            switch (operation.getToiminto()) {
+                case LISAA:
+                    hakukohde.setOrganisaatioRyhmaOids(addToArray(hakukohde.getOrganisaatioRyhmaOids(), operation.getRyhmaOid()));
+                    break;
+                case POISTA:
+                    hakukohde.setOrganisaatioRyhmaOids(removeFromArray(hakukohde.getOrganisaatioRyhmaOids(), operation.getRyhmaOid()));
+                    break;
+                default:
+                    LOG.warn("UNKNOWN OPERATION: {}", operation.getToiminto());
+                    result.addError(ErrorV1RDTO.createValidationError(
+                            "none",
+                            "hakukohde.permissionDenied",
+                            operation.getHakukohdeOid(),
+                            operation.getRyhmaOid()));
+                    // Skip this hakukohde
+                    continue;
+            }
+            
+            hakukohdeDAO.update(hakukohde);
+        }
+
+        return result;
+    }
+
+    private String[] addToArray(String source[], String newValue) {
+        List<String> tmp = new ArrayList<String>(Arrays.asList(source));
+        if (!tmp.contains(newValue)) {
+            tmp.add(newValue);
+        }
+        return tmp.toArray(new String[tmp.size()]);
+    }
+
+    private String[] removeFromArray(String source[], String newValue) {
+        List<String> tmp = new ArrayList<String>(Arrays.asList(source));
+        tmp.remove(newValue);
+        return tmp.toArray(new String[tmp.size()]);
     }
 
 }
