@@ -43,10 +43,11 @@ app.controller('HakukohdeRoutingController',
         'CommonUtilService',
         'PermissionService',
         'dialogService',
+        'HakukohdeService',
         function($scope, $log, $routeParams, $route, $q, $modal, $location,
             Hakukohde, Koodisto, AuthService, HakuService, LocalisationService,
             OrganisaatioService, SharedStateService, TarjontaService, Kuvaus,
-            CommonUtilService, PermissionService, dialogService) {
+            CommonUtilService, PermissionService, dialogService,HakukohdeService) {
 
           $log.info("HakukohdeRoutingController()", $routeParams);
           $log.info("$route: ", $route);
@@ -86,6 +87,8 @@ app.controller('HakukohdeRoutingController',
           } else {
             var hakukohdeResource = new Hakukohde(
                 $route.current.locals.hakukohdex.result);
+            HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
+
 
             if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
               hakukohdeResource.valintaperusteKuvaukset = {};

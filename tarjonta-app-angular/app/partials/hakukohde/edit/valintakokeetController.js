@@ -5,7 +5,7 @@ app
         'ValintakokeetController',
         function($scope, $q, $filter, LocalisationService, OrganisaatioService,
             Koodisto, Hakukohde, Valintakoe, dialogService, HakuService,
-            $modal, Config, $location) {
+            $modal, Config, $location, HakukohdeService) {
 
           $scope.kokeetModel = {};
 
@@ -18,14 +18,6 @@ app
           var initialTabSelected = false;
           $scope.kokeetModel.selectedTab = {};
           
-          function addValintakoeIfEmpty() {
-            if ($scope.model.hakukohde.valintakokeet.length == 0) {
-              // oletuksena näytä valintakoe editointinäkymä
-              var kieli = $scope.kokeetModel.opetusKielet[0].koodiUri;
-              $scope.addValintakoe(kieli);
-            }
-          }
-
           function newAjankohta() {
             return {
               lisatiedot : "",
@@ -53,6 +45,10 @@ app
             }
           }
 
+          
+          
+          console.log("opetuskielet:", $scope.model.hakukohde.opetusKielet);
+          
           var kielet = Koodisto.getAllKoodisWithKoodiUri('kieli',
               LocalisationService.getLocale());
           kielet.then(function(ret) {
@@ -77,7 +73,6 @@ app
                 }
               }
             }
-            addValintakoeIfEmpty();
           });
 
           for ( var i in $scope.model.hakukohde.valintakokeet) {
@@ -193,19 +188,9 @@ app
           }
 
           $scope.addValintakoe = function(lc) {
-            var vk = {
-              hakukohdeOid : $scope.model.hakukohde.oid,
-              kieliUri : lc,
-              valintakoeNimi : undefined,
-              valintakokeenKuvaus : {
-                uri : lc,
-                teksti : undefined
-              },
-              valintakoeAjankohtas : [],
-              isNew : true
-            };
-            $scope.model.hakukohde.valintakokeet.push(vk);
-            return vk;
+            console.log("add valintakoe");
+            return HakukohdeService.addValintakoe($scope.model.hakukohde, lc);
+            console.log("add valintakoe-->");
           }
 
           $scope.getValintakokeetByKieli = function(lc) {
@@ -220,6 +205,7 @@ app
 
             return ret;
           }
+          
           function containsOpetuskieli(lc) {
             for ( var i in $scope.kokeetModel.opetusKielet) {
               if ($scope.kokeetModel.opetusKielet[i].koodiUri == lc) {
@@ -263,7 +249,6 @@ app
                 }
               }
             }
-
           }
 
         });

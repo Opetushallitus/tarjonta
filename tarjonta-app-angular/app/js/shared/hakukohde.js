@@ -180,5 +180,38 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
             }
         }
     };
+    
+});
 
+app.factory('HakukohdeService', function($resource, Config) {
+
+  function addValintakoeIfEmpty(hakukohde) {
+    if (hakukohde.valintakokeet.length == 0) {
+      var kieli = hakukohde.opetusKielet[0];
+      $scope.addValintakoe(kieli);
+    }
+  }
+  
+  function addValintakoe(hakukohde, kieliUri) {
+    var vk =  {
+      hakukohdeOid : hakukohde.oid,
+      kieliUri : kieliUri,
+      valintakoeNimi : undefined,
+      valintakokeenKuvaus : {
+        uri : kieliUri,
+        teksti : undefined
+      },
+      valintakoeAjankohtas : [],
+      isNew : true
+    };
+    
+    hakukohde.valintakokeet.push(vk);
+    return vk;
+  }
+
+  return {
+    addValintakoeIfEmpty:addValintakoeIfEmpty,
+    addValintakoe: addValintakoe
+  };
+  
 });

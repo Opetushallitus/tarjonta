@@ -25,12 +25,12 @@ app
             'Kuvaus',
             'CommonUtilService',
             'PermissionService',
-            'dialogService',
+            'dialogService','HakukohdeService',
             function($scope, $log, $routeParams, $route, $q, $modal, $location,
                 Hakukohde, Koodisto, AuthService, HakuService,
                 LocalisationService, OrganisaatioService, SharedStateService,
                 TarjontaService, Kuvaus, CommonUtilService, PermissionService,
-                dialogService) {
+                dialogService, HakukohdeService) {
 
               var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
               var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
@@ -1120,17 +1120,16 @@ app
                                         $log.debug(
                                             'SERVER RESPONSE WHEN SAVING: ',
                                             hakukohde);
+                                        $scope.model.hakukohde = new Hakukohde(
+                                            hakukohde.result);
+                                        HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                         if (hakukohde.errors === undefined
                                             || hakukohde.errors.length < 1) {
-                                          $scope.model.hakukohde = new Hakukohde(
-                                              hakukohde.result);
                                           $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                                           $scope.showSuccess();
                                           $scope
                                               .checkIfSavingCopy($scope.model.hakukohde);
                                         } else {
-                                          $scope.model.hakukohde = new Hakukohde(
-                                              hakukohde.result);
                                           $scope.showError(hakukohde.errors);
                                         }
                                         if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
@@ -1160,14 +1159,14 @@ app
                               returnResource
                                   .then(
                                       function(hakukohde) {
+                                        $scope.model.hakukohde = new Hakukohde(
+                                            hakukohde.result);
+                                        HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+
                                         if (hakukohde.errors === undefined
                                             || hakukohde.errors.length < 1) {
-                                          $scope.model.hakukohde = new Hakukohde(
-                                              hakukohde.result);
                                           $scope.showSuccess();
                                         } else {
-                                          $scope.model.hakukohde = new Hakukohde(
-                                              hakukohde.result);
                                           $scope.showError(hakukohde.errors);
                                         }
                                         if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
