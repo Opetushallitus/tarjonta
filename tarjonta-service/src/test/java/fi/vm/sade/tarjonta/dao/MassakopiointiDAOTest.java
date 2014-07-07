@@ -146,35 +146,31 @@ public class MassakopiointiDAOTest {
         assertNotNull("findByOid - result KoulutusmoduuliToteutus?", kt1);
         assertEquals(KOULUTUS_URI1, kt1.getKoulutusUri());
         assertEquals(DATE, kt1.getKoulutuksenAlkamisPvm());
+        assertEquals(TarjontaTila.KOPIOITU, kt1.getTila());
 
         /*
          * findByHakuOid
          */
         List<Massakopiointi> resultByhaku = instance.findByHakuOid(HAKU_OID_1);
-        assertEquals("findByHakuOid", 2, resultByhaku.size());
+        assertEquals("findByHakuOid 1/2", 2, resultByhaku.size());
 
         resultByhaku = instance.findByHakuOid(HAKU_OID_2);
-        assertEquals("findByHakuOid", 3, resultByhaku.size());
+        assertEquals("findByHakuOid 2/2", 3, resultByhaku.size());
 
         /*
          * findByHakuOidAndOids
          */
         List<Massakopiointi> findByHakuOidAndOids = instance.findByHakuOidAndOids(HAKU_OID_2, Lists.<String>newArrayList(ANY_UNIQUE_OID_1));
-        assertEquals("findByHakuOidAndOids", 0, findByHakuOidAndOids.size());
+        assertEquals("findByHakuOidAndOids 1/2", 0, findByHakuOidAndOids.size());
 
         findByHakuOidAndOids = instance.findByHakuOidAndOids(HAKU_OID_2, Lists.<String>newArrayList(ANY_UNIQUE_OID_3, ANY_UNIQUE_OID_4));
-        assertEquals("findByHakuOidAndOids", 2, findByHakuOidAndOids.size());
+        assertEquals("findByHakuOidAndOids 2/2", 2, findByHakuOidAndOids.size());
+
         /*
          * updateTila
          */
         long updateTila = instance.updateTila(HAKU_OID_2, ANY_UNIQUE_OID_5, Massakopiointi.KopioinninTila.COPIED, ANOTHER_DATE);
-        assertEquals(1, updateTila);
-
-        kt1 = (KoulutusmoduuliToteutus) instance.find(HAKU_OID_1, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
-        assertNotNull("findByOid - result KoulutusmoduuliToteutus?", kt1);
-        assertEquals(KOULUTUS_URI1, kt1.getKoulutusUri());
-        // assertEquals(ANOTHER_DATE, kt1.getKoulutuksenAlkamisPvm());
-        assertEquals(TarjontaTila.KOPIOITU, kt1.getTila());
+        assertEquals("updateTila", 1, updateTila);
 
         /*
          * delete
@@ -183,10 +179,10 @@ public class MassakopiointiDAOTest {
         assertEquals("deleteAllByHakuOid", 2, deleted);
 
         deleted = instance.deleteByHakuOidAndKopioinninTila(HAKU_OID_2, Massakopiointi.KopioinninTila.ERROR);
-        assertEquals("deleteByHakuOidAndKopioinninTila", 0, deleted);
+        assertEquals("deleteByHakuOidAndKopioinninTila 1/2", 0, deleted);
 
         deleted = instance.deleteByHakuOidAndKopioinninTila(HAKU_OID_2, Massakopiointi.KopioinninTila.COPIED);
-        assertEquals("deleteByHakuOidAndKopioinninTila", 1, deleted);
+        assertEquals("deleteByHakuOidAndKopioinninTila 2/2", 1, deleted);
     }
 
     @Test

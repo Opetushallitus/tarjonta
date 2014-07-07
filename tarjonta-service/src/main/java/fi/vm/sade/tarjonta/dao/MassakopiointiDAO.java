@@ -23,23 +23,33 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
     public List<Massakopiointi> findByHakuOidAndOids(final String hakuOid, final List<String> oids);
 
     /**
-     * Save and convert object to json
+     * Convert given entity instance to json format and save it to database.
      *
      * @param hakuOid
      * @param oid
-     * @param type
-     * @param clazz
-     * @param entityToJson
-     * @param meta
+     * @param type type of the entity
+     * @param clazz class of the entity
+     * @param entityToJson the entity instance
+     * @param meta custom data object
      */
     public void saveEntityAsJson(String hakuOid, String oid, Massakopiointi.Tyyppi type, Class clazz, TarjontaBaseEntity entityToJson, MetaObject meta);
 
+    /**
+     * Update object status.
+     *
+     * @param hakuOid
+     * @param oid
+     * @param toTila
+     * @param updated
+     * @return count of updated items
+     */
     public long updateTila(String hakuOid, String oid, Massakopiointi.KopioinninTila toTila, Date updated);
 
     /**
      * Delete all by haku oid;
      *
      * @param hakuOid
+     * @return count of deleted items
      */
     public long deleteAllByHakuOid(final String hakuOid);
 
@@ -48,6 +58,7 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
      *
      * @param hakuOid
      * @param tila
+     * @return count of deleted items
      */
     public long deleteByHakuOidAndKopioinninTila(final String hakuOid, Massakopiointi.KopioinninTila tila);
 
