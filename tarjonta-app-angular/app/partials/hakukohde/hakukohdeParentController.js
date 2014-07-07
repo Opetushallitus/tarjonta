@@ -1077,14 +1077,6 @@ app
 
               };
 
-              function addValntakoeIfEmpty() {
-                if ($scope.model.hakukohde.valintakokeet.length == 0) {
-                  // oletuksena näytä valintakoe editointinäkymä
-                  var kieli = $scope.kokeetModel.opetusKielet[0].koodiUri;
-                  $scope.addValintakoe(kieli);
-                }
-              }
-
               $scope.model.saveParent = function(tila,
                   hakukohdeValidationFunction) {
                 if (!tila) {

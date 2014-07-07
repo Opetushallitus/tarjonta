@@ -17,6 +17,14 @@ app
 
           var initialTabSelected = false;
           $scope.kokeetModel.selectedTab = {};
+          
+          function addValintakoeIfEmpty() {
+            if ($scope.model.hakukohde.valintakokeet.length == 0) {
+              // oletuksena näytä valintakoe editointinäkymä
+              var kieli = $scope.kokeetModel.opetusKielet[0].koodiUri;
+              $scope.addValintakoe(kieli);
+            }
+          }
 
           function newAjankohta() {
             return {
@@ -69,6 +77,7 @@ app
                 }
               }
             }
+            addValintakoeIfEmpty();
           });
 
           for ( var i in $scope.model.hakukohde.valintakokeet) {
