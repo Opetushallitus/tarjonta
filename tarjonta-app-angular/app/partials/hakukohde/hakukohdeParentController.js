@@ -106,8 +106,6 @@ app.controller('HakukohdeParentController', ['$scope',
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
 
-        //TODO: Sami tähän tuodaan hakukohteen koulutukset ja niistä kerätään osaamisalat joilla filtteröidään aiku näyttö hakukohteen nimi
-        $scope.model.hakukohdeKoulutukses = [];
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
 
@@ -157,23 +155,23 @@ app.controller('HakukohdeParentController', ['$scope',
             //otherwise try to get selected koulutustyyppi from shared state
           
             if($route.current.locals && $route.current.locals.hakukohdex.result && $route.current.locals.hakukohdex.result.toteutusTyyppi) {
-              $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
-              $log.info('WITH TOTEUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.toteutusTyyppi);
+//              $log.info('ROUTING HAKUKOHDE: ' , $route.current.locals.hakukohdex.result);
+//              $log.info('WITH TOTEUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.toteutusTyyppi);
                 
               var toteutusTyyppi = $route.current.locals.hakukohdex.result.toteutusTyyppi;
               var uri = routing[toteutusTyyppi];
               if(uri) {
                 return uri;
               }
-              $log.error('TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
+              $log.error('11 TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
             } else {
               var toteutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
-              $scope.model.hakukohde.toteutusTyyppi=toteutusTyyppi;
+              //$scope.model.hakukohde.toteutusTyyppi=toteutusTyyppi;
               var uri = routing[toteutusTyyppi];
               if(uri) {
                 return uri;
               }
-              $log.error('TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
+              $log.error('22 TOTEUTUSTYYPPI WAS: ' , toteutusTyyppi, " not returning template!!");
             }
         };
 
@@ -978,17 +976,10 @@ app.controller('HakukohdeParentController', ['$scope',
          ----->  Helper functions
          */
 
-
         var validateNames  = function() {
             for(var i in $scope.model.hakukohde.hakukohteenNimet){ return true;}
             return false;
         };
-
-
-
-
-
-
 
         $scope.getHakuWithOid = function(hakuOid) {
 
@@ -1032,172 +1023,103 @@ app.controller('HakukohdeParentController', ['$scope',
             return hakutoimistoFound;
 
         };
+        
+        function addValntakoeIfEmpty() {
+          if($scope.model.hakukohde.valintakokeet.length==0) {
+            //    oletuksena näytä valintakoe editointinäkymä
+            var kieli = $scope.kokeetModel.opetusKielet[0].koodiUri;
+            $scope.addValintakoe(kieli);
+          }
+        }
 
 
-        $scope.model.saveLuonnosParent = function(hakukohdeValidationFunction) {
+        $scope.model.saveParent = function(tila, hakukohdeValidationFunction) {
+          if(!tila) {
+            throw "tila cannot be undefuned!";
+          } else {
+            console.log("tallennetaan tila:", tila);
+          }
+          $scope.model.showError = false;
+          PermissionService.permissionResource().authorize({}, function(authResponse) {
 
-            $scope.model.showError = false;
-            PermissionService.permissionResource().authorize({}, function(authResponse) {
+              $log.debug('GOT AUTH RESPONSE : ' , authResponse);
+              $scope.emptyErrorMessages();
 
-                $log.debug('GOT AUTH RESPONSE : ' , authResponse);
-                $scope.emptyErrorMessages();
+              if (hakukohdeValidationFunction()) {
+                  $scope.model.showError = false;
+                  $scope.model.hakukohde.tila = tila;
 
-                if (hakukohdeValidationFunction()) {
-                    $scope.model.showError = false;
-                    if ($scope.model.hakukohde.tila === undefined || $scope.model.hakukohde.tila === $scope.luonnosVal) {
-                        $scope.model.hakukohde.tila = $scope.luonnosVal;
-                    }
+                  $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
+                  $scope.removeEmptyKuvaukses();
 
-                    $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
-                    $scope.removeEmptyKuvaukses();
+                  //Check if hakukohde is copy, then remove oid and save hakukohde as new
+                  $scope.checkIsCopy($scope.luonnosVal);
+                  if ($scope.model.hakukohde.oid === undefined) {
 
-                    //Check if hakukohde is copy, then remove oid and save hakukohde as new
-                    $scope.checkIsCopy($scope.luonnosVal);
-                    if ($scope.model.hakukohde.oid === undefined) {
+                      $log.debug('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
 
-                        $log.debug('LISATIEDOT : ' , $scope.model.hakukohde.lisatiedot);
+                      $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
+                      var returnResource =  $scope.model.hakukohde.$save();
+                      returnResource.then(function(hakukohde) {
+                          $log.debug('SERVER RESPONSE WHEN SAVING: ', hakukohde);
+                          if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                              $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                              $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
+                              $scope.showSuccess();
+                              $scope.checkIfSavingCopy($scope.model.hakukohde);
+                          } else {
+                              $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                              $scope.showError(hakukohde.errors);
+                          }
+                          if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                              $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                          }
+                          if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                              $scope.model.hakukohde.soraKuvaukset = {};
+                          }
+                          $scope.canEdit = true;
+                          $scope.model.continueToReviewEnabled = true;
+                          $scope.status.dirty = false;
+                          $log.debug('SAVED MODEL : ', $scope.model.hakukohde);
+                      },function(error) {
+                          $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
+                          $scope.showCommonUnknownErrorMsg();
 
-                        $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
-                        var returnResource =  $scope.model.hakukohde.$save();
-                        returnResource.then(function(hakukohde) {
-                            $log.debug('SERVER RESPONSE WHEN SAVING AS LUONNOS: ', hakukohde);
-                            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
-                                $scope.showSuccess();
-                                $scope.checkIfSavingCopy($scope.model.hakukohde);
-                            } else {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.showError(hakukohde.errors);
-                            }
-                            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                            }
-                            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                $scope.model.hakukohde.soraKuvaukset = {};
-                            }
-                            $scope.canEdit = true;
-                            $scope.model.continueToReviewEnabled = true;
-                            $scope.status.dirty = false;
-                            $log.debug('SAVED MODEL : ', $scope.model.hakukohde);
-                        },function(error) {
-                            $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
-                            $scope.showCommonUnknownErrorMsg();
+                      });
 
-                        });
+                  } else {
+                      $log.debug('UPDATE MODEL1 : ', $scope.model.hakukohde);
+                      var returnResource =  $scope.model.hakukohde.$update();
+                      returnResource.then(function(hakukohde){
+                          if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                              $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                              $scope.showSuccess();
+                          } else {
+                              $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                              $scope.showError(hakukohde.errors);
+                          }
+                          if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                              $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                          }
+                          if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                              $scope.model.hakukohde.soraKuvaukset = {};
+                          }
+                          $scope.status.dirty = false;
+                          //TODO jos tyhjät valintakokeet, lisää tässä
+                          
+                      }, function(error) {
 
-                    } else {
-                        $log.debug('UPDATE MODEL : ', $scope.model.hakukohde);
-                        var returnResource =  $scope.model.hakukohde.$update();
-                        returnResource.then(function(hakukohde){
-                            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.showSuccess();
-                            } else {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.showError(hakukohde.errors);
-
-                            }
-                            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                            }
-                            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                $scope.model.hakukohde.soraKuvaukset = {};
-                            }
-                            $scope.status.dirty = false;
-                        }, function(error) {
-
-                            $log.debug('EXCEPTION UPDATING HAKUKOHDE AS LUONNOS : ', error);
-                            $scope.showCommonUnknownErrorMsg();
-                        });
-                    }
-                } else {
-                    $scope.model.showError = true;
-                    $log.debug('WHAAT : ' , $scope.model.showError && $scope.editHakukohdeForm.aloituspaikatlkm.$invalid)
-
-                }
-            })
+                          $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
+                          $scope.showCommonUnknownErrorMsg();
+                      });
+                  }
+              } else {
+                  $scope.model.showError = true;
+                  $log.debug('WHAAT : ' , $scope.model.showError && $scope.editHakukohdeForm.aloituspaikatlkm.$invalid)
+              }
+          });
         };
-
-
-        $scope.model.saveValmisParent = function(hakukohdeValidationFunction) {
-            $scope.model.showError = false;
-            PermissionService.permissionResource().authorize({}, function(authResponse) {
-                $scope.emptyErrorMessages();
-                if (hakukohdeValidationFunction()) {
-                    $scope.model.showError = false;
-                    if ($scope.model.hakukohde.tila !== $scope.julkaistuVal) {
-                        $scope.model.hakukohde.tila = $scope.valmisVal;
-                    }
-
-                    $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
-                    $scope.removeEmptyKuvaukses();
-
-                    if ($scope.model.hakukohde.oid === undefined) {
-
-                        $log.debug('SAVE VALMIS MODEL : ', $scope.model.hakukohde);
-                        var returnResource =   $scope.model.hakukohde.$save();
-                        returnResource.then(function(hakukohde){
-
-                            $log.debug('SERVER RESPONSE WHEN SAVING AS VALMIS: ', hakukohde);
-                            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
-                                $scope.showSuccess();
-                                $scope.checkIfSavingCopy($scope.model.hakukohde);
-                            } else {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.showError(hakukohde.errors);
-                            }
-                            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                            }
-                            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                $scope.model.hakukohde.soraKuvaukset = {};
-                            }
-                            $scope.canEdit = true;
-                            $scope.model.continueToReviewEnabled = true;
-                            $scope.status.dirty = false;
-                        },function(error){
-
-
-                            $scope.showCommonUnknownErrorMsg();
-                        });
-
-                    } else {
-
-                        $log.debug('UPDATE MODEL : ', $scope.model.hakukohde);
-
-                        var returnResource = $scope.model.hakukohde.$update();
-                        returnResource.then(function(hakukohde){
-                            console.log('HAKUKOHDE VALMIS UPDATE : ', hakukohde);
-                            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.showSuccess();
-                            } else {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                                $scope.showError(hakukohde.errors);
-                            }
-
-                            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                            }
-                            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                $scope.model.hakukohde.soraKuvaukset = {};
-                            }
-                            $scope.status.dirty = false;
-                        },function (error) {
-                            $scope.showCommonUnknownErrorMsg();
-                        });
-
-                    }
-                } else {
-                    $scope.model.showError = true;
-                }
-            })
-        };
-
-
+        
         /*
 
          ------>  Koodisto helper methods

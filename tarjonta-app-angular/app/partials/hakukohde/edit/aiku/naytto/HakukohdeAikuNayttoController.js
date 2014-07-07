@@ -68,14 +68,12 @@ app.controller('HakukohdeAikuNayttoEditController',
       };
         
       $scope.saveAsLuonnos = function() {
-          $scope.model.saveLuonnosParent(validateAikuHakukohde);
+          $scope.model.saveParent("LUONNOS", validateAikuHakukohde);
       };
 
       $scope.saveAsValmis = function () {
-          $scope.model.saveValmisParent(validateAikuHakukohde);
+          $scope.model.saveValmisParent("VALMIS", validateAikuHakukohde);
       };
-
-      
         
         var readOsaamisAlat = function () {
 

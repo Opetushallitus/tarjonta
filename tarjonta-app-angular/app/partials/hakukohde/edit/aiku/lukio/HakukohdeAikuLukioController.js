@@ -135,15 +135,12 @@ app.controller('HakukohdeAikuLukioEditController',
         };
 
         $scope.saveAikuLukioAsLuonnos = function() {
-
-
-            $scope.model.saveLuonnosParent(validateAikuHakukohde);
-
+            $scope.model.saveParent("LUONNOS", validateAikuHakukohde);
         };
 
         $scope.saveAikuLukioAsValmis = function () {
 
-            $scope.model.saveValmisParent(validateAikuHakukohde);
+            $scope.model.saveParent("VALMIS", validateAikuHakukohde);
 
         };
 

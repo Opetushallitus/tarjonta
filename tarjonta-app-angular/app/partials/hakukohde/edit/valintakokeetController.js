@@ -47,7 +47,7 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     		$scope.model.hakukohde.opetusKielet = [];
     	}
     	    	
-    	//console.log("KIELET = ", ret);
+    	console.log("KIELET = ", ret);
     	$scope.kokeetModel.langs = ret;
     	for (var i in ret) {
     		var lc = ret[i].koodiUri;
@@ -74,6 +74,8 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
 			}
 	}
 	
+	
+	
 	$scope.isValidAjankohta = function(ajankohta) {
     	return notEmpty([ajankohta.alkaa, ajankohta.loppuu, ajankohta.osoite.osoiterivi1, ajankohta.osoite.postinumero]);
 	}
@@ -81,19 +83,29 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     // kutsutaan parentista
     $scope.status.validateValintakokeet = function() {
     	for (var i in $scope.model.hakukohde.valintakokeet) {
-    		var li = $scope.model.hakukohde.valintakokeet[i];
-    		if (!notEmpty(li.valintakoeNimi)) {
-    			return false;
-    		}
-    		if (!notEmpty($("<div>"+li.valintakokeenKuvaus.teksti+"</div>").text().trim())) {
-    			return false;
-    		}
+          var li = $scope.model.hakukohde.valintakokeet[i];
+    	  var nimiEmpty = !notEmpty(li.valintakoeNimi);
+    	  var kuvausEmpty = !notEmpty($("<div>"+li.valintakokeenKuvaus.teksti+"</div>").text().trim());
+    	  var ajankohtaEmpty = li.valintakoeAjankohtas.length==0;
+    	  
+    	  if(nimiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
+    	    continue;
+    	    //uusi tyhjä
+    	  }
+    	  
+          if (nimiEmpty) {
+            return false;
+          }
+    	  if (kuvausEmpty) {
+            return false;
+          }
     		for (var j in li.valintakoeAjankohtas) {
     			if (!$scope.isValidAjankohta(li.valintakoeAjankohtas[j])) {
     				return false;
     			}
     		}
     	}
+    	
     	return true;
     }
 
@@ -121,8 +133,8 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     			title: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta.title"),
     			description: LocalisationService.t("tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta",
     					[valintakoe.valintakoeNimi,
-    					 $filter("date")(ajankohta.alkaa, "d.M.yyyy H:mm") || "?",
-    					 $filter("date")(ajankohta.loppuu, "d.M.yyyy H:mm") || "?"])
+    					 $filter("date")(ajankohta.alkaa, "d.M.yyyy H:mm") || "?",
+    					 $filter("date")(ajankohta.loppuu, "d.M.yyyy H:mm") || "?"])
     		}).result.then(function(ret){
     			if (ret) {
     				$scope.deleteAjankohta(valintakoe, ajankohta, true);
@@ -152,14 +164,13 @@ app.controller('ValintakokeetController', function($scope,$q, $filter, Localisat
     }
     
     $scope.addValintakoe = function(lc) {
-        $scope.status.dirtify();
-    	
     	var vk = {
         		hakukohdeOid:$scope.model.hakukohde.oid,
         		kieliUri:lc,
-        		valintakoeNimi:"",
-        		valintakokeenKuvaus: {uri: lc, teksti: ""},
-        		valintakoeAjankohtas: []
+        		valintakoeNimi:undefined,
+        		valintakokeenKuvaus: {uri: lc, teksti: undefined},
+        		valintakoeAjankohtas: [],
+        		isNew:true
         	};
     	$scope.model.hakukohde.valintakokeet.push(vk);
     	return vk;
