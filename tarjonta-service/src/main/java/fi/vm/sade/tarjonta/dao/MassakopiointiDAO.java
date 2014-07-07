@@ -55,4 +55,63 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
 
     public Object convertToEntity(final String json, final Class clazz) throws IOException;
 
+    public List<Massakopiointi> search(final SearchCriteria search);
+
+    public class SearchCriteria {
+
+        private String oid;
+        private String hakuOid;
+        private Massakopiointi.Tyyppi tyyppi;
+
+        public SearchCriteria() {
+        }
+
+        public SearchCriteria(String hakuOid, String oid, Massakopiointi.Tyyppi tyyppi) {
+            this.oid = oid;
+            this.hakuOid = hakuOid;
+            this.tyyppi = tyyppi;
+        }
+
+        /**
+         * @return the oid
+         */
+        public String getOid() {
+            return oid;
+        }
+
+        /**
+         * @param oid the oid to set
+         */
+        public void setOid(String oid) {
+            this.oid = oid;
+        }
+
+        /**
+         * @return the hakuOid
+         */
+        public String getHakuOid() {
+            return hakuOid;
+        }
+
+        /**
+         * @param hakuOid the hakuOid to set
+         */
+        public void setHakuOid(String hakuOid) {
+            this.hakuOid = hakuOid;
+        }
+
+        /**
+         * @return the tyyppi
+         */
+        public Massakopiointi.Tyyppi getTyyppi() {
+            return tyyppi;
+        }
+
+        /**
+         * @param tyyppi the tyyppi to set
+         */
+        public void setTyyppi(Massakopiointi.Tyyppi tyyppi) {
+            this.tyyppi = tyyppi;
+        }
+    }
 }

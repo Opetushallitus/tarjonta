@@ -21,10 +21,12 @@ import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.expr.BooleanExpression;
 import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
+import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
@@ -68,6 +70,28 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
+    public List<Massakopiointi> search(final SearchCriteria search) {
+        QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
+
+        BooleanExpression expression = null;
+        if (search.getHakuOid() != null) {
+            expression = QuerydslUtils.and(expression, kopiointi.hakuOid.eq(search.getHakuOid()));
+        }
+
+        if (search.getOid() != null) {
+            expression = QuerydslUtils.and(expression, kopiointi.oid.eq(search.getOid()));
+        }
+
+        if (search.getTyyppi() != null) {
+            expression = QuerydslUtils.and(expression, kopiointi.type.eq(search.getTyyppi()));
+        }
+
+        Preconditions.checkNotNull(expression, "An invalid search criteria, no paramters.");
+
+        return from(kopiointi).where(expression).list(kopiointi);
+    }
+
+    @Override
     public Object find(final String hakuOid, final String oid, Class clazz) {
         Object object = null;
         Massakopiointi result = find(hakuOid, oid);
@@ -87,19 +111,23 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
 
     @Override
     public Massakopiointi find(final String hakuOid, final String oid) {
+        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
+        Preconditions.checkNotNull(oid, "Generic OID cannot be null.");
+
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
         return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.oid.eq(oid))).uniqueResult(kopiointi);
-
     }
 
     @Override
     public List<Massakopiointi> findByHakuOid(final String hakuOid) {
+        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
         return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid)).list(kopiointi);
     }
 
     @Override
     public List<Massakopiointi> findByHakuOidAndOids(final String hakuOid, final List<String> oids) {
+        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
         return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.oid.in(oids))).list(kopiointi);
     }

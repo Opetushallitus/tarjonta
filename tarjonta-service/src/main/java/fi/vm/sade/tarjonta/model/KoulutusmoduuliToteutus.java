@@ -51,16 +51,14 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.StringUtils;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import static fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli.TILA_COLUMN_NAME;
-import static fi.vm.sade.tarjonta.model.Koulutusmoduuli.TABLE_NAME;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import javax.persistence.Enumerated;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -68,6 +66,7 @@ import javax.persistence.Enumerated;
  *
  */
 @Entity
+@JsonIgnoreProperties({"koulutusmoduuli"})
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 

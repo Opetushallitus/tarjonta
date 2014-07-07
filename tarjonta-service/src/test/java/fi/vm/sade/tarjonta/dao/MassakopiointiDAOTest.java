@@ -116,6 +116,27 @@ public class MassakopiointiDAOTest {
         assertEquals("findAll", 5, all.size());
 
         /*
+         * search by search criteria
+         */
+        List<Massakopiointi> search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, "asdads", Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        assertEquals("search 1/2 by 3 params", 0, search.size());
+
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        assertEquals("search 2/2 by 3 params", 2, search.size());
+
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, ANY_UNIQUE_OID_2, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        assertEquals("search 1/3 by 2 params", 1, search.size());
+
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        assertEquals("search 2/3 by 2 params", 5, search.size());
+
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY));
+        assertEquals("search 3/3 by 2 params", 0, search.size());
+
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_2, null, null));
+        assertEquals("search by 1 params", 3, search.size());
+
+        /*
          * find
          */
         Object nullResult = instance.find(HAKU_OID_2, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
@@ -183,12 +204,12 @@ public class MassakopiointiDAOTest {
         assertNotNull("KoulutusmoduuliToteutus - not nullable", json);
         assertTrue(json.length() > 0);
 
-//        try {
-//            komoto1 = (KoulutusmoduuliToteutus) instance.convertToEntity(json, KoulutusmoduuliToteutus.class);
-//        } catch (IOException ex) {
-//            LOG.error(json);
-//            fail("conversion error from json to entity : " + ex.getMessage());
-//        }
-//        assertEquals(ANY_UNIQUE_OID_1, komoto1.getOid());
+        try {
+            komoto1 = (KoulutusmoduuliToteutus) instance.convertToEntity(json, KoulutusmoduuliToteutus.class);
+        } catch (IOException ex) {
+            LOG.error(json);
+            fail("conversion error from json to entity : " + ex.getMessage());
+        }
+        assertEquals(ANY_UNIQUE_OID_1, komoto1.getOid());
     }
 }
