@@ -344,7 +344,7 @@ public final class EntityUtils {
         }
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
-        to.setKielis(from.getKielet());
+        to.setMultipleKielisByList(from.getKielet());
         to.setTitteli(from.getTitteli());
         to.setHenkiloTyyppi(from.getHenkiloTyyppi());
     }
@@ -359,7 +359,7 @@ public final class EntityUtils {
         to.setTitteli(from.getTitteli());
         to.setHenkiloTyyppi(from.getHenkiloTyyppi());
 
-//        for (String kieliUri : from.getKielis()) {
+//        for (String kieliUri : from.getMultipleKielis()) {
 //            to.getKielet().add(kieliUri);
 //        }
     }

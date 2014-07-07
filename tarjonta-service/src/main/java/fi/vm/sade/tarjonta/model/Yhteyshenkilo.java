@@ -60,33 +60,33 @@ public class Yhteyshenkilo extends TarjontaBaseEntity {
 
     public Yhteyshenkilo(String henkioOid, String... kieli) {
         this.henkioOid = henkioOid;
-        setKielis(kieli);
+        setMultipleKielis(kieli);
     }
 
-    public final void setKielis(Collection<String> kielis) {
+    public final void setMultipleKielisByList(Collection<String> kielis) {
 
         if (kielis == null) {
-            this.kielis = null;
+            this.setKielis(null);
             return;
         }
 
         String[] kieliArray = new String[kielis.size()];
-        setKielis(kielis.toArray(kieliArray));
+        setMultipleKielis(kielis.toArray(kieliArray));
 
     }
 
-    public final void setKielis(String... kieli) {
+    public final void setMultipleKielis(String... kieli) {
 
         if (kieli == null || kieli.length == 0) {
-            kielis = null;
+            setKielis(null);
         }
 
-        kielis = StringUtils.join(formatKielis(kieli), KIELI_SEPARATOR);
+        setKielis(StringUtils.join(formatKielis(kieli), KIELI_SEPARATOR));
 
     }
 
-    public String[] getKielis() {
-        return StringUtils.split(kielis, KIELI_SEPARATOR);
+    public String[] getMultipleKielis() {
+        return StringUtils.split(getKielis(), KIELI_SEPARATOR);
     }
 
     public String getHenkioOid() {
@@ -179,5 +179,19 @@ public class Yhteyshenkilo extends TarjontaBaseEntity {
      */
     public void setHenkiloTyyppi(HenkiloTyyppi henkiloTyyppi) {
         this.henkiloTyyppi = henkiloTyyppi;
+    }
+
+    /**
+     * @return the kielis
+     */
+    public String getKielis() {
+        return kielis;
+    }
+
+    /**
+     * @param kielis the kielis to set
+     */
+    public void setKielis(String kielis) {
+        this.kielis = kielis;
     }
 }

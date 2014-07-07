@@ -191,8 +191,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setTyyppi(yhteyshenkilo.getHenkiloTyyppi() != null ? yhteyshenkilo.getHenkiloTyyppi().name() : null);
         t.setHenkiloOid(yhteyshenkilo.getHenkioOid());
 
-        if (yhteyshenkilo.getKielis() != null) {
-            for (String kieli : yhteyshenkilo.getKielis()) {
+        if (yhteyshenkilo.getMultipleKielis() != null) {
+            for (String kieli : yhteyshenkilo.getMultipleKielis()) {
                 t.getKielet().add(kieli);
             }
         }

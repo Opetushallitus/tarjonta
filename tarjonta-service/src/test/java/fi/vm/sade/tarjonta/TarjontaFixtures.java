@@ -76,7 +76,7 @@ public class TarjontaFixtures {
         h.setHenkioOid(oid);
         h.setEtunimis("Pekka");
         h.setSukunimi("Yhteyttaja");
-        h.setKielis("fi", "en");
+        h.setMultipleKielis("fi", "en");
         h.setPuhelin("+358 123 123 123");
         h.setSahkoposti("pekka.yhteyttaja@no.such.domain.fi");
 
@@ -239,7 +239,7 @@ public class TarjontaFixtures {
         Yhteyshenkilo h = new Yhteyshenkilo();
         h.setEtunimis("Irma");
         h.setHenkioOid(oid);
-        h.setKielis("sv", "en");
+        h.setMultipleKielis("sv", "en");
         h.setPuhelin("+358123123123");
         h.setSahkoposti("irma@oph.fi");
         h.setSukunimi("Birgerdahl");
