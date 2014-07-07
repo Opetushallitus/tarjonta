@@ -22,103 +22,90 @@
 
 var app = angular.module('app.hakukohde.ctrl', []);
 
-app.controller('HakukohdeRoutingController', ['$scope',
-    '$log',
-    '$routeParams',
-    '$route',
-    '$q',
-    '$modal',
-    '$location',
-    'Hakukohde' ,
-    'Koodisto',
-    'AuthService',
-    'HakuService',
-    'LocalisationService',
-    'OrganisaatioService',
-    'SharedStateService',
-    'TarjontaService',
-    'Kuvaus',
-    'CommonUtilService',
-    'PermissionService',
-    'dialogService',
-    function ($scope,
-                                        $log,
-                                        $routeParams,
-                                        $route,
-                                        $q,
-                                        $modal ,
-                                        $location,
-                                        Hakukohde,
-                                        Koodisto,
-                                        AuthService,
-                                        HakuService,
-                                        LocalisationService,
-                                        OrganisaatioService,
-                                        SharedStateService,
-                                        TarjontaService,
-                                        Kuvaus,
-                                        CommonUtilService,
-                                        PermissionService,
-                                        dialogService) {
+app.controller('HakukohdeRoutingController',
+    [
+        '$scope',
+        '$log',
+        '$routeParams',
+        '$route',
+        '$q',
+        '$modal',
+        '$location',
+        'Hakukohde',
+        'Koodisto',
+        'AuthService',
+        'HakuService',
+        'LocalisationService',
+        'OrganisaatioService',
+        'SharedStateService',
+        'TarjontaService',
+        'Kuvaus',
+        'CommonUtilService',
+        'PermissionService',
+        'dialogService',
+        function($scope, $log, $routeParams, $route, $q, $modal, $location,
+            Hakukohde, Koodisto, AuthService, HakuService, LocalisationService,
+            OrganisaatioService, SharedStateService, TarjontaService, Kuvaus,
+            CommonUtilService, PermissionService, dialogService) {
 
+          $log.info("HakukohdeRoutingController()", $routeParams);
+          $log.info("$route: ", $route);
+          $log.info("$route action: ", $route.current.$$route.action);
+          $log.info("SCOPE: ", $scope);
+          $log.info("CAN EDIT : ", $route.current.locals.canEdit);
+          $log.info("CAN CREATE : ", $route.current.locals.canCreate);
+          $log.info("HAKUKOHDEX RESULT : ",
+              $route.current.locals.hakukohdex.result);
 
-        $log.info("HakukohdeRoutingController()", $routeParams);
-        $log.info("$route: ", $route);
-        $log.info("$route action: ", $route.current.$$route.action);
-        $log.info("SCOPE: ", $scope);
-        $log.info("CAN EDIT : ", $route.current.locals.canEdit);
-        $log.info("CAN CREATE : ", $route.current.locals.canCreate);
-        $log.info("HAKUKOHDEX RESULT : ", $route.current.locals.hakukohdex.result);
-
-        if ($route.current.locals.isCopy !== undefined) {
+          if ($route.current.locals.isCopy !== undefined) {
             $scope.isCopy = $route.current.locals.isCopy;
-        } else {
+          } else {
             $scope.isCopy = false;
-        }
+          }
 
-        $scope.formControls = {}; // controls-layouttia varten
+          $scope.formControls = {}; // controls-layouttia varten
 
-        $scope.canCreate = $route.current.locals.canCreate;
-        $scope.canEdit = $route.current.locals.canEdit;
+          $scope.canCreate = $route.current.locals.canCreate;
+          $scope.canEdit = $route.current.locals.canEdit;
 
-        if ($route.current.locals.hakukohdex.result === undefined) {
+          if ($route.current.locals.hakukohdex.result === undefined) {
             $scope.model = {
-                collapse: {
-                    model: true
-                },
-                hakukohdeTabsDisabled: true,
-                hakukohde: {
-                    valintaperusteKuvaukset: {},
-                    soraKuvaukset: {},
-                    kaytetaanJarjestelmanValintaPalvelua: false,
-                }
+              collapse : {
+                model : true
+              },
+              hakukohdeTabsDisabled : true,
+              hakukohde : {
+                valintaperusteKuvaukset : {},
+                soraKuvaukset : {},
+                kaytetaanJarjestelmanValintaPalvelua : false,
+              }
             }
 
             $scope.model.hakukohde = $route.current.locals.hakukohdex;
 
-        } else {
-            var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
+          } else {
+            var hakukohdeResource = new Hakukohde(
+                $route.current.locals.hakukohdex.result);
 
             if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
-                hakukohdeResource.valintaperusteKuvaukset = {};
+              hakukohdeResource.valintaperusteKuvaukset = {};
             }
 
             if (hakukohdeResource.soraKuvaukset === undefined) {
-                hakukohdeResource.soraKuvaukset = {};
+              hakukohdeResource.soraKuvaukset = {};
             }
 
             $scope.model = {
-                collapse: {
-                    model: true
-                },
-                hakukohdeTabsDisabled: false,
-                hakukohde: hakukohdeResource
+              collapse : {
+                model : true
+              },
+              hakukohdeTabsDisabled : false,
+              hakukohde : hakukohdeResource
             }
 
-        }
+          }
 
-        $scope.hakukohdex = $route.current.locals.hakukohdex;
-        $log.info("  --> hakukohdex == ", $scope.hakukohdex);
+          $scope.hakukohdex = $route.current.locals.hakukohdex;
+          $log.info("  --> hakukohdex == ", $scope.hakukohdex);
 
-    }
-]);
+        } ]);
