@@ -674,6 +674,7 @@ public class ConverterV1 {
 
         }
 
+        hakukohdeRDTO.setOrganisaatioRyhmaOids(hakukohde.getOrganisaatioRyhmaOids());
         return hakukohdeRDTO;
     }
 

@@ -829,7 +829,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                             $log.debug("call server with data", requestData);
 
                             TarjontaService.hakukohdeRyhmaOperaatiot(
-                                    requestData,
+                                    requestData).then(
                                     function(res) {
                                         $log.info("RESULT OK", res);
                                         $scope.model.completed = true;

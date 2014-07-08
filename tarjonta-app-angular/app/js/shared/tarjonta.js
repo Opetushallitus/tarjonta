@@ -53,12 +53,55 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         };
     }
 
-    var dataFactory = {};
+  function getTilat() {
+      return window.CONFIG.env["tarjonta.tila"];
+  };
 
-    dataFactory.getTilat = function() {
-        return window.CONFIG.env["tarjonta.tila"];
+  /**
+   * Kutsuu "/hakukohde/ryhmat/operate" POST metodia parametreilla:
+   * <pre>
+   * [
+   *   {
+   *      hakukohdeOid: "1.2.3.4",
+   *      ryhmaOid: "5.6.7.8",
+   *      toiminto: "LISAA"
+   *   },
+   *   {
+   *      hakukohdeOid: "1.2.3.4",
+   *      ryhmaOid: "5.6.7.8",
+   *      toiminto: "POISTA"
+   *   },
+   *   ...
+   * ]
+   * </pre>
+   * 
+   * @param {type} params
+   * @returns promise
+   */
+  function hakukohdeRyhmaOperaatiot(params) {
+      $log.debug("hakukohdeRyhmaOperaatiot()");
+      var resource = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/ryhmat/operate", {}, {
+          post: {method: 'POST', withCredentials: true}            
+      });
+      return resource.post(params).$promise;
+  };
+
+  /**
+   * Poista ryhmä hakukohteelta
+   * 
+   */
+  function poistaHakukohderyhma(hakukohdeOid, ryhmaOid){
+    var data = [{ toiminto: "POISTA", hakukohdeOid: hakukohdeOid, ryhmaOid: ryhmaOid}];
+    return hakukohdeRyhmaOperaatiot(data);
+  }
+  
+    var dataFactory = {
+        getTilat:getTilat,
+        hakukohdeRyhmaOperaatiot:hakukohdeRyhmaOperaatiot,
+        poistaHakukohderyhma: poistaHakukohderyhma
     };
 
+    
     dataFactory.acceptsTransition = function(from, to) {
         var s = window.CONFIG.env["tarjonta.tila"][from];
         return s != null && s.transitions.indexOf("to") >= 0;
@@ -682,36 +725,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
     };
 
-    /**
-     * Kutsuu "/hakukohde/ryhmat/operate" POST metodia parametreilla:
-     * <pre>
-     * [
-     *   {
-     *      hakukohdeOid: "1.2.3.4",
-     *      ryhmaOid: "5.6.7.8",
-     *      toiminto: "LISAA"
-     *   },
-     *   {
-     *      hakukohdeOid: "1.2.3.4",
-     *      ryhmaOid: "5.6.7.8",
-     *      toiminto: "POISTA"
-     *   },
-     *   ...
-     * ]
-     * </pre>
-     * 
-     * @param {type} params
-     * @param {type} successcb
-     * @param {type} errorcb
-     * @returns {unresolved}
-     */
-    dataFactory.hakukohdeRyhmaOperaatiot = function(params, successcb, errorcb) {
-        $log.debug("hakukohdeRyhmaOperaatiot()");
-        var resource = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/ryhmat/operate", {}, {
-            post: {method: 'POST', withCredentials: true}            
-        });
-        return resource.post(params, successcb, errorcb);
-    };
+    
 
     return dataFactory;
 });
