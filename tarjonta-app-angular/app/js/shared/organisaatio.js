@@ -170,6 +170,10 @@ angular
             etsi : etsi,
 
             /**
+             * Suomentaa organisaation
+             */
+            localize: localize,
+            /**
              * Hakee organisaatiolle voimassaolevan localen mukaisen nimen.
              * 
              * @param oid
@@ -179,7 +183,8 @@ angular
               return orgLuku.get({
                 oid : oid
               }).$promise.then(function(result) {
-                return localize(result).nimi;
+                var nimi = localize(result).nimi;
+                return nimi;
               });
             },
 
@@ -205,13 +210,12 @@ angular
               return orgLuku.get({
                 oid : oid
               }).$promise.then(function(result) {
-                console.log("res:", result);
                 return localize(result);
               });
             },
 
             /**
-             * Palauttaa organisaatioryhmat. (organisaatioita)
+             * Palauttaa organisaatioryhmat promisen. (organisaatioita)
              */
             getRyhmat: getRyhmat
 

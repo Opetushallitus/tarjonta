@@ -60,7 +60,17 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
   $scope.model.valintakoeKielet = aggregateLangs($scope.model.hakukohde.valintakokeet);
   $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
+  
+  
+  $scope.model.ryhmat={};
 
+  for(var i=0;i<$scope.model.hakukohde.organisaatioRyhmaOids.length;i++) {
+    var oid = $scope.model.hakukohde.organisaatioRyhmaOids[i];
+    (function(oid){
+      OrganisaatioService.nimi(oid).then(function(nimi){$scope.model.ryhmat[oid]=nimi});
+    })(oid);
+  }
+  
   /*
    * ----------------------------> Helper functions <
    * ----------------------------
@@ -83,6 +93,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
   };
 
   var loadKielesSetFromHakukohde = function() {
+    
+    //wtf???
 
     var koodiPromises = [];
 
@@ -568,6 +580,11 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var navigationUri = "/hakukohde/" + $scope.model.hakukohde.oid + "/edit";
     $location.path(navigationUri);
   };
+  
+  $scope.removeRyhma = function(ryhmaOid){
+    TarjontaService.poistaHakukohderyhma($scope.model.hakukohde.oid, ryhmaOid).then();
+    delete $scope.model.ryhmat[ryhmaOid];
+  }
 
   $scope.goBack = function(event) {
     // window.history.back();
@@ -575,9 +592,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
   };
 
   $scope.doCopy = function(event) {
-
     $location.path('/hakukohde/' + $scope.model.hakukohde.oid + '/edit/copy');
-
   }
 
   $scope.doDelete = function() {

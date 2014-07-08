@@ -1,7 +1,6 @@
 <div data-ng-controller="HakukohdeParentController">
 
 <div data-ng-controller="HakukohdeReviewController">
-
   <controls-model
         model="formControls"
         dto="model.hakukohde">
@@ -206,6 +205,29 @@
 	                        <div class="align-right">
 	                            <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
 	                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+	                        </div>
+	                    </td>
+	                </tr>
+	            </table>
+	        </td>
+	    </tr>
+
+	    <tr class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
+	        <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
+	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaRyhmaModal()"><span tt="hakukohde.review.liita.ryhma"/> <span class="icon-plus-sign"></span></a>
+	    </tr>
+
+	    <tr ng-show="!model.collapse.ryhmat">
+	        <th></th>
+	        <td colspan="2">
+	            <table class="table">
+	                <tr data-ng-repeat="(oid,nimi) in model.ryhmat">
+	                    <td>
+	                        {{nimi}}
+	                    </td>
+	                    <td>
+	                        <div class="align-right">
+	                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeRyhma(oid)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
 	                        </div>
 	                    </td>
 	                </tr>
