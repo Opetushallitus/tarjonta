@@ -44,7 +44,7 @@ import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
  *
  * <pre>
  * GET    /v1/haku/              ?count=100 & startIndex=0      -- list of oids
- * GET    /v1/haku/multi              ?oid=oid1&oid=oid2&oid=oidN... -- json of hakus  
+ * GET    /v1/haku/multi              ?oid=oid1&oid=oid2&oid=oidN... -- json of hakus
  * GET    /v1/haku/oid                                          -- json of haku
  * GET    /v1/haku/oid/hakukohde ?count=100 & startIndex=0      -- list of oids
  * GET    /v1/haku/oid/state                                    -- state
@@ -63,7 +63,7 @@ public interface HakuV1Resource {
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t", notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
-    public ResultV1RDTO<List<String>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c")List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
+    public ResultV1RDTO<List<String>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c") List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -108,7 +108,6 @@ public interface HakuV1Resource {
     @ApiOperation(value = "Palautaa haun hakukohteeet", notes = "Palauttaa annetun haun oid:n perusteella haun hakukohteet", response = OidV1RDTO.class)
     public ResultV1RDTO<List<OidV1RDTO>> getHakukohdesForHaku(@PathParam("oid") String oid, @QueryParam("") GenericSearchParamsV1RDTO params);
 
-
     @GET
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -125,5 +124,17 @@ public interface HakuV1Resource {
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun tilan", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = Tilamuutokset.class)
-    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid")String oid, @QueryParam("state") TarjontaTila tila);
+    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+
+    @PUT
+    @Path("/{oid}/copy")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Hakuun liittyvän tiedon kopiointi seuraavalle kaudelle.", notes = "Kopioi massana hakuun liittyvät hakukohteet ja koulutukset seuraavalle kaudelle.", response = Tilamuutokset.class)
+    public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid);
+
+    @PUT
+    @Path("/{oid}/paste/{toOid}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "", notes = "", response = Tilamuutokset.class)
+    public ResultV1RDTO<String> pasteHaku(@PathParam("oid") String fromOid, @PathParam("toOid") String toOid);
 }

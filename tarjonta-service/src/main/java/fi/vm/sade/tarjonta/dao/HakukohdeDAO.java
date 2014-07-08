@@ -110,7 +110,7 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @param startIndex
      * @param lastModifiedBefore
      * @param lastModifiedSince
-     * @return
+     * @return hakukohde OIDs
      */
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 

@@ -29,6 +29,7 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
      * @param hakuOid
      * @param oldOid
      * @param newOid
+     * @param processId
      * @param type type of the entity
      * @param clazz class of the entity
      * @param entityToJson the entity instance
@@ -38,6 +39,7 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
             final String hakuOid,
             final String oldOid,
             final String newOid,
+            final String processId,
             final Massakopiointi.Tyyppi type,
             final Class clazz,
             final TarjontaBaseEntity entityToJson,
@@ -77,21 +79,25 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
 
     public List<Massakopiointi> search(final SearchCriteria search);
 
+    public long rowCount(final String hakuOid);
+
     public class SearchCriteria {
 
         private String oldOid;
         private String newOid;
         private String hakuOid;
         private Massakopiointi.Tyyppi tyyppi;
+        private String processId;
 
         public SearchCriteria() {
         }
 
-        public SearchCriteria(String hakuOid, String oldOid, String newOid, Massakopiointi.Tyyppi tyyppi) {
+        public SearchCriteria(String hakuOid, String oldOid, String newOid, Massakopiointi.Tyyppi tyyppi, String processId) {
             this.oldOid = oldOid;
             this.newOid = newOid;
             this.hakuOid = hakuOid;
             this.tyyppi = tyyppi;
+            this.processId = processId;
         }
 
         /**
@@ -149,5 +155,20 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
         public void setNewOid(String newOid) {
             this.newOid = newOid;
         }
+
+        /**
+         * @return the processId
+         */
+        public String getProcessId() {
+            return processId;
+        }
+
+        /**
+         * @param processId the processId to set
+         */
+        public void setProcessId(String processId) {
+            this.processId = processId;
+        }
     }
+
 }

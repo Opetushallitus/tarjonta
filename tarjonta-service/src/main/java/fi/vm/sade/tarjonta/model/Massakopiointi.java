@@ -40,31 +40,31 @@ public class Massakopiointi extends BaseEntity {
 
     private static long serialVersionUID = 1;
 
-    @Column(name = "haku_oid", length = 255)
+    @Column(name = "haku_oid", length = 255, nullable = false)
     private String hakuOid;
 
-    @Column(name = "old_oid", length = 255)
+    @Column(name = "old_oid", length = 255, nullable = false)
     private String oldOid;
 
-    @Column(name = "new_oid", length = 255)
+    @Column(name = "new_oid", length = 255, nullable = false)
     private String newOid;
 
-    @Column(name = "process_id", length = 255)
+    @Column(name = "process_id", length = 255, nullable = false)
     private String processId;
 
-    @Column(name = "content_type", length = 255)
+    @Column(name = "content_type", length = 255, nullable = false)
     @Enumerated(EnumType.STRING)
     private Tyyppi type;
 
     @Lob
-    @Column(name = "json", length = 100000)
+    @Column(name = "json", length = 100000, nullable = false)
     private String json;
 
     @Lob
     @Column(name = "meta", length = 100000)
     private String meta;
 
-    @Column(name = "tila", length = 32)
+    @Column(name = "tila", length = 32, nullable = false)
     @Enumerated(EnumType.STRING)
     private KopioinninTila tila = KopioinninTila.COPIED;
 
@@ -82,10 +82,11 @@ public class Massakopiointi extends BaseEntity {
     public Massakopiointi() {
     }
 
-    public Massakopiointi(String hakuOid, String oldOid, String newOid, Tyyppi type, String json, String meta) {
+    public Massakopiointi(String hakuOid, String oldOid, String newOid, String processId, Tyyppi type, String json, String meta) {
         this.hakuOid = hakuOid;
         this.oldOid = oldOid;
         this.newOid = newOid;
+        this.processId = processId;
         this.json = json;
         this.meta = meta;
         this.type = type;

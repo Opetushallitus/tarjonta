@@ -16,7 +16,6 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
 import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -28,11 +27,8 @@ import org.springframework.stereotype.Repository;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.model.TarjontaBaseEntity;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -101,6 +97,10 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
             expression = QuerydslUtils.and(expression, kopiointi.type.eq(search.getTyyppi()));
         }
 
+        if (search.getProcessId() != null) {
+            expression = QuerydslUtils.and(expression, kopiointi.processId.eq(search.getProcessId()));
+        }
+
         Preconditions.checkNotNull(expression, "An invalid search criteria, no parameters defined.");
 
         return from(kopiointi).where(expression).list(kopiointi);
@@ -163,6 +163,14 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
+    public long rowCount(final String hakuOid) {
+        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
+
+        QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
+        return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid)).singleResult(kopiointi.id.count());
+    }
+
+    @Override
     public List<Massakopiointi> findByHakuOidAndOids(final String hakuOid, final List<String> oids) {
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
 
@@ -171,19 +179,27 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
-    public void saveEntityAsJson(final String hakuOid, final String oldOid, String newOid, final Massakopiointi.Tyyppi type, final Class clazz, final TarjontaBaseEntity entityToJson, final MetaObject meta) {
+    public void saveEntityAsJson(final String hakuOid, final String oldOid, String newOid, String processId, final Massakopiointi.Tyyppi type, final Class clazz, final TarjontaBaseEntity entityToJson, final MetaObject meta) {
         if (meta == null) {
-            saveFullEntity(hakuOid, oldOid, newOid, type, clazz, entityToJson, null);
+            saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, null);
         } else {
             try {
-                saveFullEntity(hakuOid, oldOid, newOid, type, clazz, entityToJson, convertAnyObjectToJson(meta));
+                saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, convertAnyObjectToJson(meta));
             } catch (IOException e) {
                 LOG.error("Convert meta data object to json failed '{}'", meta);
             }
         }
     }
 
-    private void saveFullEntity(final String hakuOid, final String oldOid, final String newOid, final Massakopiointi.Tyyppi type, final Class clazz, final TarjontaBaseEntity entityToJson, final String meta) {
+    private void saveFullEntity(
+            final String hakuOid,
+            final String oldOid,
+            final String newOid,
+            final String processId,
+            final Massakopiointi.Tyyppi type,
+            final Class clazz,
+            final TarjontaBaseEntity entityToJson,
+            final String meta) {
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
         Preconditions.checkNotNull(oldOid, "Original OID cannot be null.");
         Preconditions.checkNotNull(newOid, "New OID cannot be null.");
@@ -191,21 +207,8 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
         Preconditions.checkNotNull(entityToJson, "Entity instance cannot be null.");
 
-        //clear entity id
-        entityToJson.setId(null);
-
-        //clear oids and set object status to copied
-        if (entityToJson instanceof Hakukohde) {
-            Hakukohde hk = (Hakukohde) entityToJson;
-            hk.setTila(TarjontaTila.KOPIOITU);
-            hk.setKoulutusmoduuliToteutuses(Sets.<KoulutusmoduuliToteutus>newHashSet());
-        } else if (entityToJson instanceof KoulutusmoduuliToteutus) {
-            KoulutusmoduuliToteutus kt = (KoulutusmoduuliToteutus) entityToJson;
-            kt.setTila(TarjontaTila.KOPIOITU);
-        }
-
         try {
-            Massakopiointi m = new Massakopiointi(hakuOid, oldOid, newOid, type, convertToJson(entityToJson), meta);
+            Massakopiointi m = new Massakopiointi(hakuOid, oldOid, newOid, processId, type, convertToJson(entityToJson), meta);
             m.setKopioinninTila(Massakopiointi.KopioinninTila.READY_FOR_COPY);
             insert(m);
         } catch (IOException e) {

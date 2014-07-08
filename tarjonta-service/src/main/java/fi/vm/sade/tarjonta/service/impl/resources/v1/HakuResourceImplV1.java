@@ -36,7 +36,6 @@ import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
@@ -45,22 +44,24 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-import java.util.Date;
 
 /**
  * REST API V1 implementation for Haku.
@@ -95,10 +96,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private PublicationDataService publication;
 
     @Autowired
-    ContextDataService contextDataService;
+    private ContextDataService contextDataService;
 
     @Autowired
-    MassakopiointiDAO massakopiointiDAO;
+    ProcessResourceV1 processResource;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -619,13 +620,21 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     /*
-     * Massakopioinnin metodit
+     * Massakopioinnin metodi, tallentaa kopioitavan datan json-formaatissa valitauluun.
      */
-    public ResultV1RDTO<String> copyHaku(String fromOid, String toOid) {
+    @Override
+    public ResultV1RDTO<String> copyHaku(String fromOid) {
+        LOG.info("copyHaku");
+        ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
+        processV1RDTO.setProcess("massCopyProcess");
+        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromOid);
+
+        processResource.start(processV1RDTO);
+        
         return new ResultV1RDTO<String>("process_id");
     }
 
-    public ResultV1RDTO<String> pasteHaku(String fromOid) {
+    public ResultV1RDTO<String> pasteHaku(String fromOid, String toOid) {
         return new ResultV1RDTO<String>("process_id");
     }
 
