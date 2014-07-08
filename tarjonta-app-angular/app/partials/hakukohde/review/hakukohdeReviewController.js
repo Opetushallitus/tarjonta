@@ -31,10 +31,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
   // retrieved, use FI as default
   $scope.model.userLang = AuthService.getLanguage();
 
-  if ($scope.model.userLang === undefined) {
-    $scope.model.userLang = "FI";
-  }
-
   // form controls
   $scope.formControls = {};
 
