@@ -34,19 +34,19 @@ public class MetaObject implements Serializable {
     }
 
     public void addKomotoOid(String oid) {
-        if (komotoOids == null) {
-            komotoOids = Sets.<String>newHashSet();
+        if (getKomotoOids() == null) {
+            setKomotoOids(Sets.<String>newHashSet());
         }
 
-        komotoOids.add(oid);
+        getKomotoOids().add(oid);
     }
 
     public void addHakukohdeOid(String oid) {
-        if (hakukohdeOids == null) {
-            hakukohdeOids = Sets.<String>newHashSet();
+        if (getHakukohdeOids() == null) {
+            setHakukohdeOids(Sets.<String>newHashSet());
         }
 
-        hakukohdeOids.add(oid);
+        getHakukohdeOids().add(oid);
     }
 
     /**
@@ -66,5 +66,33 @@ public class MetaObject implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    /**
+     * @return the hakukohdeOids
+     */
+    public Set<String> getHakukohdeOids() {
+        return hakukohdeOids;
+    }
+
+    /**
+     * @param hakukohdeOids the hakukohdeOids to set
+     */
+    public void setHakukohdeOids(Set<String> hakukohdeOids) {
+        this.hakukohdeOids = hakukohdeOids;
+    }
+
+    /**
+     * @return the komotoOids
+     */
+    public Set<String> getKomotoOids() {
+        return komotoOids;
+    }
+
+    /**
+     * @param komotoOids the komotoOids to set
+     */
+    public void setKomotoOids(Set<String> komotoOids) {
+        this.komotoOids = komotoOids;
     }
 }

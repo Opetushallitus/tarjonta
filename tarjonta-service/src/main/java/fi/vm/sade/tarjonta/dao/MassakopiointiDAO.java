@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.dao;
 
+import com.mysema.commons.lang.Pair;
 import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
@@ -16,9 +17,9 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
 
     public List<Massakopiointi> findByHakuOid(String hakuOid);
 
-    public Object find(String hakuOid, String oid, Class clazz);
+    public Pair<Object, MetaObject> find(final String hakuOid, final String oldOid, Class clazz);
 
-    public Massakopiointi find(String hakuOid, String oid);
+    public Massakopiointi find(String hakuOid, String oldOid);
 
     public List<Massakopiointi> findByHakuOidAndOids(final String hakuOid, final List<String> oids);
 
@@ -26,27 +27,35 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
      * Convert given entity instance to json format and save it to database.
      *
      * @param hakuOid
-     * @param oid
+     * @param oldOid
+     * @param newOid
      * @param type type of the entity
      * @param clazz class of the entity
      * @param entityToJson the entity instance
      * @param meta custom data object
      */
-    public void saveEntityAsJson(String hakuOid, String oid, Massakopiointi.Tyyppi type, Class clazz, TarjontaBaseEntity entityToJson, MetaObject meta);
+    public void saveEntityAsJson(
+            final String hakuOid,
+            final String oldOid,
+            final String newOid,
+            final Massakopiointi.Tyyppi type,
+            final Class clazz,
+            final TarjontaBaseEntity entityToJson,
+            final MetaObject meta);
 
     /**
      * Update object status.
      *
      * @param hakuOid
-     * @param oid
+     * @param oldOid
      * @param toTila
      * @param updated
      * @return count of updated items
      */
-    public long updateTila(String hakuOid, String oid, Massakopiointi.KopioinninTila toTila, Date updated);
+    public long updateTila(String hakuOid, String oldOid, Massakopiointi.KopioinninTila toTila, Date updated);
 
     /**
-     * Delete all by haku oid;
+     * Delete all by haku oldOid;
      *
      * @param hakuOid
      * @return count of deleted items
@@ -54,7 +63,7 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
     public long deleteAllByHakuOid(final String hakuOid);
 
     /**
-     * Delete only objects by haku oid and tila;
+     * Delete only objects by haku oldOid and tila;
      *
      * @param hakuOid
      * @param tila
@@ -70,31 +79,33 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
 
     public class SearchCriteria {
 
-        private String oid;
+        private String oldOid;
+        private String newOid;
         private String hakuOid;
         private Massakopiointi.Tyyppi tyyppi;
 
         public SearchCriteria() {
         }
 
-        public SearchCriteria(String hakuOid, String oid, Massakopiointi.Tyyppi tyyppi) {
-            this.oid = oid;
+        public SearchCriteria(String hakuOid, String oldOid, String newOid, Massakopiointi.Tyyppi tyyppi) {
+            this.oldOid = oldOid;
+            this.newOid = newOid;
             this.hakuOid = hakuOid;
             this.tyyppi = tyyppi;
         }
 
         /**
-         * @return the oid
+         * @return the oldOid
          */
-        public String getOid() {
-            return oid;
+        public String getOldOid() {
+            return oldOid;
         }
 
         /**
-         * @param oid the oid to set
+         * @param oldOid the oldOid to set
          */
-        public void setOid(String oid) {
-            this.oid = oid;
+        public void setOldOid(String oldOid) {
+            this.oldOid = oldOid;
         }
 
         /**
@@ -123,6 +134,20 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
          */
         public void setTyyppi(Massakopiointi.Tyyppi tyyppi) {
             this.tyyppi = tyyppi;
+        }
+
+        /**
+         * @return the newOid
+         */
+        public String getNewOid() {
+            return newOid;
+        }
+
+        /**
+         * @param newOid the newOid to set
+         */
+        public void setNewOid(String newOid) {
+            this.newOid = newOid;
         }
     }
 }

@@ -16,6 +16,7 @@
 package fi.vm.sade.tarjonta.dao;
 
 import com.google.common.collect.Lists;
+import com.mysema.commons.lang.Pair;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
@@ -68,8 +69,10 @@ public class MassakopiointiDAOTest {
     private static final String KOULUTUS_URI4 = "koulutus_uri_4";
     private static final String KOULUTUS_URI5 = "koulutus_uri_5";
 
+    private static final String NEW_OID = "1213424234235";
+
     private KoulutusmoduuliToteutus toteutus1, toteutus2, toteutus3, toteutus4, toteutus5;
-    private final MetaObject metaJson = new MetaObject();
+    private MetaObject metaJson = null;
 
     @Autowired
     private MassakopiointiDAO instance;
@@ -90,6 +93,12 @@ public class MassakopiointiDAOTest {
 
     @Before
     public void setUp() {
+
+        metaJson = new MetaObject();
+        metaJson.addHakukohdeOid("oid1");
+        metaJson.addKomotoOid("oid2");
+        metaJson.setKomoOid("oid3");
+
         toteutus1 = createKomoto(ANY_UNIQUE_OID_1, KOULUTUS_URI1);
         toteutus2 = createKomoto(ANY_UNIQUE_OID_2, KOULUTUS_URI2);
         toteutus3 = createKomoto(ANY_UNIQUE_OID_3, KOULUTUS_URI3);
@@ -102,12 +111,12 @@ public class MassakopiointiDAOTest {
      */
     @Test
     public void testAllOperations() {
-        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_1, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus1, metaJson);
-        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus2, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_1, NEW_OID, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus1, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_2, NEW_OID, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus2, metaJson);
 
-        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_3, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus3, metaJson);
-        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_4, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus4, metaJson);
-        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_5, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus5, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_3, NEW_OID, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus3, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_4, NEW_OID, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus4, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_5, NEW_OID, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus5, metaJson);
 
         /*
          * findAll
@@ -118,35 +127,43 @@ public class MassakopiointiDAOTest {
         /*
          * search by search criteria
          */
-        List<Massakopiointi> search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, "asdads", Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        List<Massakopiointi> search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, "asdads", null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
         assertEquals("search 1/2 by 3 params", 0, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
         assertEquals("search 2/2 by 3 params", 2, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, ANY_UNIQUE_OID_2, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, ANY_UNIQUE_OID_2, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
         assertEquals("search 1/3 by 2 params", 1, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY));
         assertEquals("search 2/3 by 2 params", 5, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY));
         assertEquals("search 3/3 by 2 params", 0, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_2, null, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_2, null, null, null));
         assertEquals("search by 1 params", 3, search.size());
+
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, NEW_OID, null));
+        assertEquals("search new oid", 5, search.size());
 
         /*
          * find
          */
         Object nullResult = instance.find(HAKU_OID_2, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
         assertNull("findByOid -  required null", nullResult);
+        Pair<Object, MetaObject> find = instance.find(HAKU_OID_1, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
+        KoulutusmoduuliToteutus kt1 = (KoulutusmoduuliToteutus) find.getFirst();
 
-        KoulutusmoduuliToteutus kt1 = (KoulutusmoduuliToteutus) instance.find(HAKU_OID_1, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
         assertNotNull("findByOid - result KoulutusmoduuliToteutus?", kt1);
-        assertEquals(KOULUTUS_URI1, kt1.getKoulutusUri());
-        assertEquals(DATE, kt1.getKoulutuksenAlkamisPvm());
-        assertEquals(TarjontaTila.KOPIOITU, kt1.getTila());
+        assertEquals("findByOid koulutus uri", KOULUTUS_URI1, kt1.getKoulutusUri());
+        assertEquals("findByOid date", DATE, kt1.getKoulutuksenAlkamisPvm());
+        assertEquals("findByOid tila", TarjontaTila.KOPIOITU, kt1.getTila());
+        assertEquals("findByOid meta komo", "oid3", find.getSecond().getKomoOid());
+        assertEquals("findByOid meta hakukohde", "oid1", find.getSecond().getHakukohdeOids().iterator().next());
+        assertEquals("findByOid meta komoto", "oid2", find.getSecond().getKomotoOids().iterator().next());
+
 
         /*
          * findByHakuOid

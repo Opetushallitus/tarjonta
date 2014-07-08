@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(
         name = "massakopiointi",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"haku_oid", "oid"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"haku_oid", "old_oid"})
 )
 public class Massakopiointi extends BaseEntity {
 
@@ -40,35 +40,17 @@ public class Massakopiointi extends BaseEntity {
 
     private static long serialVersionUID = 1;
 
-    /**
-     * @return the type
-     */
-    public Tyyppi getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(Tyyppi type) {
-        this.type = type;
-    }
-
-    public enum KopioinninTila {
-
-        READY_FOR_COPY, PROSESSING, COPIED, ERROR
-    };
-
-    public enum Tyyppi {
-
-        HAKUKOHDE_ENTITY, KOMOTO_ENTITY
-    };
-
     @Column(name = "haku_oid", length = 255)
     private String hakuOid;
 
-    @Column(name = "oid", length = 255)
-    private String oid;
+    @Column(name = "old_oid", length = 255)
+    private String oldOid;
+
+    @Column(name = "new_oid", length = 255)
+    private String newOid;
+
+    @Column(name = "process_id", length = 255)
+    private String processId;
 
     @Column(name = "content_type", length = 255)
     @Enumerated(EnumType.STRING)
@@ -100,9 +82,10 @@ public class Massakopiointi extends BaseEntity {
     public Massakopiointi() {
     }
 
-    public Massakopiointi(String hakuOid, String oid, Tyyppi type, String json, String meta) {
+    public Massakopiointi(String hakuOid, String oldOid, String newOid, Tyyppi type, String json, String meta) {
         this.hakuOid = hakuOid;
-        this.oid = oid;
+        this.oldOid = oldOid;
+        this.newOid = newOid;
         this.json = json;
         this.meta = meta;
         this.type = type;
@@ -149,20 +132,6 @@ public class Massakopiointi extends BaseEntity {
      */
     public void setHakuOid(String hakuOid) {
         this.hakuOid = hakuOid;
-    }
-
-    /**
-     * @return the oid
-     */
-    public String getOid() {
-        return oid;
-    }
-
-    /**
-     * @param oid the oid to set
-     */
-    public void setOid(String oid) {
-        this.oid = oid;
     }
 
     /**
@@ -234,5 +203,71 @@ public class Massakopiointi extends BaseEntity {
     public void setCreated(Date created) {
         this.created = created;
     }
+
+    /**
+     * @return the type
+     */
+    public Tyyppi getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(Tyyppi type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the oldOid
+     */
+    public String getOldOid() {
+        return oldOid;
+    }
+
+    /**
+     * @param oldOid the oldOid to set
+     */
+    public void setOldOid(String oldOid) {
+        this.oldOid = oldOid;
+    }
+
+    /**
+     * @return the newOid
+     */
+    public String getNewOid() {
+        return newOid;
+    }
+
+    /**
+     * @param newOid the newOid to set
+     */
+    public void setNewOid(String newOid) {
+        this.newOid = newOid;
+    }
+
+    /**
+     * @return the processId
+     */
+    public String getProcessId() {
+        return processId;
+    }
+
+    /**
+     * @param processId the processId to set
+     */
+    public void setProcessId(String processId) {
+        this.processId = processId;
+    }
+
+    public enum KopioinninTila {
+
+        READY_FOR_COPY, PROSESSING, COPIED, ERROR
+    };
+
+    public enum Tyyppi {
+
+        HAKUKOHDE_ENTITY, KOMOTO_ENTITY
+    };
 
 }

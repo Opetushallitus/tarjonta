@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
@@ -89,12 +90,15 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Autowired
     private KoodistoValidator koodistoValidator;
-    
+
     @Autowired(required = true)
     private PublicationDataService publication;
-    
+
     @Autowired
     ContextDataService contextDataService;
+
+    @Autowired
+    MassakopiointiDAO massakopiointiDAO;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -151,11 +155,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             params = new GenericSearchParamsV1RDTO();
         }
 
-
         List<String> oidList = hakuDAO.findOIDByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
         ResultV1RDTO<List<String>> result = new ResultV1RDTO<List<String>>(oidList);
         result.setParams(params);
-
 
         LOG.debug(" --> result = {}", result);
 
@@ -163,7 +165,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     public ResultV1RDTO<List<HakuV1RDTO>> multiGet(List<String> oids) {
-        if(oids.size()==0) {
+        if (oids.size() == 0) {
             return new ResultV1RDTO<List<HakuV1RDTO>>(Collections.EMPTY_LIST, ResultStatus.OK);
         }
         List<Haku> hakus = hakuDAO.findByOids(oids);
@@ -186,7 +188,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
 
         List<Haku> hakus = hakuDAO.findAll();
-
 
         LOG.debug("FOUND  : {} hakus", hakus.size());
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
@@ -234,7 +235,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<HakuV1RDTO> createHaku(HakuV1RDTO haku) {
         LOG.info("createHaku() - {}", haku);
-        if(haku.getOid()!=null) {
+        if (haku.getOid() != null) {
             ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
             createSystemErrorFromException(new RuntimeException("cannot create with predefeined oid"), result);
             return result;
@@ -253,7 +254,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         updateRightsInformation(result, hakuDto);
 
         // result.setResult(haku);
-
         try {
             boolean isNew = isEmpty(hakuDto.getOid());
 
@@ -262,30 +262,28 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             if (isNew) {
                 // Generate new OID for haku to be created
                 permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
-                
 
                 hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
                 LOG.info("updateHakue() - NEW haku! - oid ==> {}", hakuDto.getOid());
             } else {
                 LOG.info("updateHaku() - OLD haku - find by oid");
-                
+
                 final String oid = hakuDto.getOid();
 
                 // Check haku exists
                 hakuToUpdate = hakuDAO.findByOid(oid);
-                
+
                 final TarjontaTila toTila = TarjontaTila.valueOf(hakuDto.getTila());
 
-                
                 //tilan muutos/testaus tilapalvelun kautta
                 final Tila tila = new Tila(Tyyppi.HAKU, toTila, oid);
-                if(!publication.isValidStatusChange(tila)){
+                if (!publication.isValidStatusChange(tila)) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.tilamuutos.not.allowed", hakuDto.getOid()));
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
                     return result;
                 }
                 publication.updatePublicationStatus(Lists.newArrayList(tila));
-                
+
                 if (hakuToUpdate == null) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
@@ -305,7 +303,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             LOG.info("updateHaku() - convert");
 
             hakuToUpdate = converterV1.convertHakuV1DRDTOToHaku(hakuDto, hakuToUpdate);
-            
+
             if (isNew) {
                 LOG.info("updateHaku() - insert");
                 hakuDAO.insert(hakuToUpdate);
@@ -335,20 +333,19 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     public ResultV1RDTO<Boolean> deleteHaku(final String oid) {
         LOG.info("deleteHaku() oid={}", oid);
 
-
         final ResultV1RDTO<Boolean> result = new ResultV1RDTO<Boolean>();
         updateRightsInformation(result, null);
 
         final Haku hakuToRemove = hakuDAO.findByOid(oid);
 
         permissionChecker.checkRemoveHakuWithOrgs(hakuToRemove.getTarjoajaOids());
-        
+
         if (hakuToRemove != null) {
             if (hakuToRemove.getHakukohdes().size() > 0) {
 
                 //check existing ones are "deleted"
-                for(Hakukohde hk: hakuToRemove.getHakukohdes()) {
-                    if(hk.getTila()!=TarjontaTila.POISTETTU) {
+                for (Hakukohde hk : hakuToRemove.getHakukohdes()) {
+                    if (hk.getTila() != TarjontaTila.POISTETTU) {
                         // Ei voida poistaa jos poistamattomia hakukohteita!
                         result.setResult(false);
                         result.setStatus(ResultStatus.ERROR);
@@ -418,14 +415,14 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         final Haku haku = hakuDAO.findByOid(oid);
         permissionChecker.checkUpdateHaku(haku.getTarjoajaOids());
-        
+
         Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
         Tilamuutokset tm = null;
         try {
             tm = publication.updatePublicationStatus(Lists.newArrayList(tilamuutos));
         } catch (IllegalArgumentException iae) {
             ResultV1RDTO<Tilamuutokset> r = new ResultV1RDTO<Tilamuutokset>();
-            r.addError(ErrorV1RDTO.createValidationError(null,  iae.getMessage()));
+            r.addError(ErrorV1RDTO.createValidationError(null, iae.getMessage()));
             return r;
         }
 
@@ -433,7 +430,8 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     /**
-     * Create AND log "system.error" object. Creates an ID for this exception which can be found in system logs for debugging.
+     * Create AND log "system.error" object. Creates an ID for this exception
+     * which can be found in system logs for debugging.
      *
      * @param ex
      * @param result
@@ -445,8 +443,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         LOG.error("Haku - operation failed! ERROR_ID=" + errorId, ex);
     }
-
-
 
     /**
      * Simple validations for Haku.
@@ -482,9 +478,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if (haku.isJarjestelmanHakulomake()) {
             if (haku.getMaxHakukohdes() <= 0) {
                 result.addError(ErrorV1RDTO.createValidationError("maxHakukohdes", "haku.validation.maxHakukohdes.invalid"));
-            }            
+            }
         }
-        
+
         // Own hakulomake url? Verify it.
         if (!isEmpty(haku.getHakulomakeUri())) {
             try {
@@ -493,7 +489,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 result.addError(ErrorV1RDTO.createValidationError("hakulomakeUri", "haku.validation.hakulomakeUri.invalid"));
             }
         }
-        
+
         // Must have at least one hakuaika
         if (haku.getHakuaikas() == null || haku.getHakuaikas().isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError("hakuaikas", "haku.validation.hakuaikas.empty"));
@@ -522,12 +518,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         // TODO haku.getHakukausiVuosi() - verrataanko hakukausi / vuosi arvoihin?
         // TODO haku.getKoulutuksenAlkamisVuosi() - verrataanko hakukausi / vuosi arvoihin?
-
         // Sijoittelu + system application form -> priority = true
         if (haku.isSijoittelu() && haku.isJarjestelmanHakulomake()) {
             haku.setUsePriority(true);
-        }        
-        
+        }
+
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 
@@ -538,7 +533,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         return !result.hasErrors();
     }
-
 
     /**
      * @param s
@@ -566,7 +560,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return result;
     }
 
-
     /**
      * Note, if Haku is "jatkuva" then it should not have any
      */
@@ -584,7 +577,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 //        LOG.info("isJatkuvaHaku(), uri = '{}'", haku.getHakutapaUri());
 //        LOG.info("        property uri = '{}'", _jatkuvaHakutapaUri);
 //        LOG.info("        => result = {}", result);
-
         return result;
     }
 
@@ -624,6 +616,21 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             TarjontaTila tila) {
         Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
         return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
+    }
+
+    /*
+     * Massakopioinnin metodit
+     */
+    public ResultV1RDTO<String> copyHaku(String fromOid, String toOid) {
+        return new ResultV1RDTO<String>("process_id");
+    }
+
+    public ResultV1RDTO<String> pasteHaku(String fromOid) {
+        return new ResultV1RDTO<String>("process_id");
+    }
+
+    public ResultV1RDTO<Boolean> getCopyProcessStatus(String processId) {
+        return null;
     }
 
 }
