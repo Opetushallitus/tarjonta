@@ -23,7 +23,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
