@@ -45,33 +45,36 @@ import javax.persistence.TemporalType;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
-
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 
 /**
  *
  */
 @Entity
+@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id"})
 @Table(name = Hakukohde.TABLE_NAME)
 public class Hakukohde extends TarjontaBaseEntity {
 
     public static final String TABLE_NAME = "hakukohde";
     private static final long serialVersionUID = -3320464257959195992L;
-    
-    @Column(name = "oid", unique=true, updatable=false)
+
+    @Column(name = "oid", unique = true, updatable = false)
     private String oid;
 
-    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy = "hakukohdes", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
-    
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="hakukohde", orphanRemoval=true)
+
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval = true)
     private Set<Valintakoe> valintakoes = new HashSet<Valintakoe>();
-    
+
     /**
      * The koodisto uri of the name of this hakukohde object.
      */
     @Column(name = "hakukohde_nimi")
     private String hakukohdeNimi;
-    
+
     /**
      * The string containing the human readable name of this hakukohde object.
      * Names in different languages are concatenated to this field. This field
@@ -83,22 +86,22 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Integer alinValintaPistemaara;
     @Column(name = "ylin_valinta_pistemaara")
     private Integer ylinValintaPistemaara;
-    @Column(name = "aloituspaikat_lkm", nullable=false)
+    @Column(name = "aloituspaikat_lkm", nullable = false)
     private int aloituspaikatLkm;
-    @Column(name = "valintojenAloituspaikatLkm", nullable=false)
+    @Column(name = "valintojenAloituspaikatLkm", nullable = false)
     private int valintojenAloituspaikatLkm;
-    @Column(name = "kaytetaanHaunPaattymisenAikaa", nullable=false)
+    @Column(name = "kaytetaanHaunPaattymisenAikaa", nullable = false)
     private boolean kaytetaanHaunPaattymisenAikaa;
-    @Column(name = "kaytetaanJarjestelmanValintapalvelua", nullable=false)
+    @Column(name = "kaytetaanJarjestelmanValintapalvelua", nullable = false)
     private boolean kaytetaanJarjestelmanValintapalvelua;
-    @Column(name = "kaksoisTutkinto", nullable=false)
+    @Column(name = "kaksoisTutkinto", nullable = false)
     private boolean kaksoisTutkinto = false;
     @Column(name = "edellisenvuodenhakijat")
     private Integer edellisenVuodenHakijat;
     /*@Column(name = "hakukelpoisuusvaatimus")
-    @FilterXss
-    private String hakukelpoisuusvaatumus;
-    */
+     @FilterXss
+     private String hakukelpoisuusvaatumus;
+     */
     /* todo: double check if this is koodisto uri. */
     @Column(name = "tila")
     @Enumerated(EnumType.STRING)
@@ -110,18 +113,18 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "liitteidenToimitusPvm")
     private Date liitteidenToimitusPvm;
-    @ManyToOne(optional=false, fetch=FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Haku haku;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval = true)
     private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns =
-    @JoinColumn(name = TABLE_NAME + "_id"))
+    @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> hakukelpoisuusVaatimukset = new HashSet<String>();
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "valintaperustekuvaus_teksti_id")
@@ -136,34 +139,33 @@ public class Hakukohde extends TarjontaBaseEntity {
     @JoinColumn(name = "sorakuvaus_teksti_id")
     private MonikielinenTeksti soraKuvaus;
 
-
     @Column(name = "valintaperustekuvaus_koodi_uri")
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
     @Column(name = "sora_kuvaus_koodi_uri")
     private String soraKuvausKoodiUri; //the koodi uri points to metadata
-    @Column(name ="alinHyvaksyttavaKeskiarvo")
+    @Column(name = "alinHyvaksyttavaKeskiarvo")
     private Double alinHyvaksyttavaKeskiarvo;
-    @Column(name="viimPaivitysPvm")
+    @Column(name = "viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate = new Date();
-    @Column(name="viimPaivittajaOid")
+    @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
 
-    @Column(name ="ulkoinentunniste")
+    @Column(name = "ulkoinentunniste")
     private String ulkoinenTunniste;
 
-    @Column(name="viimIndeksointiPvm")
+    @Column(name = "viimIndeksointiPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date viimIndeksointiPvm = null;
 
-    @ManyToOne(optional=true, fetch=FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Hakuaika hakuaika;
 
-    @Column(name="hakuaikaAlkuPvm")
+    @Column(name = "hakuaikaAlkuPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date hakuaikaAlkuPvm;
 
-    @Column(name="hakuaikaLoppuPvm")
+    @Column(name = "hakuaikaLoppuPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date hakuaikaLoppuPvm;
 
@@ -171,53 +173,53 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Long valintaPerusteKuvausTunniste;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = TABLE_NAME + "_valintaperuste_kielet", joinColumns =
-    @JoinColumn(name = TABLE_NAME + "_id"))
+    @CollectionTable(name = TABLE_NAME + "_valintaperuste_kielet", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> valintaPerusteKuvausKielet = new HashSet<String>();
 
     @Column(name = "soraKuvausTunniste")
     private Long soraKuvausTunniste;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns =
-    @JoinColumn(name = TABLE_NAME + "_id"))
+    @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns
+            = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> soraKuvausKielet = new HashSet<String>();
 
     /**
      * KJOH-810 Hakukohteen ryhmän valinta
      */
     private String organisaatioRyhmaOids;
-    
+
     @PreRemove
     public void detachOnDelete() {
-    	for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
-    		komoto.getHakukohdes().remove(this);
-    	}
+        for (KoulutusmoduuliToteutus komoto : koulutusmoduuliToteutuses) {
+            komoto.getHakukohdes().remove(this);
+        }
     }
 
     public Hakuaika getHakuaika() {
-		return hakuaika;
-	}
+        return hakuaika;
+    }
 
     public void setHakuaika(Hakuaika hakuaika) {
-		this.hakuaika = hakuaika;
-	}
+        this.hakuaika = hakuaika;
+    }
 
     public Date getHakuaikaAlkuPvm() {
-		return hakuaikaAlkuPvm;
-	}
+        return hakuaikaAlkuPvm;
+    }
 
     public void setHakuaikaAlkuPvm(Date hakuaikaAlkuPvm) {
-		this.hakuaikaAlkuPvm = hakuaikaAlkuPvm;
-	}
+        this.hakuaikaAlkuPvm = hakuaikaAlkuPvm;
+    }
 
     public Date getHakuaikaLoppuPvm() {
-		return hakuaikaLoppuPvm;
-	}
+        return hakuaikaLoppuPvm;
+    }
 
     public void setHakuaikaLoppuPvm(Date hakuaikaLoppuPvm) {
-		this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
-	}
+        this.hakuaikaLoppuPvm = hakuaikaLoppuPvm;
+    }
 
     /**
      * @return the koulutuses
@@ -319,17 +321,17 @@ public class Hakukohde extends TarjontaBaseEntity {
      */
     public void removeValintakoe(Valintakoe valintakoe) {
         if (valintakoes.remove(valintakoe)) {
-        	valintakoe.setHakukohde(null);
+            valintakoe.setHakukohde(null);
         }
     }
     /*
-    public String getHakukelpoisuusvaatimus() {
-        return hakukelpoisuusvaatumus;
-    }
+     public String getHakukelpoisuusvaatimus() {
+     return hakukelpoisuusvaatumus;
+     }
 
-    public void setHakukelpoisuusvaatimus(String hakukelpoisuusvaatimus) {
-        this.hakukelpoisuusvaatumus = hakukelpoisuusvaatimus;
-    } */
+     public void setHakukelpoisuusvaatimus(String hakukelpoisuusvaatimus) {
+     this.hakukelpoisuusvaatumus = hakukelpoisuusvaatimus;
+     } */
 
     public TarjontaTila getTila() {
         return tila;
@@ -517,14 +519,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     }
 
     public MonikielinenTeksti getSoraKuvaus() {
-		return soraKuvaus;
-	}
+        return soraKuvaus;
+    }
 
-	public void setSoraKuvaus(MonikielinenTeksti soraKuvaus) {
-		this.soraKuvaus = soraKuvaus;
-	}
+    public void setSoraKuvaus(MonikielinenTeksti soraKuvaus) {
+        this.soraKuvaus = soraKuvaus;
+    }
 
-	/**
+    /**
      * @return the alinHyvaksyttavaKeskiarvo
      */
     public Double getAlinHyvaksyttavaKeskiarvo() {
@@ -619,7 +621,6 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.hakukelpoisuusVaatimusKuvaus = hakukelpoisuusVaatimusKuvaus;
     }
 
-
     public Long getValintaPerusteKuvausTunniste() {
         return valintaPerusteKuvausTunniste;
     }
@@ -655,13 +656,14 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
         this.soraKuvausKielet = soraKuvausKielet;
     }
-    
+
     /**
-     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää. Muut kentät esityskerroksen vastuulla! 
+     * AntiSamy Filtteröidään (vain) kentät joissa tiedetään olevan HTML:ää.
+     * Muut kentät esityskerroksen vastuulla!
      */
     @PrePersist
     @PreUpdate
-    public void filterHTMLFields(){
+    public void filterHTMLFields() {
         filter(getHakukelpoisuusVaatimusKuvaus());
         filter(getValintaperusteKuvaus());
     }

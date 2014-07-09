@@ -148,7 +148,7 @@ public class KoulutusIndexEntityToSolrDocument implements
                         nimi = new MonikielinenTeksti();
                     }
 
-                    for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
+                    for (TekstiKaannos tekstikaannos : nimi.getTekstiKaannos()) {
                         Preconditions.checkNotNull(koodiService);
                         KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
 
@@ -165,7 +165,7 @@ public class KoulutusIndexEntityToSolrDocument implements
                         nimi = new MonikielinenTeksti();
                     }
 
-                    for (TekstiKaannos tekstikaannos : nimi.getTekstis()) {
+                    for (TekstiKaannos tekstikaannos : nimi.getTekstiKaannos()) {
                         Preconditions.checkNotNull(koodiService);
                         KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
 

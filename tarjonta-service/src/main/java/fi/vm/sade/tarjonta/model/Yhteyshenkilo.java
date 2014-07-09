@@ -27,11 +27,13 @@ import javax.persistence.Table;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Yhteyshenkilo's are always maintained in Henkilo service.
  */
 @Entity
+@JsonIgnoreProperties({"id"})
 @Table(name = Yhteyshenkilo.TABLE_NAME)
 public class Yhteyshenkilo extends TarjontaBaseEntity {
 

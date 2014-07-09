@@ -108,7 +108,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             KoulutusKorkeakouluV1RDTO kkDto = (KoulutusKorkeakouluV1RDTO) dto;
             kkDto.setKomotoOid(komoto.getOid());
 
-            final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstis().isEmpty(); //OVT-7531
+            final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstiKaannos().isEmpty(); //OVT-7531
             kkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(useKomotoName ? komoto.getNimi() : komo.getNimi(), FieldNames.KOULUTUSOHJELMA, param));
 
             if (komo.getKandidaatinKoulutusUri() != null || komoto.getKandidaatinKoulutusUri() != null) {

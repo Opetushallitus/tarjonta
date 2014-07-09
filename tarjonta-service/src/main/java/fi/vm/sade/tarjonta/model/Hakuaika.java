@@ -23,11 +23,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
  */
 @Entity
+@JsonIgnoreProperties({"id"})
 @Table(name = Hakuaika.TABLE_NAME)
 public class Hakuaika extends TarjontaBaseEntity {
 

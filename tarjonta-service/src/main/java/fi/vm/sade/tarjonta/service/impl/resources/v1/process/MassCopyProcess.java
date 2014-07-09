@@ -101,11 +101,13 @@ public class MassCopyProcess implements ProcessDefinition {
                 }
 
                 metaObject.setKomoOid(k.getOid());
+                metaObject.setOrginalKomotoOid(k.getOid());
+                metaObject.setNewKomotoOid(oidService.get(TarjontaOidType.KOMOTO));
 
                 massakopiointiDAO.saveEntityAsJson(
                         fromOid,
                         k.getOid(),
-                        oidService.get(TarjontaOidType.KOMOTO),
+                        metaObject.getNewKomotoOid(),
                         state.getId(),
                         Massakopiointi.Tyyppi.KOMOTO_ENTITY,
                         KoulutusmoduuliToteutus.class,

@@ -73,7 +73,21 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
      */
     public long deleteByHakuOidAndKopioinninTila(final String hakuOid, Massakopiointi.KopioinninTila tila);
 
+    /**
+     * Search all Massakopiointi objects by given paramters.
+     *
+     * @param search
+     * @return
+     */
     public List<Massakopiointi> search(final SearchCriteria search);
+
+    /**
+     * Search all original 'old' OIDs by given paramters.
+     *
+     * @param search
+     * @return
+     */
+    public List<String> searchOids(final SearchCriteria search);
 
     public long rowCount(final String hakuOid);
 

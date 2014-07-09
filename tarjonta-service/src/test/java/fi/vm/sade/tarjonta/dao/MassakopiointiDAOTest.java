@@ -18,13 +18,15 @@ package fi.vm.sade.tarjonta.dao;
 import com.google.common.collect.Lists;
 import com.mysema.commons.lang.Pair;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
-import java.io.IOException;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -56,6 +58,8 @@ public class MassakopiointiDAOTest {
 
     private static final String HAKU_OID_1 = "HAKU_OID_1";
     private static final String HAKU_OID_2 = "HAKU_OID_2";
+
+    private static final String HAKUKOHDE_UNIQUE_OID_1 = "ANY_OID_1";
 
     private static final String ANY_UNIQUE_OID_1 = "ANY_OID_1";
     private static final String ANY_UNIQUE_OID_2 = "ANY_OID_2";
@@ -217,27 +221,4 @@ public class MassakopiointiDAOTest {
         assertEquals("deleteByHakuOidAndKopioinninTila 2/2", 1, deleted);
     }
 
-    @Test
-    public void testConversions() {
-        Koulutusmoduuli komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
-        KoulutusmoduuliToteutus komoto1 = fixtures.createTutkintoOhjelmaToteutus(ANY_UNIQUE_OID_1);
-        komoto1.setKoulutusmoduuli(komo);
-
-        String json = null;
-        try {
-            json = EntityToJsonHelper.convertToJson(komoto1);
-        } catch (Exception ex) {
-            fail("conversion error from entity to json : " + ex.getMessage());
-        }
-        assertNotNull("KoulutusmoduuliToteutus - not nullable", json);
-        assertTrue("conversion to json failed", json != null && json.length() > 0 && !json.equals("null"));
-
-        try {
-            komoto1 = (KoulutusmoduuliToteutus) EntityToJsonHelper.convertToEntity(json, KoulutusmoduuliToteutus.class);
-        } catch (Exception ex) {
-            LOG.error(json);
-            fail("conversion error from json to entity : " + ex.getMessage());
-        }
-        assertEquals(ANY_UNIQUE_OID_1, komoto1.getOid());
-    }
 }

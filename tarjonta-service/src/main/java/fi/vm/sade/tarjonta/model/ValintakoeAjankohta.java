@@ -27,42 +27,45 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import fi.vm.sade.security.xssfilter.FilterXss;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
  */
 @Entity
+@JsonIgnoreProperties({"id"})
 @Table(name = "valintakoe_ajankohta")
 public class ValintakoeAjankohta extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = -2304365086611685405L;
 
-
-    @ManyToOne (fetch = FetchType.LAZY, optional=false)
-    @JoinColumn(name="valintakoe_id", nullable=false)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "valintakoe_id", nullable = false)
     private Valintakoe valintakoe;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="alkamisaika", nullable=false)
+    @Column(name = "alkamisaika", nullable = false)
     private Date alkamisaika;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="paattymisaika", nullable=false)
+    @Column(name = "paattymisaika", nullable = false)
     private Date paattymisaika;
 
     @FilterXss
-    @Column(name="lisatietoja")
+    @Column(name = "lisatietoja")
     private String lisatietoja;
 
     private Osoite ajankohdanOsoite;
-    
+
     public Valintakoe getValintakoe() {
-		return valintakoe;
-	}
-    
+        return valintakoe;
+    }
+
     public void setValintakoe(Valintakoe valintakoe) {
-		this.valintakoe = valintakoe;
-	}
+        this.valintakoe = valintakoe;
+    }
 
     public Date getAlkamisaika() {
         return alkamisaika;
@@ -87,7 +90,6 @@ public class ValintakoeAjankohta extends TarjontaBaseEntity {
     public void setLisatietoja(String lisatietoja) {
         this.lisatietoja = lisatietoja;
     }
-
 
     public Osoite getAjankohdanOsoite() {
         return ajankohdanOsoite;

@@ -142,10 +142,10 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             }
         }
 
-        if (s.getSoraKuvaus() != null && s.getSoraKuvaus().getTekstis() != null) {
+        if (s.getSoraKuvaus() != null && s.getSoraKuvaus().getTekstiKaannos() != null) {
 
             HashMap<String,String> soraKuvaukset = new HashMap<String,String>();
-            for (TekstiKaannos tekstiKaannos:s.getSoraKuvaus().getTekstis()) {
+            for (TekstiKaannos tekstiKaannos:s.getSoraKuvaus().getTekstiKaannos()) {
 
                soraKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
             }
@@ -154,10 +154,10 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             LOG.debug("Hakukohde sorakuvaus was null : {}",t.getOid()) ;
         }
 
-        if (s.getValintaperusteKuvaus() != null && s.getValintaperusteKuvaus().getTekstis() != null ) {
+        if (s.getValintaperusteKuvaus() != null && s.getValintaperusteKuvaus().getTekstiKaannos() != null ) {
 
             HashMap<String,String> valintaperusteKuvaukset = new HashMap<String,String>();
-            for (TekstiKaannos tekstiKaannos : s.getValintaperusteKuvaus().getTekstis()) {
+            for (TekstiKaannos tekstiKaannos : s.getValintaperusteKuvaus().getTekstiKaannos()) {
 
                 valintaperusteKuvaukset.put(tekstiKaannos.getKieliKoodi(),tekstiKaannos.getArvo());
             }

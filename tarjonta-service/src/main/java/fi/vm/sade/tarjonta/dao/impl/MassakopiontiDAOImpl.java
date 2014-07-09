@@ -29,7 +29,6 @@ import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.model.TarjontaBaseEntity;
-import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +45,12 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
 
     private static final Logger LOG = LoggerFactory.getLogger(MassakopiontiDAOImpl.class);
 
-    private String convertToJson(final Object obj) throws IOException {
+    private String convertToJson(final Object obj) {
         Preconditions.checkNotNull(obj, "Instance of object cannot be null.");
         return EntityToJsonHelper.convertToJson(obj);
     }
 
-    public Pair<Object, MetaObject> convertToEntity(final String json, final Class clazz, String meta) throws IOException {
+    public Pair<Object, MetaObject> convertToEntity(final String json, final Class clazz, String meta) {
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
         Preconditions.checkNotNull(json, "Json  cannot be null.");
         return new Pair(EntityToJsonHelper.convertToEntity(json, clazz), meta != null ? EntityToJsonHelper.convertToEntity(meta, MetaObject.class) : null);
@@ -60,6 +59,16 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     @Override
     public List<Massakopiointi> search(final SearchCriteria search) {
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
+        return from(kopiointi).where(query(search, kopiointi)).list(kopiointi);
+    }
+
+    @Override
+    public List<String> searchOids(final SearchCriteria search) {
+        QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
+        return from(kopiointi).where(query(search, kopiointi)).list(kopiointi.oldOid);
+    }
+
+    public static BooleanExpression query(final SearchCriteria search, QMassakopiointi kopiointi) {
 
         BooleanExpression expression = null;
         if (search.getHakuOid() != null) {
@@ -83,8 +92,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         }
 
         Preconditions.checkNotNull(expression, "An invalid search criteria, no parameters defined.");
-
-        return from(kopiointi).where(expression).list(kopiointi);
+        return expression;
     }
 
     @Override
@@ -92,19 +100,11 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
 
         Massakopiointi result = find(hakuOid, oldOid);
-
-        Pair pair = null;
         if (result == null) {
             LOG.info("No item found by oid '{}' class : json : '{}'", oldOid, clazz);
-        } else {
-            try {
-                pair = convertToEntity(result.getJson(), clazz, result.getMeta());
-            } catch (IOException e) {
-                LOG.error("Convert json to entity failed by oid '{}' class : json : '{}'", oldOid, clazz, e);
-            }
+            return null;
         }
-
-        return pair;
+        return convertToEntity(result.getJson(), clazz, result.getMeta());
     }
 
     @Override
@@ -145,11 +145,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         if (meta == null) {
             saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, null);
         } else {
-            try {
-                saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, convertToJson(meta));
-            } catch (IOException e) {
-                LOG.error("Convert meta data object to json failed '{}'", meta);
-            }
+            saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, convertToJson(meta));
         }
     }
 
@@ -169,13 +165,9 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
         Preconditions.checkNotNull(entityToJson, "Entity instance cannot be null.");
 
-        try {
-            Massakopiointi m = new Massakopiointi(hakuOid, oldOid, newOid, processId, type, convertToJson(entityToJson), meta);
-            m.setKopioinninTila(Massakopiointi.KopioinninTila.READY_FOR_COPY);
-            insert(m);
-        } catch (IOException e) {
-            LOG.error("Convert entity to json failed by oid '{}' class : json : '{}'", oldOid, clazz, e);
-        }
+        Massakopiointi m = new Massakopiointi(hakuOid, oldOid, newOid, processId, type, convertToJson(entityToJson), meta);
+        m.setKopioinninTila(Massakopiointi.KopioinninTila.READY_FOR_COPY);
+        insert(m);
     }
 
     @Override

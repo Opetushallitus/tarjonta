@@ -89,7 +89,7 @@ public final class EntityUtils {
             return null;
         }
 
-        for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
+        for (TekstiKaannos tekstiKaannos : from.getTekstiKaannos()) {
             Teksti teksti = new Teksti();
             teksti.setValue(tekstiKaannos.getArvo());
             teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
@@ -138,7 +138,7 @@ public final class EntityUtils {
         for (Map.Entry<T, MonikielinenTeksti> e : src.entrySet()) {
             if (kenums.isEmpty() || kenums.contains(e.getKey())) {
                 List<MonikielinenTekstiTyyppi.Teksti> txts = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
-                for (TekstiKaannos tk : e.getValue().getTekstis()) {
+                for (TekstiKaannos tk : e.getValue().getTekstiKaannos()) {
                     txts.add(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()));
                 }
                 dst.add(new NimettyMonikielinenTekstiTyyppi(txts, e.getKey().toString()));

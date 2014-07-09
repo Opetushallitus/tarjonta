@@ -66,6 +66,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
+@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id"})
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
@@ -1034,8 +1035,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * @param valmistavaKoulutus the
-     * nayttotutkintoValmistavaKoulutus to set
+     * @param valmistavaKoulutus the nayttotutkintoValmistavaKoulutus to set
      */
     public void setValmistavaKoulutus(KoulutusmoduuliToteutus valmistavaKoulutus) {
         this.valmistavaKoulutus = valmistavaKoulutus;

@@ -12,8 +12,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({"id"})
 @Table(name = Kielivalikoima.TABLE_NAME)
 public class Kielivalikoima extends TarjontaBaseEntity {
 

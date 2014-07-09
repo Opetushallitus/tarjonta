@@ -1054,7 +1054,7 @@ public class ConverterV1 {
         if (monikielinenTeksti != null) {
             List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
 
-            for (TekstiKaannos tekstiKaannos : monikielinenTeksti.getTekstis()) {
+            for (TekstiKaannos tekstiKaannos : monikielinenTeksti.getTekstiKaannos()) {
                 TekstiRDTO tekstiRDTO = new TekstiRDTO();
                 tekstiRDTO.setUri(checkAndRemoveForEmbeddedVersionInUri(tekstiKaannos.getKieliKoodi()));
                 tekstiRDTO.setTeksti(tekstiKaannos.getArvo());

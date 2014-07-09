@@ -635,6 +635,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     public ResultV1RDTO<String> pasteHaku(String fromOid, String toOid) {
+        
+        
+        
         return new ResultV1RDTO<String>("process_id");
     }
 

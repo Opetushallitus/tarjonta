@@ -31,10 +31,12 @@ import javax.persistence.Table;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Translatable texts with modest "metadata" properties.
  */
+@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos","id"})
 @Entity
 @Table(name = "monikielinen_teksti")
 public class MonikielinenTeksti extends TarjontaBaseEntity {
@@ -45,7 +47,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     @MapKey(name = "kieliKoodi")
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
-    public Collection<TekstiKaannos> getTekstis() {
+    public Collection<TekstiKaannos> getTekstiKaannos() {
         return Collections.unmodifiableCollection(tekstis.values());
     }
 
@@ -98,14 +100,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
      * object.
      *
      * @param otherTeksti / public void updateFrom(MonikielinenTeksti
-     * otherTeksti) {
-     *
-     * tekstis.clear();
-     *
-     * for (TekstiKaannos t : otherTeksti.getTekstis()) {
-     * addTekstiKaannos(t.getKieliKoodi(), t.getArvo()); }
-     *
-     * }
+ otherTeksti) {
+
+ tekstis.clear();
+
+ for (TekstiKaannos t : otherTeksti.getTekstiKaannos()) {
+ addTekstiKaannos(t.getKieliKoodi(), t.getArvo()); }
+
+ }
      */
     private TekstiKaannos findKaannos(String kieliKoodi) {
         final String koodi = TekstiKaannos.formatKieliKoodi(kieliKoodi);

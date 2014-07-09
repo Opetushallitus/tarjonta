@@ -15,12 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.copy;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,41 +29,70 @@ import java.io.Writer;
  */
 public class EntityToJsonHelper {
 
-    private static final Gson GSON = JsonFieldFilter.createPreConfiguredGsonBuilder().create();
-    private static final JsonFieldFilter GSON_HAKUKOHDE;
-    private static final JsonFieldFilter GSON_KOMOTO;
-    private static final String[] FILTER_FIELDS_KOULUTUSMODUULI_TOTEUTUS = new String[]{"koulutusmoduuli", "hakukohdes"};
-    private static final String[] FILTER_FIELDS_HAKUKOHDE = new String[]{};
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(EntityToJsonHelper.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    static {
-        GSON_HAKUKOHDE = new JsonFieldFilter(Hakukohde.class, FILTER_FIELDS_HAKUKOHDE);
-        GSON_KOMOTO = new JsonFieldFilter(KoulutusmoduuliToteutus.class, FILTER_FIELDS_KOULUTUSMODUULI_TOTEUTUS);
-    }
-
+//    private static final Gson GSON = JsonFieldFilter.createPreConfiguredGsonBuilder().create();
+//    private static final JsonFieldFilter GSON_HAKUKOHDE;
+//    private static final JsonFieldFilter GSON_KOMOTO;
+//    private static final String[] FILTER_FIELDS_KOULUTUSMODUULI_TOTEUTUS = new String[]{"koulutusmoduuli", "hakukohdes"};
+//    private static final String[] FILTER_FIELDS_HAKUKOHDE = new String[]{"koulutusmoduuliToteutuses", "haku"};
+//
+//    static {
+//        GSON_HAKUKOHDE = new JsonFieldFilter(Hakukohde.class, FILTER_FIELDS_HAKUKOHDE);
+//        GSON_KOMOTO = new JsonFieldFilter(KoulutusmoduuliToteutus.class, FILTER_FIELDS_KOULUTUSMODUULI_TOTEUTUS);
+//    }
+//
+//    public static String convertToJson(Object entity) {
+//        if (entity instanceof Hakukohde) {
+//            return convertToJson((Hakukohde) entity);
+//        } else if (entity instanceof KoulutusmoduuliToteutus) {
+//            return convertToJson((KoulutusmoduuliToteutus) entity);
+//        } else {
+//            //no filter specified
+//            return GSON.toJson(entity);
+//        }
+//    }
+//
+//    public static String convertToJson(Hakukohde entity) {
+//        return GSON_HAKUKOHDE.getJson(entity);
+//    }
+//
+//    public static String convertToJson(KoulutusmoduuliToteutus entity) {
+//        return GSON_KOMOTO.getJson(entity);
+//    }
+//
+//    public static Object convertToEntity(String jsonEntity, Class clazz) {
+//        return GSON.fromJson(jsonEntity, clazz);
+//    }
+//
+//    public static String convertToFullJson(Object obj) {
+//        return GSON.toJson(obj);
+//    }
     public static String convertToJson(Object entity) {
-        if (entity instanceof Hakukohde) {
-            return convertToJson((Hakukohde) entity);
-        } else if (entity instanceof KoulutusmoduuliToteutus) {
-            return convertToJson((KoulutusmoduuliToteutus) entity);
-        } else {
-            //no filter specified
-            return GSON.toJson(entity);
+        Writer strWriter = new StringWriter();
+        String json = null;
+        try {
+            mapper.writeValue(strWriter, entity);
+            json = strWriter.toString();
+        } catch (IOException ex) {
+            LOG.error("Convert object to JSON failed", ex);
+            try {
+                strWriter.close();  // close the writer
+            } catch (IOException e) {
+                LOG.error("StringWriter close failed");
+            }
         }
-    }
 
-    public static String convertToJson(Hakukohde entity) {
-        return GSON_HAKUKOHDE.getJson(entity);
-    }
-
-    public static String convertToJson(KoulutusmoduuliToteutus entity) {
-        return GSON_KOMOTO.getJson(entity);
+        return json;
     }
 
     public static Object convertToEntity(String jsonEntity, Class clazz) {
-        return GSON.fromJson(jsonEntity, clazz);
-    }
-
-    public static String convertToFullJson(Object obj) {
-        return GSON.toJson(obj);
+        try {
+            return mapper.readValue(jsonEntity, clazz);
+        } catch (IOException ex) {
+            LOG.error("Convert JSON to object failed. JSON : '{}'", jsonEntity, ex);
+        }
+        return null;
     }
 }

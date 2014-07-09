@@ -21,6 +21,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 	name = "teksti_kaannos",
 	uniqueConstraints = @UniqueConstraint(columnNames={"kieli_koodi", "teksti_id"})
 )
+@JsonIgnoreProperties({"id"})
 public class TekstiKaannos extends TarjontaBaseEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);

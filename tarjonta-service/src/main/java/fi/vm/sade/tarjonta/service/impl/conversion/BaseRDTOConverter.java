@@ -80,7 +80,7 @@ public abstract class BaseRDTOConverter<FROM, TO> implements Converter<FROM, TO>
 
         Map<String, String> t = new HashMap<String, String>();
 
-        for (TekstiKaannos tekstiKaannos : s.getTekstis()) {
+        for (TekstiKaannos tekstiKaannos : s.getTekstiKaannos()) {
             String arvo = tekstiKaannos.getArvo();
             String kieliUri = tekstiKaannos.getKieliKoodi();
 

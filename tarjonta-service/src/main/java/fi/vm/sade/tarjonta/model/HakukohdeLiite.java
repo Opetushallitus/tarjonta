@@ -19,11 +19,13 @@ import java.util.Date;
 import javax.persistence.*;
 
 import com.google.common.base.Preconditions;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
  */
 @Entity
+@JsonIgnoreProperties({"id"})
 @Table(name = "hakukohdeliite")
 public class HakukohdeLiite extends TarjontaBaseEntity {
 

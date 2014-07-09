@@ -206,7 +206,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     public ResultV1RDTO<HashMap<String,String>> findHakukohdeValintaperusteet(String hakukohdeOid){
        Hakukohde hakukohde =  hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
 
-       if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstis() != null && hakukohde.getValintaperusteKuvaus().getTekstis().size() > 0) {
+       if (hakukohde.getValintaperusteKuvaus() != null && hakukohde.getValintaperusteKuvaus().getTekstiKaannos() != null && hakukohde.getValintaperusteKuvaus().getTekstiKaannos().size() > 0) {
            ResultV1RDTO<HashMap<String,String>> result = new ResultV1RDTO<HashMap<String,String>>();
 
            HashMap<String,String> tekstis = converterV1.convertMonikielinenTekstiToMap(hakukohde.getValintaperusteKuvaus(), false);
