@@ -73,10 +73,6 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
      */
     public long deleteByHakuOidAndKopioinninTila(final String hakuOid, Massakopiointi.KopioinninTila tila);
 
-    public String convertToJson(final TarjontaBaseEntity entityToJson) throws IOException;
-
-    public Object convertToEntity(final String json, final Class clazz) throws IOException;
-
     public List<Massakopiointi> search(final SearchCriteria search);
 
     public long rowCount(final String hakuOid);

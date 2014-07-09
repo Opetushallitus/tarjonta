@@ -22,6 +22,7 @@ import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
+import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import java.io.IOException;
 import java.util.Date;
@@ -224,16 +225,16 @@ public class MassakopiointiDAOTest {
 
         String json = null;
         try {
-            json = instance.convertToJson(komoto1);
-        } catch (IOException ex) {
+            json = EntityToJsonHelper.convertToJson(komoto1);
+        } catch (Exception ex) {
             fail("conversion error from entity to json : " + ex.getMessage());
         }
         assertNotNull("KoulutusmoduuliToteutus - not nullable", json);
-        assertTrue(json.length() > 0);
+        assertTrue("conversion to json failed", json != null && json.length() > 0 && !json.equals("null"));
 
         try {
-            komoto1 = (KoulutusmoduuliToteutus) instance.convertToEntity(json, KoulutusmoduuliToteutus.class);
-        } catch (IOException ex) {
+            komoto1 = (KoulutusmoduuliToteutus) EntityToJsonHelper.convertToEntity(json, KoulutusmoduuliToteutus.class);
+        } catch (Exception ex) {
             LOG.error(json);
             fail("conversion error from json to entity : " + ex.getMessage());
         }

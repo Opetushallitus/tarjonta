@@ -30,13 +30,11 @@ import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.model.TarjontaBaseEntity;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.List;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fi.vm.sade.tarjonta.model.QMassakopiointi;
+import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import java.util.Date;
 
@@ -48,32 +46,15 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
 
     private static final Logger LOG = LoggerFactory.getLogger(MassakopiontiDAOImpl.class);
 
-    @Override
-    public String convertToJson(final TarjontaBaseEntity entityToJson) throws IOException {
-        return convertAnyObjectToJson(entityToJson);
-    }
-
-    private String convertAnyObjectToJson(final Object obj) throws IOException {
+    private String convertToJson(final Object obj) throws IOException {
         Preconditions.checkNotNull(obj, "Instance of object cannot be null.");
-        ObjectMapper mapper = new ObjectMapper();
-        Writer strWriter = new StringWriter();
-        mapper.writeValue(strWriter, obj);
-        return strWriter.toString();
-    }
-
-    @Override
-    public Object convertToEntity(final String json, final Class clazz) throws IOException {
-        Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
-        Preconditions.checkNotNull(json, "Json  cannot be null.");
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, clazz);
+        return EntityToJsonHelper.convertToJson(obj);
     }
 
     public Pair<Object, MetaObject> convertToEntity(final String json, final Class clazz, String meta) throws IOException {
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
         Preconditions.checkNotNull(json, "Json  cannot be null.");
-        ObjectMapper mapper = new ObjectMapper();
-        return new Pair(mapper.readValue(json, clazz), meta != null ? mapper.readValue(meta, MetaObject.class) : null);
+        return new Pair(EntityToJsonHelper.convertToEntity(json, clazz), meta != null ? EntityToJsonHelper.convertToEntity(meta, MetaObject.class) : null);
     }
 
     @Override
@@ -106,25 +87,6 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         return from(kopiointi).where(expression).list(kopiointi);
     }
 
-//    @Override
-//    public Object find(final String hakuOid, final String oldOid, Class clazz) {
-//        Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
-//
-//        Massakopiointi result = find(hakuOid, oldOid);
-//
-//        Object object = null;
-//        if (result == null) {
-//            LOG.info("No item found by oid '{}' class : json : '{}'", oldOid, clazz);
-//        } else {
-//            try {
-//                object = convertToEntity(result.getJson(), clazz);
-//            } catch (IOException e) {
-//                LOG.error("Convert json to entity failed by oid '{}' class : json : '{}'", oldOid, clazz, e);
-//            }
-//        }
-//
-//        return object;
-//    }
     @Override
     public Pair<Object, MetaObject> find(final String hakuOid, final String oldOid, Class clazz) {
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
@@ -184,7 +146,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
             saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, null);
         } else {
             try {
-                saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, convertAnyObjectToJson(meta));
+                saveFullEntity(hakuOid, oldOid, newOid, processId, type, clazz, entityToJson, convertToJson(meta));
             } catch (IOException e) {
                 LOG.error("Convert meta data object to json failed '{}'", meta);
             }
