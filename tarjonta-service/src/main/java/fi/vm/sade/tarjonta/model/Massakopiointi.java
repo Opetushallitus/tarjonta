@@ -26,6 +26,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +59,12 @@ public class Massakopiointi extends BaseEntity {
     private Tyyppi type;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "json", length = 100000, nullable = false)
     private String json;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "meta", length = 100000)
     private String meta;
 
