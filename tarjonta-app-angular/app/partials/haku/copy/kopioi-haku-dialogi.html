@@ -1,0 +1,90 @@
+<!-- view1: -->
+{{view}}
+<div ng-show="view===1" id="kopioi-haku-dialogi">
+	<div class="modal-header">
+		<h3>
+			<span tt="haunKopiointi.otsikko">Kopioi uudelle kaudelle</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p tt="haunKopiointi.kuvaus">
+			Olet kopioimassa kaudelta <b>{}</b> hausta <b>{}</b> hakukohteita ja
+			koulutuksia.
+		</p>
+		<h4>
+			<span tt="haunKopiointi.haku">Valitse Haku</span>
+		</h4>
+		<select ng-model="model.targetHaku"
+			ng-options="haku.nimi for haku in hakutulos"
+			ng-change="hakuChanged(model.haku)">
+			<option value="" tt="luoKoulutusDialogi.valitse">-- valitse
+				--</option>
+		</select>
+
+		<progressbar value="progress">{{progress}}</progressbar>
+
+	</div>
+</div>
+<div ng-show="view===1" class="modal-footer">
+	<button class="btn" ng-click="peruuta()">
+		<span tt="luoKoulutusDialogi.peruuta">Peruuta</span>
+	</button>
+	<button class="btn" disabled="true"
+		ng-click="liitaToiseenOrganisaatioon()">
+		<span tt="luoKoulutusDialogi.liitaToiseenOrganisaatioon">Liitä
+			toiseen organisaatioon</span>
+	</button>
+	<button class="btn btn-primary" ng-disabled="jatkaDisabled()"
+		ng-click="startPaste()">
+		<span tt="luoKoulutusDialogi.jatka">Jatka</span>
+	</button>
+</div>
+<!-- view2: "kopiointi käynnissä"-->
+<div ng-show="view===2" id="kopioi-haku-dialogi">
+	<div class="modal-header">
+		<h3>
+			<span tt="haunKopiointi.kaynnissa.otsikko">Haun kopiointi
+				käynnissä</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p tt="haunKopiointi.kaynnissa.kuvaus">
+			Olet kopioimassa kaudelta <b>{}</b> hausta <b>{}</b> hakukohteita ja
+			koulutuksia.
+		</p>
+
+		<progressbar value="progress">{{progress}}</progressbar>
+
+	</div>
+</div>
+
+<div ng-show="view===2" class="modal-footer">
+	<button class="btn" ng-click="peruuta()">
+		<span tt="luoKoulutusDialogi.peruuta">Peruuta</span>
+	</button>
+	<button class="btn btn-primary" ng-disabled="jatkaDisabled()"
+		ng-click="startCopy()">
+		<span tt="luoKoulutusDialogi.jatka">Jatka</span>
+	</button>
+</div>
+
+<!-- view3: "valmis"-->
+<div ng-show="view===3" id="kopioi-haku-dialogi">
+	<div class="modal-header">
+		<h3>
+			<span tt="haunKopiointi.valmis.otsikko">Kopiointi valmis</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p tt="haunKopiointi.valmis.kuvaus">
+			Kopiointi on nyt valmis.
+		</p>
+
+	</div>
+</div>
+<div ng-show="view===3" class="modal-footer">
+	<button class="btn btn-primary" ng-disabled="endDisabled()"
+		ng-click="close()">
+		<span tt="luoKoulutusDialogi.jatka">Valmis</span>
+	</button>
+</div>
