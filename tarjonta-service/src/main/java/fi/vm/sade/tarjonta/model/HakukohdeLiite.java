@@ -51,7 +51,6 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     //@Column(name = "liitteenTyyppiKoodistoNimi", nullable=false)
     //private String liitteenTyyppiKoodistoNimi;
 
-    @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name = "kuvaus_teksti_id")
     private MonikielinenTeksti kuvaus;

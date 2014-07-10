@@ -32,13 +32,12 @@ import javax.persistence.Table;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonManagedReference;
 
 /**
  * Translatable texts with modest "metadata" properties.
  */
 
-@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos", "id", "version", "hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos", "id", "version", "hibernateLazyInitializer", "handler","tekstis"})
 @Entity
 @Table(name = "monikielinen_teksti")
 public class MonikielinenTeksti extends TarjontaBaseEntity {
@@ -47,7 +46,6 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", fetch = FetchType.LAZY, orphanRemoval = true)
     @MapKey(name = "kieliKoodi")
-    @JsonManagedReference
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
     public Collection<TekstiKaannos> getTekstiKaannos() {

@@ -147,7 +147,7 @@ public class MassCopyProcess implements ProcessDefinition {
                 for (KoulutusmoduuliToteutus hk : hakukohde.getKoulutusmoduuliToteutuses()) {
                     metaObject.addKomotoOid(hk.getOid());
                 }
-                metaObject.setNewHakukohdeOid(oidService.get(TarjontaOidType.KOMOTO));
+                metaObject.setNewHakukohdeOid(oidService.get(TarjontaOidType.HAKUKOHDE));
                 metaObject.setOriginalHakuOid(fromOid);
                 massakopiointiDAO.saveEntityAsJson(
                         fromOid,
