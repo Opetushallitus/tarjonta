@@ -91,6 +91,10 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
             expression = QuerydslUtils.and(expression, kopiointi.processId.eq(search.getProcessId()));
         }
 
+        if (search.getTila() != null) {
+            expression = QuerydslUtils.and(expression, kopiointi.tila.eq(search.getTila()));
+        }
+
         Preconditions.checkNotNull(expression, "An invalid search criteria, no parameters defined.");
         return expression;
     }
@@ -171,8 +175,8 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
-    public long updateTila(final String hakuOid, final String oldOid, final Massakopiointi.KopioinninTila toTila, final Date updated) {
-        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
+    public long updateTila(final String processId, final String oldOid, final Massakopiointi.KopioinninTila toTila, final Date updated) {
+        Preconditions.checkNotNull(processId, "Process ID cannot be null.");
         Preconditions.checkNotNull(oldOid, "Generic OID cannot be null.");
         Preconditions.checkNotNull(toTila, "Status enum cannot be null.");
         Preconditions.checkNotNull(updated, "Update date cannot be null.");
@@ -181,7 +185,7 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
         JPAUpdateClause komotoUpdate = new JPAUpdateClause(getEntityManager(), kopiointi);
 
         return komotoUpdate.
-                where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.oldOid.eq(oldOid))).
+                where(kopiointi.processId.eq(processId).and(kopiointi.oldOid.eq(oldOid))).
                 set(kopiointi.updated, updated).
                 set(kopiointi.tila, toTila).execute();
     }
@@ -207,10 +211,5 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
-    }
-
-    @Override
-    public void flush() {
-        getEntityManager().flush();
     }
 }

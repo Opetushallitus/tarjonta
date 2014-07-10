@@ -45,18 +45,18 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
             final MetaObject meta);
 
     /**
-     * Update object status.
+     * Update object status by process ID and base OID.
      *
-     * @param hakuOid
+     * @param processId
      * @param oldOid
      * @param toTila
      * @param updated
      * @return count of updated items
      */
-    public long updateTila(String hakuOid, String oldOid, Massakopiointi.KopioinninTila toTila, Date updated);
+    public long updateTila(String processId, String oldOid, Massakopiointi.KopioinninTila toTila, Date updated);
 
     /**
-     * Delete all by haku oldOid;
+     * Delete all by haku base OID;
      *
      * @param hakuOid
      * @return count of deleted items
@@ -81,7 +81,7 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
     public List<Massakopiointi> search(final SearchCriteria search);
 
     /**
-     * Search all original 'old' OIDs by given paramters.
+     * Search all original 'old' OIDs by given parameters.
      *
      * @param search
      * @return
@@ -90,8 +90,6 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
 
     public long rowCount(final String hakuOid);
 
-    public void flush();
-    
     public class SearchCriteria {
 
         private String oldOid;
@@ -99,16 +97,24 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
         private String hakuOid;
         private Massakopiointi.Tyyppi tyyppi;
         private String processId;
+        private Massakopiointi.KopioinninTila tila;
 
         public SearchCriteria() {
         }
 
-        public SearchCriteria(String hakuOid, String oldOid, String newOid, Massakopiointi.Tyyppi tyyppi, String processId) {
+        public SearchCriteria(
+                String hakuOid,
+                String oldOid,
+                String newOid,
+                Massakopiointi.Tyyppi tyyppi,
+                String processId,
+                Massakopiointi.KopioinninTila tila) {
             this.oldOid = oldOid;
             this.newOid = newOid;
             this.hakuOid = hakuOid;
             this.tyyppi = tyyppi;
             this.processId = processId;
+            this.tila = tila;
         }
 
         /**
@@ -179,6 +185,20 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
          */
         public void setProcessId(String processId) {
             this.processId = processId;
+        }
+
+        /**
+         * @return the tila
+         */
+        public Massakopiointi.KopioinninTila getTila() {
+            return tila;
+        }
+
+        /**
+         * @param tila the tila to set
+         */
+        public void setTila(Massakopiointi.KopioinninTila tila) {
+            this.tila = tila;
         }
     }
 

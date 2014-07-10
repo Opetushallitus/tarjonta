@@ -128,31 +128,34 @@ public class MassakopiointiDAOTest {
         /*
          * search by search criteria
          */
-        List<Massakopiointi> search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, "asdads", null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null));
+        List<Massakopiointi> search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, "asdads", null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null, null));
         assertEquals("search 1/2 by 3 params", 0, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_1, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null, null));
         assertEquals("search 2/2 by 3 params", 2, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, ANY_UNIQUE_OID_2, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, ANY_UNIQUE_OID_2, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null, null));
         assertEquals("search 1/3 by 2 params", 1, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, null, null));
         assertEquals("search 2/3 by 2 params", 5, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY, null, null));
         assertEquals("search 3/3 by 2 params", 0, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_2, null, null, null, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_2, null, null, null, null, null));
         assertEquals("search by 1 params", 3, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, NEW_OID1, null, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, NEW_OID1, null, null, null));
         assertEquals("search new oid", 5, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID1));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID1, null));
         assertEquals("search processId1", 2, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID2));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID2, null));
+        assertEquals("search processId2", 3, search.size());
+       
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID2, Massakopiointi.KopioinninTila.READY_FOR_COPY));
         assertEquals("search processId2", 3, search.size());
 
         /*
@@ -193,7 +196,7 @@ public class MassakopiointiDAOTest {
         /*
          * updateTila
          */
-        long updateTila = instance.updateTila(HAKU_OID_2, ANY_UNIQUE_OID_5, Massakopiointi.KopioinninTila.COPIED, ANOTHER_DATE);
+        long updateTila = instance.updateTila(PROSESS_ID2, ANY_UNIQUE_OID_5, Massakopiointi.KopioinninTila.COPIED, ANOTHER_DATE);
         assertEquals("updateTila", 1, updateTila);
 
         /*
