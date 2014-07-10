@@ -11,12 +11,13 @@ angular.module('loading', ['localisation'])
     timeoutMajor: false,
     scope: null,
     errorHandlingRequested: null,
+    isEnabled: true,
     
     timeoutShort: window.CONFIG.env["ui.timeout.short"],
     timeoutLong: window.CONFIG.env["ui.timeout.long"],
     
     isLoading: function() {
-      return service.requestCount > 0 || service.operationCount > 0;
+      return (service.requestCount > 0 || service.operationCount > 0) && service.isEnabled;
     },
     isModal: function() {
     	return service.requestCount > 0;
@@ -87,6 +88,13 @@ angular.module('loading', ['localisation'])
     	} else if (service.errorHandlingRequested==null) {
     		throw "loadingService.onErrorHandled called from outside of error callback";
     	}
+    },
+    
+    /**
+     * Disabloi spinneri
+     */
+    setSpinnerEnabled: function(enabled) {
+      service.isEnabled = enabled;
     }
   };
   
