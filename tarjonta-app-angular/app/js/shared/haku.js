@@ -126,8 +126,15 @@ app.factory('HakuV1', function($resource, $log, Config) {
               url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
               method: 'PUT',
               withCredentials: true,
+          },
+          copy: {
+            url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/copy',
+            method:'PUT'
           }
-
+          ,paste: {
+            url:Config.env.tarjontaRestUrlPrefix + 'paste/:oid/:processId',
+            methos:'PUT'
+          }
         });
 
     });
@@ -209,8 +216,6 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
     };
 
   return {
-    
-    
     /**
      * Tarkista että tilasiirtymä on sallittu
      * oidstate esim: {oid: '123.456.789', state: 'JULKAISTU'}
@@ -239,8 +244,20 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
     /**
      * Poista annettu haku (jos oikeuksia)
      */
-    delete: doDelete
+    "delete": doDelete
     
+    /**
+     * Kopioi haku (ks myös liitä)
+     */
+    ,copy: function(oid){
+      return HakuV1.copy({oid:oid}).$promise;
+    }
+    /**
+     * Liitä haku
+     */
+    ,paste: function(targetOid, processId){
+      return HakuV1.paste({oid:targetOid,processId:processId}).$promise;
+    }
   };
 
 });
