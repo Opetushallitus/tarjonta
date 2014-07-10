@@ -40,6 +40,11 @@ public class MassCopyProcess implements ProcessDefinition {
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
     public static final String SELECTED_HAKU_OID = "haku.oid.from";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
+    public static final String COUNT_HAKUKOHDE = "count.hakukohde.processed";
+    public static final String COUNT_KOMOTO = "count.komoto.processed";
+    public static final String TOTAL_HAKUKOHDE = "count.total.hakukohde";
+    public static final String TOTAL_KOMOTO = "count.total.komoto";
+
     private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
 
     private ProcessV1RDTO state;
@@ -58,13 +63,22 @@ public class MassCopyProcess implements ProcessDefinition {
     @Autowired(required = true)
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
+    private int countHakukohde = 0;
+    private int countKomoto = 0;
+    private int countTotalHakukohde = 0;
+    private int countTotalKomoto = 0;
+
     public MassCopyProcess() {
         super();
-
     }
 
     @Override
     public ProcessV1RDTO getState() {
+        getState().getParameters().put(COUNT_HAKUKOHDE, countHakukohde + "");
+        getState().getParameters().put(COUNT_KOMOTO, countKomoto + "");
+        getState().getParameters().put(TOTAL_HAKUKOHDE, countTotalHakukohde + "");
+        getState().getParameters().put(TOTAL_KOMOTO, countTotalKomoto + "");
+        getState().setState(calcPercentage());
         return state;
     }
 
@@ -92,8 +106,12 @@ public class MassCopyProcess implements ProcessDefinition {
             final List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
             final Set<Long> komotoIds = Sets.newHashSet(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeIds, COPY_TILAS));
 
+            countTotalHakukohde = hakukohdeIds.size();
+            countTotalKomoto = komotoIds.size();
+
+            LOG.info("komoto rows total : {}", countTotalKomoto);
             for (Long komotoId : komotoIds) {
-                LOG.info("convert komoto by id : {}", komotoId);
+                LOG.info("convert {} komoto by id : {}", countKomoto, komotoId);
 
                 KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(komotoId);
                 Preconditions.checkNotNull(komoto, "Komoto entity cannot be null!");
@@ -117,10 +135,11 @@ public class MassCopyProcess implements ProcessDefinition {
                         KoulutusmoduuliToteutus.class,
                         komoto,
                         metaObject);
+                countKomoto++;
             }
 
             for (Long hakukohdeId : hakukohdeIds) {
-                LOG.info("convert hakukohde by hakukohdeId : {}", hakukohdeId);
+                LOG.info("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
                 Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
                 Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
 
@@ -139,6 +158,8 @@ public class MassCopyProcess implements ProcessDefinition {
                         Hakukohde.class,
                         hakukohde,
                         metaObject);
+
+                countHakukohde++;
             }
 
             getState().getParameters().put("result", "success");
@@ -162,5 +183,12 @@ public class MassCopyProcess implements ProcessDefinition {
     @Override
     public boolean isCompleted() {
         return getState().getState() == 100.0;
+    }
+
+    private double calcPercentage() {
+        if (countTotalHakukohde + countTotalKomoto > 0) {
+            return (countHakukohde + countKomoto * 100 / countTotalHakukohde + countTotalKomoto);
+        }
+        return 0;
     }
 }
