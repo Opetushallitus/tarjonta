@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
         name = "teksti_kaannos",
         uniqueConstraints = @UniqueConstraint(columnNames = {"kieli_koodi", "teksti_id"})
 )
-@JsonIgnoreProperties({"id", "version"})
+@JsonIgnoreProperties({"id", "version","teksti"})
 public class TekstiKaannos extends TarjontaBaseEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);
@@ -46,7 +46,6 @@ public class TekstiKaannos extends TarjontaBaseEntity {
 
     @Column(name = "arvo")
     private String arvo;
-    @JsonBackReference
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private MonikielinenTeksti teksti;
 
