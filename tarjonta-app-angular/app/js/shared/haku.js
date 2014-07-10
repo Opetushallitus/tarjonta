@@ -82,7 +82,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
 
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
-        return $resource(serviceUrl, {oid: '@oid', state:'@state'}, {
+        return $resource(serviceUrl, {oid: '@oid', state:'@state', processId:'@processId'}, {
             save: {
                 method: 'POST',
                 withCredentials: true,
@@ -132,8 +132,8 @@ app.factory('HakuV1', function($resource, $log, Config) {
             method:'PUT'
           }
           ,paste: {
-            url:Config.env.tarjontaRestUrlPrefix + 'paste/:oid/:processId',
-            methos:'PUT'
+            url:Config.env.tarjontaRestUrlPrefix + 'haku/paste/:oid/:processId',
+            method:'PUT'
           }
         });
 
@@ -250,6 +250,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
      * Kopioi haku (ks myös liitä)
      */
     ,copy: function(oid){
+      console.log("hakuoid:", oid);
       return HakuV1.copy({oid:oid}).$promise;
     }
     /**
