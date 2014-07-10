@@ -96,10 +96,10 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
-    public Pair<Object, MetaObject> find(final String hakuOid, final String oldOid, Class clazz) {
+    public Pair<Object, MetaObject> find(final String processId, final String oldOid, Class clazz) {
         Preconditions.checkNotNull(clazz, "Class instance cannot be null.");
 
-        Massakopiointi result = find(hakuOid, oldOid);
+        Massakopiointi result = find(processId, oldOid);
         if (result == null) {
             LOG.info("No item found by oid '{}' class : json : '{}'", oldOid, clazz);
             return null;
@@ -108,12 +108,12 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
-    public Massakopiointi find(final String hakuOid, final String oldOid) {
-        Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
+    public Massakopiointi find(final String processId, final String oldOid) {
+        Preconditions.checkNotNull(processId, "Process Id OID cannot be null.");
         Preconditions.checkNotNull(oldOid, "Generic OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid).and(kopiointi.oldOid.eq(oldOid))).uniqueResult(kopiointi);
+        return from(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.oldOid.eq(oldOid))).uniqueResult(kopiointi);
     }
 
     @Override

@@ -66,7 +66,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id"})
+@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id","version"})
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 

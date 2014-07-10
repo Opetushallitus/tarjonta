@@ -38,6 +38,7 @@ public class MassCopyProcess implements ProcessDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
     public static final String SELECTED_HAKU_OID = "haku.oid.from";
+    public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
     private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.KOPIOITU, TarjontaTila.LUONNOS, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
 
     private ProcessV1RDTO state;
@@ -94,24 +95,25 @@ public class MassCopyProcess implements ProcessDefinition {
             for (Long komotoId : searchKomotoIdsByHakukohdesId) {
                 LOG.info("convert komoto by id : {}", komotoId);
 
-                KoulutusmoduuliToteutus k = koulutusmoduuliToteutusDAO.read(komotoId);
+                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(komotoId);
                 MetaObject metaObject = new MetaObject();
-                for (Hakukohde hk : k.getHakukohdes()) {
+                for (Hakukohde hk : komoto.getHakukohdes()) {
                     metaObject.addHakukohdeOid(hk.getOid());
                 }
 
-                metaObject.setKomoOid(k.getOid());
-                metaObject.setOrginalKomotoOid(k.getOid());
+                metaObject.setOriginalHakuOid(fromOid);
+                metaObject.setOriginalKomoOid(komoto.getKoulutusmoduuli().getOid());
+                metaObject.setOriginalKomotoOid(komoto.getOid());
                 metaObject.setNewKomotoOid(oidService.get(TarjontaOidType.KOMOTO));
 
                 massakopiointiDAO.saveEntityAsJson(
                         fromOid,
-                        k.getOid(),
+                        komoto.getOid(),
                         metaObject.getNewKomotoOid(),
                         state.getId(),
                         Massakopiointi.Tyyppi.KOMOTO_ENTITY,
                         KoulutusmoduuliToteutus.class,
-                        k,
+                        komoto,
                         metaObject);
             }
 

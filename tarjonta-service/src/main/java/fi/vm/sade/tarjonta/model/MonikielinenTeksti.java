@@ -36,7 +36,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 /**
  * Translatable texts with modest "metadata" properties.
  */
-@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos","id"})
+@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos","id","version"})
 @Entity
 @Table(name = "monikielinen_teksti")
 public class MonikielinenTeksti extends TarjontaBaseEntity {

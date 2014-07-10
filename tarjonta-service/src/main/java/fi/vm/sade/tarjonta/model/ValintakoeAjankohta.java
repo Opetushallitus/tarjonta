@@ -34,7 +34,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table(name = "valintakoe_ajankohta")
 public class ValintakoeAjankohta extends TarjontaBaseEntity {
 

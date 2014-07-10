@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table(name = Kielivalikoima.TABLE_NAME)
 public class Kielivalikoima extends TarjontaBaseEntity {
 

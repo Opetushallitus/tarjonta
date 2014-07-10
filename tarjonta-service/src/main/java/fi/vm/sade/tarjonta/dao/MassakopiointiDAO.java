@@ -7,7 +7,6 @@ import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.model.TarjontaBaseEntity;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -17,9 +16,9 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
 
     public List<Massakopiointi> findByHakuOid(String hakuOid);
 
-    public Pair<Object, MetaObject> find(final String hakuOid, final String oldOid, Class clazz);
+    public Pair<Object, MetaObject> find(final String processId, final String oldOid, Class clazz);
 
-    public Massakopiointi find(String hakuOid, String oldOid);
+    public Massakopiointi find(String processId, String oldOid);
 
     public List<Massakopiointi> findByHakuOidAndOids(final String hakuOid, final List<String> oids);
 

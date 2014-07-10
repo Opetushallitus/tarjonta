@@ -634,7 +634,7 @@ public final class EntityUtils {
         for (WebLinkki fromLinkki : from) {
             WebLinkkiTyyppi toLinkki = new WebLinkkiTyyppi();
             toLinkki.setKieli(fromLinkki.getKieli());
-            toLinkki.setTyyppi(fromLinkki.getTyyppi());
+            toLinkki.setTyyppi(fromLinkki.getLinkkiTyyppi());
             toLinkki.setUri(fromLinkki.getUrl());
             to.add(toLinkki);
         }

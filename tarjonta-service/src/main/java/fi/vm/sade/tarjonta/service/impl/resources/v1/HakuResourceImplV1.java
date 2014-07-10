@@ -44,6 +44,8 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.copy.CopyConverter;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
@@ -623,21 +625,24 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * Massakopioinnin metodi, tallentaa kopioitavan datan json-formaatissa valitauluun.
      */
     @Override
-    public ResultV1RDTO<String> copyHaku(String fromOid) {
+    public ResultV1RDTO<String> copyHaku(final String fromOid) {
         LOG.info("copyHaku");
         ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
         processV1RDTO.setProcess("massCopyProcess");
-        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromOid);
+        processV1RDTO.getParameters().put(MassPasteProcess.SELECTED_HAKU_OID, fromOid);
         ProcessV1RDTO result = processResource.start(processV1RDTO);
         return new ResultV1RDTO<String>(result.getId());
     }
 
     @Override
-    public ResultV1RDTO<String> pasteHaku(String fromOid, String toOid) {
-        
-        
-        
-        return new ResultV1RDTO<String>("process_id");
+    public ResultV1RDTO<String> pasteHaku(final String fromOid, final String processId) {
+        ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
+        processV1RDTO.setProcess("massPasteProcess");
+        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromOid);
+        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_PROCESS_COPY_ID, processId);
+        ProcessV1RDTO result = processResource.start(processV1RDTO);
+
+        return new ResultV1RDTO<String>(result.getId());
     }
 
     public ResultV1RDTO<Boolean> getCopyProcessStatus(String processId) {

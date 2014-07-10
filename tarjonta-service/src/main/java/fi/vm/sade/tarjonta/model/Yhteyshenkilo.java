@@ -33,7 +33,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * Yhteyshenkilo's are always maintained in Henkilo service.
  */
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table(name = Yhteyshenkilo.TABLE_NAME)
 public class Yhteyshenkilo extends TarjontaBaseEntity {
 

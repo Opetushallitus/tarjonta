@@ -59,6 +59,7 @@
       For example, post this to create it: { process: "processTest", parameters: { time : 13 } }
     -->
     <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
+    <bean id="massPasteProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess"/>
     <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
 
     <!-- CORS (cross domain) support for rest services -->

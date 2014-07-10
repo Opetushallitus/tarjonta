@@ -20,7 +20,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
     @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
 })
 @EntityListeners(XssFilterListener.class)
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 public class MonikielinenMetadata extends TarjontaBaseEntity {
 
     /**

@@ -28,9 +28,11 @@ public class MetaObject implements Serializable {
 
     private Set<String> komotoOids;
     private Set<String> hakukohdeOids;
-    private String komoOid;
-    private String orginalKomotoOid;
     private String newKomotoOid;
+
+    private String originalKomoOid;
+    private String originalKomotoOid;
+    private String originalHakuOid;
 
     public MetaObject() {
     }
@@ -49,20 +51,6 @@ public class MetaObject implements Serializable {
         }
 
         getHakukohdeOids().add(oid);
-    }
-
-    /**
-     * @return the komoOid
-     */
-    public String getKomoOid() {
-        return komoOid;
-    }
-
-    /**
-     * @param komoOid the komoOid to set
-     */
-    public void setKomoOid(String komoOid) {
-        this.komoOid = komoOid;
     }
 
     @Override
@@ -98,19 +86,6 @@ public class MetaObject implements Serializable {
         this.komotoOids = komotoOids;
     }
 
-    /**
-     * @return the orginalKomotoOid
-     */
-    public String getOrginalKomotoOid() {
-        return orginalKomotoOid;
-    }
-
-    /**
-     * @param orginalKomotoOid the orginalKomotoOid to set
-     */
-    public void setOrginalKomotoOid(String orginalKomotoOid) {
-        this.orginalKomotoOid = orginalKomotoOid;
-    }
 
     /**
      * @return the newKomotoOid
@@ -124,5 +99,47 @@ public class MetaObject implements Serializable {
      */
     public void setNewKomotoOid(String newKomotoOid) {
         this.newKomotoOid = newKomotoOid;
+    }
+
+    /**
+     * @return the originalKomoOid
+     */
+    public String getOriginalKomoOid() {
+        return originalKomoOid;
+    }
+
+    /**
+     * @param originalKomoOid the originalKomoOid to set
+     */
+    public void setOriginalKomoOid(String originalKomoOid) {
+        this.originalKomoOid = originalKomoOid;
+    }
+
+    /**
+     * @return the originalHakuOid
+     */
+    public String getOriginalHakuOid() {
+        return originalHakuOid;
+    }
+
+    /**
+     * @param originalHakuOid the originalHakuOid to set
+     */
+    public void setOriginalHakuOid(String originalHakuOid) {
+        this.originalHakuOid = originalHakuOid;
+    }
+
+    /**
+     * @return the originalKomotoOid
+     */
+    public String getOriginalKomotoOid() {
+        return originalKomotoOid;
+    }
+
+    /**
+     * @param originalKomotoOid the originalKomotoOid to set
+     */
+    public void setOriginalKomotoOid(String originalKomotoOid) {
+        this.originalKomotoOid = originalKomotoOid;
     }
 }

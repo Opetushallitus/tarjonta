@@ -52,7 +52,7 @@ import org.codehaus.jackson.annotate.JsonManagedReference;
  *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id"})
+@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version"})
 @Table(name = Hakukohde.TABLE_NAME)
 public class Hakukohde extends TarjontaBaseEntity {
 

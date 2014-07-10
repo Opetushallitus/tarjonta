@@ -23,11 +23,11 @@ import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Conversions to entity objects.
+ * Copy to entity objects.
  *
  * @author Jani Wilén
  */
@@ -60,19 +60,23 @@ public class CopyConverter {
     @Autowired(required = true)
     private MassakopiointiDAO massakopiointi;
 
-    public void convert(String hakuOid, String processId) {
-        List<String> oldOids = massakopiointi.searchOids(new MassakopiointiDAO.SearchCriteria(hakuOid, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, processId));
+    public void convert(String processId) {
+        List<String> oldOids = massakopiointi.searchOids(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, processId));
 
-        for (String m : oldOids) {
-            Pair<Object, MetaObject> find = massakopiointi.find(hakuOid, m, KoulutusmoduuliToteutus.class);
+        Date processing = new Date();
+        for (String oldKomoOid : oldOids) {
+
+            Pair<Object, MetaObject> find = massakopiointi.find(processId, oldKomoOid, KoulutusmoduuliToteutus.class);
             KoulutusmoduuliToteutus komoto = (KoulutusmoduuliToteutus) find.getFirst();
             final MetaObject meta = find.getSecond();
-            komoto.setId(null);
+
+            LOG.info("convert komoto by oid : {}, new oid : {}", meta.getNewKomotoOid());
             komoto.setOid(meta.getNewKomotoOid());
             komoto.setTila(TarjontaTila.KOPIOITU);
-            komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(hakuOid));
+            komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
+            komoto.setUlkoinenTunniste(processId);
             koulutusmoduuliToteutusDAO.insert(komoto);
+            massakopiointi.updateTila(meta.getOriginalHakuOid(), oldKomoOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
         }
     }
-
 }

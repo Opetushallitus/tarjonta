@@ -28,7 +28,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * @author: Tuomas Katva
  */
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table(name = "painotettavaoppiaine")
 @EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends TarjontaBaseEntity {

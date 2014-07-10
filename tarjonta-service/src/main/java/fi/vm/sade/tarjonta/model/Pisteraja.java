@@ -20,12 +20,14 @@ import java.math.BigDecimal;
 
 import javax.persistence.*;
 import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 /**
  *
  * @author: Tuomas Katva
  */
 @Entity
 @Table(name = "pisteraja")
+@JsonIgnoreProperties({"id","version"})
 public class Pisteraja extends TarjontaBaseEntity  {
 
     private static final long serialVersionUID = 1878029033380865674L;

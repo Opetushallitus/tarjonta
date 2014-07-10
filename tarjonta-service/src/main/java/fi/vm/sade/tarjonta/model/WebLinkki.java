@@ -19,11 +19,13 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Typed, localized url to a an external resource.
  */
 @Embeddable
+@JsonIgnoreProperties({"id", "version", "tyyppi"})
 public class WebLinkki implements Serializable {
 
     private static final long serialVersionUID = -9139969267734067600L;
@@ -80,8 +82,12 @@ public class WebLinkki implements Serializable {
         kieli = (StringUtils.isEmpty(kieliKoodi) ? NULL_KIELI : kieliKoodi.trim());
     }
 
-    public String getTyyppi() {
+    public String getLinkkiTyyppi() {
         return linkkiTyyppi;
+    }
+
+    public void setLinkkiTyyppi(String linkkiTyyppi) {
+        this.linkkiTyyppi = linkkiTyyppi;
     }
 
     public String getUrl() {
@@ -124,6 +130,4 @@ public class WebLinkki implements Serializable {
         STIPENDI
     }
 
-
 }
-

@@ -29,7 +29,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table(name = Hakuaika.TABLE_NAME)
 public class Hakuaika extends TarjontaBaseEntity {
 

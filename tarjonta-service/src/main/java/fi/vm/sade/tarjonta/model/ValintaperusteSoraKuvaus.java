@@ -14,7 +14,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 *
 */
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table( name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME)
 public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 

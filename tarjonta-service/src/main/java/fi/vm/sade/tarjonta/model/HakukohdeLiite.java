@@ -25,7 +25,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 @Table(name = "hakukohdeliite")
 public class HakukohdeLiite extends TarjontaBaseEntity {
 

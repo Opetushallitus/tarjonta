@@ -17,16 +17,9 @@ package fi.vm.sade.tarjonta.dao;
 
 import com.google.common.collect.Lists;
 import com.mysema.commons.lang.Pair;
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
-import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -59,8 +52,6 @@ public class MassakopiointiDAOTest {
     private static final String HAKU_OID_1 = "HAKU_OID_1";
     private static final String HAKU_OID_2 = "HAKU_OID_2";
 
-    private static final String HAKUKOHDE_UNIQUE_OID_1 = "ANY_OID_1";
-
     private static final String ANY_UNIQUE_OID_1 = "ANY_OID_1";
     private static final String ANY_UNIQUE_OID_2 = "ANY_OID_2";
     private static final String ANY_UNIQUE_OID_3 = "ANY_OID_3";
@@ -73,7 +64,7 @@ public class MassakopiointiDAOTest {
     private static final String KOULUTUS_URI4 = "koulutus_uri_4";
     private static final String KOULUTUS_URI5 = "koulutus_uri_5";
 
-    private static final String NEW_OID = "1213424234235";
+    private static final String NEW_OID1 = "1213424234235";
 
     private static final String PROSESS_ID1 = "prosess_id_1";
     private static final String PROSESS_ID2 = "prosess_id_2";
@@ -83,9 +74,6 @@ public class MassakopiointiDAOTest {
 
     @Autowired
     private MassakopiointiDAO instance;
-
-    @Autowired
-    private TarjontaFixtures fixtures;
 
     public MassakopiointiDAOTest() {
     }
@@ -104,7 +92,7 @@ public class MassakopiointiDAOTest {
         metaJson = new MetaObject();
         metaJson.addHakukohdeOid("oid1");
         metaJson.addKomotoOid("oid2");
-        metaJson.setKomoOid("oid3");
+        metaJson.setOriginalKomoOid("oid3");
 
         toteutus1 = createKomoto(ANY_UNIQUE_OID_1, KOULUTUS_URI1);
         toteutus2 = createKomoto(ANY_UNIQUE_OID_2, KOULUTUS_URI2);
@@ -118,12 +106,12 @@ public class MassakopiointiDAOTest {
      */
     @Test
     public void testAllOperations() {
-        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_1, NEW_OID, PROSESS_ID1, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus1, metaJson);
-        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_2, NEW_OID, PROSESS_ID1, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus2, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_1, NEW_OID1, PROSESS_ID1, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus1, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_1, ANY_UNIQUE_OID_2, NEW_OID1, PROSESS_ID1, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus2, metaJson);
 
-        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_3, NEW_OID, PROSESS_ID2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus3, metaJson);
-        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_4, NEW_OID, PROSESS_ID2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus4, metaJson);
-        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_5, NEW_OID, PROSESS_ID2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus5, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_3, NEW_OID1, PROSESS_ID2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus3, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_4, NEW_OID1, PROSESS_ID2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus4, metaJson);
+        instance.saveEntityAsJson(HAKU_OID_2, ANY_UNIQUE_OID_5, NEW_OID1, PROSESS_ID2, Massakopiointi.Tyyppi.KOMOTO_ENTITY, KoulutusmoduuliToteutus.class, toteutus5, metaJson);
 
         /*
          * findAll
@@ -158,7 +146,7 @@ public class MassakopiointiDAOTest {
         search = instance.search(new MassakopiointiDAO.SearchCriteria(HAKU_OID_2, null, null, null, null));
         assertEquals("search by 1 params", 3, search.size());
 
-        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, NEW_OID, null, null));
+        search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, NEW_OID1, null, null));
         assertEquals("search new oid", 5, search.size());
 
         search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID1));
@@ -170,16 +158,16 @@ public class MassakopiointiDAOTest {
         /*
          * find
          */
-        Object nullResult = instance.find(HAKU_OID_2, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
+        Object nullResult = instance.find(PROSESS_ID2, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
         assertNull("findByOid -  required null", nullResult);
-        Pair<Object, MetaObject> find = instance.find(HAKU_OID_1, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
+        Pair<Object, MetaObject> find = instance.find(PROSESS_ID1, ANY_UNIQUE_OID_1, KoulutusmoduuliToteutus.class);
         KoulutusmoduuliToteutus kt1 = (KoulutusmoduuliToteutus) find.getFirst();
 
         assertNotNull("findByOid - result KoulutusmoduuliToteutus?", kt1);
         assertEquals("findByOid koulutus uri", KOULUTUS_URI1, kt1.getKoulutusUri());
         assertEquals("findByOid date", DATE, kt1.getKoulutuksenAlkamisPvm());
         // assertEquals("findByOid tila", TarjontaTila.KOPIOITU, kt1.getTila());
-        assertEquals("findByOid meta komo", "oid3", find.getSecond().getKomoOid());
+        assertEquals("findByOid meta komo", "oid3", find.getSecond().getOriginalKomoOid());
         assertEquals("findByOid meta hakukohde", "oid1", find.getSecond().getHakukohdeOids().iterator().next());
         assertEquals("findByOid meta komoto", "oid2", find.getSecond().getKomotoOids().iterator().next());
 

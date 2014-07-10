@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 	name = "teksti_kaannos",
 	uniqueConstraints = @UniqueConstraint(columnNames={"kieli_koodi", "teksti_id"})
 )
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 public class TekstiKaannos extends TarjontaBaseEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);

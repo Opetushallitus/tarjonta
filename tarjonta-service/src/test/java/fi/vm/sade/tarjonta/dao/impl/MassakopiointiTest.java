@@ -117,4 +117,18 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, hakukohde.getId());
         assertEquals(HAKUKOHDE_OID1, hakukohde.getOid());
     }
+
+//    @Test
+//    public void jsonConvesionToEntity1() throws IOException {
+//        String json = "{\"oid\":\"1.2.246.562.5.10105_02_873_0143_1508\",\"tila\":\"JULKAISTU\",\"updated\":1383648697677,\"koulutusalaUri\":null,\"eqfUri\":null,\"nqfUri\":null,\"koulutusasteUri\":\"koulutusasteoph2002_32#1\",\"koulutusUri\":null,\"koulutusohjelmaUri\":null,\"lukiolinjaUri\":null,\"osaamisalaUri\":null,\"tutkintoUri\":null,\"opintojenLaajuusarvoUri\":null,\"opintojenLaajuusyksikkoUri\":null,\"koulutustyyppiUri\":null,\"opintoalaUri\":null,\"ulkoinenTunniste\":null,\"kandidaatinKoulutusUri\":null,\"toteutustyyppi\":\"AMMATILLINEN_PERUSTUTKINTO\",\"nimi\":null,\"koulutuslajis\":[{\"koodiUri\":\"koulutuslaji_n#1\"}],\"teemas\":[],\"aihees\":[],\"avainsanas\":[],\"opetuskielis\":[{\"koodiUri\":\"kieli_fi#1\"}],\"opetusmuotos\":[{\"koodiUri\":\"opetusmuoto_l#1\"}],\"opetusAikas\":[],\"opetusPaikkas\":[],\"maksullisuus\":null,\"yhteyshenkilos\":[{\"etunimis\":\"Tarja\",\"sukunimi\":\"Tervo\",\"sahkoposti\":\"tarja.tervo@edu.hel.fi\",\"puhelin\":\"050 5427512\",\"kielis\":\"\",\"henkioOid\":null,\"titteli\":\"lehtori\",\"henkiloTyyppi\":\"YHTEYSHENKILO\",\"multipleKielis\":[]}],\"linkkis\":[{\"kieli\":\"fi\",\"url\":\"http://www.hel.fi/wps/wcm/connect/84a63163-2bed-4299-8e6d-66c07155bec0/Sosiaali-+ja+terveysala.pdf?MOD=AJPERES\",\"tyyppi\":\"KOULUTUSOHJELMA\"}],\"ammattinimikes\":[],\"tarjotutKielet\":{},\"lukiodiplomit\":[],\"kkPohjakoulutusvaatimus\":[],\"tekstit\":{\"PAINOTUS\":{},\"YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA\":{},\"KUVAILEVAT_TIEDOT\":{},\"KANSAINVALISTYMINEN\":{},\"SIJOITTUMINEN_TYOELAMAAN\":{},\"SISALTO\":{}},\"kuvat\":{},\"koulutuksenAlkamisPvms\":[1389045600000],\"tutkintonimikes\":[],\"valmistavaKoulutus\":null,\"tarjoaja\":\"1.2.246.562.10.20485193278\",\"lastUpdatedByOid\":\"1.2.246.562.24.67957597104\",\"viimIndeksointiPvm\":1385639914958,\"hinta\":null,\"jarjesteja\":null,\"alkamisVuosi\":2014,\"alkamiskausiUri\":\"kausi_k#1\",\"pohjakoulutusvaatimusUri\":\"pohjakoulutusvaatimustoinenaste_pk#1\",\"suunniteltukestoYksikkoUri\":\"suunniteltukesto_01#1\",\"suunniteltukestoArvo\":\"3\",\"sisalto\":{},\"koulutuksenAlkamisPvm\":1389045600000,\"tutkintonimikeUri\":null,\"opintojenLaajuusArvo\":null,\"maksullisuusUrl\":null,\"arviointikriteerit\":null,\"loppukoeVaatimukset\":null,\"kuvailevatTiedot\":{},\"sijoittuminenTyoelamaan\":{},\"kansainvalistyminen\":{},\"yhteistyoMuidenToimijoidenKanssa\":{},\"painotus\":{},\"koulutusohjelmanValinta\":null,\"lisatietoaOpetuskielista\":null,\"tutkimuksenPainopisteet\":null}";
+//        KoulutusmoduuliToteutus t = null;
+//        try {
+//            t = (KoulutusmoduuliToteutus) EntityToJsonHelper.convertToEntity(json, KoulutusmoduuliToteutus.class);
+//        } catch (Exception ex) {
+//            fail("conversion error from json to entity : " + ex.getMessage());
+//        }
+//        assertNotNull(t);
+//        assertEquals("1.2.246.562.5.10105_02_873_0143_1508", t.getOid());
+//
+//    }
 }
