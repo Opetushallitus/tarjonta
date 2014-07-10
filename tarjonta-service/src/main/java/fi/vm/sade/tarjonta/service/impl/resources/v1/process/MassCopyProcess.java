@@ -74,11 +74,11 @@ public class MassCopyProcess implements ProcessDefinition {
 
     @Override
     public ProcessV1RDTO getState() {
-        getState().getParameters().put(COUNT_HAKUKOHDE, countHakukohde + "");
-        getState().getParameters().put(COUNT_KOMOTO, countKomoto + "");
-        getState().getParameters().put(TOTAL_HAKUKOHDE, countTotalHakukohde + "");
-        getState().getParameters().put(TOTAL_KOMOTO, countTotalKomoto + "");
-        getState().setState(calcPercentage());
+        state.getParameters().put(COUNT_HAKUKOHDE, countHakukohde + "");
+        state.getParameters().put(COUNT_KOMOTO, countKomoto + "");
+        state.getParameters().put(TOTAL_HAKUKOHDE, countTotalHakukohde + "");
+        state.getParameters().put(TOTAL_KOMOTO, countTotalKomoto + "");
+        state.setState(calcPercentage());
         return state;
     }
 
