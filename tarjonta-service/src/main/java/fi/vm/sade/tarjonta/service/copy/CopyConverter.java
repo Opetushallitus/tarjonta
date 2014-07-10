@@ -15,11 +15,13 @@
  */
 package fi.vm.sade.tarjonta.service.copy;
 
+import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.*;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -29,6 +31,9 @@ import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,13 +75,31 @@ public class CopyConverter {
             KoulutusmoduuliToteutus komoto = (KoulutusmoduuliToteutus) find.getFirst();
             final MetaObject meta = find.getSecond();
 
-            LOG.info("convert komoto by oid : {}, new oid : {}", meta.getNewKomotoOid());
+            LOG.info("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
             komoto.setOid(meta.getNewKomotoOid());
             komoto.setTila(TarjontaTila.KOPIOITU);
             komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
             komoto.setUlkoinenTunniste(processId);
+
+            Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
+            if (koulutuksenAlkamisPvms != null) {
+                Set<Date> plusYears = Sets.<Date>newHashSet();
+                for (Date orgDate : koulutuksenAlkamisPvms) {
+                    plusYears.add(dateToNext(orgDate));
+                }
+                komoto.setKoulutuksenAlkamisPvms(plusYears);
+            }
+
             koulutusmoduuliToteutusDAO.insert(komoto);
             massakopiointi.updateTila(meta.getOriginalHakuOid(), oldKomoOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
         }
+        
+        
+    }
+
+    private Date dateToNext(Date date) {
+        DateTime dateTime = new DateTime(date);
+        dateTime.plusYears(1);
+        return dateTime.toDate();
     }
 }

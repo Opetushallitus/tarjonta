@@ -29,6 +29,7 @@ public class MetaObject implements Serializable {
     private Set<String> komotoOids;
     private Set<String> hakukohdeOids;
     private String newKomotoOid;
+    private String newHakukohdeOid;
 
     private String originalKomoOid;
     private String originalKomotoOid;
@@ -86,7 +87,6 @@ public class MetaObject implements Serializable {
         this.komotoOids = komotoOids;
     }
 
-
     /**
      * @return the newKomotoOid
      */
@@ -141,5 +141,19 @@ public class MetaObject implements Serializable {
      */
     public void setOriginalKomotoOid(String originalKomotoOid) {
         this.originalKomotoOid = originalKomotoOid;
+    }
+
+    /**
+     * @return the newHakukohdeOid
+     */
+    public String getNewHakukohdeOid() {
+        return newHakukohdeOid;
+    }
+
+    /**
+     * @param newHakukohdeOid the newHakukohdeOid to set
+     */
+    public void setNewHakukohdeOid(String newHakukohdeOid) {
+        this.newHakukohdeOid = newHakukohdeOid;
     }
 }

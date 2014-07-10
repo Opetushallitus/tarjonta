@@ -21,6 +21,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.codehaus.jackson.annotate.JsonBackReference;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +31,14 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(
-	name = "teksti_kaannos",
-	uniqueConstraints = @UniqueConstraint(columnNames={"kieli_koodi", "teksti_id"})
+        name = "teksti_kaannos",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"kieli_koodi", "teksti_id"})
 )
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id", "version"})
 public class TekstiKaannos extends TarjontaBaseEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(TekstiKaannos.class);
-    
+
     private static final long serialVersionUID = 8949181662473812771L;
 
     @Column(name = "kieli_koodi")
@@ -45,14 +46,15 @@ public class TekstiKaannos extends TarjontaBaseEntity {
 
     @Column(name = "arvo")
     private String arvo;
-
-    @ManyToOne(optional = false, fetch=FetchType.LAZY)
+    @JsonBackReference
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private MonikielinenTeksti teksti;
 
     /**
      * Constructor for JPA.
      */
-    protected TekstiKaannos() {}
+    protected TekstiKaannos() {
+    }
 
     public TekstiKaannos(MonikielinenTeksti teksti, String kieliKoodi, String arvo) {
         this.teksti = teksti;
@@ -69,8 +71,8 @@ public class TekstiKaannos extends TarjontaBaseEntity {
     }
 
     public void setArvo(String arvo) {
-		this.arvo = arvo;
-	}
+        this.arvo = arvo;
+    }
 
     static String formatKieliKoodi(String value) {
         return value.trim();
@@ -104,4 +106,3 @@ public class TekstiKaannos extends TarjontaBaseEntity {
     }
 
 }
-

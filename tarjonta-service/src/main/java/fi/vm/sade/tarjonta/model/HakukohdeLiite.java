@@ -20,12 +20,13 @@ import javax.persistence.*;
 
 import com.google.common.base.Preconditions;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 
 /**
  *
  */
 @Entity
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id","version", "hibernateLazyInitializer", "handler", "hakukohde"})
 @Table(name = "hakukohdeliite")
 public class HakukohdeLiite extends TarjontaBaseEntity {
 
@@ -50,6 +51,7 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     //@Column(name = "liitteenTyyppiKoodistoNimi", nullable=false)
     //private String liitteenTyyppiKoodistoNimi;
 
+    @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name = "kuvaus_teksti_id")
     private MonikielinenTeksti kuvaus;

@@ -15,11 +15,11 @@
  */
 package fi.vm.sade.tarjonta.service.copy;
 
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,14 @@ import org.slf4j.LoggerFactory;
 public class EntityToJsonHelper {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(EntityToJsonHelper.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY) // auto-detect all member fields
+                .setVisibility(JsonMethod.GETTER, JsonAutoDetect.Visibility.NONE) // but only public getters
+                .setVisibility(JsonMethod.IS_GETTER, JsonAutoDetect.Visibility.NONE); // and none of "is-setters"
+    }
 
 //    private static final Gson GSON = JsonFieldFilter.createPreConfiguredGsonBuilder().create();
 //    private static final JsonFieldFilter GSON_HAKUKOHDE;

@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -39,10 +40,9 @@ public class MassCopyProcess implements ProcessDefinition {
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
     public static final String SELECTED_HAKU_OID = "haku.oid.from";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
-    private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.KOPIOITU, TarjontaTila.LUONNOS, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
+    private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
 
     private ProcessV1RDTO state;
-
     private long startTs = 0L;
     private int howManySecondsToRun = 0;
 
@@ -89,13 +89,15 @@ public class MassCopyProcess implements ProcessDefinition {
             startTs = System.currentTimeMillis();
             LOG.info("start()... {}", startTs);
 
-            List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
-            final Set<Long> searchKomotoIdsByHakukohdesId = Sets.newHashSet(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeIds, COPY_TILAS));
+            final List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
+            final Set<Long> komotoIds = Sets.newHashSet(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeIds, COPY_TILAS));
 
-            for (Long komotoId : searchKomotoIdsByHakukohdesId) {
+            for (Long komotoId : komotoIds) {
                 LOG.info("convert komoto by id : {}", komotoId);
 
                 KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(komotoId);
+                Preconditions.checkNotNull(komoto, "Komoto entity cannot be null!");
+
                 MetaObject metaObject = new MetaObject();
                 for (Hakukohde hk : komoto.getHakukohdes()) {
                     metaObject.addHakukohdeOid(hk.getOid());
@@ -114,6 +116,28 @@ public class MassCopyProcess implements ProcessDefinition {
                         Massakopiointi.Tyyppi.KOMOTO_ENTITY,
                         KoulutusmoduuliToteutus.class,
                         komoto,
+                        metaObject);
+            }
+
+            for (Long hakukohdeId : hakukohdeIds) {
+                LOG.info("convert hakukohde by hakukohdeId : {}", hakukohdeId);
+                Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
+                Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
+
+                MetaObject metaObject = new MetaObject();
+                for (KoulutusmoduuliToteutus hk : hakukohde.getKoulutusmoduuliToteutuses()) {
+                    metaObject.addKomotoOid(hk.getOid());
+                }
+                metaObject.setNewHakukohdeOid(oidService.get(TarjontaOidType.KOMOTO));
+                metaObject.setOriginalHakuOid(fromOid);
+                massakopiointiDAO.saveEntityAsJson(
+                        fromOid,
+                        hakukohde.getOid(), //from hakukohde oid
+                        metaObject.getNewHakukohdeOid(), //to hakukohde oid
+                        state.getId(),
+                        Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY,
+                        Hakukohde.class,
+                        hakukohde,
                         metaObject);
             }
 

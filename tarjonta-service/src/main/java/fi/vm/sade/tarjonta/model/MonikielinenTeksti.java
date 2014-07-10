@@ -32,11 +32,13 @@ import javax.persistence.Table;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 
 /**
  * Translatable texts with modest "metadata" properties.
  */
-@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos","id","version"})
+
+@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos", "id", "version", "hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "monikielinen_teksti")
 public class MonikielinenTeksti extends TarjontaBaseEntity {
@@ -45,6 +47,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", fetch = FetchType.LAZY, orphanRemoval = true)
     @MapKey(name = "kieliKoodi")
+    @JsonManagedReference
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
     public Collection<TekstiKaannos> getTekstiKaannos() {
@@ -68,14 +71,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             //kaannos.setVersion(null);
         }
     }
-    
+
     public MonikielinenTeksti() {
     }
-    
+
     /**
-     * Construct Monikielinen teksti from lang, value pairs. for every pair n the
-     * nth lang is at data[n*2], the nth value is at data[n*2+1].
-     * 
+     * Construct Monikielinen teksti from lang, value pairs. for every pair n
+     * the nth lang is at data[n*2], the nth value is at data[n*2+1].
+     *
      * @param data
      */
     public MonikielinenTeksti(String... data) {
@@ -100,14 +103,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
      * object.
      *
      * @param otherTeksti / public void updateFrom(MonikielinenTeksti
- otherTeksti) {
-
- tekstis.clear();
-
- for (TekstiKaannos t : otherTeksti.getTekstiKaannos()) {
- addTekstiKaannos(t.getKieliKoodi(), t.getArvo()); }
-
- }
+     * otherTeksti) {
+     *
+     * tekstis.clear();
+     *
+     * for (TekstiKaannos t : otherTeksti.getTekstiKaannos()) {
+     * addTekstiKaannos(t.getKieliKoodi(), t.getArvo()); }
+     *
+     * }
      */
     private TekstiKaannos findKaannos(String kieliKoodi) {
         final String koodi = TekstiKaannos.formatKieliKoodi(kieliKoodi);
@@ -160,19 +163,19 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     @Override
     public String toString() {
         try {
-        return "MonikielinenTeksti [tekstis=" + tekstis + "]";
-        } catch(Throwable t) {
+            return "MonikielinenTeksti [tekstis=" + tekstis + "]";
+        } catch (Throwable t) {
             return super.toString();
         }
     }
 
-    public List<TekstiKaannos> getKaannoksetAsList(){
+    public List<TekstiKaannos> getKaannoksetAsList() {
         return Lists.newArrayList(tekstis.values());
     }
-    
-    public Map<String, String> asMap(){
-        Map<String, String> tekstit=Maps.newHashMap();
-        for(TekstiKaannos tk:tekstis.values()) {
+
+    public Map<String, String> asMap() {
+        Map<String, String> tekstit = Maps.newHashMap();
+        for (TekstiKaannos tk : tekstis.values()) {
             tekstit.put(tk.getKieliKoodi(), tk.getArvo());
         }
         return tekstit;
