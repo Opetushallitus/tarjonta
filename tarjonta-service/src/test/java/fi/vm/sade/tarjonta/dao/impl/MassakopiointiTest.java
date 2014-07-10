@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import com.google.common.base.Preconditions;
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
@@ -31,15 +30,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.dao.MassakopiointiDAOTest;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

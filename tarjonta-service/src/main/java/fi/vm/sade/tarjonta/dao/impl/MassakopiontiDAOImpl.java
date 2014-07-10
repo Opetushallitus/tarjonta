@@ -208,4 +208,9 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
+
+    @Override
+    public void flush() {
+        getEntityManager().flush();
+    }
 }
