@@ -18,14 +18,19 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
+import fi.vm.sade.tarjonta.dao.HakuaikaDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
+import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess.COUNT_HAKUKOHDE;
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess.COUNT_KOMOTO;
@@ -70,6 +75,9 @@ public class MassPasteProcess implements ProcessDefinition {
 
     @Autowired(required = true)
     private HakukohdeDAO hakukohdeDAO;
+
+    @Autowired(required = true)
+    private HakuaikaDAO hakuaikaDAO;
 
     @Autowired(required = true)
     private HakuDAO hakuDAO;
@@ -230,6 +238,7 @@ public class MassPasteProcess implements ProcessDefinition {
                 koulutusmoduuliToteutusDAO.insert(komoto);
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.COPIED, processing);
             } catch (Exception e) {
+                //TODO : ei toimi koska rollback
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.ERROR, processing);
             }
         }
@@ -245,7 +254,6 @@ public class MassPasteProcess implements ProcessDefinition {
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
                 Pair<Object, MetaObject> pair = massakopiointi.find(processId, oldHakukohdeOid, Hakukohde.class);
                 Hakukohde hk = (Hakukohde) pair.getFirst();
-
                 hk.setHaku(targetHaku);
                 targetHaku.addHakukohde(hk);
 
@@ -256,6 +264,37 @@ public class MassPasteProcess implements ProcessDefinition {
                 hk.setTila(TarjontaTila.KOPIOITU);
                 hk.setUlkoinenTunniste(processId);
                 List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
+
+                /*
+                 * HAKUAIKA
+                 * TODO : saattaa aiheuttaa monta hakuaikaa?
+                 */
+                Hakuaika hakuaika = hk.getHakuaika();
+                targetHaku.addHakuaika(hakuaika);
+                hakuaika.setHaku(targetHaku);
+
+                if (hakuaika.getPaattymisPvm() != null) {
+                    hakuaika.setPaattymisPvm(dateToNext(hakuaika.getPaattymisPvm()));
+                }
+
+                if (hakuaika.getAlkamisPvm() != null) {
+                    hakuaika.setAlkamisPvm(dateToNext(hakuaika.getAlkamisPvm()));
+                }
+
+                /*
+                 * LIITE
+                 */
+                Set<HakukohdeLiite> liites = hk.getLiites();
+                for (HakukohdeLiite l : liites) {
+                    l.setHakukohde(hk);
+                }
+
+                /*
+                 * VALINTAKOE
+                 */
+                for (Valintakoe v : hk.getValintakoes()) {
+                    v.setHakukohde(hk);
+                }
 
                 for (KoulutusmoduuliToteutus k : komotos) {
                     hk.addKoulutusmoduuliToteutus(k);
@@ -273,6 +312,7 @@ public class MassPasteProcess implements ProcessDefinition {
                 hakukohdeDAO.insert(hk);
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);
             } catch (Exception e) {
+                //TODO : ei toimi koska rollback
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.ERROR, processing);
             }
         }
