@@ -60,7 +60,7 @@ public class CopyConverter {
     @Autowired(required = true)
     private MassakopiointiDAO massakopiointi;
 
-    public void convert(String processId) {
+    public void convert(final String processId, final String toHakuOid) {
         List<String> oldOids = massakopiointi.searchOids(new MassakopiointiDAO.SearchCriteria(null, null, null, Massakopiointi.Tyyppi.KOMOTO_ENTITY, processId));
 
         Date processing = new Date();
