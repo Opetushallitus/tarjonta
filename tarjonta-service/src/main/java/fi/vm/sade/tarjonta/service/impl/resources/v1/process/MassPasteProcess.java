@@ -62,14 +62,14 @@ public class MassPasteProcess implements ProcessDefinition {
     @Transactional(readOnly = false)
     @Override
     public void run() {
-        final String fromOid = getState().getParameters().get(SELECTED_HAKU_OID);
+        final String targetHakuOid = getState().getParameters().get(SELECTED_HAKU_OID);
         final String processId = getState().getParameters().get(SELECTED_PROCESS_COPY_ID);
-        LOG.info("MassPasteProcess.run(), params haku oid : '{}', process id '{}'", fromOid, processId);
+        LOG.info("MassPasteProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
 
         try {
             startTs = System.currentTimeMillis();
             LOG.info("start()... {}", startTs);
-            copyConverter.convert(processId); 
+            copyConverter.convert(processId, targetHakuOid); 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
             LOG.error("Copy failed", ex);

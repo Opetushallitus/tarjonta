@@ -133,8 +133,8 @@ public interface HakuV1Resource {
     public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid);
 
     @PUT
-    @Path("/{oid}/copy/{processId}")
+    @Path("/paste/{toOid}/{processId}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "", notes = "", response = Tilamuutokset.class)
-    public ResultV1RDTO<String> pasteHaku(@PathParam("oid") String fromOid, @PathParam("processId") String processId);
+    public ResultV1RDTO<String> pasteHaku(@PathParam("toOid") String toOid, @PathParam("processId") String processId);
 }

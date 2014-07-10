@@ -635,10 +635,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<String> pasteHaku(final String fromOid, final String processId) {
+    public ResultV1RDTO<String> pasteHaku(final String toOid, final String processId) {
         ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
         processV1RDTO.setProcess("massPasteProcess");
-        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromOid);
+        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, toOid);
         processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_PROCESS_COPY_ID, processId);
         ProcessV1RDTO result = processResource.start(processV1RDTO);
 
