@@ -21,7 +21,12 @@
 				--</option>
 		</select>
 
-		<progressbar value="progress">{{progress}}</progressbar>
+<table>
+<tr><td>Koulutukset</td><td>{{koulutusCount}}/{{koulutusMax}}</td></tr>
+<tr><td>Hakukohteet</td><td>{{hakukohdeCount}}/{{hakukohdeMax}}</td></tr>
+</table>
+		<progressbar value="koulutusCount">{{koulutusCount}}</progressbar>
+		<progressbar value="hakukohdeCount">{{hakukohdeCount}}</progressbar>
 
 	</div>
 </div>
