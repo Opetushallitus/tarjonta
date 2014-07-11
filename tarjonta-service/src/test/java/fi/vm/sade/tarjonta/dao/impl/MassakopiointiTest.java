@@ -40,6 +40,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Preconditions;
+
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
@@ -93,10 +95,12 @@ public class MassakopiointiTest extends TestData {
     public void setUp() throws OIDCreationException {
         em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
+        Preconditions.checkNotNull(oidService);
+        System.out.println("oidService:" + oidService);
         Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArguments()[0].toString().concat(Long.toString(System.currentTimeMillis()));
+                return (invocation.getArguments()[0]==null?"null-type-wtf":invocation.getArguments()[0].toString()).concat(Long.toString(System.currentTimeMillis()));
             }
         });
     }
