@@ -15,11 +15,22 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -29,16 +40,20 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Preconditions;
+
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
-import java.io.IOException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import org.slf4j.LoggerFactory;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
  *
@@ -57,15 +72,37 @@ public class MassakopiointiTest extends TestData {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
 
     @Autowired(required = true)
-    private HakukohdeDAOImpl instance;
+    private HakukohdeDAOImpl hakukohdeDAO;
+    @Autowired(required = true)
+    private HakuDAOImpl hakuDAO;
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
+    
+    @Autowired(required = true)
+    private HakuV1Resource hakuResource;
+
+    @Autowired(required = true)
+    private MassCopyProcess copyProcess;
+
+    @Autowired(required = true)
+    private MassPasteProcess pasteProcess;
+
+    @Autowired(required = true)
+    private OidService oidService;
 
     @Before
-    public void setUp() {
-        em = instance.getEntityManager();
+    public void setUp() throws OIDCreationException {
+        em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
+        Preconditions.checkNotNull(oidService);
+        System.out.println("oidService:" + oidService);
+        Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return (invocation.getArguments()[0]==null?"null-type-wtf":invocation.getArguments()[0].toString()).concat(Long.toString(System.currentTimeMillis()));
+            }
+        });
     }
 
     @Test
@@ -111,6 +148,33 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, hakukohde.getId());
         assertEquals(HAKUKOHDE_OID1, hakukohde.getOid());
     }
+
+    @Test
+    public void testCopy(){
+        Haku from = getHaku1();
+
+        
+        //1st part
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid());
+        copyProcess.setState(processV1RDTO);
+        copyProcess.run();
+        final String tId=processV1RDTO.getId();
+
+        //2nd part
+        final Haku target = fixtures.createPersistedHaku();
+        processV1RDTO = MassPasteProcess.getDefinition(target.getOid(),  tId);
+        pasteProcess.setState(processV1RDTO);
+        pasteProcess.run();
+        
+        Haku h = hakuDAO.findByOid(target.getOid());
+        
+        for(Hakukohde hk: hakukohdeDAO.findAll()){
+            System.out.println("hk:" + hk);
+        }
+        assertEquals(3,  h.getHakukohdes().size());
+    }
+
+    
 
 //    @Test
 //    public void jsonConvesionToEntity1() throws IOException {

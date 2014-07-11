@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  *
@@ -70,4 +71,15 @@ public class ProcessV1RDTO implements Serializable {
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
+
+    private ProcessV1RDTO() {
+    }
+    
+    public static ProcessV1RDTO generate(){
+        ProcessV1RDTO p = new ProcessV1RDTO();
+        // Generate new id for the process
+        p.setId("" + new Random().nextLong());
+        return p;
+    }
+    
 }

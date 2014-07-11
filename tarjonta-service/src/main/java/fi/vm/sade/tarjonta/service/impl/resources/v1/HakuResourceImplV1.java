@@ -626,9 +626,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step) {
         LOG.info("copyHaku");
-        ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
-        processV1RDTO.setProcess("massCopyProcess");
-        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromHakuOid);
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
 
         ProcessV1RDTO result = processResource.start(processV1RDTO);

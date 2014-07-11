@@ -89,6 +89,9 @@ public class MassCopyProcess implements ProcessDefinition {
                     LOG.info("Received an unknown precess step '{}'.", PROCESS_SKIP_STEP);
                 }
             }
+            flushHakukohdeBatch(fromOid, batch);
+
+            getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
             LOG.error("Copy failed", ex);
             getState().setMessageKey("my.test.process.error");
@@ -109,4 +112,21 @@ public class MassCopyProcess implements ProcessDefinition {
     public boolean isCompleted() {
         return getState().getState() == 100.0;
     }
+}
+        return 0;
+    }
+    
+    /**
+     * Get process definition that can run this process.
+     * @param fromOid
+     * @return
+     */
+    public static ProcessV1RDTO getDefinition(String fromOid) {
+        ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
+        processV1RDTO.setProcess("massCopyProcess");
+        processV1RDTO.getParameters().put(MassCopyProcess.FROM_HAKU_OID,
+                fromOid);
+        return processV1RDTO;
+    }
+
 }
