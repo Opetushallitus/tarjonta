@@ -131,7 +131,7 @@ public class MassCommitProcess implements ProcessDefinition {
             countTotalKomoto = oldKomotoOids.size();
             countTotalHakukohde = oldHakukohdeOids.size();
 
-            insertHaku(newHakuoid);
+            insertHaku(targetHakuOid);
 
             /*
              * KOMOTO INSERT 
@@ -173,8 +173,6 @@ public class MassCommitProcess implements ProcessDefinition {
         } finally {
             getState().setState(100.0);
         }
-
-        
 
         LOG.info("run()... done.");
     }
@@ -219,6 +217,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 }
 
                 newHakuoid = haku.getOid();
+                getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, newHakuoid);
                 hakuDAO.insert(haku);
             }
         });
@@ -385,19 +384,4 @@ public class MassCommitProcess implements ProcessDefinition {
         }
         return 0;
     }
-    
-    /**
-     * Get process definition that can run this process.
-     * @param toOid haku oid to copy to
-     * @param tId transaction id
-     * @return
-     */
-    public static ProcessV1RDTO getDefinition(String toOid, String processId) {
-        ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
-        processV1RDTO.setProcess("massPasteProcess");
-        processV1RDTO.getParameters().put(MassPasteProcess.TO_HAKU_OID, toOid);
-        processV1RDTO.getParameters().put(MassPasteProcess.SELECTED_PROCESS_COPY_ID, processId);
-        return processV1RDTO;
-}
-
 }

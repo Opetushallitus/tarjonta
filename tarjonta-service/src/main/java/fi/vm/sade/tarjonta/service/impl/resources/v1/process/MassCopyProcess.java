@@ -15,7 +15,6 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,6 @@ public class MassCopyProcess implements ProcessDefinition {
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
 
     public static final String PROCESS_STEP_TYPE = "process.step";
-
     public static final String PROCESS_SKIP_STEP = "skip.step";
 
     public static final String COMMIT = "COMMIT";
@@ -36,6 +34,7 @@ public class MassCopyProcess implements ProcessDefinition {
     public static final String TOTAL_KOMOTO = "count.total.komoto";
 
     public static final String SELECTED_HAKU_OID = "haku.oid.from";
+    public static final String TO_HAKU_OID = "haku.oid.to";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
 
     private final MassPepareProcess prepare = new MassPepareProcess();
@@ -73,8 +72,7 @@ public class MassCopyProcess implements ProcessDefinition {
     @Override
     public void run() {
         final String fromOid = getState().getParameters().get(SELECTED_HAKU_OID);
-        final String processId = getState().getParameters().get(MassCopyProcess.SELECTED_PROCESS_COPY_ID);
-        LOG.info("MassCopyProcess.run(), params haku oid : '{}', process id '{}'", fromOid, processId);
+        LOG.info("MassCopyProcess.run(), params haku oid : '{}', process id '{}'", fromOid, getState().getId());
 
         try {
             if (PROCESS_SKIP_STEP == null || PROCESS_SKIP_STEP.isEmpty()) {
@@ -89,7 +87,6 @@ public class MassCopyProcess implements ProcessDefinition {
                     LOG.info("Received an unknown precess step '{}'.", PROCESS_SKIP_STEP);
                 }
             }
-            flushHakukohdeBatch(fromOid, batch);
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
@@ -112,21 +109,19 @@ public class MassCopyProcess implements ProcessDefinition {
     public boolean isCompleted() {
         return getState().getState() == 100.0;
     }
-}
-        return 0;
-    }
-    
+
     /**
      * Get process definition that can run this process.
-     * @param fromOid
+     *
+     * @param toOid haku oid to copy to
+     * @param step skip process steps
      * @return
      */
-    public static ProcessV1RDTO getDefinition(String fromOid) {
+    public static ProcessV1RDTO getDefinition(final String toOid, final String step) {
         ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
-        processV1RDTO.setProcess("massCopyProcess");
-        processV1RDTO.getParameters().put(MassCopyProcess.FROM_HAKU_OID,
-                fromOid);
+        processV1RDTO.setProcess("massPasteProcess");
+        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, toOid);
+        processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
         return processV1RDTO;
     }
-
 }

@@ -115,6 +115,7 @@ public class MassPepareProcess implements ProcessDefinition {
                 batch.add(komotoId);
                 countKomoto++;
             }
+            flushKoulutusBatch(fromOid, batch);
 
             batch = Sets.<Long>newHashSet();
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
@@ -128,6 +129,7 @@ public class MassPepareProcess implements ProcessDefinition {
                 batch.add(komotoId);
                 countHakukohde++;
             }
+            flushHakukohdeBatch(fromOid, batch);
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
@@ -226,7 +228,7 @@ public class MassPepareProcess implements ProcessDefinition {
                     }
 
                     try {
-                        metaObject.setNewHakukohdeOid(oidService.get(TarjontaOidType.KOMOTO));
+                        metaObject.setNewHakukohdeOid(oidService.get(TarjontaOidType.HAKUKOHDE));
                     } catch (OIDCreationException ex) {
                         LOG.error("OID Service failed", fromOid);
                     }

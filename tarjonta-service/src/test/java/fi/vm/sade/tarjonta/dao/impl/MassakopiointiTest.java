@@ -50,7 +50,6 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -68,9 +67,9 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class MassakopiointiTest extends TestData {
-
+    
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
-
+    
     @Autowired(required = true)
     private HakukohdeDAOImpl hakukohdeDAO;
     @Autowired(required = true)
@@ -81,16 +80,13 @@ public class MassakopiointiTest extends TestData {
     
     @Autowired(required = true)
     private HakuV1Resource hakuResource;
-
+    
     @Autowired(required = true)
     private MassCopyProcess copyProcess;
-
-    @Autowired(required = true)
-    private MassPasteProcess pasteProcess;
-
+    
     @Autowired(required = true)
     private OidService oidService;
-
+    
     @Before
     public void setUp() throws OIDCreationException {
         em = hakukohdeDAO.getEntityManager();
@@ -100,11 +96,11 @@ public class MassakopiointiTest extends TestData {
         Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
-                return (invocation.getArguments()[0]==null?"null-type-wtf":invocation.getArguments()[0].toString()).concat(Long.toString(System.currentTimeMillis()));
+                return (invocation.getArguments()[0] == null ? "null-type-wtf" : invocation.getArguments()[0].toString()).concat(Long.toString(System.currentTimeMillis()));
             }
         });
     }
-
+    
     @Test
     public void testKoulutusConversions() {
         String json = null;
@@ -125,7 +121,7 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, komoto.getId());
         assertEquals(KOMOTO_OID_1, komoto.getOid());
     }
-
+    
     @Test
     public void testHakukohdeConversions() throws IOException {
         String json = null;
@@ -134,10 +130,10 @@ public class MassakopiointiTest extends TestData {
         } catch (Exception ex) {
             fail("conversion error from entity to json : " + ex.getMessage());
         }
-
+        
         assertNotNull("Hakukohde - not nullable", json);
         assertTrue("conversion to json failed", json.length() > 0 && !json.equals("null"));
-
+        
         Hakukohde hakukohde = null;
         try {
             hakukohde = (Hakukohde) EntityToJsonHelper.convertToEntity(json, Hakukohde.class);
@@ -148,33 +144,25 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, hakukohde.getId());
         assertEquals(HAKUKOHDE_OID1, hakukohde.getOid());
     }
-
+    
     @Test
-    public void testCopy(){
+    public void testCopy() {
         Haku from = getHaku1();
 
-        
         //1st part
-        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid());
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid(), null); // null = do not skip process steps
         copyProcess.setState(processV1RDTO);
         copyProcess.run();
-        final String tId=processV1RDTO.getId();
 
         //2nd part
         final Haku target = fixtures.createPersistedHaku();
-        processV1RDTO = MassPasteProcess.getDefinition(target.getOid(),  tId);
-        pasteProcess.setState(processV1RDTO);
-        pasteProcess.run();
+        Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.SELECTED_HAKU_OID));
         
-        Haku h = hakuDAO.findByOid(target.getOid());
-        
-        for(Hakukohde hk: hakukohdeDAO.findAll()){
+        for (Hakukohde hk : hakukohdeDAO.findAll()) {
             System.out.println("hk:" + hk);
         }
-        assertEquals(3,  h.getHakukohdes().size());
+        assertEquals(3, h.getHakukohdes().size());
     }
-
-    
 
 //    @Test
 //    public void jsonConvesionToEntity1() throws IOException {
