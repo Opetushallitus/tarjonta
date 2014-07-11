@@ -36,10 +36,17 @@ app.controller('HakuCopyController', [ '$injector', '$q', '$scope', 'Koodisto', 
               console.log("done?");
               loadingService.setSpinnerEnabled(true);
             }
-            $scope.koulutusCount = res.parameters["count.komoto.processed"];
-            $scope.koulutusMax = res.parameters["count.total.komoto"];
-            $scope.hakukohdeCount = res.parameters["count.hakukohde.processed"];
-            $scope.hakukohdeMax = res.parameters["count.total.hakukohde"];
+            $scope.prepareKoulutusCount = res.parameters.prepare_koulutus_count;
+            $scope.prepareKoulutusMax = res.parameters.prepare_koulutus_total;;
+            $scope.prepareHakukohdeCount = res.parameters.prepare_hakukohde_count;
+            $scope.prepareHakukohdeMax = res.parameters.prepare_hakukohde_total;
+
+            $scope.commitKoulutusCount = res.parameters.commit_koulutus_count;
+            $scope.commitKoulutusMax = res.parameters.commit_koulutus_total;;
+            $scope.commitHakukohdeCount = res.parameters.commit_hakukohde_count;
+            $scope.commitHakukohdeMax = res.parameters.commit_hakukohde_total;
+            
+            $scope.view=res.parameters.process_step||"PREPARE";
           });
         }
         
@@ -55,7 +62,6 @@ app.controller('HakuCopyController', [ '$injector', '$q', '$scope', 'Koodisto', 
           });
         }
         // näytä näkymä 1 (kohteen valinta)
-        $scope.view = 1;
         // hae haut (vuosi +1)
         var vuosi = $scope.model.hakux.result.hakukausiVuosi;
         var kausi = $scope.model.hakux.result.hakukausiUri;
@@ -77,29 +83,4 @@ app.controller('HakuCopyController', [ '$injector', '$q', '$scope', 'Koodisto', 
         $scope.kopioiHakuDialog.close();
       };
 
-      $scope.startPaste = function() {
-        var targetHakuOid = $scope.model.targetHaku.oid;
-        var processId = $scope.model.processId;
-        console.log("target:", targetHakuOid);
-        console.log("target-process:", processId);
-        $scope.progress = 0;
-        $scope.view = 2; // flip view
-        console.log("haku oid:", targetHakuOid);
-        HakuV1Service.paste(targetHakuOid, processId).then(function(res) {
-          var id = res.result;
-          $scope.model.processId = id;
-          loadingService.setSpinnerEnabled(false);
-          ProcessV1Service.startPolling(id, 2000, function(res) {
-            console.log("response:", res);
-            if (res.state === 100) {
-              ProcessV1Service.stopPolling(id);
-              console.log("done? changing view to 3");
-              $scope.view = 3; // flip view
-              loadingService.setSpinnerEnabled(true);
-            }
-            $scope.progress = res.state;
-            console.log("state:", $scope.model.progress);
-          });
-        });
-      };
     } ]);

@@ -1,6 +1,5 @@
 <!-- view1: -->
-{{view}}
-<div ng-show="view===1" id="kopioi-haku-dialogi">
+<div ng-show="view==='PREPARE'" id="kopioi-haku-dialogi">
 	<div class="modal-header">
 		<h3>
 			<span tt="haunKopiointi.otsikko">Kopioi uudelle kaudelle</span>
@@ -8,10 +7,9 @@
 	</div>
 	<div class="modal-body">
 		<p tt="haunKopiointi.kuvaus">
-			Olet kopioimassa kaudelta <b>{}</b> hausta <b>{}</b> hakukohteita ja
-			koulutuksia.
+			Haun kopiointia valmistellaan. Odota.
 		</p>
-		<h4>
+<!-- 		<h4>
 			<span tt="haunKopiointi.haku">Valitse Haku</span>
 		</h4>
 		<select ng-model="model.targetHaku"
@@ -20,32 +18,19 @@
 			<option value="" tt="luoKoulutusDialogi.valitse">-- valitse
 				--</option>
 		</select>
-
+ -->
+ <div class="col-sm-4"><progressbar value="55"></progressbar></div>
 <table>
-<tr><td>Koulutukset</td><td>{{koulutusCount}}/{{koulutusMax}}</td></tr>
-<tr><td>Hakukohteet</td><td>{{hakukohdeCount}}/{{hakukohdeMax}}</td></tr>
+<tr><td>Koulutukset</td><td>{{prepareKoulutusCount}}/{{prepareKoulutusMax}}</td></tr>
+<tr><td>Hakukohteet</td><td>{{prepareHakukohdeCount}}/{{prepareHakukohdeMax}}</td></tr>
 </table>
-		<progressbar value="koulutusCount">{{koulutusCount}}</progressbar>
+<!-- 		<progressbar value="koulutusCount">{{koulutusCount}}</progressbar>
 		<progressbar value="hakukohdeCount">{{hakukohdeCount}}</progressbar>
-
+ -->
 	</div>
 </div>
-<div ng-show="view===1" class="modal-footer">
-	<button class="btn" ng-click="peruuta()">
-		<span tt="luoKoulutusDialogi.peruuta">Peruuta</span>
-	</button>
-	<button class="btn" disabled="true"
-		ng-click="liitaToiseenOrganisaatioon()">
-		<span tt="luoKoulutusDialogi.liitaToiseenOrganisaatioon">Liitä
-			toiseen organisaatioon</span>
-	</button>
-	<button class="btn btn-primary" ng-disabled="jatkaDisabled()"
-		ng-click="startPaste()">
-		<span tt="luoKoulutusDialogi.jatka">Jatka</span>
-	</button>
-</div>
 <!-- view2: "kopiointi käynnissä"-->
-<div ng-show="view===2" id="kopioi-haku-dialogi">
+<div ng-show="view==='COMMIT'" id="kopioi-haku-dialogi">
 	<div class="modal-header">
 		<h3>
 			<span tt="haunKopiointi.kaynnissa.otsikko">Haun kopiointi
@@ -54,8 +39,11 @@
 	</div>
 	<div class="modal-body">
 		<p tt="haunKopiointi.kaynnissa.kuvaus">
-			Olet kopioimassa kaudelta <b>{}</b> hausta <b>{}</b> hakukohteita ja
-			koulutuksia.
+<table>
+<tr><td>Koulutukset</td><td>{{commitKoulutusCount}}/{{commitKoulutusMax}}</td></tr>
+<tr><td>Hakukohteet</td><td>{{commitHakukohdeCount}}/{{commitHakukohdeMax}}</td></tr>
+</table>
+			
 		</p>
 
 		<progressbar value="progress">{{progress}}</progressbar>
@@ -63,18 +51,8 @@
 	</div>
 </div>
 
-<div ng-show="view===2" class="modal-footer">
-	<button class="btn" ng-click="peruuta()">
-		<span tt="luoKoulutusDialogi.peruuta">Peruuta</span>
-	</button>
-	<button class="btn btn-primary" ng-disabled="jatkaDisabled()"
-		ng-click="startCopy()">
-		<span tt="luoKoulutusDialogi.jatka">Jatka</span>
-	</button>
-</div>
-
 <!-- view3: "valmis"-->
-<div ng-show="view===3" id="kopioi-haku-dialogi">
+<div ng-show="view==='DONE'" id="kopioi-haku-dialogi">
 	<div class="modal-header">
 		<h3>
 			<span tt="haunKopiointi.valmis.otsikko">Kopiointi valmis</span>
@@ -87,9 +65,11 @@
 
 	</div>
 </div>
-<div ng-show="view===3" class="modal-footer">
-	<button class="btn btn-primary" ng-disabled="endDisabled()"
+
+<!-- nappularivi -->
+<div class="modal-footer">
+	<button class="btn btn-primary"
 		ng-click="close()">
-		<span tt="luoKoulutusDialogi.jatka">Valmis</span>
+		<span tt="luoKoulutusDialogi.sulje">Sulje</span>
 	</button>
 </div>
