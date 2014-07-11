@@ -30,9 +30,16 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+
 import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -61,6 +68,15 @@ public class MassakopiointiTest extends TestData {
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
+    
+    @Autowired(required = true)
+    private HakuV1Resource hakuResource;
+
+    @Autowired(required = true)
+    private MassCopyProcess copyProcess;
+
+    @Autowired(required = true)
+    private MassPasteProcess pasteProcess;
 
     @Before
     public void setUp() {
@@ -111,6 +127,29 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, hakukohde.getId());
         assertEquals(HAKUKOHDE_OID1, hakukohde.getOid());
     }
+
+    @Test
+    public void testCopy(){
+        Haku from = getHaku1();
+
+        
+        //1st part
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid());
+        copyProcess.setState(processV1RDTO);
+        copyProcess.run();
+        final String tId=processV1RDTO.getId();
+
+        //2nd part
+        
+        processV1RDTO = MassPasteProcess.getDefinition(getHaku2().getOid(),  tId);
+        pasteProcess.setState(processV1RDTO);
+        pasteProcess.run();
+        
+        //TODO v alidate
+
+    }
+
+    
 
 //    @Test
 //    public void jsonConvesionToEntity1() throws IOException {

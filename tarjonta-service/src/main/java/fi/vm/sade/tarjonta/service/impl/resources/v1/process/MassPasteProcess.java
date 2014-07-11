@@ -52,11 +52,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+
 public class MassPasteProcess implements ProcessDefinition {
 
     private static final int FLUSH_SIZE = 100;
     private static final Logger LOG = LoggerFactory.getLogger(MassPasteProcess.class);
-    public static final String TARGET_HAKU_OID = "haku.oid.to";
+    public static final String FROM_HAKU_OID = "haku.oid.from";
+    public static final String TO_HAKU_OID = "haku.oid.to";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
 
     private ProcessV1RDTO state;
@@ -89,7 +92,6 @@ public class MassPasteProcess implements ProcessDefinition {
 
     public MassPasteProcess() {
         super();
-
     }
 
     @Override
@@ -109,7 +111,7 @@ public class MassPasteProcess implements ProcessDefinition {
 
     @Override
     public void run() {
-        final String targetHakuOid = getState().getParameters().get(TARGET_HAKU_OID);
+        final String targetHakuOid = getState().getParameters().get(TO_HAKU_OID);
         final String processId = getState().getParameters().get(SELECTED_PROCESS_COPY_ID);
         LOG.info("MassPasteProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
 
@@ -168,6 +170,8 @@ public class MassPasteProcess implements ProcessDefinition {
         } finally {
             getState().setState(100.0);
         }
+        
+        
 
         LOG.info("run()... done.");
     }
@@ -340,4 +344,19 @@ public class MassPasteProcess implements ProcessDefinition {
         }
         return 0;
     }
+    
+    /**
+     * Get process definition that can run this process.
+     * @param toOid haku oid to copy to
+     * @param tId transaction id
+     * @return
+     */
+    public static ProcessV1RDTO getDefinition(String toOid, String processId) {
+        ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
+        processV1RDTO.setProcess("massPasteProcess");
+        processV1RDTO.getParameters().put(MassPasteProcess.TO_HAKU_OID, toOid);
+        processV1RDTO.getParameters().put(MassPasteProcess.SELECTED_PROCESS_COPY_ID, processId);
+        return processV1RDTO;
+    }
+
 }

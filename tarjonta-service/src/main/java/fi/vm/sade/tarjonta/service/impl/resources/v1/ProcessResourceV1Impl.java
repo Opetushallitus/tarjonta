@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -46,6 +47,7 @@ public class ProcessResourceV1Impl implements ProcessResourceV1 {
     private List<ProcessDefinition> _processes = new ArrayList<ProcessDefinition>();
 
     @Override
+    @Transactional
     public ProcessV1RDTO start(ProcessV1RDTO processParameters) {
         LOG.info("start({})", processParameters);
 
@@ -61,9 +63,6 @@ public class ProcessResourceV1Impl implements ProcessResourceV1 {
 
             // Set state and parameters
             pd.setState(processParameters);
-
-            // Generate new id for the process
-            pd.getState().setId("" + new Random().nextLong());
 
             // Add process to memory storage for access
             _processes.add(pd);

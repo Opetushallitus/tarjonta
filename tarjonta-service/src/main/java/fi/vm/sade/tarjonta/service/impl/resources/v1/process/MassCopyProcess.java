@@ -44,7 +44,7 @@ public class MassCopyProcess implements ProcessDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
     private static final int FLUSH_SIZE = 100;
-    public static final String SELECTED_HAKU_OID = "haku.oid.from";
+    public static final String FROM_HAKU_OID = "haku.oid.from";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
     public static final String COUNT_HAKUKOHDE = "count.hakukohde.processed";
     public static final String COUNT_KOMOTO = "count.komoto.processed";
@@ -95,7 +95,7 @@ public class MassCopyProcess implements ProcessDefinition {
 
     @Override
     public void run() {
-        final String fromOid = getState().getParameters().get(SELECTED_HAKU_OID);
+        final String fromOid = getState().getParameters().get(FROM_HAKU_OID);
         LOG.info("MassCopyProcess.run(), params haku oid : {}", fromOid);
         long rowCount = massakopiointiDAO.rowCount(fromOid);
         LOG.info("items found {}", rowCount);
@@ -107,6 +107,9 @@ public class MassCopyProcess implements ProcessDefinition {
         try {
             startTs = System.currentTimeMillis();
             final List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
+            if(hakukohdeIds.size()==0){
+                throw new IllegalArgumentException("Nothing to copy!");
+            }
             final Set<Long> komotoIds = Sets.newHashSet(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeIds, COPY_TILAS));
 
             countTotalHakukohde = hakukohdeIds.size();
@@ -271,4 +274,18 @@ public class MassCopyProcess implements ProcessDefinition {
         }
         return 0;
     }
+    
+    /**
+     * Get process definition that can run this process.
+     * @param fromOid
+     * @return
+     */
+    public static ProcessV1RDTO getDefinition(String fromOid) {
+        ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
+        processV1RDTO.setProcess("massCopyProcess");
+        processV1RDTO.getParameters().put(MassCopyProcess.FROM_HAKU_OID,
+                fromOid);
+        return processV1RDTO;
+    }
+
 }

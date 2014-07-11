@@ -39,6 +39,12 @@
 
     <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1"/>
 
+    <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
+    <bean id="massPasteProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess"/>
+    <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
+    
+    
+
     <!--
         Create a dynamic mock class for the jms message sender.
         Read more : https://bitbucket.org/kubek2k/springockito/wiki/Home

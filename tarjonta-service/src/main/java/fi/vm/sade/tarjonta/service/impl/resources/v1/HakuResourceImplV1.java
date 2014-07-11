@@ -626,21 +626,19 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<String> copyHaku(final String fromHakuOid) {
         LOG.info("copyHaku");
-        ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
-        processV1RDTO.setProcess("massCopyProcess");
-        processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromHakuOid);
+        ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid);
         ProcessV1RDTO result = processResource.start(processV1RDTO);
         return new ResultV1RDTO<String>(result.getId());
     }
 
+    /*
+     * Massakopioinnin metodi, pasteaa json välidatasta oikean kopion.
+     */
     @Override
-    public ResultV1RDTO<String> pasteHaku(final String toHakuOid, final String processId) {
-        ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
-        processV1RDTO.setProcess("massPasteProcess");
-        processV1RDTO.getParameters().put(MassPasteProcess.TARGET_HAKU_OID, toHakuOid);
-        processV1RDTO.getParameters().put(MassPasteProcess.SELECTED_PROCESS_COPY_ID, processId);
+    public ResultV1RDTO<String> pasteHaku(final String toOid, final String processId) {
+        LOG.info("pasteHaku");
+        ProcessV1RDTO processV1RDTO = MassPasteProcess.getDefinition(toOid,  processId);
         ProcessV1RDTO result = processResource.start(processV1RDTO);
-
         return new ResultV1RDTO<String>(result.getId());
     }
 

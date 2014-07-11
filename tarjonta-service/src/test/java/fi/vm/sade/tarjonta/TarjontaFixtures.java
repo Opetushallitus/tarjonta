@@ -213,7 +213,7 @@ public class TarjontaFixtures {
         t.setMaksullisuus(null);
         t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
-
+        t.setViimIndeksointiPvm(new Date());
         return t;
 
     }
@@ -311,6 +311,7 @@ public class TarjontaFixtures {
     public Hakukohde createPersistedHakukohde() {
 
         Hakukohde h = createHakukohde();
+        h.setViimIndeksointiPvm(new Date());
         h.setHaku(createPersistedHaku());
         return hakukohdeDAO.insert(h);
 
