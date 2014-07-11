@@ -178,7 +178,7 @@ public class MassPepareProcess implements ProcessDefinition {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                LOG.info("insert koulutus batch size of : {}/{}", komotoIds.size(), countKomoto);
+                LOG.info("prepare koulutus batch size of : {}/{}", komotoIds.size(), countKomoto);
                 for (Long komotoId : komotoIds) {
                     LOG.debug("convert {} komoto by id : {}", countKomoto, komotoId);
 
@@ -218,7 +218,7 @@ public class MassPepareProcess implements ProcessDefinition {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                LOG.info("insert hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
+                LOG.info("prepare hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
                 for (Long hakukohdeId : hakukohdeIds) {
                     LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
                     Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);

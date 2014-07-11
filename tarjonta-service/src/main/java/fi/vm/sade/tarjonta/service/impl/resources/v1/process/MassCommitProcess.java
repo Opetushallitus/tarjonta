@@ -37,6 +37,7 @@ import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Date;
@@ -78,6 +79,8 @@ public class MassCommitProcess implements ProcessDefinition {
 
     @Autowired(required = true)
     private HakuaikaDAO hakuaikaDAO;
+    @Autowired(required = true)
+    private IndexerResource indexerResource;
 
     @Autowired(required = true)
     private HakuDAO hakuDAO;
@@ -90,6 +93,9 @@ public class MassCommitProcess implements ProcessDefinition {
     private int countTotalHakukohde = 0;
     private int countTotalKomoto = 0;
     private String newHakuoid = null;
+
+    private Set<Long> indexHakukohdeIds = Sets.<Long>newHashSet();
+    private Set<Long> indexKomotoIds = Sets.<Long>newHashSet();
 
     public MassCommitProcess() {
         super();
@@ -166,6 +172,8 @@ public class MassCommitProcess implements ProcessDefinition {
                 countHakukohde++;
             }
             insertHakukohdeBatch(processId, oidBatch, newHakuoid);
+            indexerResource.indexKoulutukset(Lists.newArrayList(indexKomotoIds));
+            indexerResource.indexHakukohteet(Lists.newArrayList(indexHakukohdeIds));
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
@@ -263,6 +271,7 @@ public class MassCommitProcess implements ProcessDefinition {
         final Date processing = new Date();
         LOG.info("insert koulutus batch size of : {}/{}", oldOids.size(), countKomoto);
 
+        Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
         for (final String oldKomoOid : oldOids) {
             try {
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
@@ -285,20 +294,22 @@ public class MassCommitProcess implements ProcessDefinition {
                     }
                     komoto.setKoulutuksenAlkamisPvms(plusYears);
                 }
-
-                koulutusmoduuliToteutusDAO.insert(komoto);
+                KoulutusmoduuliToteutus insert = koulutusmoduuliToteutusDAO.insert(komoto);
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.COPIED, processing);
+                batchOfIndexIds.add(insert.getId());
             } catch (Exception e) {
                 //TODO : ei toimi koska rollback
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.ERROR, processing);
             }
         }
+        indexKomotoIds.addAll(batchOfIndexIds);
     }
 
     private void insertHakukohdes(Set<String> oldOids, String processId, String targetHakuOid) {
         final Date processing = new Date();
         LOG.info("insert hakukohde batch size of : {}/{}", oldOids.size(), countHakukohde);
         Haku targetHaku = hakuDAO.findByOid(targetHakuOid);
+        Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
 
         for (String oldHakukohdeOid : oldOids) {
             try {
@@ -359,7 +370,7 @@ public class MassCommitProcess implements ProcessDefinition {
                     }
                 }
 
-                //XXX korjaa tämä tekemällä kunnon testidata
+                //XXX korjaa tama tekemalla kunnon testidata
                 if(meta!=null && meta.getKomotoOids()!=null && !meta.getKomotoOids().isEmpty()){
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
                     for (KoulutusmoduuliToteutus k : komotos) {
@@ -376,8 +387,8 @@ public class MassCommitProcess implements ProcessDefinition {
                 if (hk.getHakuaikaLoppuPvm() != null) {
                     hk.setHakuaikaLoppuPvm(dateToNextYear(hk.getHakuaikaLoppuPvm()));
                 }
-
-                hakukohdeDAO.insert(hk);
+                Hakukohde insert = hakukohdeDAO.insert(hk);
+                batchOfIndexIds.add(insert.getId());
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);
             } catch (Exception e) {
                 LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
@@ -385,6 +396,8 @@ public class MassCommitProcess implements ProcessDefinition {
             }
             
         }
+
+        indexKomotoIds.addAll(batchOfIndexIds);
     }
 
     private Date dateToNextYear(Date date) {
