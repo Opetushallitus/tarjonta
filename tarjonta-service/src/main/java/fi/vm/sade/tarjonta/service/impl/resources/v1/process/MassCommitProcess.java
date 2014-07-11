@@ -397,7 +397,7 @@ public class MassCommitProcess implements ProcessDefinition {
             
         }
 
-        indexKomotoIds.addAll(batchOfIndexIds);
+        indexHakukohdeIds.addAll(batchOfIndexIds);
     }
 
     private Date dateToNextYear(Date date) {
