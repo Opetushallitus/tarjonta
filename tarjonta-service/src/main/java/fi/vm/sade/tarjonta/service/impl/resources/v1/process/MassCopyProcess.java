@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MassCopyProcess implements ProcessDefinition {
 
@@ -37,8 +38,11 @@ public class MassCopyProcess implements ProcessDefinition {
     public static final String TO_HAKU_OID = "haku.oid.to";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
 
-    private final MassPepareProcess prepare = new MassPepareProcess();
-    private final MassCommitProcess commit = new MassCommitProcess();
+    @Autowired(required = true)
+    private MassPepareProcess prepare;
+
+    @Autowired(required = true)
+    private MassCommitProcess commit;
 
     private boolean isPrepare = true;
 
