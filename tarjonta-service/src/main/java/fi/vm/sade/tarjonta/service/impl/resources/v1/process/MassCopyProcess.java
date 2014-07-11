@@ -72,22 +72,22 @@ public class MassCopyProcess implements ProcessDefinition {
     @Override
     public void run() {
         final String fromOid = getState().getParameters().get(SELECTED_HAKU_OID);
+        final String skipTestparam = getState().getParameters().get(PROCESS_SKIP_STEP);
         LOG.info("MassCopyProcess.run(), params haku oid : '{}', process id '{}'", fromOid, getState().getId());
 
         try {
-            if (PROCESS_SKIP_STEP == null || PROCESS_SKIP_STEP.isEmpty()) {
+            if (skipTestparam == null || skipTestparam.isEmpty()) {
                 runPrepareProcess();
                 runCommitProcess();
             } else {
-                if (PROCESS_SKIP_STEP.equals(COMMIT)) {
+                if (skipTestparam.equals(COMMIT)) {
                     runCommitProcess();
-                } else if (PROCESS_SKIP_STEP.equals(PREPARE)) {
+                } else if (skipTestparam.equals(PREPARE)) {
                     runPrepareProcess();
                 } else {
                     LOG.info("Received an unknown precess step '{}'.", PROCESS_SKIP_STEP);
                 }
             }
-
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
             LOG.error("Copy failed", ex);
