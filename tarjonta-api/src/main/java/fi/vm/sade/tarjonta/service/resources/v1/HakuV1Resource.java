@@ -130,11 +130,5 @@ public interface HakuV1Resource {
     @Path("/{oid}/copy")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Hakuun liittyvän tiedon kopiointi seuraavalle kaudelle.", notes = "Kopioi massana hakuun liittyvät hakukohteet ja koulutukset seuraavalle kaudelle.", response = Tilamuutokset.class)
-    public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid);
-
-    @PUT
-    @Path("/paste/{toOid}/{processId}")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "", notes = "", response = Tilamuutokset.class)
-    public ResultV1RDTO<String> pasteHaku(@PathParam("toOid") String toOid, @PathParam("processId") String processId);
+    public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid, @QueryParam("step") String step);
 }

@@ -29,15 +29,14 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
-import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess.COUNT_HAKUKOHDE;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess.COUNT_KOMOTO;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess.TOTAL_HAKUKOHDE;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess.TOTAL_KOMOTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.Date;
 import java.util.List;
@@ -52,12 +51,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-public class MassPasteProcess implements ProcessDefinition {
+public class MassCommitProcess implements ProcessDefinition {
 
     private static final int FLUSH_SIZE = 100;
-    private static final Logger LOG = LoggerFactory.getLogger(MassPasteProcess.class);
-    public static final String TARGET_HAKU_OID = "haku.oid.to";
-    public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
+    private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
 
     private ProcessV1RDTO state;
 
@@ -82,22 +79,26 @@ public class MassPasteProcess implements ProcessDefinition {
     @Autowired(required = true)
     private HakuDAO hakuDAO;
 
+    @Autowired(required = true)
+    private OidService oidService;
+
     private int countHakukohde = 0;
     private int countKomoto = 0;
     private int countTotalHakukohde = 0;
     private int countTotalKomoto = 0;
+    private String newHakuoid = null;
 
-    public MassPasteProcess() {
+    public MassCommitProcess() {
         super();
 
     }
 
     @Override
     public ProcessV1RDTO getState() {
-        state.getParameters().put(COUNT_HAKUKOHDE, countHakukohde + "");
-        state.getParameters().put(COUNT_KOMOTO, countKomoto + "");
-        state.getParameters().put(TOTAL_HAKUKOHDE, countTotalHakukohde + "");
-        state.getParameters().put(TOTAL_KOMOTO, countTotalKomoto + "");
+        state.getParameters().put(MassCopyProcess.COUNT_HAKUKOHDE, countHakukohde + "");
+        state.getParameters().put(MassCopyProcess.COUNT_KOMOTO, countKomoto + "");
+        state.getParameters().put(MassCopyProcess.TOTAL_HAKUKOHDE, countTotalHakukohde + "");
+        state.getParameters().put(MassCopyProcess.TOTAL_KOMOTO, countTotalKomoto + "");
         state.setState(calcPercentage());
         return state;
     }
@@ -109,9 +110,9 @@ public class MassPasteProcess implements ProcessDefinition {
 
     @Override
     public void run() {
-        final String targetHakuOid = getState().getParameters().get(TARGET_HAKU_OID);
-        final String processId = getState().getParameters().get(SELECTED_PROCESS_COPY_ID);
-        LOG.info("MassPasteProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
+        final String targetHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
+        final String processId = getState().getParameters().get(MassCopyProcess.SELECTED_PROCESS_COPY_ID);
+        LOG.info("MassCommitProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
 
         try {
             startTs = System.currentTimeMillis();
@@ -130,6 +131,8 @@ public class MassPasteProcess implements ProcessDefinition {
 
             countTotalKomoto = oldKomotoOids.size();
             countTotalHakukohde = oldHakukohdeOids.size();
+
+            insertHaku(newHakuoid);
 
             /*
              * KOMOTO INSERT 
@@ -174,6 +177,48 @@ public class MassPasteProcess implements ProcessDefinition {
 
     @Autowired
     private PlatformTransactionManager tm;
+
+    @Transactional(readOnly = false)
+    private void insertHaku(final String oldHakuOid) {
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                String hakuJson = EntityToJsonHelper.convertToJson(hakuDAO.findByOid(oldHakuOid));
+                final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
+                try {
+                    haku.setOid(oidService.get(TarjontaOidType.HAKU));
+                } catch (OIDCreationException ex) {
+                    LOG.error("OidService failed", ex);
+                }
+
+                Set<Hakuaika> hakuaikas = haku.getHakuaikas();
+                if (hakuaikas.size() >= 2) {
+                    throw new RuntimeException("Conversion error, too many hakuaika object found from haku object.");
+                }
+
+                for (Hakuaika hakuaika : hakuaikas) {
+                    if (hakuaika.getPaattymisPvm() != null) {
+                        hakuaika.setPaattymisPvm(dateToNextYear(hakuaika.getPaattymisPvm()));
+                    }
+
+                    if (hakuaika.getAlkamisPvm() != null) {
+                        hakuaika.setAlkamisPvm(dateToNextYear(hakuaika.getAlkamisPvm()));
+                    }
+
+                    if (haku.getKoulutuksenAlkamisVuosi() != null) {
+                        haku.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi() + 1);
+                    }
+
+                    if (haku.getHakukausiVuosi() != null) {
+                        haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
+                    }
+                }
+
+                newHakuoid = haku.getOid();
+                hakuDAO.insert(haku);
+            }
+        });
+    }
 
     @Transactional(readOnly = false)
     private void insertKomotoBatch(final String processId, final Set<String> oldOids) {
@@ -228,9 +273,8 @@ public class MassPasteProcess implements ProcessDefinition {
                 if (koulutuksenAlkamisPvms != null) {
                     Set<Date> plusYears = Sets.<Date>newHashSet();
                     for (Date orgDate : koulutuksenAlkamisPvms) {
-                        plusYears.add(dateToNext(orgDate));
+                        plusYears.add(dateToNextYear(orgDate));
                         komoto.setAlkamisVuosi(IndexDataUtils.parseYearInt(orgDate));
-                        komoto.setAlkamiskausiUri(IndexDataUtils.parseKausiKoodi(orgDate));
                     }
                     komoto.setKoulutuksenAlkamisPvms(plusYears);
                 }
@@ -264,22 +308,19 @@ public class MassPasteProcess implements ProcessDefinition {
                 hk.setTila(TarjontaTila.KOPIOITU);
                 hk.setUlkoinenTunniste(processId);
                 List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
-
                 /*
                  * HAKUAIKA
                  * TODO : saattaa aiheuttaa monta hakuaikaa?
                  */
-                Hakuaika hakuaika = hk.getHakuaika();
-                targetHaku.addHakuaika(hakuaika);
-                hakuaika.setHaku(targetHaku);
-
-                if (hakuaika.getPaattymisPvm() != null) {
-                    hakuaika.setPaattymisPvm(dateToNext(hakuaika.getPaattymisPvm()));
+                Set<Hakuaika> hakuaikas = targetHaku.getHakuaikas();
+                if (hakuaikas.isEmpty()) {
+                    throw new RuntimeException("No hakuaika object found from haku object,only one hakuaika required");
+                } else if (hakuaikas.size() >= 2) {
+                    throw new RuntimeException("Conversion error, too many hakuaika object found from haku object.");
                 }
 
-                if (hakuaika.getAlkamisPvm() != null) {
-                    hakuaika.setAlkamisPvm(dateToNext(hakuaika.getAlkamisPvm()));
-                }
+                hk.setHakuaika(hakuaikas.iterator().next());
+
 
                 /*
                  * LIITE
@@ -302,11 +343,11 @@ public class MassPasteProcess implements ProcessDefinition {
                 }
 
                 if (hk.getHakuaikaAlkuPvm() != null) {
-                    hk.setHakuaikaAlkuPvm(dateToNext(hk.getHakuaikaAlkuPvm()));
+                    hk.setHakuaikaAlkuPvm(dateToNextYear(hk.getHakuaikaAlkuPvm()));
                 }
 
                 if (hk.getHakuaikaLoppuPvm() != null) {
-                    hk.setHakuaikaLoppuPvm(dateToNext(hk.getHakuaikaLoppuPvm()));
+                    hk.setHakuaikaLoppuPvm(dateToNextYear(hk.getHakuaikaLoppuPvm()));
                 }
 
                 hakukohdeDAO.insert(hk);
@@ -318,7 +359,7 @@ public class MassPasteProcess implements ProcessDefinition {
         }
     }
 
-    private Date dateToNext(Date date) {
+    private Date dateToNextYear(Date date) {
         DateTime dateTime = new DateTime(date);
         dateTime.plusYears(1);
         return dateTime.toDate();

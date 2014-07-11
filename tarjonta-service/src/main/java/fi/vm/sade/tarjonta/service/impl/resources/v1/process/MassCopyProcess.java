@@ -14,65 +14,34 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.Massakopiointi;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class MassCopyProcess implements ProcessDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
-    private static final int FLUSH_SIZE = 100;
-    public static final String SELECTED_HAKU_OID = "haku.oid.from";
-    public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
+
+    public static final String PROCESS_STEP_TYPE = "process.step";
+
+    public static final String PROCESS_SKIP_STEP = "skip.step";
+
+    public static final String COMMIT = "COMMIT";
+    public static final String PREPARE = "PREPARE";
+
     public static final String COUNT_HAKUKOHDE = "count.hakukohde.processed";
     public static final String COUNT_KOMOTO = "count.komoto.processed";
     public static final String TOTAL_HAKUKOHDE = "count.total.hakukohde";
     public static final String TOTAL_KOMOTO = "count.total.komoto";
 
-    private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
+    public static final String SELECTED_HAKU_OID = "haku.oid.from";
+    public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
 
-    private ProcessV1RDTO state;
-    private long startTs = 0L;
-    private int howManySecondsToRun = 0;
+    private final MassPepareProcess prepare = new MassPepareProcess();
+    private final MassCommitProcess commit = new MassCommitProcess();
 
-    @Autowired(required = true)
-    private HakukohdeDAO hakukohdeDAO;
-
-    @Autowired(required = true)
-    private OidService oidService;
-
-    @Autowired(required = true)
-    private MassakopiointiDAO massakopiointiDAO;
-
-    @Autowired(required = true)
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-
-    private int countHakukohde = 0;
-    private int countKomoto = 0;
-    private int countTotalHakukohde = 0;
-    private int countTotalKomoto = 0;
+    private boolean isPrepare = true;
 
     public MassCopyProcess() {
         super();
@@ -80,67 +49,48 @@ public class MassCopyProcess implements ProcessDefinition {
 
     @Override
     public ProcessV1RDTO getState() {
-        state.getParameters().put(COUNT_HAKUKOHDE, countHakukohde + "");
-        state.getParameters().put(COUNT_KOMOTO, countKomoto + "");
-        state.getParameters().put(TOTAL_HAKUKOHDE, countTotalHakukohde + "");
-        state.getParameters().put(TOTAL_KOMOTO, countTotalKomoto + "");
-        state.setState(calcPercentage());
-        return state;
+        return isPrepare ? prepare.getState() : commit.getState();
     }
 
     @Override
     public void setState(ProcessV1RDTO state) {
-        this.state = state;
+        prepare.setState(state);
+        commit.setState(state);
+    }
+
+    private void runCommitProcess() {
+        isPrepare = false;
+        getState().getParameters().put(PROCESS_STEP_TYPE, COMMIT);
+        commit.run();
+
+    }
+
+    private void runPrepareProcess() {
+        getState().getParameters().put(PROCESS_STEP_TYPE, PREPARE);
+        prepare.run();
     }
 
     @Override
     public void run() {
         final String fromOid = getState().getParameters().get(SELECTED_HAKU_OID);
-        LOG.info("MassCopyProcess.run(), params haku oid : {}", fromOid);
-        long rowCount = massakopiointiDAO.rowCount(fromOid);
-        LOG.info("items found {}", rowCount);
-        if (rowCount > 0) {
-            LOG.info("delete all object by haku oid {}", fromOid);
-            deleteBatch(fromOid);
-        }
+        final String processId = getState().getParameters().get(MassCopyProcess.SELECTED_PROCESS_COPY_ID);
+        LOG.info("MassCopyProcess.run(), params haku oid : '{}', process id '{}'", fromOid, processId);
 
         try {
-            startTs = System.currentTimeMillis();
-            final List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
-            final Set<Long> komotoIds = Sets.newHashSet(koulutusmoduuliToteutusDAO.searchKomotoIdsByHakukohdesId(hakukohdeIds, COPY_TILAS));
-
-            countTotalHakukohde = hakukohdeIds.size();
-            countTotalKomoto = komotoIds.size();
-            LOG.info("komoto rows total : {}", countTotalKomoto);
-
-            Set<Long> batch = Sets.<Long>newHashSet();
-            for (Long komotoId : komotoIds) {
-                if (countKomoto % FLUSH_SIZE == 0 || komotoIds.size() - 1 == countKomoto) {
-                    flushKoulutusBatch(fromOid, batch);
-                    batch = Sets.<Long>newHashSet();
+            if (PROCESS_SKIP_STEP == null || PROCESS_SKIP_STEP.isEmpty()) {
+                runPrepareProcess();
+                runCommitProcess();
+            } else {
+                if (PROCESS_SKIP_STEP.equals(COMMIT)) {
+                    runCommitProcess();
+                } else if (PROCESS_SKIP_STEP.equals(PREPARE)) {
+                    runPrepareProcess();
+                } else {
+                    LOG.info("Received an unknown precess step '{}'.", PROCESS_SKIP_STEP);
                 }
-
-                batch.add(komotoId);
-                countKomoto++;
             }
-
-            batch = Sets.<Long>newHashSet();
-            LOG.info("hakukohde rows total : {}", countTotalHakukohde);
-
-            for (Long komotoId : hakukohdeIds) {
-                if (countHakukohde % FLUSH_SIZE == 0 || komotoIds.size() - 1 == countHakukohde) {
-                    flushHakukohdeBatch(fromOid, batch);
-                    batch = Sets.<Long>newHashSet();
-                }
-
-                batch.add(komotoId);
-                countHakukohde++;
-            }
-
-            getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
             LOG.error("Copy failed", ex);
-
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
         } finally {
@@ -150,112 +100,7 @@ public class MassCopyProcess implements ProcessDefinition {
         LOG.info("run()... done.");
     }
 
-    private void executeInTransaction(final Runnable runnable) {
-
-        TransactionTemplate tt = new TransactionTemplate(tm);
-        tt.execute(new TransactionCallback<Object>() {
-
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                runnable.run();
-                return null;
-            }
-        });
-
-    }
-
-    @Autowired
-    private PlatformTransactionManager tm;
-
-    @Transactional(readOnly = false)
-    private void deleteBatch(final String fromOid) {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                massakopiointiDAO.deleteAllByHakuOid(fromOid);
-            }
-        });
-    }
-
-    @Transactional(readOnly = false)
-    private void flushKoulutusBatch(final String fromOid, final Set<Long> komotoIds) throws OIDCreationException {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                LOG.info("insert koulutus batch size of : {}/{}", komotoIds.size(), countKomoto);
-                for (Long komotoId : komotoIds) {
-                    LOG.debug("convert {} komoto by id : {}", countKomoto, komotoId);
-
-                    KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.read(komotoId);
-                    Preconditions.checkNotNull(komoto, "Komoto entity cannot be null!");
-
-                    MetaObject metaObject = new MetaObject();
-                    for (Hakukohde hk : komoto.getHakukohdes()) {
-                        metaObject.addHakukohdeOid(hk.getOid());
-                    }
-
-                    metaObject.setOriginalHakuOid(fromOid);
-                    metaObject.setOriginalKomoOid(komoto.getKoulutusmoduuli().getOid());
-                    metaObject.setOriginalKomotoOid(komoto.getOid());
-                    try {
-                        metaObject.setNewKomotoOid(oidService.get(TarjontaOidType.KOMOTO));
-                    } catch (OIDCreationException ex) {
-                        LOG.error("OID Service failed", fromOid);
-                    }
-
-                    massakopiointiDAO.saveEntityAsJson(
-                            fromOid,
-                            komoto.getOid(),
-                            metaObject.getNewKomotoOid(),
-                            state.getId(),
-                            Massakopiointi.Tyyppi.KOMOTO_ENTITY,
-                            KoulutusmoduuliToteutus.class,
-                            komoto,
-                            metaObject);
-                }
-            }
-        });
-    }
-
-    @Transactional(readOnly = false)
-    private void flushHakukohdeBatch(final String fromOid, final Set<Long> hakukohdeIds) throws OIDCreationException {
-        executeInTransaction(new Runnable() {
-            @Override
-            public void run() {
-                LOG.info("insert hakukohde batch size of : {}/{}", hakukohdeIds.size(), countHakukohde);
-                for (Long hakukohdeId : hakukohdeIds) {
-                    LOG.debug("convert {} hakukohde by id : {}", countHakukohde, hakukohdeId);
-                    Hakukohde hakukohde = hakukohdeDAO.read(hakukohdeId);
-                    Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
-
-                    MetaObject metaObject = new MetaObject();
-                    for (KoulutusmoduuliToteutus hk : hakukohde.getKoulutusmoduuliToteutuses()) {
-                        metaObject.addKomotoOid(hk.getOid());
-                    }
-
-                    try {
-                        metaObject.setNewHakukohdeOid(oidService.get(TarjontaOidType.KOMOTO));
-                    } catch (OIDCreationException ex) {
-                        LOG.error("OID Service failed", fromOid);
-                    }
-
-                    metaObject.setOriginalHakuOid(fromOid);
-                    massakopiointiDAO.saveEntityAsJson(
-                            fromOid,
-                            hakukohde.getOid(), //from hakukohde oid
-                            metaObject.getNewHakukohdeOid(), //to hakukohde oid
-                            state.getId(),
-                            Massakopiointi.Tyyppi.HAKUKOHDE_ENTITY,
-                            Hakukohde.class,
-                            hakukohde,
-                            metaObject);
-                }
-            }
-        });
-    }
-
     @Override
-
     public boolean canStop() {
         return true;
     }
@@ -263,12 +108,5 @@ public class MassCopyProcess implements ProcessDefinition {
     @Override
     public boolean isCompleted() {
         return getState().getState() == 100.0;
-    }
-
-    private double calcPercentage() {
-        if (countTotalHakukohde + countTotalKomoto > 0) {
-            return (countHakukohde + countKomoto * 100 / countTotalHakukohde + countTotalKomoto);
-        }
-        return 0;
     }
 }

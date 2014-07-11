@@ -44,7 +44,7 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCommitProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
@@ -624,28 +624,14 @@ public class HakuResourceImplV1 implements HakuV1Resource {
      * Massakopioinnin metodi, tallentaa kopioitavan datan json-formaatissa valitauluun.
      */
     @Override
-    public ResultV1RDTO<String> copyHaku(final String fromHakuOid) {
+    public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step) {
         LOG.info("copyHaku");
         ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
         processV1RDTO.setProcess("massCopyProcess");
         processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, fromHakuOid);
+        processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
+
         ProcessV1RDTO result = processResource.start(processV1RDTO);
         return new ResultV1RDTO<String>(result.getId());
     }
-
-    @Override
-    public ResultV1RDTO<String> pasteHaku(final String toHakuOid, final String processId) {
-        ProcessV1RDTO processV1RDTO = new ProcessV1RDTO();
-        processV1RDTO.setProcess("massPasteProcess");
-        processV1RDTO.getParameters().put(MassPasteProcess.TARGET_HAKU_OID, toHakuOid);
-        processV1RDTO.getParameters().put(MassPasteProcess.SELECTED_PROCESS_COPY_ID, processId);
-        ProcessV1RDTO result = processResource.start(processV1RDTO);
-
-        return new ResultV1RDTO<String>(result.getId());
-    }
-
-    public ResultV1RDTO<Boolean> getCopyProcessStatus(String processId) {
-        return null;
-    }
-
 }
