@@ -163,6 +163,8 @@ public class MassakopiointiTest extends TestData {
         ha.setAlkamisPvm(new Date());
         ha.setPaattymisPvm(new Date(ha.getAlkamisPvm().getTime() + 10000));
         from.addHakuaika(ha);
+        from.setOrganisationOids(new String[]{"o1","o2"});
+        from.setTarjoajaOids(new String[]{"o1","o2"});
         ha.setHaku(from);
         super.persist(from);
 

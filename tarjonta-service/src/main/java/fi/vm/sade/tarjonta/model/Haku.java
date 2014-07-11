@@ -35,7 +35,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * @author Team2
  */
 @Entity
-@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler","organisationOidString","tarjoajaOidString"})
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
 })
@@ -137,7 +137,8 @@ public class Haku extends TarjontaBaseEntity {
      * This is needed for KK-spesific functionality. See task KJOH-744 --
      * (https://jira.oph.ware.fi/jira/browse/KJOH-744)
      */
-    private String organisationOids;
+    @Column(name = "organisationOids")
+    private String organisationOidString;
 
     /**
      * Array of organisation OIDs, comma separated. This lists the "tarjoaja"
@@ -145,7 +146,8 @@ public class Haku extends TarjontaBaseEntity {
      *
      * Tarjoaja organisation oids;
      */
-    private String tarjoajaOid;
+    @Column(name = "tarjoajaOid")
+    private String tarjoajaOidString;
 
     /**
      * If this is true, then the hakukohde choises users make should be arranged
@@ -426,32 +428,32 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     public String[] getOrganisationOids() {
-        if (organisationOids == null || organisationOids.isEmpty()) {
+        if (organisationOidString == null || organisationOidString.isEmpty()) {
             return new String[0];
         }
-        return organisationOids.split(",");
+        return organisationOidString.split(",");
     }
 
     public void setOrganisationOids(String[] organisationOids) {
         if (organisationOids == null || organisationOids.length == 0) {
-            this.organisationOids = null;
+            this.organisationOidString = null;
         } else {
-            this.organisationOids = StringUtils.join(organisationOids, ",");
+            this.organisationOidString = StringUtils.join(organisationOids, ",");
         }
     }
 
     public String[] getTarjoajaOids() {
-        if (tarjoajaOid == null || tarjoajaOid.isEmpty()) {
+        if (tarjoajaOidString == null || tarjoajaOidString.isEmpty()) {
             return new String[0];
         }
-        return tarjoajaOid.split(",");
+        return tarjoajaOidString.split(",");
     }
 
     public void setTarjoajaOids(String[] organisationOids) {
         if (organisationOids == null || organisationOids.length == 0) {
-            this.tarjoajaOid = null;
+            this.tarjoajaOidString = null;
         } else {
-            this.tarjoajaOid = StringUtils.join(organisationOids, ",");
+            this.tarjoajaOidString = StringUtils.join(organisationOids, ",");
         }
     }
 
