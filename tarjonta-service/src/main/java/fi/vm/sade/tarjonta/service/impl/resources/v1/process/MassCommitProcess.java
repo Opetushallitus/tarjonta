@@ -112,7 +112,7 @@ public class MassCommitProcess implements ProcessDefinition {
     @Override
     public void run() {
         final String targetHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
-        final String processId = getState().getParameters().get(MassCopyProcess.SELECTED_PROCESS_COPY_ID);
+        final String processId = getState().getId();
         LOG.info("MassCommitProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
 
         try {
