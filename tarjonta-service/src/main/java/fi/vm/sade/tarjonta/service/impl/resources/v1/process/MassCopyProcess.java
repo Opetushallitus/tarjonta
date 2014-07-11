@@ -23,16 +23,24 @@ public class MassCopyProcess implements ProcessDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
 
-    public static final String PROCESS_STEP_TYPE = "process.step";
+    public static final String PROCESS_STEP_TYPE = "process_step";
     public static final String PROCESS_SKIP_STEP = "skip.step";
 
     public static final String COMMIT = "COMMIT";
     public static final String PREPARE = "PREPARE";
+    public static final String DONE = "DONE";
 
-    public static final String COUNT_HAKUKOHDE = "count.hakukohde.processed";
-    public static final String COUNT_KOMOTO = "count.komoto.processed";
-    public static final String TOTAL_HAKUKOHDE = "count.total.hakukohde";
-    public static final String TOTAL_KOMOTO = "count.total.komoto";
+
+    public static final String COMMIT_COUNT_HAKUKOHDE = "commit_hakukohde_processed";
+    public static final String COMMIT_TOTAL_HAKUKOHDE = "commit_hakukohde_total";
+    public static final String COMMIT_COUNT_KOMOTO = "commit_komoto_processed";
+    public static final String COMMIT_TOTAL_KOMOTO = "commit_komoto_total";
+
+    public static final String PREPARE_COUNT_HAKUKOHDE = "prepare_hakukohde_processed";
+    public static final String PREPARE_TOTAL_HAKUKOHDE = "prepare_hakukohde_total";
+    public static final String PREPARE_COUNT_KOMOTO = "prepare_komoto_processed";
+    public static final String PREPARE_TOTAL_KOMOTO = "prepare_komoto_total";
+
 
     public static final String SELECTED_HAKU_OID = "haku.oid.from";
     public static final String TO_HAKU_OID = "haku.oid.to";
@@ -46,13 +54,16 @@ public class MassCopyProcess implements ProcessDefinition {
 
     private boolean isPrepare = true;
 
+    private boolean completed=false;
+
     public MassCopyProcess() {
         super();
     }
 
     @Override
     public ProcessV1RDTO getState() {
-        return isPrepare ? prepare.getState() : commit.getState();
+        ProcessV1RDTO state = isPrepare ? prepare.getState() : commit.getState();
+        return state;
     }
 
     @Override
@@ -98,7 +109,8 @@ public class MassCopyProcess implements ProcessDefinition {
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
         } finally {
-            getState().setState(100.0);
+            completed=true;
+            getState().getParameters().put(PROCESS_STEP_TYPE, DONE);
         }
 
         LOG.info("run()... done.");
@@ -111,7 +123,7 @@ public class MassCopyProcess implements ProcessDefinition {
 
     @Override
     public boolean isCompleted() {
-        return getState().getState() == 100.0;
+        return prepare.isCompleted() && commit.isCompleted();
     }
 
     /**

@@ -96,6 +96,7 @@ public class MassCommitProcess implements ProcessDefinition {
 
     private Set<Long> indexHakukohdeIds = Sets.<Long>newHashSet();
     private Set<Long> indexKomotoIds = Sets.<Long>newHashSet();
+    private boolean completed=false;
 
     public MassCommitProcess() {
         super();
@@ -103,10 +104,10 @@ public class MassCommitProcess implements ProcessDefinition {
 
     @Override
     public ProcessV1RDTO getState() {
-        state.getParameters().put(MassCopyProcess.COUNT_HAKUKOHDE, countHakukohde + "");
-        state.getParameters().put(MassCopyProcess.COUNT_KOMOTO, countKomoto + "");
-        state.getParameters().put(MassCopyProcess.TOTAL_HAKUKOHDE, countTotalHakukohde + "");
-        state.getParameters().put(MassCopyProcess.TOTAL_KOMOTO, countTotalKomoto + "");
+        state.getParameters().put(MassCopyProcess.COMMIT_COUNT_HAKUKOHDE, countHakukohde + "");
+        state.getParameters().put(MassCopyProcess.COMMIT_COUNT_KOMOTO, countKomoto + "");
+        state.getParameters().put(MassCopyProcess.COMMIT_TOTAL_HAKUKOHDE, countTotalHakukohde + "");
+        state.getParameters().put(MassCopyProcess.COMMIT_TOTAL_KOMOTO, countTotalKomoto + "");
         state.setState(calcPercentage());
         return state;
     }
@@ -182,7 +183,7 @@ public class MassCommitProcess implements ProcessDefinition {
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
         } finally {
-            getState().setState(100.0);
+            completed=true;
         }
 
         LOG.info("run()... done.");
@@ -413,12 +414,12 @@ public class MassCommitProcess implements ProcessDefinition {
 
     @Override
     public boolean isCompleted() {
-        return getState().getState() == 100.0;
+        return completed;
     }
 
     private double calcPercentage() {
         if (countTotalHakukohde + countTotalKomoto > 0) {
-            return (countHakukohde + countKomoto * 100 / countTotalHakukohde + countTotalKomoto);
+            return ((countHakukohde + countKomoto) * 100 / (countTotalHakukohde + countTotalKomoto));
         }
         return 0;
     }

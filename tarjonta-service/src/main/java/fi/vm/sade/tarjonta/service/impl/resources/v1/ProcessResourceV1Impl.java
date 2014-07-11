@@ -136,6 +136,7 @@ public class ProcessResourceV1Impl implements ProcessResourceV1 {
 
         for (ProcessDefinition processDefinition : _processes) {
             if (processDefinition.isCompleted()) {
+                LOG.info("Removing process :" + processDefinition.getState().getProcess());
                 pdsToBeRemoved.add(processDefinition);
             }
         }
