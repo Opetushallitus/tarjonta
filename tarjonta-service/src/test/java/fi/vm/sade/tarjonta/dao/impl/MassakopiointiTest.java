@@ -100,6 +100,7 @@ public class MassakopiointiTest extends TestData {
         em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
         Preconditions.checkNotNull(oidService);
+        Mockito.reset(oidService);
         Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
