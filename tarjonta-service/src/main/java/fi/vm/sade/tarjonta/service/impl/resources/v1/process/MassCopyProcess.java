@@ -119,7 +119,7 @@ public class MassCopyProcess implements ProcessDefinition {
      */
     public static ProcessV1RDTO getDefinition(final String toOid, final String step) {
         ProcessV1RDTO processV1RDTO = ProcessV1RDTO.generate();
-        processV1RDTO.setProcess("massPasteProcess");
+        processV1RDTO.setProcess("massCopyProcess");
         processV1RDTO.getParameters().put(MassCopyProcess.SELECTED_HAKU_OID, toOid);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
         return processV1RDTO;
