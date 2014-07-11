@@ -146,6 +146,8 @@ public class MassPasteProcess implements ProcessDefinition {
                 oidBatch.add(oldKomotoOid);
                 countKomoto++;
             }
+            insertKomotoBatch(processId, oidBatch);
+
 
             /*
              * HAKUKOHDE INSERT 
@@ -160,6 +162,7 @@ public class MassPasteProcess implements ProcessDefinition {
                 oidBatch.add(oldHakukohdeOid);
                 countHakukohde++;
             }
+            insertHakukohdeBatch(processId, oidBatch, targetHakuOid);
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {

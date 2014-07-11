@@ -126,6 +126,9 @@ public class MassCopyProcess implements ProcessDefinition {
                 batch.add(komotoId);
                 countKomoto++;
             }
+            
+            flushKoulutusBatch(fromOid, batch);
+
 
             batch = Sets.<Long>newHashSet();
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
@@ -139,6 +142,7 @@ public class MassCopyProcess implements ProcessDefinition {
                 batch.add(komotoId);
                 countHakukohde++;
             }
+            flushHakukohdeBatch(fromOid, batch);
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {

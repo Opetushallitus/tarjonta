@@ -15,11 +15,22 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -33,19 +44,14 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassPasteProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-
-import java.io.IOException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import org.slf4j.LoggerFactory;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 
 /**
  *
@@ -64,7 +70,9 @@ public class MassakopiointiTest extends TestData {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
 
     @Autowired(required = true)
-    private HakukohdeDAOImpl instance;
+    private HakukohdeDAOImpl hakukohdeDAO;
+    @Autowired(required = true)
+    private HakuDAOImpl hakuDAO;
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
@@ -78,10 +86,19 @@ public class MassakopiointiTest extends TestData {
     @Autowired(required = true)
     private MassPasteProcess pasteProcess;
 
+    @Autowired(required = true)
+    private OidService oidService;
+
     @Before
-    public void setUp() {
-        em = instance.getEntityManager();
+    public void setUp() throws OIDCreationException {
+        em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
+        Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArguments()[0].toString().concat(Long.toString(System.currentTimeMillis()));
+            }
+        });
     }
 
     @Test
@@ -140,13 +157,17 @@ public class MassakopiointiTest extends TestData {
         final String tId=processV1RDTO.getId();
 
         //2nd part
-        
-        processV1RDTO = MassPasteProcess.getDefinition(getHaku2().getOid(),  tId);
+        final Haku target = fixtures.createPersistedHaku();
+        processV1RDTO = MassPasteProcess.getDefinition(target.getOid(),  tId);
         pasteProcess.setState(processV1RDTO);
         pasteProcess.run();
         
-        //TODO v alidate
-
+        Haku h = hakuDAO.findByOid(target.getOid());
+        
+        for(Hakukohde hk: hakukohdeDAO.findAll()){
+            System.out.println("hk:" + hk);
+        }
+        assertEquals(3,  h.getHakukohdes().size());
     }
 
     
