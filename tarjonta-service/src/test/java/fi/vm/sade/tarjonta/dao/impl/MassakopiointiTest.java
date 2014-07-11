@@ -18,9 +18,13 @@ package fi.vm.sade.tarjonta.dao.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.EntityManager;
 
@@ -41,9 +45,11 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -86,17 +92,21 @@ public class MassakopiointiTest extends TestData {
     
     @Autowired(required = true)
     private OidService oidService;
+
+    AtomicInteger c = new AtomicInteger(0);
     
     @Before
     public void setUp() throws OIDCreationException {
         em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
         Preconditions.checkNotNull(oidService);
-        System.out.println("oidService:" + oidService);
         Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
-                return (invocation.getArguments()[0] == null ? "null-type-wtf" : invocation.getArguments()[0].toString()).concat(Long.toString(System.currentTimeMillis()));
+                if(invocation.getArguments()[0]==null) {
+                    throw new IllegalArgumentException("type was null???");
+                }
+                return (invocation.getArguments()[0]==null?"null-type-wtf":invocation.getArguments()[0].toString()).concat(Long.toString(c.incrementAndGet()));
             }
         });
     }
@@ -146,35 +156,65 @@ public class MassakopiointiTest extends TestData {
     }
     
     @Test
-    public void testCopy() {
-        Haku from = getHaku1();
+    public void testCopy2(){
+        final Haku from = getHaku1();
+        Hakuaika ha = new Hakuaika();
+        ha.setAlkamisPvm(new Date());
+        ha.setPaattymisPvm(new Date(ha.getAlkamisPvm().getTime() + 10000));
+        from.addHakuaika(ha);
+        ha.setHaku(from);
+        super.persist(from);
 
-        //1st part
+        HashMap<String, Hakukohde> hakukohdes = Maps.newHashMap();
+        
+        int c=0;
+        for(Hakukohde hk: from.getHakukohdes()){
+            final String nimi = Integer.toString(c++);
+            hk.setHakukohdeNimi(nimi);
+            hakukohdes.put(nimi, hk);
+            super.persist(hk);
+        }
+
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid(), null); // null = do not skip process steps
         copyProcess.setState(processV1RDTO);
         copyProcess.run();
+        processV1RDTO = copyProcess.getState();
 
-        //2nd part
-        final Haku target = fixtures.createPersistedHaku();
-        Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.SELECTED_HAKU_OID));
-        
-        for (Hakukohde hk : hakukohdeDAO.findAll()) {
-            System.out.println("hk:" + hk);
+        final Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.TO_HAKU_OID));
+
+        assertNotNull(h.getOid());
+        assertFalse(from.getOid().equals(h.getOid()));
+
+        assertEquals(3,  h.getHakukohdes().size());
+
+        for(Hakukohde hk: h.getHakukohdes()){
+            compareHakukohde(hk, hakukohdes.get(hk.getHakukohdeNimi()));
         }
-        assertEquals(3, h.getHakukohdes().size());
     }
 
-//    @Test
-//    public void jsonConvesionToEntity1() throws IOException {
-//        String json = "{\"oid\":\"1.2.246.562.5.10105_02_873_0143_1508\",\"tila\":\"JULKAISTU\",\"updated\":1383648697677,\"koulutusalaUri\":null,\"eqfUri\":null,\"nqfUri\":null,\"koulutusasteUri\":\"koulutusasteoph2002_32#1\",\"koulutusUri\":null,\"koulutusohjelmaUri\":null,\"lukiolinjaUri\":null,\"osaamisalaUri\":null,\"tutkintoUri\":null,\"opintojenLaajuusarvoUri\":null,\"opintojenLaajuusyksikkoUri\":null,\"koulutustyyppiUri\":null,\"opintoalaUri\":null,\"ulkoinenTunniste\":null,\"kandidaatinKoulutusUri\":null,\"toteutustyyppi\":\"AMMATILLINEN_PERUSTUTKINTO\",\"nimi\":null,\"koulutuslajis\":[{\"koodiUri\":\"koulutuslaji_n#1\"}],\"teemas\":[],\"aihees\":[],\"avainsanas\":[],\"opetuskielis\":[{\"koodiUri\":\"kieli_fi#1\"}],\"opetusmuotos\":[{\"koodiUri\":\"opetusmuoto_l#1\"}],\"opetusAikas\":[],\"opetusPaikkas\":[],\"maksullisuus\":null,\"yhteyshenkilos\":[{\"etunimis\":\"Tarja\",\"sukunimi\":\"Tervo\",\"sahkoposti\":\"tarja.tervo@edu.hel.fi\",\"puhelin\":\"050 5427512\",\"kielis\":\"\",\"henkioOid\":null,\"titteli\":\"lehtori\",\"henkiloTyyppi\":\"YHTEYSHENKILO\",\"multipleKielis\":[]}],\"linkkis\":[{\"kieli\":\"fi\",\"url\":\"http://www.hel.fi/wps/wcm/connect/84a63163-2bed-4299-8e6d-66c07155bec0/Sosiaali-+ja+terveysala.pdf?MOD=AJPERES\",\"tyyppi\":\"KOULUTUSOHJELMA\"}],\"ammattinimikes\":[],\"tarjotutKielet\":{},\"lukiodiplomit\":[],\"kkPohjakoulutusvaatimus\":[],\"tekstit\":{\"PAINOTUS\":{},\"YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA\":{},\"KUVAILEVAT_TIEDOT\":{},\"KANSAINVALISTYMINEN\":{},\"SIJOITTUMINEN_TYOELAMAAN\":{},\"SISALTO\":{}},\"kuvat\":{},\"koulutuksenAlkamisPvms\":[1389045600000],\"tutkintonimikes\":[],\"valmistavaKoulutus\":null,\"tarjoaja\":\"1.2.246.562.10.20485193278\",\"lastUpdatedByOid\":\"1.2.246.562.24.67957597104\",\"viimIndeksointiPvm\":1385639914958,\"hinta\":null,\"jarjesteja\":null,\"alkamisVuosi\":2014,\"alkamiskausiUri\":\"kausi_k#1\",\"pohjakoulutusvaatimusUri\":\"pohjakoulutusvaatimustoinenaste_pk#1\",\"suunniteltukestoYksikkoUri\":\"suunniteltukesto_01#1\",\"suunniteltukestoArvo\":\"3\",\"sisalto\":{},\"koulutuksenAlkamisPvm\":1389045600000,\"tutkintonimikeUri\":null,\"opintojenLaajuusArvo\":null,\"maksullisuusUrl\":null,\"arviointikriteerit\":null,\"loppukoeVaatimukset\":null,\"kuvailevatTiedot\":{},\"sijoittuminenTyoelamaan\":{},\"kansainvalistyminen\":{},\"yhteistyoMuidenToimijoidenKanssa\":{},\"painotus\":{},\"koulutusohjelmanValinta\":null,\"lisatietoaOpetuskielista\":null,\"tutkimuksenPainopisteet\":null}";
-//        KoulutusmoduuliToteutus t = null;
-//        try {
-//            t = (KoulutusmoduuliToteutus) EntityToJsonHelper.convertToEntity(json, KoulutusmoduuliToteutus.class);
-//        } catch (Exception ex) {
-//            fail("conversion error from json to entity : " + ex.getMessage());
-//        }
-//        assertNotNull(t);
-//        assertEquals("1.2.246.562.5.10105_02_873_0143_1508", t.getOid());
-//
-//    }
+    private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
+        LOG.info("comparing hakukohde copy");
+        assertEquals(orig.getAlinHyvaksyttavaKeskiarvo(),  copy.getAlinHyvaksyttavaKeskiarvo());
+        assertEquals(orig.getAlinValintaPistemaara(),  copy.getAlinValintaPistemaara());
+        assertEquals(orig.getAloituspaikatLkm(),  copy.getAloituspaikatLkm());
+        assertEquals(orig.getEdellisenVuodenHakijat(),  copy.getEdellisenVuodenHakijat());
+        if(orig.getHakuaika()!=null) {
+            assertEquals(orig.getHakuaika().getAlkamisPvm(),  copy.getHakuaika().getAlkamisPvm());
+            assertEquals(orig.getHakuaika().getPaattymisPvm(),  copy.getHakuaika().getPaattymisPvm());
+        }
+        assertEquals(orig.getHakukelpoisuusVaatimukset().size(),  copy.getHakukelpoisuusVaatimukset().size());
+        assertEquals(orig.getHakukelpoisuusVaatimusKuvaus(),  copy.getHakukelpoisuusVaatimusKuvaus());
+        assertEquals(orig.getHakukohdeKoodistoNimi(),  copy.getHakukohdeKoodistoNimi());
+        assertEquals(orig.getHakukohdeMonikielinenNimi(),  copy.getHakukohdeMonikielinenNimi());
+        assertEquals(orig.getHakukohdeNimi(),  copy.getHakukohdeNimi());
+        assertEquals(orig.getKoulutusmoduuliToteutuses().size(),  copy.getKoulutusmoduuliToteutuses().size());
+        assertEquals(orig.getLiites().size(),  copy.getLiites().size());        
+        assertEquals(orig.getLiitteidenToimitusOsoite(),  copy.getLiitteidenToimitusOsoite());        
+        assertEquals(orig.getLiitteidenToimitusPvm(), copy.getLiitteidenToimitusPvm());        
+        assertEquals(orig.getLisatiedot(), copy.getLisatiedot());
+        assertEquals(orig.getValintakoes().size(), copy.getValintakoes().size());
+        
+        assertFalse(orig.getOid().equals(copy.getOid()));
+    }
+
 }

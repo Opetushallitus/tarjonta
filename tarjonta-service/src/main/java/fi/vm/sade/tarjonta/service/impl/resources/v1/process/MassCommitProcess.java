@@ -165,7 +165,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 oidBatch.add(oldHakukohdeOid);
                 countHakukohde++;
             }
-            insertHakukohdeBatch(processId, oidBatch, targetHakuOid);
+            insertHakukohdeBatch(processId, oidBatch, newHakuoid);
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
@@ -314,7 +314,6 @@ public class MassCommitProcess implements ProcessDefinition {
                 hk.setOid(meta.getNewHakukohdeOid());
                 hk.setTila(TarjontaTila.KOPIOITU);
                 hk.setUlkoinenTunniste(processId);
-                List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
                 /*
                  * HAKUAIKA
                  * TODO : saattaa aiheuttaa monta hakuaikaa?
@@ -360,10 +359,15 @@ public class MassCommitProcess implements ProcessDefinition {
                     }
                 }
 
-                for (KoulutusmoduuliToteutus k : komotos) {
-                    hk.addKoulutusmoduuliToteutus(k);
-                    k.addHakukohde(hk);
+                //XXX korjaa tämä tekemällä kunnon testidata
+                if(meta!=null && meta.getKomotoOids()!=null && !meta.getKomotoOids().isEmpty()){
+                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
+                    for (KoulutusmoduuliToteutus k : komotos) {
+                        hk.addKoulutusmoduuliToteutus(k);
+                        k.addHakukohde(hk);
+                    }
                 }
+            
 
                 if (hk.getHakuaikaAlkuPvm() != null) {
                     hk.setHakuaikaAlkuPvm(dateToNextYear(hk.getHakuaikaAlkuPvm()));
@@ -377,7 +381,9 @@ public class MassCommitProcess implements ProcessDefinition {
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);
             } catch (Exception e) {
                 LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
+                //TODO : ei toimi koska rollback
             }
+            
         }
     }
 
