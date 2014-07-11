@@ -201,6 +201,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 }
 
                 for (Hakuaika hakuaika : hakuaikas) {
+                    hakuaika.setHaku(haku);
                     if (hakuaika.getPaattymisPvm() != null) {
                         hakuaika.setPaattymisPvm(dateToNextYear(hakuaika.getPaattymisPvm()));
                     }
