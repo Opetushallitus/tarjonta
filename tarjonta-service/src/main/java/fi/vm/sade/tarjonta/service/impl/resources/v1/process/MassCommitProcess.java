@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
@@ -157,7 +158,7 @@ public class MassCommitProcess implements ProcessDefinition {
             oidBatch = Sets.<String>newHashSet();
             for (String oldHakukohdeOid : oldHakukohdeOids) {
                 if (countHakukohde % FLUSH_SIZE == 0 || oldKomotoOids.size() - 1 == countHakukohde) {
-                    insertHakukohdeBatch(processId, oidBatch, targetHakuOid);
+                    insertHakukohdeBatch(processId, oidBatch, newHakuoid);
                     oidBatch = Sets.<String>newHashSet();
                 }
 
@@ -334,6 +335,10 @@ public class MassCommitProcess implements ProcessDefinition {
                 Set<HakukohdeLiite> liites = hk.getLiites();
                 for (HakukohdeLiite l : liites) {
                     l.setHakukohde(hk);
+
+                    if (l.getErapaiva() != null) {
+                        l.setErapaiva(dateToNextYear(l.getErapaiva()));
+                    }
                 }
 
                 /*
@@ -341,6 +346,18 @@ public class MassCommitProcess implements ProcessDefinition {
                  */
                 for (Valintakoe v : hk.getValintakoes()) {
                     v.setHakukohde(hk);
+
+                    if (v.getAjankohtas() != null) {
+                        for (ValintakoeAjankohta va : v.getAjankohtas()) {
+                            if (va.getAlkamisaika() != null) {
+                                va.setAlkamisaika(dateToNextYear(va.getAlkamisaika()));
+                            }
+
+                            if (va.getPaattymisaika() != null) {
+                                va.setPaattymisaika(dateToNextYear(va.getPaattymisaika()));
+                            }
+                        }
+                    }
                 }
 
                 for (KoulutusmoduuliToteutus k : komotos) {
@@ -359,8 +376,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 hakukohdeDAO.insert(hk);
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);
             } catch (Exception e) {
-                //TODO : ei toimi koska rollback
-                massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.ERROR, processing);
+                LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
             }
         }
     }
