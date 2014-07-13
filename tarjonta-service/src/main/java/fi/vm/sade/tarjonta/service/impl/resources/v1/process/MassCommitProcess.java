@@ -320,7 +320,7 @@ public class MassCommitProcess {
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
                 Pair<Object, MetaObject> pair = massakopiointi.find(processId, oldHakukohdeOid, Hakukohde.class);
                 Hakukohde hk = (Hakukohde) pair.getFirst();
-                hk.setViimIndeksointiPvm(indexointDate);
+                hk.setViimIndeksointiPvm(indexFutureDate);
                 hk.setHaku(targetHaku);
                 targetHaku.addHakukohde(hk);
 
