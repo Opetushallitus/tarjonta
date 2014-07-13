@@ -42,7 +42,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
-public class MassPepareProcess implements ProcessDefinition {
+public class MassPepareProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);
     private static final int FLUSH_SIZE = 100;
@@ -67,13 +67,8 @@ public class MassPepareProcess implements ProcessDefinition {
     private int countKomoto = 0;
     private int countTotalHakukohde = 0;
     private int countTotalKomoto = 0;
-    private boolean completed=false;
+    private boolean completed = false;
 
-    public MassPepareProcess() {
-        super();
-    }
-
-    @Override
     public ProcessV1RDTO getState() {
         state.getParameters().put(MassCopyProcess.PREPARE_COUNT_HAKUKOHDE, countHakukohde + "");
         state.getParameters().put(MassCopyProcess.PREPARE_COUNT_KOMOTO, countKomoto + "");
@@ -83,13 +78,16 @@ public class MassPepareProcess implements ProcessDefinition {
         return state;
     }
 
-    @Override
     public void setState(ProcessV1RDTO state) {
         this.state = state;
     }
 
-    @Override
     public void run() {
+        countHakukohde = 0;
+        countKomoto = 0;
+        countTotalHakukohde = 0;
+        countTotalKomoto = 0;
+
         final String fromOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
         LOG.info("MassPrepareProcess.run(), params haku oid : {}", fromOid);
         long rowCount = massakopiointiDAO.rowCount(fromOid);
@@ -141,14 +139,13 @@ public class MassPepareProcess implements ProcessDefinition {
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
         } finally {
-            completed=true;
+            completed = true;
         }
 
         LOG.info("run()... done.");
     }
 
     private void executeInTransaction(final Runnable runnable) {
-
         TransactionTemplate tt = new TransactionTemplate(tm);
         tt.execute(new TransactionCallback<Object>() {
 
@@ -158,7 +155,6 @@ public class MassPepareProcess implements ProcessDefinition {
                 return null;
             }
         });
-
     }
 
     @Autowired
@@ -251,13 +247,10 @@ public class MassPepareProcess implements ProcessDefinition {
         });
     }
 
-    @Override
-
     public boolean canStop() {
         return true;
     }
 
-    @Override
     public boolean isCompleted() {
         return completed;
     }

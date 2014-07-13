@@ -55,7 +55,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
-public class MassCommitProcess implements ProcessDefinition {
+public class MassCommitProcess {
 
     private static final int FLUSH_SIZE = 100;
     private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
@@ -79,6 +79,7 @@ public class MassCommitProcess implements ProcessDefinition {
 
     @Autowired(required = true)
     private HakuaikaDAO hakuaikaDAO;
+
     @Autowired(required = true)
     private IndexerResource indexerResource;
 
@@ -96,13 +97,8 @@ public class MassCommitProcess implements ProcessDefinition {
 
     private Set<Long> indexHakukohdeIds = Sets.<Long>newHashSet();
     private Set<Long> indexKomotoIds = Sets.<Long>newHashSet();
-    private boolean completed=false;
+    private boolean completed = false;
 
-    public MassCommitProcess() {
-        super();
-    }
-
-    @Override
     public ProcessV1RDTO getState() {
         state.getParameters().put(MassCopyProcess.COMMIT_COUNT_HAKUKOHDE, countHakukohde + "");
         state.getParameters().put(MassCopyProcess.COMMIT_COUNT_KOMOTO, countKomoto + "");
@@ -112,13 +108,16 @@ public class MassCommitProcess implements ProcessDefinition {
         return state;
     }
 
-    @Override
     public void setState(ProcessV1RDTO state) {
         this.state = state;
     }
 
-    @Override
     public void run() {
+        countHakukohde = 0;
+        countKomoto = 0;
+        countTotalHakukohde = 0;
+        countTotalKomoto = 0;
+
         final String targetHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
         final String processId = getState().getId();
         LOG.info("MassCommitProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
@@ -158,7 +157,6 @@ public class MassCommitProcess implements ProcessDefinition {
             }
             insertKomotoBatch(processId, oidBatch);
 
-
             /*
              * HAKUKOHDE INSERT 
              */
@@ -183,7 +181,7 @@ public class MassCommitProcess implements ProcessDefinition {
             getState().setMessageKey("my.test.process.error");
             getState().getParameters().put("result", ex.getMessage());
         } finally {
-            completed=true;
+            completed = true;
         }
 
         LOG.info("run()... done.");
@@ -270,6 +268,8 @@ public class MassCommitProcess implements ProcessDefinition {
 
     private void insertKomotos(final Set<String> oldOids, final String processId) {
         final Date processing = new Date();
+        DateTime dateTime = new DateTime(processing);
+        Date indexFutureDate = dateTime.plusHours(5).toDate();
         LOG.info("insert koulutus batch size of : {}/{}", oldOids.size(), countKomoto);
 
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
@@ -285,6 +285,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 komoto.setTila(TarjontaTila.KOPIOITU);
                 komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
                 komoto.setUlkoinenTunniste(processId);
+                komoto.setViimIndeksointiPvm(indexFutureDate);
 
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
                 if (koulutuksenAlkamisPvms != null) {
@@ -308,6 +309,8 @@ public class MassCommitProcess implements ProcessDefinition {
 
     private void insertHakukohdes(Set<String> oldOids, String processId, String targetHakuOid) {
         final Date processing = new Date();
+        DateTime dateTime = new DateTime(processing);
+        Date indexFutureDate = dateTime.plusHours(5).toDate();
         LOG.info("insert hakukohde batch size of : {}/{}", oldOids.size(), countHakukohde);
         Haku targetHaku = hakuDAO.findByOid(targetHakuOid);
         Set<Long> batchOfIndexIds = Sets.<Long>newHashSet();
@@ -317,6 +320,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.PROSESSING, processing);
                 Pair<Object, MetaObject> pair = massakopiointi.find(processId, oldHakukohdeOid, Hakukohde.class);
                 Hakukohde hk = (Hakukohde) pair.getFirst();
+                hk.setViimIndeksointiPvm(indexointDate);
                 hk.setHaku(targetHaku);
                 targetHaku.addHakukohde(hk);
 
@@ -372,14 +376,13 @@ public class MassCommitProcess implements ProcessDefinition {
                 }
 
                 //XXX korjaa tama tekemalla kunnon testidata
-                if(meta!=null && meta.getKomotoOids()!=null && !meta.getKomotoOids().isEmpty()){
+                if (meta != null && meta.getKomotoOids() != null && !meta.getKomotoOids().isEmpty()) {
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
                     for (KoulutusmoduuliToteutus k : komotos) {
                         hk.addKoulutusmoduuliToteutus(k);
                         k.addHakukohde(hk);
                     }
                 }
-            
 
                 if (hk.getHakuaikaAlkuPvm() != null) {
                     hk.setHakuaikaAlkuPvm(dateToNextYear(hk.getHakuaikaAlkuPvm()));
@@ -395,7 +398,7 @@ public class MassCommitProcess implements ProcessDefinition {
                 LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
                 //TODO : ei toimi koska rollback
             }
-            
+
         }
 
         indexHakukohdeIds.addAll(batchOfIndexIds);
@@ -407,12 +410,10 @@ public class MassCommitProcess implements ProcessDefinition {
         return dateTime.toDate();
     }
 
-    @Override
     public boolean canStop() {
         return true;
     }
 
-    @Override
     public boolean isCompleted() {
         return completed;
     }

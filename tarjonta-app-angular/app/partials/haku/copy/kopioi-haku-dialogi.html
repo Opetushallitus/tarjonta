@@ -19,7 +19,7 @@
 				--</option>
 		</select>
  -->
- <div class="col-sm-4"><progressbar value="55"></progressbar></div>
+ <div class="col-sm-4"><progressbar animate="false" value="dynamic" type="success">{{progress}}%</progressbar></div>
 <table>
 <tr><td>Koulutukset</td><td>{{prepareKoulutusCount}}/{{prepareKoulutusMax}}</td></tr>
 <tr><td>Hakukohteet</td><td>{{prepareHakukohdeCount}}/{{prepareHakukohdeMax}}</td></tr>
@@ -46,7 +46,7 @@
 			
 		</p>
 
-		<progressbar value="progress">{{progress}}</progressbar>
+		<progressbar  animate="false" value="dynamic" type="success">{{progress}}%</progressbar>
 
 	</div>
 </div>

@@ -59,7 +59,7 @@ public class MassCopyProcess implements ProcessDefinition {
     public MassCopyProcess() {
         super();
     }
-
+    
     @Override
     public ProcessV1RDTO getState() {
         ProcessV1RDTO state = isPrepare ? prepare.getState() : commit.getState();

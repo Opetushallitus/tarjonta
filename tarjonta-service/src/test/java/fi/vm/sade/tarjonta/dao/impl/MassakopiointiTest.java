@@ -73,9 +73,9 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public class MassakopiointiTest extends TestData {
-    
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
-    
+
     @Autowired(required = true)
     private HakukohdeDAOImpl hakukohdeDAO;
     @Autowired(required = true)
@@ -83,18 +83,18 @@ public class MassakopiointiTest extends TestData {
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
     private EntityManager em;
-    
+
     @Autowired(required = true)
     private HakuV1Resource hakuResource;
-    
+
     @Autowired(required = true)
     private MassCopyProcess copyProcess;
-    
+
     @Autowired(required = true)
     private OidService oidService;
 
     AtomicInteger c = new AtomicInteger(0);
-    
+
     @Before
     public void setUp() throws OIDCreationException {
         em = hakukohdeDAO.getEntityManager();
@@ -104,14 +104,14 @@ public class MassakopiointiTest extends TestData {
         Mockito.stub(oidService.get(Mockito.any(TarjontaOidType.class))).toAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
-                if(invocation.getArguments()[0]==null) {
+                if (invocation.getArguments()[0] == null) {
                     throw new IllegalArgumentException("type was null???");
                 }
-                return (invocation.getArguments()[0]==null?"null-type-wtf":invocation.getArguments()[0].toString()).concat(Long.toString(c.incrementAndGet()));
+                return (invocation.getArguments()[0] == null ? "null-type-wtf" : invocation.getArguments()[0].toString()).concat(Long.toString(c.incrementAndGet()));
             }
         });
     }
-    
+
     @Test
     public void testKoulutusConversions() {
         String json = null;
@@ -132,7 +132,7 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, komoto.getId());
         assertEquals(KOMOTO_OID_1, komoto.getOid());
     }
-    
+
     @Test
     public void testHakukohdeConversions() throws IOException {
         String json = null;
@@ -141,10 +141,10 @@ public class MassakopiointiTest extends TestData {
         } catch (Exception ex) {
             fail("conversion error from entity to json : " + ex.getMessage());
         }
-        
+
         assertNotNull("Hakukohde - not nullable", json);
         assertTrue("conversion to json failed", json.length() > 0 && !json.equals("null"));
-        
+
         Hakukohde hakukohde = null;
         try {
             hakukohde = (Hakukohde) EntityToJsonHelper.convertToEntity(json, Hakukohde.class);
@@ -155,23 +155,23 @@ public class MassakopiointiTest extends TestData {
         assertEquals(null, hakukohde.getId());
         assertEquals(HAKUKOHDE_OID1, hakukohde.getOid());
     }
-    
+
     @Test
-    public void testCopy2(){
+    public void testCopy2() {
         final Haku from = getHaku1();
         Hakuaika ha = new Hakuaika();
         ha.setAlkamisPvm(new Date());
         ha.setPaattymisPvm(new Date(ha.getAlkamisPvm().getTime() + 10000));
         from.addHakuaika(ha);
-        from.setOrganisationOids(new String[]{"o1","o2"});
-        from.setTarjoajaOids(new String[]{"o1","o2"});
+        from.setOrganisationOids(new String[]{"o1", "o2"});
+        from.setTarjoajaOids(new String[]{"o1", "o2"});
         ha.setHaku(from);
         super.persist(from);
 
         HashMap<String, Hakukohde> hakukohdes = Maps.newHashMap();
-        
-        int c=0;
-        for(Hakukohde hk: from.getHakukohdes()){
+
+        int c = 0;
+        for (Hakukohde hk : from.getHakukohdes()) {
             final String nimi = Integer.toString(c++);
             hk.setHakukohdeNimi(nimi);
             hakukohdes.put(nimi, hk);
@@ -188,35 +188,35 @@ public class MassakopiointiTest extends TestData {
         assertNotNull(h.getOid());
         assertFalse(from.getOid().equals(h.getOid()));
 
-        assertEquals(3,  h.getHakukohdes().size());
+        assertEquals(3, h.getHakukohdes().size());
 
-        for(Hakukohde hk: h.getHakukohdes()){
+        for (Hakukohde hk : h.getHakukohdes()) {
             compareHakukohde(hk, hakukohdes.get(hk.getHakukohdeNimi()));
         }
     }
 
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
         LOG.info("comparing hakukohde copy");
-        assertEquals(orig.getAlinHyvaksyttavaKeskiarvo(),  copy.getAlinHyvaksyttavaKeskiarvo());
-        assertEquals(orig.getAlinValintaPistemaara(),  copy.getAlinValintaPistemaara());
-        assertEquals(orig.getAloituspaikatLkm(),  copy.getAloituspaikatLkm());
-        assertEquals(orig.getEdellisenVuodenHakijat(),  copy.getEdellisenVuodenHakijat());
-        if(orig.getHakuaika()!=null) {
-            assertEquals(orig.getHakuaika().getAlkamisPvm(),  copy.getHakuaika().getAlkamisPvm());
-            assertEquals(orig.getHakuaika().getPaattymisPvm(),  copy.getHakuaika().getPaattymisPvm());
+        assertEquals(orig.getAlinHyvaksyttavaKeskiarvo(), copy.getAlinHyvaksyttavaKeskiarvo());
+        assertEquals(orig.getAlinValintaPistemaara(), copy.getAlinValintaPistemaara());
+        assertEquals(orig.getAloituspaikatLkm(), copy.getAloituspaikatLkm());
+        assertEquals(orig.getEdellisenVuodenHakijat(), copy.getEdellisenVuodenHakijat());
+        if (orig.getHakuaika() != null) {
+            assertEquals(orig.getHakuaika().getAlkamisPvm(), copy.getHakuaika().getAlkamisPvm());
+            assertEquals(orig.getHakuaika().getPaattymisPvm(), copy.getHakuaika().getPaattymisPvm());
         }
-        assertEquals(orig.getHakukelpoisuusVaatimukset().size(),  copy.getHakukelpoisuusVaatimukset().size());
-        assertEquals(orig.getHakukelpoisuusVaatimusKuvaus(),  copy.getHakukelpoisuusVaatimusKuvaus());
-        assertEquals(orig.getHakukohdeKoodistoNimi(),  copy.getHakukohdeKoodistoNimi());
-        assertEquals(orig.getHakukohdeMonikielinenNimi(),  copy.getHakukohdeMonikielinenNimi());
-        assertEquals(orig.getHakukohdeNimi(),  copy.getHakukohdeNimi());
-        assertEquals(orig.getKoulutusmoduuliToteutuses().size(),  copy.getKoulutusmoduuliToteutuses().size());
-        assertEquals(orig.getLiites().size(),  copy.getLiites().size());        
-        assertEquals(orig.getLiitteidenToimitusOsoite(),  copy.getLiitteidenToimitusOsoite());        
-        assertEquals(orig.getLiitteidenToimitusPvm(), copy.getLiitteidenToimitusPvm());        
+        assertEquals(orig.getHakukelpoisuusVaatimukset().size(), copy.getHakukelpoisuusVaatimukset().size());
+        assertEquals(orig.getHakukelpoisuusVaatimusKuvaus(), copy.getHakukelpoisuusVaatimusKuvaus());
+        assertEquals(orig.getHakukohdeKoodistoNimi(), copy.getHakukohdeKoodistoNimi());
+        assertEquals(orig.getHakukohdeMonikielinenNimi(), copy.getHakukohdeMonikielinenNimi());
+        assertEquals(orig.getHakukohdeNimi(), copy.getHakukohdeNimi());
+        assertEquals(orig.getKoulutusmoduuliToteutuses().size(), copy.getKoulutusmoduuliToteutuses().size());
+        assertEquals(orig.getLiites().size(), copy.getLiites().size());
+        assertEquals(orig.getLiitteidenToimitusOsoite(), copy.getLiitteidenToimitusOsoite());
+        assertEquals(orig.getLiitteidenToimitusPvm(), copy.getLiitteidenToimitusPvm());
         assertEquals(orig.getLisatiedot(), copy.getLisatiedot());
         assertEquals(orig.getValintakoes().size(), copy.getValintakoes().size());
-        
+
         assertFalse(orig.getOid().equals(copy.getOid()));
     }
 
