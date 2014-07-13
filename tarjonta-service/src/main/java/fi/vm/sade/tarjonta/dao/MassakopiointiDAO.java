@@ -88,7 +88,7 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
      */
     public List<String> searchOids(final SearchCriteria search);
 
-    public long rowCount(final String hakuOid);
+    public long rowCount(final String hakuOid, String processId);
 
     public class SearchCriteria {
 

@@ -83,19 +83,11 @@ public class MassPepareProcess {
     }
 
     public void run() {
+        final String fromOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
         countHakukohde = 0;
         countKomoto = 0;
         countTotalHakukohde = 0;
         countTotalKomoto = 0;
-
-        final String fromOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
-        LOG.info("MassPrepareProcess.run(), params haku oid : {}", fromOid);
-        long rowCount = massakopiointiDAO.rowCount(fromOid);
-        LOG.info("items found {}", rowCount);
-        if (rowCount > 0) {
-            LOG.info("delete all object by haku oid {}", fromOid);
-            deleteBatch(fromOid);
-        }
 
         try {
             startTs = System.currentTimeMillis();

@@ -129,11 +129,12 @@ public class MassakopiontiDAOImpl extends AbstractJpaDAOImpl<Massakopiointi, Lon
     }
 
     @Override
-    public long rowCount(final String hakuOid) {
+    public long rowCount(final String processId, final String hakuOid) {
+        Preconditions.checkNotNull(processId, "Process Id OID cannot be null.");
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
 
         QMassakopiointi kopiointi = QMassakopiointi.massakopiointi;
-        return from(kopiointi).where(kopiointi.hakuOid.eq(hakuOid)).singleResult(kopiointi.id.count());
+        return from(kopiointi).where(kopiointi.processId.eq(processId).and(kopiointi.hakuOid.eq(hakuOid))).singleResult(kopiointi.id.count());
     }
 
     @Override

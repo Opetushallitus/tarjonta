@@ -12,6 +12,7 @@ app.controller('HakuCopyController', ['$injector', '$q', '$scope', 'Koodisto', '
         var oid = $scope.model.hakux.result.oid; // mistä kopioidaan
 
         $scope.view = 0;
+        $scope.progress = 0;
 
         // hae ensin kaikki prosessit ja tarkista ettei ole jo käynnissä
 
@@ -49,9 +50,12 @@ app.controller('HakuCopyController', ['$injector', '$q', '$scope', 'Koodisto', '
                     $scope.view = res.parameters.process_step;
                     if ($scope.view === 'COMMIT') {
                         $scope.progress = Math.round((Number($scope.commitKoulutusCount) + Number($scope.commitHakukohdeCount)) * 100 / (Number($scope.commitKoulutusMax) + Number($scope.commitHakukohdeMax)))
-                    } else {
+                    } else if ($scope.view === 'PREPARE') {
                         $scope.progress = Math.round((Number($scope.prepareKoulutusCount) + Number($scope.prepareHakukohdeCount)) * 100 / (Number($scope.prepareKoulutusMax) + Number($scope.prepareHakukohdeMax)))
-
+                    } else if ($scope.view === 'DONE') {
+                        $scope.progress = 100;
+                    } else {
+                        $scope.progress = 0;
                     }
                 });
             }

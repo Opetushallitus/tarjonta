@@ -1,5 +1,5 @@
 <!-- view1: -->
-<div ng-show="view==='PREPARE'" id="kopioi-haku-dialogi">
+<div ng-if="view === 'PREPARE'" id="kopioi-haku-dialogi">
 	<div class="modal-header">
 		<h3>
 			<span tt="haunKopiointi.otsikko">Kopioi uudelle kaudelle</span>
@@ -30,7 +30,7 @@
 	</div>
 </div>
 <!-- view2: "kopiointi käynnissä"-->
-<div ng-show="view==='COMMIT'" id="kopioi-haku-dialogi">
+<div ng-if="view === 'COMMIT'" id="kopioi-haku-dialogi">
 	<div class="modal-header">
 		<h3>
 			<span tt="haunKopiointi.kaynnissa.otsikko">Haun kopiointi
@@ -52,7 +52,7 @@
 </div>
 
 <!-- view3: "valmis"-->
-<div ng-show="view==='DONE'" id="kopioi-haku-dialogi">
+<div ng-if="view === 'DONE'" id="kopioi-haku-dialogi">
 	<div class="modal-header">
 		<h3>
 			<span tt="haunKopiointi.valmis.otsikko">Kopiointi valmis</span>

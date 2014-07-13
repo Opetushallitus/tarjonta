@@ -93,7 +93,7 @@ public class MassCommitProcess {
     private int countKomoto = 0;
     private int countTotalHakukohde = 0;
     private int countTotalKomoto = 0;
-    private String newHakuoid = null;
+    private String targetHakuoid = null;
 
     private Set<Long> indexHakukohdeIds = Sets.<Long>newHashSet();
     private Set<Long> indexKomotoIds = Sets.<Long>newHashSet();
@@ -118,9 +118,9 @@ public class MassCommitProcess {
         countTotalHakukohde = 0;
         countTotalKomoto = 0;
 
-        final String targetHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
+        final String fromHakuOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
         final String processId = getState().getId();
-        LOG.info("MassCommitProcess.run(), params target haku oid : '{}', process id '{}'", targetHakuOid, processId);
+        LOG.info("MassCommitProcess.run(), params target haku oid : '{}', process id '{}'", fromHakuOid, processId);
 
         try {
             startTs = System.currentTimeMillis();
@@ -140,7 +140,7 @@ public class MassCommitProcess {
             countTotalKomoto = oldKomotoOids.size();
             countTotalHakukohde = oldHakukohdeOids.size();
 
-            insertHaku(targetHakuOid);
+            insertHaku(fromHakuOid);
 
             /*
              * KOMOTO INSERT 
@@ -163,14 +163,16 @@ public class MassCommitProcess {
             oidBatch = Sets.<String>newHashSet();
             for (String oldHakukohdeOid : oldHakukohdeOids) {
                 if (countHakukohde % FLUSH_SIZE == 0 || oldKomotoOids.size() - 1 == countHakukohde) {
-                    insertHakukohdeBatch(processId, oidBatch, newHakuoid);
+                    insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
                     oidBatch = Sets.<String>newHashSet();
                 }
 
                 oidBatch.add(oldHakukohdeOid);
                 countHakukohde++;
             }
-            insertHakukohdeBatch(processId, oidBatch, newHakuoid);
+            insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
+            removeBatch(processId, fromHakuOid);
+
             indexerResource.indexKoulutukset(Lists.newArrayList(indexKomotoIds));
             indexerResource.indexHakukohteet(Lists.newArrayList(indexHakukohdeIds));
 
@@ -227,8 +229,8 @@ public class MassCommitProcess {
                     }
                 }
 
-                newHakuoid = haku.getOid();
-                getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, newHakuoid);
+                targetHakuoid = haku.getOid();
+                getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
                 hakuDAO.insert(haku);
             }
         });
@@ -245,7 +247,22 @@ public class MassCommitProcess {
     }
 
     @Transactional(readOnly = false)
-    private void insertHakukohdeBatch(final String processId, final Set<String> oldOids, final String targetHakuOid) {
+    private void removeBatch(final String processId, final String hakuOid) {
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                long rowCount = massakopiointi.rowCount(processId, hakuOid);
+                LOG.info("items found {}", rowCount);
+                if (rowCount > 0) {
+                    LOG.info("change status of all objects to copied. haku oid {}, process id : {}", hakuOid, processId);
+                    massakopiointi.updateTila(processId, hakuOid, Massakopiointi.KopioinninTila.COPIED, new Date());
+                }
+            }
+        });
+    }
+
+    @Transactional(readOnly = false)
+    private void insertHakukohdeBatch(final String processId, final String targetHakuOid, final Set<String> oldOids) {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {

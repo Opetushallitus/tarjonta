@@ -122,8 +122,8 @@ public class MassakopiointiDAOTest {
         /*
          * rowCount
          */
-        assertEquals("rowCount 1/2", 2l, instance.rowCount(HAKU_OID_1));
-        assertEquals("rowCount 2/2", 3l, instance.rowCount(HAKU_OID_2));
+        assertEquals("rowCount 1/2", 2l, instance.rowCount(PROSESS_ID1, HAKU_OID_1));
+        assertEquals("rowCount 2/2", 3l, instance.rowCount(PROSESS_ID2, HAKU_OID_2));
 
         /*
          * search by search criteria
@@ -154,7 +154,7 @@ public class MassakopiointiDAOTest {
 
         search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID2, null));
         assertEquals("search processId2", 3, search.size());
-       
+
         search = instance.search(new MassakopiointiDAO.SearchCriteria(null, null, null, null, PROSESS_ID2, Massakopiointi.KopioinninTila.READY_FOR_COPY));
         assertEquals("search processId2", 3, search.size());
 
