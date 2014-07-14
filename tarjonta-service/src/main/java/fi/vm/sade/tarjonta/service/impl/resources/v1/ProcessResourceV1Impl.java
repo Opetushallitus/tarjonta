@@ -135,7 +135,17 @@ public class ProcessResourceV1Impl implements ProcessResourceV1 {
         List<ProcessDefinition> pdsToBeRemoved = new ArrayList<ProcessDefinition>();
 
         for (ProcessDefinition processDefinition : _processes) {
-            if (processDefinition.isCompleted()) {
+            
+            String lastCheck = processDefinition.getState().getParameters().get("__ts");
+            if(lastCheck==null) {
+                lastCheck = Long.toString(System.currentTimeMillis());
+                processDefinition.getState().getParameters().put("__ts", lastCheck);
+            }
+            
+            long lastChecktimestamp = Long.parseLong(lastCheck);
+            
+            //vanhat rosessit säilytetään 5 min
+            if (processDefinition.isCompleted() && System.currentTimeMillis()-lastChecktimestamp > 1000*60*5) {
                 LOG.info("Removing process :" + processDefinition.getState().getProcess());
                 pdsToBeRemoved.add(processDefinition);
             }
