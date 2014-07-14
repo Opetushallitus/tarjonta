@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
@@ -29,6 +30,7 @@ import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.Massakopiointi;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
@@ -40,6 +42,8 @@ import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -197,7 +201,9 @@ public class MassCommitProcess {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
-                String hakuJson = EntityToJsonHelper.convertToJson(hakuDAO.findByOid(oldHakuOid));
+                final Haku sourceHaku = hakuDAO.findByOid(oldHakuOid);
+                String hakuJson = EntityToJsonHelper.convertToJson(sourceHaku);
+                
                 final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
                 try {
                     haku.setOid(oidService.get(TarjontaOidType.HAKU));
@@ -228,9 +234,16 @@ public class MassCommitProcess {
                         haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
                     }
                 }
-
+                
                 targetHakuoid = haku.getOid();
                 getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
+                Date d = new Date();
+                
+                //TODO jostain syystä haun nimi ei kopioitunut??
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+                for(TekstiKaannos k:  sourceHaku.getNimi().getKaannoksetAsList()){
+                    haku.getNimi().addTekstiKaannos(k.getKieliKoodi(), k.getArvo().concat(" (Kopioitu ").concat(sdf.format(d)).concat(")"));
+                }
                 hakuDAO.insert(haku);
             }
         });
