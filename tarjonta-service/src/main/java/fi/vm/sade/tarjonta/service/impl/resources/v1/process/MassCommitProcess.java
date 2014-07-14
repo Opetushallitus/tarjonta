@@ -310,7 +310,7 @@ public class MassCommitProcess {
                 KoulutusmoduuliToteutus komoto = (KoulutusmoduuliToteutus) find.getFirst();
                 final MetaObject meta = find.getSecond();
 
-                LOG.info("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
+                LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
                 komoto.setOid(meta.getNewKomotoOid());
                 komoto.setTila(TarjontaTila.KOPIOITU);
                 komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
