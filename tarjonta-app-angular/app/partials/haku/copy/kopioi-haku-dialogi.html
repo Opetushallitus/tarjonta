@@ -1,0 +1,75 @@
+<!-- view1: -->
+<div ng-if="view === 'PREPARE'" id="kopioi-haku-dialogi">
+	<div class="modal-header">
+		<h3>
+			<span tt="haunKopiointi.otsikko">Kopioi uudelle kaudelle</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p tt="haunKopiointi.kuvaus">
+			Haun kopiointia valmistellaan. Odota.
+		</p>
+<!-- 		<h4>
+			<span tt="haunKopiointi.haku">Valitse Haku</span>
+		</h4>
+		<select ng-model="model.targetHaku"
+			ng-options="haku.nimi for haku in hakutulos"
+			ng-change="hakuChanged(model.haku)">
+			<option value="" tt="luoKoulutusDialogi.valitse">-- valitse
+				--</option>
+		</select>
+ -->
+ <div class="col-sm-4"><progressbar animate="false" value="dynamic" type="success">{{progress}}%</progressbar></div>
+<table>
+<tr><td>Koulutukset</td><td>{{prepareKoulutusCount}}/{{prepareKoulutusMax}}</td></tr>
+<tr><td>Hakukohteet</td><td>{{prepareHakukohdeCount}}/{{prepareHakukohdeMax}}</td></tr>
+</table>
+<!-- 		<progressbar value="koulutusCount">{{koulutusCount}}</progressbar>
+		<progressbar value="hakukohdeCount">{{hakukohdeCount}}</progressbar>
+ -->
+	</div>
+</div>
+<!-- view2: "kopiointi käynnissä"-->
+<div ng-if="view === 'COMMIT'" id="kopioi-haku-dialogi">
+	<div class="modal-header">
+		<h3>
+			<span tt="haunKopiointi.kaynnissa.otsikko">Haun kopiointi
+				käynnissä</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p tt="haunKopiointi.kaynnissa.kuvaus">
+<table>
+<tr><td>Koulutukset</td><td>{{commitKoulutusCount}}/{{commitKoulutusMax}}</td></tr>
+<tr><td>Hakukohteet</td><td>{{commitHakukohdeCount}}/{{commitHakukohdeMax}}</td></tr>
+</table>
+			
+		</p>
+
+		<progressbar  animate="false" value="dynamic" type="success">{{progress}}%</progressbar>
+
+	</div>
+</div>
+
+<!-- view3: "valmis"-->
+<div ng-if="view === 'DONE'" id="kopioi-haku-dialogi">
+	<div class="modal-header">
+		<h3>
+			<span tt="haunKopiointi.valmis.otsikko">Kopiointi valmis</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<p tt="haunKopiointi.valmis.kuvaus">
+			Kopiointi on nyt valmis.
+		</p>
+
+	</div>
+</div>
+
+<!-- nappularivi -->
+<div class="modal-footer">
+	<button class="btn btn-primary"
+		ng-click="close()">
+		<span tt="luoKoulutusDialogi.sulje">Sulje</span>
+	</button>
+</div>

@@ -40,7 +40,7 @@ public class HakuTest {
         h.setNimiFi("name1");
         h.setNimiFi("name2");
         
-        assertEquals(1, h.getNimi().getTekstis().size());
+        assertEquals(1, h.getNimi().getTekstiKaannos().size());
         assertEquals("name2", h.getNimiFi());
         
     }
@@ -52,11 +52,11 @@ public class HakuTest {
         h.setNimiFi("nimi");
         h.setNimiEn("name");
         
-        assertEquals(2, h.getNimi().getTekstis().size());
+        assertEquals(2, h.getNimi().getTekstiKaannos().size());
         
         h.getNimi().removeKaannos("fi");
         
-        assertEquals(1, h.getNimi().getTekstis().size());        
+        assertEquals(1, h.getNimi().getTekstiKaannos().size());        
         assertEquals("name", h.getNimiEn());        
         
     }

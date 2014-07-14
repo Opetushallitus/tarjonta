@@ -175,7 +175,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         if (hakukohdeNimi == null) {
             // kk? nimi monikielisenä tekstinä
             MonikielinenTeksti nimi = indexerDao.getNimiForHakukohde(id);
-            for(TekstiKaannos tekstikaannos: nimi.getTekstis()) {
+            for(TekstiKaannos tekstikaannos: nimi.getTekstiKaannos()) {
                 Preconditions.checkNotNull(koodiService);
                 KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
                 

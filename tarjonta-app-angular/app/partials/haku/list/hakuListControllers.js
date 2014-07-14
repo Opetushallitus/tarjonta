@@ -301,7 +301,7 @@ app.controller('HakuListController',
                         }
 
                         //publish
-                        if (true === results[0] && true === results[2].result && haku.tila != 'JULKAISTU') {
+                        if (true === results[0] && true === results[2].result) {
                             ret.push({title: LocalisationService.t("haku.menu.julkaise"), action: function() {
                                     $scope.doPublish(haku, haku.$update);
                                 }});

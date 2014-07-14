@@ -8,6 +8,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.Type;
 
 import java.util.Date;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * This entity is used to store "looong" multilanguage texts by key (avain) and category (kategoria).
@@ -19,6 +20,7 @@ import java.util.Date;
     @UniqueConstraint(columnNames = {"avain", "kategoria", "kieli"})
 })
 @EntityListeners(XssFilterListener.class)
+@JsonIgnoreProperties({"id","version"})
 public class MonikielinenMetadata extends TarjontaBaseEntity {
 
     /**

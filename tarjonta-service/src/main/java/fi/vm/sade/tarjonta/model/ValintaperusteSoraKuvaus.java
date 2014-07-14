@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /*
 * @author: Tuomas Katva 16/12/13
@@ -13,6 +14,7 @@ import java.util.List;
 *
 */
 @Entity
+@JsonIgnoreProperties({"id","version"})
 @Table( name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME)
 public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
 

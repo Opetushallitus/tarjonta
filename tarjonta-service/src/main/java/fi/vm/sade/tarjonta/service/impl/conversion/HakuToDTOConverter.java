@@ -73,8 +73,8 @@ public class HakuToDTOConverter extends AbstractFromDomainConverter<Haku, HakuTy
     }
 
     private void convertHaunNimet(HakuTyyppi h, Haku s) {
-        if (s.getNimi() != null && s.getNimi().getTekstis() != null) {
-        for (TekstiKaannos tk: s.getNimi().getTekstis()) {
+        if (s.getNimi() != null && s.getNimi().getTekstiKaannos() != null) {
+        for (TekstiKaannos tk: s.getNimi().getTekstiKaannos()) {
             HaunNimi hn = new HaunNimi();
             hn.setKielikoodi(TarjontaKoodistoHelper.convertKieliUriToKielikoodi(tk.getKieliKoodi()));
             hn.setNimi(tk.getArvo());

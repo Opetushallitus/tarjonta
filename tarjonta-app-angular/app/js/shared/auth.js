@@ -219,10 +219,10 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             return accessCheck(service||'APP_TARJONTA', orgOid, crudAccess);
         },
         /**
-         * Palauttaa käyttäjän kielen
+         * Palauttaa käyttäjän kielen, tai oletuksena suomi jos ei määritelty.
          */
         getLanguage: function(){
-        	return MyRolesModel.userinfo.lang;
+        	return MyRolesModel.userinfo.lang || "FI";
         },
         /**
          * Palauttaa käyttäjän oidin

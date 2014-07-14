@@ -233,7 +233,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             }
             onChange();
             updateErrors();
-        }
+            
+            $scope.combo.selection = null;
+        };
 
         //a hack: scope is missing in promise function?
         var key = $scope.key;
@@ -352,3 +354,5 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
     }
 
 });
+
+

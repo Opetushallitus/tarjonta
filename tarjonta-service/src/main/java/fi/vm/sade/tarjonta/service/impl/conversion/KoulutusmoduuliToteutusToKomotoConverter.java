@@ -147,8 +147,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         }
 
         // OVT-6619 Add koulutusohjelman nimi, free text
-        if (s.getNimi() != null && s.getNimi().getTekstis() != null) {
-            for (TekstiKaannos kaannos : s.getNimi().getTekstis()) {
+        if (s.getNimi() != null && s.getNimi().getTekstiKaannos() != null) {
+            for (TekstiKaannos kaannos : s.getNimi().getTekstiKaannos()) {
                 t.setKoulutusohjelmanNimi(kaannos.getArvo());  //stored under "fi"
             }
         }
@@ -191,8 +191,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setTyyppi(yhteyshenkilo.getHenkiloTyyppi() != null ? yhteyshenkilo.getHenkiloTyyppi().name() : null);
         t.setHenkiloOid(yhteyshenkilo.getHenkioOid());
 
-        if (yhteyshenkilo.getKielis() != null) {
-            for (String kieli : yhteyshenkilo.getKielis()) {
+        if (yhteyshenkilo.getMultipleKielis() != null) {
+            for (String kieli : yhteyshenkilo.getMultipleKielis()) {
                 t.getKielet().add(kieli);
             }
         }

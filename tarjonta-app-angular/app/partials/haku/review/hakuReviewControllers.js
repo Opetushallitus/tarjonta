@@ -13,19 +13,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 
-var app = angular.module('app.haku.review.ctrl', []);
+var app = angular.module('app.haku.review.ctrl', ['app.haku.ctrl','app.haku.copy.ctrl']);
 
 app.controller('HakuReviewController',
         ['$scope', '$route', '$log',
             '$routeParams', 'ParameterService', '$location',
             'HakuV1Service', 'TarjontaService', 'dialogService',
             'LocalisationService', '$q', "PermissionService",
-            'OrganisaatioService',
+            'OrganisaatioService', '$modal',
             function HakuReviewController($scope, $route, $log,
                     $routeParams, ParameterService, $location,
                     HakuV1Service, TarjontaService, dialogService,
                     LocalisationService, $q, PermissionService,
-                    OrganisaatioService) {
+                    OrganisaatioService, $modal) {
 
                 $log = $log.getInstance("HakuReviewController");
                 $scope.isMutable = false;
@@ -82,6 +82,20 @@ app.controller('HakuReviewController',
                         }
                     });
                 };
+                
+                /**
+                 * Avaa "haun kopiointi dialogi"
+                 */
+                $scope.doCopy = function() {
+                  console.log("initializing haku copy", $modal);
+                    //aseta esivalittu organisaatio
+                    $scope.kopioiHakuDialog = $modal.open({
+                        scope: $scope,
+                        templateUrl: 'partials/haku/copy/kopioi-haku-dialogi.html',
+                        controller: 'HakuCopyController'
+                    });
+                };
+
 
                 $scope.init = function() {
                     $log.info("HakuReviewController.init()...");
