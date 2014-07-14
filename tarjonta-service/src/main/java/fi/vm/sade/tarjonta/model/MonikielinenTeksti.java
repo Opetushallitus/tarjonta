@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -37,7 +38,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * Translatable texts with modest "metadata" properties.
  */
 
-@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos", "id", "version", "hibernateLazyInitializer", "handler","tekstis"})
+@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos", "id", "version", "hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "monikielinen_teksti")
 public class MonikielinenTeksti extends TarjontaBaseEntity {
@@ -47,6 +48,17 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "teksti", fetch = FetchType.LAZY, orphanRemoval = true)
     @MapKey(name = "kieliKoodi")
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
+
+    
+    
+    
+    public void setTekstis(Map<String, TekstiKaannos> tekstis){
+        this.tekstis.clear();
+        System.out.println("custom setter for serializer");
+        for(TekstiKaannos k:tekstis.values()){
+            addTekstiKaannos(k.getKieliKoodi(), k.getArvo());
+        }
+    }
 
     public Collection<TekstiKaannos> getTekstiKaannos() {
         return Collections.unmodifiableCollection(tekstis.values());

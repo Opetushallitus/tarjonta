@@ -28,7 +28,7 @@ import org.codehaus.jackson.annotate.JsonManagedReference;
  */
 @Entity
 @Table(name = "valintakoe")
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties({"id","version"})
 public class Valintakoe extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 7092585555234995829L;

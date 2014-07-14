@@ -40,6 +40,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -47,8 +48,9 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
@@ -137,6 +139,7 @@ public class MassakopiointiTest extends TestData {
         String json = null;
         try {
             json = EntityToJsonHelper.convertToJson(kohde1);
+            System.out.println("kohde1:" + json);
         } catch (Exception ex) {
             fail("conversion error from entity to json : " + ex.getMessage());
         }
@@ -165,6 +168,11 @@ public class MassakopiointiTest extends TestData {
         from.setOrganisationOids(new String[]{"o1", "o2"});
         from.setTarjoajaOids(new String[]{"o1", "o2"});
         ha.setHaku(from);
+        kohde1.getValintakoes().clear();
+        kohde1.addValintakoe(koe1);
+        koe1.setHakukohde(kohde1);
+        super.persist(koe1);
+        
         super.persist(from);
         
         assertFalse(0==from.getNimi().getKaannoksetAsList().size());
@@ -233,6 +241,30 @@ public class MassakopiointiTest extends TestData {
         assertEquals(orig.getHakukohdeNimi(), copy.getHakukohdeNimi());
         assertEquals(orig.getKoulutusmoduuliToteutuses().size(), copy.getKoulutusmoduuliToteutuses().size());
         assertEquals(orig.getLiites().size(), copy.getLiites().size());
+
+        //oletus testidatassa vain nolla tai yksi valintakoetta
+        if(orig.getValintakoes().size()==1) {
+            final Valintakoe origV=orig.getValintakoes().iterator().next();
+            final Valintakoe copyV=copy.getValintakoes().iterator().next();
+            assertEquals(origV.getKieli(), copyV.getKieli());
+            assertEquals(origV.getKuvaus().getKaannoksetAsList().size(), copyV.getKuvaus().getKaannoksetAsList().size());
+            if(origV.getLisanaytot()!=null) {
+                assertEquals(origV.getLisanaytot().getKaannoksetAsList().size(), copyV.getLisanaytot().getKaannoksetAsList().size());
+            }
+        } else {
+            System.out.println("no valintakoes");
+        }
+
+        //oletus testidatassa vain nolla tai yksi liitettä
+        if(orig.getLiites().size()==1) {
+            final HakukohdeLiite origL=orig.getLiites().iterator().next();
+            final HakukohdeLiite copyL=copy.getLiites().iterator().next();
+            assertEquals(origL.getKuvaus().getKaannoksetAsList().size(), copyL.getKuvaus().getKaannoksetAsList().size());
+            assertEquals(origL.getLiitetyyppi(), copyL.getLiitetyyppi());
+        } else {
+            System.out.println("no liites");
+        }
+
         assertEquals(orig.getLiitteidenToimitusOsoite(), copy.getLiitteidenToimitusOsoite());
         assertEquals(orig.getLiitteidenToimitusPvm(), copy.getLiitteidenToimitusPvm());
         assertEquals(orig.getLisatiedot(), copy.getLisatiedot());
