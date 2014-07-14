@@ -89,6 +89,9 @@ public class MassPepareProcess {
         countTotalHakukohde = 0;
         countTotalKomoto = 0;
 
+        //tyhjää vanha data
+        deleteBatch(fromOid);
+
         try {
             startTs = System.currentTimeMillis();
             final List<Long> hakukohdeIds = hakukohdeDAO.searchHakukohteetByHakuOid(Lists.<String>newArrayList(fromOid), COPY_TILAS);
