@@ -34,7 +34,6 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
 import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import javax.xml.ws.WebServiceException;
-import org.apache.cxf.transport.http.HTTPException;
 
 /**
  * Gathers learning opportunity material (tarjonta) that is ready for

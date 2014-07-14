@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Haku entity.
@@ -34,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Team2
  */
 @Entity
+@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler","organisationOidString","tarjoajaOidString"})
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
 })
@@ -46,7 +48,7 @@ public class Haku extends TarjontaBaseEntity {
     public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
     @NotNull
-    @Column(unique=true)
+    @Column(unique = true)
     private String oid;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -71,7 +73,6 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "koulutuksen_alkamiskausi")
     private String koulutuksenAlkamiskausiUri;
 
-
     @Column(name = "koulutuksen_alkamisvuosi")
     private Integer koulutuksenAlkamisVuosi;
 
@@ -82,8 +83,8 @@ public class Haku extends TarjontaBaseEntity {
     private String haunTunniste;
 
     /**
-     * yliopistojen / ammattikorkeitten / peruskoulujen jne..
-     * esm. ammatillinen koulutus
+     * yliopistojen / ammattikorkeitten / peruskoulujen jne.. esm. ammatillinen
+     * koulutus
      */
     @NotNull
     @Column(name = "kohdejoukko")
@@ -110,47 +111,50 @@ public class Haku extends TarjontaBaseEntity {
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
 
-    @OneToMany(mappedBy = "haku", fetch = FetchType.LAZY, cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy = "haku", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<Hakukohde> hakukohdes = new HashSet<Hakukohde>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "haku", fetch = FetchType.EAGER)
     private Set<Hakuaika> hakuaikas = new HashSet<Hakuaika>();
 
-    @Column(name="viimPaivitysPvm")
+    @Column(name = "viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate = new Date();
-    @Column(name="viimPaivittajaOid")
+    @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
 
     /**
-     * KoulutusInformation service uses this to "know" how many hakukohdes can be added to "muistilista" (application list?)
+     * KoulutusInformation service uses this to "know" how many hakukohdes can
+     * be added to "muistilista" (application list?)
      */
     @Column(name = "max_hakukohdes")
     private int maxHakukohdes = 0;
 
-
     /**
-     * Array of organisation OIDs, comma separated. This lists the organisations that can bind hakukohdes to this haku.
+     * Array of organisation OIDs, comma separated. This lists the organisations
+     * that can bind hakukohdes to this haku.
      *
-     * This is needed for KK-spesific functionality.
-     * See task KJOH-744 -- (https://jira.oph.ware.fi/jira/browse/KJOH-744)
+     * This is needed for KK-spesific functionality. See task KJOH-744 --
+     * (https://jira.oph.ware.fi/jira/browse/KJOH-744)
      */
-    private String organisationOids;
+    @Column(name = "organisationOids")
+    private String organisationOidString;
 
     /**
-     * Array of organisation OIDs, comma separated. This lists the "tarjoaja" oids for the haku (allowed to edit/delete it)
+     * Array of organisation OIDs, comma separated. This lists the "tarjoaja"
+     * oids for the haku (allowed to edit/delete it)
      *
      * Tarjoaja organisation oids;
      */
-    private String tarjoajaOid;
-
+    @Column(name = "tarjoajaOid")
+    private String tarjoajaOidString;
 
     /**
-     * If this is true, then the hakukohde choises users make should be arranged in priority order.
+     * If this is true, then the hakukohde choises users make should be arranged
+     * in priority order.
      */
     private boolean usePriority = false;
-    
-    
+
     public String getOid() {
         return oid;
     }
@@ -184,8 +188,8 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     /**
-     * Koulutukseen hakeutumisen tyypin tieto. Esim. varsinainen haku, täydennys- tai lisähaku.
-     * Arvo on viittaus koodistoon.
+     * Koulutukseen hakeutumisen tyypin tieto. Esim. varsinainen haku,
+     * täydennys- tai lisähaku. Arvo on viittaus koodistoon.
      *
      * @return
      */
@@ -228,7 +232,8 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     /**
-     * Uri to koodisto. Sample value behind uri could be: "Ammatillinen koulutus". This attribute is mandatory.
+     * Uri to koodisto. Sample value behind uri could be: "Ammatillinen
+     * koulutus". This attribute is mandatory.
      *
      * @param koodistoUri
      */
@@ -241,7 +246,8 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     /**
-     * Uri to koodisto. Sample value behind uri could be: "Yhteishaku". This attribute is mandatory.
+     * Uri to koodisto. Sample value behind uri could be: "Yhteishaku". This
+     * attribute is mandatory.
      *
      * @param hakutapa
      */
@@ -275,7 +281,7 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     public void setNimi(MonikielinenTeksti newNimi) {
-    	nimi = MonikielinenTeksti.merge(nimi, newNimi);
+        nimi = MonikielinenTeksti.merge(nimi, newNimi);
     }
 
     private String getNimi(String kieliKoodi) {
@@ -422,32 +428,32 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     public String[] getOrganisationOids() {
-        if (organisationOids == null || organisationOids.isEmpty()) {
+        if (organisationOidString == null || organisationOidString.isEmpty()) {
             return new String[0];
         }
-        return organisationOids.split(",");
+        return organisationOidString.split(",");
     }
 
     public void setOrganisationOids(String[] organisationOids) {
         if (organisationOids == null || organisationOids.length == 0) {
-            this.organisationOids = null;
+            this.organisationOidString = null;
         } else {
-            this.organisationOids = StringUtils.join(organisationOids, ",");
+            this.organisationOidString = StringUtils.join(organisationOids, ",");
         }
     }
 
     public String[] getTarjoajaOids() {
-        if (tarjoajaOid == null || tarjoajaOid.isEmpty()) {
+        if (tarjoajaOidString == null || tarjoajaOidString.isEmpty()) {
             return new String[0];
         }
-        return tarjoajaOid.split(",");
+        return tarjoajaOidString.split(",");
     }
 
     public void setTarjoajaOids(String[] organisationOids) {
         if (organisationOids == null || organisationOids.length == 0) {
-            this.tarjoajaOid = null;
+            this.tarjoajaOidString = null;
         } else {
-            this.tarjoajaOid = StringUtils.join(organisationOids, ",");
+            this.tarjoajaOidString = StringUtils.join(organisationOids, ",");
         }
     }
 

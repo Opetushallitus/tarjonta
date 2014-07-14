@@ -24,10 +24,13 @@ import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import org.joda.time.DateTime;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +62,12 @@ public class TestData {
     protected Hakukohde kohde1, kohde2, kohde3;
     protected Valintakoe koe1, koe2, koe3, koe4;
     protected Haku haku1, haku2;
-    protected Calendar cal1, cal2, cal3;
+    protected Calendar cal2, cal3;
+    protected static final Date KOULUTUS_START_DATE = (new DateTime(2013, 1, 1, 0, 0, 0, 0)).toDate();
+
+    private static final Date DATE = (new DateTime(2014, 1, 6, 0, 0, 0, 0)).toDate();
+
+    private static final Date ANOTHER_DATE = (new DateTime(2014, 3, 9, 0, 0, 0, 0)).toDate();
 
     private TarjontaFixtures fixtures;
     private EntityManager em;
@@ -103,10 +111,6 @@ public class TestData {
         komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         persist(komo);
 
-        cal1 = Calendar.getInstance();
-        cal1.set(Calendar.YEAR, YEAR);
-        cal1.set(Calendar.DAY_OF_MONTH, 1);
-
         cal2 = Calendar.getInstance();
         cal2.set(Calendar.YEAR, YEAR);
         cal2.set(Calendar.DAY_OF_MONTH, 5);
@@ -118,7 +122,7 @@ public class TestData {
         komoto1 = addKomoto(KOMOTO_OID_1); //legacy komoto
 
         KoulutusmoduuliToteutus t2Normal = createKomoto(KOMOTO_OID_2);
-        komoto2 = addKomoto(t2Normal, cal1.getTime());
+        komoto2 = addKomoto(t2Normal, KOULUTUS_START_DATE);
 
         KoulutusmoduuliToteutus t3NoAlkamispvm = createKomoto(KOMOTO_OID_3);
         t3NoAlkamispvm.clearKoulutuksenAlkamisPvms(); //must be an empty date list!!!
@@ -141,16 +145,13 @@ public class TestData {
         /*
          * CREATE OBJECTS
          */
-        kohde1 = fixtures.createHakukohde();
+        kohde1 = createHakukohde(HAKUKOHDE_OID1);  //three exams
         kohde1.setHakukohdeKoodistoNimi(HUMAN_READABLE_NAME_1);
         kohde1.setHakukohdeNimi(KOODISTO_URI_1);
-        kohde1.setOid(HAKUKOHDE_OID1); //three exams
 
-        kohde2 = fixtures.createHakukohde();
-        kohde2.setOid(HAKUKOHDE_OID2); //one exam
+        kohde2 = createHakukohde(HAKUKOHDE_OID2);//one exam
 
-        kohde3 = fixtures.createHakukohde();
-        kohde3.setOid(HAKUKOHDE_OID3); //no exams
+        kohde3 = createHakukohde(HAKUKOHDE_OID3);//no exams
 
         koe1 = fixtures.createValintakoe();
         koe2 = fixtures.createValintakoe();
@@ -198,7 +199,7 @@ public class TestData {
 
     protected void check(KoulutusmoduuliToteutus k) {
         assertNotNull(k.getOid());
-       // assertNotNull(k.getKoulutuksenAlkamisPvm()); tests disabled as tested elsewhere
+        // assertNotNull(k.getKoulutuksenAlkamisPvm()); tests disabled as tested elsewhere
         assertNotNull("alkamisvuosi", k.getAlkamisVuosi());
         assertEquals(YEAR, k.getAlkamisVuosi().intValue());
         assertEquals(KAUSI, k.getAlkamiskausiUri());
@@ -261,7 +262,7 @@ public class TestData {
             assertNotNull(find);
             assertNotNull(find.getId());
         } else {
-            fail("Found an unknown object type : " + o.toString());
+            em.persist(o);
         }
     }
 
@@ -294,7 +295,7 @@ public class TestData {
     }
 
     private KoulutusmoduuliToteutus addKomoto(String oid) {
-        return addKomoto(createKomoto(oid), cal1.getTime());
+        return addKomoto(createKomoto(oid), KOULUTUS_START_DATE);
     }
 
     private KoulutusmoduuliToteutus addKomoto(KoulutusmoduuliToteutus komoto, Date date) {
@@ -310,10 +311,25 @@ public class TestData {
         return komoto;
     }
 
+    public Hakukohde createHakukohde(String oid) {
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid((oid));
+        hakukohde.setHakukohdeNimi("hakukohde_nimi");
+        hakukohde.setAlinValintaPistemaara(10);
+        hakukohde.setAloituspaikatLkm(100);
+        List<String> hakukelpoisuusUris = new ArrayList<String>();
+        hakukelpoisuusUris.add("koulutustaso´_uri");
+        hakukohde.getHakukelpoisuusVaatimukset().addAll(hakukelpoisuusUris);
+        hakukohde.setTila(TarjontaTila.VALMIS);
+        hakukohde.setYlinValintaPistemaara(200);
+        hakukohde.setLastUpdateDate(new Date());
+        return hakukohde;
+    }
+
     private KoulutusmoduuliToteutus createKomoto(String oid) {
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setOid(oid);
-        t.setKoulutuksenAlkamisPvm(cal1.getTime());
+        t.setKoulutuksenAlkamisPvm(KOULUTUS_START_DATE);
         t.setAlkamisVuosi(YEAR);
         t.setAlkamiskausiUri(KAUSI);
         t.setMaksullisuus("TRUE");

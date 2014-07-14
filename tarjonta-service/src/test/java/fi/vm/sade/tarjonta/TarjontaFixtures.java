@@ -76,7 +76,7 @@ public class TarjontaFixtures {
         h.setHenkioOid(oid);
         h.setEtunimis("Pekka");
         h.setSukunimi("Yhteyttaja");
-        h.setKielis("fi", "en");
+        h.setMultipleKielis("fi", "en");
         h.setPuhelin("+358 123 123 123");
         h.setSahkoposti("pekka.yhteyttaja@no.such.domain.fi");
 
@@ -213,7 +213,7 @@ public class TarjontaFixtures {
         t.setMaksullisuus(null);
         t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
-
+        t.setViimIndeksointiPvm(new Date());
         return t;
 
     }
@@ -239,7 +239,7 @@ public class TarjontaFixtures {
         Yhteyshenkilo h = new Yhteyshenkilo();
         h.setEtunimis("Irma");
         h.setHenkioOid(oid);
-        h.setKielis("sv", "en");
+        h.setMultipleKielis("sv", "en");
         h.setPuhelin("+358123123123");
         h.setSahkoposti("irma@oph.fi");
         h.setSukunimi("Birgerdahl");
@@ -311,6 +311,7 @@ public class TarjontaFixtures {
     public Hakukohde createPersistedHakukohde() {
 
         Hakukohde h = createHakukohde();
+        h.setViimIndeksointiPvm(new Date());
         h.setHaku(createPersistedHaku());
         return hakukohdeDAO.insert(h);
 

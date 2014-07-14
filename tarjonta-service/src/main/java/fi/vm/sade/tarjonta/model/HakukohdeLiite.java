@@ -19,11 +19,14 @@ import java.util.Date;
 import javax.persistence.*;
 
 import com.google.common.base.Preconditions;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 
 /**
  *
  */
 @Entity
+@JsonIgnoreProperties({"id","version", "hibernateLazyInitializer", "handler", "hakukohde"})
 @Table(name = "hakukohdeliite")
 public class HakukohdeLiite extends TarjontaBaseEntity {
 

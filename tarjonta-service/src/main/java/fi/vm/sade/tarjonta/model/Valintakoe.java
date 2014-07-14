@@ -15,27 +15,29 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 
 /**
  *
  */
 @Entity
 @Table(name = "valintakoe")
+@JsonIgnoreProperties({"id","version"})
 public class Valintakoe extends TarjontaBaseEntity {
-
 
     private static final long serialVersionUID = 7092585555234995829L;
 
     //@Column(name = "hakukohde_id", insertable = false, updatable = false)
     //private long hakukohdeId;
-
-    @ManyToOne (fetch = FetchType.LAZY, optional=false)
-    @JoinColumn(name="hakukohde_id", nullable=false)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "hakukohde_id", nullable = false)
     private Hakukohde hakukohde;
 
     @Column(name = "valintakoe_nimi")
@@ -44,33 +46,35 @@ public class Valintakoe extends TarjontaBaseEntity {
     /**
      * Valintakokeen tyyppi. Koodisto uri.
      */
-    @Column(name="tyyppiuri")
+    @Column(name = "tyyppiuri")
     private String tyyppiUri;
 
-    @Column(name="kieli")
+    @Column(name = "kieli")
     private String kieli;
-    
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy="valintakoe")
+
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "valintakoe")
     private Set<ValintakoeAjankohta> ajankohtas = new HashSet<ValintakoeAjankohta>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER/*, optional=false*/)
     @JoinColumn(name = "kuvaus_monikielinenteksti_id"/*, nullable=false*/)
     private MonikielinenTeksti kuvaus;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "lisanaytot_monikielinenteksti_id")
     private MonikielinenTeksti lisanaytot;
-    
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy="valintakoe")
+
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "valintakoe")
     private Set<Pisteraja> pisterajat = new HashSet<Pisteraja>();
 
-    @Column(name="viimPaivitysPvm")
+    @Column(name = "viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate;
-    
-    @Column(name="viimPaivittajaOid")
+
+    @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
-    
+
     /**
      * Collection of times when this Valintakoe is to be held. This collection
      * is loaded eagerly since the number of items and amount of data will be
@@ -157,29 +161,28 @@ public class Valintakoe extends TarjontaBaseEntity {
         result = 31 * result + (getId() != null ? getId().hashCode() : 0);
         return result;
     }
-    
+
     public Hakukohde getHakukohde() {
-		return hakukohde;
-	}
-    
+        return hakukohde;
+    }
+
     public void setHakukohde(Hakukohde hakukohde) {
-		this.hakukohde = hakukohde;
-	}
+        this.hakukohde = hakukohde;
+    }
 
     /* *
      * @return the hakukohdeId
      */
     /*public long getHakukohdeId() {
-        return hakukohdeId;
-    }*/
+     return hakukohdeId;
+     }*/
 
     /* *
      * @param hakukohdeId the hakukohdeId to set
      */
     /*public void setHakukohdeId(long hakukohdeId) {
-        this.hakukohdeId = hakukohdeId;
-    }*/
-
+     this.hakukohdeId = hakukohdeId;
+     }*/
     /**
      * @return the lisanaytot
      */

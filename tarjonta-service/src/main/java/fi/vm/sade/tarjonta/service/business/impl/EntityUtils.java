@@ -89,7 +89,7 @@ public final class EntityUtils {
             return null;
         }
 
-        for (TekstiKaannos tekstiKaannos : from.getTekstis()) {
+        for (TekstiKaannos tekstiKaannos : from.getTekstiKaannos()) {
             Teksti teksti = new Teksti();
             teksti.setValue(tekstiKaannos.getArvo());
             teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());
@@ -138,7 +138,7 @@ public final class EntityUtils {
         for (Map.Entry<T, MonikielinenTeksti> e : src.entrySet()) {
             if (kenums.isEmpty() || kenums.contains(e.getKey())) {
                 List<MonikielinenTekstiTyyppi.Teksti> txts = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
-                for (TekstiKaannos tk : e.getValue().getTekstis()) {
+                for (TekstiKaannos tk : e.getValue().getTekstiKaannos()) {
                     txts.add(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()));
                 }
                 dst.add(new NimettyMonikielinenTekstiTyyppi(txts, e.getKey().toString()));
@@ -344,7 +344,7 @@ public final class EntityUtils {
         }
         to.setPuhelin(from.getPuhelin());
         to.setSahkoposti(from.getSahkoposti());
-        to.setKielis(from.getKielet());
+        to.setMultipleKielisByList(from.getKielet());
         to.setTitteli(from.getTitteli());
         to.setHenkiloTyyppi(from.getHenkiloTyyppi());
     }
@@ -359,7 +359,7 @@ public final class EntityUtils {
         to.setTitteli(from.getTitteli());
         to.setHenkiloTyyppi(from.getHenkiloTyyppi());
 
-//        for (String kieliUri : from.getKielis()) {
+//        for (String kieliUri : from.getMultipleKielis()) {
 //            to.getKielet().add(kieliUri);
 //        }
     }
@@ -634,7 +634,7 @@ public final class EntityUtils {
         for (WebLinkki fromLinkki : from) {
             WebLinkkiTyyppi toLinkki = new WebLinkkiTyyppi();
             toLinkki.setKieli(fromLinkki.getKieli());
-            toLinkki.setTyyppi(fromLinkki.getTyyppi());
+            toLinkki.setTyyppi(fromLinkki.getLinkkiTyyppi());
             toLinkki.setUri(fromLinkki.getUrl());
             to.add(toLinkki);
         }

@@ -48,7 +48,7 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
         for (Map.Entry<TYPE, MonikielinenTeksti> e : tekstit.entrySet()) {
             NimiV1RDTO dto = new NimiV1RDTO();
 
-            Collection<TekstiKaannos> tekstis1 = e.getValue().getTekstis();
+            Collection<TekstiKaannos> tekstis1 = e.getValue().getTekstiKaannos();
             for (TekstiKaannos kaannos : tekstis1) {
 
                 if (kaannos.getKieliKoodi() != null && !kaannos.getKieliKoodi().isEmpty()) {
@@ -96,7 +96,7 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
             }
 
             boolean clear = true;
-            for (TekstiKaannos kaannos : mkMerge.getTekstis()) {
+            for (TekstiKaannos kaannos : mkMerge.getTekstiKaannos()) {
                 if (kaannos.getArvo() != null && !kaannos.getArvo().isEmpty()) {
                     clear = false;
                     break;
@@ -114,7 +114,7 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
     private TekstiKaannos searchByKielikoodi(MonikielinenTeksti merge, final String kieliUri) {
         koodistoUri.validateKieliUri(kieliUri);
 
-        for (TekstiKaannos k : merge.getTekstis()) {
+        for (TekstiKaannos k : merge.getTekstiKaannos()) {
             if (k.getKieliKoodi().equals(kieliUri)) {
                 return k;
             }

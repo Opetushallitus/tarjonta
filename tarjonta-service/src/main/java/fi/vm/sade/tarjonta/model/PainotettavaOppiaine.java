@@ -21,12 +21,14 @@ import fi.vm.sade.security.xssfilter.XssFilterListener;
 import java.math.BigDecimal;
 
 import javax.persistence.*;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
  * @author: Tuomas Katva
  */
 @Entity
+@JsonIgnoreProperties({"id","version"})
 @Table(name = "painotettavaoppiaine")
 @EntityListeners(XssFilterListener.class)
 public class PainotettavaOppiaine extends TarjontaBaseEntity {

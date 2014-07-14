@@ -73,7 +73,7 @@ public class CommonToDTOConverter {
         if (monikielinenTeksti != null) {
             List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
 
-            for (TekstiKaannos tekstiKaannos:monikielinenTeksti.getTekstis()) {
+            for (TekstiKaannos tekstiKaannos:monikielinenTeksti.getTekstiKaannos()) {
 
                 TekstiRDTO tekstiRDTO = new TekstiRDTO();
                 if (tekstiKaannos.getKieliKoodi().contains("#")) {
@@ -100,7 +100,7 @@ public class CommonToDTOConverter {
     	}
         MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
         ArrayList<MonikielinenTekstiTyyppi.Teksti> tekstis = new ArrayList<MonikielinenTekstiTyyppi.Teksti>();
-        for (TekstiKaannos kaannos: monikielinenTeksti.getTekstis()) {
+        for (TekstiKaannos kaannos: monikielinenTeksti.getTekstiKaannos()) {
             MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
             teksti.setKieliKoodi(kaannos.getKieliKoodi());
             teksti.setValue(kaannos.getArvo());

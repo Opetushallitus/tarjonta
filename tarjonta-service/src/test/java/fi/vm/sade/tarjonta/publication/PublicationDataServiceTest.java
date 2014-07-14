@@ -107,7 +107,7 @@ public class PublicationDataServiceTest {
         Haku haku = hakus.get(0);
         assertEquals("1.1", haku.getOid());
         // lazy loaded attributes are properly loaded
-        assertEquals(3, haku.getNimi().getTekstis().size());
+        assertEquals(3, haku.getNimi().getTekstiKaannos().size());
 
     }
 

@@ -267,7 +267,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     private boolean hakusanaMatches(Haku haku, String hakusana, String kielikoodi) {
         boolean otherLanguageMatch = false;
-        for (TekstiKaannos curKaannos : haku.getNimi().getTekstis()) {
+        for (TekstiKaannos curKaannos : haku.getNimi().getTekstiKaannos()) {
             if (kielikoodi.equals(curKaannos.getKieliKoodi())
                     && (curKaannos.getArvo() != null)
                     && curKaannos.getArvo().toLowerCase().contains(hakusana.toLowerCase())) {
@@ -620,7 +620,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         toKoulutus.setMaksullisuus(false); //todo
 
         MonikielinenTeksti nimi = fromKoulutus.getNimi();
-        if (nimi != null && nimi.getTekstis().size() > 0) {
+        if (nimi != null && nimi.getTekstiKaannos().size() > 0) {
             TekstiKaannos tk = nimi.getKaannoksetAsList().get(0);
             toKoulutus.setNimi(new MonikielinenTekstiTyyppi(Lists.newArrayList(new MonikielinenTekstiTyyppi.Teksti(tk.getArvo(), tk.getKieliKoodi()))));
         }
@@ -649,7 +649,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     private MonikielinenTekstiTyyppi mapMonikielinenTekstiToTyyppi(MonikielinenTeksti monikielinenTeksti) {
         MonikielinenTekstiTyyppi monikielinenTekstiTyyppi = new MonikielinenTekstiTyyppi();
-        for (TekstiKaannos tekstiKaannos : monikielinenTeksti.getTekstis()) {
+        for (TekstiKaannos tekstiKaannos : monikielinenTeksti.getTekstiKaannos()) {
 
             MonikielinenTekstiTyyppi.Teksti teksti = new MonikielinenTekstiTyyppi.Teksti();
             teksti.setKieliKoodi(tekstiKaannos.getKieliKoodi());

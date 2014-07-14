@@ -84,7 +84,7 @@ public class TarjontaDatabasePrinter {
                 + "\n\t type: " + k.getClass().getSimpleName()
                 + "\n\t id: " + k.getId()
                 + "\n\t oid: " + k.getOid()
-                + "\n\t nimi(s): " + k.getNimi().getTekstis()
+                + "\n\t nimi(s): " + k.getNimi().getTekstiKaannos()
                 + "\n\t sisaltyvyysList: " + k.getSisaltyvyysList());
 
         }

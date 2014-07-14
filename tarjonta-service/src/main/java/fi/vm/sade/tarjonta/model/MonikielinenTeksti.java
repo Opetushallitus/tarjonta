@@ -31,10 +31,13 @@ import javax.persistence.Table;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Translatable texts with modest "metadata" properties.
  */
+
+@JsonIgnoreProperties({"kaannoksetAsList", "tekstiKaannos", "id", "version", "hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "monikielinen_teksti")
 public class MonikielinenTeksti extends TarjontaBaseEntity {
@@ -45,7 +48,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     @MapKey(name = "kieliKoodi")
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
-    public Collection<TekstiKaannos> getTekstis() {
+    public void setTekstis(Map<String, TekstiKaannos> tekstis){
+        this.tekstis.clear();
+        for(TekstiKaannos k:tekstis.values()){
+            addTekstiKaannos(k.getKieliKoodi(), k.getArvo());
+        }
+    }
+
+    public Collection<TekstiKaannos> getTekstiKaannos() {
         return Collections.unmodifiableCollection(tekstis.values());
     }
 
@@ -66,14 +76,14 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
             //kaannos.setVersion(null);
         }
     }
-    
+
     public MonikielinenTeksti() {
     }
-    
+
     /**
-     * Construct Monikielinen teksti from lang, value pairs. for every pair n the
-     * nth lang is at data[n*2], the nth value is at data[n*2+1].
-     * 
+     * Construct Monikielinen teksti from lang, value pairs. for every pair n
+     * the nth lang is at data[n*2], the nth value is at data[n*2+1].
+     *
      * @param data
      */
     public MonikielinenTeksti(String... data) {
@@ -102,7 +112,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
      *
      * tekstis.clear();
      *
-     * for (TekstiKaannos t : otherTeksti.getTekstis()) {
+     * for (TekstiKaannos t : otherTeksti.getTekstiKaannos()) {
      * addTekstiKaannos(t.getKieliKoodi(), t.getArvo()); }
      *
      * }
@@ -158,19 +168,19 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     @Override
     public String toString() {
         try {
-        return "MonikielinenTeksti [tekstis=" + tekstis + "]";
-        } catch(Throwable t) {
+            return "MonikielinenTeksti [tekstis=" + tekstis + "]";
+        } catch (Throwable t) {
             return super.toString();
         }
     }
 
-    public List<TekstiKaannos> getKaannoksetAsList(){
+    public List<TekstiKaannos> getKaannoksetAsList() {
         return Lists.newArrayList(tekstis.values());
     }
-    
-    public Map<String, String> asMap(){
-        Map<String, String> tekstit=Maps.newHashMap();
-        for(TekstiKaannos tk:tekstis.values()) {
+
+    public Map<String, String> asMap() {
+        Map<String, String> tekstit = Maps.newHashMap();
+        for (TekstiKaannos tk : tekstis.values()) {
             tekstit.put(tk.getKieliKoodi(), tk.getArvo());
         }
         return tekstit;

@@ -40,58 +40,36 @@ app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
         var deferred = $q.defer();
         promises.push(deferred.promise);
 
-        /*
-         * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan allaolevista oppilaitoksista,
-         * oppilaitoksen tyypit tulee oppilaitokselta, toimipisteen tyyppi typee ylemmän tason oppilaitokselta.
-         * TODO lisää testi
-         */
-        var haeOppilaitostyypit = function(organisaatio) {
-
-            var deferred = $q.defer();
-            var oppilaitostyypit = [];
-            /*
-             * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
-             */
-            var addTyyppi = function(organisaatio) {
-                if (organisaatio.oppilaitostyyppi !== undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
-                    oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
-                }
-            };
-            if (organisaatio.organisaatiotyypit.indexOf("KOULUTUSTOIMIJA") != -1 && organisaatio.children !== undefined) {
-                //koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan olevan oppilaitoksia)
-                for (var i = 0; i < organisaatio.children.length; i++) {
-                    addTyyppi(organisaatio.children[i]);
-                }
-                deferred.resolve(oppilaitostyypit);
-            } else if (organisaatio.organisaatiotyypit.indexOf("OPPILAITOS") != -1 && organisaatio.oppilaitostyyppi !== undefined) {
-                //oppilaitos, kerää tyyppi
-                addTyyppi(organisaatio);
-                deferred.resolve(oppilaitostyypit);
-            } else if (organisaatio.organisaatiotyypit.indexOf("TOIMIPISTE") != -1) {
-                //opetuspiste, kerää parentin tyyppi
-                var parent = $scope.organisaatiomap[organisaatio.parentOid];
-                if (undefined !== parent) {
-                    addTyyppi(parent);
-                    deferred.resolve(oppilaitostyypit);
-                } else {
-                    //parentti ei ole saatavilla, kysytään organisaatioservicestä
-                    console.log("organisaatio:", organisaatio);
-                    OrganisaatioService.etsi({oidRestrictionList: organisaatio.parentOid}).then(function(vastaus) {
-                        $scope.organisaatiomap[organisaatio.parentoid] = vastaus.organisaatiot[0].oppilaitostyyppi;
-                        deferred.resolve([vastaus.organisaatiot[0].oppilaitostyyppi]);
-                    }, function() {
-                        deferred.resolve([]);
-                    });
-                }
-            } else {
-                console.log("Tuntematon organisaatiotyyppi:", organisaatio.organisaatiotyypit);
-            }
-            return deferred.promise;
-        };
 
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
-        OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
+        OrganisaatioService.etsi({
+            organisaatiotyyppi: 'Koulutustoimija',
+            lakkautetut: false,
+            skipparents: true,
+            suunnitellut: false}).then(function(vastaus) {
             //console.log("asetetaan org hakutulos modeliin.");
+
+            var typeUris = window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"];
+
+            //filtteroi vain oppilaitokset tietyillä oppilaitostyypeilla
+            for (var i = 0; i < vastaus.organisaatiot.length; i++) {
+                if (vastaus.organisaatiot[i].organisaatiotyypit.indexOf("KOULUTUSTOIMIJA") !== -1) {
+                    var arr = [];
+                    for (var c = 0; c < vastaus.organisaatiot[i].children.length; c++) {
+                        if (!angular.isString(vastaus.organisaatiot[i].children[c].oppilaitostyyppi)) {
+                            continue;
+                        }
+                        var uri = vastaus.organisaatiot[i].children[c].oppilaitostyyppi.split("#")[0];
+
+                        if (typeUris.indexOf(uri) !== -1) {
+                            arr.push(vastaus.organisaatiot[i].children[c]);
+                            break;
+                        }
+
+                    }
+                    vastaus.organisaatiot[i].children = arr;
+                }
+            }
 
             $scope.alkorganisaatiot = vastaus.organisaatiot;
             //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
@@ -105,26 +83,7 @@ app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
                 }
             };
             buildMapFrom(vastaus.organisaatiot);
-            //hakee kaikki valittavissa olevat koulutustyypit
-            var oltUrit = [];
-            var oltpromises = [];
-            for (var i = 0; i < vastaus.organisaatiot.length; i++) {
-                var oppilaitostyypit = haeOppilaitostyypit(vastaus.organisaatiot[i]);
-                promises.push(oppilaitostyypit);
-                oppilaitostyypit.then(function(tyypit) {
-                    for (var i = 0; i < tyypit.length; i++) {
-                        if (oltUrit.indexOf(tyypit[i]) == -1) {
-                            oltUrit.push(tyypit[i]);
-                        }
-                    }
-                });
-            }
-            $q.all(oltpromises).then(function() {
-                $q.all(promises).then(function() {
-                    paivitaKoulutustyypit(oltUrit);
-                    //console.log("all done!");
-                });
-            });
+
         });
         var lisaaOrganisaatio = function(organisaatio) {
             $scope.model.organisaatiot.push(organisaatio);
@@ -161,7 +120,8 @@ app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
                 }
             }
             $scope.model.organisaatiot = valitut;
-        };
+        }
+        ;
     }]);
 
 

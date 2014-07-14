@@ -305,15 +305,11 @@ app.controller('HakukohdeEditController',
      */
 
     $scope.model.saveValmis = function() {
-
-        $scope.model.saveValmisParent($scope.validateHakukohde);
-
+        $scope.model.saveParent("VALMIS", $scope.validateHakukohde);
     };
 
     $scope.model.saveLuonnos = function() {
-
-        $scope.model.saveLuonnosParent($scope.validateHakukohde);
-
+        $scope.model.saveParent("LUONNOS", $scope.validateHakukohde);
     };
 
     $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset); }, function(n, o){

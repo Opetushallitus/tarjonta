@@ -152,7 +152,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
                     for (ValintaperusteSoraKuvaus valintaperusteSoraKuvaus : valintaperusteSoraKuvauses) {
                         HashMap<String,String> nimet = new HashMap<String, String>();
-                        for (TekstiKaannos nimi: valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstis()) {
+                        for (TekstiKaannos nimi: valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstiKaannos()) {
                             nimet.put(nimi.getKieliKoodi(),nimi.getArvo());
                         }
                         nimetList.add(nimet);
@@ -190,7 +190,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
                 for (ValintaperusteSoraKuvaus valintaperusteSoraKuvaus : valintaperusteSoraKuvauses) {
                     HashMap<String,String> nimet = new HashMap<String, String>();
-                    for (TekstiKaannos nimi: valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstis()) {
+                    for (TekstiKaannos nimi: valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstiKaannos()) {
                         nimet.put(nimi.getKieliKoodi(),nimi.getArvo());
                     }
                     nimetList.add(nimet);
