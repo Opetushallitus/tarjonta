@@ -15,11 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Date;
@@ -52,6 +48,7 @@ import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
@@ -169,6 +166,9 @@ public class MassakopiointiTest extends TestData {
         from.setTarjoajaOids(new String[]{"o1", "o2"});
         ha.setHaku(from);
         super.persist(from);
+        
+        assertFalse(0==from.getNimi().getKaannoksetAsList().size());
+
 
         HashMap<String, Hakukohde> hakukohdes = Maps.newHashMap();
 
@@ -183,13 +183,18 @@ public class MassakopiointiTest extends TestData {
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid(), null); // null = do not skip process steps
         copyProcess.setState(processV1RDTO);
         copyProcess.run();
-        processV1RDTO = copyProcess.getState();
+        assertEquals("DONE", processV1RDTO.getParameters().get("process_step"));
 
         final Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.TO_HAKU_OID));
 
         assertNotNull(h.getOid());
         assertFalse(from.getOid().equals(h.getOid()));
-
+        assertFalse(0==from.getNimi().getKaannoksetAsList().size());
+        
+        final String toNimi=h.getNimi().getKaannoksetAsList().get(0).getArvo();
+        final String fromNimi=from.getNimi().getKaannoksetAsList().get(0).getArvo();
+        assertNotSame(toNimi, fromNimi);
+        
         assertEquals(3, h.getHakukohdes().size());
 
         for (Hakukohde hk : h.getHakukohdes()) {

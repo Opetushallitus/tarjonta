@@ -32,11 +32,8 @@ app.controller('HakuCopyController', ['$injector', '$q', '$scope', 'Koodisto', '
             function startPolling(id) {
                 loadingService.setSpinnerEnabled(false);
                 ProcessV1Service.startPolling(id, 2000, function(res) {
-                    if (res.state === 100) {
-                        ProcessV1Service.stopPolling(id);
-                        console.log("done?");
-                        loadingService.setSpinnerEnabled(true);
-                    }
+                  console.log("polling result:", res)
+                  if(res.parameters) {
                     $scope.prepareKoulutusCount = res.parameters.prepare_komoto_processed;
                     $scope.prepareKoulutusMax = res.parameters.prepare_komoto_total;
                     $scope.prepareHakukohdeCount = res.parameters.prepare_hakukohde_processed;
@@ -48,12 +45,16 @@ app.controller('HakuCopyController', ['$injector', '$q', '$scope', 'Koodisto', '
                     $scope.commitHakukohdeMax = res.parameters.commit_hakukohde_total;
 
                     $scope.view = res.parameters.process_step;
+                  }
                     if ($scope.view === 'COMMIT') {
                         $scope.progress = Math.round((Number($scope.commitKoulutusCount) + Number($scope.commitHakukohdeCount)) * 100 / (Number($scope.commitKoulutusMax) + Number($scope.commitHakukohdeMax)))
                     } else if ($scope.view === 'PREPARE') {
                         $scope.progress = Math.round((Number($scope.prepareKoulutusCount) + Number($scope.prepareHakukohdeCount)) * 100 / (Number($scope.prepareKoulutusMax) + Number($scope.prepareHakukohdeMax)))
                     } else if ($scope.view === 'DONE') {
                         $scope.progress = 100;
+                        ProcessV1Service.stopPolling(id);
+                        console.log("service says I am done?");
+                        loadingService.setSpinnerEnabled(true);
                     } else {
                         $scope.progress = 0;
                     }
