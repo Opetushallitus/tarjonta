@@ -181,7 +181,7 @@ public class MassakopiointiTest extends TestData {
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(from.getOid(), null); // null = do not skip process steps
         copyProcess.setState(processV1RDTO);
         copyProcess.run();
-        processV1RDTO = copyProcess.getState();
+        assertEquals("DONE", processV1RDTO.getParameters().get("process_step"));
 
         final Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.TO_HAKU_OID));
 
