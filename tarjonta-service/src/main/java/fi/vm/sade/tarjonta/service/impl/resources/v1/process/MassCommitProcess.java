@@ -199,6 +199,7 @@ public class MassCommitProcess {
             public void run() {
                 String hakuJson = EntityToJsonHelper.convertToJson(hakuDAO.findByOid(oldHakuOid));
                 final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
+                haku.setTila(TarjontaTila.KOPIOITU);
                 try {
                     haku.setOid(oidService.get(TarjontaOidType.HAKU));
                 } catch (OIDCreationException ex) {
@@ -305,11 +306,12 @@ public class MassCommitProcess {
                 komoto.setViimIndeksointiPvm(indexFutureDate);
 
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
+                komoto.setAlkamisVuosi(komoto.getAlkamisVuosi() + 1);
+
                 if (koulutuksenAlkamisPvms != null) {
                     Set<Date> plusYears = Sets.<Date>newHashSet();
                     for (Date orgDate : koulutuksenAlkamisPvms) {
                         plusYears.add(dateToNextYear(orgDate));
-                        komoto.setAlkamisVuosi(IndexDataUtils.parseYearInt(orgDate));
                     }
                     komoto.setKoulutuksenAlkamisPvms(plusYears);
                 }
@@ -421,10 +423,9 @@ public class MassCommitProcess {
         indexHakukohdeIds.addAll(batchOfIndexIds);
     }
 
-    private Date dateToNextYear(Date date) {
+    private static Date dateToNextYear(Date date) {
         DateTime dateTime = new DateTime(date);
-        dateTime.plusYears(1);
-        return dateTime.toDate();
+        return dateTime.plusYears(1).toDate();
     }
 
     public boolean canStop() {

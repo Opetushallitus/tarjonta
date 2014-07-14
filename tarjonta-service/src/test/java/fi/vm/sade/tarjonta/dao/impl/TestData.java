@@ -62,9 +62,11 @@ public class TestData {
     protected Hakukohde kohde1, kohde2, kohde3;
     protected Valintakoe koe1, koe2, koe3, koe4;
     protected Haku haku1, haku2;
-    protected Calendar cal1, cal2, cal3;
+    protected Calendar cal2, cal3;
+    protected static final Date KOULUTUS_START_DATE = (new DateTime(2013, 1, 1, 0, 0, 0, 0)).toDate();
 
     private static final Date DATE = (new DateTime(2014, 1, 6, 0, 0, 0, 0)).toDate();
+
     private static final Date ANOTHER_DATE = (new DateTime(2014, 3, 9, 0, 0, 0, 0)).toDate();
 
     private TarjontaFixtures fixtures;
@@ -109,10 +111,6 @@ public class TestData {
         komo = fixtures.createKoulutusmoduuli(KoulutusmoduuliTyyppi.TUTKINTO);
         persist(komo);
 
-        cal1 = Calendar.getInstance();
-        cal1.set(Calendar.YEAR, YEAR);
-        cal1.set(Calendar.DAY_OF_MONTH, 1);
-
         cal2 = Calendar.getInstance();
         cal2.set(Calendar.YEAR, YEAR);
         cal2.set(Calendar.DAY_OF_MONTH, 5);
@@ -124,7 +122,7 @@ public class TestData {
         komoto1 = addKomoto(KOMOTO_OID_1); //legacy komoto
 
         KoulutusmoduuliToteutus t2Normal = createKomoto(KOMOTO_OID_2);
-        komoto2 = addKomoto(t2Normal, cal1.getTime());
+        komoto2 = addKomoto(t2Normal, KOULUTUS_START_DATE);
 
         KoulutusmoduuliToteutus t3NoAlkamispvm = createKomoto(KOMOTO_OID_3);
         t3NoAlkamispvm.clearKoulutuksenAlkamisPvms(); //must be an empty date list!!!
@@ -297,7 +295,7 @@ public class TestData {
     }
 
     private KoulutusmoduuliToteutus addKomoto(String oid) {
-        return addKomoto(createKomoto(oid), cal1.getTime());
+        return addKomoto(createKomoto(oid), KOULUTUS_START_DATE);
     }
 
     private KoulutusmoduuliToteutus addKomoto(KoulutusmoduuliToteutus komoto, Date date) {
@@ -327,11 +325,11 @@ public class TestData {
         hakukohde.setLastUpdateDate(new Date());
         return hakukohde;
     }
-   
+
     private KoulutusmoduuliToteutus createKomoto(String oid) {
         KoulutusmoduuliToteutus t = new KoulutusmoduuliToteutus();
         t.setOid(oid);
-        t.setKoulutuksenAlkamisPvm(cal1.getTime());
+        t.setKoulutuksenAlkamisPvm(KOULUTUS_START_DATE);
         t.setAlkamisVuosi(YEAR);
         t.setAlkamiskausiUri(KAUSI);
         t.setMaksullisuus("TRUE");

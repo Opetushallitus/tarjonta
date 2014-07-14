@@ -59,6 +59,7 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -75,6 +76,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 public class MassakopiointiTest extends TestData {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
+    private static final Date DATE_2014 = (new DateTime(KOULUTUS_START_DATE)).plusYears(1).toDate();
 
     @Autowired(required = true)
     private HakukohdeDAOImpl hakukohdeDAO;
@@ -192,7 +194,21 @@ public class MassakopiointiTest extends TestData {
 
         for (Hakukohde hk : h.getHakukohdes()) {
             compareHakukohde(hk, hakukohdes.get(hk.getHakukohdeNimi()));
+
+            for (KoulutusmoduuliToteutus kt : hk.getKoulutusmoduuliToteutuses()) {
+                assertEquals(1, hk.getKoulutusmoduuliToteutuses().size());
+                compareKomoto(kt, getPersistedKomoto1());
+            }
         }
+    }
+
+    private void compareKomoto(KoulutusmoduuliToteutus copy, KoulutusmoduuliToteutus orig) {
+        assertEquals(KOMOTO_OID_1, orig.getOid());
+        assertFalse(copy.getOid().equals(orig.getOid()));
+        assertEquals(1, copy.getKoulutuksenAlkamisPvms().size());
+        assertEquals(DATE_2014, copy.getKoulutuksenAlkamisPvms().iterator().next());
+        assertEquals(new Integer(orig.getAlkamisVuosi() + 1), copy.getAlkamisVuosi());
+        assertEquals(orig.getAlkamiskausiUri(), copy.getAlkamiskausiUri());
     }
 
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {

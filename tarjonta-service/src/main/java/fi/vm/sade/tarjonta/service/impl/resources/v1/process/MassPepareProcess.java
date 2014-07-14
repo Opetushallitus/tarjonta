@@ -84,6 +84,7 @@ public class MassPepareProcess {
 
     public void run() {
         final String fromOid = getState().getParameters().get(MassCopyProcess.SELECTED_HAKU_OID);
+        final String processId = getState().getId();
         countHakukohde = 0;
         countKomoto = 0;
         countTotalHakukohde = 0;
@@ -115,14 +116,14 @@ public class MassPepareProcess {
 
             for (Long komotoId : hakukohdeIds) {
                 if (countHakukohde % FLUSH_SIZE == 0 || komotoIds.size() - 1 == countHakukohde) {
-                    flushHakukohdeBatch(fromOid, batch);
+                    flushHakukohdeBatch(processId, fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
 
                 batch.add(komotoId);
                 countHakukohde++;
             }
-            flushHakukohdeBatch(fromOid, batch);
+            flushHakukohdeBatch(processId, fromOid, batch);
 
             getState().getParameters().put("result", "success");
         } catch (Throwable ex) {
@@ -203,7 +204,7 @@ public class MassPepareProcess {
     }
 
     @Transactional(readOnly = false)
-    private void flushHakukohdeBatch(final String fromOid, final Set<Long> hakukohdeIds) throws OIDCreationException {
+    private void flushHakukohdeBatch(final String processId, final String fromOid, final Set<Long> hakukohdeIds) throws OIDCreationException {
         executeInTransaction(new Runnable() {
             @Override
             public void run() {
@@ -214,8 +215,9 @@ public class MassPepareProcess {
                     Preconditions.checkNotNull(hakukohde, "Hakukohde entity cannot be null!");
 
                     MetaObject metaObject = new MetaObject();
-                    for (KoulutusmoduuliToteutus hk : hakukohde.getKoulutusmoduuliToteutuses()) {
-                        metaObject.addKomotoOid(hk.getOid());
+                    for (KoulutusmoduuliToteutus kt : hakukohde.getKoulutusmoduuliToteutuses()) {
+                        //add only the new oid to set of komotos
+                        metaObject.addKomotoOid(massakopiointiDAO.findNewOid(processId, kt.getOid()));
                     }
 
                     try {

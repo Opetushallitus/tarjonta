@@ -19,6 +19,8 @@ public interface MassakopiointiDAO extends JpaDAO<Massakopiointi, Long> {
     public Pair<Object, MetaObject> find(final String processId, final String oldOid, Class clazz);
 
     public Massakopiointi find(String processId, String oldOid);
+    
+    public String findNewOid(String processId, String oldOid);
 
     public List<Massakopiointi> findByHakuOidAndOids(final String hakuOid, final List<String> oids);
 
