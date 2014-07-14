@@ -262,7 +262,7 @@ public class TestData {
             assertNotNull(find);
             assertNotNull(find.getId());
         } else {
-            fail("Found an unknown object type : " + o.toString());
+            em.persist(o);
         }
     }
 
