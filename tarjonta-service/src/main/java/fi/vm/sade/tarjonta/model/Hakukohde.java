@@ -115,7 +115,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     private Date liitteidenToimitusPvm;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Haku haku;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "lisatiedot_teksti_id")
     private MonikielinenTeksti lisatiedot;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
