@@ -50,6 +50,7 @@ import fi.vm.sade.tarjonta.model.Hakuaika;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -57,6 +58,7 @@ import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import org.joda.time.DateTime;
 
@@ -139,7 +141,6 @@ public class MassakopiointiTest extends TestData {
         String json = null;
         try {
             json = EntityToJsonHelper.convertToJson(kohde1);
-            System.out.println("kohde1:" + json);
         } catch (Exception ex) {
             fail("conversion error from entity to json : " + ex.getMessage());
         }
@@ -168,9 +169,26 @@ public class MassakopiointiTest extends TestData {
         from.setOrganisationOids(new String[]{"o1", "o2"});
         from.setTarjoajaOids(new String[]{"o1", "o2"});
         ha.setHaku(from);
+        getPersistedKomoto1().setSijoittuminenTyoelamaan(new MonikielinenTeksti("fi","blaah"));
+        getPersistedKomoto1().setKoulutusohjelmanValinta(new MonikielinenTeksti("fi", "bvlaahh"));
+        getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi","blaah"));
+        super.persist(getPersistedKomoto1());
+        kohde1.setLisatiedot(new MonikielinenTeksti());
+        kohde1.getLisatiedot().addTekstiKaannos("fi", "lisätieto");
         kohde1.getValintakoes().clear();
         kohde1.addValintakoe(koe1);
         koe1.setHakukohde(kohde1);
+
+        HakukohdeLiite liite = new HakukohdeLiite();
+        liite.setHakukohde(kohde1);
+        liite.setHakukohdeLiiteNimi("liiteNimi");
+        liite.setKuvaus(new MonikielinenTeksti("fi","kuvaus"));
+        liite.setLiitetyyppi("tyyppi");
+        liite.setErapaiva(new Date());
+        kohde1.addLiite(liite);
+        super.persist(kohde1);
+        
+
         super.persist(koe1);
         
         super.persist(from);
@@ -244,6 +262,7 @@ public class MassakopiointiTest extends TestData {
 
         //oletus testidatassa vain nolla tai yksi valintakoetta
         if(orig.getValintakoes().size()==1) {
+            LOG.debug("tarkistetaan valintakoe");
             final Valintakoe origV=orig.getValintakoes().iterator().next();
             final Valintakoe copyV=copy.getValintakoes().iterator().next();
             assertEquals(origV.getKieli(), copyV.getKieli());
@@ -252,22 +271,26 @@ public class MassakopiointiTest extends TestData {
                 assertEquals(origV.getLisanaytot().getKaannoksetAsList().size(), copyV.getLisanaytot().getKaannoksetAsList().size());
             }
         } else {
-            System.out.println("no valintakoes");
+            LOG.debug("no valintakoes");
         }
 
         //oletus testidatassa vain nolla tai yksi liitettä
         if(orig.getLiites().size()==1) {
+            LOG.debug("tarkistetaan liite");
             final HakukohdeLiite origL=orig.getLiites().iterator().next();
             final HakukohdeLiite copyL=copy.getLiites().iterator().next();
             assertEquals(origL.getKuvaus().getKaannoksetAsList().size(), copyL.getKuvaus().getKaannoksetAsList().size());
             assertEquals(origL.getLiitetyyppi(), copyL.getLiitetyyppi());
         } else {
-            System.out.println("no liites");
+            LOG.debug("no liites");
         }
 
         assertEquals(orig.getLiitteidenToimitusOsoite(), copy.getLiitteidenToimitusOsoite());
         assertEquals(orig.getLiitteidenToimitusPvm(), copy.getLiitteidenToimitusPvm());
-        assertEquals(orig.getLisatiedot(), copy.getLisatiedot());
+        if(orig.getLisatiedot()!=null) {
+            assertEquals(orig.getLisatiedot().getKaannoksetAsList().size(), copy.getLisatiedot().getKaannoksetAsList().size());
+            LOG.debug("tarkistetaan lisätietoja");
+        }
         assertEquals(orig.getValintakoes().size(), copy.getValintakoes().size());
 
         assertFalse(orig.getOid().equals(copy.getOid()));
