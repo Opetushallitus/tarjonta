@@ -24,7 +24,7 @@ public class MassCopyProcess implements ProcessDefinition {
     private static final Logger LOG = LoggerFactory.getLogger(MassCopyProcess.class);
 
     public static final String PROCESS_STEP_TYPE = "process_step";
-    public static final String PROCESS_SKIP_STEP = "skip.step";
+    public static final String PROCESS_SKIP_STEP = "step";
 
     public static final String COMMIT = "COMMIT";
     public static final String PREPARE = "PREPARE";

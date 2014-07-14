@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -49,12 +48,8 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
     @MapKey(name = "kieliKoodi")
     private Map<String, TekstiKaannos> tekstis = new HashMap<String, TekstiKaannos>();
 
-    
-    
-    
     public void setTekstis(Map<String, TekstiKaannos> tekstis){
         this.tekstis.clear();
-        System.out.println("custom setter for serializer");
         for(TekstiKaannos k:tekstis.values()){
             addTekstiKaannos(k.getKieliKoodi(), k.getArvo());
         }

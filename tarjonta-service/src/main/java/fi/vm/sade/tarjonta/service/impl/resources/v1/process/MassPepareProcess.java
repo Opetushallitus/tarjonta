@@ -45,7 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class MassPepareProcess {
 
     private static final Logger LOG = LoggerFactory.getLogger(MassPepareProcess.class);
-    private static final int FLUSH_SIZE = 100;
+    private static final int BATCH_SIZE = 100;
     private static final TarjontaTila[] COPY_TILAS = {TarjontaTila.JULKAISTU, TarjontaTila.PERUTTU, TarjontaTila.VALMIS};
 
     private ProcessV1RDTO state;
@@ -104,7 +104,7 @@ public class MassPepareProcess {
 
             Set<Long> batch = Sets.<Long>newHashSet();
             for (Long komotoId : komotoIds) {
-                if (countKomoto % FLUSH_SIZE == 0 || komotoIds.size() - 1 == countKomoto) {
+                if (countKomoto % BATCH_SIZE == 0 || komotoIds.size() - 1 == countKomoto) {
                     flushKoulutusBatch(fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }
@@ -118,7 +118,7 @@ public class MassPepareProcess {
             LOG.info("hakukohde rows total : {}", countTotalHakukohde);
 
             for (Long komotoId : hakukohdeIds) {
-                if (countHakukohde % FLUSH_SIZE == 0 || komotoIds.size() - 1 == countHakukohde) {
+                if (countHakukohde % BATCH_SIZE == 0 || komotoIds.size() - 1 == countHakukohde) {
                     flushHakukohdeBatch(processId, fromOid, batch);
                     batch = Sets.<Long>newHashSet();
                 }

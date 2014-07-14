@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
@@ -38,7 +37,6 @@ import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
 import fi.vm.sade.tarjonta.service.copy.MetaObject;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -61,7 +59,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Component
 public class MassCommitProcess {
 
-    private static final int FLUSH_SIZE = 100;
+    private static final int BATCH_KOMOTO_SIZE = 100; 
+    private static final int BATCH_HAKUKOHDE_SIZE = 50;
     private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
 
     private ProcessV1RDTO state;
@@ -151,7 +150,7 @@ public class MassCommitProcess {
              */
             Set<String> oidBatch = Sets.<String>newHashSet();
             for (String oldKomotoOid : oldKomotoOids) {
-                if (countKomoto % FLUSH_SIZE == 0 || oldKomotoOids.size() - 1 == countKomoto) {
+                if (countKomoto % BATCH_KOMOTO_SIZE == 0 || oldKomotoOids.size() - 1 == countKomoto) {
                     insertKomotoBatch(processId, oidBatch);
                     oidBatch = Sets.<String>newHashSet();
                 }
@@ -166,7 +165,7 @@ public class MassCommitProcess {
              */
             oidBatch = Sets.<String>newHashSet();
             for (String oldHakukohdeOid : oldHakukohdeOids) {
-                if (countHakukohde % FLUSH_SIZE == 0 || oldKomotoOids.size() - 1 == countHakukohde) {
+                if (countHakukohde % BATCH_HAKUKOHDE_SIZE == 0 || oldKomotoOids.size() - 1 == countHakukohde) {
                     insertHakukohdeBatch(processId, targetHakuoid, oidBatch);
                     oidBatch = Sets.<String>newHashSet();
                 }
@@ -311,7 +310,7 @@ public class MassCommitProcess {
                 KoulutusmoduuliToteutus komoto = (KoulutusmoduuliToteutus) find.getFirst();
                 final MetaObject meta = find.getSecond();
 
-                LOG.debug("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
+                LOG.info("convert json to entity by oid : {}, new oid : {}", oldKomoOid, meta.getNewKomotoOid());
                 komoto.setOid(meta.getNewKomotoOid());
                 komoto.setTila(TarjontaTila.KOPIOITU);
                 komoto.setKoulutusmoduuli(koulutusmoduuliDAO.findByOid(meta.getOriginalKomoOid()));
