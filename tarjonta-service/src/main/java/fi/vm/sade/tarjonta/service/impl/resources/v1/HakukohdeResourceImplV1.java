@@ -515,7 +515,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         
         ToteutustyyppiEnum toteutustyyppi;
 
-        Preconditions.checkNotNull(hakukohdeV1RDTO.getToteutusTyyppi(), "toteutustyuyppi null");
+        Preconditions.checkNotNull(hakukohdeV1RDTO.getToteutusTyyppi(), "toteutustyyppi == null");
         try{
             toteutustyyppi = ToteutustyyppiEnum.valueOf(hakukohdeV1RDTO.getToteutusTyyppi());
         } catch (IllegalArgumentException iae) {
