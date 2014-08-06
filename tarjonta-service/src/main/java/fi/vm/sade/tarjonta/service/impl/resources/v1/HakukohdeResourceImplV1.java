@@ -25,10 +25,12 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Nullable;
 
+import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.*;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +59,6 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.Hakuko
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeRyhmaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -387,6 +380,33 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             return result;
         }
+    }
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> findValintaperusteetByOid(@ApiParam(value = "Hakukohteen oid", required = true) String oid) {
+        if (oid != null && oid.trim().length() > 0) {
+            Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+            if(hakukohde != null) {
+                HakukohdeValintaperusteetV1RDTO dto = converterV1.valintaperusteetFromHakukohde(hakukohde);
+                ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> result = new ResultV1RDTO<HakukohdeValintaperusteetV1RDTO>();
+                result.setResult(dto);
+                result.setStatus(ResultV1RDTO.ResultStatus.OK);
+                return result;
+            } else {
+                return valintaperusteitaEiLoydy();
+            }
+        } else {
+           return valintaperusteitaEiLoydy();
+        }
+    }
+
+    private ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> valintaperusteitaEiLoydy() {
+        ResultV1RDTO<HakukohdeValintaperusteetV1RDTO> result = new ResultV1RDTO<HakukohdeValintaperusteetV1RDTO>();
+        result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+        return result;
     }
 
     public HashMap<String,String> getKoulutusAstetyyppiAndLajiForKoulutukses(List<String> komotoOids) {

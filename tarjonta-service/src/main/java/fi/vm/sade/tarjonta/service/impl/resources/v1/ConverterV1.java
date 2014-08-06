@@ -14,9 +14,16 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import java.math.BigDecimal;
 import java.util.*;
 
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperusteetUtil;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.*;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +40,6 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.Osoite;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
-import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -54,19 +47,6 @@ import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
-import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.TarjoajaHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
@@ -816,6 +796,249 @@ public class ConverterV1 {
         }
 
         return hakukohde;
+    }
+
+    public HakukohdeValintaperusteetV1RDTO valintaperusteetFromHakukohde(Hakukohde hakukohde) {
+        HakukohdeValintaperusteetV1RDTO t = new HakukohdeValintaperusteetV1RDTO();
+
+        t.setOid(hakukohde.getOid());
+        t.setVersion(hakukohde.getVersion());
+
+        // tarjoajaOid, tarjoajaNimi
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            if (koulutusmoduuliToteutus.getTarjoaja() != null) {
+                // Assumes that only one provider for koulutus - is this true?
+                String organisaatioOid = koulutusmoduuliToteutus.getTarjoaja();
+                t.setTarjoajaOid(organisaatioOid);
+                if (organisaatioOid != null) {
+                    OrganisaatioDTO organisaatio = organisaatioService.findByOid(organisaatioOid);
+                    if (organisaatio != null) {
+                        Map<String, String> map = new HashMap<String, String>();
+                        for (MonikielinenTekstiTyyppi.Teksti teksti : organisaatio.getNimi().getTeksti()) {
+                            map.put(tarjontaKoodistoHelper.convertKielikoodiToKieliUri(teksti.getKieliKoodi()),
+                                    teksti.getValue());
+                        }
+                        t.setTarjoajaNimi(map);
+                    }
+                }
+                break;
+            }
+        }
+
+        BigDecimal nolla = new BigDecimal("0.0");
+        // hakukohdeNimi
+        t.setHakukohdeNimi(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
+        // Painotetun keskiarvon arvoväli
+        t.setPainotettuKeskiarvoHylkaysMax(hakukohde.getAlinHyvaksyttavaKeskiarvo() != null ? new BigDecimal(String.valueOf(hakukohde.getAlinHyvaksyttavaKeskiarvo())) : nolla);
+        t.setPainotettuKeskiarvoHylkaysMin(nolla);
+
+        // Kokonaishylkäyksen arvoväli
+        t.setHylkaysMax(hakukohde.getAlinValintaPistemaara() != null ? new BigDecimal(String.valueOf(hakukohde.getAlinValintaPistemaara())) : nolla);
+        t.setHylkaysMin(nolla);
+
+        // Valintakokeiden arvovälit
+        t.setLisanayttoMax(nolla);
+        t.setLisanayttoMin(nolla);
+        t.setLisapisteMax(nolla);
+        t.setLisapisteMin(nolla);
+        t.setPaasykoeMax(nolla);
+        t.setPaasykoeMin(nolla);
+
+        t.setLisanayttoHylkaysMax(nolla);
+        t.setLisanayttoHylkaysMin(nolla);
+        t.setLisapisteHylkaysMax(nolla);
+        t.setLisapisteHylkaysMin(nolla);
+        t.setPaasykoeHylkaysMax(nolla);
+        t.setPaasykoeHylkaysMin(nolla);
+
+        BigDecimal kokonaispisteet = null;
+
+        // Muutetaan yhdistetyt valintakokeet erillisiksi kokeiksi
+        Set<Valintakoe> result = new HashSet<Valintakoe>();
+        for (Valintakoe koe : hakukohde.getValintakoes()) {
+            Valintakoe vk = null;
+            Valintakoe lt = null;
+
+            Set<Pisteraja> addToBothVKs = new HashSet<Pisteraja>();
+
+            for (Pisteraja pisteraja : koe.getPisterajat()) {
+
+                if (ValinnanPisterajaTyyppi.PAASYKOE.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
+                    vk = (vk == null) ? new Valintakoe() : vk;
+                    if (vk.getPisterajat() == null) {
+                        vk.setPisterajat(new HashSet<Pisteraja>());
+                    }
+                    vk.getPisterajat().add(pisteraja);
+                } else if (ValinnanPisterajaTyyppi.LISAPISTEET.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
+                    lt = (lt == null) ? new Valintakoe() : lt;
+                    if (lt.getPisterajat() == null) {
+                        lt.setPisterajat(new HashSet<Pisteraja>());
+                    }
+                    lt.getPisterajat().add(pisteraja);
+                } else {
+                    if(ValinnanPisterajaTyyppi.KOKONAISPISTEET.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
+                        kokonaispisteet = pisteraja.getAlinHyvaksyttyPistemaara();
+                    }
+                    addToBothVKs.add(pisteraja);
+                }
+            }
+
+            if (vk != null) {
+                vk.setKuvaus(koe.getKuvaus());
+                vk.setTyyppiUri(ValintaperusteetUtil.PAASY_JA_SOVELTUVUUSKOE);
+                vk.getPisterajat().addAll(addToBothVKs);
+                result.add(vk);
+            }
+
+            if (lt != null) {
+
+                lt.setKuvaus(koe.getLisanaytot());
+                if(koe.getTyyppiUri() != null &&
+                        (koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISANAYTTO) || koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISAPISTE))) {
+                    lt.setTyyppiUri(koe.getTyyppiUri());
+                } else {
+                    lt.setTyyppiUri(ValintaperusteetUtil.LISANAYTTO);
+                }
+
+
+                lt.getPisterajat().addAll(addToBothVKs);
+
+                result.add(lt);
+            }
+
+            // Jos valintakokeella ei ole pisterajoja
+            if(lt == null && vk == null) {
+                result.add(koe);
+            }
+        }
+
+        for (Valintakoe koe : result) {
+            if (koe.getTyyppiUri() != null) {
+                if (koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.PAASY_JA_SOVELTUVUUSKOE)) {
+                    for (Pisteraja p : koe.getPisterajat()) {
+                        if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.PAASYKOE.value())) {
+                            t.setPaasykoeMax(p.getYlinPistemaara());
+                            t.setPaasykoeMin(p.getAlinPistemaara());
+                            t.setPaasykoeHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        }
+                    }
+                }
+                if (koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISANAYTTO)) {
+                    for (Pisteraja p : koe.getPisterajat()) {
+                        if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+                            t.setLisanayttoMax(p.getYlinPistemaara());
+                            t.setLisanayttoMin(p.getAlinPistemaara());
+                            t.setLisanayttoHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        }
+                    }
+                }
+                if (koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISAPISTE)) {
+                    for (Pisteraja p : koe.getPisterajat()) {
+                        if (p.getValinnanPisterajaTyyppi().equals(ValinnanPisterajaTyyppi.LISAPISTEET.value())) {
+                            t.setLisapisteMax(p.getYlinPistemaara());
+                            t.setLisapisteMin(p.getAlinPistemaara());
+                            t.setLisapisteHylkaysMax(p.getAlinHyvaksyttyPistemaara());
+                        }
+                    }
+                }
+            }
+
+        }
+
+        if (t.getHylkaysMax().equals(nolla) && kokonaispisteet != null) {
+            t.setHylkaysMax(kokonaispisteet);
+        }
+
+        // Alimman valintapistemäärän asettaminen ei ole pakollista, jos kohteella on vain pääsykoe
+        if (t.getHylkaysMax().equals(nolla) && !t.getPaasykoeHylkaysMax().equals(nolla)) {
+            t.setHylkaysMax(t.getPaasykoeHylkaysMax());
+        }
+
+        for (Valintakoe koe : result) {
+            ValintakoeRDTO koeDto = new ValintakoeRDTO();
+
+            koeDto.setCreated(null);
+            koeDto.setCreatedBy(null);
+            koeDto.setModified(koe.getLastUpdateDate());
+            koeDto.setModifiedBy(koe.getLastUpdatedByOid());
+            koeDto.setOid("" + koe.getId());
+            koeDto.setVersion(koe.getVersion() != null ? koe.getVersion().intValue() : 0);
+            koeDto.setKuvaus(convertMonikielinenTekstiToMap(koe.getKuvaus(), false));
+            koeDto.setLisanaytot(convertMonikielinenTekstiToMap(koe.getLisanaytot(), false));
+            koeDto.setTyyppiUri(koe.getTyyppiUri());
+
+            for (ValintakoeAjankohta kohta : koe.getAjankohtas()) {
+                ValintakoeAjankohtaRDTO kohtaDto = new ValintakoeAjankohtaRDTO();
+
+                OsoiteRDTO osoite = new OsoiteRDTO();
+
+                osoite.setOsoiterivi1(kohta.getAjankohdanOsoite().getOsoiterivi1());
+                osoite.setOsoiterivi2(kohta.getAjankohdanOsoite().getOsoiterivi2());
+                osoite.setPostinumero(kohta.getAjankohdanOsoite().getPostinumero());
+                osoite.setPostitoimipaikka(kohta.getAjankohdanOsoite().getPostitoimipaikka());
+
+                kohtaDto.setOsoite(osoite);
+                kohtaDto.setAlkaa(kohta.getAlkamisaika());
+                kohtaDto.setLisatiedot(kohta.getLisatietoja());
+                kohtaDto.setLoppuu(kohta.getPaattymisaika());
+
+                kohtaDto.setOid("" + kohta.getId());
+                kohtaDto.setVersion(kohta.getVersion() != null ? kohta.getVersion().intValue() : 0);
+
+                koeDto.getValintakoeAjankohtas().add(kohtaDto);
+            }
+
+            for (Pisteraja raja : koe.getPisterajat()) {
+                ValintakoePisterajaRDTO rajaDto = new ValintakoePisterajaRDTO();
+
+                rajaDto.setAlinHyvaksyttyPistemaara(raja.getAlinHyvaksyttyPistemaara() != null ? raja.getAlinHyvaksyttyPistemaara().doubleValue() : null);
+                rajaDto.setAlinPistemaara(raja.getAlinPistemaara() != null ? raja.getAlinPistemaara().doubleValue() : null);
+                rajaDto.setTyyppi(raja.getValinnanPisterajaTyyppi());
+                rajaDto.setYlinPistemaara(raja.getYlinPistemaara() != null ? raja.getYlinPistemaara().doubleValue() : null);
+
+                rajaDto.setOid("" + raja.getId());
+                rajaDto.setVersion(raja.getVersion() != null ? raja.getVersion().intValue() : 0);
+
+                koeDto.getValintakoePisterajas().add(rajaDto);
+            }
+
+            t.getValintakokeet().add(koeDto);
+
+        }
+
+
+        t.setHakuOid(hakukohde.getHaku() != null ? hakukohde.getHaku().getOid() : null);
+
+        t.setHakukohdeNimiUri(hakukohde.getHakukohdeNimi());
+        t.setTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
+
+        t.setModified(hakukohde.getLastUpdateDate());
+        t.setModifiedBy(hakukohde.getLastUpdatedByOid());
+
+        t.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
+
+
+        // Opetuskielet
+        Set<String> opetuskielis = new HashSet<String>();
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            for (KoodistoUri koodistoUri : koulutusmoduuliToteutus.getOpetuskielis()) {
+                opetuskielis.add(ValintaperusteetUtil.sanitizeOpetuskieliUri(koodistoUri.getKoodiUri()));
+            }
+        }
+        t.setOpetuskielet(new ArrayList<String>(opetuskielis));
+
+        t.setPainokertoimet(ValintaperusteetUtil.convertPainotettavatOppianeet(hakukohde.getPainotettavatOppiaineet()));
+
+        Haku haku = hakukohde.getHaku();
+        if (haku != null) {
+            t.setHakuVuosi(haku.getHakukausiVuosi());
+            t.setHakuKausi(tarjontaKoodistoHelper.getKoodiMetadataNimi(haku.getHakukausiUri()));
+        } else {
+            t.setHakuVuosi(-1);
+            t.setHakuKausi(null);
+        }
+
+        return t;
     }
 
     public Valintakoe toValintakoe(ValintakoeV1RDTO valintakoeV1RDTO) {
