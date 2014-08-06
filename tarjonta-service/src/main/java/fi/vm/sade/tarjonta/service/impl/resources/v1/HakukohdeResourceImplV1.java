@@ -1314,6 +1314,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     continue;
             }
             
+            hakukohde.setLastUpdateDate(new Date());
             hakukohdeDAO.update(hakukohde);
         }
 
