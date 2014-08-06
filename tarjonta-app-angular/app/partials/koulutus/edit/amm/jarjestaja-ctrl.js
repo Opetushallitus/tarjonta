@@ -52,10 +52,24 @@ app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
             //console.log("asetetaan org hakutulos modeliin.");
 
             // OVT-8204 Näyttötutkinnon järjestäjä config entry was missing...
-            if (!window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"]) {
-                $log.error("CONFIG window.CONFIG.app[nayttotutkinto.jarjestaja.oppilaitostyypit] - MISSING, setting to []");
-            }
             var typeUris = window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"] || [];
+
+            if (!window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"]) {
+                typeUris.push("oppilaitostyyppi_24"); // 24 Ammatilliset aikuiskoulutuskeskukset
+                typeUris.push("oppilaitostyyppi_23"); // 23 Ammatilliset erikoisoppilaitokset
+                typeUris.push("oppilaitostyyppi_22"); // 22 Ammatilliset erityisoppilaitokset
+                typeUris.push("oppilaitostyyppi_21"); // 21 Ammatilliset oppilaitokset
+                typeUris.push("oppilaitostyyppi_41"); // 41 Ammattikorkeakoulut
+                typeUris.push("oppilaitostyyppi_63"); // 63 Kansanopistot
+                typeUris.push("oppilaitostyyppi_62"); // 62 Liikunnan koulutuskeskukset
+                typeUris.push("oppilaitostyyppi_61"); // 61 Musiikkioppilaitokset
+                typeUris.push("oppilaitostyyppi_93"); // 93 Muut koulutuksen järjestäjät
+                typeUris.push("oppilaitostyyppi_99"); // 99 Muut oppilaitokset
+                typeUris.push("oppilaitostyyppi_42"); // 42 Yliopistot
+                typeUris.push("oppilaitostyyppi_XX"); // XX Ei tiedossa (oppilaitostyyppi)                
+
+                $log.error("CONFIG window.CONFIG.app[nayttotutkinto.jarjestaja.oppilaitostyypit] - MISSING, setting to", typeUris);
+            }
 
             //filtteroi vain oppilaitokset tietyillä oppilaitostyypeilla
             for (var i = 0; i < vastaus.organisaatiot.length; i++) {
