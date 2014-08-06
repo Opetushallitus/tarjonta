@@ -826,8 +826,19 @@ public class ConverterV1 {
         }
 
         BigDecimal nolla = new BigDecimal("0.0");
-        // hakukohdeNimi
-        t.setHakukohdeNimi(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
+        Map<String, String> nimiMap = new HashMap<String, String>();
+
+        if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
+            t.setHakukohdeNimi(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
+        } else if(hakukohde.getHakukohdeKoodistoNimi() != null) {
+            nimiMap.put("kieli_fi", hakukohde.getHakukohdeKoodistoNimi());
+            t.setHakukohdeNimi(nimiMap);
+        } else {
+            nimiMap.put("kieli_fi", "Hakukohteella ei ole nimeä");
+            t.setHakukohdeNimi(nimiMap);
+        }
+
+
         // Painotetun keskiarvon arvoväli
         t.setPainotettuKeskiarvoHylkaysMax(hakukohde.getAlinHyvaksyttavaKeskiarvo() != null ? new BigDecimal(String.valueOf(hakukohde.getAlinHyvaksyttavaKeskiarvo())) : nolla);
         t.setPainotettuKeskiarvoHylkaysMin(nolla);
