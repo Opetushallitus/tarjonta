@@ -6,10 +6,12 @@ var app = angular.module('app.edit.ctrl.amm');
 
 app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
     'TarjontaService', 'LocalisationService', '$q', '$scope',
-    'OrganisaatioService', 'AuthService', 'PermissionService', '$location',
+    'OrganisaatioService', 'AuthService', 'PermissionService', '$location', '$log',
     function($modalInstance, targetOrganisaatio,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location) {
+            OrganisaatioService, AuthService, PermissionService, $location, $log) {
+                
+                $log = $log.getInstance("JarjestajaCtrl");
 
         // Tähän populoidaan formin valinnat:
         $scope.model = {
@@ -49,7 +51,11 @@ app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
             suunnitellut: false}).then(function(vastaus) {
             //console.log("asetetaan org hakutulos modeliin.");
 
-            var typeUris = window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"];
+            // OVT-8204 Näyttötutkinnon järjestäjä config entry was missing...
+            if (!window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"]) {
+                $log.error("CONFIG window.CONFIG.app[nayttotutkinto.jarjestaja.oppilaitostyypit] - MISSING, setting to []");
+            }
+            var typeUris = window.CONFIG.app["nayttotutkinto.jarjestaja.oppilaitostyypit"] || [];
 
             //filtteroi vain oppilaitokset tietyillä oppilaitostyypeilla
             for (var i = 0; i < vastaus.organisaatiot.length; i++) {
