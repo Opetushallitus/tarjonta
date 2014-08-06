@@ -99,9 +99,20 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
                 break;
             }
         }
-        // hakukohdeNimi
-        t.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(s.getHakukohdeNimi()));
 
+        // hakukohdeNimi
+
+        // New data / old API... / 6.8.2014 mlyly - August - no name provided for X hakukohde (new KK hakukohde)
+        if (s.getHakukohdeNimi() == null) {
+            // no "koodisto" name, user supplied names
+            if (s.getHakukohdeMonikielinenNimi() != null) {
+                t.setHakukohdeNimi(s.getHakukohdeMonikielinenNimi().asMap());
+            }
+        } else {
+            // Name resolved from koodisto
+            t.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(s.getHakukohdeNimi()));
+        }
+        
         t.setAlinHyvaksyttavaKeskiarvo(s.getAlinHyvaksyttavaKeskiarvo() != null ? s.getAlinHyvaksyttavaKeskiarvo()
                 .doubleValue() : 0.0d);
         t.setAlinValintaPistemaara(s.getAlinValintaPistemaara() != null ? s.getAlinValintaPistemaara().intValue() : 0);
