@@ -533,6 +533,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         final List<HakukohdeValidationMessages> validationMessageses = new ArrayList<HakukohdeValidationMessages>();
         
+        if (true) {
+            LOG.error("***************************** VALIDOINTI POISSA PÄÄLTÄ ******************************");
+            return validationMessageses;
+        }
+        
         ToteutustyyppiEnum toteutustyyppi;
 
         Preconditions.checkNotNull(hakukohdeV1RDTO.getToteutusTyyppi(), "toteutustyyppi == null");
