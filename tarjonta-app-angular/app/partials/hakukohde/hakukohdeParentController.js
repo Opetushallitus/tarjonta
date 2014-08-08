@@ -145,16 +145,18 @@ app.controller('HakukohdeParentController', [
         // If hakukohdex is defined then we are updating it
         // otherwise try to get selected koulutustyyppi from shared
         // state
+        
+        $log.error('getHakukohdePartialUri() - $route.current.locals = ', $route.current.locals);
 
         if ($route.current.locals && $route.current.locals.hakukohdex.result && $route.current.locals.hakukohdex.result.toteutusTyyppi) {
-          // $log.info('ROUTING HAKUKOHDE: ' ,
-          // $route.current.locals.hakukohdex.result);
-          // $log.info('WITH TOTEUTUSTYYPPI : ',
-          // $route.current.locals.hakukohdex.result.toteutusTyyppi);
+          $log.error('ROUTING HAKUKOHDE: ', $route.current.locals.hakukohdex.result);
+          $log.error('WITH TOTEUTUSTYYPPI : ', $route.current.locals.hakukohdex.result.toteutusTyyppi);
 
           var toteutusTyyppi = $route.current.locals.hakukohdex.result.toteutusTyyppi;
           var uri = routing[toteutusTyyppi];
           if (uri) {
+              $log.error("A  toteutusTyyppi = ", toteutusTyyppi);
+              $log.error("A  -> uri = ", uri);
             return uri;
           }
           $log.error('11 TOTEUTUSTYYPPI WAS: ', toteutusTyyppi, " not returning template!!");
@@ -163,6 +165,8 @@ app.controller('HakukohdeParentController', [
           // $scope.model.hakukohde.toteutusTyyppi=toteutusTyyppi;
           var uri = routing[toteutusTyyppi];
           if (uri) {
+              $log.error("B  toteutusTyyppi = ", toteutusTyyppi);
+              $log.error("B  -> uri = ", uri);
             return uri;
           }
           $log.error('22 TOTEUTUSTYYPPI WAS: ', toteutusTyyppi, " not returning template!!");
@@ -1004,6 +1008,10 @@ app.controller('HakukohdeParentController', [
             if ($scope.model.hakukohde.oid === undefined) {
 
               $log.debug('LISATIEDOT : ', $scope.model.hakukohde.lisatiedot);
+
+              // OVT-8199, OVT-8205 Fix "toteutusTyyppi", was not sent to server side... was validated though :)
+              var toteutusTyyppi = SharedStateService.getFromState('SelectedKoulutusTyyppi');
+              $scope.model.hakukohde.toteutusTyyppi = toteutusTyyppi;
 
               $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
               var returnResource = $scope.model.hakukohde.$save();

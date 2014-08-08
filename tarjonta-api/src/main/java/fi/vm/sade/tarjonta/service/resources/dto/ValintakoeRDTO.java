@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,8 @@ public class ValintakoeRDTO extends BaseRDTO {
     private String _tyyppiUri;
     private Map<String, String> _lisanaytot;
     private Map<String, String> _kuvaus;
-    private List<ValintakoeAjankohtaRDTO> _valintakoeAjankohtas;
-    private List<ValintakoePisterajaRDTO> _valintakoePisterajas;
+    private List<ValintakoeAjankohtaRDTO> _valintakoeAjankohtas = new ArrayList<ValintakoeAjankohtaRDTO>();
+    private List<ValintakoePisterajaRDTO> _valintakoePisterajas = new ArrayList<ValintakoePisterajaRDTO>();
 
     public String getTyyppiUri() {
         return _tyyppiUri;
