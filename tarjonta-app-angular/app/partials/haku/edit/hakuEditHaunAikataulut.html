@@ -61,7 +61,7 @@
 </div><!-- /commmon parameters -->
 
 
-<div data-ng-switch on="model.haku.haunkohdejoukkoUri">
+<div data-ng-switch on="stripVersionFromKoodistoUri(model.hakux.result.kohdejoukkoUri)">
 
     <!-- Korkeakoulu -->
      <div data-ng-switch-when="haunkohdejoukko_12">
@@ -76,7 +76,7 @@
 </div>
 
 <!-- Lisähaku -->
-<div ng-if="model.haku.hakutyyppiUri == 'hakutyyppi_03'">
+<div ng-if="stripVersionFromKoodistoUri(model.hakux.result.hakutyyppiUri) == 'hakutyyppi_03'">
 
     <h3 tt='haku.edit.aikataulu.lisahaunTiedot'>Lisähaun tiedot</h3>
 
