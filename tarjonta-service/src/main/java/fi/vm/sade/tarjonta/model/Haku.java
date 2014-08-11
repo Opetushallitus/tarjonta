@@ -35,7 +35,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * @author Team2
  */
 @Entity
-@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler","organisationOidString","tarjoajaOidString"})
+@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler"})
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
 })

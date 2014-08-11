@@ -18,6 +18,7 @@ package fi.vm.sade.tarjonta.dao.impl;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.Haku;
@@ -162,6 +164,8 @@ public class MassakopiointiTest extends TestData {
     @Test
     public void testCopy2() {
         final Haku from = getHaku1();
+        from.setOrganisationOids(new String[]{"ooid1", "ooid2"});
+        from.setTarjoajaOids(new String[]{"toid1", "toid2"});
         Hakuaika ha = new Hakuaika();
         ha.setAlkamisPvm(new Date());
         ha.setPaattymisPvm(new Date(ha.getAlkamisPvm().getTime() + 10000));
@@ -213,6 +217,8 @@ public class MassakopiointiTest extends TestData {
 
         final Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.TO_HAKU_OID));
 
+        compareHaku(h, from);
+        
         assertNotNull(h.getOid());
         assertFalse(from.getOid().equals(h.getOid()));
         assertFalse(0==from.getNimi().getKaannoksetAsList().size());
@@ -233,6 +239,15 @@ public class MassakopiointiTest extends TestData {
         }
     }
 
+    private void compareHaku(Haku copy, Haku orig) {
+        assertFalse(Objects.equal(copy.getOid(),orig.getOid()));
+        assertTrue(orig.getOrganisationOids().length>0);
+        assertTrue(orig.getTarjoajaOids().length>0);
+        assertSame(0,Sets.difference(Sets.newHashSet(orig.getOrganisationOids()), Sets.newHashSet(copy.getOrganisationOids())).size());
+        assertSame(0,Sets.difference(Sets.newHashSet(orig.getTarjoajaOids()), Sets.newHashSet(copy.getTarjoajaOids())).size());
+    }
+
+    
     private void compareKomoto(KoulutusmoduuliToteutus copy, KoulutusmoduuliToteutus orig) {
         assertEquals(KOMOTO_OID_1, orig.getOid());
         assertFalse(copy.getOid().equals(orig.getOid()));
