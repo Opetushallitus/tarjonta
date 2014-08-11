@@ -60,7 +60,7 @@ app
           };
 
           $scope.saveAsValmis = function() {
-            $scope.model.saveValmisParent("VALMIS", validateAikuHakukohde);
+            $scope.model.saveParent("VALMIS", validateAikuHakukohde);
           };
 
           var readOsaamisAlat = function() {
