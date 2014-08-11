@@ -219,10 +219,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
             var selectedKoulutusOids;
 
-            if (!SharedStateService.getFromState('SelectedKoulutukses')) {
-                throw new Error("No koulutus selected!")
-            }
-
             if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
                 selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
             } else {
@@ -247,10 +243,6 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
                 } else {
                     selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
-                }
-
-                if (!SharedStateService.getFromState('SelectedKoulutukses')) {
-                    throw new Error("No koulutus selected!")
                 }
 
                 if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
