@@ -124,7 +124,7 @@ angular.module('app').factory(
                 M = M ? [M[1], M[2]] : [N, navigator.appVersion, '-?'];
                 return M[1];
             }
-            
+
 
             // Log error to console (as normal) AND to the remote server
             function log(exception, cause) {
@@ -132,8 +132,8 @@ angular.module('app').factory(
                 $log.error.apply($log, arguments);
 
                 if (Config.env["errorlog.disabled"] || errorsLoggingSuspended) {
-                	return;
-                	
+                    return;
+
                 }
                 // Try to send stacktrace event to server
                 try {
@@ -141,13 +141,13 @@ angular.module('app').factory(
 
                     var errorMessage = exception.toString();
                     var stackTrace = exception.stack.toString();
-                    
-                    var errorId = errorMessage + "---" +stackTrace;
-                    if (loggedErrors.indexOf(errorId)!=-1) {
-                    	// älä lähetä, jos jo lokitettu tai lokitus keskeytetty
-                    	return;
+
+                    var errorId = errorMessage + "---" + stackTrace;
+                    if (loggedErrors.indexOf(errorId) != -1) {
+                        // älä lähetä, jos jo lokitettu tai lokitus keskeytetty
+                        return;
                     }
-                    
+
                     var browserInfo = {
                         browser: get_browser(),
                         browserVersion: get_browser_version()
@@ -169,15 +169,15 @@ angular.module('app').factory(
                             browserInfo: browserInfo
                         }),
                         success: function() {
-                        	loggedErrors.push(errorId);
+                            loggedErrors.push(errorId);
                         },
                         error: function() {
-                        	errorsLoggingSuspended = true;
-                    		$log.debug("error logging suspended for "+errorsLoggingTimeout+" ms.");
-                        	setTimeout(function(){
-                        		$log.debug("error logging resumed.");
-                        		errorsLoggingSuspended = false;
-                        	}, errorsLoggingTimeout);
+                            errorsLoggingSuspended = true;
+                            $log.debug("error logging suspended for " + errorsLoggingTimeout + " ms.");
+                            setTimeout(function() {
+                                $log.debug("error logging resumed.");
+                                errorsLoggingSuspended = false;
+                            }, errorsLoggingTimeout);
                         }
                     });
 
@@ -219,6 +219,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
             var selectedKoulutusOids;
 
+            if (!SharedStateService.getFromState('SelectedKoulutukses')) {
+                throw new Error("No koulutus selected!")
+            }
+
             if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
                 selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
             } else {
@@ -243,6 +247,10 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     selectedTarjoajaOids = SharedStateService.getFromState('SelectedOrgOid');
                 } else {
                     selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
+                }
+
+                if (!SharedStateService.getFromState('SelectedKoulutukses')) {
+                    throw new Error("No koulutus selected!")
                 }
 
                 if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {

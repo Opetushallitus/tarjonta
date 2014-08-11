@@ -64,9 +64,7 @@ app
           };
 
           var readOsaamisAlat = function() {
-
-            var koulutukses = SharedStateService
-                .getFromState('SelectedKoulutukses');
+            var koulutukses = SharedStateService.getFromState('SelectedKoulutukses');
 
             var koulutusPromiset = [];
             for ( var i = 0; i < koulutukses.length; i++) {

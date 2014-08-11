@@ -3,13 +3,13 @@
 
 angular.module('app.search.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTreeTable'])
         .controller('SearchController',
-                function($scope, $routeParams, $location, 
-                         LocalisationService, Koodisto, OrganisaatioService, 
-                         TarjontaService, PermissionService, Config, 
-                         loadingService, $modal, $window, 
-                         SharedStateService, AuthService, $q, 
-                         dialogService, $log) {
-                             
+                function($scope, $routeParams, $location,
+                        LocalisationService, Koodisto, OrganisaatioService,
+                        TarjontaService, PermissionService, Config,
+                        loadingService, $modal, $window,
+                        SharedStateService, AuthService, $q,
+                        dialogService, $log) {
+
                     $log = $log.getInstance("SearchController");
 
                     var OPH_ORG_OID = Config.env["root.organisaatio.oid"];
@@ -701,14 +701,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                                 });
                                 return;
                             }
-
-
                             SharedStateService.addToState('SelectedKoulutukses', $scope.selection.koulutukset);
-                            SharedStateService.addToState('SelectedKoulutusTyyppi', koulutusTyyppi);
                             SharedStateService.addToState('SelectedToteutusTyyppi', res.toteutustyyppi);
                             SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
                             $location.path('/hakukohde/new/edit');
-
                         });
 
                     };
@@ -770,10 +766,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                     var AddHakukohdeToGroupController = function($scope, $modalInstance, valitutHakukohteet, ryhmat) {
                         $log.info("AddHakukohdeToGroupController()");
-                        
+
                         var init = function() {
                             $log.info("AddHakukohdeToGroupController.init()", valitutHakukohteet, ryhmat);
-                               
+
                             $scope.model = $scope.model ? $scope.model : {};
                             $scope.model.hakukohteet = valitutHakukohteet;
                             $scope.model.ryhmat = ryhmat;
@@ -814,17 +810,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                             var valitutRyhmat = $scope.model.ryhmat.filter(function(ryhma) {
                                 return ryhma.selected;
                             });
-                            
+
                             $log.debug("  valitut ryhmät: ", valitutRyhmat);
 
                             // Create request data
                             var requestData = [];
-                            angular.forEach(valitutRyhmat, function (ryhma) {
+                            angular.forEach(valitutRyhmat, function(ryhma) {
                                 angular.forEach($scope.model.hakukohteet, function(hakukohdeOid) {
-                                    requestData.push({ toiminto: tyyppi, hakukohdeOid: hakukohdeOid, ryhmaOid: ryhma.oid});
+                                    requestData.push({toiminto: tyyppi, hakukohdeOid: hakukohdeOid, ryhmaOid: ryhma.oid});
                                 });
                             });
-                            
+
                             // Tee pyyntö
                             $log.debug("call server with data", requestData);
 
@@ -850,7 +846,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                                 status: "OK",
                                 errors: []
                             };
-                            
+
 //                            {
 //                                status: "ERROR",
 //                                errors : [
@@ -864,7 +860,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 //                                    }
 //                                ]
 //                            };
-                            
+
                             //$modalInstance.close();
                         };
 
@@ -881,20 +877,20 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                     $scope.liitaHakukohteetRyhmaan = function() {
                         $log.info("liitaHakukohteetRyhmaan()", $scope.selection.hakukohteet);
-                        
+
                         var modalInstance = $modal.open({
                             templateUrl: 'partials/search/liita-hakukohde-ryhmaan-dialog.html',
                             controller: AddHakukohdeToGroupController,
                             resolve: {
                                 valitutHakukohteet: function() {
-                                    return $scope.selection.hakukohteet; 
+                                    return $scope.selection.hakukohteet;
                                 },
                                 ryhmat: function() {
                                     return OrganisaatioService.getRyhmat();
                                 }
                             }
                         });
-                        
+
                     };
 
                 });

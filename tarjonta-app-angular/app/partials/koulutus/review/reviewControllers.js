@@ -283,7 +283,7 @@ app.controller('BaseReviewController', [
             var koulutusOids = [];
             koulutusOids.push($scope.model.koulutus.oid);
             SharedStateService.addToState('SelectedKoulutukses', koulutusOids);
-            SharedStateService.addToState('SelectedKoulutusTyyppi', $scope.model.koulutus.toteutustyyppi);
+            SharedStateService.addToState('SelectedToteutusTyyppi', $scope.model.koulutus.toteutustyyppi);
             SharedStateService.addToState('SelectedOrgOid', $scope.model.koulutus.organisaatio.oid);
             $location.path('/hakukohde/new/edit');
         };

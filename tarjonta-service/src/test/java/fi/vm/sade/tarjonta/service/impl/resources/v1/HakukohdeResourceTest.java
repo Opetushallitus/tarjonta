@@ -48,7 +48,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.junit.Ignore;
 
-@Ignore
+
 public class HakukohdeResourceTest {
 
     private static final String KOMOTO_PERUTTU = "komoto-peruttu";
