@@ -1,12 +1,11 @@
 <div class="richTextArea" ng-cloack>
-     
 	<div ng-show="!isEdit()" class="preview" ng-class="isEmpty() ? 'empty' : ''" ng-click="startEdit($event)" ng-cloack>
 	    <p ng-show="isEmpty()" tt="tarjonta.richtextarea.empty"></p>
 		<div class="previewBody" ng-bind-html="html()" ng-show="!isEmpty()"></div>
 	</div>
 	
 	<div ng-show="isEdit()" class="editor" ng-cloack>
-		<textarea ui-tinymce="tinymceOptions" ng-model="model"> </textarea>
+		<textarea ui-tinymce="tinymceOptions" ng-model="directive.model"> </textarea>
 		<p ng-show="showMax" ng-class="charCount() > max ? 'overflow' : ''">{{charCount()}} / {{max}}</p>
 	</div>
 
