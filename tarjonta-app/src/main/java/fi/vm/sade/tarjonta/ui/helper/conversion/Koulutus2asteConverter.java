@@ -336,7 +336,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
                         break;
                     default:
                         klm.set(kt, t.getValue());
-                        break; 
+                        break;
                 }
             }
         }
@@ -383,9 +383,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
             throw new RuntimeException("Data validation failed - koulutusaste numeric code is required!");
         }
 
-        
         final Koulutustyyppi koulutustyyppi = Koulutustyyppi.getByKoodistoUri(model.getKoulutuksenTyyppi().getKoodi());
-
 
         Preconditions.checkNotNull(koulutusaste, "Data validation failed - koulutustyyppi is required!");
 
@@ -395,7 +393,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
                 || koulutustyyppi == Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS)
                 && koulutusohjelmaKoodi == null || koulutusohjelmaKoodi.getUri() == null) {
             throw new RuntimeException("Persist failed - koulutusohjelma URI is required!");
-        } else if (koulutustyyppi != Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS 
+        } else if (koulutustyyppi != Koulutustyyppi.MAMU_LUKIOON_OHJAAVA_KOULUTUS
                 && koulutusaste.equals(KoulutusasteType.TOINEN_ASTE_LUKIO.getKoulutusaste())) {
             //Lukio tutkinto do not have koulutusohjema data.
             lisaa.setKoulutusohjelmaKoodi(new KoodistoKoodiTyyppi());
@@ -434,11 +432,15 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {
 
-            Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(
-                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()),
-                    TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutusohjelmakoodiUri())
-            );
-            hashMap.put(e, komo);
+            if (komo.getKoulutusohjelmakoodiUri() == null) {
+                //Skip null koulutusohjelma uri komos.
+                Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(
+                        TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()),
+                        TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutusohjelmakoodiUri())
+                );
+
+                hashMap.put(e, komo);
+            }
         }
 
         return hashMap;
