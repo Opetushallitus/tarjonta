@@ -118,16 +118,16 @@ public class KoulutusIndexEntityToSolrDocumentTest {
                 doc.removeField(SolrFields.Koulutus.KOULUTUSKOODI_URI)
                 .getValue());
 
-        Assert.assertEquals(OSAAMISALA_URI  + "-nimi-EN",
+        Assert.assertEquals(KOULUTUSOHJELMA_URI  + "-nimi-EN",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_EN)
                 .getValue());
-        Assert.assertEquals(OSAAMISALA_URI + "-nimi-SV",
+        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-SV",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_SV)
                 .getValue());
-        Assert.assertEquals(OSAAMISALA_URI + "-nimi-FI",
+        Assert.assertEquals(KOULUTUSOHJELMA_URI + "-nimi-FI",
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_FI)
                 .getValue());
-        Assert.assertEquals(OSAAMISALA_URI,
+        Assert.assertEquals(KOULUTUSOHJELMA_URI,
                 doc.removeField(SolrFields.Koulutus.KOULUTUSOHJELMA_URI)
                 .getValue());
         Assert.assertEquals(KOULUTUSTYYPPI_URI,
