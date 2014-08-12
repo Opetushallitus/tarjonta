@@ -255,6 +255,7 @@ public class MassakopiointiTest extends TestData {
         assertEquals(DATE_2014, copy.getKoulutuksenAlkamisPvms().iterator().next());
         assertEquals(new Integer(orig.getAlkamisVuosi() + 1), copy.getAlkamisVuosi());
         assertEquals(orig.getAlkamiskausiUri(), copy.getAlkamiskausiUri());
+        assertEquals(orig.getKoulutuslajis().size(), copy.getKoulutuslajis().size());
     }
 
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
