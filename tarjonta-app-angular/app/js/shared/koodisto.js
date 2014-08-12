@@ -37,6 +37,14 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             return "";
         }
     };
+    
+    function removeVersion(koodiUri)  {
+      if (koodiUri.indexOf('#') != -1) {
+        console.log("removing version from:", koodiUri);
+        koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
+      }
+      return koodiUri;
+    }
 
 
     /*
@@ -358,6 +366,9 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          @returns {array} array of koodisto view model objects
          */
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
+          koodiUriParam = removeVersion(koodiUriParam);
+            //CCC
+            
             var returnKoodi = $q.defer();
             var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
             //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
@@ -376,9 +387,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
             locale = locale || "fi"; // default locale is finnish
 
-            if (koodiUri.indexOf('#') != -1) {
-                koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
-            }
+            koodiUri = removeVersion(koodiUri);
 
             return CacheService.lookup("koodi/" + koodiUri + "/" + locale, function(ret) {
 
