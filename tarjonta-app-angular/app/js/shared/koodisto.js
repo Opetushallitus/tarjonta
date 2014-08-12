@@ -366,8 +366,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
          @returns {array} array of koodisto view model objects
          */
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
-          koodiUriParam = removeVersion(koodiUriParam);
-            //CCC
+            koodiUriParam = removeVersion(koodiUriParam);
             
             var returnKoodi = $q.defer();
             var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
