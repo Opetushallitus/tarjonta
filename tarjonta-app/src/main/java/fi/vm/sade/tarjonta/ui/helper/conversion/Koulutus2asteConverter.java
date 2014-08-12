@@ -432,7 +432,7 @@ public class Koulutus2asteConverter extends KoulutusConveter {
 
         for (KoulutusmoduuliKoosteTyyppi komo : komos) {
 
-            if (komo.getKoulutusohjelmakoodiUri() == null) {
+            if (komo.getKoulutusohjelmakoodiUri() != null) {
                 //Skip null koulutusohjelma uri komos.
                 Map.Entry<String, String> e = new AbstractMap.SimpleEntry<String, String>(
                         TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(komo.getKoulutuskoodiUri()),
