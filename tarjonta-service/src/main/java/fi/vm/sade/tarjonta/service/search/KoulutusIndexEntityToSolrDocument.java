@@ -78,6 +78,8 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.Date;
 
 /**
@@ -177,11 +179,15 @@ public class KoulutusIndexEntityToSolrDocument implements
 
                     break;
                 default:
-                    if (koulutus.getOsaamisalaUri() != null) {
-                        addKoulutusohjelmaTiedot(komotoDoc, koulutus.getOsaamisalaUri());
-                    } else if (koulutus.getKoulutusohjelmaKoodi() != null) {
+                    if(koulutus.getSubKoulutustyyppiEnum()==ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO){
                         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
-                    } 
+                    } else {
+                        if (koulutus.getOsaamisalaUri() != null) {
+                            addKoulutusohjelmaTiedot(komotoDoc, koulutus.getOsaamisalaUri());
+                        } else if (koulutus.getKoulutusohjelmaKoodi() != null) {
+                            addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
+                        }
+                    }
                     //muut: koulutusohjelma, pohjakoulutus
                     break;
             }
