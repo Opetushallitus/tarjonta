@@ -23,7 +23,12 @@ public class HakukohteetKysely implements Serializable
     private String hakuOid;
     private String hakukohdeOid;
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>();
+    private String organisaatioRyhmaOid;
 
+
+    public String getOrganisaatioRyhmaOid() {
+        return organisaatioRyhmaOid;
+    }
 
     public List<KoulutusasteTyyppi> getKoulutusasteTyypit() {
         return koulutusasteTyypit;
@@ -108,6 +113,10 @@ public class HakukohteetKysely implements Serializable
         HakukohteetKysely kys = new HakukohteetKysely();
         kys.hakukohdeOid = oid;
         return kys;
+    }
+
+    public void setOrganisaatioRyhmaOid(String organisaatioRyhmaOid) {
+        this.organisaatioRyhmaOid = organisaatioRyhmaOid;
     }
 
 }

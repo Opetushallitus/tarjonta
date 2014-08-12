@@ -70,7 +70,7 @@ public class IndexerResourceTest {
     }
 
     private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
-        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU, "hakutapaUri", Integer.valueOf(5), 2l, "hakuoid", "hakutyyppiUri");
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU, "hakutapaUri", Integer.valueOf(5), 2l, "hakuoid", "hakutyyppiUri", "ryhmä-oid");
         return hie;
     }
 
