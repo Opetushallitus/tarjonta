@@ -60,13 +60,11 @@ app
           };
 
           $scope.saveAsValmis = function() {
-            $scope.model.saveValmisParent("VALMIS", validateAikuHakukohde);
+            $scope.model.saveParent("VALMIS", validateAikuHakukohde);
           };
 
           var readOsaamisAlat = function() {
-
-            var koulutukses = SharedStateService
-                .getFromState('SelectedKoulutukses');
+            var koulutukses = SharedStateService.getFromState('SelectedKoulutukses');
 
             var koulutusPromiset = [];
             for ( var i = 0; i < koulutukses.length; i++) {
