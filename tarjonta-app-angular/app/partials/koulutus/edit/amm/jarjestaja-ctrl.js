@@ -25,15 +25,15 @@ app.controller('JarjestajaCtrl', ['$modalInstance', 'targetOrganisaatio',
         };
         $scope.alkorganisaatio = $scope.alkorganisaatio || {currentNode: undefined};
         // Watchi valitulle organisaatiolle
-//        $scope.$watch('alkorganisaatio.currentNode', function(organisaatio, oldVal) {
-//            console.log("oprganisaatio valittu", organisaatio);
-//            //XXX nyt vain yksi organisaatio valittavissa
-//            $scope.model.organisaatiot = [];
-////            if (!angular.isUndefined(organisaatio) && organisaatio !== null) {
-////                lisaaOrganisaatio(organisaatio);
-////            }
-//
-//        });
+        $scope.$watch('alkorganisaatio.currentNode', function(organisaatio, oldVal) {
+            console.log("oprganisaatio valittu", organisaatio);
+            //XXX nyt vain yksi organisaatio valittavissa
+            $scope.model.organisaatiot = [];
+            if (!angular.isUndefined(organisaatio) && organisaatio !== null) {
+                lisaaOrganisaatio(organisaatio);
+            }
+
+        });
         $scope.valitut = $scope.valitut || [];
         $scope.organisaatiomap = $scope.organisaatiomap || {};
         $scope.alkorganisaatiot = {};

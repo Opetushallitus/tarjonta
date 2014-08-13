@@ -50,7 +50,6 @@ import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
  * Convert "Hakukohde" to {@link SolrInputDocument} so that it can be indexed.
@@ -91,7 +90,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addHakuTiedot(hakukohdeDoc, getHakuajat(hakukohde.getHakuId()));
         addTekstihaku(hakukohdeDoc);
         add(hakukohdeDoc, HAUN_OID, hakukohde.getHakuOid());
-        
+        addRyhmat(hakukohdeDoc, hakukohde.getRyhmaOidit());
 
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
@@ -119,6 +118,15 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
 
         return docs;
+    }
+
+    private void addRyhmat(SolrInputDocument hakukohdeDoc, String ryhmaOidit) {
+        if (ryhmaOidit==null) {
+            return;
+        }
+        for (String oid : ryhmaOidit.split(",")) {
+            hakukohdeDoc.addField(ORGANISAATIORYHMAOID, oid);
+        }
     }
 
     private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,
