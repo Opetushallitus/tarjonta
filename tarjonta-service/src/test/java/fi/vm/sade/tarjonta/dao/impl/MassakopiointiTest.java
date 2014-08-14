@@ -43,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -176,6 +177,7 @@ public class MassakopiointiTest extends TestData {
         getPersistedKomoto1().setSijoittuminenTyoelamaan(new MonikielinenTeksti("fi","blaah"));
         getPersistedKomoto1().setKoulutusohjelmanValinta(new MonikielinenTeksti("fi", "bvlaahh"));
         getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi","blaah"));
+        getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1","a2"));
         super.persist(getPersistedKomoto1());
         kohde1.setLisatiedot(new MonikielinenTeksti());
         kohde1.getLisatiedot().addTekstiKaannos("fi", "lisätieto");
@@ -256,6 +258,10 @@ public class MassakopiointiTest extends TestData {
         assertEquals(new Integer(orig.getAlkamisVuosi() + 1), copy.getAlkamisVuosi());
         assertEquals(orig.getAlkamiskausiUri(), copy.getAlkamiskausiUri());
         assertEquals(orig.getKoulutuslajis().size(), copy.getKoulutuslajis().size());
+        if(orig.getOid().equals(getPersistedKomoto1().getOid())){
+            //komoto1 testaus
+            assertEquals(orig.getKieliValikoima("KIEEEL").getKielet().size(), copy.getKieliValikoima("KIEEEL").getKielet().size());
+        }
     }
 
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
