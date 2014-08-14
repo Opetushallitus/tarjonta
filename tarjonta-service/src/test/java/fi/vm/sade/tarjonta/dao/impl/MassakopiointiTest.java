@@ -63,6 +63,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.joda.time.DateTime;
 
 /**
@@ -179,6 +181,12 @@ public class MassakopiointiTest extends TestData {
         getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi","blaah"));
         getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1","a2"));
         super.persist(getPersistedKomoto1());
+        getPersistedKomoto2().setTila(TarjontaTila.LUONNOS);
+        kohde1.addKoulutusmoduuliToteutus(getPersistedKomoto2());
+        getPersistedKomoto2().addHakukohde(kohde1);
+        super.persist(getPersistedKomoto2());
+        
+        
         kohde1.setLisatiedot(new MonikielinenTeksti());
         kohde1.getLisatiedot().addTekstiKaannos("fi", "lisätieto");
         kohde1.getValintakoes().clear();
@@ -279,7 +287,11 @@ public class MassakopiointiTest extends TestData {
         assertEquals(orig.getHakukohdeKoodistoNimi(), copy.getHakukohdeKoodistoNimi());
         assertEquals(orig.getHakukohdeMonikielinenNimi(), copy.getHakukohdeMonikielinenNimi());
         assertEquals(orig.getHakukohdeNimi(), copy.getHakukohdeNimi());
-        assertEquals(orig.getKoulutusmoduuliToteutuses().size(), copy.getKoulutusmoduuliToteutuses().size());
+        if(orig.getOid().equals(kohde1.getOid())) {
+            assertEquals(1, copy.getKoulutusmoduuliToteutuses().size()); //toinen koulutus oli luonnos
+        } else {
+            assertEquals(orig.getKoulutusmoduuliToteutuses().size(), copy.getKoulutusmoduuliToteutuses().size());
+        }
         assertEquals(orig.getLiites().size(), copy.getLiites().size());
 
         //oletus testidatassa vain nolla tai yksi valintakoetta
