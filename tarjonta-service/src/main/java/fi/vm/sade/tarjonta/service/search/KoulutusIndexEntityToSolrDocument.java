@@ -78,6 +78,7 @@ import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.Date;
@@ -179,7 +180,7 @@ public class KoulutusIndexEntityToSolrDocument implements
 
                     break;
                 default:
-                    if(koulutus.getSubKoulutustyyppiEnum()==ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO){
+                    if (koulutus.getSubKoulutustyyppiEnum() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO) {
                         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
                     } else {
                         if (koulutus.getOsaamisalaUri() != null) {
@@ -236,17 +237,20 @@ public class KoulutusIndexEntityToSolrDocument implements
         }
 
         for (String uri : koodistoUris) {
-            add(doc, KOULUTUSLAJI_URIS, uri);
             //käännökset, vain yksi käännös tallennetaan
             KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(uri, koodiService);
 
             if (koodi != null) {
+                add(doc, KOULUTUSLAJI_URIS, koodi.getKoodiUri()); // no '#'-characters!
                 KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
+
                 add(doc, KOULUTUSLAJI_FI, metadata.getNimi());
                 metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
                 add(doc, KOULUTUSLAJI_SV, metadata.getNimi());
                 metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
                 add(doc, KOULUTUSLAJI_EN, metadata.getNimi());
+            } else {
+                add(doc, KOULUTUSLAJI_URIS, TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(uri)); // no '#'-characters!
             }
         }
     }

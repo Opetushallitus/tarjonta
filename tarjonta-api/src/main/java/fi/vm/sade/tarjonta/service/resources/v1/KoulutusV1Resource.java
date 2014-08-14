@@ -243,19 +243,21 @@ public interface KoulutusV1Resource {
 
     /**
      * Hakukysely tarjonnan käyttöliittymää varten.
-     * 
+     *
      * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given organisations
+     * @param organisationOids filter result to be in or "under" given
+     * organisations
      * @param koulutusOids
      * @param koulutusTila filter result to be only in states given
      * @param alkamisKausi
      * @param alkamisVuosi
-     * @param koulutustyyppi
-     * @param toteutustyyppi
-     * @param koulutusastetyyppi (deprecated)
+     * @param koulutustyyppi Koodisto-palvelun koulutustyyppi URI (esim. koulutustyyppi_1).
+     * @param toteutustyyppi Enum, vastaa koodiston koulutustyyppiä, tietyin laajennuksin.
+     * @param koulutusastetyyppi (deprecated) Karkea erottelu koulutuksille. Enum, ei vastaa koodiston koulutusytyyppiä. 
      * @param komoOid
      * @param alkamisPvmAlkaenTs not supported
-     * @return 
+     * @param koulutuslaji Koodisto-palvelun koulutuslaji URI (esim. koulutuslaji_a tai koulutuslaji_b).
+     * @return
      */
     @GET
     @Path("/search")
@@ -275,7 +277,8 @@ public interface KoulutusV1Resource {
             @Deprecated
             @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid,
-            @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs
+            @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs,
+            @QueryParam("koulutuslaji") String koulutuslaji
     );
 
     /**

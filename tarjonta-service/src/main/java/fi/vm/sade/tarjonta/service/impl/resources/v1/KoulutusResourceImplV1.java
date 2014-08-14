@@ -786,7 +786,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             List<ToteutustyyppiEnum> toteutustyyppi,
             @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
             String komoOid,
-            String alkamisPvmAlkaenTs) {
+            String alkamisPvmAlkaenTs,
+            String koulutuslaji) {
 
         // Process alkamispvm search criteria
         // TODO alkamispvm not used yet!
@@ -819,8 +820,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutusOids().addAll(koulutusOids);
         q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
-        q.getKoulutustyyppi().addAll(koulutustyyppi);
-        q.getTotetustyyppi().addAll(toteutustyyppi);
+        q.getKoulutustyyppi().addAll(koulutustyyppi); //uri
+        q.getTotetustyyppi().addAll(toteutustyyppi); //enum
+        q.setKoulutuslaji(koulutuslaji);
         KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));
