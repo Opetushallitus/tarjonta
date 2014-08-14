@@ -27,6 +27,7 @@ public class KoulutuksetKysely implements Serializable {
     private String komoOid;
     private List<String> koulutustyyppi = new ArrayList<String>();
     private Date koulutuksenAlkamisPvmAlkaen = null;
+    private String koulutuslaji;
 
     public String getKomoOid() {
         return komoOid;
@@ -174,6 +175,20 @@ public class KoulutuksetKysely implements Serializable {
 
     public void setKoulutuksenAlkamisPvmAlkaen(Date koulutuksenAlkamisPvmAlkaen) {
         this.koulutuksenAlkamisPvmAlkaen = koulutuksenAlkamisPvmAlkaen;
+    }
+
+    /**
+     * @return the koulutuslaji
+     */
+    public String getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(String koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
     }
 
 }
