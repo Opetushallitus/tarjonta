@@ -191,6 +191,7 @@ public class MassakopiointiTest extends TestData {
         kohde1.getLisatiedot().addTekstiKaannos("fi", "lisätieto");
         kohde1.getValintakoes().clear();
         kohde1.addValintakoe(koe1);
+        kohde1.setOrganisaatioRyhmaOids(new String[]{"ooid1","ooid2"});
         koe1.setHakukohde(kohde1);
 
         HakukohdeLiite liite = new HakukohdeLiite();
@@ -274,6 +275,7 @@ public class MassakopiointiTest extends TestData {
 
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
         LOG.info("comparing hakukohde copy");
+        assertEquals(orig.getOrganisaatioRyhmaOids().length, copy.getOrganisaatioRyhmaOids().length);
         assertEquals(orig.getAlinHyvaksyttavaKeskiarvo(), copy.getAlinHyvaksyttavaKeskiarvo());
         assertEquals(orig.getAlinValintaPistemaara(), copy.getAlinValintaPistemaara());
         assertEquals(orig.getAloituspaikatLkm(), copy.getAloituspaikatLkm());
