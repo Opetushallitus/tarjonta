@@ -23,9 +23,12 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -159,6 +162,16 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
  * @author Timo Santasalo / Teknokala Ky
  */
 public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
+
+    
+    @Value("${koodisto-uris.yhteishaku}")
+    private String hakutapaYhteishakuUrl;
+
+    @Value("${koodisto-uris.lisahaku}")
+    private String hakutyyppiLisahakuUrl;
+
+    @Value("${koodisto-uris.erillishaku}")
+    private String hakutapaErillishakuUrl;
 
     private static Logger LOG = LoggerFactory.getLogger(TarjontaPresenter.class);
     private static final boolean KOODISTO_URIS_FROM_KOODISTO = true;
@@ -546,7 +559,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }
-        return Lists.newArrayList(Iterables.filter(foundHaut, new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService)));
+        
+        Predicate<HakuViewModel> pr1 = new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService);
+        Predicate<HakuViewModel> pr2 = new HakuHakuaikaPredicate(getModel().getHakukohde()!=null?getModel().getHakukohde().getHakuaika():null, hakutyyppiLisahakuUrl, hakutapaErillishakuUrl, getPermission());
+
+        return Lists.newArrayList(Iterables.filter(foundHaut, Predicates.and(pr1,pr2)));
     }
 
     /**
