@@ -39,6 +39,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO.SearchCriteria;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.HakukohdeLiite;
@@ -54,6 +55,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutustyyppiKoosteV1RDTO;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
@@ -69,6 +71,8 @@ import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKaikkiKoulutusmoduulitVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeKoulutusmoduulitVastausTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutustyyppiUrisKyselyTyyppi;
+import fi.vm.sade.tarjonta.service.types.HaeKoulutustyyppiUrisVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeTarjoajanKoulutustenPohjakoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.types.HaeTarjoajanKoulutustenPohjakoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.types.HakuTyyppi;
@@ -127,6 +131,9 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     private TarjontaSearchService searchService;
     //private final static String SYKSY = "syksy";
     //private final static String KEVAT = "kevat";
+
+    @Autowired(required = true)
+    private OppilaitosKoodiRelations oppilaitosKoodiRelations;
 
     public TarjontaPublicServiceImpl() {
         super();
@@ -402,7 +409,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
             koulutus.setAjankohta(tulos.getKoulutuksenAlkamiskausi().getNimi().get("fi") + " " + tulos.getKoulutuksenAlkamisVuosi());
             if (tulos.getKoulutusohjelma() != null) {
                 koulutus.setKoulutusohjelmakoodi(tulos.getKoulutusohjelma().getUri());
-            } 
+            }
 
             koulutus.setKoulutuskoodi(tulos.getKoulutusKoodi().getUri());
 
@@ -680,7 +687,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         }
 
         if (kysely.getKoulutustyyppi() != null) {
-            criteria.setKoulutustyyppi(ModuulityyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
+            criteria.setModuulityyppi(ModuulityyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
         }
 
         if (kysely.getHakusana() != null) {
@@ -724,7 +731,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         criteria.setKoulutusohjelmaKoodi(kysely.getKoulutusohjelmakoodiUri());
         criteria.setLukiolinjaKoodiUri(kysely.getLukiolinjakoodiUri());
         if (kysely.getKoulutustyyppi() != null) {
-            criteria.setKoulutustyyppi(ModuulityyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
+            criteria.setModuulityyppi(ModuulityyppiEnum.fromEnum(kysely.getKoulutustyyppi()));
         }
         criteria.setOppilaitostyyppis(kysely.getOppilaitostyyppiUris());
 
@@ -765,5 +772,23 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         LueKoulutusmoduuliVastausTyyppi komo = new LueKoulutusmoduuliVastausTyyppi();
         komo.setKoulutusmoduuli(EntityUtils.copyFieldsToKoulutusmoduuliKoosteTyyppi(koulutusmoduuliDAO.findByOid(kysely.getOid())));
         return komo;
+    }
+
+    @Override
+    public HaeKoulutustyyppiUrisVastausTyyppi haeKoulutustyyppiUris(HaeKoulutustyyppiUrisKyselyTyyppi kysely) {
+        Preconditions.checkNotNull(kysely.getOrganisaatioOid(), "KOMO OID cannot be null");
+
+        KoulutusmoduuliDAO.SearchCriteria searchCriteria = new KoulutusmoduuliDAO.SearchCriteria();
+        searchCriteria.setKoulutustyyppiUris(oppilaitosKoodiRelations.getKoulutustyyppiUris(kysely.getOrganisaatioOid()));
+        List<Koulutusmoduuli> search = koulutusmoduuliDAO.search(new KoulutusmoduuliDAO.SearchCriteria());
+        KoulutustyyppiKoosteV1RDTO k = new KoulutustyyppiKoosteV1RDTO();
+        k.setKoulutustyyppiUris(searchCriteria.getKoulutustyyppiUris());
+        k.setModules(!search.isEmpty());
+
+        HaeKoulutustyyppiUrisVastausTyyppi vastaus = new HaeKoulutustyyppiUrisVastausTyyppi();
+        vastaus.setOrganisaatioOid(kysely.getOrganisaatioOid());
+        vastaus.getKoulutustyyppiUris().addAll(searchCriteria.getKoulutustyyppiUris());
+        vastaus.setHasKoulutusmodules(!search.isEmpty());
+        return vastaus;
     }
 }

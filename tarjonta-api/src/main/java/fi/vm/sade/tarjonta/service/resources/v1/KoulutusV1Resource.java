@@ -18,23 +18,21 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
-
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusMultiCopyV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusmoduuliStandardRelationV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutustyyppiKoosteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -251,12 +249,16 @@ public interface KoulutusV1Resource {
      * @param koulutusTila filter result to be only in states given
      * @param alkamisKausi
      * @param alkamisVuosi
-     * @param koulutustyyppi Koodisto-palvelun koulutustyyppi URI (esim. koulutustyyppi_1).
-     * @param toteutustyyppi Enum, vastaa koodiston koulutustyyppiä, tietyin laajennuksin.
-     * @param koulutusastetyyppi (deprecated) Karkea erottelu koulutuksille. Enum, ei vastaa koodiston koulutusytyyppiä. 
+     * @param koulutustyyppi Koodisto-palvelun koulutustyyppi URI (esim.
+     * koulutustyyppi_1).
+     * @param toteutustyyppi Enum, vastaa koodiston koulutustyyppiä, tietyin
+     * laajennuksin.
+     * @param koulutusastetyyppi (deprecated) Karkea erottelu koulutuksille.
+     * Enum, ei vastaa koodiston koulutusytyyppiä.
      * @param komoOid
      * @param alkamisPvmAlkaenTs not supported
-     * @param koulutuslaji Koodisto-palvelun koulutuslaji URI (esim. koulutuslaji_a tai koulutuslaji_b).
+     * @param koulutuslaji Koodisto-palvelun koulutuslaji URI (esim.
+     * koulutuslaji_a tai koulutuslaji_b).
      * @return
      */
     @GET
@@ -294,5 +296,13 @@ public interface KoulutusV1Resource {
             value = "Näyttää koulutukseen liittyvien hakukohteiden nimen ja oid:n annetulla koulutuksen oid:lla",
             notes = "Operaatio näyttää koulutukseen liittyvien hakukohteiden nimen ja oid:n annetulla koulutuksen oid:lla")
     public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(@PathParam("oid") String oid);
+
+    @GET
+    @Path("/organisaatio/{oid}/koulutustyyppi")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Näyttää organisaation oid:lla organisaatioon liittyvät koulutustyypit.",
+            notes = "Operaatio näyttää organisaation oid:lla organisaatioon liittyvät koulutustyypit.")
+    ResultV1RDTO<KoulutustyyppiKoosteV1RDTO> isAllowedEducationByOrganisationOid(@PathParam("oid") String organisationOid);
 
 }

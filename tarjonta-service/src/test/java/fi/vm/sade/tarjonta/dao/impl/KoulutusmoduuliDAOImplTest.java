@@ -206,14 +206,14 @@ public class KoulutusmoduuliDAOImplTest {
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI1);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
-        criteria.setKoulutustyyppi(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+        criteria.setModuulityyppi(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
         result = instance.search(criteria);
         assertEquals(1, result.size());
 
         criteria = new KoulutusmoduuliDAO.SearchCriteria();
         criteria.setKoulutusohjelmaKoodi(KOULUTUSOHJELMA_URI1);
         criteria.getOppilaitostyyppis().add(SEARCH_BY_URI_C);
-        criteria.setKoulutustyyppi(ModuulityyppiEnum.LUKIOKOULUTUS);
+        criteria.setModuulityyppi(ModuulityyppiEnum.LUKIOKOULUTUS);
 
         result = instance.search(criteria);
         assertEquals(0, result.size());
