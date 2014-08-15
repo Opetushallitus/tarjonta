@@ -29,18 +29,6 @@ app.controller('BaseReviewController', [
             var tila = TarjontaService.getTilat()[koulutusModel.tila];
             $scope.isMutable = tila.mutable && data;
             $scope.isRemovable = tila.removable && data;
-
-            if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
-                //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-                if (angular.isDefined(koulutusModel.koulutuslaji) &&
-                        KoodistoURI.compareKoodi(
-                                koulutusModel.koulutuslaji.uri,
-                                window.CONFIG.env['koodi-uri.koulutuslaji.nuortenKoulutus'],
-                                true)) {
-                    $scope.isMutable = false;
-                    $scope.isRemovable = false;
-                }
-            }
         });
 
         $scope.formControls = {};
