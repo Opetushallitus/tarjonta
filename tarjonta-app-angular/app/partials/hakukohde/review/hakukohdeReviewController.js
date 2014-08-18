@@ -329,7 +329,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     var koodistot = {
       LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA : "hakukelpoisuusvaatimusta",
-      KORKEAKOULUTUS : "pohjakoulutusvaatimuskorkeakoulut"
+      KORKEAKOULUTUS : "pohjakoulutusvaatimuskorkeakoulut",
+      LUKIOKOULUTUS: "hakukelpoisuusvaatimusta"
     };
 
     var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];
