@@ -24,6 +24,9 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
  */
 public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
 
+    @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
+    private KoodiV1RDTO pohjakoulutusvaatimus;
+
     @ApiModelProperty(value = "Tutkintonimike", required = true)
     private KoodiV1RDTO tutkintonimike;
 
@@ -81,5 +84,19 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
+    }
+
+    /**
+     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
+     */
+    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @return the pohjakoulutusvaatimus
+     */
+    public KoodiV1RDTO getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
     }
 }

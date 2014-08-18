@@ -603,6 +603,16 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
             }
         },
+
+        /*******************************************/
+        /* AMMATILLINEN_PERUSTUTKINTO INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLINEN_PERUSTUTKINTO: $.extend(GENERIC_VALMISTAVA_STRUCTURE, {
+            STR: $.extend(GENERIC_VALMISTAVA_STRUCTURE.STR, {
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            })
+        }),
+
         /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
