@@ -15,8 +15,11 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
+import java.util.Map;
 
 /**
  *
@@ -35,6 +38,9 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
 
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
+
+    @ApiModelProperty(value = "Koulutuksen-tavoitteet", required = false)
+    private Map<String, String> koulutuksenTavoitteet;
 
     public KoulutusAmmatillinenPerustutkintoV1RDTO() {
         super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
@@ -98,5 +104,13 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public KoodiV1RDTO getPohjakoulutusvaatimus() {
         return pohjakoulutusvaatimus;
+    }
+
+    public Map<String, String> getKoulutuksenTavoitteet() {
+        return koulutuksenTavoitteet;
+    }
+
+    public void setKoulutuksenTavoitteet(Map<String, String> koulutuksenTavoitteet) {
+        this.koulutuksenTavoitteet = koulutuksenTavoitteet;
     }
 }

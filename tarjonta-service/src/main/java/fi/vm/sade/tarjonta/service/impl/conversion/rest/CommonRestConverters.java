@@ -1,19 +1,12 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
-import com.google.common.base.Preconditions;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.search.IndexDataUtils;
-import java.util.Date;
+
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /*
  * @author: Tuomas Katva 10/3/13
@@ -31,7 +24,7 @@ public class CommonRestConverters {
         return osoite;
     }
 
-    public static MonikielinenTeksti convertMapToMonikielinenTeksti(Map<String, String> map) {
+    public static MonikielinenTeksti toMonikielinenTeksti(Map<String, String> map) {
 
         if (map != null) {
             MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
@@ -47,4 +40,13 @@ public class CommonRestConverters {
 
     }
 
+    public static Map<String, String> toStringMap(MonikielinenTeksti monikielinenTeksti) {
+        Map<String, String> map = new HashMap<String, String>();
+
+        for (TekstiKaannos tekstiKaannos : monikielinenTeksti.getKaannoksetAsList()) {
+            map.put(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
+        }
+
+        return map;
+    }
 }

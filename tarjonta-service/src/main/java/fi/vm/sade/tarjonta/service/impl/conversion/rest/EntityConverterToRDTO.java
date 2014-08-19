@@ -16,11 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.BinaryData;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.WebLinkki;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
@@ -28,19 +24,20 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Conversion services for REST service.
  *
- * @author jani
  * @param <TYPE> KoulutusV1RDTO
+ * @author jani
  */
 @Component
 public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
@@ -167,21 +164,20 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             //override parent komo data by the child komo data
             mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         } else if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
-            /**
-             * 2ASTE : AMMATILLINEN_PERUSTUTKINTO
-             */
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
-
-            //tutkintonimike is on child komo object 'koulutusohjelma', not parent
             amisDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
             amisDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
             amisDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             amisDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
-            //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet
-            final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
-            //override parent komo data by the child komo data
-            mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
+
+            for (Map.Entry<KomoTeksti, MonikielinenTeksti> teksti : komo.getTekstit().entrySet()) {
+                if (KomoTeksti.TAVOITTEET.equals(teksti.getKey())) {
+                    amisDto.setKoulutuksenTavoitteet(CommonRestConverters.toStringMap(teksti.getValue()));
+                }
+            }
+
+            mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
         } else if (dto instanceof NayttotutkintoV1RDTO) {
             /**
              * Nayttotutkinto:
