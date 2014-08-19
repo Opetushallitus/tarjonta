@@ -104,7 +104,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
       var allKieles = new buckets.Set();
 
       for ( var kieliUri in $scope.model.hakukohde.hakukohteenNimet) {
-
         allKieles.add(kieliUri);
       }
 
@@ -113,15 +112,11 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
       }
 
       angular.forEach($scope.model.hakukohde.valintakokeet, function(valintakoe) {
-
         allKieles.add(valintakoe.kieliUri);
-
       });
 
       angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite) {
-
         allKieles.add(liite.kieliUri);
-
       });
 
       $scope.model.allkieles = allKieles.toArray();
@@ -332,7 +327,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var koodistot = {
       LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA : "hakukelpoisuusvaatimusta",
       KORKEAKOULUTUS : "pohjakoulutusvaatimuskorkeakoulut",
-      LUKIOKOULUTUS: "hakukelpoisuusvaatimusta"
+      LUKIOKOULUTUS: "hakukelpoisuusvaatimusta",
+      AMMATILLINEN_PERUSTUTKINTO: "hakukelpoisuusvaatimusta"
     };
 
     var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];

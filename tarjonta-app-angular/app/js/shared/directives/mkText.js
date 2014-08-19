@@ -65,7 +65,11 @@ app.directive('mkText', function(Koodisto, LocalisationService, $log, $modal) {
         Koodisto.getAllKoodisWithKoodiUri("kieli", LocalisationService.getLocale()).then(function(v) {
             var nc = {};
             for (var i in v) {
+                // Lokalisointiavaimet voivat olla kahta eri muotoa: "kieli_fi#1" tai "kieli_fi". Tämän takia ne
+                // tallennetaan myös kahteen eri taulukkoon.
+                nc[v[i].koodiUri + "#" + v[i].koodiVersio] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
                 nc[v[i].koodiUri] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
+
             }
             $scope.codes = nc;
             updateLangs();
