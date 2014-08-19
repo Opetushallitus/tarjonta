@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Maps;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -53,6 +54,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import java.util.Map.Entry;
 
 /**
  * API V1 converters to/from model/domain.
@@ -94,7 +96,6 @@ public class ConverterV1 {
         }
 
         boolean result = (haku.getHakutapaUri().equals(jatkuvaHakutapaUriParam));
-
 
         return result;
     }
@@ -181,7 +182,7 @@ public class ConverterV1 {
             }
         }
 
-        if(isJatkuvaHaku(hakuV1RDTO,_jatkuvaHakutapaUri)) {
+        if (isJatkuvaHaku(hakuV1RDTO, _jatkuvaHakutapaUri)) {
 
             haku.setHakukausiUri(getKausiForForJatkuvaHakuAloitusPvm(getEarliestStartDate(getAloitusPvmsFromHakuaikas(hakuV1RDTO.getHakuaikas()))));
             haku.setHakukausiVuosi(getHakuvuosiForJatkuvaHakuAloitusPvm(getEarliestStartDate(getAloitusPvmsFromHakuaikas(hakuV1RDTO.getHakuaikas()))));
@@ -258,8 +259,8 @@ public class ConverterV1 {
     private List<Date> getAloitusPvmsFromHakuaikas(List<HakuaikaV1RDTO> hakuaikaV1RDTOs) {
         List<Date> aloitusDates = new ArrayList<Date>();
 
-        for(HakuaikaV1RDTO ha:hakuaikaV1RDTOs) {
-             aloitusDates.add(ha.getAlkuPvm());
+        for (HakuaikaV1RDTO ha : hakuaikaV1RDTOs) {
+            aloitusDates.add(ha.getAlkuPvm());
         }
 
         return aloitusDates;
@@ -267,10 +268,9 @@ public class ConverterV1 {
 
     private Date getEarliestStartDate(List<Date> startDates) {
 
-
         Date aloitusPvm = null;
 
-        for (Date ap:startDates) {
+        for (Date ap : startDates) {
             if (aloitusPvm == null) {
                 aloitusPvm = ap;
             }
@@ -469,7 +469,7 @@ public class ConverterV1 {
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
-        hakukohdeRDTO.setHakukohteenNimiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getHakukohdeNimi()));
+        hakukohdeRDTO.setHakukohteenNimiUri(hakukohde.getHakukohdeNimi());
         hakukohdeRDTO.setVersion(hakukohde.getVersion());
         hakukohdeRDTO.setOid(hakukohde.getOid());
         hakukohdeRDTO.setAloituspaikatLkm(hakukohde.getAloituspaikatLkm());
@@ -594,11 +594,13 @@ public class ConverterV1 {
             String uri = tarjontaKoodistoHelper.getValintaperustekuvausryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
             if (uri != null) {
                 hakukohdeRDTO.setValintaperustekuvausKoodiUri(uri);
+                HashMap<String, String> noLangVersionMap = Maps.<String, String>newHashMap();
+                HashMap<String, String> convertMonikielinenMetadata = convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri, MetaCategory.VALINTAPERUSTEKUVAUS.name()));
 
-                hakukohdeRDTO.setValintaperusteKuvaukset(
-                        convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri, MetaCategory.VALINTAPERUSTEKUVAUS.name()))
-                );
-
+                for (Entry<String, String> e : convertMonikielinenMetadata.entrySet()) {
+                    noLangVersionMap.put(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(e.getKey()), e.getValue());
+                    hakukohdeRDTO.setValintaperusteKuvaukset(noLangVersionMap);
+                }
             }
         }
 
@@ -830,14 +832,13 @@ public class ConverterV1 {
 
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             t.setHakukohdeNimi(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
-        } else if(hakukohde.getHakukohdeKoodistoNimi() != null) {
+        } else if (hakukohde.getHakukohdeKoodistoNimi() != null) {
             nimiMap.put("kieli_fi", hakukohde.getHakukohdeKoodistoNimi());
             t.setHakukohdeNimi(nimiMap);
         } else {
             nimiMap.put("kieli_fi", "Hakukohteella ei ole nimeä");
             t.setHakukohdeNimi(nimiMap);
         }
-
 
         // Painotetun keskiarvon arvoväli
         t.setPainotettuKeskiarvoHylkaysMax(hakukohde.getAlinHyvaksyttavaKeskiarvo() != null ? new BigDecimal(String.valueOf(hakukohde.getAlinHyvaksyttavaKeskiarvo())) : nolla);
@@ -887,7 +888,7 @@ public class ConverterV1 {
                     }
                     lt.getPisterajat().add(pisteraja);
                 } else {
-                    if(ValinnanPisterajaTyyppi.KOKONAISPISTEET.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
+                    if (ValinnanPisterajaTyyppi.KOKONAISPISTEET.value().equals(pisteraja.getValinnanPisterajaTyyppi())) {
                         kokonaispisteet = pisteraja.getAlinHyvaksyttyPistemaara();
                     }
                     addToBothVKs.add(pisteraja);
@@ -904,13 +905,12 @@ public class ConverterV1 {
             if (lt != null) {
 
                 lt.setKuvaus(koe.getLisanaytot());
-                if(koe.getTyyppiUri() != null &&
-                        (koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISANAYTTO) || koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISAPISTE))) {
+                if (koe.getTyyppiUri() != null
+                        && (koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISANAYTTO) || koe.getTyyppiUri().split("#")[0].equals(ValintaperusteetUtil.LISAPISTE))) {
                     lt.setTyyppiUri(koe.getTyyppiUri());
                 } else {
                     lt.setTyyppiUri(ValintaperusteetUtil.LISANAYTTO);
                 }
-
 
                 lt.getPisterajat().addAll(addToBothVKs);
 
@@ -918,7 +918,7 @@ public class ConverterV1 {
             }
 
             // Jos valintakokeella ei ole pisterajoja
-            if(lt == null && vk == null) {
+            if (lt == null && vk == null) {
                 result.add(koe);
             }
         }
@@ -1017,7 +1017,6 @@ public class ConverterV1 {
 
         }
 
-
         t.setHakuOid(hakukohde.getHaku() != null ? hakukohde.getHaku().getOid() : null);
 
         t.setHakukohdeNimiUri(hakukohde.getHakukohdeNimi());
@@ -1027,7 +1026,6 @@ public class ConverterV1 {
         t.setModifiedBy(hakukohde.getLastUpdatedByOid());
 
         t.setValintojenAloituspaikatLkm(hakukohde.getValintojenAloituspaikatLkm());
-
 
         // Opetuskielet
         Set<String> opetuskielis = new HashSet<String>();
@@ -1459,7 +1457,6 @@ public class ConverterV1 {
 
 //        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
 //        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
-        
         return ret;
     }
 

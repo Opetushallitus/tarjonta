@@ -102,7 +102,7 @@ public class HakukohdeResourceTest {
         koulutusLajiJaKoulutusAste.put(HakukohdeResourceImplV1.KOULUTUSLAJI_KEY,"N");
 
 
-        when(hakukohdeResource.getKoulutusAstetyyppiAndLajiForKoulutukses(anyList())).thenReturn(koulutusLajiJaKoulutusAste);
+        //when(hakukohdeResource.getKoulutusAstetyyppiAndLajiForKoulutukses(anyList())).thenReturn(koulutusLajiJaKoulutusAste);
 
 
 

@@ -88,31 +88,14 @@
                         </td>
                     </tr>
 
-
-
-
-
-
-
-
                 </table>
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
 
                 <mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
-
+     
                 <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
                 <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
-
-                <!--
-                <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>
-
-                <tabset>
-                    <tab  heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
-                        <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
-                    </tab>
-                </tabset>
-                 -->
 
             </form>
         </tab>

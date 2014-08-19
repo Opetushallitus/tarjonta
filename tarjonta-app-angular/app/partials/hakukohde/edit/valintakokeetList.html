@@ -1,10 +1,9 @@
 <div>
-
     <tabset>
-        <tab ng-repeat="kieli in kokeetModel.opetusKielet" heading="{{kieli.koodiNimi}}" active="kokeetModel.selectedTab[kieli.koodiUri]">
+        <tab ng-repeat="kieli in kokeetModel.valintakoeLangs" heading="{{kieli.koodiNimi}}" active="kokeetModel.selectedTab[kieli.koodiUri]">
 
             <div ng-repeat="valintakoe in getValintakokeetByKieli(kieli.koodiUri)">
-
+  
             <table class="tarjontaForm">
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.valintakoe.modal.valintakoenimi"></th>
@@ -80,7 +79,7 @@
         <tab class="addLangTab">
             <tab-heading><span class="icon-plus"></span></tab-heading>
             <multi-select
-                on-change="onLangSelection()"
+                on-change="onLangSelection(uris)"
                 order-with="userLangs"
                 model="kokeetModel.langs"
                 selection="kokeetModel.selectedLangs"
