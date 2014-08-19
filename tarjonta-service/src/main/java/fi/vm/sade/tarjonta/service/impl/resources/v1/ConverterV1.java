@@ -796,6 +796,8 @@ public class ConverterV1 {
         for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
             hakukohde.addLiite(toHakukohdeLiite(liite));
         }
+        
+        hakukohde.setOrganisaatioRyhmaOids(hakukohdeRDTO.getOrganisaatioRyhmaOids());
 
         return hakukohde;
     }
