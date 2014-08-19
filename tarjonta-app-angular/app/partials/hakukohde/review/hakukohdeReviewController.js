@@ -15,6 +15,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
   $scope.showNimiUri = false;
   $scope.isAiku = false;
   $scope.isKK = false;
+  $scope.hakukohteenNimiUri = undefined;
+
   // $log.debug("scope.model:", $scope.model);
 
   var aikuKoulutuslajiUri = "koulutuslaji_a";
@@ -511,18 +513,29 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
    * 
    */
 
-  $scope.getHakukohteenJaOrganisaationNimi = function() {
+  $scope.getHakukohteenJaOrganisaationNimi = function(locale) {
 
     console.log('ORGANISAATION NIMET : ', $scope.model.organisaatioNimet);
 
     var ret = "";
     var ja = LocalisationService.t("tarjonta.yleiset.ja");
 
-    for ( var i in $scope.model.hakukohde.hakukohteenNimet) {
-      if (i > 0) {
-        ret = ret + ((i == $scope.model.hakukohde.hakukohteenNimet.length - 1) ? " " + ja + " " : ", ");
-      }
-      ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
+    if($scope.showNimiUri) {
+        if($scope.hakukohteenNimiUri === undefined) {
+            Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, locale).then(
+                function(data){
+                    $scope.hakukohteenNimiUri = data;
+                }
+            );
+        }
+        ret =  "<b>" + $scope.hakukohteenNimiUri + "</b>"
+    } else {
+        for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+            if (i > 0) {
+                ret = ret + ((i == $scope.model.hakukohde.hakukohteenNimet.length - 1) ? " " + ja + " " : ", ");
+            }
+            ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
+        }
     }
 
     if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0) {
