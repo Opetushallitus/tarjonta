@@ -409,10 +409,13 @@ app.controller('BaseReviewController', [
                 }
                 result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
             } else if (
-                    koulutusModel.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA'
-                    || koulutusModel.toteutustyyppi === 'AMMATTITUTKINTO'
-                    || koulutusModel.toteutustyyppi === 'ERIKOISAMMATTITUTKINTO'
-                    ) {
+                $.inArray(koulutusModel.toteutustyyppi, [
+                    'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA',
+                    'AMMATTITUTKINTO',
+                    'ERIKOISAMMATTITUTKINTO',
+                    'AMMATILLINEN_PERUSTUTKINTO'
+                ])
+            ) {
                 if (angular.isDefined($scope.model.koulutus.koulutusohjelma) && angular.isDefined($scope.model.koulutus.koulutusohjelma.meta) && angular.isDefined(userLangUri) ) {
                     if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.meta[userLangUri])) {
                         // Just take first value for language
