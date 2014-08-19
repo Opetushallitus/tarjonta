@@ -53,7 +53,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var ret = [];
     for ( var i in items) {
       var kieli = items[i].kieliUri;
-      if (ret.indexOf(kieli) == -1) {
+      if (kieli && ret.indexOf(kieli) == -1) {
         ret.push(kieli);
       }
     }
