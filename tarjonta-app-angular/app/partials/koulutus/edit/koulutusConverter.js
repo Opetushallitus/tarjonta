@@ -623,6 +623,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }),
 
         /*******************************************/
+        /* PERUSOPETUKSEN_LISAOPETUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        PERUSOPETUKSEN_LISAOPETUS: $.extend(GENERIC_VALMISTAVA_STRUCTURE, {
+            STR: $.extend(GENERIC_VALMISTAVA_STRUCTURE.STR, {
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            })
+        }),
+
+        /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,

@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
@@ -23,7 +24,58 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
  */
 public class KoulutusPerusopetuksenLisaopetusV1RDTO extends KoulutusV1RDTO {
 
+    @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
+    private KoodiV1RDTO pohjakoulutusvaatimus;
+
+    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
+    private String linkkiOpetussuunnitelmaan;
+
+    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
+    private KoodiV1RDTO koulutuslaji;
+
     public KoulutusPerusopetuksenLisaopetusV1RDTO() {
         super(ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS, ModuulityyppiEnum.PERUSOPETUKSEN_LISAOPETUS);
+    }
+
+    /**
+     * @return the linkkiOpetussuunnitelmaan
+     */
+    public String getLinkkiOpetussuunnitelmaan() {
+        return linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
+     */
+    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
+        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
+     */
+    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @return the pohjakoulutusvaatimus
+     */
+    public KoodiV1RDTO getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
+    }
+
+    /**
+     * @return the koulutuslaji
+     */
+    public KoodiV1RDTO getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    /**
+     * @param koulutuslaji the koulutuslaji to set
+     */
+    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
     }
 }

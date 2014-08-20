@@ -202,6 +202,17 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             }
 
             mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
+        } else if (dto instanceof KoulutusPerusopetuksenLisaopetusV1RDTO) {
+            /**
+             * PERUSOPETUKSEN_LISAOPETUS
+             */
+            KoulutusPerusopetuksenLisaopetusV1RDTO perusLisaDto = (KoulutusPerusopetuksenLisaopetusV1RDTO) dto;
+            perusLisaDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+            perusLisaDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
+            perusLisaDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+            perusLisaDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
+
+            mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
         } else if (dto instanceof NayttotutkintoV1RDTO) {
             /**
              * Nayttotutkinto:
