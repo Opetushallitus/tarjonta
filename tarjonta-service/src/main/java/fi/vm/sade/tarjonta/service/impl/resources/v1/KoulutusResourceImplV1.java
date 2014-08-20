@@ -191,6 +191,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             case PERUSOPETUKSEN_LISAOPETUS:
                 result.setResult(converterToRDTO.convert(KoulutusPerusopetuksenLisaopetusV1RDTO.class, komoto, restParam));
                 break;
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                result.setResult(converterToRDTO.convert(KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistava.class, komoto, restParam));
+                break;
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                 //very special case: may have a double komoto structure  
                 result.setResult(converterToRDTO.convert(
