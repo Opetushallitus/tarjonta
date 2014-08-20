@@ -13,6 +13,15 @@ angular
           var orgLuku = $resource(Config.env["organisaatio.api.rest.url"]
               + "organisaatio/:oid");
 
+          /**
+           * Hakee organisaatiopalvelusta ryhmät ja filtteroi niistä vain "hakukohde" käyttöön tarkoitetut ryhmät.
+           * Eli jos "ryhmatyypit"-array sisältää "hakukohde" stringing.
+           * 
+           * Esimerkkidataa:
+           * https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/perse/ryhmat
+           * 
+           * @returns {$q@call;defer.promise}
+           */
           function getRyhmat() {
               $log.info("getRyhmat()");
               var ret = $q.defer();
@@ -33,8 +42,18 @@ angular
                   noCache: new Date().getTime()
               },
               function(result) {
-                  $log.info("  got result", result);
-                  ret.resolve(result);
+                  $log.debug("  got result", result);
+
+                  // Filter correct type
+                  var tmp = [];
+                  angular.forEach(result, function(group) {
+                      if (group.ryhmatyypit && group.ryhmatyypit.indexOf("hakukohde") >= 0) {
+                          tmp.push(group);
+                      }
+                  });
+
+                  $log.debug("getRyhmat() - resolved to: ", tmp);
+                  ret.resolve(tmp);
               },
               function(err) {
                   $log.error("  got error", err);
