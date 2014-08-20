@@ -188,6 +188,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              *         - VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
              *         - AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS
              *         - PERUSOPETUKSEN_LISAOPETUS
+             *         - MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS
              */
             ValmistavaKoulutusV1RDTO valmDto = (ValmistavaKoulutusV1RDTO) dto;
             valmDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
