@@ -20,9 +20,9 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /**
  *
- * @author mlyly
+ * @author alexGofore
  */
-public class KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistava extends KoulutusV1RDTO {
+public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
 
     @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
     private KoodiV1RDTO pohjakoulutusvaatimus;
@@ -33,8 +33,8 @@ public class KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistava extends K
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
 
-    public KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistava() {
-        super(ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS, ModuulityyppiEnum.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS);
+    protected ValmistavaKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
+        super(toteutustyyppi, moduulityyppi);
     }
 
     /**
