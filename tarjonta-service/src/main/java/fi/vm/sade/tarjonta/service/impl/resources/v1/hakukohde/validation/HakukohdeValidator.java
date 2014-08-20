@@ -102,7 +102,7 @@ public class HakukohdeValidator {
         String kausi = null;
         Integer vuosi = null;
         
-        boolean tilaOk = false;
+//        boolean tilaOk = false;
         if(komotot.size()==0) {
             return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
         }
@@ -117,15 +117,15 @@ public class HakukohdeValidator {
                } 
             }
             
-            if(komoto.getTila()!=TarjontaTila.PERUTTU && komoto.getTila()!=TarjontaTila.POISTETTU) {
-            	tilaOk = true;
-            }
+//            if(komoto.getTila()!=TarjontaTila.PERUTTU && komoto.getTila()!=TarjontaTila.POISTETTU) {
+//            	tilaOk = true;
+//            }
 
         }
         
-        if (!tilaOk) {
-            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
-        }
+//        if (!tilaOk) {
+//            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
+//        }
         
         return Collections.EMPTY_LIST;
     }

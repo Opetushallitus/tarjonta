@@ -1082,7 +1082,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.checkKoulutukset(kaikkiKoulutukset);
         if (validationMessages.size() > 0) {
-            System.out.println("validation:" + validationMessages);
             return populateValidationErrors(null, validationMessages);
         }
 

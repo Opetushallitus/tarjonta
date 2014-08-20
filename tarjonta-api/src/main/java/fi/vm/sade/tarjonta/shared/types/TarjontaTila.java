@@ -80,7 +80,11 @@ public enum TarjontaTila {
     		return this==VALMIS || this==PERUTTU;    	
                 case POISTETTU:
                                 return isRemovable();           
-    	default:
+
+                case LUONNOS:
+                                return this==KOPIOITU;           
+
+                default:
     		return false;
     	}
     }

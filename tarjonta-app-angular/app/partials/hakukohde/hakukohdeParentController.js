@@ -41,6 +41,16 @@ app.controller('HakukohdeParentController', [
             "AMMATTITUTKINTO": aikuNayttoHakukohdePartialUri
         };
 
+        
+        function updateTila(tila) {
+          var tilat = ["LUONNOS","PERUTTU","KOPIOITU"];
+          if (tilat.indexOf($scope.model.hakukohde.tila)) {
+            // päivitä tila modeliin jos se voi muuttua
+            $scope.model.hakukohde.tila = tila;
+          }
+        }
+
+        
         /*
          * 
          * Common hakukohde controller variables
@@ -967,7 +977,8 @@ app.controller('HakukohdeParentController', [
 
                 if (hakukohdeValidationFunction()) {
                     $scope.model.showError = false;
-                    $scope.model.hakukohde.tila = tila;
+                    
+                    updateTila(tila);
 
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
