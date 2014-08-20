@@ -164,6 +164,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             //override parent komo data by the child komo data
             mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         } else if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
+            /**
+             * 2ASTE : AMMATILLINEN_PERUSTUTKINTO
+             */
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
             amisDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
@@ -174,6 +177,27 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             for (Map.Entry<KomoTeksti, MonikielinenTeksti> teksti : komo.getTekstit().entrySet()) {
                 if (KomoTeksti.TAVOITTEET.equals(teksti.getKey())) {
                     amisDto.setKoulutuksenTavoitteet(CommonRestConverters.toStringMap(teksti.getValue()));
+                    break;
+                }
+            }
+
+            mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
+        } else if (dto instanceof KoulutusValmentavaJaKuntouttavaV1RDTO) {
+            /**
+             * 2ASTE : VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
+             */
+            KoulutusValmentavaJaKuntouttavaV1RDTO valmKuntDto = (KoulutusValmentavaJaKuntouttavaV1RDTO) dto;
+            valmKuntDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+            // TODO: aiheuttaa nyt "org.apache.cxf.interceptor.Fault: Koodi uri with version string object cannot be null"
+            // valmKuntDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
+            valmKuntDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
+            valmKuntDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+            valmKuntDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
+
+            for (Map.Entry<KomoTeksti, MonikielinenTeksti> teksti : komo.getTekstit().entrySet()) {
+                if (KomoTeksti.TAVOITTEET.equals(teksti.getKey())) {
+                    valmKuntDto.setKoulutuksenTavoitteet(CommonRestConverters.toStringMap(teksti.getValue()));
+                    break;
                 }
             }
 

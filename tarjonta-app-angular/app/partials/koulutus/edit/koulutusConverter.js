@@ -614,6 +614,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }),
 
         /*******************************************/
+        /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: $.extend(GENERIC_VALMISTAVA_STRUCTURE, {
+            STR: $.extend(GENERIC_VALMISTAVA_STRUCTURE.STR, {
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            })
+        }),
+
+        /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
