@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,13 +57,16 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.TarjontaAdminService;
 import fi.vm.sade.tarjonta.service.TarjontaPublicService;
-import fi.vm.sade.tarjonta.service.resources.HakukohdeResource;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -68,13 +74,18 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.OrganisaatioHakukohdeGroup;
 import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
 import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.Map;
 import org.joda.time.DateTime;
+
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
@@ -114,7 +125,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     private OidService oidService;
 
     @Autowired
-    private HakukohdeResource hakukohdeResource;
+    private HakukohdeV1Resource hakukohdeResource;
 
     @Autowired
     private KoulutusV1Resource koulutusResource;
@@ -133,6 +144,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         try {
             Mockito.stub(oidService.get(TarjontaOidType.KOMO)).toReturn("oid-komo");
             Mockito.stub(oidService.get(TarjontaOidType.KOMOTO)).toReturn("oid-komoto");
+            Mockito.stub(oidService.get(TarjontaOidType.HAKUKOHDE)).toReturn("oid-hakukohde");
         } catch (OIDCreationException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -178,7 +190,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 getOrgDTO("1.2.3.4.555"));
 
         stubKoodi(koodiService, "kieli_fi", "FI");
-        stubKoodi(koodiService, "koulutus-uri", "FI");
         stubKoodi(koodiService, "tutkinto-uri", "FI");
         stubKoodi(koodiService, "laajuus-uri", "FI");
         stubKoodi(koodiService, "laajuusyksikko-uri", "FI");
@@ -186,6 +197,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         stubKoodi(koodiService, "koulutusala-uri", "FI");
         stubKoodi(koodiService, "opintoala-uri", "FI");
         stubKoodi(koodiService, "tutkintonimike-uri", "FI");
+        stubKoodi(koodiService, "kausi_k", "FI");
         stubKoodi(koodiService, "EQF-uri", "FI");
         stubKoodi(koodiService, "suunniteltu-kesto-uri", "FI");
 
@@ -219,9 +231,12 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         solrServer.commit();
     }
 
+    private String hkOid;
+
     void createTestDataInTransaction() {
 
         executeInTransaction(new Runnable() {
+
             @Override
             public void run() {
                 hakukohde = tarjontaFixtures
@@ -236,6 +251,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
                                         .getOid()));
+                
+                
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
                 hakukohde = tarjontaFixtures
@@ -263,7 +280,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         assertNotNull(vastaus);
 
         assertEquals(3, vastaus.getKoulutukset().size());
-
+        
         kysely.setNimi("foo");
         vastaus = tarjontaSearchService.haeKoulutukset(kysely);
 
@@ -284,14 +301,13 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         assertNotNull(vastaus);
 
         assertEquals(3, vastaus.getHakukohteet().size());
-
+        
         kysely.setNimi("foo");
         vastaus = tarjontaSearchService.haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
         assertEquals(0, vastaus.getHakukohteet().size());
-
     }
 
     @Test
@@ -372,29 +388,37 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         assertEquals(1, vastaus.getKoulutukset().size());
     }
 
-//    @Test
-//    public void testKKHakukohde() throws SolrServerException {
-//        createTestDataInTransaction();
-//
-//        // tee kk koulutus ja hakukohde
-//        executeInTransaction(new Runnable() {
-//            @Override
-//            public void run() {
-//                KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
-//                ResultV1RDTO<KoulutusKorkeakouluV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKorkeakouluKoulutus(kk);
-//                HakukohdeV1RDTO hakukohde = getHakukohde(postKorkeakouluKoulutus.getResult().getOid());
-//                hakukohdeResource.insertHakukohde(hakukohde);
-//            }
-//
-//        });
-//
-//        HakukohteetKysely kysely = new HakukohteetKysely();
-//        kysely.setNimi("kkhakukohdenimi");
-//        HakukohteetVastaus vastaus = tarjontaSearchService
-//                .haeHakukohteet(kysely);
-//        assertNotNull(vastaus);
-//        assertEquals(1, vastaus.getHakukohteet().size());
-//    }
+
+    @Test
+    public void testKKHakukohde() throws SolrServerException {
+        createTestDataInTransaction();
+
+        // tee kk koulutus ja hakukohde
+        executeInTransaction(new Runnable() {
+            @Override
+            public void run() {
+                KoulutusKorkeakouluV1RDTO kk = getKKKoulutus();
+                ResultV1RDTO<KoulutusV1RDTO> postKorkeakouluKoulutus = koulutusResource.postKoulutus(kk);
+                HakukohdeV1RDTO hakukohde = getKKHakukohde(postKorkeakouluKoulutus.getResult().getOid());
+                ResultV1RDTO<HakukohdeV1RDTO> response = hakukohdeResource.createHakukohde(hakukohde);
+                assertEquals("errors in koulutus insert", false, response.hasErrors());
+            }
+        });
+
+        HakukohteetKysely kysely = new HakukohteetKysely();
+        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.KORKEAKOULUTUS);
+        HakukohteetVastaus vastaus = tarjontaSearchService
+                .haeHakukohteet(kysely);
+        assertNotNull(vastaus);
+        assertEquals(1, vastaus.getHakukohteet().size());
+        
+        assertEquals(Integer.valueOf(2014), TarjontaSearchServiceTest.this.hakukohde.getHaku().getKoulutuksenAlkamisVuosi());
+        
+        assertEquals(Integer.valueOf(2011), vastaus.getHakukohteet().get(0).getKoulutuksenAlkamisvuosi());
+        assertEquals("kausi_k#0", vastaus.getHakukohteet().get(0).getKoulutuksenAlkamiskausi().getUri());
+    }
+    
+    
     private KoulutusKorkeakouluV1RDTO getKKKoulutus() {
 
         KoulutusKorkeakouluV1RDTO kk = new KoulutusKorkeakouluV1RDTO();
@@ -413,7 +437,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kk.setKoulutuskoodi(new KoodiV1RDTO("koulutus-uri", 1, null));
         kk.setOpintojenMaksullisuus(Boolean.FALSE);
         kk.setSuunniteltuKestoTyyppi(new KoodiV1RDTO("suunniteltu-kesto-uri", 1, null));
-        kk.getKoulutuksenAlkamisPvms().add(new DateTime(2013, 1, 1, 1, 1).toDate());
+        kk.getKoulutuksenAlkamisPvms().add(new DateTime(2011, 1, 1, 1, 1).toDate());
         kk.setKoulutuksenAlkamiskausi(new KoodiV1RDTO("uri_kausi", 1, null));
         kk.setSuunniteltuKestoArvo("1");
 
@@ -444,35 +468,35 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return kk;
     }
 
-    /*
-     private HakukohdeV1RDTO getHakukohde(String koulutusOid) {
-     HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
-     hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
-     .getOid());
+    private HakukohdeV1RDTO getKKHakukohde(String koulutusOid) {
+        HakukohdeV1RDTO hakukohde = new HakukohdeV1RDTO();
+        hakukohde.setHakuOid(TarjontaSearchServiceTest.this.hakukohde.getHaku()
+                .getOid());
 
-     //TekstiRDTO nimi = new TekstiRDTO();
-     HashMap<String, String> nimet = new HashMap<String, String>();
-     nimet.put("kieli_fi", "kkhakukohdenimi");
-     //nimi.setUri("kieli_fi");
-     //nimi.setTeksti("kkhakukohdenimi");
-     //ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
-     //nimet.add(nimi);
+        // TekstiRDTO nimi = new TekstiRDTO();
+        HashMap<String, String> nimet = new HashMap<String, String>();
+        nimet.put("kieli_fi", "kkhakukohdenimi");
+        // nimi.setUri("kieli_fi");
+        // nimi.setTeksti("kkhakukohdenimi");
+        // ArrayList<TekstiRDTO> nimet = new ArrayList<TekstiRDTO>();
+        // nimet.add(nimi);
 
-     hakukohde.setHakukohteenNimet(nimet);
-     hakukohde.setTila(TarjontaTila.JULKAISTU.toString());
+        hakukohde.setHakukohteenNimet(nimet);
+        hakukohde.setTila(TarjontaTila.VALMIS.toString());
 
-     ArrayList<String> koulutusOidit = new ArrayList();
-     koulutusOidit.add(koulutusOid);
-     // oidit
-     hakukohde.setHakukohdeKoulutusOids(koulutusOidit);
-     OsoiteRDTO osoite = new OsoiteRDTO();
-     osoite.setCreated(new Date());
-     osoite.setModified(new Date());
-     hakukohde.setLiitteidenToimitusOsoite(osoite);
-     return hakukohde;
-     }
-     */
-    /**
+        ArrayList<String> koulutusOidit = new ArrayList();
+        koulutusOidit.add(koulutusOid);
+        // oidit
+        hakukohde.setHakukohdeKoulutusOids(koulutusOidit);
+        OsoiteRDTO osoite = new OsoiteRDTO();
+        osoite.setCreated(new Date());
+        osoite.setModified(new Date());
+        hakukohde.setLiitteidenToimitusOsoite(osoite);
+        hakukohde.setToteutusTyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS.toString());
+        return hakukohde;
+    }
+
+     /**
      * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on
      * hookattu nyt transaktion onnistumiseen.
      *
