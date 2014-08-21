@@ -164,6 +164,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             //override parent komo data by the child komo data
             mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         } else if (dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO) {
+            /**
+             * 2ASTE : AMMATILLINEN_PERUSTUTKINTO
+             */
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
             amisDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
@@ -174,8 +177,26 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             for (Map.Entry<KomoTeksti, MonikielinenTeksti> teksti : komo.getTekstit().entrySet()) {
                 if (KomoTeksti.TAVOITTEET.equals(teksti.getKey())) {
                     amisDto.setKoulutuksenTavoitteet(CommonRestConverters.toStringMap(teksti.getValue()));
+                    break;
                 }
             }
+
+            mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
+        } else if (dto instanceof ValmistavaKoulutusV1RDTO) {
+            /**
+             * 2-ASTE :
+             *         - VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS
+             *         - AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS
+             *         - PERUSOPETUKSEN_LISAOPETUS
+             *         - MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS
+             */
+            ValmistavaKoulutusV1RDTO valmDto = (ValmistavaKoulutusV1RDTO) dto;
+            valmDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+            // TODO: aiheuttaa nyt "org.apache.cxf.interceptor.Fault: Koodi uri with version string object cannot be null"
+            // valmKuntDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
+            valmDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
+            valmDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
+            valmDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
 
             mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
         } else if (dto instanceof NayttotutkintoV1RDTO) {

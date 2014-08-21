@@ -15,23 +15,17 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
-import java.util.Map;
-
 /**
  *
- * @author mlyly
+ * @author alexGofore
  */
-public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
+public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
 
     @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
     private KoodiV1RDTO pohjakoulutusvaatimus;
-
-    @ApiModelProperty(value = "Tutkintonimike", required = true)
-    private KoodiV1RDTO tutkintonimike;
 
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
     private String linkkiOpetussuunnitelmaan;
@@ -39,19 +33,8 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
 
-    @ApiModelProperty(value = "Koulutuksen-tavoitteet", required = false)
-    private Map<String, String> koulutuksenTavoitteet;
-
-    public KoulutusAmmatillinenPerustutkintoV1RDTO() {
-        super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
-    }
-
-    public KoulutusAmmatillinenPerustutkintoV1RDTO(ToteutustyyppiEnum toteutustyyppiEnum, ModuulityyppiEnum moduulityyppiEnum) {
-        super(toteutustyyppiEnum, moduulityyppiEnum);
-    }
-
-    protected KoulutusAmmatillinenPerustutkintoV1RDTO(ToteutustyyppiEnum koulutustyyppiUri) {
-        super(koulutustyyppiUri, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+    protected ValmistavaKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
+        super(toteutustyyppi, moduulityyppi);
     }
 
     /**
@@ -69,17 +52,17 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
     }
 
     /**
-     * @return the tutkintonimike
+     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
      */
-    public KoodiV1RDTO getTutkintonimike() {
-        return tutkintonimike;
+    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
+        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
     }
 
     /**
-     * @param tutkintonimike the tutkintonimike to set
+     * @return the pohjakoulutusvaatimus
      */
-    public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
-        this.tutkintonimike = tutkintonimike;
+    public KoodiV1RDTO getPohjakoulutusvaatimus() {
+        return pohjakoulutusvaatimus;
     }
 
     /**
@@ -94,27 +77,5 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
-    }
-
-    /**
-     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
-     */
-    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
-        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @return the pohjakoulutusvaatimus
-     */
-    public KoodiV1RDTO getPohjakoulutusvaatimus() {
-        return pohjakoulutusvaatimus;
-    }
-
-    public Map<String, String> getKoulutuksenTavoitteet() {
-        return koulutuksenTavoitteet;
-    }
-
-    public void setKoulutuksenTavoitteet(Map<String, String> koulutuksenTavoitteet) {
-        this.koulutuksenTavoitteet = koulutuksenTavoitteet;
     }
 }

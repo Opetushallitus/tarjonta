@@ -15,19 +15,17 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
-import java.util.Map;
-
 /**
  *
- * @author alexGofore
+ * @author mlyly
  */
-public class KoulutusValmentavaJaKuntouttavaV1RDTO extends ValmistavaKoulutusV1RDTO {
+public class KoulutusMaahanmuuttajienAmmatilliseenPeruskoulutukseenValmistavaV1RDTO extends ValmistavaKoulutusV1RDTO {
 
-    public KoulutusValmentavaJaKuntouttavaV1RDTO() {
-        super(ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS, ModuulityyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS);
+    public KoulutusMaahanmuuttajienAmmatilliseenPeruskoulutukseenValmistavaV1RDTO() {
+        super(ToteutustyyppiEnum.MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS, ModuulityyppiEnum.MAAHANM_AMM_VALMISTAVA_KOULUTUS);
     }
+
 }
