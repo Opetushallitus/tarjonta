@@ -47,12 +47,13 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version"})
+@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version","organisaatioRyhmaOids"})
 @Table(name = Hakukohde.TABLE_NAME)
 public class Hakukohde extends TarjontaBaseEntity {
 
@@ -676,6 +677,16 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.ulkoinenTunniste = ulkoinenTunniste;
     }
 
+    @JsonProperty
+    public String getOrganisaatioRyhmat() {
+        return organisaatioRyhmaOids;
+    }
+
+    public void setOrganisaatioRyhmat(String oids) {
+        organisaatioRyhmaOids = oids;
+    }
+
+    
     public String[] getOrganisaatioRyhmaOids() {
         if (organisaatioRyhmaOids == null || organisaatioRyhmaOids.isEmpty()) {
             return new String[0];

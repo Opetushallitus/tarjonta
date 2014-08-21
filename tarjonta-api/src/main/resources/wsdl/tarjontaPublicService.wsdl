@@ -116,6 +116,14 @@
     <wsdl:message name="lueKoulutusmoduuliVastaus">
         <wsdl:part element="ns1:lueKoulutusmoduuliVastaus" name="parameters"/>
     </wsdl:message>
+    
+    <wsdl:message name="haeKoulutustyyppiUrisKysely">
+        <wsdl:part element="ns1:haeKoulutustyyppiUrisKysely" name="parameters"/>
+    </wsdl:message>
+    
+    <wsdl:message name="haeKoulutustyyppiUrisVastaus">
+        <wsdl:part element="ns1:haeKoulutustyyppiUrisVastaus" name="parameters"/>
+    </wsdl:message>
 
     <wsdl:portType name="TarjontaPublicService">
 
@@ -230,6 +238,18 @@
             <wsdl:output message="tns:lueKoulutusmoduuliVastaus" name="lueKoulutusmoduuliVastaus">
             </wsdl:output>
         </wsdl:operation>
+        
+        <wsdl:operation name="haeKoulutustyyppiUris">
+            <wsdl:documentation>
+                Hakee organisaation OID:lla organisaation mahdolliset koulutustyypit.
+            </wsdl:documentation>
+            <wsdl:input message="tns:haeKoulutustyyppiUrisKysely" name="haeKoulutustyyppiUrisKysely">
+            </wsdl:input>
+            <wsdl:output message="tns:haeKoulutustyyppiUrisVastaus" name="haeKoulutustyyppiUrisVastaus">
+            </wsdl:output>
+        </wsdl:operation>
+        
+        
 
     </wsdl:portType>
 
@@ -366,7 +386,16 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-
+        
+        <wsdl:operation name="haeKoulutustyyppiUris">
+            <soap:operation soapAction="http://service.tarjonta.sade.vm.fi/haeKoulutustyyppiUris"/>
+            <wsdl:input name="haeKoulutustyyppiUrisKysely">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="haeKoulutustyyppiUrisVastaus">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
 
     <wsdl:service name="TarjontaPublicService">

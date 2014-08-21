@@ -5,7 +5,7 @@
            xmlns:tarjonta="http://service.tarjonta.sade.vm.fi/types"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:include schemaLocation="tarjonta.xsd"/>
+    <xs:include schemaLocation="tarjonta.xsd"/>
 
     <xs:element name="listaaHaku" type="tns:ListaaHakuTyyppi" />
     <xs:element name="listaaHakuVastaus" type="tns:ListHakuVastausTyyppi" />
@@ -44,6 +44,9 @@
     
     <xs:element name="lueKoulutusmoduuliKysely" type="tns:LueKoulutusmoduuliKyselyTyyppi" />
     <xs:element name="lueKoulutusmoduuliVastaus" type="tns:LueKoulutusmoduuliVastausTyyppi" />
+    
+    <xs:element name="haeKoulutustyyppiUrisKysely" type="tns:haeKoulutustyyppiUrisKyselyTyyppi" />
+    <xs:element name="haeKoulutustyyppiUrisVastaus" type="tns:haeKoulutustyyppiUrisVastausTyyppi" />
 
     <xs:complexType name="HaeHakukohteenLiitteetKyselyTyyppi">
         <xs:sequence>
@@ -289,6 +292,42 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="koulutusmoduuli" type="tarjonta:KoulutusmoduuliKoosteTyyppi" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="haeKoulutustyyppiUrisKyselyTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="organisaatioOid"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="haeKoulutustyyppiUrisVastausTyyppi">
+        <xs:annotation>
+            <xs:documentation xml:lang="fi">
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="organisaatioOid"
+                        type="xs:string"
+                        maxOccurs="1"
+                        minOccurs="1"/>
+            
+            <xs:element name="hasKoulutusmodules"
+                        type="xs:boolean"
+                        maxOccurs="1"
+                        minOccurs="0"/>
+ 
+            <xs:element name="koulutustyyppiUris"
+                        type="xs:string"
+                        maxOccurs="unbounded"
+                        minOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
     

@@ -378,7 +378,7 @@ public class KomoResourceImplV1 implements KomoV1Resource {
         }
 
         if (koulutustyyppiUri != null) {
-            criteria.setKoulutustyyppiUri(koulutustyyppiUri);
+            criteria.setToteutustyyppiEnum(koulutustyyppiUri);
         }
 
         if (koulutusmoduuliTyyppi != null) {

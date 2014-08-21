@@ -214,7 +214,11 @@
 
 	    <tr class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
 	        <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
-	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaRyhmaModal()"><span tt="hakukohde.review.liita.ryhma"/> <span class="icon-plus-sign"></span></a>
+	        <td>
+                    <!--
+                    <a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaRyhmaModal()"><span tt="hakukohde.review.liita.ryhma"/> <span class="icon-plus-sign"></span></a>
+                    -->
+                </td>
 	    </tr>
 
 	    <tr ng-show="!model.collapse.ryhmat">
