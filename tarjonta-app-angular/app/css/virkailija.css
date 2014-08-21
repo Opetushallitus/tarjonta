@@ -48,7 +48,7 @@ background-image: none;
 .btn[disabled] {
   cursor: default;
   color: #333333;    
-  background-image:url("https://dl.dropboxusercontent.com/u/1218812/disabled-pat.png");
+  /*background-image:url("https://dl.dropboxusercontent.com/u/1218812/disabled-pat.png");*/
   background-repeat: repeat;
   border: 1px solid #ababab;
   box-shadow: none;    
