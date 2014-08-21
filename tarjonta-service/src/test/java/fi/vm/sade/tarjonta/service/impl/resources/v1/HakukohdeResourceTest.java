@@ -236,16 +236,6 @@ public class HakukohdeResourceTest {
     }
 
     @Test
-    public void testOVT7385() {
-        HakukohdeV1RDTO hk = getHakukohde();
-        hk.getHakukohdeKoulutusOids().clear();
-        hk.getHakukohdeKoulutusOids().add(KOMOTO_PERUTTU);
-        ResultV1RDTO<HakukohdeV1RDTO> res = hakukohdeResource.createHakukohde(hk);
-        Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
-        Assert.assertEquals("HAKUKOHDE_KOULUTUS_TILA_INVALID", res.getErrors().get(0).getErrorMessageKey());
-    }
-
-    @Test
     public void testCreate() {
         HakukohdeV1RDTO hk;
 
