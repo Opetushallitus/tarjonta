@@ -668,6 +668,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }),
 
         /*******************************************/
+        /* AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA: $.extend(GENERIC_VALMISTAVA_STRUCTURE, {
+            STR: $.extend(GENERIC_VALMISTAVA_STRUCTURE.STR, {
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            })
+        }),
+
+        /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,

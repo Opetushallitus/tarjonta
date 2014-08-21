@@ -46,6 +46,10 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
         super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
 
+    public KoulutusAmmatillinenPerustutkintoV1RDTO(ToteutustyyppiEnum toteutustyyppiEnum, ModuulityyppiEnum moduulityyppiEnum) {
+        super(toteutustyyppiEnum, moduulityyppiEnum);
+    }
+
     protected KoulutusAmmatillinenPerustutkintoV1RDTO(ToteutustyyppiEnum koulutustyyppiUri) {
         super(koulutustyyppiUri, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
