@@ -650,6 +650,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }),
 
         /*******************************************/
+        /* MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS: $.extend(GENERIC_VALMISTAVA_STRUCTURE, {
+            STR: $.extend(GENERIC_VALMISTAVA_STRUCTURE.STR, {
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            })
+        }),
+
+        /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,

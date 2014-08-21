@@ -211,6 +211,11 @@
             <td colspan="2" data-ng-bind-html="model.koulutus.kuvausKomo.KOULUTUKSEN_RAKENNE.tekstis[lang.koodi_uri]"></td>
         </tr>
 
+        <tr ng-show="model.koulutus.kuvausKomoto.KOHDERYHMA">
+            <th tt="koulutus.review.kuvailevatTiedot.kohderyhma">Kohderyhmä</th>
+            <td colspan="2" data-ng-bind-html="model.koulutus.kuvausKomoto.KOHDERYHMA.tekstis[lang.koodi_uri]"></td>
+        </tr>
+
         <tr>
             <th tt="koulutus.review.kuvailevatTiedot.kansainvalistyminen">Kansainvälistyminen</th>
             <td colspan="2" data-ng-bind-html="model.koulutus.kuvausKomoto.KANSAINVALISTYMINEN.tekstis[lang.koodi_uri]"></td>
