@@ -8,12 +8,9 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * @author: Tuomas Katva 10/3/13
- */
 public class CommonRestConverters {
 
-    public static Osoite convertOsoiteRDTOToOsoite(OsoiteRDTO osoiteRDTO) {
+    public static Osoite toOsoite(OsoiteRDTO osoiteRDTO) {
         Osoite osoite = new Osoite();
 
         osoite.setOsoiterivi1(osoiteRDTO.getOsoiterivi1());

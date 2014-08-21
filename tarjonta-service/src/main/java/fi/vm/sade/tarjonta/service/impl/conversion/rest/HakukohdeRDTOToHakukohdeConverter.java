@@ -77,7 +77,7 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         hakukohde.setYlinValintaPistemaara(hakukohdeDTO.getYlinValintapistemaara());
         hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());
 
-        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
+        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.toOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
 
         hakukohde.setHakukelpoisuusVaatimukset(new HashSet<String>(hakukohdeDTO.getHakukelpoisuusvaatimusUris()));
 

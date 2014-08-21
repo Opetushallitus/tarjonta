@@ -784,7 +784,7 @@ public class ConverterV1 {
             hakukohde.setHakukelpoisuusVaatimusKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
         }
         if (hakukohdeRDTO.getLiitteidenToimitusOsoite() != null) {
-            hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
+            hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.toOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
         }
 
         for (ValintakoeV1RDTO valintakoeV1RDTO : hakukohdeRDTO.getValintakokeet()) {
@@ -1075,7 +1075,7 @@ public class ConverterV1 {
         hakukohdeLiite.setHakukohdeLiiteNimi(hakukohdeLiiteV1RDTO.getLiitteenNimi());
         hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteV1RDTO.getSahkoinenToimitusOsoite());
         hakukohdeLiite.setErapaiva(hakukohdeLiiteV1RDTO.getToimitettavaMennessa());
-        hakukohdeLiite.setToimitusosoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
+        hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
         hakukohdeLiite.setKuvaus(convertMapToMonikielinenTeksti(hakukohdeLiiteV1RDTO.getLiitteenKuvaukset()));
 
         return hakukohdeLiite;
@@ -1161,7 +1161,7 @@ public class ConverterV1 {
 
             valintakoeAjankohta.setValintakoe(vk);
             valintakoeAjankohta.setLisatietoja(valintakoeAjankohtaRDTO.getLisatiedot());
-            valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(valintakoeAjankohtaRDTO.getOsoite()));
+            valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.toOsoite(valintakoeAjankohtaRDTO.getOsoite()));
             valintakoeAjankohta.setAlkamisaika(valintakoeAjankohtaRDTO.getAlkaa());
             valintakoeAjankohta.setPaattymisaika(valintakoeAjankohtaRDTO.getLoppuu());
             valintakoeAjankohtas.add(valintakoeAjankohta);

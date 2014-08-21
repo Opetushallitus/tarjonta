@@ -17,7 +17,7 @@ public class HakukohdeLiiteRDTOToLiiteConverter implements Converter<HakukohdeLi
         hakukohdeLiite.setErapaiva(hakukohdeLiiteDTO.getErapaiva());
         hakukohdeLiite.setKuvaus(CommonRestConverters.toMonikielinenTeksti(hakukohdeLiiteDTO.getKuvaus()));
         hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteDTO.getLiitteenTyyppiUri());
-        hakukohdeLiite.setToimitusosoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeLiiteDTO.getToimitusosoite()));
+        hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteDTO.getToimitusosoite()));
         hakukohdeLiite.setSahkoinenToimitusosoite(hakukohdeLiiteDTO.getSahkoinenToimitusosoite());
         hakukohdeLiite.setLastUpdateDate(hakukohdeLiiteDTO.getModified());
         hakukohdeLiite.setLastUpdatedByOid(hakukohdeLiiteDTO.getCreatedBy());

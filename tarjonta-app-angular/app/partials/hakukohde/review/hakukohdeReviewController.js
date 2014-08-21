@@ -478,6 +478,11 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
       }
       $scope.isRemovable = results[1] === true && results[2] === true;
       checkForHakuRemove();
+
+      var tila = $scope.model.hakukohde.tila;
+      if(['JULKAISTU','POISTETTU'].indexOf(tila) != -1) {
+        $scope.isRemovable = false;
+      }
     });
 
     if ($scope.model.hakukohde.result) {

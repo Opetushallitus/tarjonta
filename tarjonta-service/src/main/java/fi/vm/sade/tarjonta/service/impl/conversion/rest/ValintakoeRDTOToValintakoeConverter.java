@@ -43,7 +43,7 @@ public class ValintakoeRDTOToValintakoeConverter implements Converter<Valintakoe
 
             for (ValintakoeAjankohtaRDTO ajankohtaRDTO: valintakoeAjankohtaRDTOs) {
                ValintakoeAjankohta ajankohta = new ValintakoeAjankohta();
-               ajankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(ajankohtaRDTO.getOsoite()));
+               ajankohta.setAjankohdanOsoite(CommonRestConverters.toOsoite(ajankohtaRDTO.getOsoite()));
                ajankohta.setAlkamisaika(ajankohtaRDTO.getAlkaa());
                ajankohta.setPaattymisaika(ajankohtaRDTO.getLoppuu());
                ajankohta.setLisatietoja(ajankohtaRDTO.getLisatiedot());
