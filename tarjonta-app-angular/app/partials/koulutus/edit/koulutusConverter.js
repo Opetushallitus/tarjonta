@@ -659,6 +659,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }),
 
         /*******************************************/
+        /* VAPAAN_SIVISTYSTYON_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        VAPAAN_SIVISTYSTYON_KOULUTUS: $.extend(GENERIC_VALMISTAVA_STRUCTURE, {
+            STR: $.extend(GENERIC_VALMISTAVA_STRUCTURE.STR, {
+                suunniteltuKestoArvo: {nullable: true, "default": ''}
+            })
+        }),
+
+        /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
