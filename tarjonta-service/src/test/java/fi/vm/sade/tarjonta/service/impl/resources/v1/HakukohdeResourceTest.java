@@ -141,6 +141,7 @@ public class HakukohdeResourceTest {
         komoto3.setToteutustyyppi(ToteutustyyppiEnum.KORKEAKOULUTUS);
 
         komotoPeruttu = new KoulutusmoduuliToteutus();
+        komotoPeruttu.setOid(KOMOTO_PERUTTU);
         komotoPeruttu.setTila(TarjontaTila.PERUTTU);
         komotoPeruttu.setAlkamiskausiUri("kausi2");
         komotoPeruttu.setAlkamisVuosi(2005);

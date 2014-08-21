@@ -27,19 +27,31 @@
 
     <display-controls model="formControls" display="header"></display-controls>
 
+    AIKU LUKIO
+    
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
 
                 <export-to-parent name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
-
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo koodistouri="'hakukohteet'"  koodiuri="model.hakukohde.hakukohteenNimiUri"  parentkoodiuri="'lukiolinjat_0086'" isdependent="true" locale="'fi'"  version="true" isrequired="true" name="hakutapa"></div>
+                            <div koodistocombo 
+                                 onchangecallback="fnTemp"  
+                                 koodistouri="'hakukohteet'"  
+                                 koodiuri="model.hakukohde.hakukohteenNimiUri"  
+                                 parentkoodiuri="'lukiolinjat_0086'" 
+                                 isdependent="true" 
+                                 locale="'fi'"  
+                                 version="true" 
+                                 isrequired="true" 
+                                 excludeuris="temp"
+                                 isalakoodi="temp"
+                                 name="hakutapa"></div>
                         </td>
                         <td>
                             <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->

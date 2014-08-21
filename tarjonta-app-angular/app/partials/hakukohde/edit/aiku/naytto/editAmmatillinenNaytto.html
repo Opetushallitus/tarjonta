@@ -5,7 +5,7 @@
             tt-create="hakukohde.create.header.title"
             tt-edit="hakukohde.edit.header.title"
             title="model.hakukohde.tekstis"
-            dto="model.hakukohde">
+            dto="model.hakukohde"> 
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
@@ -26,7 +26,10 @@
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
-
+     
+    
+    AMM {{model.canSaveAsLuonnos() | json}}
+    
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
@@ -39,7 +42,19 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo koodistouri="'aikuhakukohteet'"  koodiuri="model.hakukohde.hakukohteenNimiUri"  parentkoodiuri="osaamisalat" isdependent="true" locale="'fi'"  version="true" isrequired="true" name="hakutapa"></div>
+                            <div koodistocombo 
+                                 onchangecallback="fnTemp"  
+                                 koodistouri="'aikuhakukohteet'"  
+                                 koodiuri="model.hakukohde.hakukohteenNimiUri"  
+                                 parentkoodiuri="osaamisalat" 
+                                 isdependent="true" 
+                                 locale="'fi'"  
+                                 version="true" 
+                                 isrequired="true" 
+                                 name="hakutapa"
+                                 excludeuris="temp"
+                                 isalakoodi="temp"
+                                 ></div>
                         </td>
                         <td>
                             <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->

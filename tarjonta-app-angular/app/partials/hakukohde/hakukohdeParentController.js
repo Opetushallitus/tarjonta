@@ -400,7 +400,7 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
                     $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids, hakuFilterFunction);
                     var orgQueryPromises = [];
-                    
+
                     angular.forEach($scope.model.hakukohde.tarjoajaOids, function(tarjoajaOid) {
                         orgQueryPromises.push(OrganisaatioService.byOid(tarjoajaOid));
                     });
@@ -536,27 +536,24 @@ app.controller('HakukohdeParentController', [
                 // Get selected haku if one is defined that must be shown
                 // even if the filtering does not show it
                 if ($scope.model.hakukohde.hakuOid) {
-
-                    angular.forEach(hakuDatas, function(haku) {
-
-                        if (haku.oid === $scope.model.hakukohde.hakuOid) {
-                            selectedHaku = haku;
-                        }
-
+                    selectedHaku = _.find(hakuDatas, function(m) {
+                        return m.oid === $scope.model.hakukohde.hakuOid;
                     });
-
                 }
 
                 var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
                 $log.info('HAKUS FILTERED WITH GIVEN FUNCTION : ', filteredHakus);
 
                 if (selectedHaku) {
-                    filteredHakus.push(selectedHaku);
+                    var inFilteres = _.find(filteredHakus, function(m) {
+                        return m.oid === selectedHaku.oid;
+                    });
+                    if (!inFilteres) {
+                        filteredHakus.push(inFilteres);
+                    }
                 }
 
-                angular.forEach(filteredHakus, function(haku) {
-                    $scope.model.hakus.push(haku);
-                });
+                $scope.model.hakus = filteredHakus;
 
                 if ($scope.model.hakukohde.hakuOid !== undefined && $scope.model.hakuChanged) {
                     $scope.model.hakuChanged();
@@ -1193,5 +1190,11 @@ app.controller('HakukohdeParentController', [
             return orgMatches;
 
         };
+
+        $scope.fnTemp = function() {
+            //no nothing. A quick hack, this is here as some directives needs function parameters.
+        };
+
+        $scope.temp = null;
 
     }]);
