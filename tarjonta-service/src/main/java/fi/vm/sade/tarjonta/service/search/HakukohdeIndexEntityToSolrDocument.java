@@ -81,6 +81,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
         if(koulutuses.size()==0){
             logger.warn("There is a hakukohde without komotos???" + hakukohde.toString());
+            return Collections.EMPTY_LIST;
         }
         
         add(hakukohdeDoc, OID, hakukohde.getOid());
