@@ -271,7 +271,7 @@ app.controller('BaseReviewController', [
             var koulutusOids = [];
             koulutusOids.push($scope.model.koulutus.oid);
             SharedStateService.addToState('SelectedKoulutukses', koulutusOids);
-            SharedStateService.addToState('SelectedKoulutusTyyppi', $scope.model.koulutus.toteutustyyppi);
+            SharedStateService.addToState('SelectedToteutusTyyppi', $scope.model.koulutus.toteutustyyppi);
             SharedStateService.addToState('SelectedOrgOid', $scope.model.koulutus.organisaatio.oid);
             $location.path('/hakukohde/new/edit');
         };
@@ -316,8 +316,14 @@ app.controller('BaseReviewController', [
             dialogService.showNotImplementedDialog();
         };
         $scope.doPreview = function(event) {
-            $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid + "?lang=" + $scope.model.koodistoLocale;
             //example : https://<oppija-env>/app/preview.html#!/korkeakoulu/1.2.246.562.5.2014021318092550673640?lang=fi
+
+            if ($scope.model.koulutus.toteutustyyppi === 'KORKEAKOULUTUS') {
+                $window.location.href = window.CONFIG.env['web.url.oppija.preview'] + $scope.model.koulutus.oid + "?lang=" + $scope.model.koodistoLocale;
+            } else if ($scope.model.koulutus.toteutustyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA') {
+                //TODO: fix the 'korkeakoulu' in the env config.
+                $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace("korkeakoulu", "aikuislukio") + $scope.model.koulutus.oid + "?lang=" + $scope.model.koodistoLocale;
+            }
         };
 
         $scope.findHakukohdeNimi = function(lang, hakukohde) {
@@ -416,7 +422,7 @@ app.controller('BaseReviewController', [
                     'AMMATILLINEN_PERUSTUTKINTO'
                 ])
             ) {
-                if (angular.isDefined($scope.model.koulutus.koulutusohjelma) && angular.isDefined($scope.model.koulutus.koulutusohjelma.meta) && angular.isDefined(userLangUri) ) {
+                if (angular.isDefined($scope.model.koulutus.koulutusohjelma) && angular.isDefined($scope.model.koulutus.koulutusohjelma.meta) && angular.isDefined(userLangUri)) {
                     if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.meta[userLangUri])) {
                         // Just take first value for language
                         userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.meta)[0];

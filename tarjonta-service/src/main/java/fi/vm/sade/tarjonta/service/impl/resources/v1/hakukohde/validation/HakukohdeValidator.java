@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
@@ -72,10 +73,6 @@ public class HakukohdeValidator {
 
         validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
 
-        if (hakukohdeRDTO.getTarjoajaOids() == null || hakukohdeRDTO.getTarjoajaOids().size() < 1) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TARJOAJA_MISSING);
-        }
-
         if (hakukohdeRDTO.getHakukohteenNimet() == null || hakukohdeRDTO.getHakukohteenNimet().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
@@ -101,7 +98,7 @@ public class HakukohdeValidator {
         String kausi = null;
         Integer vuosi = null;
         
-        boolean tilaOk = false;
+//        boolean tilaOk = false;
         if(komotot.size()==0) {
             return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
         }
@@ -116,15 +113,15 @@ public class HakukohdeValidator {
                } 
             }
             
-            if(komoto.getTila()!=TarjontaTila.PERUTTU && komoto.getTila()!=TarjontaTila.POISTETTU) {
-            	tilaOk = true;
-            }
+//            if(komoto.getTila()!=TarjontaTila.PERUTTU && komoto.getTila()!=TarjontaTila.POISTETTU) {
+//            	tilaOk = true;
+//            }
 
         }
         
-        if (!tilaOk) {
-            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
-        }
+//        if (!tilaOk) {
+//            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
+//        }
         
         return Collections.EMPTY_LIST;
     }
@@ -211,5 +208,6 @@ public class HakukohdeValidator {
 
         return new ArrayList<HakukohdeValidationMessages>(validationMessages);
     }
+  
 
 }

@@ -23,7 +23,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
     }
 
     function controller($scope) {
-    	
+
         $scope.errors = {
             required: false,
             pristine: true,
@@ -35,14 +35,16 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
-        
+
         $scope.initialized = false;
 
-    	function onChange() {
-    		if ($scope.onChange) {
-    			$scope.onChange();
-    		}
-    	}
+        function onChange(uris, addedUris, removedUris) {
+            if ($scope.onChange) {
+
+
+                $scope.onChange({uris: {uris: uris, added: addedUris, removed: removedUris}});
+            }
+        }
 
         function updateErrors() {
             $scope.errors.dirty = true;
@@ -79,11 +81,11 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         if ($scope.ttShowAllHelp) {
             $scope.txtShowAllHelp = LocalisationService.t($scope.ttShowAllHelp);
         }
-        
+
         $scope._isDisabled = function() {
-        	var dis = $scope.isDisabled()===true;
-        	//console.log("DIS = ",[dis, $scope.isDisabled]);
-        	return dis;
+            var dis = $scope.isDisabled() === true;
+            //console.log("DIS = ",[dis, $scope.isDisabled]);
+            return dis;
         }
 
         $scope.combo = {selection: ""};
@@ -145,33 +147,34 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 scope: ns
             });
         }
-        
+
         function indexOfItem(key) {
-        	for (var i in $scope.items) {
-        		if ($scope.items[i].key==key) {
-        			return i;
-        		}
-        	}
-        	return -1;
+            for (var i in $scope.items) {
+                if ($scope.items[i].key == key) {
+                    return i;
+                }
+            }
+            return -1;
         }
-        
+
         function sortSelection() {
             $scope.selection.sort(function(a, b) {
-                return indexOfItem(a)-indexOfItem(b);
+                return indexOfItem(a) - indexOfItem(b);
             });
         }
 
         // (multi)select-valinta
         $scope.onPreselection = function(preselection) {
             for (var i in preselection) {
-                if ($scope.selection.indexOf(preselection[i]) == -1) {
+                if ($scope.selection.indexOf(preselection[i]) === -1) {
                     $scope.selection.push(preselection[i]);
+                    onChange(preselection, preselection[i], null);
                 }
             }
 
             sortSelection();
             updateErrors();
-            onChange();
+
         }
 
         $scope.onSelection = function(selection) {
@@ -187,7 +190,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // poistetaan valinnat joita ei ole (uudessa) modelissa
         function filterSelection() {
-        	for (var i in $scope.selection) {
+            for (var i in $scope.selection) {
                 if (!$scope.names[$scope.selection[i]]) {
                     $scope.selection.splice(i, 1);
                 }
@@ -196,9 +199,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // salli valintojen muuttaminen "ulkopuolelta"
         $scope.$watch('selection', function(newValue, oldValue) {
-        	if (!$scope.initialized) {
-        		return;
-        	}
+            if (!$scope.initialized) {
+                return;
+            }
             for (var i = 0; i < $scope.items.length; i++) {
                 var item = $scope.items[i];
                 if (newValue.indexOf(item.key) == -1 && item.selected) {
@@ -214,9 +217,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
         // kuuntelija model-muutoksille
         $scope.$watch('model', function(newValue, oldValue) {
-        	if (!$scope.initialized) {
-        		return;
-        	}
+            if (!$scope.initialized) {
+                return;
+            }
             init(newValue);
         });
 
@@ -228,12 +231,14 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             var p = $scope.selection.indexOf(k);
             if (p == -1) {
                 $scope.selection.push(k);
+                onChange($scope.model, k, null);
             } else {
                 $scope.selection.splice(p, 1);
+                onChange($scope.model, null, k);
             }
-            onChange();
+
             updateErrors();
-            
+
             $scope.combo.selection = null;
         };
 
@@ -343,7 +348,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             ttShowAll: "@", // näytä kaikki -tekstin käännösavain (combobox)
             ttShowAllTitle: "@", // näytä kaikki -dialogin otsikko (combobox)
             ttShowAllHelp: "@", // näytä kaikki -dialogin ohjeteksti (combobox)
-            
+
             onChange: "&", // funktio, jota kutsutaan valinnan muuttuessa
 
             // angular-form-logiikkaa varten

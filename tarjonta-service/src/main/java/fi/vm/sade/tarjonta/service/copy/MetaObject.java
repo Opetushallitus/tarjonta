@@ -43,7 +43,9 @@ public class MetaObject implements Serializable {
             setKomotoOids(Sets.<String>newHashSet());
         }
 
-        getKomotoOids().add(oid);
+        if (oid != null) {
+            getKomotoOids().add(oid);
+        }
     }
 
     public void addHakukohdeOid(String oid) {
@@ -51,7 +53,9 @@ public class MetaObject implements Serializable {
             setHakukohdeOids(Sets.<String>newHashSet());
         }
 
-        getHakukohdeOids().add(oid);
+        if (oid != null) {
+            getHakukohdeOids().add(oid);
+        }
     }
 
     @Override

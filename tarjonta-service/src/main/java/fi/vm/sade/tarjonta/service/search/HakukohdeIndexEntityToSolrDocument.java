@@ -50,7 +50,6 @@ import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 
 /**
  * Convert "Hakukohde" to {@link SolrInputDocument} so that it can be indexed.
@@ -80,10 +79,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
         
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
+        if(koulutuses.size()==0){
+            logger.warn("There is a hakukohde without komotos???" + hakukohde.toString());
+            return Collections.EMPTY_LIST;
+        }
         
         add(hakukohdeDoc, OID, hakukohde.getOid());
-        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, hakukohde.getHakukausiUri(), koodiService);
-        add(hakukohdeDoc, VUOSI_KOODI, hakukohde.getHakukausiVuosi());
+        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, koulutuses.get(0).getKausi(), koodiService);
+        add(hakukohdeDoc, VUOSI_KOODI, koulutuses.get(0).getVuosi());
         addHakutapaTiedot(hakukohdeDoc, hakukohde.getHakutapaUri());
         add(hakukohdeDoc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
         add(hakukohdeDoc, TILA, hakukohde.getTila());
@@ -91,7 +94,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addHakuTiedot(hakukohdeDoc, getHakuajat(hakukohde.getHakuId()));
         addTekstihaku(hakukohdeDoc);
         add(hakukohdeDoc, HAUN_OID, hakukohde.getHakuOid());
-        
+        addRyhmat(hakukohdeDoc, hakukohde.getRyhmaOidit());
 
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
@@ -119,6 +122,15 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
 
         return docs;
+    }
+
+    private void addRyhmat(SolrInputDocument hakukohdeDoc, String ryhmaOidit) {
+        if (ryhmaOidit==null) {
+            return;
+        }
+        for (String oid : ryhmaOidit.split(",")) {
+            hakukohdeDoc.addField(ORGANISAATIORYHMAOID, oid);
+        }
     }
 
     private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,

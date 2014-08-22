@@ -545,6 +545,17 @@ app.controller('HakuEditController',
             };
 
             /**
+             * Strip version information from given koodisto uri.
+             * Ie. "foo_1#2" becomes "foo_1".
+             */
+            $scope.stripVersionFromKoodistoUri = function(uri) {
+                uri = uri || "";                
+                var result = uri.replace(/#.*/, "");
+                // $log.info("stripVersionFromKoodistoUri()", uri, result);
+                return result;
+            };
+
+            /**
              * Initialize controller and ui state.
              *
              * @returns {undefined}

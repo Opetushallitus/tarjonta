@@ -62,7 +62,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .list(
                         new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.koulutuksenAlkamiskausiUri, haku.koulutuksenAlkamisVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri));
+                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri, hakukohde.organisaatioRyhmaOids));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                                 komoto.pohjakoulutusvaatimusUri,
                                 komo.koulutustyyppiEnum,
                                 komoto.toteutustyyppi,
-                                komo.koulutusUri));
+                                komo.koulutusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class IndexerDaoImpl implements IndexerDAO {
                 .singleResult(
                         new QHakukohdeIndexEntity(hakukohde.id, hakukohde.oid, hakukohde.hakukohdeNimi,
                                 haku.koulutuksenAlkamiskausiUri, haku.koulutuksenAlkamisVuosi, hakukohde.tila, haku.hakutapaUri,
-                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri));
+                                hakukohde.aloituspaikatLkm, haku.id, haku.oid, haku.hakutyyppiUri, hakukohde.organisaatioRyhmaOids));
     }
 
     @Override

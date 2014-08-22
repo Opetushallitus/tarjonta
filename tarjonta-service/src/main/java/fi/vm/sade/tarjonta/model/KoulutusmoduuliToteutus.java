@@ -15,7 +15,11 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +30,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -59,6 +64,7 @@ import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import javax.persistence.Enumerated;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -66,7 +72,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id","version"})
+@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id","version", "koulutuslajis"})
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
@@ -325,6 +331,26 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
             koulutuslajis = new HashSet<KoodistoUri>();
         }
         return koulutuslajis;
+    }
+
+    /**
+     * This is for the json serializer (massakopiointi)
+     */
+    @JsonProperty
+    public Set<KoodistoUri> getKoulutuslajit() {
+        if (koulutuslajis == null) {
+            koulutuslajis = new HashSet<KoodistoUri>();
+        }
+        
+        return koulutuslajis;
+    }
+
+    /**
+     * This is for the json serializer
+     */
+    public void setKoulutuslajit(Set<KoodistoUri> uris) {
+        koulutuslajis.clear();
+        koulutuslajis.addAll(uris);
     }
 
     /**

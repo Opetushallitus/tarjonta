@@ -151,11 +151,7 @@ public class UusiKoulutusDialog extends OrganisaatioSelectDialog {
                     KoodiType type = koulutuksenTyyppiCombo.getValue() instanceof KoodiContainer ? ((KoodiContainer) (koulutuksenTyyppiCombo.getValue())).koodiType : null;
 
                     if (type != null) {
-                        if (presenter.getPermission().underConstruction() && contains(type, Koulutustyyppi.KORKEAKOULU)) {
-                            getParent().removeWindow(UusiKoulutusDialog.this);
-                            presenter.getKorkeakouluPresenter().showValitseKoulutusDialog();
-
-                        } else if (contains(type, Koulutustyyppi.TOINEN_ASTE_LUKIO)) {
+                        if (contains(type, Koulutustyyppi.TOINEN_ASTE_LUKIO)) {
                             presenter.getLukioPresenter().showLukioKoulutusEditView(selectedOrgs.values());
                             logger.info("lukiokoulutus()");
                             getParent().removeWindow(UusiKoulutusDialog.this);

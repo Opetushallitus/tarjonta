@@ -87,6 +87,7 @@ import fi.vm.sade.tarjonta.ui.model.HakukohdeNameUriModel;
 import fi.vm.sade.tarjonta.ui.model.HakukohdeViewModel;
 import fi.vm.sade.tarjonta.ui.model.KielikaannosViewModel;
 import fi.vm.sade.tarjonta.ui.model.PainotettavaOppiaineViewModel;
+import fi.vm.sade.tarjonta.ui.presenter.HakuaikaPredicate;
 import fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter;
 import fi.vm.sade.tarjonta.ui.view.common.DateRangeEnforcer;
 import fi.vm.sade.tarjonta.ui.view.haku.HakuajatView;
@@ -870,53 +871,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         return alinHyvaksyttavaKeskiarvoText;
     }
 
-
-    /*
-     * Checks if the hakuaika is acceptable for hakukohde
-     */
-    private boolean accepts(HakuaikaViewModel ham, boolean isLisahakuOrErillishaku) {
-        //Oph user has her own rules
-        if (presenter.getPermission().userIsOphCrud()) {
-            return acceptsForOph(ham);
-        }
-        //If it is lisahaku it is acceptable if hakuaika has not ended yet.
-        if (isLisahakuOrErillishaku) {
-            return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
-        }
-        
-        //Hakuaika is ok if it has not started yet.
-        return ham.equals(model.getHakuaika()) || !ham.getAlkamisPvm().before(new Date());
-    }
-
-    /*
-     * Checks if hakuaika is acceptable for hakukohde in case the user is oph user
-     */
-    private boolean acceptsForOph(HakuaikaViewModel ham) {
-        //If hakuaika has not ended it is acceptable for hakukohde
-        return ham.equals(model.getHakuaika()) || !ham.getPaattymisPvm().before(new Date());
-    }
-
-    /*
-     * Checks if haku is acceptable for hakukohde in case the user is oph user
-     */
-    private boolean acceptsForOph(HakuViewModel hm) {
-        //If hakuaika has not ended it is ok
-        if (hm.getPaattymisPvm() != null && !hm.getPaattymisPvm().before(new Date())) {
-                return true;
-        }
-        //If at least 1 hakuaika is acceptabe, then the haku is acceptable.
-        for (HakuaikaViewModel ham : hm.getSisaisetHakuajat()) {
-                if (accepts(ham, isErillishakuOrLisahaku(hm))) {
-                        return true;
-                }
-        }
-        return false;
-    }
-
-    private boolean isErillishakuOrLisahaku(HakuViewModel hm) {
-        return this.hakutyyppiLisahakuUrl.equals(hm.getHakutyyppi()) || this.hakutapaErillishaku.equals(hm.getHakutapa());
-    }
-
     /*
      *
      * This method is called from presenter, it sets HakuTyyppis for the Haku-ComboBox
@@ -964,16 +918,14 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         	List<HakuaikaViewModel> hvms = new ArrayList<HakuaikaViewModel>();
 
         	boolean hamSelected = false;
-            for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
-            	if (accepts(ham, isErillishakuOrLisahaku(hk))) {
+        	
 
-            	    hvms.add(ham);
-            	    if (!hamSelected) {
-            	        model.setHakuaika(ham);
-            	        hamSelected = true;
-            	    }
-            	}
-            }
+        	    for (HakuaikaViewModel ham : hk.getSisaisetHakuajat()) {
+        	        HakuaikaPredicate hap = new HakuaikaPredicate(hk,  model.getHakuaika(), hakutyyppiLisahakuUrl , hakutapaErillishaku, presenter.getPermission());
+        	        if (hap.apply(ham)) {
+        	            hamSelected = selectHakuaika(hvms, hamSelected, ham);
+        	        }
+        	    }
 
             container.addAll(hvms);
         }
@@ -983,6 +935,16 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
         selectHakuAika(model.getHakuaika(), hk);
     	setCustomHakuaika(doesHakukohdeNeedCustomhakuaika(), (model.getHakuaika()==null));//this.hakutyyppiLisahakuUrl.equals(model.getHakuViewModel().getHakutyyppi())
     	//hakuAikaCombo.setEnabled(true);
+    }
+
+    private boolean selectHakuaika(List<HakuaikaViewModel> hvms,
+            boolean hamSelected, HakuaikaViewModel ham) {
+        hvms.add(ham);
+        if (!hamSelected) {
+            model.setHakuaika(ham);
+            hamSelected = true;
+        }
+        return hamSelected;
     }
 
     private void selectHakuAika(HakuaikaViewModel hvm, HakuViewModel hk) {
@@ -1037,51 +999,6 @@ public class PerustiedotViewImpl extends VerticalLayout implements PerustiedotVi
     	//if (selected) {
     	//	hakuAikaCombo.setValue(null);
     	//}
-    }
-
-    private class HakuaikaRangeValidator implements Listener {
-
-		private static final long serialVersionUID = 1L;
-
-		private final boolean alku;
-
-    	public HakuaikaRangeValidator(boolean alku) {
-			super();
-			this.alku = alku;
-		}
-
-		@Override
-    	public void componentEvent(Event event) {
-			HakuViewModel hvm = (HakuViewModel) hakuCombo.getValue();
-			if (hvm==null) {
-				return;
-			}
-
-			DateField df = alku ? hakuaikaAlkuPvm : hakuaikaLoppuPvm;
-			Date spvm = (Date) df.getValue();
-			Date opvm = (Date) (alku ? hakuaikaLoppuPvm : hakuaikaAlkuPvm).getValue();
-
-			if (spvm==null) {
-				return;
-			}
-
-			// rajaa haun alkamis- ja päättymispäivän mukaan
-			if (spvm.before(hvm.getAlkamisPvm())) {
-				spvm = hvm.getAlkamisPvm();
-			} else if (spvm.after(hvm.getPaattymisPvm())) {
-				spvm = hvm.getPaattymisPvm();
-			}
-
-			// rajaa annetun alku/loppupvm:n mukaan
-			if (opvm!=null && ((alku && spvm.after(opvm)) || (!alku && spvm.before(opvm)))) {
-				spvm = opvm;
-			}
-
-			if (!spvm.equals(df.getValue())) {
-				df.setValue(spvm);
-			}
-
-    	}
     }
 
     private AbstractComponent buildHakuaikaSelector() {

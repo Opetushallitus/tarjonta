@@ -205,6 +205,11 @@ public class TarjontaSearchService {
             q.addFilterQuery(String.format("%s:%s", Hakukohde.OID, kysely.getHakukohdeOid()));
         }
 
+        // hakukohderyhmä
+        if (kysely.getOrganisaatioRyhmaOid() != null) {
+            q.addFilterQuery(String.format("%s:%s", Hakukohde.ORGANISAATIORYHMAOID, kysely.getOrganisaatioRyhmaOid()));
+        }
+
         addFilterForKoulutukset(kysely.getKoulutusOids(), queryParts, q);
 
         //restrict with koulutusastetyyppi
@@ -340,6 +345,10 @@ public class TarjontaSearchService {
 
         if (kysely.getKoulutusKoodi() != null) {
             q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSKOODI_URI, kysely.getKoulutusKoodi()));
+        }
+
+        if (kysely.getKoulutuslaji() != null) {
+            q.addFilterQuery(String.format("%s:%s", Koulutus.KOULUTUSLAJI_URIS, kysely.getKoulutuslaji()));
         }
 
         //koulutuksen oid

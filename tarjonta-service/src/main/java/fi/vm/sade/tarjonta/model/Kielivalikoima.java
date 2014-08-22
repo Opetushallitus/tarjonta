@@ -13,9 +13,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @Entity
-@JsonIgnoreProperties({"id","version"})
+@JsonIgnoreProperties({"id","version","kielet"})
 @Table(name = Kielivalikoima.TABLE_NAME)
 public class Kielivalikoima extends TarjontaBaseEntity {
 
@@ -60,4 +61,24 @@ public class Kielivalikoima extends TarjontaBaseEntity {
             kielet.add(new KoodistoUri(uri));
         }
     }
+    
+    
+    /**
+     * for Json serializer
+     * @return
+     */
+    @JsonProperty
+    public Set<KoodistoUri> getKieliUrit() {
+        return Collections.unmodifiableSet(kielet);
+    }
+    
+    /**
+     * for Json serializer
+     * @return
+     */
+    public void setKieliUrit(Set<KoodistoUri> kieliUrit){
+        kielet.clear();
+        kielet.addAll(kieliUrit);
+    }
+
 }

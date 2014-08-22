@@ -26,20 +26,30 @@
     </controls-model>
 
     <display-controls model="formControls" display="header"></display-controls>
-
+    
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
 
                 <export-to-parent name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
-
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo koodistouri="'hakukohteet'"  koodiuri="model.hakukohde.hakukohteenNimiUri"  parentkoodiuri="'lukiolinjat_0086'" isdependent="true" locale="'fi'"  version="true" isrequired="true" name="hakutapa"></div>
+                            <div koodistocombo 
+                                 onchangecallback="fnTemp"  
+                                 koodistouri="'hakukohteet'"  
+                                 koodiuri="model.hakukohde.hakukohteenNimiUri"  
+                                 parentkoodiuri="'lukiolinjat_0086'" 
+                                 isdependent="true" 
+                                 locale="'fi'"  
+                                 version="true" 
+                                 isrequired="true" 
+                                 excludeuris="temp"
+                                 isalakoodi="temp"
+                                 name="hakutapa"></div>
                         </td>
                         <td>
                             <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->
@@ -88,31 +98,14 @@
                         </td>
                     </tr>
 
-
-
-
-
-
-
-
                 </table>
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
 
                 <mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
-
+     
                 <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
                 <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
-
-                <!--
-                <koodistotypeahead removearvocallback="model.kieliRemoveCallback" onchangecallback="model.kieliCallback" koodiuris="model.selectedKieliUris" allkoodis="model.allkieles" koodistouri="'kieli'" locale="model.userLang"></koodistotypeahead>
-
-                <tabset>
-                    <tab  heading="{{lisatieto.nimi}}" ng-repeat="lisatieto in model.hakukohde.lisatiedot">
-                        <textarea ui-tinymce ng-model="lisatieto.teksti"></textarea>
-                    </tab>
-                </tabset>
-                 -->
 
             </form>
         </tab>

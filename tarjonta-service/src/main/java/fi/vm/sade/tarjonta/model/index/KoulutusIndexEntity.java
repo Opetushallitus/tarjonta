@@ -7,7 +7,6 @@ import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.List;
 
 /**
  * Entity containing all fields from database needed for indexing
@@ -39,7 +38,7 @@ public class KoulutusIndexEntity {
     
     @QueryProjection
     public KoulutusIndexEntity(String oid, String tarjoaja, String koulutuslaji, String pohjakoulutusVaatimusUri,
-            ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum, String koulutusUri) {
+            ModuulityyppiEnum baseKoulutustyyppiEnum, ToteutustyyppiEnum subKoulutustyyppiEnum, String koulutusUri, String koulutuksenAlkamiskausi, Integer koulutuksenAlkamivuosi) {
         this.oid = oid;
         this.tarjoaja = tarjoaja;
         this.koulutuslaji = koulutuslaji;
@@ -47,6 +46,8 @@ public class KoulutusIndexEntity {
         this.baseKoulutustyyppiEnum = baseKoulutustyyppiEnum;
         this.subKoulutustyyppiEnum = subKoulutustyyppiEnum;
         this.koulutusUri = koulutusUri;
+        this.kausi = koulutuksenAlkamiskausi;
+        this.vuosi = koulutuksenAlkamivuosi;
     }
 
     @QueryProjection

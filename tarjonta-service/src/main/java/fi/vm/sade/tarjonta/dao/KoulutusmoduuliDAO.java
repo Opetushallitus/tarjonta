@@ -15,20 +15,21 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -122,11 +123,12 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         private String koulutusKoodiUri;
         private String koulutusohjelmaKoodiUri;
         private String lukiolinjaKoodiUri;
-        private ToteutustyyppiEnum koulutustyyppiUri;
+        private ToteutustyyppiEnum toteutustyyppiEnum;
         private List<String> tarjoajaOids;
         private List<String> oppilaitostyyppis;
-        private ModuulityyppiEnum koulutustyyppiEnum;
+        private ModuulityyppiEnum moduulityyppiEnum;
         private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+        private Set<String> koulutustyyppiUris;
 
         private TarjontaTila tila;
 
@@ -178,17 +180,17 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         /**
-         * @return the koulutustyyppi
+         * @return the moduulityyppi
          */
-        public ModuulityyppiEnum getKoulutustyyppi() {
-            return koulutustyyppiEnum;
+        public ModuulityyppiEnum getModuulityyppi() {
+            return moduulityyppiEnum;
         }
 
         /**
-         * @param koulutustyyppiEnum the koulutustyyppi to set
+         * @param moduulityyppiEnum the moduulityyppi to set
          */
-        public void setKoulutustyyppi(ModuulityyppiEnum koulutustyyppiEnum) {
-            this.koulutustyyppiEnum = koulutustyyppiEnum;
+        public void setModuulityyppi(ModuulityyppiEnum moduulityyppiEnum) {
+            this.moduulityyppiEnum = moduulityyppiEnum;
         }
 
         /**
@@ -338,17 +340,35 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
         }
 
         /**
-         * @return the koulutustyyppiUri
+         * @return the toteutustyyppi enum
          */
-        public ToteutustyyppiEnum getKoulutustyyppiUri() {
-            return koulutustyyppiUri;
+        public ToteutustyyppiEnum getToteutustyyppiEnum() {
+            return toteutustyyppiEnum;
         }
 
         /**
-         * @param koulutustyyppiUri the koulutustyyppiUri to set
+         * @param toteutustyyppiEnum the toteutustyyppi enum to set
          */
-        public void setKoulutustyyppiUri(ToteutustyyppiEnum koulutustyyppiUri) {
-            this.koulutustyyppiUri = koulutustyyppiUri;
+        public void setToteutustyyppiEnum(ToteutustyyppiEnum toteutustyyppiEnum) {
+            this.toteutustyyppiEnum = toteutustyyppiEnum;
+        }
+
+        /**
+         * @return the koulutustyyppiUris
+         */
+        public Set<String> getKoulutustyyppiUris() {
+            if (koulutustyyppiUris == null) {
+                koulutustyyppiUris = Sets.<String>newHashSet();
+            }
+
+            return koulutustyyppiUris;
+        }
+
+        /**
+         * @param koulutustyyppiUris the koulutustyyppiUris to set
+         */
+        public void setKoulutustyyppiUris(Set koulutustyyppiUris) {
+            this.koulutustyyppiUris = koulutustyyppiUris;
         }
 
         public enum GroupBy {

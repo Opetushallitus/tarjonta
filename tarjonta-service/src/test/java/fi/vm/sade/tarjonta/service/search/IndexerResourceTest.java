@@ -64,13 +64,13 @@ public class IndexerResourceTest {
 
     private List<KoulutusIndexEntity> getHakukohdeKoulutukset(long id) {
         List<KoulutusIndexEntity> hakukohteenKoulutukset = Lists.newArrayList();
-        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus", ModuulityyppiEnum.KORKEAKOULUTUS, ToteutustyyppiEnum.KORKEAKOULUTUS, "12345678#100");
+        KoulutusIndexEntity koulutus = new KoulutusIndexEntity("koulutus-oid", "o-oid-12345", "koulutusaste", "pohjakoulutusvaatimus", ModuulityyppiEnum.KORKEAKOULUTUS, ToteutustyyppiEnum.KORKEAKOULUTUS, "12345678#100", "kevat_k", 2014);
         hakukohteenKoulutukset.add(koulutus);
         return hakukohteenKoulutukset;
     }
 
     private HakukohdeIndexEntity getHakukohdeIndexEntity(long id) {
-        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU, "hakutapaUri", Integer.valueOf(5), 2l, "hakuoid", "hakutyyppiUri");
+        HakukohdeIndexEntity hie = new HakukohdeIndexEntity(id, "oid", "hakukohdenimi", "hakukausiUri", Integer.valueOf(2013), TarjontaTila.JULKAISTU, "hakutapaUri", Integer.valueOf(5), 2l, "hakuoid", "hakutyyppiUri", "ryhmä-oid");
         return hie;
     }
 

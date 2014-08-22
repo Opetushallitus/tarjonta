@@ -19,9 +19,14 @@ public class HakukohdeIndexEntity {
     private Long hakuId;
     private String hakuOid;
     private String hakutyyppiUri;
+    private String ryhmaOidit;
+
+    public String getRyhmaOidit() {
+        return ryhmaOidit;
+    }
 
     @QueryProjection
-    public HakukohdeIndexEntity(Long id, String oid, String hakukohdeNimi, String hakukausiUri, Integer hakukausiVuosi, TarjontaTila tila, String hakutapaUri, Integer aloituspaikatLkm, Long hakuId, String hakuOid, String hakutyyppiUri) {
+    public HakukohdeIndexEntity(Long id, String oid, String hakukohdeNimi, String hakukausiUri, Integer hakukausiVuosi, TarjontaTila tila, String hakutapaUri, Integer aloituspaikatLkm, Long hakuId, String hakuOid, String hakutyyppiUri, String ryhmaOidit) {
         this.id = id;
         this.oid = oid;
         this.hakukohdeNimi = hakukohdeNimi;
@@ -33,6 +38,7 @@ public class HakukohdeIndexEntity {
         this.hakuId = hakuId;
         this.hakuOid = hakuOid;
         this.hakutyyppiUri = hakutyyppiUri;
+        this.ryhmaOidit = ryhmaOidit;
     }
 
     //hakukohde.id, hakukohde.oid
@@ -133,8 +139,8 @@ public class HakukohdeIndexEntity {
                 + ", aloituspaikatLkm=" + aloituspaikatLkm + ", tila=" + tila
                 + ", hakukohdeNimi=" + hakukohdeNimi + ", hakuId=" + hakuId
                 + ", hakuOid=" + hakuOid + ", hakutyyppiUri=" + hakutyyppiUri
-                + ", alkamisPvm=" + alkamisPvm + ", paattymisPvm="
-                + paattymisPvm + "]";
+                + ", ryhmaOidit=" + ryhmaOidit + ", alkamisPvm=" + alkamisPvm
+                + ", paattymisPvm=" + paattymisPvm + "]";
     }
     
     
