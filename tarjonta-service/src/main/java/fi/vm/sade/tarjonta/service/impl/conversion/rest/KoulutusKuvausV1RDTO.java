@@ -90,9 +90,14 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
 
             for (Map.Entry<String, String> entry : textMap.entrySet()) {
                 String text = entry.getValue();//text
-                TekstiKaannos tekstiKaannos = searchByKielikoodi(mkMerge, entry.getKey());
-                tekstiKaannos.setArvo(text);
-                mkMerge.addTekstiKaannos(tekstiKaannos);
+                if (text == null) {
+                    //remove deleted data when text is set to null.
+                    mkMerge.removeKaannos(entry.getKey());
+                } else {
+                    TekstiKaannos tekstiKaannos = searchByKielikoodi(mkMerge, entry.getKey());
+                    tekstiKaannos.setArvo(text);
+                    mkMerge.addTekstiKaannos(tekstiKaannos);
+                }
             }
 
             boolean clear = true;
@@ -104,6 +109,7 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
             }
 
             if (clear) {
+                System.out.print("remove key " + e.getKey());
                 tekstit.remove(e.getKey());
             } else {
                 tekstit.put(e.getKey(), mkMerge);

@@ -27,7 +27,8 @@ app.controller('EditNayttotutkintoController',
                         disableOsaamisala: false,
                         koulutusohjelma: [],
                         tutkintoModules: {},
-                        koulutusohjelmaModules: {}
+                        koulutusohjelmaModules: {},
+                        valmistavaLisatiedot: converter.STRUCTURE[ENUM_OPTIONAL_TOTEUTUS].KUVAUS_ORDER
                     };
 
                     //valmistava koulutus
@@ -86,7 +87,7 @@ app.controller('EditNayttotutkintoController',
                         });
 
                         //activate valmistava koulutus 
-                       $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
+                        $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
 
                     } else {
                         converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
@@ -102,11 +103,10 @@ app.controller('EditNayttotutkintoController',
                      */
                     // lisätietokielivalinnat
                     uiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
-                    vkUiModel.lisatietoKielet = _.keys(model.opetuskielis.uris);
 
-                    for (var ki in model.kuvausKomo) {
-                        if (angular.isDefined(model.kuvausKomo[ki])) {
-                            for (var lc in model.kuvausKomo[ki].tekstis) {
+                    for (var ki in model.kuvausKomoto) {
+                        if (angular.isDefined(model.kuvausKomoto[ki])) {
+                            for (var lc in model.kuvausKomoto[ki].tekstis) {
                                 if (uiModel.lisatietoKielet.indexOf(lc) == -1) {
                                     uiModel.lisatietoKielet.push(lc);
                                 }
@@ -328,16 +328,6 @@ app.controller('EditNayttotutkintoController',
                 };
 
 
-                $scope.getValmistavaLisatietoKielet = function() {
-                    for (var i in $scope.uiModel.opetuskielis.uris) {
-                        var lc = $scope.uiModel.opetuskielis.uris[i];
-                        if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
-                            $scope.uiModel.lisatietoKielet.push(lc);
-                        }
-                    }
-                    return $scope.vkUiModel.lisatietoKielet;
-                };
-
                 $scope.getEditValmistavaKoulutusPerustiedot = function() {
                     return '/partials/koulutus/edit/amm/editValmistavaKoulutusPerustiedot.html';
                 };
@@ -384,7 +374,6 @@ app.controller('EditNayttotutkintoController',
                     $scope.commonNewModelHandler($scope.koulutusForm, model, vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                     apimodel.valmistavaKoulutus = model;
                     $scope.commonKoodistoLoadHandler(vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
-                    vkUiModel.selectedKieliUri = "kieli_fi";
                     vkUiModel.showValidationErrors = false;
                     uiModel.toggleTabs = true;
                 };
@@ -415,6 +404,40 @@ app.controller('EditNayttotutkintoController',
                         });
                     }
                 });
+
+
+                $scope.onValmistavaLisatietoLangSelection = function(uris) {
+                    if (uris.removed && $scope.uiModel.opetuskielis.uris) {
+
+                        // ei opetuskieli -> varmista poisto dialogilla
+                        dialogService.showDialog({
+                            ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
+                            title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
+                            description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[uris.removed]])
+                        }).result.then(function(ret) {
+                            if (ret) {
+                                $scope.deleteKuvausByStructureType($scope.CONFIG.TYYPPI, uris.removed);
+
+                                if ($scope.model.valmistavaKoulutus && $scope.model.valmistavaKoulutus.kuvaus) {
+                                    for (var ki in $scope.model.valmistavaKoulutus.kuvaus) {
+                                        $scope.model.valmistavaKoulutus.kuvaus[ki].tekstis[uris.removed] = null;
+                                    }
+                                }
+                            } else {
+                                //cancelled remove, put uri back to the lang array
+                                if ($scope.uiModel.lisatietoKielet.indexOf(uris.removed) === -1) {
+                                    $scope.uiModel.lisatietoKielet.push(uris.removed);
+                                }
+                            }
+                        });
+
+                    } else if (uris.added && $scope.uiModel.lisatietoKielet) {
+
+                        if ($scope.uiModel.lisatietoKielet.indexOf(uris.added) === -1) {
+                            $scope.uiModel.lisatietoKielet.push(uris.added);
+                        }
+                    }
+                };
 
                 $scope.init();
             }]);

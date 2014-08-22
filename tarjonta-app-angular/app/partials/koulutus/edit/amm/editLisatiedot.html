@@ -20,7 +20,7 @@
  
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
     <multi-select
-        on-change="onLisatietoLangSelection()"
+        on-change="onValmistavaLisatietoLangSelection(uris)"
         promise="uiModel.opetuskielis.promise"
         order-with="userLanguages"
         selection="uiModel.lisatietoKielet"

@@ -35,13 +35,10 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
-
         $scope.initialized = false;
 
         function onChange(uris, addedUris, removedUris) {
             if ($scope.onChange) {
-
-
                 $scope.onChange({uris: {uris: uris, added: addedUris, removed: removedUris}});
             }
         }
@@ -49,7 +46,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         function updateErrors() {
             $scope.errors.dirty = true;
             $scope.errors.pristine = false;
-            $scope.errors.required = $scope.isrequired && $scope.selection.length == 0;
+            $scope.errors.required = $scope.isrequired && $scope.selection.length === 0;
         }
 
         if ($scope.columns == undefined) {

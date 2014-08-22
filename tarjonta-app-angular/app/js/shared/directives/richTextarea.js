@@ -15,10 +15,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
         };
 
         $scope.dataListener = $scope.$watch('model', function(val) {
-            if (val) {
-                $scope.directive.model = $scope.model;
-                $scope.dataListener(); //delete load listener
-            }
+            $scope.directive.model = $scope.model;
         });
 
         function execCommand(cmd, arg) {
@@ -62,7 +59,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
         }
 
         function postFilter(src) {
-            if (!src) {
+            if (!angular.isDefined(src)) {
                 return src;
             }
             var data = $("<div>" + src + "</div>");

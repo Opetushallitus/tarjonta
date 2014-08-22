@@ -2,22 +2,22 @@
 </table>
 
 <mk-tabs
-    model="getValmistavaLisatietoKielet()"
+    model="getLisatietoKielet()"
     selection="uiModel.selectedKieliUri"
     mutable="true"
     ></mk-tabs>
-
-<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri == null">
+ 
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
     <multi-select
-        on-change="onLisatietoLangSelection()"
-        promise="vkUiModel.opetuskielis.promise"
+        on-change="onValmistavaLisatietoLangSelection(uris)"
+        promise="uiModel.opetuskielis.promise"
         order-with="userLanguages"
-        selection="vkUiModel.lisatietoKielet"
+        selection="uiModel.lisatietoKielet"
         display="dualpane"></multi-select>
 </div>
 
 <div ng-if="uiModel.cbShowValmistavaKoulutus" class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
-    <div ng-if="vkUiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.valmistavaKoulutus.opintojenMaksullisuus">
+    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in uiModel.valmistavaLisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.valmistavaKoulutus.opintojenMaksullisuus">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
         <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
