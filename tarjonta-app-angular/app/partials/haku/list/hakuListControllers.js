@@ -28,10 +28,12 @@ app.controller('HakuListController',
                     HakuV1Service, Koodisto, PermissionService,
                     loadingService) {
 
-
-                PermissionService.permissionResource().authorize({}, function(response) {
-                    $log.debug("Authorization check : " + response.result);
-                });
+//
+// OVT-8275 ? Tama on myos tehty tuolla tarjontaApp init:ssä...
+// 
+//                PermissionService.permissionResource().authorize({}, function(response) {
+//                    $log.debug("Authorization check : " + response.result);
+//                });
 
                 $log = $log.getInstance("HakuListController");
 

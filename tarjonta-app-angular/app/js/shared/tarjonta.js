@@ -115,8 +115,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutusastetyyppi: ["Korkeakoulutus", "Lukiokoulutus"],
-            hakuOid: args.hakuOid
+            hakuOid: args.hakuOid,
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11","koulutustyyppi_12"]
         };
 
         $log.debug("haeHakukohteet()", params);

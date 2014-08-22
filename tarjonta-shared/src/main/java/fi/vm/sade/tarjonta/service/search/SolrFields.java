@@ -107,6 +107,7 @@ public class SolrFields {
         protected static final String HAKUTYYPPI_URI = "hakutyyppiuri_s";
         protected static final String KOULUTUSASTETYYPPI = "koulutusastetyyppi_s";
         protected static final String ORGANISAATIORYHMAOID = "organisaatioryhmaoid_ss";
+        protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppiuri_s";
     }
 
 }

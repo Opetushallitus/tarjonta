@@ -267,13 +267,6 @@ public class HakukohdeResourceTest {
         Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
         Assert.assertEquals("HAKUKOHDE_HAKU_MISSING", res.getErrors().get(0).getErrorMessageKey());
 
-        //ei tarjoajaa
-        hk = getHakukohde();
-        hk.setTarjoajaOids(null);
-        res = hakukohdeResource.createHakukohde(hk);
-        Assert.assertEquals(ResultStatus.ERROR, res.getStatus());
-        Assert.assertEquals("HAKUKOHDE_TARJOAJA_MISSING", res.getErrors().get(0).getErrorMessageKey());
-
         //ei nimeä
         hk = getHakukohde();
         hk.setHakukohteenNimet(null);
