@@ -222,6 +222,32 @@ public class TarjontaSearchService {
             q.addFilterQuery(String.format("%s:(%s)", Hakukohde.KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
         }
 
+        //restrict with getTotetustyyppi enum
+        if (kysely.getTotetustyyppi().size() > 0) {
+            System.out.println("toteutustyyppi!");
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getTotetustyyppi(), new Function<ToteutustyyppiEnum, String>() {
+                @Override
+                public String apply(ToteutustyyppiEnum src) {
+                    return src.name();
+
+                }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", Hakukohde.TOTEUTUSTYYPPI_ENUM, Joiner.on(" ").join(tyypit)));
+        }
+        
+        //restrict with koulutustyyppi-uri
+        if (kysely.getKoulutustyyppi().size() > 0) {
+            final ArrayList<String> tyypit = Lists.newArrayList(Iterables.transform(kysely.getKoulutustyyppi(), new Function<String, String>() {
+                @Override
+                public String apply(String src) {
+                    return src;
+
+                }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSTYYPPI_URI, Joiner.on(" ").join(tyypit)));
+        }
+
+
         q.setRows(Integer.MAX_VALUE);
         return q;
     }

@@ -3,10 +3,13 @@ package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 
 public class HakukohteetKysely implements Serializable
@@ -23,7 +26,9 @@ public class HakukohteetKysely implements Serializable
     private String hakuOid;
     private String hakukohdeOid;
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>();
+    private Set<String> koulutustyyppi = new HashSet<String>();
     private String organisaatioRyhmaOid;
+    private Set<ToteutustyyppiEnum> toteutustyypit = new HashSet<ToteutustyyppiEnum>();
 
 
     public String getOrganisaatioRyhmaOid() {
@@ -117,6 +122,14 @@ public class HakukohteetKysely implements Serializable
 
     public void setOrganisaatioRyhmaOid(String organisaatioRyhmaOid) {
         this.organisaatioRyhmaOid = organisaatioRyhmaOid;
+    }
+
+    public Set<ToteutustyyppiEnum> getTotetustyyppi() {
+        return this.toteutustyypit ;
+    }
+
+    public Set<String> getKoulutustyyppi() {
+        return koulutustyyppi;
     }
 
 }
