@@ -139,9 +139,9 @@ describe('TarjontaPermissions', function() {
     				        }
     				      } ]
     				    } ],
-    				    "tuloksia" : 1
-    				  },
+    				    "tuloksia" : 1,
     				  "status" : "OK"
+    			  },
     				};
     	};
 
@@ -155,10 +155,10 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(koulutushaku('1.2.4'));
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(koulutushaku('1.2.3'));
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3.4&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(koulutushaku('1.2.3'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.5'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.4'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
-        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutusastetyyppi=Korkeakoulutus&koulutusastetyyppi=Lukiokoulutus').respond(hakukohdehaku('1.2.3'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.5&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(hakukohdehaku('1.2.5'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.4&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(hakukohdehaku('1.2.4'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(hakukohdehaku('1.2.3'));
+        $httpBackend.whenGET('/hakukohde/search?hakukohdeOid=hakukohde.1.2.3.4&koulutustyyppi=koulutustyyppi_3&koulutustyyppi=koulutustyyppi_13&koulutustyyppi=koulutustyyppi_14&koulutustyyppi=koulutustyyppi_11&koulutustyyppi=koulutustyyppi_12').respond(hakukohdehaku('1.2.3'));
 
         // Parameters
         var parameterResponse = {
