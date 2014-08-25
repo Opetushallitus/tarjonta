@@ -44,9 +44,10 @@ app.controller('HakukohdeParentController', [
 
         function updateTila(tila) {
             var tilat = ["LUONNOS", "PERUTTU", "KOPIOITU"];
-            if (tilat.indexOf($scope.model.hakukohde.tila)) {
-                // päivitä tila modeliin jos se voi muuttua
-                $scope.model.hakukohde.tila = tila;
+            if (tilat.indexOf($scope.model.hakukohde.tila)!==-1) {
+              console.log("asetetaan tila modeliin!", tila);
+              // päivitä tila modeliin jos se voi muuttua
+              $scope.model.hakukohde.tila = tila;
             }
         }
 
