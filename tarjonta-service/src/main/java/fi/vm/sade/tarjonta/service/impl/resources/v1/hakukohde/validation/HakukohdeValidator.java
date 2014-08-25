@@ -73,10 +73,6 @@ public class HakukohdeValidator {
 
         validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
 
-        if (hakukohdeRDTO.getTarjoajaOids() == null || hakukohdeRDTO.getTarjoajaOids().size() < 1) {
-            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TARJOAJA_MISSING);
-        }
-
         if (hakukohdeRDTO.getHakukohteenNimet() == null || hakukohdeRDTO.getHakukohteenNimet().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }

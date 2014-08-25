@@ -13,21 +13,21 @@
 </table>
 
 <mk-tabs
-    model="getLisatietoKielet()"
+    model="uiModel.lisatietoKielet"
     selection="uiModel.selectedKieliUri"
     mutable="true"
     ></mk-tabs>
  
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
     <multi-select
-        on-change="onLisatietoLangSelection()"
+        on-change="onLisatietoLangSelection(uris, CONFIG.TYYPPI)"
         model="uiModel.tmp"
         promise="uiModel.opetuskielis.promise"
         order-with="userLanguages"
         selection="uiModel.lisatietoKielet"
         display="dualpane"></multi-select>
 </div>
- 
+
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
     <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->

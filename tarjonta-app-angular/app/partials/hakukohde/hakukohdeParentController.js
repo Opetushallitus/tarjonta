@@ -41,16 +41,17 @@ app.controller('HakukohdeParentController', [
             "AMMATTITUTKINTO": aikuNayttoHakukohdePartialUri
         };
 
-        
+
         function updateTila(tila) {
-          var tilat = ["LUONNOS","PERUTTU","KOPIOITU"];
-          if (tilat.indexOf($scope.model.hakukohde.tila)) {
-            // päivitä tila modeliin jos se voi muuttua
-            $scope.model.hakukohde.tila = tila;
-          }
+            var tilat = ["LUONNOS", "PERUTTU", "KOPIOITU"];
+            if (tilat.indexOf($scope.model.hakukohde.tila)!==-1) {
+              console.log("asetetaan tila modeliin!", tila);
+              // päivitä tila modeliin jos se voi muuttua
+              $scope.model.hakukohde.tila = tila;
+            }
         }
 
-        
+
         /*
          * 
          * Common hakukohde controller variables
@@ -78,6 +79,20 @@ app.controller('HakukohdeParentController', [
             validateValintakokeet: function() {
                 return true;
             }
+        };
+
+        $scope.showCommonUnknownErrorMsg = function() {
+
+            var errors = [];
+
+            var error = {};
+
+            error.errorMessageKey = commonExceptionMsgKey;
+
+            errors.push(error);
+
+            $scope.showError(errors);
+
         };
 
         $scope.model.showSuccess = false;
@@ -256,19 +271,7 @@ app.controller('HakukohdeParentController', [
 
         };
 
-        $scope.showCommonUnknownErrorMsg = function() {
 
-            var errors = [];
-
-            var error = {};
-
-            error.errorMessageKey = commonExceptionMsgKey;
-
-            errors.push(error);
-
-            $scope.showError(errors);
-
-        };
 
         $scope.checkIsCopy = function(tilaParam) {
 
@@ -857,6 +860,7 @@ app.controller('HakukohdeParentController', [
         }
 
         function isDirty() {
+
             return $scope.status.dirty || ($scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty);
         }
 
@@ -974,7 +978,7 @@ app.controller('HakukohdeParentController', [
 
                 if (hakukohdeValidationFunction()) {
                     $scope.model.showError = false;
-                    
+
                     updateTila(tila);
 
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
@@ -1013,6 +1017,7 @@ app.controller('HakukohdeParentController', [
                             $scope.canEdit = true;
                             $scope.model.continueToReviewEnabled = true;
                             $scope.status.dirty = false;
+                            $scope.editHakukohdeForm.$dirty = false;
                             $log.debug('SAVED MODEL : ', $scope.model.hakukohde);
                         }, function(error) {
                             $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
@@ -1028,24 +1033,26 @@ app.controller('HakukohdeParentController', [
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                 $scope.status.dirty = false;
+                                $scope.editHakukohdeForm.$dirty = false;
                                 //TODO jos tyhjät valintakokeet, lisää tässä
                             } else {
                                 console.log("error", hakukohde);
-                            }
 
-                            if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
-                                $scope.showSuccess();
-                            } else {
-                                $scope.showError(hakukohde.errors);
-                            }
-                            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                            }
-                            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                $scope.model.hakukohde.soraKuvaukset = {};
+                                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
+                                    $scope.showSuccess();
+                                } else {
+                                    $scope.showError(hakukohde.errors);
+                                }
+                                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                                }
+                                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                                    $scope.model.hakukohde.soraKuvaukset = {};
+                                }
+
+                                $scope.showCommonUnknownErrorMsg();
                             }
                         }, function(error) {
-
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
                             $scope.showCommonUnknownErrorMsg();
                         });

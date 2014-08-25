@@ -39,7 +39,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         $scope.hakuehdot = {
                             "searchStr": "",
                             "organisaatiotyyppi": "",
-                            "oppilaitostyyppi": "",
+                            "oppilaitostyyppi": undefined,
                             "lakkautetut": false,
                             "suunnitellut": false,
                             "skipparents": true

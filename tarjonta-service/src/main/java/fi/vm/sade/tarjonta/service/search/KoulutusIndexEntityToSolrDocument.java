@@ -162,6 +162,8 @@ public class KoulutusIndexEntityToSolrDocument implements
                     }
                     break;
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
+                    addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
+
                     nimi = indexerDao.getKomotoNimi(koulutus.getKoulutusId());
 
                     if (nimi == null) {

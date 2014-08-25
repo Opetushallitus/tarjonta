@@ -190,4 +190,20 @@ public class HakukohdePerustieto implements Serializable
     public void setHakuOid(String hakuOid) {
         this.hakuOid = hakuOid;
     }
+
+    @Override
+    public String toString() {
+        return "HakukohdePerustieto [oid=" + oid + ", nimi=" + nimi
+                + ", koodistoNimi=" + koodistoNimi + ", tila=" + tila
+                + ", aloituspaikat=" + aloituspaikat
+                + ", koulutuksenAlkamiskausi=" + koulutuksenAlkamiskausi
+                + ", koulutuksenAlkamisvuosi=" + koulutuksenAlkamisvuosi
+                + ", hakutapakoodi=" + hakutapakoodi + ", tarjoajaOid="
+                + tarjoajaOid + ", hakuOid=" + hakuOid + ", tarjoajaNimi="
+                + tarjoajaNimi + ", hakuAlkamisPvm=" + hakuAlkamisPvm
+                + ", hakuPaattymisPvm=" + hakuPaattymisPvm + ", koulutuslaji="
+                + koulutuslaji + ", hakutyyppiUri=" + hakutyyppiUri
+                + ", pohjakoulutusvaatimus=" + pohjakoulutusvaatimus
+                + ", koulutusastetyyppi=" + koulutusastetyyppi + "]";
+    }
 }

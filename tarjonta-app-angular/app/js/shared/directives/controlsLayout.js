@@ -1,5 +1,4 @@
 'use strict';
-
 /* Layout-komponentti/direktiivistö formien toimintonappeja, ilmoitustekstejä ja muita yleisiä asioita varten.
  *
  * 1. Direktiivit kommunikoivat scopessa määritellyn olion välityksellä joka controllerin on alustettava tyhjäksi
@@ -54,20 +53,27 @@
  */
 
 var app = angular.module('ControlsLayout', ['localisation', 'Yhteyshenkilo', 'Logging']);
-
 app.directive('displayControls', function($log, LocalisationService, $filter, YhteyshenkiloService) {
-    
-    $log = $log.getInstance("<displayControls>");
 
+    $log = $log.getInstance("<displayControls>");
     return {
         restrict: 'E',
         templateUrl: "js/shared/directives/controlsLayout.html",
         replace: true,
         scope: {
             model: "=", // model johon controls-model viittaa
-            display: "@" // header|footer
+            display: "@", // header|footer
+            command: "=" //external command api
         },
         controller: function($scope) {
+
+            if ($scope.command) {
+                $scope.command.active = true;
+
+                $scope.command.clear = function() {
+                    $scope.model.notifs.errorDetail =[];
+                };
+            }
 
             switch ($scope.display) {
                 case "header":
@@ -100,25 +106,20 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             $scope.showErrorDetail = function(msg) {
                 return showMessage($scope.model.notifs.errorDetail, msg);
             };
-
             $scope.showError = function(msg) {
                 if (msg == undefined) {
                     return showMessage($scope.model.notifs.error) || showMessage($scope.model.notifs.errorDetail);
                 }
                 return showMessage($scope.model.notifs.error, msg);
             };
-
             $scope.showSuccess = function(msg) {
                 return showMessage($scope.model.notifs.success, msg) && (msg != null || !$scope.showError());
             };
-
             $scope.showMessage = function(msg) {
                 return showMessage($scope.model.notifs.message, msg);
             };
-
             //$scope.dto = $scope.model.dto();
             $scope.model.metadata = [];
-
             function appendMetadata(md, key, user, timestamp) {
                 if (!user && !timestamp) {
                     return;
@@ -126,24 +127,24 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 if (!user || user.length == 0) {
                     user = LocalisationService.t("tarjonta.metadata.unknown");
                 }
-                
+
                 var msg = LocalisationService.t(key,
                         [$filter("date")(timestamp, "d.M.yyyy"), $filter("date")(timestamp, "H:mm"), user]);
-                if (md.indexOf(msg)==-1) { // jostain tulee duplikaatteja??
-                	md.push(msg);
+                if (md.indexOf(msg) == -1) { // jostain tulee duplikaatteja??
+                    md.push(msg);
                 }
             }
 
             $scope.$watch('model.dto', $scope.model._reloadDisplayControls);
             /*$scope.$watch('dto.tila', $scope.model._reloadDisplayControls);
-            $scope.$watch('dto.created', $scope.model._reloadDisplayControls);
-            $scope.$watch('dto.modified', $scope.model._reloadDisplayControls);*/
-            
-            
+             $scope.$watch('dto.created', $scope.model._reloadDisplayControls);
+             $scope.$watch('dto.modified', $scope.model._reloadDisplayControls);*/
+
+
             $scope.model.reloadDisplayControls = function() {
-            	// TODO poista tämä delegaattifunktio kun virheelliset viittaukset on poistettu
-            	alert("reloadDisplayControls() EI OLE OSA DIREKTIIVIN JULKISTA APIA ELI ÄLÄ KÄYTÄ!!!");
-            	$scope.model._reloadDisplayControls();
+                // TODO poista tämä delegaattifunktio kun virheelliset viittaukset on poistettu
+                alert("reloadDisplayControls() EI OLE OSA DIREKTIIVIN JULKISTA APIA ELI ÄLÄ KÄYTÄ!!!");
+                $scope.model._reloadDisplayControls();
             }
 
             /*
@@ -151,20 +152,16 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
              */
             $scope.model._reloadDisplayControls = function() {
                 var dto = $scope.model.dto;
-            	//console.log("FORM controlsLayout._reloadDisplayControls() ", [ dto.modified, dto.modifiedBy, dto.created, dto.createdBy ]);
 
                 $scope.model.metadata = [];
-
                 // oletuksenä näytetään muokkaustiedot
                 var userOid = dto.modifiedBy;
                 var date = dto.modified;
                 var lokalisointiKey = "tarjonta.metadata.modified";
-                
                 if (!date) { // ei muokkaustietoja -> näytetään luontitiedot
                     userOid = dto.createdBy;
                     date = dto.created;
                     lokalisointiKey = "tarjonta.metadata.created";
-                	
                 }
 
                 // tila
@@ -184,17 +181,16 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                             name += response.sukunimi;
                         }
                         appendMetadata($scope.model.metadata, lokalisointiKey, name, date);
-                    }, function(){
+                    }, function() {
                         appendMetadata($scope.model.metadata, lokalisointiKey, userOid, date);
                     });
                 } else {
                     appendMetadata($scope.model.metadata, lokalisointiKey, userOid, date);
                 }
             };
-
             $scope.isNew = function() {
-                return !$scope.model.dto.oid && $scope.model.metadata.length==0;
-            }
+                return !$scope.model.dto.oid && $scope.model.metadata.length == 0;
+            };
 
             function titleText() {
                 var title = $scope.model.title();
@@ -228,7 +224,6 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 }
 
                 var tkey = $scope.isNew() ? $scope.model.ttCreate : $scope.model.ttEdit;
-
                 return tkey == null ? ttext : LocalisationService.t(tkey, [ttext]);
             }
 
@@ -237,11 +232,9 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
     }
 
 });
-
 app.directive('controlsModel', function($log) {
 
     $log = $log.getInstance("<controlsModel>");
-
     return {
         restrict: 'E',
         template: "<div style=\"display:none;\" ng-transclude></div>",
@@ -262,27 +255,22 @@ app.directive('controlsModel', function($log) {
                 errorDetail: []
             }
             $scope.model.buttons = [];
-
             $scope.model.ttCreate = $scope.ttCreate;
             $scope.model.ttEdit = $scope.ttEdit;
             $scope.model.title = $scope.title;
             $scope.model.dto = $scope.dto;
-            
-            $scope.$watch("dto", function(){
-            	//console.log("FORM WTF dto");
+            $scope.$watch("dto", function() {
+                //console.log("FORM WTF dto");
                 $scope.model.dto = $scope.dto;
             });
-
             return $scope;
         }
     }
 
 });
-
 app.directive('controlsButton', function($log) {
 
     $log = $log.getInstance("<controlsButton>");
-
     return {
         restrict: 'E',
         //replace: true,
@@ -305,11 +293,9 @@ app.directive('controlsButton', function($log) {
         }
     }
 });
-
 app.directive('controlsNotify', function($log) {
 
     $log = $log.getInstance("<controlsNotify>");
-
     return {
         restrict: 'E',
         ///replace: true,
@@ -331,19 +317,17 @@ app.directive('controlsNotify', function($log) {
             }
 
             notifs.push({
-                ttExpr: function(){
-                	var ret = scope.ttExpr();
-                	if (!ret) {
-                		throw new Error("ttExpr returned illegal translation key: '"+ret+"'");
-                	}
-                	return ret;
+                ttExpr: function() {
+                    var ret = scope.ttExpr();
+                    if (!ret) {
+                        throw new Error("ttExpr returned illegal translation key: '" + ret + "'");
+                    }
+                    return ret;
                 },
                 ttParams: scope.ttParams,
                 type: scope.type,
                 show: scope.show});
-
             $log.info("controlsNotify - notifs = ", notifs);
-
         },
         scope: {
             ttExpr: "&", // viesti (lokalisaatioavain); huom.: ei string vaan expr

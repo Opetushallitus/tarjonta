@@ -16,6 +16,8 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.KOULUTUSTYYPPI_URI;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TOTEUTUSTYYPPI_ENUM;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,10 +81,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
         
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
+        if(koulutuses.size()==0){
+            logger.warn("There is a hakukohde without komotos???" + hakukohde.toString());
+            return Collections.EMPTY_LIST;
+        }
         
         add(hakukohdeDoc, OID, hakukohde.getOid());
-        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, hakukohde.getHakukausiUri(), koodiService);
-        add(hakukohdeDoc, VUOSI_KOODI, hakukohde.getHakukausiVuosi());
+        IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, koulutuses.get(0).getKausi(), koodiService);
+        add(hakukohdeDoc, VUOSI_KOODI, koulutuses.get(0).getVuosi());
         addHakutapaTiedot(hakukohdeDoc, hakukohde.getHakutapaUri());
         add(hakukohdeDoc, ALOITUSPAIKAT, hakukohde.getAloituspaikatLkm());
         add(hakukohdeDoc, TILA, hakukohde.getTila());
@@ -95,6 +101,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addKomotoOids(hakukohdeDoc, koulutuses);
         addKoulutuslajit(hakukohdeDoc, koulutuses);
         addKoulutusAsteTyyppi(hakukohdeDoc, koulutuses);
+        addToteutustyyppi(hakukohdeDoc, koulutuses);
         
 
         addPohjakoulutusvaatimus(hakukohdeDoc, koulutuses);
@@ -118,7 +125,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
 
         return docs;
-    }
+        }
 
     private void addRyhmat(SolrInputDocument hakukohdeDoc, String ryhmaOidit) {
         if (ryhmaOidit==null) {
@@ -134,6 +141,17 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         if(koulutuses!=null && koulutuses.size()>0) {
             String koulutusastetyyppi = koulutuses.get(0).getBaseKoulutustyyppiEnum().getKoulutusasteTyyppi().value();
             hakukohdeDoc.addField(KOULUTUSASTETYYPPI, koulutusastetyyppi);
+        }
+    }
+
+    private void addToteutustyyppi(SolrInputDocument hakukohdeDoc,
+            List<KoulutusIndexEntity> koulutuses) {
+        if(koulutuses!=null && koulutuses.size()>0) {
+            final KoulutusIndexEntity koulutus = koulutuses.get(0);
+            if (koulutus.getSubKoulutustyyppiEnum() != null) {
+                add(hakukohdeDoc, KOULUTUSTYYPPI_URI, koulutus.getSubKoulutustyyppiEnum().uri());
+                add(hakukohdeDoc, TOTEUTUSTYYPPI_ENUM, koulutus.getSubKoulutustyyppiEnum());
+            }
         }
     }
 

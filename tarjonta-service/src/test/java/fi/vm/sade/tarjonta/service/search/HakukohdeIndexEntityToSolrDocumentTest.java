@@ -25,6 +25,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.impl.IndexerDaoImpl;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
+import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
@@ -72,6 +73,8 @@ public class HakukohdeIndexEntityToSolrDocumentTest {
 
         IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
         Whitebox.setInternalState(converter, "indexerDao", indexerDao);
+        Mockito.stub(indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(Mockito.anyLong())).toReturn(Lists.newArrayList(new KoulutusIndexEntity("oid", "tarjoaja-oid", "foo", "bar",
+                ModuulityyppiEnum.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS, ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA, "koulutus_1", "kevat_k", Integer.valueOf(2014))));
         
         HakukohdeIndexEntity hk = new HakukohdeIndexEntity(1l,  "hk-oid",  "NIMI",  null,  null,  null,  null,  null,  null,  null,  null,  RYHMA_OID);
         List<SolrInputDocument> doc = converter.apply(hk);
