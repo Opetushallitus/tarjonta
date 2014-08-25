@@ -35,11 +35,14 @@
             <tr>
                 <th tt="hakukohde.review.perustiedot.nimi"/>
                 <td colspan="2">
-                    <div ng-show="!showNimiUri">
-                    <mk-text model="model.hakukohde.hakukohteenNimet" display="rows"/>
+                    <div ng-show="!showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                        <mk-text model="model.hakukohde.hakukohteenNimet" display="rows"/>
                     </div>
-                    <div ng-show="showNimiUri">
+                    <div ng-show="showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
                         <div koodi uri="model.hakukohde.hakukohteenNimiUri">resolved</div>
+                    </div>
+                    <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                        {{model.hakukohde.hakukohteenNimi}}
                     </div>
                 </td>
             </tr>
@@ -72,8 +75,49 @@
 		            {{ model.hakukohde.aloituspaikatLkm }}
 		        </td>
 		    </tr>
-		
-		    <tr ng-show="!isAiku">
+
+            <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
+                          'LUKIOKOULUTUS',
+                          'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                          'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                          'PERUSOPETUKSEN_LISAOPETUS',
+                          'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                          'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                          'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                          'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+                          ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
+                <th tt="hakukohde.review.perustiedot.valintojenAloituspaikat"/>
+                <td colspan="2">
+                    {{ model.hakukohde.valintojenAloituspaikatLkm }}
+                </td>
+            </tr>
+
+            <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
+                          'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+                          ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
+                <th tt="hakukohde.review.perustiedot.kaksoistutkinto"/>
+                <td colspan="2">
+                    {{ model.kaksoisTutkinto}}
+                </td>
+            </tr>
+
+            <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
+                <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo"/>
+                <td colspan="2">
+                    {{ model.hakukohde.alinHyvaksyttavaKeskiarvo != 0 ? model.hakukohde.alinHyvaksyttavaKeskiarvo : ""}}
+                </td>
+            </tr>
+
+            <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
+                <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet"/>
+                <td colspan="2">
+		            <span data-ng-repeat="painotettavaOppiaine in model.painotettavatOppiaineet">
+		                {{ painotettavaOppiaine.nimi }} ( {{painotettavaOppiaine.painokerroin}} ){{$last ? '' : ', '}}
+		            </span>
+                </td>
+            </tr>
+
+            <tr ng-show="!isAiku">
 		        <th tt="hakukohde.review.perustiedot.kaytetaanJarjestelmanValintaPalvelua"></th>
 		        <td colspan="2">
 		            {{ model.kaytetaanJarjestelmanValintaPalveluaArvo }}

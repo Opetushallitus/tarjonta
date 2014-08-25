@@ -656,8 +656,23 @@ public class ConverterV1 {
 
         }
 
-        hakukohdeRDTO.setOrganisaatioRyhmaOids(hakukohde.getOrganisaatioRyhmaOids());
+        addOrganisaatioRyhmaOids(hakukohde, hakukohdeRDTO);
+        addPainotettavatOppiaineet(hakukohde, hakukohdeRDTO);
+
         return hakukohdeRDTO;
+    }
+
+    private void addOrganisaatioRyhmaOids(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        hakukohdeRDTO.setOrganisaatioRyhmaOids(hakukohde.getOrganisaatioRyhmaOids());
+    }
+
+    private void addPainotettavatOppiaineet(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        for (PainotettavaOppiaine painotettavaOppiaine : hakukohde.getPainotettavatOppiaineet()) {
+            PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO = new PainotettavaOppiaineV1RDTO();
+            painotettavaOppiaineV1RDTO.setOppiaineUri(painotettavaOppiaine.getOppiaine());
+            painotettavaOppiaineV1RDTO.setPainokerroin(painotettavaOppiaine.getPainokerroin().toString());
+            hakukohdeRDTO.getPainotettavatOppiaineet().add(painotettavaOppiaineV1RDTO);
+        }
     }
 
     private HashMap<String, String> convertMonikielinenMetadata(List<MonikielinenMetadata> metadatas) {

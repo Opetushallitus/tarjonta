@@ -13,17 +13,17 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 @ApiModel(value = "V1 Hakukohde REST-api model, used by KK-ui")
 public class HakukohdeV1RDTO extends BaseV1RDTO {
 
-	private static final long serialVersionUID = 1L;
-	
-	private String hakukohteenNimi;
+    private static final long serialVersionUID = 1L;
+
+    private String hakukohteenNimi;
     private String hakukohteenNimiUri;
-    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=false)
-    private Map<String,String> hakukohteenNimet;
-    private Map<String,String> tarjoajaNimet;
+    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required = false)
+    private Map<String, String> hakukohteenNimet;
+    private Map<String, String> tarjoajaNimet;
     private Set<String> tarjoajaOids;
-    @ApiModelProperty(value = "Hakukohde's haku's oid",required = true)
+    @ApiModelProperty(value = "Hakukohde's haku's oid", required = true)
     private String hakuOid;
-    @ApiModelProperty(value = "Hakukohde's haku's inner application period",required = false)
+    @ApiModelProperty(value = "Hakukohde's haku's inner application period", required = false)
     private String hakuaikaId;
     private List<String> hakukelpoisuusvaatimusUris;
     @ApiModelProperty(value = "Hakukohde's related koulutus oids", required = true)
@@ -39,7 +39,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private int valintojenAloituspaikatLkm;
     private String sahkoinenToimitusOsoite;
     private String soraKuvausKoodiUri;
-    @ApiModelProperty(value = "Hakukohde's state",required = true,allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
+    @ApiModelProperty(value = "Hakukohde's state", required = true, allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU")
     private String tila;
     private String valintaperustekuvausKoodiUri;
     private Date liitteidenToimitusPvm;
@@ -47,10 +47,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String koulutusAsteTyyppi;
     private String toteutusTyyppi;
     private String koulutuslaji;
-    private Map<String,String> lisatiedot;
-    private Map<String,String> valintaperusteKuvaukset;
-    private Map<String,String> soraKuvaukset;
-    private Map<String,String> hakukelpoisuusVaatimusKuvaukset;
+    private Map<String, String> lisatiedot;
+    private Map<String, String> valintaperusteKuvaukset;
+    private Map<String, String> soraKuvaukset;
+    private Map<String, String> hakukelpoisuusVaatimusKuvaukset;
     private boolean kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
@@ -63,7 +63,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Set<String> opetusKielet;
     private Set<String> valintaPerusteKuvausKielet;
     private Set<String> soraKuvausKielet;
-    
+    private List<PainotettavaOppiaineV1RDTO> painotettavatOppiaineet = new ArrayList<PainotettavaOppiaineV1RDTO>();
+
     // KJOH-810
     private String[] organisaatioRyhmaOids;
 
@@ -306,9 +307,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
 
     public Map<String, String> getLisatiedot() {
-    	if (lisatiedot==null) {
-    		lisatiedot = new TreeMap<String, String>();
-    	}
+        if (lisatiedot == null) {
+            lisatiedot = new TreeMap<String, String>();
+        }
         return lisatiedot;
     }
 
@@ -341,9 +342,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     }
 
     public Map<String, String> getHakukelpoisuusVaatimusKuvaukset() {
-    	if (hakukelpoisuusVaatimusKuvaukset==null) {
-    		hakukelpoisuusVaatimusKuvaukset = new TreeMap<String, String>();
-    	}
+        if (hakukelpoisuusVaatimusKuvaukset == null) {
+            hakukelpoisuusVaatimusKuvaukset = new TreeMap<String, String>();
+        }
         return hakukelpoisuusVaatimusKuvaukset;
     }
 
@@ -368,9 +369,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     }
 
     public Set<String> getValintaPerusteKuvausKielet() {
-    	if (valintaPerusteKuvausKielet==null) {
-    		valintaPerusteKuvausKielet = new TreeSet<String>();
-    	}
+        if (valintaPerusteKuvausKielet == null) {
+            valintaPerusteKuvausKielet = new TreeSet<String>();
+        }
         return valintaPerusteKuvausKielet;
     }
 
@@ -379,23 +380,23 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     }
 
     public Set<String> getSoraKuvausKielet() {
-    	if (soraKuvausKielet==null) {
-    		soraKuvausKielet = new TreeSet<String>();
-    	}
+        if (soraKuvausKielet == null) {
+            soraKuvausKielet = new TreeSet<String>();
+        }
         return soraKuvausKielet;
     }
 
     public void setSoraKuvausKielet(Set<String> soraKuvausKielet) {
         this.soraKuvausKielet = soraKuvausKielet;
     }
-    
+
     public void setOpetusKielet(Set<String> opetusKielet) {
-		this.opetusKielet = opetusKielet;
-	}
-    
+        this.opetusKielet = opetusKielet;
+    }
+
     public Set<String> getOpetusKielet() {
-		return opetusKielet;
-	}
+        return opetusKielet;
+    }
 
     public Map<String, String> getTarjoajaNimet() {
 
@@ -456,5 +457,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setOrganisaatioRyhmaOids(String[] organisaatioRyhmat) {
         this.organisaatioRyhmaOids = organisaatioRyhmat;
+    }
+
+    public List<PainotettavaOppiaineV1RDTO> getPainotettavatOppiaineet() {
+        return painotettavatOppiaineet;
+    }
+
+    public void setPainotettavatOppiaineet(List<PainotettavaOppiaineV1RDTO> painotettavatOppiaineet) {
+        this.painotettavatOppiaineet = painotettavatOppiaineet;
     }
 }

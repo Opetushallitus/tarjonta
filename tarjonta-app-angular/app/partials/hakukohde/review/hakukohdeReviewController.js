@@ -23,10 +23,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var kieliKoodistoUri = "kieli";
 
     $scope.model.hakukohteenKielet = [];
-
     $scope.model.koulutukses = [];
-
     $scope.model.hakukelpoisuusVaatimukses = [];
+    $scope.model.painotettavatOppiaineet = [];
 
     // Try to get the user language and if for some reason it can't be
     // retrieved, use FI as default
@@ -95,6 +94,15 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
         }
 
+    };
+
+    var convertKaksoistutkintoValue = function() {
+
+        if ($scope.model.hakukohde.kaksoisTutkinto) {
+            $scope.model.kaksoisTutkinto = LocalisationService.t('hakukohde.review.perustiedot.kaksoitutkinto.kylla');
+        } else {
+            $scope.model.kaksoisTutkinto = LocalisationService.t('hakukohde.review.perustiedot.kaksoitutkinto.ei');
+        }
     };
 
     var loadKielesSetFromHakukohde = function() {
@@ -354,6 +362,18 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     };
 
+    var loadPainotettavatOppiaineet = function() {
+
+        var koodistoUri = "painotettavatoppiaineetlukiossa";
+
+        angular.forEach($scope.model.hakukohde.painotettavatOppiaineet, function(painotettavaOppiaine) {
+            getKoodiWithUri(koodistoUri, painotettavaOppiaine.oppiaineUri, function(oppiaineKoodi) {
+                var oppiaine = { nimi: oppiaineKoodi.koodiNimi, painokerroin: painotettavaOppiaine.painokerroin};
+                $scope.model.painotettavatOppiaineet.push(oppiaine);
+            });
+        });
+    };
+
     var modelInit = function() {
 
         $scope.model.collapse = {
@@ -498,16 +518,19 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         }
 
         console.log('REVIEW HAKUKOHDE :', $scope.model.hakukohde);
-        if ($scope.model.hakukohde.hakukohteenNimiUri) {
+        if ($scope.model.hakukohde.hakukohteenNimiUri &&
+            $scope.model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
             $scope.showNimiUri = true;
         }
 
         initLanguages();
         convertValintaPalveluValue();
+        convertKaksoistutkintoValue();
         loadKielesSetFromHakukohde();
         loadHakuInformation();
         modelInit();
         loadHakukelpoisuusVaatimukses();
+        loadPainotettavatOppiaineet();
         loadKoulutukses();
         // reloadFormControls();
         // checkForHakuRemove();
@@ -528,7 +551,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
         var ret = "";
         var ja = LocalisationService.t("tarjonta.yleiset.ja");
-
         if($scope.showNimiUri) {
             if($scope.hakukohteenNimiUri === undefined) {
                 Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, locale).then(
@@ -538,6 +560,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                 );
             }
             ret =  "<b>" + $scope.hakukohteenNimiUri + "</b>"
+        } else if($scope.model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
+            ret = $scope.model.hakukohde.hakukohteenNimi;
         } else {
             for (var i in $scope.model.hakukohde.hakukohteenNimet) {
                 if (i > 0) {
@@ -576,7 +600,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             });
 
         }
-
         return ret;
 
     };
