@@ -141,7 +141,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
             List<String> organisationOids, List<String> hakukohdeTilas,
-            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid, List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid, String organisaatioRyhmaOid) {
+            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid, List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid, String organisaatioRyhmaOid, List<ToteutustyyppiEnum> koulutustyypit) {
 
         organisationOids = organisationOids != null ? organisationOids
                 : new ArrayList<String>();
@@ -172,6 +172,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
         }
 
+        for(ToteutustyyppiEnum koulutustyyppi: koulutustyypit) {
+            q.getKoulutustyyppi().add(koulutustyyppi.uri());
+        }
+        
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
 
         r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
