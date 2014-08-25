@@ -154,21 +154,21 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
 
         replayAll();
 
-        /*
-         * UPDATE NAYTTO AND ADD VALMENTAVA TO DB
-         */
-        withoutValmentava.setValmistavaKoulutus(createValmentavaDTO());
-        v = instance.postKoulutus(withoutValmentava);
-
-        printResultErrors(v);
-        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
-
-        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO withValmentava = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) v.getResult();
-        assertNayttoData(withValmentava);
-        assertValmentavaData(withValmentava.getValmistavaKoulutus());
-
-        verify(organisaatioServiceMock);
-        verify(tarjontaKoodistoHelperMock);
+//        /*
+//         * UPDATE NAYTTO AND ADD VALMENTAVA TO DB
+//         */
+//        withoutValmentava.setValmistavaKoulutus(createValmentavaDTO());
+//        v = instance.postKoulutus(withoutValmentava);
+//
+//        printResultErrors(v);
+//        assertEquals("Validation errors", true, v.getErrors() != null ? v.getErrors().isEmpty() : true);
+//
+//        KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO withValmentava = (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) v.getResult();
+//        assertNayttoData(withValmentava);
+//        assertValmentavaData(withValmentava.getValmistavaKoulutus());
+//
+//        verify(organisaatioServiceMock);
+//        verify(tarjontaKoodistoHelperMock);
     }
 
     private void expectValmistavaKoodis() {

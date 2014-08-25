@@ -50,6 +50,15 @@ public class ValmistavaV1RDTO implements Serializable {
     @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
     private String linkkiOpetussuunnitelmaan;
 
+    @ApiModelProperty(value = "Koulutuksen opetusmuodot (sisältää koodisto koodi uri:a)", required = true)
+    private KoodiUrisV1RDTO opetusmuodos;
+
+    @ApiModelProperty(value = "Koulutuksen opetusajat (esim. Iltaopetus) (sisältää koodisto koodi uri:a)", required = true)
+    private KoodiUrisV1RDTO opetusAikas;
+
+    @ApiModelProperty(value = "Koulutuksen opetuspaikat (sisältää koodisto koodi uri:a)", required = true)
+    private KoodiUrisV1RDTO opetusPaikkas;
+
     public ValmistavaV1RDTO() {
 
     }
@@ -166,5 +175,48 @@ public class ValmistavaV1RDTO implements Serializable {
      */
     public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
         this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @return the opetusmuodos
+     */
+    public KoodiUrisV1RDTO getOpetusmuodos() {
+        if (opetusmuodos == null) {
+            opetusmuodos = new KoodiUrisV1RDTO();
+        }
+
+        return opetusmuodos;
+    }
+
+    /**
+     * @param opetusmuodos the opetusmuodos to set
+     */
+    public void setOpetusmuodos(KoodiUrisV1RDTO opetusmuodos) {
+        this.opetusmuodos = opetusmuodos;
+    }
+
+    public KoodiUrisV1RDTO getOpetusAikas() {
+
+        if (opetusAikas == null) {
+            opetusAikas = new KoodiUrisV1RDTO();
+        }
+
+        return opetusAikas;
+    }
+
+    public void setOpetusAikas(KoodiUrisV1RDTO opetusAikas) {
+        this.opetusAikas = opetusAikas;
+    }
+
+    public KoodiUrisV1RDTO getOpetusPaikkas() {
+        if (opetusPaikkas == null) {
+            opetusPaikkas = new KoodiUrisV1RDTO();
+        }
+
+        return opetusPaikkas;
+    }
+
+    public void setOpetusPaikkas(KoodiUrisV1RDTO opetusPaikkas) {
+        this.opetusPaikkas = opetusPaikkas;
     }
 }

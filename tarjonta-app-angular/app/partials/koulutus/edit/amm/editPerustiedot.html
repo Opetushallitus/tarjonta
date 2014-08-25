@@ -162,8 +162,8 @@
     <th tt="koulutus.edit.opetusaikas">Opetusajat</th>
     <td>
 <multi-select
-    selection="uiModel.opetusAikas.uris"
-    promise="uiModel.opetusAikas.promise"
+    selection="vkUiModel.opetusAikas.uris"
+    promise="vkUiModel.opetusAikas.promise"
     columns="2"
     name="opetusAikas" required/>
 </td>
@@ -172,18 +172,20 @@
 </td>
 </tr>
 
+{{uiModel.opetusmuodos | json}}
+
 <!-- opetusmuodot -->
 <tr ng-if="uiModel.toggleTabs" class="required">
     <th tt="koulutus.edit.opetusmuodot">Opetusmuodot</th>
     <td>
 <multi-select
-    selection="uiModel.opetusmuodos.uris"
-    promise="uiModel.opetusmuodos.promise"
+    selection="vkUiModel.opetusmuodos.uris"
+    promise="vkUiModel.opetusmuodos.promise"
     columns="2"
     name="opetusmuodos" required/>
 </td>
 <td>
-    <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required">Opetusmuodot vaaditaan</p>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required">Opetusmuodot vaaditaan</p>
 </td>
 </tr>
 
@@ -192,13 +194,13 @@
     <th tt="koulutus.edit.opetusPaikkas">Opetuspaikat</th>
     <td>
 <multi-select
-    selection="uiModel.opetusPaikkas.uris"
-    promise="uiModel.opetusPaikkas.promise"
+    selection="vkUiModel.opetusPaikkas.uris"
+    promise="vkUiModel.opetusPaikkas.promise"
     columns="2"
     name="opetusPaikkas" required/>
 </td>
 <td>
-    <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required">Opetuspaikat vaaditaan</p>
+    <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required">Opetuspaikat vaaditaan</p>
 </td>
 </tr>
 

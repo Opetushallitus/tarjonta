@@ -343,6 +343,18 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             dto.setHinta(komoto.getHinta().doubleValue());
         }
 
+        if (komoto.getOpetusmuotos() != null) {
+            dto.setOpetusmuodos(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusmuotos(), FieldNames.OPETUSMUODOS, param));
+        }
+
+        if (komoto.getOpetusAikas() != null) {
+            dto.setOpetusAikas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusAikas(), FieldNames.OPETUSAIKAS, param));
+        }
+
+        if (komoto.getOpetusPaikkas() != null) {
+            dto.setOpetusPaikkas(commonConverter.convertToKoodiUrisDTO(komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS, param));
+        }
+
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
