@@ -22,10 +22,10 @@ app.controller('BaseEditController', [
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
     'dialogService', 'CacheService',
     function BaseEditController($scope, $log, Config,
-            $routeParams, $route, $location,
-            converter, TarjontaService, PermissionService,
-            organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-            dialogService, CacheService) {
+        $routeParams, $route, $location,
+        converter, TarjontaService, PermissionService,
+        organisaatioService, Koodisto, KoodistoURI, LocalisationService,
+        dialogService, CacheService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -300,11 +300,11 @@ app.controller('BaseEditController', [
             }
 
             $scope.saveByStatusAndApiObject(
-                    form,
-                    tyyppi,
-                    fnCustomCallbackAfterSave,
-                    converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
-                    );
+                form,
+                tyyppi,
+                fnCustomCallbackAfterSave,
+                converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
+                );
         };
 
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
@@ -453,9 +453,9 @@ app.controller('BaseEditController', [
                 if (model.toteutustyyppi === 'LUKIOKOULUTUS') {
                     //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
                     if (angular.isDefined(uiModel.loadedKoulutuslaji) &&
-                            KoodistoURI.compareKoodi(
-                                    uiModel.loadedKoulutuslaji.uri,
-                                    Config.env['koodi-uri.koulutuslaji.nuortenKoulutus'], true)) {
+                        KoodistoURI.compareKoodi(
+                            uiModel.loadedKoulutuslaji.uri,
+                            Config.env['koodi-uri.koulutuslaji.nuortenKoulutus'], true)) {
 
                         uiModel.isMutable = false;
                         uiModel.isRemovable = false;
@@ -502,17 +502,46 @@ app.controller('BaseEditController', [
         /*
          * LISATIEDOT PAGE FUNCTIONS
          */
-
-        $scope.getLisatietoKielet = function() {
-
-
-            for (var i in $scope.uiModel.opetuskielis.uris) {
-                var lc = $scope.uiModel.opetuskielis.uris[i];
-                if ($scope.uiModel.lisatietoKielet.indexOf(lc) === -1) {
-                    $scope.uiModel.lisatietoKielet.push(lc);
-                }
+        
+        
+        /**
+         * Try to find all language uris for textarea objects.
+         * Set founded uris to uiModel.lisatietoKielet property.
+         * 
+         * @param {type} model
+         * @param {type} uiModel
+         */
+        $scope.getLisatietoKielet = function(model, uiModel, requireKomoTexts) {
+            var arrLanguageUris = [];
+            if (model.kuvausKomoto) {
+                angular.forEach(model.kuvausKomoto, function(tekstis, key) {
+                    angular.forEach(tekstis, function(value, key) {
+                        if (key === 'tekstis') {
+                            arrLanguageUris = arrLanguageUris.concat(_.keys(value));
+                        }
+                    });
+                });
             }
-            return $scope.uiModel.lisatietoKielet;
+            
+             if (requireKomoTexts && model.kuvausKomo) {
+                angular.forEach(model.kuvausKomo, function(tekstis, key) {
+                    angular.forEach(tekstis, function(value, key) {
+                        if (key === 'tekstis') {
+                            arrLanguageUris = arrLanguageUris.concat(_.keys(value));
+                        }
+                    });
+                });
+            }
+
+            if (model.opetuskielis && model.opetuskielis.uris) {
+                arrLanguageUris = arrLanguageUris.concat(_.keys(model.opetuskielis.uris));
+            }
+            
+            if(!angular.isDefined(uiModel.lisatietoKielet)){
+                uiModel.lisatietoKielet = [];  
+            }
+            
+            return uiModel.lisatietoKielet = _.uniq(uiModel.lisatietoKielet.concat(arrLanguageUris));
         };
 
         $scope.getRakenneKuvaModel = function(kieliUri) {
@@ -555,8 +584,8 @@ app.controller('BaseEditController', [
 
         $scope.isTutkintoOhjelmaKoodisto = function(tarjontaKoodistoObj) {
             return window.CONFIG.env["koodisto-uris.koulutusohjelma"] === tarjontaKoodistoObj.koodiKoodisto ||
-                    window.CONFIG.env["koodisto-uris.lukiolinja"] === tarjontaKoodistoObj.koodiKoodisto ||
-                    window.CONFIG.env["koodisto-uris.osaamisala"] === tarjontaKoodistoObj.koodiKoodisto;
+                window.CONFIG.env["koodisto-uris.lukiolinja"] === tarjontaKoodistoObj.koodiKoodisto ||
+                window.CONFIG.env["koodisto-uris.osaamisala"] === tarjontaKoodistoObj.koodiKoodisto;
         };
 
         $scope.deleteKuvausByStructureType = function(tyyppi, kieliUri) {
