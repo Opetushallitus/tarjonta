@@ -201,6 +201,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             valmDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
             valmDto.setOpintojenLaajuusarvoKannassa(komoto.getOpintojenLaajuusArvo());
 
+            if ( komoto.getNimi() != null ) {
+                valmDto.setKoulutusohjelmanNimiKannassa(CommonRestConverters.toStringMap(komoto.getNimi()));
+            }
+
             mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
         } else if (dto instanceof NayttotutkintoV1RDTO) {
             /**

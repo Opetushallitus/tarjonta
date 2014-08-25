@@ -397,6 +397,25 @@ app.controller('BaseReviewController', [
             });
         }
 
+        function removeVersion(uri)  {
+            if (uri.indexOf('#') != -1) {
+                uri = uri.substring(0, uri.indexOf('#'));
+            }
+            return uri;
+        }
+
+        // Ylikirjoita koodistosta tuleva koulutusohjelman nimi paikallisella arvolla (jos olemassa)
+        if ( $scope.model.koulutus.koulutusohjelmanNimiKannassa ) {
+            try {
+                angular.forEach($scope.model.koulutus.koulutusohjelmanNimiKannassa, function (value, key) {
+                    $scope.model.koulutus.koulutusohjelma.meta[removeVersion(key)].nimi = value;
+                });
+            }
+            catch (err) {
+                console.error("Koulutusohjelman nimen ylikirjoitus fail", err);
+            }
+        }
+
         $scope.treeClickHandler = function(obj, event) {
 //            TarjontaService.haeKoulutukset({//search parameter object
 //                komoOid: obj.oid

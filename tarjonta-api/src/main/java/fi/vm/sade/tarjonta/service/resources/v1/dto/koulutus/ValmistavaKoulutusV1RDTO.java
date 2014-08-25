@@ -18,6 +18,8 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
+import java.util.Map;
+
 /**
  *
  * @author alexGofore
@@ -40,6 +42,13 @@ public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
      */
     @ApiModelProperty(value = "Opintojen laajuuden arvo (ei koodistosta)", required = false)
     private String opintojenLaajuusarvoKannassa;
+
+    /**
+     * Osalla koulutuksista (esim. valmetava ja kuntouttava) koulutusohjelman
+     * nimi tulee suoraan kannasta, eikä käytetä koodistosta tulevaa arvoa.
+     */
+    @ApiModelProperty(value = "Koulutusohjelman nimi kannassa", required = false)
+    private Map<String, String> koulutusohjelmanNimiKannassa;
 
     protected ValmistavaKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
@@ -99,5 +108,13 @@ public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
      */
     public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
+    }
+
+    public Map<String, String> getKoulutusohjelmanNimiKannassa() {
+        return koulutusohjelmanNimiKannassa;
+    }
+
+    public void setKoulutusohjelmanNimiKannassa(Map<String, String> koulutusohjelmanNimiKannassa) {
+        this.koulutusohjelmanNimiKannassa = koulutusohjelmanNimiKannassa;
     }
 }
