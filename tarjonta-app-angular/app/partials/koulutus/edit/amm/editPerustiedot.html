@@ -158,7 +158,7 @@
 
 
 <!-- opetusaikas -->
-<tr class="required">
+<tr ng-if="uiModel.toggleTabs" class="required">
     <th tt="koulutus.edit.opetusaikas">Opetusajat</th>
     <td>
 <multi-select
@@ -173,7 +173,7 @@
 </tr>
 
 <!-- opetusmuodot -->
-<tr class="required">
+<tr ng-if="uiModel.toggleTabs" class="required">
     <th tt="koulutus.edit.opetusmuodot">Opetusmuodot</th>
     <td>
 <multi-select
@@ -188,7 +188,7 @@
 </tr>
 
 <!-- opetuspaikka -->
-<tr class="required">
+<tr ng-if="uiModel.toggleTabs" class="required">
     <th tt="koulutus.edit.opetusPaikkas">Opetuspaikat</th>
     <td>
 <multi-select
