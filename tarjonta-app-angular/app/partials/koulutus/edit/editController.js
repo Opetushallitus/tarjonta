@@ -438,18 +438,6 @@ app.controller('BaseEditController', [
             PermissionService.koulutus.canEdit(model.oid).then(function(data) {
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;
-
-                if (model.toteutustyyppi === 'LUKIOKOULUTUS') {
-                    //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-                    if (angular.isDefined(uiModel.loadedKoulutuslaji) &&
-                            KoodistoURI.compareKoodi(
-                                    uiModel.loadedKoulutuslaji.uri,
-                                    Config.env['koodi-uri.koulutuslaji.nuortenKoulutus'], true)) {
-
-                        uiModel.isMutable = false;
-                        uiModel.isRemovable = false;
-                    }
-                }
             });
 
             uiModel.tabs.lisatiedot = false; //activate lisatiedot tab

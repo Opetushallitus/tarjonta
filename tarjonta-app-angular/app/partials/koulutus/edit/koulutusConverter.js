@@ -579,7 +579,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     koodisto: 'koodisto-uris.kieli',
                     types: ['A1A2KIELI', 'B1KIELI', 'B2KIELI', 'B3KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
                 },
-                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuoto'},
                 opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
                 opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
                 opetuskielis: {koodisto: 'koodisto-uris.kieli'},

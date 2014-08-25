@@ -255,8 +255,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 return postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo);
             } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
                 return postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo);
-            } else if (dto.getClass() == KoulutusLukioAikuistenOppimaaraV1RDTO.class) {
-                return postLukioKoulutus((KoulutusLukioAikuistenOppimaaraV1RDTO) dto, komo);
+            } else if (dto instanceof KoulutusLukioV1RDTO) {
+                return postLukioKoulutus((KoulutusLukioV1RDTO) dto, komo);
             }
         }
         
