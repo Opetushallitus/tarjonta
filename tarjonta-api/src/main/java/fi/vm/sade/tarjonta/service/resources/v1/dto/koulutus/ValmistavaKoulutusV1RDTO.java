@@ -33,8 +33,30 @@ public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
     private KoodiV1RDTO koulutuslaji;
 
+    /**
+     * Valmistavilla koulutuksilla ei (aina?) ole koodistosta tulevaa
+     * opintojen laajuuden arvoa, vaan virkailijat voivat käsin syöttää
+     * laajuuden arvon.
+     */
+    @ApiModelProperty(value = "Opintojen laajuuden arvo (ei koodistosta)", required = false)
+    private String opintojenLaajuusarvoKannassa;
+
     protected ValmistavaKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
+    }
+
+    /**
+     * @param opintojenLaajuusarvo the opintojenLaajuusarvoKannassa to set
+     */
+    public void setOpintojenLaajuusarvoKannassa(String opintojenLaajuusarvo) {
+        this.opintojenLaajuusarvoKannassa = opintojenLaajuusarvo;
+    }
+
+    /**
+     * @return the opintojenLaajuusarvoKannassa
+     */
+    public String getOpintojenLaajuusarvoKannassa() {
+        return opintojenLaajuusarvoKannassa;
     }
 
     /**

@@ -381,6 +381,22 @@ app.controller('BaseReviewController', [
             console.error("No koulutus found?");
         }
 
+        /**
+         * Kaikille koulutustyypeille ei ole asetettu opintojen laajutta koodistossa,
+         * missä tapauksessa näytetään virkailijan tallentama paikallinen arvo (tarjonnan kannasta).
+         */
+        if ( ! $scope.model.koulutus.opintojenLaajuusarvo.meta
+            && $scope.model.koulutus.opintojenLaajuusarvoKannassa ) {
+
+            $scope.model.koulutus.opintojenLaajuusarvo.meta = {};
+
+            angular.forEach($scope.model.languages, function(lang) {
+                $scope.model.koulutus.opintojenLaajuusarvo.meta[lang.koodi_uri] = {
+                    nimi: $scope.model.koulutus.opintojenLaajuusarvoKannassa
+                };
+            });
+        }
+
         $scope.treeClickHandler = function(obj, event) {
 //            TarjontaService.haeKoulutukset({//search parameter object
 //                komoOid: obj.oid
