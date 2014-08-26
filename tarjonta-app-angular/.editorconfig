@@ -1,0 +1,14 @@
+# editorconfig.org
+root = true
+
+[*]
+indent_style = space
+
+# Should be 2 spaces for JS, but lets go with 4 spaces
+# since most of the files already use 4 spaces...
+indent_size = 4
+
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = false
