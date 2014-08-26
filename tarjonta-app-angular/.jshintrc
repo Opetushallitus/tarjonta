@@ -1,0 +1,4 @@
+{
+    "predef": [ "window", "console", "angular" ],
+    "sub": true
+}
