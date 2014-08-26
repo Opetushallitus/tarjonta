@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -626,6 +627,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step) {
         LOG.info("copyHaku");
+        
+        Haku h = hakuDAO.findByOid(fromHakuOid);
+        
+        permissionChecker.checkUpdateHaku(h.getTarjoajaOids());
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid, step);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
 
