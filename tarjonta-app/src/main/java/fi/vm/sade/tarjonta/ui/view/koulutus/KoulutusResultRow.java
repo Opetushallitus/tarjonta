@@ -142,7 +142,8 @@ public class KoulutusResultRow extends HorizontalLayout {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
 
-        if ((tila.equals(TarjontaTila.VALMIS) ||tila.equals(TarjontaTila.PERUTTU)) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
+        //Muutettu OVT-8135 mukaan
+        if ((tila.equals(TarjontaTila.VALMIS)) && tarjontaPresenter.getPermission().userCanPublishKoulutus(context)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
         
