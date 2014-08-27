@@ -644,7 +644,7 @@ app.controller('HakukohdeParentController', [
             var filteredHakuArray = [];
 
             angular.forEach(hakus, function(haku) {
-                $log.info('HAKU ORGOID: ', haku.organisaatioOids);
+                // $log.info('HAKU ORGOID: ', haku.organisaatioOids);
                 if (haku.organisaatioOids && haku.organisaatioOids.length > 0) {
 
                     if (checkIfOrgMatches(haku.organisaatioOids) || checkIfParentOrgMatches(haku)) {
