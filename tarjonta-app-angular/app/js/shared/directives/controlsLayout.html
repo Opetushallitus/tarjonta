@@ -10,6 +10,7 @@
 
 <span ng-repeat="b in model.buttons">
 	<a href
+        data-action="{{b.ttKey}}"
 	    ng-class="b.primary ? 'btn btn-primary' : 'btn'"
 	    data-ng-click="b.disabled() ? function() : b.action()"
 	    ng-disabled="b.disabled()">{{t(b.ttKey)}}<span ng-show="b.icon"> <span ng-class="'icon-'+b.icon"/></span></a>
@@ -33,7 +34,7 @@
 	<p ng-show="!isNew()" class="float-right">
 	    <span ng-repeat="v in model.metadata"><span ng-show="!$first">, </span>{{v}}</span>
 	</p>
-	
+
     <div class="clear-both"></div>
 </div>
 
