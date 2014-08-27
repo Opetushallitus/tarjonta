@@ -65,6 +65,10 @@ app.controller('HakukohdeRoutingController', [
       $scope.canCreate = $route.current.locals.canCreate;
       $scope.canEdit = $route.current.locals.canEdit;
 
+      var toisenAsteenHakukohde = function (toteutusTyyppi) {
+        return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO';
+      }
+
       if ($route.current.locals.hakukohdex.result === undefined) {
         $scope.model = {
           collapse : {
@@ -82,7 +86,6 @@ app.controller('HakukohdeRoutingController', [
 
       } else {
         var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
-        HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
 
         if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
           hakukohdeResource.valintaperusteKuvaukset = {};
@@ -100,6 +103,10 @@ app.controller('HakukohdeRoutingController', [
           hakukohde : hakukohdeResource
         }
 
+      }
+
+      if (!toisenAsteenHakukohde($scope.model.hakukohde.toteutusTyyppi)) {
+        HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
       }
 
       $scope.hakukohdex = $route.current.locals.hakukohdex;

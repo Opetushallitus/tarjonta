@@ -7,7 +7,10 @@
             <table class="tarjontaForm">
                 <tr class="required">
                     <th tt="tarjonta.hakukohde.valintakoe.modal.valintakoenimi"></th>
-                    <td><input type="text" ng-model="valintakoe.valintakoeNimi" ng-change="status.dirtify()"/></td>
+                    <td>
+                        <input ng-if="model.hakukohde.toteutusTyyppi !== 'AMMATILLINEN_PERUSTUTKINTO'" type="text" ng-model="valintakoe.valintakoeNimi" ng-change="status.dirtify()"/>
+                        <select ng-if="model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO'" name="valintakoetyyppiselect" required ng-model="valintakoe.tyyppi" data-ng-options="valintakoetyyppi.uri as valintakoetyyppi.nimi for valintakoetyyppi in kokeetModel.valintakoetyypit | orderBy: 'nimi'"/>
+                    </td>
                     <td>
                         <p class="error" ng-show="model.showError && !valintakoe.valintakoeNimi" tt="tarjonta.hakukohde.valintakoe.errors.tyyppi">Valintakokeen tyyppi on pakollinen.</p>
                     </td>

@@ -25,11 +25,12 @@ app.controller('HakukohdeParentController', [
     'dialogService',
     'HakukohdeService',
     function($scope, $log, $routeParams, $route, $q, $modal, $location, Hakukohde, Koodisto, AuthService, HakuService, LocalisationService,
-            OrganisaatioService, SharedStateService, TarjontaService, Kuvaus, CommonUtilService, PermissionService, dialogService, HakukohdeService) {
+             OrganisaatioService, SharedStateService, TarjontaService, Kuvaus, CommonUtilService, PermissionService, dialogService, HakukohdeService) {
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
         var aikuNayttoHakukohdePartialUri = "partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html";
+        var ammatillinenPerustutkintoHakukohdePartialUri = "partials/hakukohde/edit/AMMATILLINEN_PERUSTUTKINTO.html";
 
         var routing = {
             "KORKEAKOULUTUS": korkeakoulutusHakukohdePartialUri,
@@ -38,7 +39,8 @@ app.controller('HakukohdeParentController', [
             "AMMATILLINEN_PERUSKOULUTUS": aikuNayttoHakukohdePartialUri,
             "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA": aikuNayttoHakukohdePartialUri,
             "ERIKOISAMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
-            "AMMATTITUTKINTO": aikuNayttoHakukohdePartialUri
+            "AMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
+            "AMMATILLINEN_PERUSTUTKINTO": ammatillinenPerustutkintoHakukohdePartialUri
         };
 
 
@@ -314,7 +316,7 @@ app.controller('HakukohdeParentController', [
 
         };
 
-        $scope.validateHakukohde = function() {
+        $scope.validateHakukohde = function(toteutustyyppi) {
 
             if (!$scope.model.canSaveHakukohde()) {
                 return false;
@@ -331,21 +333,23 @@ app.controller('HakukohdeParentController', [
 
             }
 
-            if (!validateNames()) {
+            if(toteutustyyppi !== 'AMMATILLINEN_PERUSTUTKINTO') {
+                if (!validateNames()) {
 
-                var err = {};
-                err.errorMessageKey = 'hakukohde.edit.nimi.missing';
-                $scope.model.nimiValidationFailed = true;
-                errors.push(err);
+                    var err = {};
+                    err.errorMessageKey = 'hakukohde.edit.nimi.missing';
+                    $scope.model.nimiValidationFailed = true;
+                    errors.push(err);
 
-            }
+                }
 
-            if (!$scope.validateNameLengths($scope.model.hakukohde.hakukohteenNimet)) {
+                if (!$scope.validateNameLengths($scope.model.hakukohde.hakukohteenNimet)) {
 
-                var err = {};
-                err.errorMessageKey = 'hakukohde.edit.nimi.too.long';
+                    var err = {};
+                    err.errorMessageKey = 'hakukohde.edit.nimi.too.long';
 
-                errors.push(err);
+                    errors.push(err);
+                }
             }
 
             if (!$scope.status.validateValintakokeet()) {
@@ -359,7 +363,6 @@ app.controller('HakukohdeParentController', [
                     errorMessageKey: "hakukohde.edit.liitteet.errors"
                 });
             }
-
             if (errors.length < 1) {
                 return true;
             } else {
@@ -505,11 +508,6 @@ app.controller('HakukohdeParentController', [
 
         }
 
-        /*
-         * 
-         * -----> Retrieve all hakus
-         * 
-         */
         $scope.retrieveHakus = function(filterHakuFunction) {
 
             var hakuPromise = HakuService.getAllHakus();
@@ -923,7 +921,7 @@ app.controller('HakukohdeParentController', [
             var foundHaku;
 
             angular.forEach($scope.model.hakus, function(haku) {
-                if (haku.oid === hakuOid) {
+                if (haku && haku.oid === hakuOid) {
                     foundHaku = haku;
                 }
             });
@@ -1064,9 +1062,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         
+
          ------>  Koodisto helper methods
-         
+
          */
         var findKoodiWithArvo = function(koodi, koodis) {
 

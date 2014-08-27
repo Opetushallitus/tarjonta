@@ -44,18 +44,6 @@ app.controller('HakukohdeEditController',
 
     $log = $log.getInstance("HakukohdeEditController");
 
-    var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
-
-    //Initialize all variables and scope object in the beginning
-    var postinumero = undefined;
-
-
-    /*
-
-        ----> Scope function to express whether hakukohde can be saved or not
-
-     */
-
     $scope.model.canSaveHakukohde = function() {
 
         if ($scope.editHakukohdeForm !== undefined) {
@@ -127,23 +115,50 @@ app.controller('HakukohdeEditController',
         });
         $log.info('filterHakuWithAikaAndKohdejoukko, FILTERED HAKUS : ', filteredHakus);
         return filteredHakus;
-
     };
 
-        var filterHakus = function(hakus) {
-            return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
+    var filterHakusForAmmatillinenPerustutkinto = function(hakus) {
 
-        };
+        var filteredHakus = [];
+        $log.info('filterHakusForAmmatillinenPerustutkinto, ALL HAKUS :', hakus);
+
+        angular.forEach(hakus,function(haku){
+            if(haku.kohdejoukkoUri === 'haunkohdejoukko_11#1') {
+                filteredHakus.push(haku);
+            }
+        });
+
+        $log.info('filterHakusForAmmatillinenPerustutkinto, FILTERED HAKUS : ', filteredHakus);
+        return filteredHakus;
+    };
+
+    var filterHakus = function(hakus) {
+        return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
+    };
 
 
 
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
 
+    var loadKoodistoNimi = function() {
+        if($scope.model.hakukohde.hakukohteenNimiUri) {
+            Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, AuthService.getLanguage()).then(
+                function (data) {
+                    $scope.model.hakukohde.koodistonimi = data;
+                }
+            );
+        }
+    };
+
+    var getHakusFilterFunctionBasedOnToteutustyyppi = function(toteutustyyppi) {
+        if(toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO') {
+            return filterHakusForAmmatillinenPerustutkinto;
+        }
+        return filterHakus;
+    }
+
     var init = function() {
-
-
-
         $scope.model.userLang  =  AuthService.getLanguage();
 
         if ($scope.model.userLang === undefined) {
@@ -154,7 +169,7 @@ app.controller('HakukohdeEditController',
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
         $scope.loadHakukelpoisuusVaatimukset();
-        $scope.loadKoulutukses(filterHakus);
+        $scope.loadKoulutukses(getHakusFilterFunctionBasedOnToteutustyyppi($scope.model.hakukohde.toteutusTyyppi));
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
@@ -169,21 +184,11 @@ app.controller('HakukohdeEditController',
         }
 
         $scope.enableOrDisableTabs();
+
+        $scope.model.hakukohde.koodistonimi = loadKoodistoNimi();
     };
 
     init();
-
-    //$scope.model.koodiuriPromise = $q.defer();
-
-    /*
-
-        ---> If creating new hakukohde then tabs are disabled, when hakukohde has oid then
-        tabs are enabled
-
-     */
-
-
-
 
     $scope.model.kieliCallback = function(kieliUri) {
         if ($scope.model.allkieles !== undefined) {
@@ -304,12 +309,16 @@ app.controller('HakukohdeEditController',
 
      */
 
+    var validateHakukohdeFunction = function() {
+        return $scope.validateHakukohde($scope.model.hakukohde.toteutusTyyppi)
+    }
+
     $scope.model.saveValmis = function() {
-        $scope.model.saveParent("VALMIS", $scope.validateHakukohde);
+        $scope.model.saveParent("VALMIS", validateHakukohdeFunction);
     };
 
     $scope.model.saveLuonnos = function() {
-        $scope.model.saveParent("LUONNOS", $scope.validateHakukohde);
+        $scope.model.saveParent("LUONNOS", validateHakukohdeFunction);
     };
 
     $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset); }, function(n, o){
