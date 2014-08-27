@@ -93,9 +93,10 @@ public enum TarjontaTila {
     public boolean isMutable() {
     	return true; // this==LUONNOS || this==KOPIOITU;
     }
-    
+
+    //muokattu OVT-8135 mukaisesti
     public boolean isRemovable() {
-        return this==LUONNOS || this==KOPIOITU || this==VALMIS || this == PERUTTU;
+        return this==LUONNOS || this==KOPIOITU || this==VALMIS;
     }
     
     /**
