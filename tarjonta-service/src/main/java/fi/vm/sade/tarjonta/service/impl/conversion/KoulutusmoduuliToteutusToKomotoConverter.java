@@ -87,7 +87,10 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setVersion((s.getVersion() != null) ? s.getVersion().intValue() : -1);
 
         //OVT-7513 REAL KOODISTO FROM KOMOTO URIs (null if empty):
-        t.setTutkintonimikeUri(s.getTutkintonimikeUri());
+        if (s.getTutkintonimikes() != null && !s.getTutkintonimikes().isEmpty()) {
+            t.setTutkintonimikeUri(s.getTutkintonimikes().iterator().next().getKoodiUri());
+        }
+
         t.setOpintoalaUri(s.getOpintoalaUri());
         t.setKoulutusAlaUri(s.getKoulutusalaUri());
         t.setKoulutusAsteUri(s.getKoulutusasteUri());

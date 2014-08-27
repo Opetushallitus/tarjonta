@@ -54,8 +54,8 @@ public interface KomoV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Luo uuden yksittäisen koulutusmoduulin",
-            notes = "Operaatio luo uuden yksittäisen koulutusmoduulin",
+            value = "Luo tai päivittää yksittäisen koulutusmoduulin",
+            notes = "Operaatio luo tai päivittää yksittäisen koulutusmoduulin",
             response = KomoV1RDTO.class)
     public ResultV1RDTO<KomoV1RDTO> postKomo(KomoV1RDTO dto);
 
