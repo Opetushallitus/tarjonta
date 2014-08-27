@@ -443,7 +443,15 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
 
                 },
                 permissionResource: function() {
-                    return $resource(Config.env.tarjontaRestUrlPrefix + "permission/authorize", {}, {
+                    /**
+                     * Tarjotaan mock-dataa automaattisia testejä varten (vain jos useragent on protractorTest)
+                     * Mock-data olisi parempi saada eriytettyä kokonaan testi-tiedostoihin, jotta ei tarvitsisi
+                     * muokata toiminnallista koodia (kuten tässä)...
+                     */
+                    var url = navigator.userAgent === 'protractorTest'
+                                ? 'http://localhost/authorize.json'
+                                : Config.env.tarjontaRestUrlPrefix + "permission/authorize";
+                    return $resource(url, {}, {
                         authorize: {
                             method: 'GET',
                             withCredentials: true,
@@ -456,7 +464,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                  * <pre>
                  * TODO esimerkki tuloksesta tähän!
                  * </pre>
-                 * 
+                 *
                  * @param {type} type esim. "haku", "hakukohde"
                  * @param {type} target oid
                  * @returns {$q@call;defer.promise}
@@ -473,8 +481,8 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                     });
 
                     var ret = $q.defer();
-                    
-                    permissions.get({"target": target, "type": type}, 
+
+                    permissions.get({"target": target, "type": type},
                         function(result) {
                             $log.info("GOT PERMISSIONS: ", permissionsUrl, type, target, result);
                             ret.resolve(result);

@@ -8,11 +8,8 @@ exports.config = {
             ajetaan lokaalisti ja osa luokalta, ja CORS
             headerit eivät aina ole asetettu...
             */
-            args: ['disable-web-security']
+            args: ['disable-web-security', 'user-agent=protractorTest']
         }
     },
-    beforeEach: function() {
-        global.alex = 'test';
-    },
-    baseUrl: 'http://localhost'
+    baseUrl: 'http://localhost:8080'
 }
