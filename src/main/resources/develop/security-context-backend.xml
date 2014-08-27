@@ -14,7 +14,7 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
         <!-- todo: default rooli -->
         <intercept-url pattern="/" access="permitAll"/>
         <intercept-url pattern="/index.html" access="permitAll"/>
-        <intercept-url pattern="/**" access="permitAll"/>
+        <intercept-url pattern="/**" access="${spring_security_default_access}"/>
         <!--
 <form-login login-page="/user/login" login-processing-url="/j_spring_security_check"
 default-target-url="/user/postLogin"

@@ -443,15 +443,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
 
                 },
                 permissionResource: function() {
-                    /**
-                     * Tarjotaan mock-dataa automaattisia testejä varten (vain jos useragent on protractorTest)
-                     * Mock-data olisi parempi saada eriytettyä kokonaan testi-tiedostoihin, jotta ei tarvitsisi
-                     * muokata toiminnallista koodia (kuten tässä)...
-                     */
-                    var url = navigator.userAgent === 'protractorTest'
-                                ? 'http://localhost/authorize.json'
-                                : Config.env.tarjontaRestUrlPrefix + "permission/authorize";
-                    return $resource(url, {}, {
+                    return $resource(Config.env.tarjontaRestUrlPrefix + "permission/authorize", {}, {
                         authorize: {
                             method: 'GET',
                             withCredentials: true,
