@@ -22,27 +22,42 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl',['app.services','Haku','Organisaatio','Koodisto','localisation','Hakukohde','auth','config','MonikielinenTextArea','MultiSelect','ngGrid','TarjontaOsoiteField','ExportToParent']);
 
 
-app.controller('HakukohdeEditController', 
+app.controller('HakukohdeEditController',
     function($scope,
-             $q, 
+             $q,
              $log,
-             LocalisationService, 
+             LocalisationService,
              OrganisaatioService,
              Koodisto,
              Hakukohde,
-             AuthService, 
+             AuthService,
              HakuService,
-             $route , 
+             $route ,
              $modal ,
              Config,
              $location,
              $timeout,
              TarjontaService,
              Kuvaus,
-             CommonUtilService, 
+             CommonUtilService,
              PermissionService) {
 
     $log = $log.getInstance("HakukohdeEditController");
+
+    // Get organisation groups, see "tarjontaApp.js" routing resolve for hakukohde/id/edit
+    var organisationGroups = $route.current.locals.organisationGroups || [];
+
+    var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
+
+    //Initialize all variables and scope object in the beginning
+    var postinumero = undefined;
+
+
+    /*
+
+        ----> Scope function to express whether hakukohde can be saved or not
+
+     */
 
     $scope.model.canSaveHakukohde = function() {
 
@@ -141,6 +156,10 @@ app.controller('HakukohdeEditController',
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
 
+    $scope.model.ryhmaChange = function() {
+        $log.info("ryhmaChange()", $scope.model.hakukohde.ryhmatX);
+    };
+
     var loadKoodistoNimi = function() {
         if($scope.model.hakukohde.hakukohteenNimiUri) {
             Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, AuthService.getLanguage()).then(
@@ -159,12 +178,15 @@ app.controller('HakukohdeEditController',
     }
 
     var init = function() {
+        $log.info("init()");
+
         $scope.model.userLang  =  AuthService.getLanguage();
 
         if ($scope.model.userLang === undefined) {
             $scope.model.userLang = "FI";
         }
-        console.log('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
+
+        $log.debug('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
         if ($scope.model.hakukohde.oid) {
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
@@ -181,6 +203,15 @@ app.controller('HakukohdeEditController',
 
         if ($scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua === undefined) {
             $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
+        }
+
+        // Mahdolliset Organisaatiopalvelun hakukohdetyhmät joissa hakukohde voi olla, routerissa resolvattuna
+        // [{ key: XXX, value: YYY}, ...]
+        $scope.model.hakukohdeRyhmat = organisationGroups;
+
+        // Alusta ryhmälista tyhjäksi jos ei valintoja
+        if (!$scope.model.hakukohde.organisaatioRyhmaOids) {
+            $scope.model.hakukohde.organisaatioRyhmaOids = [];
         }
 
         $scope.enableOrDisableTabs();
@@ -331,7 +362,7 @@ app.controller('HakukohdeEditController',
     	if (!angular.equals(n,o) && o!="{}") {
     		$scope.status.dirty = true;
     	}
-	});	
+	});
 
 });
 

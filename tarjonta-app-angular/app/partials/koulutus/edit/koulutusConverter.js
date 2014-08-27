@@ -375,9 +375,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }, COMBO: {
             koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
         }, MCOMBO: {
-            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
-            opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
-            opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
             opetuskielis: {koodisto: 'koodisto-uris.kieli'},
             ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
         }, STR: {
@@ -692,13 +689,16 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             MLANG: {},
             RELATION: {
             }, COMBO: {
-                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
+                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'}
             }, MCOMBO: {
+                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'}
             }, STR: {
                 linkkiOpetussuunnitelmaan: {"default": ''},
                 suunniteltuKestoArvo: {nullable: true, "default": ''},
                 hinta: {"default": ''}
-            }, DATES: {     
+            }, DATES: {
             }, BOOL: {
                 opintojenMaksullisuus: {"default": false}
             }, IMAGES: {

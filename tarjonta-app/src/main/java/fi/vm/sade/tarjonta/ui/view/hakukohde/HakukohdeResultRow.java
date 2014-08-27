@@ -135,8 +135,9 @@ public class HakukohdeResultRow extends HorizontalLayout {
         if (tila.isRemovable() && tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.DELETE.key), menuCommand);
         }
-        
-        if ((tila.equals(TarjontaTila.VALMIS) || tila.equals(TarjontaTila.PERUTTU)) && tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
+
+        //Muutettu OVT-8135 mukaan
+        if (tila.equals(TarjontaTila.VALMIS) && tarjontaPresenter.isHakukohdeEditableForCurrentUser(hakukohdeOid)) {
             rowMenuBar.addMenuCommand(i18n.getMessage(MenuBarActions.PUBLISH.key), menuCommand);
         }
         

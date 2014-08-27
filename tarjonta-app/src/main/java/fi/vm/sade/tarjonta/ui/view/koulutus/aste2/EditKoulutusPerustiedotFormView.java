@@ -654,7 +654,7 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         addSelectedFormComponents(type, kcKoulutuslaji);
 
         // OVT-4607 väliaikainen pakotettu valinta
-        kcKoulutuslaji.setEnabled(false);
+        kcKoulutuslaji.setEnabled(isPervako);
 
     }
 
@@ -851,7 +851,9 @@ public class EditKoulutusPerustiedotFormView extends GridLayout {
         disableOrEnableComponents(true);
 
         // OVT-4607 väliaikainen pakotettu valinta
-        koulutusModel.setKoulutuslaji("koulutuslaji_n#1");
+        if(!isPervako) {
+          koulutusModel.setKoulutuslaji("koulutuslaji_n#1");
+        }
     }
 
     private void clearKomoLabels() {

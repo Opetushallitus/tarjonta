@@ -66,7 +66,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
@@ -382,6 +381,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.setNimi("otsikko");
+        kysely.getTotetustyyppi().add(ToteutustyyppiEnum.KORKEAKOULUTUS);
         KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
 
         assertNotNull(vastaus);
@@ -406,7 +406,9 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         });
 
         HakukohteetKysely kysely = new HakukohteetKysely();
-        kysely.getKoulutusasteTyypit().add(KoulutusasteTyyppi.KORKEAKOULUTUS);
+        kysely.getTotetustyyppi().add(ToteutustyyppiEnum.KORKEAKOULUTUS);
+        kysely.setNimi("kkhakukohdenimi");
+
         HakukohteetVastaus vastaus = tarjontaSearchService
                 .haeHakukohteet(kysely);
         assertNotNull(vastaus);
@@ -416,6 +418,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         
         assertEquals(Integer.valueOf(2011), vastaus.getHakukohteet().get(0).getKoulutuksenAlkamisvuosi());
         assertEquals("kausi_k#0", vastaus.getHakukohteet().get(0).getKoulutuksenAlkamiskausi().getUri());
+        assertEquals("kkhakukohdenimi", vastaus.getHakukohteet().get(0).getNimi("fi"));
     }
     
     

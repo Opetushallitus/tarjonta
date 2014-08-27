@@ -174,6 +174,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
     private void expectValmistavaKoodis() {
         // expectKausiNaytto();
         expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
+        expectMetaMapUris(MAP_OPETUMUOTO);
+        expectMetaMapUris(MAP_OPETUSAIKAS);
+        expectMetaMapUris(MAP_OPETUSPAIKKAS);
     }
 
     private void expectNayttoKoodis() {
@@ -327,6 +330,9 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setSuunniteltuKestoArvo(SUUNNITELTU_KESTO_VALUE);
         dto.getYhteyshenkilos().add(new YhteyshenkiloTyyppi(PERSON[0], PERSON[1], PERSON[2], PERSON[3], PERSON[4], PERSON[5], null, HenkiloTyyppi.YHTEYSHENKILO));
         dto.setLinkkiOpetussuunnitelmaan("www");
+        koodiUrisMap(dto.getOpetusPaikkas(), URI_KIELI_FI, MAP_OPETUSPAIKKAS);
+        koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
+        koodiUrisMap(dto.getOpetusmuodos(), URI_KIELI_FI, MAP_OPETUMUOTO);
 
         return dto;
     }

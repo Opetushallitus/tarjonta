@@ -1,0 +1,38 @@
+<div ng-controller="PreviewController">
+    <form action="" method="post" enctype="multipart/form-data">
+        <div class='form-group'>
+            <label for='excel_file'>Excel tiedosto</label>
+            <input type="file" name="excel_file" accept=".xlsx" onchange="angular.element(this).scope().fileChanged(this.files);" required="true">
+        </div>
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="model.showPreview"  ng-model="model.showPreview">Näytä Excel tiedoston sisältö
+            </label>
+        </div>
+        <div ng-show="model.isProcessing">
+            <span>Odota tiedostoa luetaan ...</span>
+        </div>
+
+        <div class='form-group'>
+            <label for='sheet_name'>Välilehden nimi</label>
+            <select id="sheet_name" class="form-control" ng-model="model.selectedSheetName" required="true" ng-required="true" ng-options="sheetName as sheetName for (sheetName, sheetData) in model.sheets">
+                <option value="">---- Valitse välilehti ----</option>
+            </select>
+        </div>
+        <button  ng-click="updateKuvaus()">Päivitä koulutusmoduulien kuvaukset</button>
+
+        <div ng-if="model.showPreview">
+            <table>
+                <thead>
+                    <tr>
+                        <th ng-bind="sheetName"></th>
+                    </tr>
+                </thead>
+                <tr ng-repeat="row in model.selectedSheet.data">
+                    <td ng-repeat="col in row.rowdata track by $index" ng-bind="col"></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>

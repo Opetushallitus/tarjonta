@@ -222,6 +222,12 @@ public class TarjontaSearchService {
             q.addFilterQuery(String.format("%s:(%s)", Hakukohde.KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
         }
 
+        //restrict with koulutustyyppi-uri
+        if (kysely.getKoulutustyyppi().size() > 0) {
+            q.addFilterQuery(String.format("%s:(%s)", Koulutus.KOULUTUSTYYPPI_URI, Joiner.on(" ").join(kysely.getKoulutustyyppi())));
+        }
+
+
         q.setRows(Integer.MAX_VALUE);
         return q;
     }

@@ -22,10 +22,10 @@ app.controller('BaseEditController', [
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
     'dialogService', 'CacheService',
     function BaseEditController($scope, $log, Config,
-            $routeParams, $route, $location,
-            converter, TarjontaService, PermissionService,
-            organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-            dialogService, CacheService) {
+        $routeParams, $route, $location,
+        converter, TarjontaService, PermissionService,
+        organisaatioService, Koodisto, KoodistoURI, LocalisationService,
+        dialogService, CacheService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -50,6 +50,13 @@ app.controller('BaseEditController', [
              formControls: {}*/
         };
 
+        $scope.controlModelCommandApi = {
+            active: false,
+            clear: function() {
+                throw new Error("Component command link failed : ref not assigned!");
+            }
+        }; //clear
+
         /*
          * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
          * LUKIO, KORKEAKOULU etc.
@@ -72,7 +79,7 @@ app.controller('BaseEditController', [
 
         $scope.commonCreatePageConfig = function(routeParams, result) {
             if (angular.isDefined(routeParams) && angular.isDefined(routeParams.toteutustyyppi)) {
-                //create new 
+                //create new
                 $scope.CONFIG = {
                     TYYPPI: routeParams.toteutustyyppi,
                     KOULUTUSTYYPPI: routeParams.koulutustyyppi
@@ -200,6 +207,10 @@ app.controller('BaseEditController', [
          * @returns {undefined}
          */
         $scope.controlFormMessages = function(koulutusForm, uiModel, action, errorDetailType, apiErrors) {
+            if ($scope.controlModelCommandApi.active) {
+                $scope.controlModelCommandApi.clear();
+            }
+
             switch (action) {
                 case 'SHOW':
                     uiModel.showErrorCheckField = false;
@@ -289,11 +300,11 @@ app.controller('BaseEditController', [
             }
 
             $scope.saveByStatusAndApiObject(
-                    form,
-                    tyyppi,
-                    fnCustomCallbackAfterSave,
-                    converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
-                    );
+                form,
+                tyyppi,
+                fnCustomCallbackAfterSave,
+                converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
+                );
         };
 
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
@@ -480,29 +491,46 @@ app.controller('BaseEditController', [
          * LISATIEDOT PAGE FUNCTIONS
          */
 
-        $scope.getLisatietoKielet = function() {
-            for (var i in $scope.uiModel.opetuskielis.uris) {
-                var lc = $scope.uiModel.opetuskielis.uris[i];
-                if ($scope.uiModel.lisatietoKielet.indexOf(lc) == -1) {
-                    $scope.uiModel.lisatietoKielet.push(lc);
-                }
+
+        /**
+         * Try to find all language uris for textarea objects.
+         * Set founded uris to uiModel.lisatietoKielet property.
+         *
+         * @param {type} model
+         * @param {type} uiModel
+         */
+        $scope.getLisatietoKielet = function(model, uiModel, requireKomoTexts) {
+            var arrLanguageUris = [];
+            if (model.kuvausKomoto) {
+                angular.forEach(model.kuvausKomoto, function(tekstis, key) {
+                    angular.forEach(tekstis, function(value, key) {
+                        if (key === 'tekstis') {
+                            arrLanguageUris = arrLanguageUris.concat(_.keys(value));
+                        }
+                    });
+                });
             }
-            return $scope.uiModel.lisatietoKielet;
+
+             if (requireKomoTexts && model.kuvausKomo) {
+                angular.forEach(model.kuvausKomo, function(tekstis, key) {
+                    angular.forEach(tekstis, function(value, key) {
+                        if (key === 'tekstis') {
+                            arrLanguageUris = arrLanguageUris.concat(_.keys(value));
+                        }
+                    });
+                });
+            }
+
+            if (model.opetuskielis && model.opetuskielis.uris) {
+                arrLanguageUris = arrLanguageUris.concat(_.keys(model.opetuskielis.uris));
+            }
+
+            if(!angular.isDefined(uiModel.lisatietoKielet)){
+                uiModel.lisatietoKielet = [];
+            }
+
+            return uiModel.lisatietoKielet = _.uniq(uiModel.lisatietoKielet.concat(arrLanguageUris));
         };
-
-        function deleteLisatiedot(lc) {
-            var lcp = $scope.uiModel.lisatietoKielet.indexOf(lc);
-            if (lcp == -1) {
-                return;
-            }
-            $scope.uiModel.lisatietoKielet.splice(lcp, 1);
-
-            for (var ki in $scope.model.kuvausKomo) {
-                for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
-                    $scope.model.kuvausKomo[ki].tekstis[lc] = undefined;
-                }
-            }
-        }
 
         $scope.getRakenneKuvaModel = function(kieliUri) {
             if (kieliUri === null || angular.isUndefined(kieliUri) || kieliUri === Object(kieliUri)) {
@@ -518,33 +546,45 @@ app.controller('BaseEditController', [
             return ret;
         };
 
-        $scope.onLisatietoLangSelection = function() {
-            for (var ki in $scope.model.kuvausKomo) {
-                for (var lc in $scope.model.kuvausKomo[ki].tekstis) {
-                    if ($scope.uiModel.lisatietoKielet.indexOf(lc) === -1
-                            && $scope.model.kuvausKomo[ki].tekstis[lc] && $scope.model.kuvausKomo[ki].tekstis[lc].trim().length > 0) {
-                        // palautetaan listaan jottei angular digestoi ennen dialogia
-                        $scope.uiModel.lisatietoKielet.push(lc);
-
-                        if ($scope.uiModel.opetuskielis.uris.indexOf(lc) === -1) {
-                            // ei opetuskieli -> varmista poisto dialogilla
-                            dialogService.showDialog({
-                                ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
-                                title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
-                                description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[lc]])
-                            }).result.then(function(ret) {
-                                deleteLisatiedot(lc);
-                            });
+        $scope.onLisatietoLangSelection = function(uris, tyyppi) {
+            if (uris.removed && $scope.uiModel.opetuskielis.uris) {
+                // ei opetuskieli -> varmista poisto dialogilla
+                dialogService.showDialog({
+                    ok: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.poista"),
+                    title: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto.title"),
+                    description: LocalisationService.t("tarjonta.poistovahvistus.koulutus.lisatieto", [$scope.langs[uris.removed]])
+                }).result.then(function(ret) {
+                    if (ret) {
+                        $scope.deleteKuvausByStructureType(tyyppi, uris.removed);
+                    } else {
+                        //cancel remove, put back the uri
+                        if ($scope.uiModel.lisatietoKielet.indexOf(uris.removed) === -1) {
+                            $scope.uiModel.lisatietoKielet.push(uris.removed);
                         }
                     }
+                });
+            } else if (uris.added && $scope.uiModel.lisatietoKielet) {
+                if ($scope.uiModel.lisatietoKielet.indexOf(uris.added) === -1) {
+                    $scope.uiModel.lisatietoKielet.push(uris.added);
                 }
             }
         };
 
         $scope.isTutkintoOhjelmaKoodisto = function(tarjontaKoodistoObj) {
             return window.CONFIG.env["koodisto-uris.koulutusohjelma"] === tarjontaKoodistoObj.koodiKoodisto ||
-                    window.CONFIG.env["koodisto-uris.lukiolinja"] === tarjontaKoodistoObj.koodiKoodisto ||
-                    window.CONFIG.env["koodisto-uris.osaamisala"] === tarjontaKoodistoObj.koodiKoodisto;
+                window.CONFIG.env["koodisto-uris.lukiolinja"] === tarjontaKoodistoObj.koodiKoodisto ||
+                window.CONFIG.env["koodisto-uris.osaamisala"] === tarjontaKoodistoObj.koodiKoodisto;
+        };
+
+        $scope.deleteKuvausByStructureType = function(tyyppi, kieliUri) {
+            angular.forEach(converter.STRUCTURE[tyyppi].KUVAUS_ORDER, function(value, key) {
+                //null = text delete flag in service
+                if (value.isKomo) {
+                    $scope.model.kuvausKomo[value.type].tekstis[kieliUri] = null;
+                } else {
+                    $scope.model.kuvausKomoto[value.type].tekstis[kieliUri] = null;
+                }
+            });
         };
 
         return $scope;

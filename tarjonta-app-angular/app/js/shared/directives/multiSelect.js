@@ -35,13 +35,10 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.items = [];
         $scope.preselection = [];
         $scope.names = {};
-
         $scope.initialized = false;
 
         function onChange(uris, addedUris, removedUris) {
             if ($scope.onChange) {
-
-
                 $scope.onChange({uris: {uris: uris, added: addedUris, removed: removedUris}});
             }
         }
@@ -49,7 +46,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         function updateErrors() {
             $scope.errors.dirty = true;
             $scope.errors.pristine = false;
-            $scope.errors.required = $scope.isrequired && $scope.selection.length == 0;
+            $scope.errors.required = $scope.isrequired && $scope.selection.length === 0;
         }
 
         if ($scope.columns == undefined) {
@@ -286,7 +283,7 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                         w = cw.length;
                     }
                 }
-                //console.log("cw="+cw+" -> w="+w);
+                // console.log("cw="+cw+" -> w="+w);
 
                 $scope.titles.push(e[value]);
 
@@ -302,7 +299,30 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.titles.sort();
 
             $scope.items.sort(function(a, b) {
-                return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
+                if (angular.isUndefined(a) || angular.isUndefined(b)) {
+                    return 0;
+                }
+                
+                if (!a.value) {
+                    return -1;
+                }              
+                if (!b.value) {
+                    return 1;
+                }              
+                
+                if (a.orderWith < b.orderWith) {
+                    return  -1;
+                }
+                if (a.orderWith > b.orderWith) {
+                    return  1;
+                }
+                
+                if(angular.isDefined(a.value.localeCompare)) {
+                    return a.value.localeCompare(b.value);
+                }
+                
+                return 0;
+                // return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
 
             $scope.rows = columnize($scope.items, columns);

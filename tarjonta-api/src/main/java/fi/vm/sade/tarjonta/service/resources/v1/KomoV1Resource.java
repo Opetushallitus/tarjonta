@@ -22,12 +22,14 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KomoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -54,8 +56,8 @@ public interface KomoV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
-            value = "Luo uuden yksittäisen koulutusmoduulin",
-            notes = "Operaatio luo uuden yksittäisen koulutusmoduulin",
+            value = "Luo tai päivittää yksittäisen koulutusmoduulin",
+            notes = "Operaatio luo tai päivittää yksittäisen koulutusmoduulin",
             response = KomoV1RDTO.class)
     public ResultV1RDTO<KomoV1RDTO> postKomo(KomoV1RDTO dto);
 
@@ -118,6 +120,14 @@ public interface KomoV1Resource {
             notes = "Operaatio näyttää koulutusmoduulin monikieliset tekstit",
             response = ResultV1RDTO.class)
     public ResultV1RDTO<KuvausV1RDTO> loadKomoTekstis(@PathParam("oid") String oid);
+
+    @POST
+    @Path("/{oid}/tekstis")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Lisää koulutusmoduuliin monikielisen kuvaustekstin",
+            notes = "Operaatio lisää koulutusmoduuliin monikielisen kuvaustekstin")
+    public ResultV1RDTO saveKomoTekstis(@PathParam("oid") String oid, KuvausV1RDTO<KomoTeksti> dto);
 
     @POST
     @Path("/import/{koulutus}")

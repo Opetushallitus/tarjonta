@@ -108,7 +108,7 @@ abstract class KoulutusBase {
     protected static final String MAP_OPETUSAIHEES = "aihees";
     protected static final String MAP_OPETUSKIELI = "opetuskieli";
     protected static final String MAP_POHJAKOULUTUS = "pohjakoulutus";
-    protected static final String MAP_OPETUMUOTO = "opetusmuto";
+    protected static final String MAP_OPETUMUOTO = "opetusmuoto";
     protected static final String MAP_AMMATTINIMIKE = "ammattinimike";
     protected static final String MAP_OPETUSAIKAS = "opetusaikas";
     protected static final String MAP_OPETUSPAIKKAS = "opetuspaikkas";

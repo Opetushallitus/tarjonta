@@ -13,14 +13,14 @@
 </table>
 
 <mk-tabs
-    model="getLisatietoKielet()"
+    model="uiModel.lisatietoKielet"
     selection="uiModel.selectedKieliUri"
     mutable="true"
     ></mk-tabs>
  
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
     <multi-select
-        on-change="onLisatietoLangSelection()"
+        on-change="onValmistavaLisatietoLangSelection(uris)"
         promise="uiModel.opetuskielis.promise"
         order-with="userLanguages"
         selection="uiModel.lisatietoKielet"

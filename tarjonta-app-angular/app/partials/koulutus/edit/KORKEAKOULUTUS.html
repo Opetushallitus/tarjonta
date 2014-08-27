@@ -4,7 +4,9 @@
             model="controlModel"
             tt-create="koulutus.edit.header.title"
             title="model.koulutusohjelma.tekstis"
-            dto="model">
+            dto="model"
+          
+            >
 
             <controls-button icon="arrow-left" tt-key="koulutus.edit.takaisin" action="goBack($event, koulutusForm)"></controls-button>
             <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveLuonnos($event)" disabled="!canSaveAsLuonnos()" primary="true"></controls-button>
@@ -23,7 +25,7 @@
 
         </controls-model>
 
-        <display-controls model="controlModel" display="header"></display-controls>
+        <display-controls model="controlModel" display="header" command="controlModelCommandApi"></display-controls>
 
         <form name="koulutusForm" novalidate>
             <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
