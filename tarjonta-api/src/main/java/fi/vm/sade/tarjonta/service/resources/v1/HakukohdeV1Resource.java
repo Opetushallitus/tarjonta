@@ -23,6 +23,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.HashMap;
 import java.util.List;
@@ -224,7 +225,8 @@ public interface HakukohdeV1Resource {
             @ApiParam(value = "Alkamiskausi", required = false) @QueryParam("alkamisKausi") String alkamisKausi,
             @ApiParam(value = "Alkamisvuosi", required = false) @QueryParam("alkamisVuosi") Integer alkamisVuosi,
             @ApiParam(value = "Hakukohteen oid", required = false) @QueryParam("hakukohdeOid") String hakukohdeOid,
-            @ApiParam(value = "Lista koulutusasteen tyyppejä", required = false) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi, @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid, @ApiParam(value = "Hakukohderyhmä", required = false) @QueryParam("organisaatioRyhmaOid") String organisaatioRyhmaOid);
+            @ApiParam(value = "Lista koulutusasteen tyyppejä", required = false) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi, @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid, @ApiParam(value = "Hakukohderyhmä", required = false) @QueryParam("organisaatioRyhmaOid") String organisaatioRyhmaOid,
+            @ApiParam(value = "Lista toteutustyyppejä", required = false) @QueryParam("koulutustyyppi") List<ToteutustyyppiEnum> koulutustyypit);
 
     /**
      * Hakukohteen koulutuksten nimi ja oid, muut tiedot saa /search

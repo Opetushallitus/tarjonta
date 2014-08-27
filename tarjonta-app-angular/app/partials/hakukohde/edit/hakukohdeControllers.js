@@ -44,6 +44,9 @@ app.controller('HakukohdeEditController',
 
     $log = $log.getInstance("HakukohdeEditController");
 
+    // Get organisation groups, see "tarjontaApp.js" routing resolve for hakukohde/id/edit
+    var organisationGroups = $route.current.locals.organisationGroups || [];
+
     var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
 
     //Initialize all variables and scope object in the beginning
@@ -139,17 +142,21 @@ app.controller('HakukohdeEditController',
 
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
+    
+    $scope.model.ryhmaChange = function() {
+        $log.info("ryhmaChange()", $scope.model.hakukohde.ryhmatX);
+    };
 
     var init = function() {
-
-
-
+        $log.info("init()");
+        
         $scope.model.userLang  =  AuthService.getLanguage();
 
         if ($scope.model.userLang === undefined) {
             $scope.model.userLang = "FI";
         }
-        console.log('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
+        
+        $log.debug('CHECKING PERMISSIONS : ', $scope.model.hakukohde);
         if ($scope.model.hakukohde.oid) {
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
@@ -163,9 +170,18 @@ app.controller('HakukohdeEditController',
         if ($scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset === undefined) {
             $scope.model.hakukohde.hakukelpoisuusVaatimusKuvaukset = {};
         }
-
+        
         if ($scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua === undefined) {
             $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
+        }
+
+        // Mahdolliset Organisaatiopalvelun hakukohdetyhmät joissa hakukohde voi olla, routerissa resolvattuna
+        // [{ key: XXX, value: YYY}, ...]
+        $scope.model.hakukohdeRyhmat = organisationGroups;
+
+        // Alusta ryhmälista tyhjäksi jos ei valintoja
+        if (!$scope.model.hakukohde.organisaatioRyhmaOids) {
+            $scope.model.hakukohde.organisaatioRyhmaOids = [];
         }
 
         $scope.enableOrDisableTabs();

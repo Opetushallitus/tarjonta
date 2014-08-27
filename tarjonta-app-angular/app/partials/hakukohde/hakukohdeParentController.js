@@ -42,9 +42,12 @@ app.controller('HakukohdeParentController', [
         };
 
 
+        /** 
+         * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
+         */
         function updateTila(tila) {
             var tilat = ["LUONNOS", "PERUTTU", "KOPIOITU"];
-            if (tilat.indexOf($scope.model.hakukohde.tila)!==-1) {
+            if ($scope.model.hakukohde.tila===undefined||tilat.indexOf($scope.model.hakukohde.tila)!==-1) {
               console.log("asetetaan tila modeliin!", tila);
               // päivitä tila modeliin jos se voi muuttua
               $scope.model.hakukohde.tila = tila;
@@ -641,7 +644,7 @@ app.controller('HakukohdeParentController', [
             var filteredHakuArray = [];
 
             angular.forEach(hakus, function(haku) {
-                $log.info('HAKU ORGOID: ', haku.organisaatioOids);
+                // $log.info('HAKU ORGOID: ', haku.organisaatioOids);
                 if (haku.organisaatioOids && haku.organisaatioOids.length > 0) {
 
                     if (checkIfOrgMatches(haku.organisaatioOids) || checkIfParentOrgMatches(haku)) {
