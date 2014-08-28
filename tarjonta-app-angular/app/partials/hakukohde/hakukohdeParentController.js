@@ -1041,15 +1041,11 @@ app.controller('HakukohdeParentController', [
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                 $scope.status.dirty = false;
                                 $scope.editHakukohdeForm.$dirty = false;
+                                $scope.showSuccess();
                                 //TODO jos tyhjät valintakokeet, lisää tässä
                             } else {
                                 console.log("error", hakukohde);
 
-                                if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
-                                    $scope.showSuccess();
-                                } else {
-                                    $scope.showError(hakukohde.errors);
-                                }
                                 if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
                                     $scope.model.hakukohde.valintaperusteKuvaukset = {};
                                 }
@@ -1058,6 +1054,8 @@ app.controller('HakukohdeParentController', [
                                 }
 
                                 $scope.showCommonUnknownErrorMsg();
+                                $scope.showError(hakukohde.errors);
+
                             }
                         }, function(error) {
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
