@@ -97,11 +97,19 @@ app.controller('EditLukioController',
             };
 
             $scope.loadRelationKoodistoData = function(apiModel, uiModel, koodiUri, tutkintoTyyppi) {
+
+                var koulutuslajit = {
+                    LUKIOKOULUTUS: 'koulutuslaji_n',
+                    LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: 'koulutuslaji_a'
+                };
+
                 TarjontaService.getKoulutuskoodiRelations(
                     {
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         uri: koodiUri,
-                        defaults: "koulutuslaji:koulutuslaji_a,pohjakoulutusvaatimus:pohjakoulutustoinenaste_1,koulutustyyppi:" + $scope.CONFIG.KOULUTUSTYYPPI,
+                        defaults: "koulutuslaji:" + koulutuslajit[apiModel.toteutustyyppi] +
+                            ",pohjakoulutusvaatimus:pohjakoulutustoinenaste_1,koulutustyyppi:" +
+                            $scope.CONFIG.KOULUTUSTYYPPI,
                         languageCode: $scope.koodistoLocale
                     }, function(data) {
                     var restRelationData = data.result;
