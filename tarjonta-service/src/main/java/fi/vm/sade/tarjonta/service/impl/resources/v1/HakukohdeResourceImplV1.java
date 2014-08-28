@@ -1028,7 +1028,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private void setHakukohde(Set<KoulutusmoduuliToteutus> komotot, Hakukohde hk) {
-        hakukohde.setKoulutusmoduuliToteutuses(komotot);
+        hk.setKoulutusmoduuliToteutuses(komotot);
         for (KoulutusmoduuliToteutus komoto : komotot) {
             komoto.addHakukohde(hk);
         }
