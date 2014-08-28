@@ -160,7 +160,11 @@ app.controller('HakukohdeParentController', [
             $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
 
             angular.forEach(errorArray, function(error) {
-                $scope.model.validationmsgs.push(error.errorMessageKey);
+                if(error.errorMessageKey){
+                    $scope.model.validationmsgs.push(error.errorMessageKey);
+                } else {
+                    $scope.model.validationmsgs.push(angular.toJson(error));
+                }
             });
             $scope.model.showError = true;
             $scope.model.showSuccess = false;
