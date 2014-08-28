@@ -21,6 +21,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -40,10 +41,12 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.ModuuliTuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -417,6 +420,25 @@ public class KomoResourceImplV1 implements KomoV1Resource {
 
         result.setResult(komoKoulutusConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), true));
         return result;
+    }
+
+    @Override
+    public ResultV1RDTO saveKomoTekstis(String oid, KuvausV1RDTO<KomoTeksti> tekstis) {
+        permissionChecker.checkCreateKoulutusmoduuli();
+        Preconditions.checkNotNull(oid, "KOMO OID cannot be null.");
+        Preconditions.checkNotNull(tekstis, "KomoTeksti objects cannot be null.");
+
+        final Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
+        ResultV1RDTO dto = new ResultV1RDTO();
+
+        if (komo == null) {
+            dto.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+            return dto;
+        }
+
+        komoKoulutusConverters.convertTekstiDTOToMonikielinenTeksti(tekstis, komo.getTekstit());
+        koulutusmoduuliDAO.update(komo);
+        return dto;
     }
 
 }

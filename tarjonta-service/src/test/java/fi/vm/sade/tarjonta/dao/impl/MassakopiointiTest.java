@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.persistence.EntityManager;
 
+import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -176,9 +177,10 @@ public class MassakopiointiTest extends TestData {
         from.setOrganisationOids(new String[]{"o1", "o2"});
         from.setTarjoajaOids(new String[]{"o1", "o2"});
         ha.setHaku(from);
-        getPersistedKomoto1().setSijoittuminenTyoelamaan(new MonikielinenTeksti("fi","blaah"));
+        getPersistedKomoto1().setSijoittuminenTyoelamaan(new MonikielinenTeksti("fi", "blaah"));
         getPersistedKomoto1().setKoulutusohjelmanValinta(new MonikielinenTeksti("fi", "bvlaahh"));
-        getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi","blaah"));
+        getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi", "blaah"));
+        getPersistedKomoto1().getKoulutusmoduuli().getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi","blaah2"));
         getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1","a2"));
         super.persist(getPersistedKomoto1());
         getPersistedKomoto2().setTila(TarjontaTila.LUONNOS);
@@ -267,6 +269,14 @@ public class MassakopiointiTest extends TestData {
         assertEquals(new Integer(orig.getAlkamisVuosi() + 1), copy.getAlkamisVuosi());
         assertEquals(orig.getAlkamiskausiUri(), copy.getAlkamiskausiUri());
         assertEquals(orig.getKoulutuslajis().size(), copy.getKoulutuslajis().size());
+
+        //komoton tekstit kopioituu
+        assertNotSame(orig.getTekstit().get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN).getId(), copy.getTekstit().get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN).getId());
+        assertEquals(orig.getTekstit().get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN).getTekstiForKieliKoodi("fi"), copy.getTekstit().get(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN).getTekstiForKieliKoodi("fi"));
+
+        //komon tekstit ei kopioidu
+        assertEquals(orig.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getId(), copy.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getId());
+        assertEquals(orig.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getTekstiForKieliKoodi("fi"), copy.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getTekstiForKieliKoodi("fi"));
         if(orig.getOid().equals(getPersistedKomoto1().getOid())){
             //komoto1 testaus
             assertEquals(orig.getKieliValikoima("KIEEEL").getKielet().size(), copy.getKieliValikoima("KIEEEL").getKielet().size());

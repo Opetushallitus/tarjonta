@@ -39,69 +39,71 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     function searchCacheKey(prefix, args) {
         return {
             key: prefix + "/?" +
-                    "oid=" + args.oid + "&" +
-                    "terms=" + escape(args.terms) + "&" +
-                    "state=" + escape(args.state) + "&" +
-                    "season=" + escape(args.season) + "&" +
-                    "komoOid=" + escape(args.komoOid) + "&" +
-                    "kooulutusOid=" + escape(args.koulutusOid) + "&" +
-                    "hakukohdeOid=" + escape(args.hakukohdeOid) + "&" +
-                    "hakuOid=" + escape(args.hakuOid) + "&" +
-                    "year=" + escape(args.year),
+                "oid=" + args.oid + "&" +
+                "terms=" + escape(args.terms) + "&" +
+                "state=" + escape(args.state) + "&" +
+                "season=" + escape(args.season) + "&" +
+                "komoOid=" + escape(args.komoOid) + "&" +
+                "kooulutusOid=" + escape(args.koulutusOid) + "&" +
+                "hakukohdeOid=" + escape(args.hakukohdeOid) + "&" +
+                "hakuOid=" + escape(args.hakuOid) + "&" +
+                "year=" + escape(args.year),
             expires: 60000,
             pattern: prefix + "/.*"
         };
     }
 
-  function getTilat() {
-      return window.CONFIG.env["tarjonta.tila"];
-  };
+    function getTilat() {
+        return window.CONFIG.env["tarjonta.tila"];
+    }
+    ;
 
-  /**
-   * Kutsuu "/hakukohde/ryhmat/operate" POST metodia parametreilla:
-   * <pre>
-   * [
-   *   {
-   *      hakukohdeOid: "1.2.3.4",
-   *      ryhmaOid: "5.6.7.8",
-   *      toiminto: "LISAA"
-   *   },
-   *   {
-   *      hakukohdeOid: "1.2.3.4",
-   *      ryhmaOid: "5.6.7.8",
-   *      toiminto: "POISTA"
-   *   },
-   *   ...
-   * ]
-   * </pre>
-   * 
-   * @param {type} params
-   * @returns promise
-   */
-  function hakukohdeRyhmaOperaatiot(params) {
-      $log.debug("hakukohdeRyhmaOperaatiot()");
-      var resource = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/ryhmat/operate", {}, {
-          post: {method: 'POST', withCredentials: true}            
-      });
-      return resource.post(params).$promise;
-  };
+    /**
+     * Kutsuu "/hakukohde/ryhmat/operate" POST metodia parametreilla:
+     * <pre>
+     * [
+     *   {
+     *      hakukohdeOid: "1.2.3.4",
+     *      ryhmaOid: "5.6.7.8",
+     *      toiminto: "LISAA"
+     *   },
+     *   {
+     *      hakukohdeOid: "1.2.3.4",
+     *      ryhmaOid: "5.6.7.8",
+     *      toiminto: "POISTA"
+     *   },
+     *   ...
+     * ]
+     * </pre>
+     * 
+     * @param {type} params
+     * @returns promise
+     */
+    function hakukohdeRyhmaOperaatiot(params) {
+        $log.debug("hakukohdeRyhmaOperaatiot()");
+        var resource = $resource(Config.env.tarjontaRestUrlPrefix + "hakukohde/ryhmat/operate", {}, {
+            post: {method: 'POST', withCredentials: true}
+        });
+        return resource.post(params).$promise;
+    }
+    ;
 
-  /**
-   * Poista ryhmä hakukohteelta
-   * 
-   */
-  function poistaHakukohderyhma(hakukohdeOid, ryhmaOid){
-    var data = [{ toiminto: "POISTA", hakukohdeOid: hakukohdeOid, ryhmaOid: ryhmaOid}];
-    return hakukohdeRyhmaOperaatiot(data);
-  }
-  
+    /**
+     * Poista ryhmä hakukohteelta
+     * 
+     */
+    function poistaHakukohderyhma(hakukohdeOid, ryhmaOid) {
+        var data = [{toiminto: "POISTA", hakukohdeOid: hakukohdeOid, ryhmaOid: ryhmaOid}];
+        return hakukohdeRyhmaOperaatiot(data);
+    }
+
     var dataFactory = {
-        getTilat:getTilat,
-        hakukohdeRyhmaOperaatiot:hakukohdeRyhmaOperaatiot,
+        getTilat: getTilat,
+        hakukohdeRyhmaOperaatiot: hakukohdeRyhmaOperaatiot,
         poistaHakukohderyhma: poistaHakukohderyhma
     };
 
-    
+
     dataFactory.acceptsTransition = function(from, to) {
         var s = window.CONFIG.env["tarjonta.tila"][from];
         return s != null && s.transitions.indexOf("to") >= 0;
@@ -116,7 +118,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             hakuOid: args.hakuOid,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11","koulutustyyppi_12"]
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"]
         };
 
         $log.debug("haeHakukohteet()", params);
@@ -158,7 +160,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             tila: args.state,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11","koulutustyyppi_12"]
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"]
         };
 
         $log.debug("haeKoulutukset()", params);
@@ -179,7 +181,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = r.oid;
                     } else {
-                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi!=="LUKIOKOULUTUS" && r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
+                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi !== "LUKIOKOULUTUS" && r.pohjakoulutusvaatimus !== undefined ? ", " + localize(r.pohjakoulutusvaatimus) : "");
                     }
 
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
@@ -291,19 +293,18 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         $log.debug("save KomoTekstis(): ", oid);
         var ret = $q.defer();
         var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/tekstis", {'oid': '@oid'});
-        var Tekstis = KomoTekstis.get({'oid': oid}, function(res) {
+        KomoTekstis.get({'oid': oid}, function(res) {
             ret.resolve(res);
         });
 
         return ret.$promise;
     };
 
-    dataFactory.saveKomoTekstis = function(oid) {
-        var KomoTekstis = new $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/:oid/komo/tekstis", {'oid': '@oid'});
-        var Tekstis = KomoTekstis.get({'oid': oid}, function() {
+    dataFactory.saveKomoTekstis = function(komoOid, params) {
+        var resource = new $resource(Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis", {'oid': komoOid}, {
+            post: {method: 'POST', withCredentials: true}
         });
-
-        return Tekstis;
+        return resource.post(params).$promise;
     };
 
     dataFactory.getHakukohde = function(id) {
@@ -342,12 +343,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug("getKoulutuskoodiRelations()");
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + "koulutus/koodisto/:uri/:koulutustyyppi?meta=false&lang=:languageCode",
-                {
-                    koulutustyyppi: '@koulutustyyppi',
-                    uri: '@uri',
-                    defaults: '@defaults', //optional data : string like 'object-field1:uri, object-field2:uri, ...';
-                    languageCode: '@languageCode'
-                });
+            {
+                koulutustyyppi: '@koulutustyyppi',
+                uri: '@uri',
+                defaults: '@defaults', //optional data : string like 'object-field1:uri, object-field2:uri, ...';
+                languageCode: '@languageCode'
+            });
         return koulutus.get(arg, func);
     };
 
@@ -386,8 +387,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
 
         if (!angular.isUndefined(image.file) &&
-                !angular.isUndefined(image.file.type) &&
-                !angular.isUndefined(image.dataURL)) {
+            !angular.isUndefined(image.file.type) &&
+            !angular.isUndefined(image.dataURL)) {
 
             var apiImg = {kieliUri: kieliuri};
 
@@ -457,33 +458,33 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      * </pre>
      */
     dataFactory.resourceLink =
-            $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid", {}, {
-                checkput: {
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
-                },
-                save: {
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
-                    method: 'POST'
-                },
-                test: {
-                    url: Config.env.tarjontaRestUrlPrefix + "link/test",
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'},
-                    method: 'POST'
-                },
-                parents: {
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
-                    isArray: false,
-                    method: 'GET'
-                },
-                remove: {
-                    method: 'DELETE',
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child"
-                },
-                removeMany: {
-                    method: 'DELETE',
-                    url: Config.env.tarjontaRestUrlPrefix + "link/:parent"
-                }
-            });
+        $resource(Config.env.tarjontaRestUrlPrefix + "link/:oid", {}, {
+            checkput: {
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            },
+            save: {
+                headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                method: 'POST'
+            },
+            test: {
+                url: Config.env.tarjontaRestUrlPrefix + "link/test",
+                headers: {'Content-Type': 'application/json; charset=UTF-8'},
+                method: 'POST'
+            },
+            parents: {
+                url: Config.env.tarjontaRestUrlPrefix + "link/:oid/parents",
+                isArray: false,
+                method: 'GET'
+            },
+            remove: {
+                method: 'DELETE',
+                url: Config.env.tarjontaRestUrlPrefix + "link/:parent/:child"
+            },
+            removeMany: {
+                method: 'DELETE',
+                url: Config.env.tarjontaRestUrlPrefix + "link/:parent"
+            }
+        });
 
 
     /**
@@ -531,7 +532,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
 
     dataFactory.komoImport = function(koulutusUri) {
-        return $resource(Config.env.tarjontaRestUrlPrefix + "komo/import/"+ koulutusUri, {}, {
+        return $resource(Config.env.tarjontaRestUrlPrefix + "komo/import/" + koulutusUri, {}, {
             import: {
                 method: 'POST',
                 withCredentials: true,
@@ -668,7 +669,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             result = defaultValue;
         }
 
-       // $log.debug("getParameter()", target, name, result, cache[target]);
+        // $log.debug("getParameter()", target, name, result, cache[target]);
 
         return result;
     };
@@ -725,7 +726,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
     };
 
-    
+
 
     return dataFactory;
 });
