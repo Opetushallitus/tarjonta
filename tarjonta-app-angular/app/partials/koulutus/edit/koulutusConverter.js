@@ -454,6 +454,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         DESC: {
             kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([])},
             kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
+        },
+        /**
+         * TODO: vaihda tämä myöhemmin olemaan 'LUKIOKOULUTUS'. Nyt tällä nimellä,
+         * koska tiimi2 tekee samanaikaisesti muutoksia ja halutaan saada myös heidän
+         * muutokset mukaan.
+         */
+        templates: {
+            edit: 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'
         }
     };
 
