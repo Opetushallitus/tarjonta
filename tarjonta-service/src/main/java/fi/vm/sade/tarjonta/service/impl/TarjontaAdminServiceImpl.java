@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import javax.annotation.Nullable;
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -85,7 +86,6 @@ import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliKoosteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LisaaKoulutusHakukohteelleTyyppi;
@@ -377,7 +377,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
         log.debug("HAKUKOHDE KOULUTUS PROVIDER : " + providerOid);
         log.debug("HAKUKOHDE HAKU OID : " + hakuOid);
         log.debug("HAKUKOHDE KOULUTUSTYYPPI : " + komoto.getKoulutusmoduuli().getKoulutustyyppiEnum());
-        if (komoto.getKoulutusmoduuli().getKoulutustyyppiEnum().equals(KoulutusasteTyyppi.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS.value())) {
+        if (komoto.getKoulutusmoduuli().getKoulutustyyppiEnum()== ModuulityyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS) {
             return false;
         }
 
