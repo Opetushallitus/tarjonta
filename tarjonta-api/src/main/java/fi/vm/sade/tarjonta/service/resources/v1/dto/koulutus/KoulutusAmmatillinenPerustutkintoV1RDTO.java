@@ -25,19 +25,7 @@ import java.util.Map;
  *
  * @author mlyly
  */
-public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
-
-    @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
-    private KoodiV1RDTO pohjakoulutusvaatimus;
-
-    @ApiModelProperty(value = "Tutkintonimike", required = true)
-    private KoodiV1RDTO tutkintonimike;
-
-    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
-    private String linkkiOpetussuunnitelmaan;
-
-    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
-    private KoodiV1RDTO koulutuslaji;
+public class KoulutusAmmatillinenPerustutkintoV1RDTO extends Koulutus2AsteV1RDTO {
 
     @ApiModelProperty(value = "Koulutuksen-tavoitteet", required = false)
     private Map<String, String> koulutuksenTavoitteet;
@@ -52,62 +40,6 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends KoulutusV1RDTO {
 
     protected KoulutusAmmatillinenPerustutkintoV1RDTO(ToteutustyyppiEnum koulutustyyppiUri) {
         super(koulutustyyppiUri, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
-    }
-
-    /**
-     * @return the linkkiOpetussuunnitelmaan
-     */
-    public String getLinkkiOpetussuunnitelmaan() {
-        return linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
-     */
-    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
-        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @return the tutkintonimike
-     */
-    public KoodiV1RDTO getTutkintonimike() {
-        return tutkintonimike;
-    }
-
-    /**
-     * @param tutkintonimike the tutkintonimike to set
-     */
-    public void setTutkintonimike(KoodiV1RDTO tutkintonimike) {
-        this.tutkintonimike = tutkintonimike;
-    }
-
-    /**
-     * @return the koulutuslaji
-     */
-    public KoodiV1RDTO getKoulutuslaji() {
-        return koulutuslaji;
-    }
-
-    /**
-     * @param koulutuslaji the koulutuslaji to set
-     */
-    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
-    }
-
-    /**
-     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
-     */
-    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
-        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @return the pohjakoulutusvaatimus
-     */
-    public KoodiV1RDTO getPohjakoulutusvaatimus() {
-        return pohjakoulutusvaatimus;
     }
 
     public Map<String, String> getKoulutuksenTavoitteet() {

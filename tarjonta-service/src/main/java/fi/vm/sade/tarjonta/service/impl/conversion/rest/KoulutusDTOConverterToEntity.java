@@ -30,14 +30,10 @@ import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusLukioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NayttotutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -139,7 +135,7 @@ public class KoulutusDTOConverterToEntity {
     /*
      * LUKIO RDTO CONVERSION TO ENTITY
      */
-    public KoulutusmoduuliToteutus convert(final KoulutusLukioV1RDTO dto, final String userOid) {
+    public KoulutusmoduuliToteutus convert(final Koulutus2AsteV1RDTO dto, final String userOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
@@ -201,9 +197,20 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
 
-        if (dto.getLukiodiplomit() != null) {
-            komoto.getLukiodiplomit().clear();
-            komoto.setLukiodiplomit(commonConverter.convertToUris(dto.getLukiodiplomit(), komoto.getLukiodiplomit(), FieldNames.LUKIODIPLOMI));
+        /**
+         * LUKIOKOULUTUKSEN erikoiskentät
+         */
+        if (dto instanceof KoulutusLukioV1RDTO) {
+            KoulutusLukioV1RDTO lukioV1RDTO = (KoulutusLukioV1RDTO) dto;
+
+            if ( lukioV1RDTO.getLukiodiplomit() != null ) {
+                komoto.getLukiodiplomit().clear();
+                komoto.setLukiodiplomit(commonConverter.convertToUris(lukioV1RDTO.getLukiodiplomit(), komoto.getLukiodiplomit(), FieldNames.LUKIODIPLOMI));
+            }
+
+            if (lukioV1RDTO.getKielivalikoima() != null) {
+                commonConverter.convertToKielivalikoima(lukioV1RDTO.getKielivalikoima(), komoto);
+            }
         }
 
         if (dto.getLinkkiOpetussuunnitelmaan() != null) {
@@ -212,10 +219,6 @@ public class KoulutusDTOConverterToEntity {
                     commonConverter.convertToLinkkis(WebLinkki.LinkkiTyyppi.OPETUSSUUNNITELMA,
                             dto.getLinkkiOpetussuunnitelmaan(),
                             komoto.getLinkkis()));
-        }
-
-        if (dto.getKielivalikoima() != null) {
-            commonConverter.convertToKielivalikoima(dto.getKielivalikoima(), komoto);
         }
 
         if (dto.getKoulutuslaji() != null) {

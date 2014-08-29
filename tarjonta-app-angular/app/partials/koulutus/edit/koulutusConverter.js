@@ -374,11 +374,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutuslaji: {module: 'TUTKINTO'}
         },
         COMBO: {
-            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
+            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
+            suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'}
         },
         MCOMBO: {
             opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
+            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'},
+            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+            opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
         },
         STR: {
             koulutuksenAlkamisvuosi: {"default": ''},
@@ -567,7 +571,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLINEN_PERUSTUTKINTO INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATILLINEN_PERUSTUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
+        AMMATILLINEN_PERUSTUTKINTO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            KUVAUS_ORDER: [
+                {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
+                {type: "SISALTO", isKomo: false, length: 2000},
+                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
+                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+            ]
+        }),
 
         /*******************************************/
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
