@@ -39,7 +39,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            {{ model.hakukohde.koodistonimi}}
+                            {{ model.koodistonimi}}
                         </td>
                     </tr>
 
@@ -84,6 +84,33 @@
                         </td>
                     </tr>
 
+                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
+                        <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo">Alin hyväksytty keskiarvo</th>
+                        <td>
+                            <input name="alinHyvaksyttavaKeskiarvo" ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text" data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.alinHyvaksyttavaKeskiarvo.$invalid" tt="tarjonta.hakukohde.alinHyvaksyttavaKeskiarvo.validation.failed">Tarkista alin hyväksyttävä keskiarvo</p>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
+                        <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet">Painotettavat oppiaineet</th>
+                        <td>
+                            <div ng-repeat="painotettavaOppiaine in model.hakukohde.painotettavatOppiaineet">
+                                <select ng-model="painotettavaOppiaine.oppiaineUri">
+                                    <option ng-selected="{{po.oppiaineUri == painotettavaOppiaine.oppiaineUri}}" ng-repeat="po in painotettavatOppiaineet | orderBy: 'lokalisoituNimi'" value="{{po.oppiaineUri}}">{{po.lokalisoituNimi}}</option>
+                                </select>
+                                <input class="input-mini" type="text"  ng-model="painotettavaOppiaine.painokerroin" />
+                                <button class="btn top" ng-click="deletePainotettavaOppiaine(painotettavaOppiaine)"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
+                            </div>
+                            <button class="btn" ng-click="addPainotettavaOppiaine()"><span tt="tarjonta.hakukohde.painotettavaOppiaine.uusi.painotettavaOppiaine"></span> <span class="icon-plus-sign"></span></button>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.painotettavatOppiaineetValidationFailed" tt="tarjonta.hakukohde.painotettavatOppiaineet.errors">Tarkista painotettavat oppiaineet.</p>
+                        </td>
+                    </tr>
+
                     <tr>
                         <th tt="kk.hakukohde.valintapalvelu">Valintapalvelu</th>
                         <td ng-disabled="model.isDeEnabled">
@@ -96,12 +123,7 @@
                             <span tt="no">Ei</span>
 
                         </td>
-                        <td>
-                            <!-- <p class="error" ng-show="model.koulutusohjelma.meta.length==0">(TODO virheilmo)</p>  -->
-                        </td>
                     </tr>
-
-
 
                 </table>
 

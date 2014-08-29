@@ -30,17 +30,17 @@ app.controller('HakukohdeParentController', [
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
         var aikuNayttoHakukohdePartialUri = "partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html";
-        var ammatillinenPerustutkintoHakukohdePartialUri = "partials/hakukohde/edit/AMMATILLINEN_PERUSTUTKINTO.html";
+        var toinenAsteHakukohdePartialUri = "partials/hakukohde/edit/TOINEN_ASTE.html";
 
         var routing = {
             "KORKEAKOULUTUS": korkeakoulutusHakukohdePartialUri,
             "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA": aikuLukioHakukohdePartialUri,
-            "LUKIOKOULUTUS": aikuLukioHakukohdePartialUri,
             "AMMATILLINEN_PERUSKOULUTUS": aikuNayttoHakukohdePartialUri,
             "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA": aikuNayttoHakukohdePartialUri,
             "ERIKOISAMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
             "AMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
-            "AMMATILLINEN_PERUSTUTKINTO": ammatillinenPerustutkintoHakukohdePartialUri
+            "AMMATILLINEN_PERUSTUTKINTO": toinenAsteHakukohdePartialUri,
+            "LUKIOKOULUTUS": toinenAsteHakukohdePartialUri
         };
 
 
@@ -92,7 +92,7 @@ app.controller('HakukohdeParentController', [
 
             var error = {};
 
-            error.errorMessageKey = commonExceptionMsgKey;
+            error.errorMessageKey = "tuntematon virhe.";
 
             errors.push(error);
 
@@ -109,6 +109,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.organisaatioNimet = [];
         $scope.model.hakukohdeOppilaitosTyyppis = [];
         $scope.model.nimiValidationFailed = false;
+        $scope.model.painotettavatOppiaineetValidationFailed= false;
         $scope.model.hakukelpoisuusValidationErrMsg = false;
         $scope.model.tallennaValmiinaEnabled = true;
         $scope.model.tallennaLuonnoksenaEnabled = true;
@@ -320,7 +321,9 @@ app.controller('HakukohdeParentController', [
 
         };
 
-        $scope.validateHakukohde = function(toteutustyyppi) {
+        $scope.validateHakukohde = function(toteutusTyyppi) {
+
+            $scope.model.painotettavatOppiaineetValidationFailed = false;
 
             if (!$scope.model.canSaveHakukohde()) {
                 return false;
@@ -337,7 +340,7 @@ app.controller('HakukohdeParentController', [
 
             }
 
-            if(toteutustyyppi !== 'AMMATILLINEN_PERUSTUTKINTO') {
+            if(toteutusTyyppi !== 'AMMATILLINEN_PERUSTUTKINTO' && toteutusTyyppi !== 'LUKIOKOULUTUS') {
                 if (!validateNames()) {
 
                     var err = {};
@@ -353,6 +356,15 @@ app.controller('HakukohdeParentController', [
                     err.errorMessageKey = 'hakukohde.edit.nimi.too.long';
 
                     errors.push(err);
+                }
+            }
+
+            if(toteutusTyyppi === 'LUKIOKOULUTUS') {
+                if(!validPainotettavatOppiaineet()) {
+                    $scope.model.painotettavatOppiaineetValidationFailed = true;
+                    errors.push({
+                        errorMessageKey: "tarjonta.hakukohde.edit.painotettavatOppiaineet.errors"
+                    });
                 }
             }
 
@@ -846,6 +858,22 @@ app.controller('HakukohdeParentController', [
             $scope.model.hakukelpoisuusVaatimusPromise = Koodisto.getAllKoodisWithKoodiUri('pohjakoulutusvaatimuskorkeakoulut', AuthService.getLanguage());
         };
 
+        $scope.loadPainotettavatOppiainevaihtoehdot = function() {
+            var painotettavatOppiaineet = [];
+
+            var painotettavatOppiaineetLukiossaPromise = Koodisto.getAllKoodisWithKoodiUri('painotettavatoppiaineetlukiossa', AuthService.getLanguage());
+            painotettavatOppiaineetLukiossaPromise.then(function(painotettavatOppiaineetLukiossa){
+                for (var i in painotettavatOppiaineetLukiossa) {
+                    var uri = painotettavatOppiaineetLukiossa[i].koodiUri;
+                    var nimi = painotettavatOppiaineetLukiossa[i].koodiNimi;
+                    var versio = painotettavatOppiaineetLukiossa[i].koodiVersio;
+                    var painotettavatOppiaine = { oppiaineUri: uri + "#" + versio, lokalisoituNimi: nimi };
+                    painotettavatOppiaineet.push(painotettavatOppiaine);
+                }
+                $scope.painotettavatOppiaineet = painotettavatOppiaineet;
+            });
+        };
+
         $scope.enableOrDisableTabs = function() {
 
             if ($scope.model.hakukohde !== undefined && $scope.model.hakukohde.oid !== undefined) {
@@ -918,6 +946,17 @@ app.controller('HakukohdeParentController', [
                 return true;
             }
             return false;
+        };
+
+        var validPainotettavatOppiaineet = function() {
+            for (var i in $scope.model.hakukohde.painotettavatOppiaineet) {
+                var painokerroin = $scope.model.hakukohde.painotettavatOppiaineet[i].painokerroin;
+                var painokerroinBlank = !painokerroin.trim();
+                if (painokerroinBlank) {
+                    return false;
+                }
+            }
+            return true;
         };
 
         $scope.getHakuWithOid = function(hakuOid) {
@@ -1038,7 +1077,7 @@ app.controller('HakukohdeParentController', [
                                 //TODO jos tyhjät valintakokeet, lisää tässä
                             } else {
                                 console.log("error", hakukohde);
-
+                                $scope.model.hakukohde = hakukohde.result;
                                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                     $scope.showSuccess();
                                 } else {
@@ -1205,4 +1244,17 @@ app.controller('HakukohdeParentController', [
 
         $scope.temp = null;
 
+
+        $scope.addPainotettavaOppiaine = function () {
+            return HakukohdeService.addPainotettavaOppiaine($scope.model.hakukohde);
+        };
+
+        $scope.deletePainotettavaOppiaine = function (painotettavaOppiaine) {
+            var p = $scope.model.hakukohde.painotettavatOppiaineet.indexOf(painotettavaOppiaine);
+            if (p !== -1) {
+                $scope.status.dirty = true;
+                $scope.model.hakukohde.painotettavatOppiaineet.splice(p, 1);
+                $scope.status.dirtify();
+            }
+        };
     }]);

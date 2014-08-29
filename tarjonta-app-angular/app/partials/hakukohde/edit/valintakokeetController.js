@@ -145,6 +145,7 @@ app.controller('ValintakokeetController',
 
         // kutsutaan parentista
         $scope.status.validateValintakokeet = function () {
+            return true;
             for (var i in $scope.model.hakukohde.valintakokeet) {
                 var li = $scope.model.hakukohde.valintakokeet[i];
                 var nimiEmpty = !notEmpty(li.valintakoeNimi);

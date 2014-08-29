@@ -14,19 +14,25 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import fi.vm.sade.tarjonta.service.resources.serializer.BigDecimalDeserializer;
+import fi.vm.sade.tarjonta.service.resources.serializer.BigDecimalSerializer;
 
 import java.math.BigDecimal;
 
 @ApiModel(value = "V1 Hakukohde's painotettava oppiaine REST-api model")
-public class PainotettavaOppiaineV1RDTO {
+public class PainotettavaOppiaineV1RDTO extends BaseV1RDTO {
 
     @ApiModelProperty(value = "Oppiainee's name uri", required = true)
     private String oppiaineUri;
 
     @ApiModelProperty(value = "Oppiainee's weight", required = true)
-    private String painokerroin;
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    private BigDecimal painokerroin;
 
     public String getOppiaineUri() {
         return oppiaineUri;
@@ -36,11 +42,11 @@ public class PainotettavaOppiaineV1RDTO {
         this.oppiaineUri = oppiaineUri;
     }
 
-    public String getPainokerroin() {
+    public BigDecimal getPainokerroin() {
         return painokerroin;
     }
 
-    public void setPainokerroin(String painokerroin) {
+    public void setPainokerroin(BigDecimal painokerroin) {
         this.painokerroin = painokerroin;
     }
 }

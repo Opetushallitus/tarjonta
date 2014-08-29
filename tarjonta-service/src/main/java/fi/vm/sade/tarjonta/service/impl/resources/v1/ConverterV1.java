@@ -669,8 +669,9 @@ public class ConverterV1 {
     private void addPainotettavatOppiaineet(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
         for (PainotettavaOppiaine painotettavaOppiaine : hakukohde.getPainotettavatOppiaineet()) {
             PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO = new PainotettavaOppiaineV1RDTO();
+            painotettavaOppiaineV1RDTO.setOid(painotettavaOppiaine.getId().toString());
             painotettavaOppiaineV1RDTO.setOppiaineUri(painotettavaOppiaine.getOppiaine());
-            painotettavaOppiaineV1RDTO.setPainokerroin(painotettavaOppiaine.getPainokerroin().toString());
+            painotettavaOppiaineV1RDTO.setPainokerroin(painotettavaOppiaine.getPainokerroin());
             hakukohdeRDTO.getPainotettavatOppiaineet().add(painotettavaOppiaineV1RDTO);
         }
     }
@@ -811,7 +812,11 @@ public class ConverterV1 {
         for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
             hakukohde.addLiite(toHakukohdeLiite(liite));
         }
-        
+
+        for (PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
+            hakukohde.addPainotettavaOppiaine(convertPainotettavaOppiaineRDTOToPainotettavaOppiaine(painotettavaOppiaineV1RDTO));
+        }
+
         hakukohde.setOrganisaatioRyhmaOids(hakukohdeRDTO.getOrganisaatioRyhmaOids());
 
         return hakukohde;
@@ -1129,9 +1134,6 @@ public class ConverterV1 {
         }
     }
 
-    //------------------------------------
-    //Hakukohde helper converters
-    //------------------------------------
     private Valintakoe convertValintakoeRDTOToValintakoe(ValintakoeV1RDTO valintakoeV1RDTO) {
         Valintakoe valintakoe = new Valintakoe();
 
@@ -1147,6 +1149,16 @@ public class ConverterV1 {
         }
 
         return valintakoe;
+    }
+
+    private PainotettavaOppiaine convertPainotettavaOppiaineRDTOToPainotettavaOppiaine(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+        PainotettavaOppiaine painotettavaOppiaine = new PainotettavaOppiaine();
+
+        painotettavaOppiaine.setId(oidFromString(painotettavaOppiaineV1RDTO.getOid()));
+        painotettavaOppiaine.setOppiaine(painotettavaOppiaineV1RDTO.getOppiaineUri());
+        painotettavaOppiaine.setPainokerroin(painotettavaOppiaineV1RDTO.getPainokerroin());
+
+        return painotettavaOppiaine;
     }
 
     /**

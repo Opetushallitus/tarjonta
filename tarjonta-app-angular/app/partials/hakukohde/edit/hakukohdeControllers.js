@@ -132,10 +132,8 @@ app.controller('HakukohdeEditController',
         return filteredHakus;
     };
 
-    var filterHakusForAmmatillinenPerustutkinto = function(hakus) {
-
+    var filterHakusForAmmatillinenAndLukio = function(hakus) {
         var filteredHakus = [];
-        $log.info('filterHakusForAmmatillinenPerustutkinto, ALL HAKUS :', hakus);
 
         angular.forEach(hakus,function(haku){
             if(haku.kohdejoukkoUri === 'haunkohdejoukko_11#1') {
@@ -143,7 +141,6 @@ app.controller('HakukohdeEditController',
             }
         });
 
-        $log.info('filterHakusForAmmatillinenPerustutkinto, FILTERED HAKUS : ', filteredHakus);
         return filteredHakus;
     };
 
@@ -164,15 +161,16 @@ app.controller('HakukohdeEditController',
         if($scope.model.hakukohde.hakukohteenNimiUri) {
             Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, AuthService.getLanguage()).then(
                 function (data) {
-                    $scope.model.hakukohde.koodistonimi = data;
+                    $scope.model.koodistonimi = data;
                 }
             );
         }
     };
 
-    var getHakusFilterFunctionBasedOnToteutustyyppi = function(toteutustyyppi) {
-        if(toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO') {
-            return filterHakusForAmmatillinenPerustutkinto;
+    var getHakusFilterFunctionBasedOnToteutusTyyppi = function(toteutusTyyppi) {
+        if(toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
+            toteutusTyyppi === 'LUKIOKOULUTUS') {
+            return filterHakusForAmmatillinenAndLukio;
         }
         return filterHakus;
     }
@@ -191,7 +189,7 @@ app.controller('HakukohdeEditController',
             $scope.checkPermissions($scope.model.hakukohde.oid);
         }
         $scope.loadHakukelpoisuusVaatimukset();
-        $scope.loadKoulutukses(getHakusFilterFunctionBasedOnToteutustyyppi($scope.model.hakukohde.toteutusTyyppi));
+        $scope.loadKoulutukses(getHakusFilterFunctionBasedOnToteutusTyyppi($scope.model.hakukohde.toteutusTyyppi));
         $scope.canSaveParam($scope.model.hakukohde.hakuOid);
         $scope.haeTarjoajaOppilaitosTyypit();
         $scope.model.continueToReviewEnabled = $scope.checkJatkaBtn($scope.model.hakukohde);
@@ -216,7 +214,11 @@ app.controller('HakukohdeEditController',
 
         $scope.enableOrDisableTabs();
 
-        $scope.model.hakukohde.koodistonimi = loadKoodistoNimi();
+        loadKoodistoNimi();
+
+        if($scope.model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
+            $scope.loadPainotettavatOppiainevaihtoehdot();
+        }
     };
 
     init();
@@ -353,8 +355,8 @@ app.controller('HakukohdeEditController',
     };
 
     $scope.$watch(function(){ return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset); }, function(n, o){
-    	if (!angular.equals(n,o) && o!="{}") {
-    		$scope.status.dirty = true;
+        if (!angular.equals(n,o) && o!="{}") {
+            $scope.status.dirty = true;
     	}
 	});
 

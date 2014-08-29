@@ -50,7 +50,8 @@ public class ConverterV1Test {
         PainotettavaOppiaineV1RDTO painotettavaOppiaineDTO = hakukohdeDTO.getPainotettavatOppiaineet().get(0);
 
         assertEquals("painotettavatoppiaineetlukiossa_ge#1", painotettavaOppiaineDTO.getOppiaineUri());
-        assertEquals("2.5", painotettavaOppiaineDTO.getPainokerroin());
+        assertEquals(new BigDecimal("2.5"), painotettavaOppiaineDTO.getPainokerroin());
+        assertEquals("57982", painotettavaOppiaineDTO.getOid());
         assertTrue(hakukohdeDTO.getPainotettavatOppiaineet().size() == 1);
     }
 
@@ -60,6 +61,7 @@ public class ConverterV1Test {
         PainotettavaOppiaine oppiaine = new PainotettavaOppiaine();
         oppiaine.setPainokerroin(new BigDecimal("2.5"));
         oppiaine.setOppiaine("painotettavatoppiaineetlukiossa_ge#1");
+        oppiaine.setId(57982L);
 
         painotettavatOppiaineet.add(oppiaine);
 

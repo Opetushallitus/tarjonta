@@ -534,7 +534,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 validationMessageses.addAll(HakukohdeValidator
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
-
+            case LUKIOKOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
             default:
                 LOG.error("Toteutustyyppi:" + toteutustyyppi + " validation rules not implemented");
                 validationMessageses

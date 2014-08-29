@@ -306,13 +306,14 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     }
 
-    /**
-     *
-     */
     public void addValintakoe(Valintakoe valintakoe) {
         valintakoes.add(valintakoe);
         valintakoe.setHakukohde(this);
 
+    }
+
+    public void addPainotettavaOppiaine(PainotettavaOppiaine painotettavaOppiaine) {
+        painotettavatOppiaineet.add(painotettavaOppiaine);
     }
 
     /**

@@ -46,7 +46,7 @@ app.factory('Hakukohde',function($resource, Config){
             withCredentials: true,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         }
-        
+
     });
 
 });
@@ -137,7 +137,7 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
                     withCredentials: true,
                     headers : {'Content-Type': 'application/json; charset=UTF-8'}
                 }).success(function(data){
-                      promise.resolve("OK"===data.status); 
+                      promise.resolve("OK"===data.status);
                 }).error(function(data){
                     promise.resolve(false);
                     });
@@ -180,38 +180,46 @@ app.factory('HakukohdeKoulutukses',function($http,Config,$q){
             }
         }
     };
-    
+
 });
 
 app.factory('HakukohdeService', function($resource, Config) {
 
-  function addValintakoeIfEmpty(hakukohde) {
-    if (hakukohde.valintakokeet.length == 0) {
-      var kieli = hakukohde.opetusKielet[0];
-      $scope.addValintakoe(kieli);
+    function addValintakoeIfEmpty(hakukohde) {
+        if (hakukohde.valintakokeet.length == 0) {
+            var kieli = hakukohde.opetusKielet[0];
+            $scope.addValintakoe(kieli);
+        }
     }
-  }
-  
-  function addValintakoe(hakukohde, kieliUri) {
-    var vk =  {
-      hakukohdeOid : hakukohde.oid,
-      kieliUri : kieliUri,
-      valintakoeNimi : undefined,
-      valintakokeenKuvaus : {
-        uri : kieliUri,
-        teksti : undefined
-      },
-      valintakoeAjankohtas : [],
-      isNew : true
-    };
-    
-    hakukohde.valintakokeet.push(vk);
+
+    function addValintakoe(hakukohde, kieliUri) {
+        var vk =  {
+            hakukohdeOid : hakukohde.oid,
+            kieliUri : kieliUri,
+            valintakoeNimi : undefined,
+            valintakokeenKuvaus : {
+            uri : kieliUri,
+            teksti : undefined
+          },
+            valintakoeAjankohtas : [],
+            isNew : true
+        };
+
+        hakukohde.valintakokeet.push(vk);
     return vk;
   }
 
-  return {
-    addValintakoeIfEmpty:addValintakoeIfEmpty,
-    addValintakoe: addValintakoe
+    function addPainotettavaOppiaine(hakukohde) {
+        var po = {
+            oppiaineUri: "painotettavatoppiaineetlukiossa_a1et#1",
+            painokerroin: ""
+        }
+        hakukohde.painotettavatOppiaineet.push(po);
+    }
+
+    return {
+        addValintakoeIfEmpty:addValintakoeIfEmpty,
+        addValintakoe: addValintakoe,
+        addPainotettavaOppiaine: addPainotettavaOppiaine
   };
-  
 });
