@@ -403,6 +403,19 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }
     };
 
+    var AMMATILLINEN_PERUSTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+        KUVAUS_ORDER: [
+            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
+            {type: "SISALTO", isKomo: false, length: 2000},
+            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
+            {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+        ],
+        templates: {
+            edit: 'AMMATILLINEN_PERUSTUTKINTO'
+        }
+    });
+
     var GENERIC_LUKIOKOULUTUS_STRUCTURE = {
         KUVAUS_ORDER: [
             {type: "TAVOITTEET", isKomo: true, length: 2000},
@@ -571,15 +584,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLINEN_PERUSTUTKINTO INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATILLINEN_PERUSTUTKINTO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            KUVAUS_ORDER: [
-                {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
-                {type: "SISALTO", isKomo: false, length: 2000},
-                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
-                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
-                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
-            ]
-        }),
+        AMMATILLINEN_PERUSTUTKINTO: AMMATILLINEN_PERUSTUTKINTO_STRUCTURE,
 
         /*******************************************/
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
@@ -614,7 +619,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA: GENERIC_VALMISTAVA_STRUCTURE,
+        AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA: AMMATILLINEN_PERUSTUTKINTO_STRUCTURE,
 
         /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
