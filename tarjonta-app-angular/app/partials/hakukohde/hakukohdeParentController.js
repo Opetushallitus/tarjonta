@@ -40,9 +40,29 @@ app.controller('HakukohdeParentController', [
             "ERIKOISAMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
             "AMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
             "AMMATILLINEN_PERUSTUTKINTO": toinenAsteHakukohdePartialUri,
-            "LUKIOKOULUTUS": toinenAsteHakukohdePartialUri
+            "LUKIOKOULUTUS": toinenAsteHakukohdePartialUri,
+            "MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS": toinenAsteHakukohdePartialUri,
+            "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS": toinenAsteHakukohdePartialUri,
+            "AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS": toinenAsteHakukohdePartialUri,
+            "PERUSOPETUKSEN_LISAOPETUS": toinenAsteHakukohdePartialUri
         };
 
+
+        $scope.toisenAsteenKoulutus = function(toteutusTyyppi) {
+            return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
+                toteutusTyyppi === 'LUKIOKOULUTUS' ||
+                toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+        }
+
+        $scope.needsHakukelpoisuus = function(toteutusTyyppi) {
+            return toteutusTyyppi !== 'PERUSOPETUKSEN_LISAOPETUS' &&
+                toteutusTyyppi !== 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' &&
+                toteutusTyyppi !== 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
+                toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+        }
 
         /** 
          * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
@@ -55,13 +75,6 @@ app.controller('HakukohdeParentController', [
               $scope.model.hakukohde.tila = tila;
             }
         }
-
-
-        /*
-         * 
-         * Common hakukohde controller variables
-         * 
-         */
 
         $scope.modifiedObj = {
             modifiedBy: '',
@@ -331,16 +344,18 @@ app.controller('HakukohdeParentController', [
 
             var errors = [];
 
-            if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
+            if($scope.needsHakukelpoisuus(toteutusTyyppi)) {
+                if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
 
-                var error = {};
-                error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
-                $scope.model.hakukelpoisuusValidationErrMsg = true;
-                errors.push(error);
+                    var error = {};
+                    error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
+                    $scope.model.hakukelpoisuusValidationErrMsg = true;
+                    errors.push(error);
 
+                }
             }
 
-            if(toteutusTyyppi !== 'AMMATILLINEN_PERUSTUTKINTO' && toteutusTyyppi !== 'LUKIOKOULUTUS') {
+            if(!$scope.toisenAsteenKoulutus(toteutusTyyppi)) {
                 if (!validateNames()) {
 
                     var err = {};

@@ -196,10 +196,10 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     }
     
     $scope.getLiitteetByKieli = function(lc) {
-    	var ret = [];    	
+    	var ret = [];
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-    		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];    		
-    		if (li.kieliUri == lc) {
+    		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+    		if (li.kieliUri.split('#')[0] == lc) {
     			ret.push(postProcessLiite(li));
     		}
     	}    	

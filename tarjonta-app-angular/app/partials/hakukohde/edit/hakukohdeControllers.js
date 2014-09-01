@@ -144,6 +144,18 @@ app.controller('HakukohdeEditController',
         return filteredHakus;
     };
 
+    var filterHakusForAmmatillinenValmistavaAndLisaopetus = function(hakus) {
+        var filteredHakus = [];
+
+        angular.forEach(hakus,function(haku){
+            if(haku.kohdejoukkoUri === 'haunkohdejoukko_17#1') {
+                filteredHakus.push(haku);
+            }
+        });
+
+        return filteredHakus;
+    };
+
     var filterHakus = function(hakus) {
         return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
     };
@@ -171,6 +183,11 @@ app.controller('HakukohdeEditController',
         if(toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
             toteutusTyyppi === 'LUKIOKOULUTUS') {
             return filterHakusForAmmatillinenAndLukio;
+        } else if(toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+            toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS') {
+            return filterHakusForAmmatillinenValmistavaAndLisaopetus;
         }
         return filterHakus;
     }

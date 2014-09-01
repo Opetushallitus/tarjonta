@@ -14,40 +14,20 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Nullable;
-
-import com.wordnik.swagger.annotations.ApiParam;
-import fi.vm.sade.generic.service.exception.NotAuthorizedException;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.tarjonta.model.*;
-
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.generic.service.exception.NotAuthorizedException;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
@@ -59,14 +39,8 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.Hakuko
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -74,11 +48,17 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import java.util.Arrays;
-import java.util.Collections;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
 /**
- *
  * @author mlyly
  */
 public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
@@ -140,8 +120,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
-            List<String> organisationOids, List<String> hakukohdeTilas,
-            String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid, List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid, String organisaatioRyhmaOid, List<ToteutustyyppiEnum> koulutustyypit) {
+                                                                             List<String> organisationOids, List<String> hakukohdeTilas,
+                                                                             String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid, List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid, String organisaatioRyhmaOid, List<ToteutustyyppiEnum> koulutustyypit) {
 
         organisationOids = organisationOids != null ? organisationOids
                 : new ArrayList<String>();
@@ -172,10 +152,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(s));
         }
 
-        for(ToteutustyyppiEnum koulutustyyppi: koulutustyypit) {
+        for (ToteutustyyppiEnum koulutustyyppi : koulutustyypit) {
             q.getKoulutustyyppi().add(koulutustyyppi.uri());
         }
-        
+
         HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q);
 
         r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
@@ -527,7 +507,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
-            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
             case ERIKOISAMMATTITUTKINTO:
             case AMMATTITUTKINTO:
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
@@ -535,6 +514,22 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
             case LUKIOKOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
+            case PERUSOPETUKSEN_LISAOPETUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
+            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
+            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
                 validationMessageses.addAll(HakukohdeValidator
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
@@ -1207,7 +1202,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     public ResultV1RDTO<Boolean> isStateChangePossible(String oid,
-            TarjontaTila tila) {
+                                                       TarjontaTila tila) {
         Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, tila, oid);
         return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
     }
