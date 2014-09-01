@@ -3,7 +3,7 @@ describe('LUKIOKOULUTUS', function() {
     var searchBtn = $('#orgSearch .buttons a:nth-child(2)');
     var firstSearchResult = $('#orgSearchResults li:first-child');
     var koulutuksetFirstResult = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(2)');
-    var koulutusLukio2014 = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(4)');
+    var koulutusLukio2014 = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(3)');
 
     it('should find LUKIOKOULUTUS in organisaatiohaku', function() {
         browser.get('/tarjonta-app');
@@ -16,6 +16,9 @@ describe('LUKIOKOULUTUS', function() {
 
     it('should show koulutukset', function() {
         firstSearchResult.$('span').click();
+        var filterInput = element(by.model('spec.terms'));
+        element(by.cssContainingText('#searchSpec td.year option', '2014')).click();
+        filterInput.sendKeys(protractor.Key.ENTER);
 
         expect(koulutuksetFirstResult.getText()).toEqual('Kauniaisten lukio');
     });
