@@ -418,12 +418,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
     var GENERIC_LUKIOKOULUTUS_STRUCTURE = {
         KUVAUS_ORDER: [
-            {type: "TAVOITTEET", isKomo: true, length: 2000},
-            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true, length: 2000},
-            {type: "KOULUTUKSEN_RAKENNE", isKomo: true, length: 2000},
             {type: "SISALTO", isKomo: false, length: 2000},
-            {type: "KOHDERYHMA", isKomo: false, length: 2000},
-            {type: "OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
             {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
             {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
         ],
