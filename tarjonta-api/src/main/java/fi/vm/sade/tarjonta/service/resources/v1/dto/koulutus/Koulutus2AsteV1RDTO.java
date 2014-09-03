@@ -24,64 +24,13 @@ import java.util.List;
  *
  * @author mlyly
  */
-public abstract class Koulutus2AsteV1RDTO extends KoulutusV1RDTO {
-
-    @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
-    private KoodiV1RDTO pohjakoulutusvaatimus;
-
-    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
-    private KoodiV1RDTO koulutuslaji;
+public abstract class Koulutus2AsteV1RDTO extends KoulutusGenericV1RDTO {
 
     @ApiModelProperty(value = "Tutkintonimike", required = true)
     private KoodiV1RDTO tutkintonimike;
 
-    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan")
-    private String linkkiOpetussuunnitelmaan;
-
     protected Koulutus2AsteV1RDTO(ToteutustyyppiEnum toteutustyyppiEnum, ModuulityyppiEnum moduulityyppiEnum) {
         super(toteutustyyppiEnum, moduulityyppiEnum);
-    }
-
-    /**
-     * @return the pohjakoulutusvaatimus
-     */
-    public KoodiV1RDTO getPohjakoulutusvaatimus() {
-        return pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
-     */
-    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
-        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @return the koulutuslaji
-     */
-    public KoodiV1RDTO getKoulutuslaji() {
-        return koulutuslaji;
-    }
-
-    /**
-     * @param koulutuslaji the koulutuslaji to set
-     */
-    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
-    }
-
-    /**
-     * @return the linkkiOpetussuunnitelmaan
-     */
-    public String getLinkkiOpetussuunnitelmaan() {
-        return linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
-     */
-    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
-        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
     }
 
     /**

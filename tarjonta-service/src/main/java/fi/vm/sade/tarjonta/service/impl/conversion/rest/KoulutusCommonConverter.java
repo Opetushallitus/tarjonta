@@ -278,6 +278,7 @@ public class KoulutusCommonConverter {
 
         final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
 
+
         if (koodiType == null && nullable.isAllowed()) {
             //TODO: remove this code block when data is fixed
             toKoodiUriDTO(koodiDto, new KoodiUriAndVersioType(), new KoodiType(), param.getLocale());

@@ -77,6 +77,12 @@ app.controller('EditGenericController',
 
             $scope.loadRelationKoodistoData = function(apiModel, uiModel, koodiUri, tutkintoTyyppi) {
 
+                /**
+                 * TODO  @alexGofore: selvitä miksi ja milloin tämä ajetaan.
+                 * Liittyy todenäkköisesti uusien koulutusten luomiseen.
+                 */
+                return;
+
                 TarjontaService.getKoulutuskoodiRelations(
                     {
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
@@ -106,7 +112,7 @@ app.controller('EditGenericController',
                 $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                 $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
                 $scope.getLisatietoKielet($scope.model, $scope.uiModel, true);
-            }
+            };
 
             $scope.loadKomoKuvausTekstis = function(komoOid, uiModel, kuvausKomoto) {
                 if (angular.isDefined(kuvausKomoto) && komoOid === null && kuvausKomoto) {

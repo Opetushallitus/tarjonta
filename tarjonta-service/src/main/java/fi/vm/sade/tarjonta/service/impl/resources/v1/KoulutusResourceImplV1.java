@@ -255,8 +255,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 return postNayttotutkintona(dto.getClass(), (AmmattitutkintoV1RDTO) dto, komo);
             } else if (dto.getClass() == ErikoisammattitutkintoV1RDTO.class) {
                 return postNayttotutkintona(dto.getClass(), (ErikoisammattitutkintoV1RDTO) dto, komo);
-            } else if (dto instanceof Koulutus2AsteV1RDTO) {
-                return postGeneric2AsteKoulutus((Koulutus2AsteV1RDTO) dto, komo);
+            } else if (dto instanceof KoulutusGenericV1RDTO) {
+                return postGenericKoulutus((KoulutusGenericV1RDTO) dto, komo);
             }
         }
         
@@ -345,11 +345,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return false;
     }
     
-    private ResultV1RDTO<KoulutusV1RDTO> postGeneric2AsteKoulutus(Koulutus2AsteV1RDTO dto, Koulutusmoduuli komo) {
+    private ResultV1RDTO<KoulutusV1RDTO> postGenericKoulutus(KoulutusGenericV1RDTO dto, Koulutusmoduuli komo) {
         KoulutusmoduuliToteutus fullKomotoWithKomo = null;
         
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
-        KoulutusValidator.validateKoulutusGeneric2Aste(dto, komo, result);
+        KoulutusValidator.validateKoulutusGeneric(dto, komo, result);
         
         if (!result.hasErrors() && validateOrganisation(
                 dto.getOrganisaatio(), result,
@@ -363,10 +363,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     return result;
                 }
                 
-                fullKomotoWithKomo = updateGeneric2Aste(komoto, dto);
+                fullKomotoWithKomo = updateGeneric(komoto, dto);
             } else {
                 //create korkeakoulu koulutus
-                fullKomotoWithKomo = insertKoulutusGeneric2Aste(dto);
+                fullKomotoWithKomo = insertKoulutusGeneric(dto);
             }
             
             indexerResource.indexKoulutukset(Lists.newArrayList(fullKomotoWithKomo.getId()));
@@ -438,7 +438,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return koulutusmoduuliToteutusDAO.insert(newKomoto);
     }
     
-    private KoulutusmoduuliToteutus insertKoulutusGeneric2Aste(final Koulutus2AsteV1RDTO dto) {
+    private KoulutusmoduuliToteutus insertKoulutusGeneric(final KoulutusGenericV1RDTO dto) {
         Preconditions.checkNotNull(dto.getKomotoOid() != null, "External KOMOTO OID not allowed. OID : %s.", dto.getKomotoOid());
         Preconditions.checkNotNull(dto.getKomoOid() != null, "External KOMO OID not allowed. OID : %s.", dto.getKomoOid());
         
@@ -467,7 +467,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), false);
     }
     
-    private KoulutusmoduuliToteutus updateGeneric2Aste(KoulutusmoduuliToteutus komoto, final Koulutus2AsteV1RDTO dto) {
+    private KoulutusmoduuliToteutus updateGeneric(KoulutusmoduuliToteutus komoto, final KoulutusGenericV1RDTO dto) {
         permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
         return convertToEntity.convert(dto, contextDataService.getCurrentUserOid());
     }
@@ -1082,7 +1082,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             persisted = insertKoulutusKorkeakoulu((KoulutusKorkeakouluV1RDTO) koulutusDtoForCopy(KoulutusKorkeakouluV1RDTO.class, komoto, orgOid), true);
                             break;
                         case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
-                            persisted = insertKoulutusGeneric2Aste((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
+                            persisted = insertKoulutusGeneric((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                             persisted = insertKoulutusNayttotutkintona((ErikoisammattitutkintoV1RDTO) koulutusDtoForCopy(ErikoisammattitutkintoV1RDTO.class, komoto, orgOid));

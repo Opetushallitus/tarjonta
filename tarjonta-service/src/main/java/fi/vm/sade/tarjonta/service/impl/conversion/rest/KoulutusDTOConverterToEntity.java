@@ -20,13 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.BaseKoulutusmoduuli;
-import fi.vm.sade.tarjonta.model.BinaryData;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.WebLinkki;
-import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
@@ -133,9 +127,9 @@ public class KoulutusDTOConverterToEntity {
     }
 
     /*
-     * LUKIO RDTO CONVERSION TO ENTITY
+     * GENERIC RDTO CONVERSION TO ENTITY
      */
-    public KoulutusmoduuliToteutus convert(final Koulutus2AsteV1RDTO dto, final String userOid) {
+    public KoulutusmoduuliToteutus convert(final KoulutusGenericV1RDTO dto, final String userOid) {
         KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
         if (dto == null) {
             return komoto;
@@ -147,7 +141,7 @@ public class KoulutusDTOConverterToEntity {
             komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
             komo = komoto.getKoulutusmoduuli();
         } else {
-            //insert only new komoto data to database, do not change or update komo. 
+            //insert only new komoto data to database, do not change or update komo.
             Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
             komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
             Preconditions.checkNotNull(komo, "KOMO object not found.");
@@ -173,8 +167,11 @@ public class KoulutusDTOConverterToEntity {
          * KOMOTO custom data conversion
          */
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO, ALLOW_NULL_KOODI_URI), dto.getSuunniteltuKestoArvo());
-        komoto.setLukiolinjaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.LUKIOLINJA));
-        komoto.setTutkintonimikeUri(commonConverter.convertToUri(dto.getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
+
+        if ( dto instanceof Koulutus2AsteV1RDTO ) {
+            komoto.setTutkintonimikeUri(commonConverter.convertToUri(((Koulutus2AsteV1RDTO) dto).getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
+        }
+
         komoto.setPohjakoulutusvaatimusUri(commonConverter.convertToUri(dto.getPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
 
         if (dto.getOpetuskielis() != null) {
@@ -203,6 +200,8 @@ public class KoulutusDTOConverterToEntity {
         if (dto instanceof KoulutusLukioV1RDTO) {
             KoulutusLukioV1RDTO lukioV1RDTO = (KoulutusLukioV1RDTO) dto;
 
+            komoto.setLukiolinjaUri(commonConverter.convertToUri(lukioV1RDTO.getKoulutusohjelma(), FieldNames.LUKIOLINJA));
+
             if ( lukioV1RDTO.getLukiodiplomit() != null ) {
                 komoto.getLukiodiplomit().clear();
                 komoto.setLukiodiplomit(commonConverter.convertToUris(lukioV1RDTO.getLukiodiplomit(), komoto.getLukiodiplomit(), FieldNames.LUKIODIPLOMI));
@@ -224,6 +223,31 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getKoulutuslaji() != null) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
+        }
+
+        if ( dto instanceof ValmistavaKoulutusV1RDTO ) {
+            ValmistavaKoulutusV1RDTO valmistavaKoulutusV1RDTO = (ValmistavaKoulutusV1RDTO) dto;
+
+            if ( valmistavaKoulutusV1RDTO.getOpintojenLaajuusarvoKannassa() != null ) {
+                komoto.setOpintojenLaajuusArvo(valmistavaKoulutusV1RDTO.getOpintojenLaajuusarvoKannassa());
+            }
+
+            if ( valmistavaKoulutusV1RDTO.getKoulutusohjelmanNimiKannassa() != null ) {
+
+                Map<String, String> koulutusohjelmanNimiKannassa = valmistavaKoulutusV1RDTO.getKoulutusohjelmanNimiKannassa();
+
+                String[] monikielinenTekstiVarags = new String[koulutusohjelmanNimiKannassa.keySet().size() * 2];
+                int counter = 0;
+
+                for (Object key : koulutusohjelmanNimiKannassa.keySet()) {
+                    monikielinenTekstiVarags[counter] = key.toString();
+                    monikielinenTekstiVarags[counter + 1] = koulutusohjelmanNimiKannassa.get(key);
+
+                    counter += 2;
+                }
+
+                komoto.setNimi(new MonikielinenTeksti(monikielinenTekstiVarags));
+            }
         }
 
         return komoto;

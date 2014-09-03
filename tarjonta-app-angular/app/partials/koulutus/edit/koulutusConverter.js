@@ -584,7 +584,20 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
         /*******************************************/
-        VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: GENERIC_VALMISTAVA_STRUCTURE,
+        VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            COMBO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.COMBO, {
+                opintojenLaajuusyksikko: {koodisto: 'koodisto-uris.opintojenLaajuusyksikko'},
+                koulutuslaji: {koodisto: 'koodisto-uris.koulutuslaji'}
+            }),
+            KUVAUS_ORDER: [
+                {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
+                {type: "SISALTO", isKomo: false, length: 2000},
+                {type: "KOHDERYHMA", isKomo: false, length: 1500},
+                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
+                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+            ]
+        }),
 
         /*******************************************/
         /* PERUSOPETUKSEN_LISAOPETUS INITIALIZATION PARAMETERS  */

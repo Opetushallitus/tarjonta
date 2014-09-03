@@ -209,28 +209,28 @@ app.controller('BaseReviewController', [
             checkIsOkToRemoveHakukohde(hakukohde);
             /*
              if (checkIsOkToRemoveHakukohde(hakukohde)) {
-             
+
              var texts = {
              title: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.title"),
              description: LocalisationService.t("koulutus.review.perustiedot.remove.koulutus.desc"),
              ok: LocalisationService.t("ok"),
              cancel: LocalisationService.t("cancel")
              };
-             
+
              var d = dialogService.showDialog(texts);
              d.result.then(function(data){
              if (data) {
              reallyRemoveHakukohdeFromKoulutus(hakukohde);
-             
+
              }
              });
-             
-             
+
+
              } else {
-             
+
              $scope.model.validationmsgs.push('koulutus.review.hakukohde.remove.exp.msg');
              $scope.model.showError = true;
-             
+
              }   */
 
         }

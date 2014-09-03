@@ -24,16 +24,7 @@ import java.util.Map;
  *
  * @author alexGofore
  */
-public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
-
-    @ApiModelProperty(value = "Pohjakoulutusvaatimus-koodi", required = true)
-    private KoodiV1RDTO pohjakoulutusvaatimus;
-
-    @ApiModelProperty(value = "HTTP-linkki opetussuunnitelmaan", required = false)
-    private String linkkiOpetussuunnitelmaan;
-
-    @ApiModelProperty(value = "Koulutuslaji-koodi", required = true)
-    private KoodiV1RDTO koulutuslaji;
+public abstract class ValmistavaKoulutusV1RDTO extends KoulutusGenericV1RDTO {
 
     /**
      * Valmistavilla koulutuksilla ei (aina?) ole koodistosta tulevaa
@@ -66,48 +57,6 @@ public abstract class ValmistavaKoulutusV1RDTO extends KoulutusV1RDTO {
      */
     public String getOpintojenLaajuusarvoKannassa() {
         return opintojenLaajuusarvoKannassa;
-    }
-
-    /**
-     * @return the linkkiOpetussuunnitelmaan
-     */
-    public String getLinkkiOpetussuunnitelmaan() {
-        return linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @param linkkiOpetussuunnitelmaan the linkkiOpetussuunnitelmaan to set
-     */
-    public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
-        this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
-    }
-
-    /**
-     * @param pohjakoulutusvaatimus the pohjakoulutusvaatimus to set
-     */
-    public void setPohjakoulutusvaatimus(KoodiV1RDTO pohjakoulutusvaatimus) {
-        this.pohjakoulutusvaatimus = pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @return the pohjakoulutusvaatimus
-     */
-    public KoodiV1RDTO getPohjakoulutusvaatimus() {
-        return pohjakoulutusvaatimus;
-    }
-
-    /**
-     * @return the koulutuslaji
-     */
-    public KoodiV1RDTO getKoulutuslaji() {
-        return koulutuslaji;
-    }
-
-    /**
-     * @param koulutuslaji the koulutuslaji to set
-     */
-    public void setKoulutuslaji(KoodiV1RDTO koulutuslaji) {
-        this.koulutuslaji = koulutuslaji;
     }
 
     public Map<String, String> getKoulutusohjelmanNimiKannassa() {
