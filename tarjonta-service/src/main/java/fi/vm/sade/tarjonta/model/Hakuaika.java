@@ -29,7 +29,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @Entity
-@JsonIgnoreProperties({"id","version", "haku", "hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"version", "haku", "hibernateLazyInitializer", "handler"})
 @Table(name = Hakuaika.TABLE_NAME)
 public class Hakuaika extends TarjontaBaseEntity {
 
