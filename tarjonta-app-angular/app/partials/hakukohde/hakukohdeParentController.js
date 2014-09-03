@@ -64,7 +64,7 @@ app.controller('HakukohdeParentController', [
                 toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
         }
 
-        /** 
+        /**
          * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
          */
         function updateTila(tila) {
@@ -176,7 +176,11 @@ app.controller('HakukohdeParentController', [
             $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
 
             angular.forEach(errorArray, function(error) {
-                $scope.model.validationmsgs.push(error.errorMessageKey);
+                if(error.errorMessageKey){
+                    $scope.model.validationmsgs.push(error.errorMessageKey);
+                } else {
+                    $scope.model.validationmsgs.push(angular.toJson(error));
+                }
             });
             $scope.model.showError = true;
             $scope.model.showSuccess = false;
@@ -404,9 +408,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         * 
+         *
          * ------> Load hakukohde koulutusnames
-         * 
+         *
          */
 
         $scope.loadKoulutukses = function(hakuFilterFunction) {
@@ -1089,15 +1093,19 @@ app.controller('HakukohdeParentController', [
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                 $scope.status.dirty = false;
                                 $scope.editHakukohdeForm.$dirty = false;
+                                $scope.showSuccess();
                                 //TODO jos tyhjät valintakokeet, lisää tässä
                             } else {
                                 console.log("error", hakukohde);
+
                                 $scope.model.hakukohde = hakukohde.result;
+
                                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                     $scope.showSuccess();
                                 } else {
                                     $scope.showError(hakukohde.errors);
                                 }
+
                                 if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
                                     $scope.model.hakukohde.valintaperusteKuvaukset = {};
                                 }
@@ -1106,6 +1114,8 @@ app.controller('HakukohdeParentController', [
                                 }
 
                                 $scope.showCommonUnknownErrorMsg();
+                                $scope.showError(hakukohde.errors);
+
                             }
                         }, function(error) {
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);

@@ -323,11 +323,10 @@ app.controller('BaseReviewController', [
             } else if ($scope.model.koulutus.toteutustyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA') {
                 //TODO: fix the 'korkeakoulu' in the env config.
                 $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace("korkeakoulu", "aikuislukio") + $scope.model.koulutus.oid + "?lang=" + $scope.model.koodistoLocale;
-            } else if ($scope.model.koulutus.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
+            } else if ($scope.model.koulutus.toteutustyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA' || $scope.model.koulutus.toteutustyyppi === 'ERIKOISAMMATTITUTKINTO' || $scope.model.koulutus.toteutustyyppi === 'AMMATTITUTKINTO') {
                 //TODO: fix the 'korkeakoulu' in the env config.
                 $window.location.href = window.CONFIG.env['web.url.oppija.preview'].replace("korkeakoulu", "ammatillinenaikuiskoulutus") + $scope.model.koulutus.oid + "?lang=" + $scope.model.koodistoLocale;
             }
-
         };
 
         $scope.findHakukohdeNimi = function(lang, hakukohde) {

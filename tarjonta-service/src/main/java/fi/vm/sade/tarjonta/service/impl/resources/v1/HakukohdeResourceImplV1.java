@@ -591,10 +591,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         hakukohde = hakukohdeDAO.insert(hakukohde);
-        hakukohde.setKoulutusmoduuliToteutuses(komotot);
-        for (KoulutusmoduuliToteutus komoto : komotot) {
-            komoto.addHakukohde(hakukohde);
-        }
+        setHakukohde(komotot, hakukohde);
 
         hakukohdeDAO.update(hakukohde);
 
@@ -683,9 +680,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Tila tilamuutos = new Tila(Tyyppi.HAKUKOHDE, TarjontaTila.valueOf(hakukohdeRDTO.getTila()), hakukohde.getOid());
 
             if (publicationDataService.isValidStatusChange(tilamuutos)) {
+
                 hakukohdeDAO.update(hakukohde);
                 LOG.info("Hakukohde.liitteet -> {}", hakukohde.getLiites());
                 LOG.info("Hakukohde.kokeet -> {}", hakukohde.getValintakoes());
+                LOG.info("Hakukohde", hakukohde);
                 indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                 indexerResource.indexKoulutukset(Lists.newArrayList(Iterators.transform(hakukohde.getKoulutusmoduuliToteutuses().iterator(), new Function<KoulutusmoduuliToteutus, Long>() {
                     public Long apply(@Nullable KoulutusmoduuliToteutus arg0) {
@@ -696,6 +695,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
                 ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
                 result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
                 HakukohdeV1RDTO toHakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid()));
                 updateKoulutusTypesToHakukohdeDto(toHakukohdeRDTO);
                 result.setResult(toHakukohdeRDTO);
@@ -1026,6 +1026,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private void setHakukohde(Set<KoulutusmoduuliToteutus> komotot, Hakukohde hk) {
+        hk.setKoulutusmoduuliToteutuses(komotot);
         for (KoulutusmoduuliToteutus komoto : komotot) {
             komoto.addHakukohde(hk);
         }
