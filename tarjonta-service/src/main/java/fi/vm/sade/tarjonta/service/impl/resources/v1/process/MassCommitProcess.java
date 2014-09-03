@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.process;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mysema.commons.lang.Pair;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
@@ -44,6 +45,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -101,6 +103,9 @@ public class MassCommitProcess {
     private Set<Long> indexHakukohdeIds = Sets.<Long>newHashSet();
     private Set<Long> indexKomotoIds = Sets.<Long>newHashSet();
     private boolean completed = false;
+
+    //hakuajat
+    private Map<Long, Hakuaika> hakuaikas = Maps.newHashMap();
 
     public ProcessV1RDTO getState() {
         state.getParameters().put(MassCopyProcess.COMMIT_COUNT_HAKUKOHDE, countHakukohde + "");
@@ -211,12 +216,11 @@ public class MassCommitProcess {
                     LOG.error("OidService failed", ex);
                 }
 
-                Set<Hakuaika> hakuaikas = haku.getHakuaikas();
-                if (hakuaikas.size() >= 2) {
-                    throw new RuntimeException("Conversion error, too many hakuaika object found from haku object.");
-                }
 
-                for (Hakuaika hakuaika : hakuaikas) {
+
+                for (Hakuaika hakuaika : haku.getHakuaikas()) {
+                    hakuaikas.put(hakuaika.getId(), hakuaika);
+                    hakuaika.setId(null);
                     hakuaika.setHaku(haku);
                     if (hakuaika.getPaattymisPvm() != null) {
                         hakuaika.setPaattymisPvm(dateToNextYear(hakuaika.getPaattymisPvm()));
@@ -363,17 +367,11 @@ public class MassCommitProcess {
                 hk.setUlkoinenTunniste(processId);
                 /*
                  * HAKUAIKA
-                 * TODO : saattaa aiheuttaa monta hakuaikaa?
                  */
-                Set<Hakuaika> hakuaikas = targetHaku.getHakuaikas();
-                if (hakuaikas.isEmpty()) {
-                    throw new RuntimeException("No hakuaika object found from haku object,only one hakuaika required");
-                } else if (hakuaikas.size() >= 2) {
-                    throw new RuntimeException("Conversion error, too many hakuaika object found from haku object.");
+                if(hk.getHakuaika()!=null){
+                    final Hakuaika ha = hakuaikas.get(hk.getHakuaika().getId());
+                    hk.setHakuaika(ha);
                 }
-
-                hk.setHakuaika(hakuaikas.iterator().next());
-
 
                 /*
                  * LIITE
@@ -409,9 +407,9 @@ public class MassCommitProcess {
                 //XXX korjaa tama tekemalla kunnon testidata
                 if (meta != null && meta.getKomotoOids() != null && !meta.getKomotoOids().isEmpty()) {
                     List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(Lists.<String>newArrayList(meta.getKomotoOids()));
-                    for (KoulutusmoduuliToteutus k : komotos) {
-                        hk.addKoulutusmoduuliToteutus(k);
-                        k.addHakukohde(hk);
+                    for (KoulutusmoduuliToteutus kt : komotos) {
+                        hk.addKoulutusmoduuliToteutus(kt);
+                        kt.addHakukohde(hk);
                     }
                 }
 
