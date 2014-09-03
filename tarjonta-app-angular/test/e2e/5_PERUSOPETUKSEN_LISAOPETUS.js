@@ -35,4 +35,19 @@ describe('PERUSOPETUKSEN_LISAOPETUS', function() {
 
         expect(infoMsg.getText()).toMatch('Perusopetuksen lisäopetus joka on sidottu organisaatioon Valkealan');
     });
+
+    it('should show edit page for koulutus', function() {
+        var firstEditBtn = element.all(by.css('[tt="koulutus.review.muokkaa"]')).first();
+        firstEditBtn.click();
+
+        // TODO: muokkaa koulutuksen arvoja ja testaa, että muutokset tallentuvat
+
+        var firstSaveBtn = element.all(by.css('[data-action="koulutus.edit.tallenna.valmis"]')).first();
+        firstSaveBtn.click();
+
+        var saveMsg = element.all(by.css('.msgOk p')).first();
+
+        expect(saveMsg.isDisplayed()).toBe(true);
+        expect(saveMsg.getText()).toEqual('Tallennettu');
+    });
 });

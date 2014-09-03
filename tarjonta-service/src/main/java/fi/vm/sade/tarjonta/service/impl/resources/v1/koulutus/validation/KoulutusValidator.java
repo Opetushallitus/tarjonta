@@ -121,10 +121,12 @@ public class KoulutusValidator {
 
             Boolean invalidNimi = false;
             Map<String, String> koulutusohjelmanNimiKannassa = valmistavaKoulutusV1RDTO.getKoulutusohjelmanNimiKannassa();
-            for (Object key : koulutusohjelmanNimiKannassa.keySet()) {
-                if (!notNullStrOrEmpty(koulutusohjelmanNimiKannassa.get(key))) {
-                    invalidNimi = true;
-                    break;
+            if ( koulutusohjelmanNimiKannassa != null ) {
+                for (Object key : koulutusohjelmanNimiKannassa.keySet()) {
+                    if (!notNullStrOrEmpty(koulutusohjelmanNimiKannassa.get(key))) {
+                        invalidNimi = true;
+                        break;
+                    }
                 }
             }
 

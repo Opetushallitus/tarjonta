@@ -353,7 +353,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     /* INITIALIZATION PARAMETERS BY TOTEUTUSTYYPPI */
     /*************************************************/
 
-    var GENERIC_VALMISTAVA_STRUCTURE = {
+    var GENERIC_STRUCTURE = {
         page: 'nayttotutkinto',
         KUVAUS_ORDER: [
             {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
@@ -403,7 +403,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }
     };
 
-    var AMMATILLINEN_PERUSTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+    var AMMATILLINEN_PERUSTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
         KUVAUS_ORDER: [
             {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
             {type: "SISALTO", isKomo: false, length: 2000},
@@ -413,6 +413,24 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         ],
         templates: {
             edit: 'AMMATILLINEN_PERUSTUTKINTO'
+        }
+    });
+
+    var GENERIC_VALMISTAVA_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
+        KUVAUS_ORDER: [
+            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
+            {type: "SISALTO", isKomo: false, length: 2000},
+            {type: "KOHDERYHMA", isKomo: false, length: 2000},
+            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
+            {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+        ],
+        COMBO: angular.extend({}, GENERIC_STRUCTURE.COMBO, {
+            opintojenLaajuusyksikko: {koodisto: 'koodisto-uris.opintojenLaajuusyksikko'},
+            koulutuslaji: {koodisto: 'koodisto-uris.koulutuslaji'}
+        }),
+        templates: {
+            edit: 'VALMISTAVA_KOULUTUS'
         }
     });
 
@@ -585,18 +603,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            COMBO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.COMBO, {
-                opintojenLaajuusyksikko: {koodisto: 'koodisto-uris.opintojenLaajuusyksikko'},
-                koulutuslaji: {koodisto: 'koodisto-uris.koulutuslaji'}
-            }),
-            KUVAUS_ORDER: [
-                {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
-                {type: "SISALTO", isKomo: false, length: 2000},
-                {type: "KOHDERYHMA", isKomo: false, length: 1500},
-                {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
-                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
-                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
-            ]
+            templates: null // käytä oletusnimeä templalle
         }),
 
         /*******************************************/
@@ -632,9 +639,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
-        ERIKOISAMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
-        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: GENERIC_VALMISTAVA_STRUCTURE,
+        AMMATTITUTKINTO: GENERIC_STRUCTURE,
+        ERIKOISAMMATTITUTKINTO: GENERIC_STRUCTURE,
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: GENERIC_STRUCTURE,
         AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA: {//not enum
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 1500},
