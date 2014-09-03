@@ -562,8 +562,9 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         
         Predicate<HakuViewModel> pr1 = new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService);
         Predicate<HakuViewModel> pr2 = new HakuHakuaikaPredicate(getModel().getHakukohde()!=null?getModel().getHakukohde().getHakuaika():null, hakutyyppiLisahakuUrl, hakutapaErillishakuUrl, getPermission());
+        Predicate<HakuViewModel> pr3 = new HakuTilaPredicate();
 
-        return Lists.newArrayList(Iterables.filter(foundHaut, Predicates.and(pr1,pr2)));
+        return Lists.newArrayList(Iterables.filter(foundHaut, Predicates.and(pr1,pr2, pr3)));
     }
 
     /**
