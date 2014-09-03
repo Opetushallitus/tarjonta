@@ -102,6 +102,8 @@ public class MassakopiointiTest extends TestData {
     @Autowired(required = true)
     private OidService oidService;
 
+    private String foo;
+
     AtomicInteger c = new AtomicInteger(0);
 
     @Before
@@ -174,18 +176,24 @@ public class MassakopiointiTest extends TestData {
         ha.setAlkamisPvm(new Date());
         ha.setPaattymisPvm(new Date(ha.getAlkamisPvm().getTime() + 10000));
         from.addHakuaika(ha);
+        Hakuaika ha2 = new Hakuaika();
+        ha2.setAlkamisPvm(new Date());
+        ha2.setPaattymisPvm(new Date(ha2.getAlkamisPvm().getTime() + 10000));
+        ha2.setHaku(from);;
+        from.addHakuaika(ha2);
         from.setOrganisationOids(new String[]{"o1", "o2"});
         from.setTarjoajaOids(new String[]{"o1", "o2"});
-        ha.setHaku(from);
+         ha.setHaku(from);
         getPersistedKomoto1().setSijoittuminenTyoelamaan(new MonikielinenTeksti("fi", "blaah"));
         getPersistedKomoto1().setKoulutusohjelmanValinta(new MonikielinenTeksti("fi", "bvlaahh"));
         getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi", "blaah"));
         getPersistedKomoto1().getKoulutusmoduuli().getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi","blaah2"));
-        getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1","a2"));
+        getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1", "a2"));
         super.persist(getPersistedKomoto1());
         getPersistedKomoto2().setTila(TarjontaTila.LUONNOS);
         kohde1.addKoulutusmoduuliToteutus(getPersistedKomoto2());
         getPersistedKomoto2().addHakukohde(kohde1);
+        kohde1.setHakuaika(ha);
         super.persist(getPersistedKomoto2());
         
         
@@ -254,10 +262,11 @@ public class MassakopiointiTest extends TestData {
 
     private void compareHaku(Haku copy, Haku orig) {
         assertFalse(Objects.equal(copy.getOid(),orig.getOid()));
-        assertTrue(orig.getOrganisationOids().length>0);
+        assertTrue(orig.getOrganisationOids().length > 0);
         assertTrue(orig.getTarjoajaOids().length>0);
-        assertSame(0,Sets.difference(Sets.newHashSet(orig.getOrganisationOids()), Sets.newHashSet(copy.getOrganisationOids())).size());
+        assertSame(0, Sets.difference(Sets.newHashSet(orig.getOrganisationOids()), Sets.newHashSet(copy.getOrganisationOids())).size());
         assertSame(0,Sets.difference(Sets.newHashSet(orig.getTarjoajaOids()), Sets.newHashSet(copy.getTarjoajaOids())).size());
+        assertEquals(2,haku1.getHakuaikas().size());
     }
 
     
@@ -283,6 +292,12 @@ public class MassakopiointiTest extends TestData {
         }
     }
 
+
+    private static Date dateToNextYear(Date date) {
+        DateTime dateTime = new DateTime(date);
+        return dateTime.plusYears(1).toDate();
+    }
+
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
         LOG.info("comparing hakukohde copy");
         assertEquals(orig.getOrganisaatioRyhmaOids().length, copy.getOrganisaatioRyhmaOids().length);
@@ -291,8 +306,8 @@ public class MassakopiointiTest extends TestData {
         assertEquals(orig.getAloituspaikatLkm(), copy.getAloituspaikatLkm());
         assertEquals(orig.getEdellisenVuodenHakijat(), copy.getEdellisenVuodenHakijat());
         if (orig.getHakuaika() != null) {
-            assertEquals(orig.getHakuaika().getAlkamisPvm(), copy.getHakuaika().getAlkamisPvm());
-            assertEquals(orig.getHakuaika().getPaattymisPvm(), copy.getHakuaika().getPaattymisPvm());
+            assertEquals(dateToNextYear(orig.getHakuaika().getAlkamisPvm()), copy.getHakuaika().getAlkamisPvm());
+            assertEquals(dateToNextYear(orig.getHakuaika().getPaattymisPvm()), copy.getHakuaika().getPaattymisPvm());
         }
         assertEquals(orig.getHakukelpoisuusVaatimukset().size(), copy.getHakukelpoisuusVaatimukset().size());
         assertEquals(orig.getHakukelpoisuusVaatimusKuvaus(), copy.getHakukelpoisuusVaatimusKuvaus());
