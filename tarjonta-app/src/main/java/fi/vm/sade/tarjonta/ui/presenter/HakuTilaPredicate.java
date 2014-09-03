@@ -13,7 +13,8 @@ public class HakuTilaPredicate implements Predicate<HakuViewModel> {
 
     @Override
     public boolean apply(HakuViewModel input) {
-        return !input.getHaunTila().equals(TarjontaTila.POISTETTU);
+        final boolean result = !input.getHaunTila().equals(TarjontaTila.POISTETTU.toString());
+        return result;
     }
 
 }
