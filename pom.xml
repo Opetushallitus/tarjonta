@@ -29,7 +29,7 @@
 
     <modules>
         <module>tarjonta-api</module>
-        <module>tarjonta-publication-api</module>
+<!--        <module>tarjonta-publication-api</module> -->
         <module>tarjonta-shared</module>
         <module>tarjonta-service</module>
 	<module>tarjonta-app-angular</module>
