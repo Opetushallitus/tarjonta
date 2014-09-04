@@ -14,10 +14,11 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
     	$scope.langs = [];
         $scope.codes = null;
         $scope.codeList = [];
-        
+
+        //aktiivinen täbi
         $scope.active = {};
         $scope.active[$scope.selection] = true;
-        
+
         if (!$scope.model) {
             $scope.model = [];
         }
@@ -54,8 +55,13 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
         	});
         	
         	$scope.langs = ret;
-        	
-        	if ($scope.selection===undefined || ($scope.selection===null && !$scope.mutable)) {
+
+            if ($scope.langs.indexOf($scope.selection) == -1) {
+                //jos valittu kieli pooistunut
+                $scope.selection = undefined;
+            }
+
+            if ( $scope.selection===undefined || ($scope.selection===null && !$scope.mutable)) {
         		$scope.onSelect($scope.langs.length==0 ? null : $scope.langs[0], false);
         		console.log("Preselected:", [$scope.selection, $scope.langs]);
         	}
@@ -73,7 +79,7 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
         		$scope.active[k] = false;
         	}
         	$scope.active[kieli] = true;
-        	$scope.selection = kieli;
+            $scope.selection = kieli;
         }
         
         $scope.$watch("selection", function(nv, ov) {
@@ -94,16 +100,10 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
             updateLangs();
         });
         
-        var lastModel;
-        
-        $scope.$watch(function(){
-        	// oma watch-funktio koska muuten ei havaitse sisällöltään muuttunutta arrayta
-        	if (!angular.equals(lastModel, $scope.model)) {
-        		lastModel = angular.copy($scope.model);
-        	}
-        	return lastModel;
-    	}, updateLangs);
-        
+        $scope.$watchCollection("model", function(nv,ov){
+            updateLangs();
+        });
+
     }
 
     return {
