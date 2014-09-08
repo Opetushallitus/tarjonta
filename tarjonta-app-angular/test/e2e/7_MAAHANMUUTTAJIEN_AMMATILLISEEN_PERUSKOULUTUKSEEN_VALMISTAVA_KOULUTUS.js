@@ -7,7 +7,7 @@ describe('MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
     var koulutuksetFirstResult = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(2)');
     var koulutus2014 = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(3)');
 
-    it('should find MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS in organisaatiohaku', function() {
+    it('should find koulutus in organisaatiohaku', function() {
         browser.get('/tarjonta-app');
 
         searchInput.sendKeys('Turun ammatti');
