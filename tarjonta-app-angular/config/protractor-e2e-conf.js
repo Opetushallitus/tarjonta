@@ -20,5 +20,12 @@ exports.config = {
         browser.driver.get('http://' + encodeURIComponent(credentials.username) + ':' +
             encodeURIComponent(credentials.password) +
             '@localhost:8080/tarjonta-service/rest/v1/permission/authorize');
+    },
+    jasmineNodeOpts: {
+        onComplete: null,
+        isVerbose: true,
+        showColors: true,
+        includeStackTrace: true,
+        defaultTimeoutInterval: 60000 // 60s
     }
 }
