@@ -189,7 +189,7 @@ public class HakukohdeValidator {
         		continue;
         	}
         	
-            if (Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi())) {
+            if (Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi()) && Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoetyyppi())) {
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_NIMI_MISSING);
             }            
             if (Strings.isNullOrEmpty(valintakoeV1RDTO.getKieliUri())){

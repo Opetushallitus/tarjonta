@@ -51,7 +51,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.errors.pristine = false;
             $scope.errors.required = $scope.isrequired && $scope.selection.length === 0;
 
-            $formController.$setValidity('required', !$scope.errors.required);
+            if($formController !== undefined) {
+                $formController.$setValidity('required', !$scope.errors.required);
+            }
         }
 
         if ($scope.columns == undefined) {

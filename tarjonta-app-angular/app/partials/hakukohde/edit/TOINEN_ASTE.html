@@ -12,15 +12,9 @@
         <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" disabled="model.canSaveAsValmis()" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
 
-        <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
-        <controls-button tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
-         -->
-        <!-- TODO uutta luotaessa vaihtoehtoinen teksti "olet luomassa... " tjsp. -->
         <controls-notify type="message" tt-expr="getKoulutustenNimetKey()" tt-params="[ getKoulutustenNimet() ]"></controls-notify>
-
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
-
         <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
@@ -39,7 +33,12 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            {{ model.koodistonimi}}
+                            <div ng-show="model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                                <select name="hakukohteenNimiUri" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakukohteenNimiUri" data-ng-options="hakukohteenNimi.uri as hakukohteenNimi.label for hakukohteenNimi in model.hakukohteenNimet | orderBy: 'label'"/>
+                            </div>
+                            <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                                <input name="hakukohteenNimiUri" ng-disabled="model.isPartiallyDeEnabled" type="text" data-ng-model="model.hakukohde.hakukohteenNimiUri" required />
+                            </div>
                         </td>
                     </tr>
 
@@ -128,8 +127,10 @@
                 </table>
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
-
                 <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+
+                <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
+                <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
 
             </form>
         </tab>

@@ -8,9 +8,13 @@
 	            <table class="tarjontaForm">
 	                <tr class="required">
 	                    <th tt="tarjonta.hakukohde.liite.modal.nimi"></th>
-	                    <td><input type="text" ng-model="liite.liitteenNimi" ng-change="status.dirtify()" required/></td>
 	                    <td>
-                            <p class="error" ng-show="model.showError && !liite.liitteenNimi" tt="tarjonta.hakukohde.liite.errors.nimi">Liitteen nimi on pakollinen.</p>
+                            <input ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" type="text" ng-model="liite.liitteenNimi" ng-change="status.dirtify()" required/>
+                            <select ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" name="liitteentyyppiselect" required ng-model="liite.liitteenTyyppi" data-ng-options="liitetyyppi.uri as liitetyyppi.nimi for liitetyyppi in liitteetModel.liitetyypit | orderBy: 'nimi' | orderBy: 'nimi'"/>
+                        </td>
+	                    <td>
+                            <p class="error" ng-show="model.showError && !liite.liitteenNimi && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="tarjonta.hakukohde.liite.errors.nimi">Liitteen nimi on pakollinen.</p>
+                            <p class="error" ng-show="model.showError && !liite.liitteenTyyppi && toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="tarjonta.hakukohde.liite.errors.tyyppi">Liitteen tyyppi on pakollinen.</p>
 	                    </td>
 	                </tr>
 	                

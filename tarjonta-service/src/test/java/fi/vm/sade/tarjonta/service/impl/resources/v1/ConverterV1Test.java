@@ -1,13 +1,15 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.HakukohdeLiite;
 import fi.vm.sade.tarjonta.model.PainotettavaOppiaine;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.PainotettavaOppiaineV1RDTO;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -66,5 +68,31 @@ public class ConverterV1Test {
         painotettavatOppiaineet.add(oppiaine);
 
         hakukohde.setPainotettavatOppiaineet(painotettavatOppiaineet);
+    }
+
+    @Test
+    public void thatLiitteetAreConverted() {
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(mock(Haku.class));
+        hakukohde.setTila(TarjontaTila.JULKAISTU);
+
+        when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
+        when(tarjontaKoodistoHelper.getKoodiByUri("kieli_fi")).thenReturn(mock(KoodiType.class));
+
+        addLiitteet(hakukohde);
+
+        HakukohdeV1RDTO hakukohdeDTO = converterV1.toHakukohdeRDTO(hakukohde);
+
+        HakukohdeLiiteV1RDTO hakukohdeLiiteDTO = hakukohdeDTO.getHakukohteenLiitteet().get(0);
+
+        assertEquals("liitetyypitamm_3#1", hakukohdeLiiteDTO.getLiitteenTyyppi());
+        assertTrue(hakukohdeDTO.getHakukohteenLiitteet().size() == 1);
+    }
+
+    private void addLiitteet(Hakukohde hakukohde) {
+        HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
+        hakukohdeLiite.setKieli("kieli_fi");
+        hakukohdeLiite.setLiitetyyppi("liitetyypitamm_3#1");
+        hakukohde.addLiite(hakukohdeLiite);
     }
 }

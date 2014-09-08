@@ -533,6 +533,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 validationMessageses.addAll(HakukohdeValidator
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                break;
             default:
                 LOG.error("Toteutustyyppi:" + toteutustyyppi + " validation rules not implemented");
                 validationMessageses
@@ -642,19 +650,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Hakukohde hakukohdeTemp = hakukohdeDAO
                     .findHakukohdeByOid(hakukohdeRDTO.getOid());
 
-            // These are updated in a separate resource -> ei enää
-            /*
-             * hakukohde.getValintakoes().clear();
-             * hakukohde.getValintakoes().addAll
-             * (hakukohdeTemp.getValintakoes());
-             * 
-             * hakukohde.getLiites().clear();
-             * hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
-             */
             hakukohde.setId(hakukohdeTemp.getId());
             hakukohde.setVersion(hakukohdeTemp.getVersion());
 
-            // Just in case remove kuvaukses if tunniste is defined
             if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
                 hakukohde.setValintaperusteKuvaus(null);
             }

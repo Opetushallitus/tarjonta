@@ -145,21 +145,20 @@ app.controller('ValintakokeetController',
 
         // kutsutaan parentista
         $scope.status.validateValintakokeet = function () {
-            return true;
             for (var i in $scope.model.hakukohde.valintakokeet) {
                 var li = $scope.model.hakukohde.valintakokeet[i];
-                var nimiEmpty = !notEmpty(li.valintakoeNimi);
+                var nimiEmptyAndTyyppiEmpty = !notEmpty(li.valintakoeNimi) && !notEmpty(li.valintakoetyyppi);
                 var kuvausEmpty = !notEmpty($(
                         "<div>" + li.valintakokeenKuvaus.teksti + "</div>").text()
                     .trim());
                 var ajankohtaEmpty = li.valintakoeAjankohtas.length == 0;
 
-                if (nimiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
+                if (nimiEmptyAndTyyppiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
                     continue;
                     // uusi tyhjä
                 }
 
-                if (nimiEmpty) {
+                if (nimiEmptyAndTyyppiEmpty) {
                     return false;
                 }
                 if (kuvausEmpty) {
@@ -305,11 +304,23 @@ app.controller('ValintakokeetController',
         };
 
         var setValintakoetyypit = function (toteutusTyyppi) {
-            var paasyJaSoveltuvuuskoe = Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_1", $scope.model.userLang);
-            var lisanaytto = Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_2", $scope.model.userLang);
-            var lisapiste = Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_5", $scope.model.userLang);
+            var valintakoetyypit = [];
 
-            angular.forEach([paasyJaSoveltuvuuskoe, lisanaytto, lisapiste], function(koodiPromise) {
+            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_1", $scope.model.userLang));
+            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_2", $scope.model.userLang));
+            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_5", $scope.model.userLang));
+
+            if(toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+                toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+                toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+                valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_6", $scope.model.userLang));
+            }
+
+            angular.forEach(valintakoetyypit, function(koodiPromise) {
                 koodiPromise.then(function(koodi) {
                     var valintakoetyyppi = {
                         nimi: koodi.koodiNimi,
@@ -320,5 +331,5 @@ app.controller('ValintakokeetController',
             });
         };
 
-        setValintakoetyypit(null);
+        setValintakoetyypit($scope.model.hakukohde.toteutusTyyppi);
     });

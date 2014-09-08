@@ -3,15 +3,13 @@ var app =  angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('LiitteetListController',function($scope,$q, LocalisationService, OrganisaatioService ,Koodisto,Hakukohde,Liite, dialogService , HakuService, $modal ,Config,$location, TarjontaService) {
 
 	$scope.liitteetModel = {};
-
     $scope.liitteetModel.opetusKielet = [];
-    
-    var initialTabSelected = false;
-    $scope.liitteetModel.selectedTab = {};
-    
+    $scope.liitteetModel.liitetyypit = [];
     $scope.liitteetModel.langs = [];
     $scope.liitteetModel.selectedLangs = [];
+    $scope.liitteetModel.selectedTab = {};
 
+    var initialTabSelected = false;
     var osoitteetReceived = false;
     
     function postProcessLiite(liite) {
@@ -245,7 +243,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     $scope.status.validateLiitteet = function() {
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
     		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];    		
-    		if (!notEmpty([li.liitteenNimi, li.toimitettavaMennessa])
+    		if ((!notEmpty([li.liitteenNimi, li.toimitettavaMennessa]) && !notEmpty([li.liitteenTyyppi, li.toimitettavaMennessa]))
     				|| !$scope.isValidSahkoinenOsoite(li)
     				|| !$scope.isValidToimitusOsoite(li)) {
     			return false;
@@ -266,5 +264,35 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		return v && (""+v).trim().length>0;
     	}
     }
+
+    var setLiitetyypit = function (toteutusTyyppi) {
+        var liitetyypit = [];
+
+        liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_1", $scope.model.userLang));
+        liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_2", $scope.model.userLang));
+        liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_4", $scope.model.userLang));
+
+        if(toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+            toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+            toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+            toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+            liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_3", $scope.model.userLang));
+        }
+
+        angular.forEach(liitetyypit, function(koodiPromise) {
+            koodiPromise.then(function(koodi) {
+                var valintakoetyyppi = {
+                    nimi: koodi.koodiNimi,
+                    uri: koodi.koodiUri + "#" + koodi.koodiVersio
+                };
+                $scope.liitteetModel.liitetyypit.push(valintakoetyyppi);
+            });
+        });
+    };
+
+    setLiitetyypit($scope.model.hakukohde.toteutusTyyppi);
 
 });

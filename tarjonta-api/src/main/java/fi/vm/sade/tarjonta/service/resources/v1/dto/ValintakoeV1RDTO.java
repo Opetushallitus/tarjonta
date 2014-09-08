@@ -23,6 +23,8 @@ public class ValintakoeV1RDTO extends BaseRDTO {
     private String kieliNimi;
     @ApiModelProperty(value = "Valintakoe's name ", required = true)
     private String valintakoeNimi;
+    @ApiModelProperty(value = "Valintakoe's tyyppi", required=true)
+    private String valintakoetyyppi;
 
     private TekstiRDTO valintakokeenKuvaus;
     @ApiModelProperty(value = "Valintakoe's dates")
@@ -79,5 +81,13 @@ public class ValintakoeV1RDTO extends BaseRDTO {
 
     public void setKieliNimi(String kieliNimi) {
         this.kieliNimi = kieliNimi;
+    }
+
+    public String getValintakoetyyppi() {
+        return valintakoetyyppi;
+    }
+
+    public void setValintakoetyyppi(String valintakoetyyppi) {
+        this.valintakoetyyppi = valintakoetyyppi;
     }
 }

@@ -65,10 +65,6 @@ app.controller('HakukohdeRoutingController', [
       $scope.canCreate = $route.current.locals.canCreate;
       $scope.canEdit = $route.current.locals.canEdit;
 
-      var toisenAsteenHakukohde = function (toteutusTyyppi) {
-        return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO';
-      }
-
       if ($route.current.locals.hakukohdex.result === undefined) {
         $scope.model = {
           collapse : {
@@ -105,9 +101,7 @@ app.controller('HakukohdeRoutingController', [
 
       }
 
-      if (!toisenAsteenHakukohde($scope.model.hakukohde.toteutusTyyppi)) {
-        HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
-      }
+      HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
 
       $scope.hakukohdex = $route.current.locals.hakukohdex;
       $log.info("  --> hakukohdex == ", $scope.hakukohdex);

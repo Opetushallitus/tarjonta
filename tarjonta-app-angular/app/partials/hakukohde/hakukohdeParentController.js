@@ -44,7 +44,10 @@ app.controller('HakukohdeParentController', [
             "MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS": toinenAsteHakukohdePartialUri,
             "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS": toinenAsteHakukohdePartialUri,
             "AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS": toinenAsteHakukohdePartialUri,
-            "PERUSOPETUKSEN_LISAOPETUS": toinenAsteHakukohdePartialUri
+            "PERUSOPETUKSEN_LISAOPETUS": toinenAsteHakukohdePartialUri,
+            "VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS": toinenAsteHakukohdePartialUri,
+            "VAPAAN_SIVISTYSTYON_KOULUTUS": toinenAsteHakukohdePartialUri,
+            "AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA": toinenAsteHakukohdePartialUri
         };
 
 
@@ -54,14 +57,20 @@ app.controller('HakukohdeParentController', [
                 toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
                 toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
                 toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
-                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+                toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+                toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
         }
 
         $scope.needsHakukelpoisuus = function(toteutusTyyppi) {
             return toteutusTyyppi !== 'PERUSOPETUKSEN_LISAOPETUS' &&
                 toteutusTyyppi !== 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' &&
                 toteutusTyyppi !== 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
-                toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+                toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
+                toteutusTyyppi !== 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' &&
+                toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS' &&
+                toteutusTyyppi !== 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
         }
 
         /**
@@ -425,30 +434,29 @@ app.controller('HakukohdeParentController', [
                 var tarjoajaOidsSet = new buckets.Set();
 
                 if (data !== undefined) {
-                    angular.forEach(data.tulokset, function(tulos) {
+                    angular.forEach(data.tulokset, function (tulos) {
                         if (tulos !== undefined && tulos.tulokset !== undefined) {
                             tarjoajaOidsSet.add(tulos.oid);
-                            angular.forEach(tulos.tulokset, function(toinenTulos) {
+                            angular.forEach(tulos.tulokset, function (toinenTulos) {
                                 $scope.koulutusKausiUri = toinenTulos.kausiUri;
                                 $scope.model.koulutusVuosi = toinenTulos.vuosi;
                                 koulutusSet.add(toinenTulos.nimi);
                             });
                         }
                     });
-
                     $scope.model.koulutusnimet = koulutusSet.toArray();
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
                     $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids, hakuFilterFunction);
                     var orgQueryPromises = [];
 
-                    angular.forEach($scope.model.hakukohde.tarjoajaOids, function(tarjoajaOid) {
+                    angular.forEach($scope.model.hakukohde.tarjoajaOids, function (tarjoajaOid) {
                         orgQueryPromises.push(OrganisaatioService.byOid(tarjoajaOid));
                     });
 
-                    $q.all(orgQueryPromises).then(function(orgs) {
+                    $q.all(orgQueryPromises).then(function (orgs) {
 
                         var counter = 0;
-                        angular.forEach(orgs, function(data) {
+                        angular.forEach(orgs, function (data) {
 
                             orgSet.add(data.nimi);
 
@@ -549,7 +557,7 @@ app.controller('HakukohdeParentController', [
 
             hakuPromise.then(function(hakuDatas) {
                 $scope.model.hakus = [];
-                $log.info('ALL HAKUS : ', hakuDatas);
+
                 angular.forEach(hakuDatas, function(haku) {
 
                     var userLang = AuthService.getLanguage();

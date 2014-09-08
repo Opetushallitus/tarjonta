@@ -105,14 +105,10 @@ app.controller('HakukohdeEditController',
     var filterHakuWithAikaAndKohdejoukko = function(hakus) {
 
         var filteredHakus = [];
-        $log.info('filterHakuWithAikaAndKohdejoukko, ALL HAKUS :', hakus);
+
         angular.forEach(hakus,function(haku){
 
-            // rajaus kk-hakukohteisiin; ks. OVT-6452
-            // TODO selvitä uri valitun koulutuksen perusteella
-
             var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
-
             if (kohdeJoukkoUriNoVersion==window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
 
                 if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
@@ -123,44 +119,44 @@ app.controller('HakukohdeEditController',
                 } else {
                     filteredHakus.push(haku);
                 }
-
-
-
             }
         });
-        $log.info('filterHakuWithAikaAndKohdejoukko, FILTERED HAKUS : ', filteredHakus);
         return filteredHakus;
     };
 
     var filterHakusForAmmatillinenAndLukio = function(hakus) {
-        var filteredHakus = [];
-
-        angular.forEach(hakus,function(haku){
-            if(haku.kohdejoukkoUri === 'haunkohdejoukko_11#1') {
-                filteredHakus.push(haku);
-            }
-        });
-
-        return filteredHakus;
+        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_11#1');
     };
 
     var filterHakusForAmmatillinenValmistavaAndLisaopetus = function(hakus) {
-        var filteredHakus = [];
+        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_17#1');
+    };
 
+    var filterHakusForValmentavaJaKuntouttavaOpetus = function(hakus) {
+        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_16#1');
+    }
+
+    var filterHakusForVapaanSivistystyonKoulutus = function(hakus) {
+        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_18#1');
+    }
+
+    var filterHakusForAmmatillinenPeruskoulutusErityisopetuksena = function(hakus) {
+        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_15#1');
+    }
+
+    var filterHakusByHaunKohdejoukko = function(hakus, haunKohdejoukko) {
+        var filteredHakus = [];
         angular.forEach(hakus,function(haku){
-            if(haku.kohdejoukkoUri === 'haunkohdejoukko_17#1') {
+            if(haku.kohdejoukkoUri === haunKohdejoukko) {
                 filteredHakus.push(haku);
             }
         });
-
         return filteredHakus;
-    };
+    }
 
     var filterHakus = function(hakus) {
         return  filterHakuWithAikaAndKohdejoukko($scope.filterHakusWithOrgs(hakus));
     };
-
-
 
     //Placeholder for multiselect remove when refactored
     $scope.model.temp = {};
@@ -188,6 +184,12 @@ app.controller('HakukohdeEditController',
             toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
             toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS') {
             return filterHakusForAmmatillinenValmistavaAndLisaopetus;
+        } else if(toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS') {
+            return filterHakusForValmentavaJaKuntouttavaOpetus;
+        } else if(toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
+            return filterHakusForVapaanSivistystyonKoulutus;
+        } else if(toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+            return filterHakusForAmmatillinenPeruskoulutusErityisopetuksena;
         }
         return filterHakus;
     }
@@ -235,6 +237,28 @@ app.controller('HakukohdeEditController',
 
         if($scope.model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
             $scope.loadPainotettavatOppiainevaihtoehdot();
+        }
+
+        if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
+            $scope.model.hakukohteenNimet = [];
+            angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function (koulutusOid) {
+                TarjontaService.getKoulutusPromise(koulutusOid).then(function(koulutus) {
+                    var koulutusohjelma = koulutus.result.koulutusohjelma;
+                    if(koulutusohjelma !== undefined && koulutusohjelma.uri !== undefined) {
+                        Koodisto.getAlapuolisetKoodit(koulutusohjelma.uri, AuthService.getLanguage()).then(function(koodit) {
+                            angular.forEach(koodit, function (koodi) {
+                                if(koodi.koodiKoodisto === 'hakukohteet') {
+                                    var hakukohteenNimi = {
+                                        uri: koodi.koodiUri + "#" + koodi.koodiVersio,
+                                        label: koodi.koodiNimi
+                                    };
+                                    $scope.model.hakukohteenNimet.push(hakukohteenNimi);
+                                }
+                            });
+                        })
+                    }
+                });
+            });
         }
     };
 

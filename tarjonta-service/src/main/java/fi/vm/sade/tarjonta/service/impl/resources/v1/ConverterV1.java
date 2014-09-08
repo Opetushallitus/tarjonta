@@ -1097,6 +1097,7 @@ public class ConverterV1 {
         hakukohdeLiite.setErapaiva(hakukohdeLiiteV1RDTO.getToimitettavaMennessa());
         hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
         hakukohdeLiite.setKuvaus(convertMapToMonikielinenTeksti(hakukohdeLiiteV1RDTO.getLiitteenKuvaukset()));
+        hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteV1RDTO.getLiitteenTyyppi());
 
         return hakukohdeLiite;
     }
@@ -1117,7 +1118,7 @@ public class ConverterV1 {
         hakukohdeLiiteV1RDTO.setToimitettavaMennessa(hakukohdeLiite.getErapaiva());
         hakukohdeLiiteV1RDTO.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
         hakukohdeLiiteV1RDTO.setLiitteenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohdeLiite.getToimitusosoite()));
-
+        hakukohdeLiiteV1RDTO.setLiitteenTyyppi(hakukohdeLiite.getLiitetyyppi());
         hakukohdeLiiteV1RDTO.setLiitteenKuvaukset(BaseRDTOConverter.convertToMap(hakukohdeLiite.getKuvaus(), tarjontaKoodistoHelper));
 
         return hakukohdeLiiteV1RDTO;
@@ -1138,9 +1139,10 @@ public class ConverterV1 {
         Valintakoe valintakoe = new Valintakoe();
 
         valintakoe.setId(oidFromString(valintakoeV1RDTO.getOid()));
-
         valintakoe.setValintakoeNimi(valintakoeV1RDTO.getValintakoeNimi());
         valintakoe.setKieli(valintakoeV1RDTO.getKieliUri());
+        valintakoe.setTyyppiUri(valintakoeV1RDTO.getValintakoetyyppi());
+
         List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
         tekstiRDTOs.add(valintakoeV1RDTO.getValintakokeenKuvaus());
         valintakoe.setKuvaus(convertTekstiRDTOToMonikielinenTeksti(tekstiRDTOs));
@@ -1240,6 +1242,8 @@ public class ConverterV1 {
         valintakoeV1RDTO.setOid(valintakoe.getId().toString());
         valintakoeV1RDTO.setKieliUri(valintakoe.getKieli());
         valintakoeV1RDTO.setValintakoeNimi(valintakoe.getValintakoeNimi());
+        valintakoeV1RDTO.setValintakoetyyppi(valintakoe.getTyyppiUri());
+
         List<TekstiRDTO> lisatiedot = convertMonikielinenTekstiToTekstiDTOs(valintakoe.getKuvaus());
         if (lisatiedot != null && lisatiedot.size() > 0) {
             valintakoeV1RDTO.setValintakokeenKuvaus(lisatiedot.get(0));

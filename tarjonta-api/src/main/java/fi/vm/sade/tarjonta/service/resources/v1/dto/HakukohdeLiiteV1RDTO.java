@@ -25,6 +25,8 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     private String kieliNimi;
     @ApiModelProperty(value = "Liite's name", required = true)
     private String liitteenNimi;
+    @ApiModelProperty(value = "Liite's tyyppi", required = true)
+    private String liitteenTyyppi;
 
     private Map<String,String> liitteenKuvaukset;
 
@@ -96,5 +98,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setLiitteenKuvaukset(Map<String, String> liitteenKuvaukset) {
         this.liitteenKuvaukset = liitteenKuvaukset;
+    }
+
+    public String getLiitteenTyyppi() {
+        return liitteenTyyppi;
+    }
+
+    public void setLiitteenTyyppi(String liitteenTyyppi) {
+        this.liitteenTyyppi = liitteenTyyppi;
     }
 }
