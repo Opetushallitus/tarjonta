@@ -11,7 +11,7 @@
             display="tokenfield" /></td>
         <td></td>
     </tr>
-   
+
      <tr class="info">
         <th tt="koulutus.edit.kielivalikoima.B1KIELI.title">B1-kieli</th>
         <td><multi-select
@@ -24,7 +24,7 @@
     </tr>
      <tr class="info">
         <th tt="koulutus.edit.kielivalikoima.B2KIELI.title">B2-kieli</th>
-        <td><multi-select  
+        <td><multi-select
                     order-with="userLanguages"
                     selection="uiModel.kielivalikoima.B2KIELI.uris"
                     model="uiModel.tmp"
@@ -34,7 +34,7 @@
     </tr>
     <tr class="info">
         <th tt="koulutus.edit.kielivalikoima.B3KIELI.title">B3-kieli</th>
-        <td><multi-select 
+        <td><multi-select
             order-with="userLanguages"
             selection="uiModel.kielivalikoima.B3KIELI.uris"
             model="uiModel.tmp"
@@ -68,7 +68,7 @@
         <th></th>
         <td><multi-select model="uiModel.tmp"
                       selection="uiModel.lukiodiplomit.uris"
-                      promise="uiModel.lukiodiplomit.promise" 
+                      promise="uiModel.lukiodiplomit.promise"
                       display="checklist"
                       columns="3"
                       tt-show-all-title="koulutus.edit.lukiodiplomit.title"/></td>
@@ -82,7 +82,7 @@
     selection="uiModel.selectedKieliUri"
     mutable="true"
     ></mk-tabs>
- 
+
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
     <multi-select
         on-change="onLisatietoLangSelection(uris, CONFIG.TYYPPI)"
@@ -94,7 +94,9 @@
 </div>
 
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
-    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot"
+         ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus"
+         lisatieto-type="{{lisatieto.type}}">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
         <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>

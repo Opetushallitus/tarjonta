@@ -149,7 +149,7 @@ describe('AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA', function() {
                     val: ''
                 },
                 YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA: {
-                    val: '  '
+                    val: ''
                 }
             },
             otherFields: {
