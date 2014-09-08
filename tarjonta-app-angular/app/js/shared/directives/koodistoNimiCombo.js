@@ -420,54 +420,57 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
         return foundKoodi;
     };
 
-    var getKoodiByArvo = function(arvo, arr) {
+    var isSameHakukohdeUriSelection = function(arvo, arr) {
+        if (!arvo || !arr || arvo === null || arr.length === 0) {
+            return false;
+        }
+
         for (var j = 0; j < arr.length; j++) {
             if (arr[j].koodiArvo !== arvo) {
-                return arr[j];
+                return  false;
             }
         }
-        return null;
+        return true;
     };
 
-    var aikuFilter = function(allOsaamisalaKoodis, allKolutusKoodis, filterwithkoodistouri) {
-        if (!filterwithkoodistouri) {
+    var aikuFilter = function(allHakukohdeKoodis, allKolutusKoodis, filterWithKoodistoUri) {
+        if (!filterWithKoodistoUri) {
             throw new Error("Missing koodisto filter!");
         }
 
-        var arrSeletableKoodiObjects = [];
-        var tutkintoHakukohde;
+        var resultUris = [];
+        var tutkintoHakukohde = null;
 
         //filter koodistos
         for (var i = 0; i < allKolutusKoodis.length; i++) {
-            if (allKolutusKoodis[i].koodiKoodisto === filterwithkoodistouri) {
+            if (allKolutusKoodis[i].koodiKoodisto === filterWithKoodistoUri) {
                 tutkintoHakukohde = allKolutusKoodis[i];
                 break;
             }
         }
 
-
-        var filteredOsaamisalaKoodis = [];
+        var filteredHakukohdeKoodis = [];
         if (tutkintoHakukohde && tutkintoHakukohde !== null) {
-            //remove tutkinto from array of osaamisalas 
+            //remove tutkinto from array of osaamisala uris
 
-            filteredOsaamisalaKoodis = _.reject(allOsaamisalaKoodis, function(koodi) {
+            filteredHakukohdeKoodis = _.reject(allHakukohdeKoodis, function(koodi) {
                 return koodi.koodiArvo === tutkintoHakukohde.koodiArvo;
             });
         }
 
-        var arvo = filteredOsaamisalaKoodis && filteredOsaamisalaKoodis.length > 0 ? filteredOsaamisalaKoodis[0].koodiArvo : null;
+        var hakukohdeArvo = filteredHakukohdeKoodis && filteredHakukohdeKoodis.length > 0 ? filteredHakukohdeKoodis[0].koodiArvo : null;
 
         //always add perustutkinto
         if (tutkintoHakukohde && tutkintoHakukohde !== null) {
-            arrSeletableKoodiObjects.push(tutkintoHakukohde);
+            resultUris.push(tutkintoHakukohde);
         }
 
-        if (getKoodiByArvo(arvo, filteredOsaamisalaKoodis) === null) {
-            //add single osaamisala as it's same as the all other
-            arrSeletableKoodiObjects.push(filteredOsaamisalaKoodis[0]);
+        if (isSameHakukohdeUriSelection(hakukohdeArvo, filteredHakukohdeKoodis)) {
+            //add first osaamisala as it should be same the all other osaamisala uris
+            resultUris.push(filteredHakukohdeKoodis[0]);
         }
 
-        return arrSeletableKoodiObjects;
+        return resultUris;
     };
 
     return {
@@ -571,7 +574,7 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                         });
 
                         var osaamisala = _.filter(parentkoodiuri, function(uri) {
-                            return uri.indexOf("koulutus") === -1;
+                            return uri.indexOf("osaamisala") !== -1;
                         });
 
                         Koodisto.getAlapuolisetKoodit(koulutus, $scope.locale).then(function(koulutusRelationResult) {
