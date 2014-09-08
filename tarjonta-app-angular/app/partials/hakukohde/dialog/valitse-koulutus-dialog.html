@@ -1,0 +1,35 @@
+<div id="valitse-koulutus-dialog">
+    <div class="modal-header">
+        <h3><span  tt="hakukohde.luo-uusi-hakukohde">Luo uusi hakukohde</span></h3>
+    </div>
+
+    <div class="modal-body">
+        <p ng-bind-html="model.text.help"></p>
+
+        <ul ng-show="model.errors.length > 0" class="errors">
+            <li ng-repeat="error in model.errors">{{error.msg}}</li>
+        </ul>
+
+        <table width="100%">
+            <tr>
+                <td colspan="2">
+                    <span tt="hakukohde.valitse-hakukohteen-koulutukset">Valitse hakukohteen koulutukset</span>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%">
+                    <ul style="height:250px" class="listView" >
+                        <li ng-repeat="obj in model.komotos">
+                           <input type="checkbox" ng-click="toggleSelection(obj.oid)" ng-model="model.selectedOids[obj.oid]"> {{getNameByLang(obj)}}
+                        </li>
+                        <li ng-show="emptyResult()" tt="hakukohde.ei-valittuja-koulutuksia">Ei valittuja koulutuksia</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="peruuta()"><span tt="peruuta">Peruuta</span></button>
+        <button class="btn btn-primary" ng-disabled="!isSelected()" ng-click="jatka()"><span tt="jatka">Jatka</span></button>
+    </div>
+</div>
