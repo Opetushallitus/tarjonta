@@ -10,6 +10,7 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
         var filteredkoodis = [];
 
         angular.forEach(koodisParam, function(koodi) {
+            console.log("relaatio " + koodistoFilterUri + " " + koodi.koodiUri);
             if (koodi.koodiKoodisto === koodistoFilterUri) {
                 filteredkoodis.push(koodi);
             }
@@ -102,9 +103,9 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                     }
 
                     $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri, koodisParam);
-                    console.log(" $scope.koodis",  $scope.koodis);
-                    
-                    
+                    console.log(" $scope.koodis", $scope.koodis);
+
+
                 } else {
                     addVersionToKoodis(koodisParam);
                     $scope.koodis = koodisParam;
@@ -324,7 +325,6 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                                 allPromises.then(function(data) {
 
                                     angular.forEach(data, function(koodis) {
-
                                         processAlapuolisetKoodit(koodis);
                                     })
                                 })
@@ -365,6 +365,239 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                     }
                 }
             });
+
+            $scope.onKoodistoComboChange = function() {
+                if ($scope.onchangecallback !== undefined) {
+                    $log.info('Select koodiuri ');
+
+                    $log.info($scope.koodiuri);
+
+                    var koodi = findKoodiWithUri($scope.koodiuri, $scope.koodis);
+
+                    $log.info('Found koodi : ', koodi);
+
+                    $scope.onchangecallback(koodi);
+
+                } else {
+                    //$log.info('No onchangecallback defined');
+                }
+            };
+
+        }
+
+    }
+});
+
+app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
+
+    $log = $log.getInstance("<koodistocomboaiku>");
+
+    var filterKoodis = function(mapFilterDublicates, koodistoFilterUri, koodisParam) {
+        var filteredkoodis = [];
+
+        angular.forEach(koodisParam, function(koodi) {
+            if (koodi.koodiKoodisto === koodistoFilterUri) {
+                console.log("selected  " + koodistoFilterUri + " " + koodi.koodiUri);
+
+                if (!mapFilterDublicates[koodi.koodiArvo]) {
+                    filteredkoodis.push(koodi);
+                    mapFilterDublicates[koodi.koodiArvo] = true;
+                }
+            }
+        });
+
+        return filteredkoodis;
+    };
+
+    var findKoodiWithUri = function(koodi, koodis) {
+        var foundKoodi;
+        angular.forEach(koodis, function(koodiLoop) {
+            if (koodiLoop.koodiUri === koodi) {
+                foundKoodi = koodiLoop;
+            }
+        });
+
+        return foundKoodi;
+    };
+
+    var getKoodiByArvo = function(arvo, arr) {
+        for (var j = 0; j < arr.length; j++) {
+            if (arr[j].koodiArvo !== arvo) {
+                return arr[j];
+            }
+        }
+        return null;
+    };
+
+    var aikuFilter = function(allOsaamisalaKoodis, allKolutusKoodis, filterwithkoodistouri) {
+        if (!filterwithkoodistouri) {
+            throw new Error("Missing koodisto filter!");
+        }
+
+        var arrSeletableKoodiObjects = [];
+        var tutkintoHakukohde;
+
+        //filter koodistos
+        for (var i = 0; i < allKolutusKoodis.length; i++) {
+            if (allKolutusKoodis[i].koodiKoodisto === filterwithkoodistouri) {
+                tutkintoHakukohde = allKolutusKoodis[i];
+                break;
+            }
+        }
+
+
+        var filteredOsaamisalaKoodis = [];
+        if (tutkintoHakukohde && tutkintoHakukohde !== null) {
+            //remove tutkinto from array of osaamisalas 
+
+            filteredOsaamisalaKoodis = _.reject(allOsaamisalaKoodis, function(koodi) {
+                return koodi.koodiArvo === tutkintoHakukohde.koodiArvo;
+            });
+        }
+
+        var arvo = filteredOsaamisalaKoodis && filteredOsaamisalaKoodis.length > 0 ? filteredOsaamisalaKoodis[0].koodiArvo : null;
+
+        //always add perustutkinto
+        if (tutkintoHakukohde && tutkintoHakukohde !== null) {
+            arrSeletableKoodiObjects.push(tutkintoHakukohde);
+        }
+
+        if (getKoodiByArvo(arvo, filteredOsaamisalaKoodis) === null) {
+            //add single osaamisala as it's same as the all other
+            arrSeletableKoodiObjects.push(filteredOsaamisalaKoodis[0]);
+        }
+
+        return arrSeletableKoodiObjects;
+    };
+
+    return {
+        restrict: 'EA',
+        require: '^form',
+        replace: true,
+        templateUrl: "js/shared/directives/koodistoNimiCombo.html",
+        scope: {
+            koodistouri: "=",
+            koodiuri: "=",
+            locale: "=",
+            isdependent: "=",
+            filterwithkoodistouri: "=",
+            version: "=",
+            isrequired: "=",
+            usearvocombo: "=",
+            parentkoodiuri: "=",
+            filteruris: "=",
+            excludeuris: "=",
+            prompt: "=",
+            isalakoodi: "=",
+            onchangecallback: "="
+
+        },
+        controller: function($scope, Koodisto) {
+            var koodiSeparator = "#";
+            $scope.baseKoodis = [];
+            $scope.koodis = [];
+            $scope.mapFilterDublicates = {};
+
+            var checkForKoodiUriVersion = function() {
+                if ($scope.koodiuri) {
+                    if ($scope.koodiuri.indexOf(koodiSeparator) > -1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            };
+
+            var processAlapuolisetKoodit = function(koodisParam) {
+                return filterKoodis($scope.mapFilterDublicates, $scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri, koodisParam);
+            };
+
+            var addKoodiToKoodiUri = function(koodiversio) {
+                if ($scope.koodiuri) {
+                    $scope.koodiuri = $scope.koodiuri + koodiSeparator + koodiversio;
+                }
+            };
+
+            var addVersionToKoodis = function(koodis) {
+                var koodienVersio = 0;
+                if ($scope.version !== undefined && $scope.version) {
+                    angular.forEach(koodis, function(koodi) {
+                        if (koodi.koodiUri.indexOf("#") < 0) {
+                            koodienVersio = koodi.koodiVersio;
+                            koodi.koodiUri = koodi.koodiUri + "#" + koodi.koodiVersio;
+                        } else {
+                            $log.warn("addVersionToKoodis - tried to add version to already versioned URI!", koodi);
+                        }
+                    });
+                    if (!checkForKoodiUriVersion()) {
+                        addKoodiToKoodiUri(koodienVersio);
+                    }
+                }
+            };
+
+            if ($scope.isrequired !== undefined && $scope.isrequired === "true" || $scope.isrequired) {
+                $scope.valuerequired = true;
+            } else {
+                $scope.valuerequired = false;
+            }
+
+            if ($scope.usearvocombo !== undefined) {
+                $scope.combotype = {
+                    value: "arvo"
+                };
+            } else {
+                $scope.combotype = {
+                    value: "nimi"
+                };
+            }
+
+            $scope.$watch('parentkoodiuri', function(parentkoodiuri) {
+                $log.info('Parent koodi uri changed');
+                if (parentkoodiuri !== undefined && parentkoodiuri.length > 0) {
+                    //Default behaviour is to get alakoodis
+                    if ($scope.isalakoodi === undefined || $scope.isalakoodi === null) {
+                        $log.info('isalakoodi was undefined');
+                        $scope.isalakoodi = true;
+                    }
+
+                    if (angular.isArray(parentkoodiuri)) {
+                        var koodiPromises = [];
+
+
+                        var koulutus = _.filter(parentkoodiuri, function(uri) {
+                            return uri.indexOf("koulutus") !== -1;
+                        });
+
+                        var osaamisala = _.filter(parentkoodiuri, function(uri) {
+                            return uri.indexOf("koulutus") === -1;
+                        });
+
+                        Koodisto.getAlapuolisetKoodit(koulutus, $scope.locale).then(function(koulutusRelationResult) {
+                            angular.forEach(osaamisala, function(uri) {
+                                koodiPromises.push(Koodisto.getAlapuolisetKoodit(uri, $scope.locale));
+                            });
+
+                            $q.all(koodiPromises).then(function(data) {
+                                var filteredOsaamisalaKoodis = [];
+
+                                console.log($scope.parentkoodiuri);
+
+                                angular.forEach(data, function(koodis) {
+                                    filteredOsaamisalaKoodis = filteredOsaamisalaKoodis.concat(processAlapuolisetKoodit(koodis));
+                                });
+
+                                var arr = aikuFilter(filteredOsaamisalaKoodis, koulutusRelationResult, $scope.koodistouri);
+                                addVersionToKoodis(arr);
+                                $scope.koodis = arr;
+                            });
+                        });
+                    }
+                }
+            });
+
+
 
             $scope.onKoodistoComboChange = function() {
                 if ($scope.onchangecallback !== undefined) {
