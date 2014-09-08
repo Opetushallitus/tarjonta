@@ -198,7 +198,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
         var error = {};
 
-        error.errorMessageKey =  commonExceptionMsgKey;
+        error.errorMessageKey =  "tarjonta.common.unexpected.error.msg";
 
         errors.push(error);
 
