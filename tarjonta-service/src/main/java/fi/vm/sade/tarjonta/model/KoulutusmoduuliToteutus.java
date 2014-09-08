@@ -198,7 +198,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private String tarjoaja;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = TABLE_NAME + "_xxxxxxs", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    @CollectionTable(name = TABLE_NAME + "_owners", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<KoulutusOwner> owners;
 
     @Column(name = "viimPaivittajaOid")
