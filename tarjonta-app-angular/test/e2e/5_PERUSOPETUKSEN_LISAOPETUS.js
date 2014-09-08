@@ -7,7 +7,7 @@ describe('PERUSOPETUKSEN_LISAOPETUS', function() {
     var koulutuksetFirstResult = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(2)');
     var koulutus2014 = $('.resultsTreeTable[selection="selection.koulutukset"] tr:nth-child(3)');
 
-    it('should find PERUSOPETUKSEN_LISAOPETUS in organisaatiohaku', function() {
+    it('should find koulutus in organisaatiohaku', function() {
         browser.get('/tarjonta-app');
 
         searchInput.sendKeys('valkealan');
