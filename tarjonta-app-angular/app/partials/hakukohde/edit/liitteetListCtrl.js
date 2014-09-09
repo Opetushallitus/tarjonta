@@ -243,7 +243,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     $scope.status.validateLiitteet = function() {
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
     		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];    		
-    		if ((!notEmpty([li.liitteenNimi, li.toimitettavaMennessa]) && !notEmpty([li.liitteenTyyppi, li.toimitettavaMennessa]))
+    		if ((!notEmpty([li.liitteenNimi, li.toimitettavaMennessa, li.liitteenTyyppi]))
     				|| !$scope.isValidSahkoinenOsoite(li)
     				|| !$scope.isValidToimitusOsoite(li)) {
     			return false;
