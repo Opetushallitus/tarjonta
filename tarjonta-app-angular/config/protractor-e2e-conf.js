@@ -11,7 +11,9 @@ exports.config = {
             headerit eivät aina ole asetettu...
             */
             args: ['disable-web-security']
-        }
+        },
+        shardTestFiles: true, // run tests in parallel
+        maxInstances: 9 // max n.of parallel instances
     },
     baseUrl: 'http://localhost:8080',
     allScriptsTimeout: 20000,
@@ -26,6 +28,6 @@ exports.config = {
         isVerbose: true,
         showColors: true,
         includeStackTrace: true,
-        defaultTimeoutInterval: 60000 // 60s
+        defaultTimeoutInterval: 2 * 60 * 1000 // 2min
     }
 }

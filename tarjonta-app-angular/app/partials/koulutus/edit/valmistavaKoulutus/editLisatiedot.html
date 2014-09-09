@@ -28,7 +28,9 @@
 </div>
 
 <div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
-    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot"
+         ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus"
+         lisatieto-type="{{lisatieto.type}}">
         <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
         <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
         <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>

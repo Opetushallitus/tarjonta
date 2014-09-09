@@ -19,6 +19,7 @@ var testHelper = {
     mapTinyMCE: function(inputs, callback) {
         if ( this.map ) {
             callback(null, this.map);
+            return;
         }
         var map = this.map = {};
         var driver = protractor.getInstance().driver;
@@ -188,6 +189,7 @@ var testHelper = {
         var self = this;
 
         it('should show edit page for koulutus', function(done) {
+            self.map = null; // reset tinyMCE map
             var firstEditBtn = element.all(by.css('[tt="koulutus.review.muokkaa"]')).first();
             firstEditBtn.click();
 
