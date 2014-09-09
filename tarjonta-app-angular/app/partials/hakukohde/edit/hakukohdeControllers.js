@@ -148,7 +148,9 @@ app.controller('HakukohdeEditController',
         var filteredHakus = [];
         angular.forEach(hakus,function(haku){
             if(haku.kohdejoukkoUri === haunKohdejoukko) {
-                filteredHakus.push(haku);
+                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                    filteredHakus.push(haku);
+                }
             }
         });
         return filteredHakus;
@@ -239,24 +241,32 @@ app.controller('HakukohdeEditController',
             $scope.loadPainotettavatOppiainevaihtoehdot();
         }
 
-        if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
-            $scope.model.hakukohteenNimet = [];
-            angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function (koulutusOid) {
-                TarjontaService.getKoulutusPromise(koulutusOid).then(function(koulutus) {
-                    var koulutusohjelma = koulutus.result.koulutusohjelma;
-                    if(koulutusohjelma !== undefined && koulutusohjelma.uri !== undefined) {
-                        Koodisto.getAlapuolisetKoodit(koulutusohjelma.uri, AuthService.getLanguage()).then(function(koodit) {
-                            angular.forEach(koodit, function (koodi) {
-                                if(koodi.koodiKoodisto === 'hakukohteet') {
+        var populateHakukohteenNimetByKoulutus = function(koulutus) {
+            var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
+            Koodisto.getAlapuolisetKoodit(koulutus.koulutusohjelma.uri, AuthService.getLanguage()).then(function(koulutusohjelmanKoodit) {
+                angular.forEach(koulutusohjelmanKoodit, function (koulutusohjelmanKoodi) {
+                    if(koulutusohjelmanKoodi.koodiKoodisto === 'hakukohteet') {
+                        Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage()).then(function(hakukohteenYlapuolisetKoodit) {
+                            angular.forEach(hakukohteenYlapuolisetKoodit, function (hakukohteenYlapuolinenKoodi) {
+                                if(hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
                                     var hakukohteenNimi = {
-                                        uri: koodi.koodiUri + "#" + koodi.koodiVersio,
-                                        label: koodi.koodiNimi
+                                        uri: koulutusohjelmanKoodi.koodiUri + "#" + koulutusohjelmanKoodi.koodiVersio,
+                                        label: koulutusohjelmanKoodi.koodiNimi
                                     };
                                     $scope.model.hakukohteenNimet.push(hakukohteenNimi);
                                 }
                             });
-                        })
+                        });
                     }
+                });
+            })
+        }
+
+        if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
+            $scope.model.hakukohteenNimet = [];
+            angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function (koulutusOid) {
+                TarjontaService.getKoulutusPromise(koulutusOid).then(function(response) {
+                    populateHakukohteenNimetByKoulutus(response.result);
                 });
             });
         }
