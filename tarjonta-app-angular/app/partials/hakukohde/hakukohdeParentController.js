@@ -147,6 +147,7 @@ app.controller('HakukohdeParentController', [
         // varten
         $scope.model.defaultLang = 'kieli_fi';
         $scope.model.showHakuaikas = false;
+        $scope.model.hakukohde.configurableHakuaika = false;
         $scope.model.collapse.model = true;
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
@@ -551,6 +552,26 @@ app.controller('HakukohdeParentController', [
 
         }
 
+        var getHakuaikaForToisenAsteenKoulutus = function(haku) {
+            return haku.hakuaikas[0];
+        }
+
+        $scope.handleConfigurableHakuaika = function() {
+            if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
+                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+                var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                $scope.model.hakukohde.configurableHakuaika = haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_03' || haku.hakutapaUri.split('#')[0] === 'hakutapa_02';
+                $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
+                $scope.model.hakuaikaMin = hakuaika.alkuPvm;
+                $scope.model.hakuaikaMax = hakuaika.loppuPvm;
+
+                if(!$scope.model.hakukohde.configurableHakuaika) {
+                    $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
+                    $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+                }
+            }
+        }
+
         $scope.retrieveHakus = function(filterHakuFunction) {
 
             var hakuPromise = HakuService.getAllHakus();
@@ -601,6 +622,8 @@ app.controller('HakukohdeParentController', [
                 if ($scope.model.hakukohde.hakuOid !== undefined && $scope.model.hakuChanged) {
                     $scope.model.hakuChanged();
                 }
+
+                $scope.handleConfigurableHakuaika();
             });
         };
 
@@ -1098,6 +1121,7 @@ app.controller('HakukohdeParentController', [
                         returnResource.then(function(hakukohde) {
                             if (hakukohde.status === 'OK') {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                                $scope.handleConfigurableHakuaika();
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                 $scope.status.dirty = false;
                                 $scope.editHakukohdeForm.$dirty = false;
@@ -1132,7 +1156,6 @@ app.controller('HakukohdeParentController', [
                     }
                 } else {
                     $scope.model.showError = true;
-                    $log.debug('WHAAT : ', $scope.model.showError && $scope.editHakukohdeForm.aloituspaikatlkm.$invalid)
                 }
             });
         };

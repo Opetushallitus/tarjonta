@@ -6,6 +6,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 /*
 * @author: Tuomas Katva 10/11/13
@@ -465,5 +466,17 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setPainotettavatOppiaineet(List<PainotettavaOppiaineV1RDTO> painotettavatOppiaineet) {
         this.painotettavatOppiaineet = painotettavatOppiaineet;
+    }
+
+    public boolean toisenAsteenKoulutus() {
+        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.PERUSOPETUKSEN_LISAOPETUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
+                ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
     }
 }

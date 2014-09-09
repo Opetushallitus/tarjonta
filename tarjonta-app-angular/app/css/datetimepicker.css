@@ -344,6 +344,10 @@
 .datetimepicker table tr td span.active.disabled:hover.active {
   background-color: #003399 \9;
 }
+.datetimepicker-label {
+    margin-right: 10px;
+}
+
 .datetimepicker table tr td span.old {
   color: #999999;
 }

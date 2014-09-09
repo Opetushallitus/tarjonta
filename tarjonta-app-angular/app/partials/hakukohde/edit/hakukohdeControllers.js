@@ -52,23 +52,12 @@ app.controller('HakukohdeEditController',
     //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
-
-    /*
-
-        ----> Scope function to express whether hakukohde can be saved or not
-
-     */
-
     $scope.model.canSaveHakukohde = function() {
-
         if ($scope.editHakukohdeForm !== undefined) {
-
-
             return $scope.editHakukohdeForm.$valid && $scope.checkCanCreateOrEditHakukohde($scope.model.hakukohde);
         } else {
             return false;
         }
-
     };
 
 
@@ -387,11 +376,9 @@ app.controller('HakukohdeEditController',
 
     };
 
-    /*
-
-        ------> Hakukohde save functions
-
-     */
+    $scope.model.toisenAsteenHakuChanged = function(hakuOid) {
+        $scope.handleConfigurableHakuaika()
+    };
 
     var validateHakukohdeFunction = function() {
         return $scope.validateHakukohde($scope.model.hakukohde.toteutusTyyppi)

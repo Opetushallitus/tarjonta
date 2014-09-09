@@ -305,26 +305,27 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                             }
                         }
 
-                    if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 0 && $scope.model.hakukohde.hakuaikaId !== undefined) {
+                    if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi) &&
+                        $scope.model.hakukohde.hakuaikaAlkuPvm !== undefined &&
+                        $scope.model.hakukohde.hakuaikaLoppuPvm !== undefined) {
+                        $scope.model.hakuNimi = $scope.model.hakuNimi + "  ( " + createFormattedDateString($scope.model.hakukohde.hakuaikaAlkuPvm) + " - "
+                            + createFormattedDateString($scope.model.hakukohde.hakuaikaLoppuPvm) + " ) ";
+                    } else {
+                        if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 0 && $scope.model.hakukohde.hakuaikaId !== undefined) {
+                            var valittuHakuAika = undefined;
+                            angular.forEach(haku.hakuaikas, function(hakuaika) {
 
-                        var valittuHakuAika = undefined;
-                        angular.forEach(haku.hakuaikas, function(hakuaika) {
+                                if (hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId) {
+                                    valittuHakuAika = hakuaika;
+                                }
 
-                            if (hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId) {
-                                valittuHakuAika = hakuaika;
+                            });
+                            if (valittuHakuAika !== undefined) {
+                                var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
+                                $scope.model.hakuNimi = $scope.model.hakuNimi + "  ( " + prefix + createFormattedDateString(valittuHakuAika.alkuPvm) + " - "
+                                        + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
                             }
-
-                        });
-
-                        if (valittuHakuAika !== undefined) {
-
-                            var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
-
-                            $scope.model.hakuNimi = $scope.model.hakuNimi + "  ( " + prefix + createFormattedDateString(valittuHakuAika.alkuPvm) + " - "
-                                    + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
-
                         }
-
                     }
                 }
             });
