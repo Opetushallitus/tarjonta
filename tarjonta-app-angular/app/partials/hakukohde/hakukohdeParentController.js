@@ -25,7 +25,7 @@ app.controller('HakukohdeParentController', [
     'dialogService',
     'HakukohdeService',
     function($scope, $log, $routeParams, $route, $q, $modal, $location, Hakukohde, Koodisto, AuthService, HakuService, LocalisationService,
-            OrganisaatioService, SharedStateService, TarjontaService, Kuvaus, CommonUtilService, PermissionService, dialogService, HakukohdeService) {
+        OrganisaatioService, SharedStateService, TarjontaService, Kuvaus, CommonUtilService, PermissionService, dialogService, HakukohdeService) {
 
         var korkeakoulutusHakukohdePartialUri = "partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html";
         var aikuLukioHakukohdePartialUri = "partials/hakukohde/edit/aiku/lukio/editAiku.html";
@@ -47,10 +47,10 @@ app.controller('HakukohdeParentController', [
          */
         function updateTila(tila) {
             var tilat = ["LUONNOS", "PERUTTU", "KOPIOITU"];
-            if ($scope.model.hakukohde.tila===undefined||tilat.indexOf($scope.model.hakukohde.tila)!==-1) {
-              console.log("asetetaan tila modeliin!", tila);
-              // päivitä tila modeliin jos se voi muuttua
-              $scope.model.hakukohde.tila = tila;
+            if ($scope.model.hakukohde.tila === undefined || tilat.indexOf($scope.model.hakukohde.tila) !== -1) {
+                console.log("asetetaan tila modeliin!", tila);
+                // päivitä tila modeliin jos se voi muuttua
+                $scope.model.hakukohde.tila = tila;
             }
         }
 
@@ -160,7 +160,7 @@ app.controller('HakukohdeParentController', [
             $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
 
             angular.forEach(errorArray, function(error) {
-                if(error.errorMessageKey){
+                if (error.errorMessageKey) {
                     $scope.model.validationmsgs.push(error.errorMessageKey);
                 } else {
                     $scope.model.validationmsgs.push(angular.toJson(error));
@@ -526,19 +526,14 @@ app.controller('HakukohdeParentController', [
                 $scope.model.hakus = [];
                 $log.info('ALL HAKUS : ', hakuDatas);
                 angular.forEach(hakuDatas, function(haku) {
-
                     var userLang = AuthService.getLanguage();
-
                     var hakuLang = userLang !== undefined ? userLang : $scope.model.defaultLang;
 
                     for (var kieliUri in haku.nimi) {
-
                         if (kieliUri.indexOf(hakuLang) != -1) {
                             haku.lokalisoituNimi = haku.nimi[kieliUri];
                         }
-
                     }
-
                 });
 
                 var selectedHaku;
@@ -559,7 +554,7 @@ app.controller('HakukohdeParentController', [
                         return m.oid === selectedHaku.oid;
                     });
                     if (!inFilteres) {
-                        filteredHakus.push(inFilteres);
+                        filteredHakus.push(selectedHaku);
                     }
                 }
 
@@ -614,10 +609,10 @@ app.controller('HakukohdeParentController', [
 
                 var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
 
-                if (kohdeJoukkoUriNoVersion == window.CONFIG.app[kohdejoukkoUriNimi]) {
-
-                    filteredHakus.push(haku);
-
+                if (kohdeJoukkoUriNoVersion === window.CONFIG.app[kohdejoukkoUriNimi]) {
+                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                        filteredHakus.push(haku);
+                    }
                 }
             });
 

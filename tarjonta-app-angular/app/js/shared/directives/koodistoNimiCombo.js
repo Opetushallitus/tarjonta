@@ -574,7 +574,6 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                     if (angular.isArray(parentkoodiuri)) {
                         var koodiPromises = [];
 
-
                         var koulutus = _.filter(parentkoodiuri, function(uri) {
                             return uri.indexOf("koulutus") !== -1;
                         });
@@ -590,9 +589,7 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
 
                             $q.all(koodiPromises).then(function(data) {
                                 var filteredOsaamisalaKoodis = [];
-
-                                console.log($scope.parentkoodiuri);
-
+                                
                                 angular.forEach(data, function(koodis) {
                                     filteredOsaamisalaKoodis = filteredOsaamisalaKoodis.concat(processAlapuolisetKoodit(koodis));
                                 });
@@ -606,26 +603,15 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                 }
             });
 
-
-
             $scope.onKoodistoComboChange = function() {
                 if ($scope.onchangecallback !== undefined) {
-                    $log.info('Select koodiuri ');
-
-                    $log.info($scope.koodiuri);
-
                     var koodi = findKoodiWithUri($scope.koodiuri, $scope.koodis);
-
                     $log.info('Found koodi : ', koodi);
-
                     $scope.onchangecallback(koodi);
-
                 } else {
                     //$log.info('No onchangecallback defined');
                 }
             };
-
         }
-
-    }
+    };
 });
