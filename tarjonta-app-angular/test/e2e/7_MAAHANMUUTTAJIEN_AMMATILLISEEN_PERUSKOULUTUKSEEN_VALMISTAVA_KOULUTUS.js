@@ -58,8 +58,8 @@ describe('MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
             },
             alkamispvm: {
                 el: $('.tarjontaDateTime input[placeholder="pp.kk.vvvv"]'),
-                val: '8.9.2014',
-                editVal: '24.9.2014'
+                val: '30.12.2014',
+                editVal: '31.12.2014'
             },
             suunniteltuKestoArvo: {
                 el: $('[name="suunniteltuKestoArvo"]'),

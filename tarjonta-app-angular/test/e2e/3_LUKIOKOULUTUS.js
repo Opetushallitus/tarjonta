@@ -77,8 +77,8 @@ describe('LUKIOKOULUTUS', function() {
         perustiedot: {
             alkamispvm: {
                 el: $('.tarjontaDateTime input[placeholder="pp.kk.vvvv"]'),
-                val: '8.9.2014',
-                editVal: '24.9.2014'
+                val: '30.12.2014',
+                editVal: '31.12.2014'
             },
             suunniteltuKestoArvo: {
                 el: $('[name="suunniteltuKestoArvo"]'),
