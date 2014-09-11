@@ -1,5 +1,4 @@
-<div class="localizedTabs">
-
+<div class="localizedTabs" data-ng-controller="LiitteetListController">
     <tabset>
         <tab ng-repeat="kieli in liitteetModel.opetusKielet" heading="{{kieli.koodiNimi}}" active="liitteetModel.selectedTab[kieli.koodiUri]">
             <div ng-repeat="liite in getLiitteetByKieli(kieli.koodiUri)" class="{{liite.selected ? 'selected' : ''}}">

@@ -209,6 +209,11 @@ app.factory('HakukohdeService', function($resource, Config) {
         }
     }
 
+    /**
+     * Lisää hakukohteeseen valintakokeen-
+     * @param hakukohde
+     * @param kieliUri
+     */
     function addValintakoe(hakukohde, kieliUri) {
         var vk = {
             hakukohdeOid: hakukohde.oid,
@@ -226,9 +231,66 @@ app.factory('HakukohdeService', function($resource, Config) {
         return vk;
     }
 
+    /**
+     * Lisää hakukohteeseen liitteen jos siinä ei ole vielä yhtään.
+     * @param hakukohde
+     */
+    function addLiiteIfEmpty(hakukohde) {
+        console.log("checking if there is liite in hakukohde");
+
+        if(!hakukohde.hakukohteenLiitteet){
+            hakukohde.hakukohteenLiitteet=[];
+        }
+
+        if (hakukohde.hakukohteenLiitteet.length === 0) {
+            var kieli = hakukohde.opetusKielet[0]||"kieli_fi";
+            console.log("no there was not, adding one with lang", kieli);
+            addLiite(hakukohde, kieli,{});
+        }
+    }
+
+    /**
+     * Lisää hakukohteeseen liitteen (opetuskieli[0]).
+     * @param hakukohde
+     * @param kieliUri
+     */
+    function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite){
+        console.log("lisätään liite hakukohteeseen:", kieliUri);
+        hakukohde.hakukohteenLiitteet.push(newLiite(hakukohde.oid, kieliUri,liitteidenToimitusosoite));
+        console.log("hakukohde:", hakukohde);
+    }
+
+
+    /**
+     * Luo liitte objektin
+     * @param hakukohdeOid
+     * @param kieliUri
+     * @param liitteidenToimitusosoite
+     */
+    function newLiite(hakukohdeOid, kieliUri, liitteidenToimitusosoite) {
+        var kuvaukset = {};
+        kuvaukset[kieliUri] = "";
+
+        var addr = liitteidenToimitusosoite;
+        return {
+            hakukohdeOid:hakukohdeOid,
+            kieliUri: kieliUri,
+            liitteenNimi: "",
+            liitteenKuvaukset:kuvaukset,
+            toimitettavaMennessa: null, //tmennessa,
+            liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
+            muuOsoiteEnabled: !addr,
+            sahkoinenOsoiteEnabled: false,
+            isNew: true
+        };
+    }
+
+
     return {
         addValintakoeIfEmpty: addValintakoeIfEmpty,
-        addValintakoe: addValintakoe
+        addValintakoe: addValintakoe,
+        addLiiteIfEmpty: addLiiteIfEmpty,
+        addLiite: addLiite
     };
 
 });
