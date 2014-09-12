@@ -51,13 +51,11 @@ public interface HakukohdeV1Resource {
      * Päivittää hakukohteen tilan (olettaen että kyseinen tilasiirtymä on
      * sallittu).
      *
-     * @param oid
-     *            Hakukohteen oid.
-     * @param tila
-     *            Kohdetila.
+     * @param oid Hakukohteen oid.
+     * @param tila Kohdetila.
      * @return Tila ( {@link TarjontaTila#toString()} ), jossa hakukohde on
-     *         tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos
-     *         siirtymä ei ollut sallittu).
+     * tämän kutsun jälkeen (eli kohdetila tai edellinen tila, jos siirtymä ei
+     * ollut sallittu).
      */
     @POST
     @Path("/{oid}/tila")
@@ -87,7 +85,7 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Palauttaa hakukohteen ulkoisella tunnisteella")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public ResultV1RDTO<HakukohdeV1RDTO> findByUlkoinenTunniste(@ApiParam(value = "Tarjoajan oid", required = true) @PathParam("tarjoajaOid") String tarjoajaOid,
-                                                                @ApiParam(value = "Ulkoinen tunniste", required = true) @PathParam("ulkoinenTunniste") String ulkoinenTunniste);
+            @ApiParam(value = "Ulkoinen tunniste", required = true) @PathParam("ulkoinenTunniste") String ulkoinenTunniste);
 
     @POST
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -208,10 +206,9 @@ public interface HakukohdeV1Resource {
      * Hakukysely tarjonnan käyttöliittymää varten.
      *
      * @param searchTerms
-     * @param organisationOids
-     *            filter result to be in or "under" given organisations
-     * @param hakukohdeTilas
-     *            filter result to be only in states given
+     * @param organisationOids filter result to be in or "under" given
+     * organisations
+     * @param hakukohdeTilas filter result to be only in states given
      * @return
      */
     @GET
@@ -244,18 +241,16 @@ public interface HakukohdeV1Resource {
     @POST
     @Path("/{oid}/koulutukset")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Poistaa annetun hakukohteen ja koulutusten välisen relaation", notes="Poistaa annetun hakukohteen ja koulutusten välisen relaation, huom. mikäli hakukohteelle ei jää yhtään koulutusrelaatiota se poistetaan")
-    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid")  String hakukohdeOid,
-                                                                     @ApiParam(value = "Lista hakukohteelta poistettavista koulutus oideista") List<String> koulutukses);
-
+    @ApiOperation(value = "Poistaa annetun hakukohteen ja koulutusten välisen relaation", notes = "Poistaa annetun hakukohteen ja koulutusten välisen relaation, huom. mikäli hakukohteelle ei jää yhtään koulutusrelaatiota se poistetaan")
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String hakukohdeOid,
+            @ApiParam(value = "Lista hakukohteelta poistettavista koulutus oideista") List<String> koulutukses);
 
     @POST
     @Path("/{oid}/koulutukset/lisaa")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää annetut koulutukset hakukohteelle")
-    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään",required = true)  @PathParam("oid") String hakukohdeOid,
-                                                                  @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<String> koulutukses);
-
+    public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään", required = true) @PathParam("oid") String hakukohdeOid,
+            @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<String> koulutukses);
 
     @GET
     @Path("/{oid}/stateChangeCheck")
@@ -263,13 +258,16 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Tutkii onko esitetty tilamuutos mahdollinen", response = Boolean.class)
     public ResultV1RDTO<Boolean> isStateChangePossible(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
-    
     @POST
     @Path("/ryhmat/operate")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää/poistaa annetut ryhmat hakukohteelle, ei muuta olemassaolevia liitoksia")
     public ResultV1RDTO<Boolean> lisaaRyhmatHakukohteille(
-            @ApiParam(value = "Lista hakukohteiden liittamis/poistamis toimintoja", required = true)
-            List<HakukohdeRyhmaV1RDTO> data);
-    
+            @ApiParam(value = "Lista hakukohteiden liittamis/poistamis toimintoja", required = true) List<HakukohdeRyhmaV1RDTO> data);
+
+    @GET
+    @Path("/komotoSelectedCheck")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Tutkii onko valituista koulutuksista mahdollista luoda uusi hakukohde", response = ResultV1RDTO.class)
+    public ResultV1RDTO<ValitutKoulutuksetV1RDTO> isValidKoulutusSelection(@QueryParam("oid") List<String> oids);
 }

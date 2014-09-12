@@ -38,8 +38,6 @@ public class HakuHakuaikaPredicate implements Predicate<HakuViewModel> {
             }
         }
         
-        System.out.println(this + "\n\n\n\nfiltering result:" + input.getNimi() + ": " + acceptable);
-
         return acceptable;
     }
 

@@ -39,7 +39,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo 
+                            <div koodistocomboaiku 
                                  onchangecallback="fnTemp"  
                                  koodistouri="'aikuhakukohteet'"  
                                  koodiuri="model.hakukohde.hakukohteenNimiUri"  
@@ -57,16 +57,6 @@
                             <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->
                         </td>
                     </tr>
-
-<!-- 
-                    <tr>
-                        <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
-                        <td>
-                            <input name="ulkoinentunniste" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
-
-                        </td>
-                    </tr>
-                     -->
 
                     <!-- haku -->
                     <tr class="required">
@@ -122,7 +112,7 @@
              <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
          </tab>-->
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
-            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'" data-ng-controller="LiitteetListController"></div>
+            <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'"></div>
         </tab>
 
 

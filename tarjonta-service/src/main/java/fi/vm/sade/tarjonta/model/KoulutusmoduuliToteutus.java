@@ -21,14 +21,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
@@ -58,13 +51,13 @@ import org.apache.commons.lang.StringUtils;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import javax.persistence.Enumerated;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.opensaml.xml.signature.J;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -204,6 +197,10 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "tarjoaja")
     private String tarjoaja;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_owners", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    private Set<KoulutusOwner> owners;
+
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
 
@@ -303,22 +300,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public Koulutusmoduuli getKoulutusmoduuli() {
         return koulutusmoduuli;
-    }
-
-    /**
-     * Palauttaa oid:n joka viittaa organisaatioon joka tarjoaa tata koulutusta.
-     *
-     * @return
-     */
-    public String getTarjoaja() {
-        return tarjoaja;
-    }
-
-    /**
-     *
-     */
-    public void setTarjoaja(String organisaatioOid) {
-        tarjoaja = organisaatioOid;
     }
 
     /**
@@ -1067,6 +1048,23 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.valmistavaKoulutus = valmistavaKoulutus;
     }
 
+
+    /**
+     * Palauttaa oid:n joka viittaa organisaatioon joka tarjoaa tata koulutusta.
+     *
+     * @return
+     */
+    public String getTarjoaja() {
+        return tarjoaja;
+    }
+
+    /**
+     *
+     */
+    public void setTarjoaja(String organisaatioOid) {
+        this.tarjoaja = organisaatioOid;
+    }
+
     /**
      * @return the jarjesteja OID
      */
@@ -1081,4 +1079,19 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.jarjesteja = jarjesteja;
     }
 
+    /**
+     * Manage different kind of relations to this object.
+     *
+     * @return
+     */
+    public Set<KoulutusOwner> getOwners() {
+        if (owners == null) {
+            owners = new HashSet<KoulutusOwner>();
+        }
+        return owners;
+    }
+
+    public void setOwners(Set<KoulutusOwner> owners) {
+        this.owners = owners;
+    }
 }
