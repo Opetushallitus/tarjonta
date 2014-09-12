@@ -18,7 +18,6 @@ package fi.vm.sade.tarjonta.dao.impl;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,14 +68,13 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.joda.time.DateTime;
 
 /**
- *
  * @author jani
  */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class
+        DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
@@ -101,6 +99,8 @@ public class MassakopiointiTest extends TestData {
 
     @Autowired(required = true)
     private OidService oidService;
+
+    private String foo;
 
     AtomicInteger c = new AtomicInteger(0);
 
@@ -174,43 +174,50 @@ public class MassakopiointiTest extends TestData {
         ha.setAlkamisPvm(new Date());
         ha.setPaattymisPvm(new Date(ha.getAlkamisPvm().getTime() + 10000));
         from.addHakuaika(ha);
+        Hakuaika ha2 = new Hakuaika();
+        ha2.setAlkamisPvm(new Date());
+        ha2.setPaattymisPvm(new Date(ha2.getAlkamisPvm().getTime() + 10000));
+        ha2.setHaku(from);
+        ;
+        from.addHakuaika(ha2);
         from.setOrganisationOids(new String[]{"o1", "o2"});
         from.setTarjoajaOids(new String[]{"o1", "o2"});
         ha.setHaku(from);
         getPersistedKomoto1().setSijoittuminenTyoelamaan(new MonikielinenTeksti("fi", "blaah"));
         getPersistedKomoto1().setKoulutusohjelmanValinta(new MonikielinenTeksti("fi", "bvlaahh"));
         getPersistedKomoto1().getTekstit().put(KomotoTeksti.SIJOITTUMINEN_TYOELAMAAN, new MonikielinenTeksti("fi", "blaah"));
-        getPersistedKomoto1().getKoulutusmoduuli().getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi","blaah2"));
-        getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1","a2"));
+        getPersistedKomoto1().getKoulutusmoduuli().getTekstit().put(KomoTeksti.KOULUTUKSEN_RAKENNE, new MonikielinenTeksti("fi", "blaah2"));
+        getPersistedKomoto1().setKieliValikoima("KIEEEL", Lists.newArrayList("a1", "a2"));
         super.persist(getPersistedKomoto1());
         getPersistedKomoto2().setTila(TarjontaTila.LUONNOS);
         kohde1.addKoulutusmoduuliToteutus(getPersistedKomoto2());
         getPersistedKomoto2().addHakukohde(kohde1);
+        kohde1.setHakuaika(ha);
         super.persist(getPersistedKomoto2());
-        
-        
+
+
         kohde1.setLisatiedot(new MonikielinenTeksti());
         kohde1.getLisatiedot().addTekstiKaannos("fi", "lisätieto");
         kohde1.getValintakoes().clear();
         kohde1.addValintakoe(koe1);
-        kohde1.setOrganisaatioRyhmaOids(new String[]{"ooid1","ooid2"});
+        kohde1.setOrganisaatioRyhmaOids(new String[]{"ooid1", "ooid2"});
         koe1.setHakukohde(kohde1);
 
         HakukohdeLiite liite = new HakukohdeLiite();
         liite.setHakukohde(kohde1);
         liite.setHakukohdeLiiteNimi("liiteNimi");
-        liite.setKuvaus(new MonikielinenTeksti("fi","kuvaus"));
+        liite.setKuvaus(new MonikielinenTeksti("fi", "kuvaus"));
         liite.setLiitetyyppi("tyyppi");
         liite.setErapaiva(new Date());
         kohde1.addLiite(liite);
         super.persist(kohde1);
-        
+
 
         super.persist(koe1);
-        
+
         super.persist(from);
-        
-        assertFalse(0==from.getNimi().getKaannoksetAsList().size());
+
+        assertFalse(0 == from.getNimi().getKaannoksetAsList().size());
 
 
         HashMap<String, Hakukohde> hakukohdes = Maps.newHashMap();
@@ -231,15 +238,15 @@ public class MassakopiointiTest extends TestData {
         final Haku h = hakuDAO.findByOid(processV1RDTO.getParameters().get(MassCopyProcess.TO_HAKU_OID));
 
         compareHaku(h, from);
-        
+
         assertNotNull(h.getOid());
         assertFalse(from.getOid().equals(h.getOid()));
-        assertFalse(0==from.getNimi().getKaannoksetAsList().size());
-        
-        final String toNimi=h.getNimi().getKaannoksetAsList().get(0).getArvo();
-        final String fromNimi=from.getNimi().getKaannoksetAsList().get(0).getArvo();
+        assertFalse(0 == from.getNimi().getKaannoksetAsList().size());
+
+        final String toNimi = h.getNimi().getKaannoksetAsList().get(0).getArvo();
+        final String fromNimi = from.getNimi().getKaannoksetAsList().get(0).getArvo();
         assertNotSame(toNimi, fromNimi);
-        
+
         assertEquals(3, h.getHakukohdes().size());
 
         for (Hakukohde hk : h.getHakukohdes()) {
@@ -253,14 +260,15 @@ public class MassakopiointiTest extends TestData {
     }
 
     private void compareHaku(Haku copy, Haku orig) {
-        assertFalse(Objects.equal(copy.getOid(),orig.getOid()));
-        assertTrue(orig.getOrganisationOids().length>0);
-        assertTrue(orig.getTarjoajaOids().length>0);
-        assertSame(0,Sets.difference(Sets.newHashSet(orig.getOrganisationOids()), Sets.newHashSet(copy.getOrganisationOids())).size());
-        assertSame(0,Sets.difference(Sets.newHashSet(orig.getTarjoajaOids()), Sets.newHashSet(copy.getTarjoajaOids())).size());
+        assertFalse(Objects.equal(copy.getOid(), orig.getOid()));
+        assertTrue(orig.getOrganisationOids().length > 0);
+        assertTrue(orig.getTarjoajaOids().length > 0);
+        assertSame(0, Sets.difference(Sets.newHashSet(orig.getOrganisationOids()), Sets.newHashSet(copy.getOrganisationOids())).size());
+        assertSame(0, Sets.difference(Sets.newHashSet(orig.getTarjoajaOids()), Sets.newHashSet(copy.getTarjoajaOids())).size());
+        assertEquals(2, haku1.getHakuaikas().size());
     }
 
-    
+
     private void compareKomoto(KoulutusmoduuliToteutus copy, KoulutusmoduuliToteutus orig) {
         assertEquals(KOMOTO_OID_1, orig.getOid());
         assertFalse(copy.getOid().equals(orig.getOid()));
@@ -277,10 +285,16 @@ public class MassakopiointiTest extends TestData {
         //komon tekstit ei kopioidu
         assertEquals(orig.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getId(), copy.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getId());
         assertEquals(orig.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getTekstiForKieliKoodi("fi"), copy.getKoulutusmoduuli().getTekstit().get(KomoTeksti.KOULUTUKSEN_RAKENNE).getTekstiForKieliKoodi("fi"));
-        if(orig.getOid().equals(getPersistedKomoto1().getOid())){
+        if (orig.getOid().equals(getPersistedKomoto1().getOid())) {
             //komoto1 testaus
             assertEquals(orig.getKieliValikoima("KIEEEL").getKielet().size(), copy.getKieliValikoima("KIEEEL").getKielet().size());
         }
+    }
+
+
+    private static Date dateToNextYear(Date date) {
+        DateTime dateTime = new DateTime(date);
+        return dateTime.plusYears(1).toDate();
     }
 
     private void compareHakukohde(Hakukohde copy, Hakukohde orig) {
@@ -291,15 +305,15 @@ public class MassakopiointiTest extends TestData {
         assertEquals(orig.getAloituspaikatLkm(), copy.getAloituspaikatLkm());
         assertEquals(orig.getEdellisenVuodenHakijat(), copy.getEdellisenVuodenHakijat());
         if (orig.getHakuaika() != null) {
-            assertEquals(orig.getHakuaika().getAlkamisPvm(), copy.getHakuaika().getAlkamisPvm());
-            assertEquals(orig.getHakuaika().getPaattymisPvm(), copy.getHakuaika().getPaattymisPvm());
+            assertEquals(dateToNextYear(orig.getHakuaika().getAlkamisPvm()), copy.getHakuaika().getAlkamisPvm());
+            assertEquals(dateToNextYear(orig.getHakuaika().getPaattymisPvm()), copy.getHakuaika().getPaattymisPvm());
         }
         assertEquals(orig.getHakukelpoisuusVaatimukset().size(), copy.getHakukelpoisuusVaatimukset().size());
         assertEquals(orig.getHakukelpoisuusVaatimusKuvaus(), copy.getHakukelpoisuusVaatimusKuvaus());
         assertEquals(orig.getHakukohdeKoodistoNimi(), copy.getHakukohdeKoodistoNimi());
         assertEquals(orig.getHakukohdeMonikielinenNimi(), copy.getHakukohdeMonikielinenNimi());
         assertEquals(orig.getHakukohdeNimi(), copy.getHakukohdeNimi());
-        if(orig.getOid().equals(kohde1.getOid())) {
+        if (orig.getOid().equals(kohde1.getOid())) {
             assertEquals(1, copy.getKoulutusmoduuliToteutuses().size()); //toinen koulutus oli luonnos
         } else {
             assertEquals(orig.getKoulutusmoduuliToteutuses().size(), copy.getKoulutusmoduuliToteutuses().size());
@@ -307,13 +321,13 @@ public class MassakopiointiTest extends TestData {
         assertEquals(orig.getLiites().size(), copy.getLiites().size());
 
         //oletus testidatassa vain nolla tai yksi valintakoetta
-        if(orig.getValintakoes().size()==1) {
+        if (orig.getValintakoes().size() == 1) {
             LOG.debug("tarkistetaan valintakoe");
-            final Valintakoe origV=orig.getValintakoes().iterator().next();
-            final Valintakoe copyV=copy.getValintakoes().iterator().next();
+            final Valintakoe origV = orig.getValintakoes().iterator().next();
+            final Valintakoe copyV = copy.getValintakoes().iterator().next();
             assertEquals(origV.getKieli(), copyV.getKieli());
             assertEquals(origV.getKuvaus().getKaannoksetAsList().size(), copyV.getKuvaus().getKaannoksetAsList().size());
-            if(origV.getLisanaytot()!=null) {
+            if (origV.getLisanaytot() != null) {
                 assertEquals(origV.getLisanaytot().getKaannoksetAsList().size(), copyV.getLisanaytot().getKaannoksetAsList().size());
             }
         } else {
@@ -321,10 +335,10 @@ public class MassakopiointiTest extends TestData {
         }
 
         //oletus testidatassa vain nolla tai yksi liitettä
-        if(orig.getLiites().size()==1) {
+        if (orig.getLiites().size() == 1) {
             LOG.debug("tarkistetaan liite");
-            final HakukohdeLiite origL=orig.getLiites().iterator().next();
-            final HakukohdeLiite copyL=copy.getLiites().iterator().next();
+            final HakukohdeLiite origL = orig.getLiites().iterator().next();
+            final HakukohdeLiite copyL = copy.getLiites().iterator().next();
             assertEquals(origL.getKuvaus().getKaannoksetAsList().size(), copyL.getKuvaus().getKaannoksetAsList().size());
             assertEquals(origL.getLiitetyyppi(), copyL.getLiitetyyppi());
         } else {
@@ -333,7 +347,7 @@ public class MassakopiointiTest extends TestData {
 
         assertEquals(orig.getLiitteidenToimitusOsoite(), copy.getLiitteidenToimitusOsoite());
         assertEquals(orig.getLiitteidenToimitusPvm(), copy.getLiitteidenToimitusPvm());
-        if(orig.getLisatiedot()!=null) {
+        if (orig.getLisatiedot() != null) {
             assertEquals(orig.getLisatiedot().getKaannoksetAsList().size(), copy.getLisatiedot().getKaannoksetAsList().size());
             LOG.debug("tarkistetaan lisätietoja");
         }
