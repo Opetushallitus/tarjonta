@@ -1163,9 +1163,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (String komotoOid : koulutusMultiCopy.getKomotoOids()) {
             ResultV1RDTO copyOrMove = copyOrMove(komotoOid, koulutusMultiCopy);
             if (copyOrMove.hasErrors()) {
-                for (ErrorV1RDTO err : copyOrMove.getErrors()) {
-                    result.addError(err);
-                }
+                result.getErrors().addAll(copyOrMove.getErrors());
             }
         }
         
