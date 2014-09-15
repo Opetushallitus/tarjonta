@@ -16,11 +16,7 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.BinaryData;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.WebLinkki;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
@@ -248,6 +244,32 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
+
+        //
+        // KJOH-778 multiple owners, API output
+        //
+
+        // TODO verify that this is what is wanted - these are the original organizer/holder
+
+        if (komoto.getTarjoaja() != null) {
+            dto.getOpetusTarjoajat().add(komoto.getTarjoaja());
+        }
+
+        if (komoto.getJarjesteja() != null) {
+            dto.getOpetusJarjestajat().add(komoto.getJarjesteja());
+        }
+
+        for (KoulutusOwner owner : komoto.getOwners()) {
+            if (KoulutusOwner.TARJOAJA.equalsIgnoreCase(owner.getOwnerType())) {
+                dto.getOpetusTarjoajat().add(owner.getOwnerOid());
+            }
+            else if (KoulutusOwner.JARJESTAJA.equalsIgnoreCase(owner.getOwnerType())) {
+                dto.getOpetusJarjestajat().add(owner.getOwnerOid());
+            } else {
+                LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
+                        komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
+            }
+        }
 
         return dto;
     }

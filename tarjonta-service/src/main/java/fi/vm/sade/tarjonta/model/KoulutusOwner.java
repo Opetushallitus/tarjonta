@@ -25,8 +25,11 @@ import java.io.Serializable;
 @Embeddable
 public class KoulutusOwner implements Serializable {
 
+    public static final String TARJOAJA = "TARJOAJA";
+    public static final String JARJESTAJA = "JARJESTAJA";
+
     private String ownerOid;
-    private String ownerType = "";
+    private String ownerType = TARJOAJA;
 
     public String getOwnerOid() {
         return ownerOid;
