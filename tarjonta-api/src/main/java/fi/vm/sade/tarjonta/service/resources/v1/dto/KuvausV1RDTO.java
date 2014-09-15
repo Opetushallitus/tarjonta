@@ -31,6 +31,9 @@ public class KuvausV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "HashMap containing descriptions and description languages")
     private HashMap<String,String> kuvaukset;
 
+    @ApiModelProperty(value = "Koodisto-key used by 2.-degree")
+    private String avain;
+
     public HashMap<String, String> getKuvauksenNimet() {
         return kuvauksenNimet;
     }
@@ -86,5 +89,9 @@ public class KuvausV1RDTO extends BaseV1RDTO {
     public void setVuosi(Integer vuosi) {
         this.vuosi = vuosi;
     }
+
+    public void setAvain(String avain) { this.avain = avain; }
+
+    public String getAvain() { return avain; }
 
 }

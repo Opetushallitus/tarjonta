@@ -116,6 +116,10 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
             whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.kausi.eq(searchSpec.getKausiUri()));
         }
 
+        if (searchSpec.getAvain() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.avain.eq(searchSpec.getAvain()));
+        }
+
         //TODO: add search for nimi
 
         JPAQuery query = from(qValintaperusteSoraKuvaus);

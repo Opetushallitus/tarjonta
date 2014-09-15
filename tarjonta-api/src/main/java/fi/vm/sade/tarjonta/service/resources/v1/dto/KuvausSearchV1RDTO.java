@@ -18,6 +18,8 @@ public class KuvausSearchV1RDTO {
     @ApiModelProperty(value = "Year")
     private Integer vuosi;
 
+    @ApiModelProperty(value = "Avain")
+    private String avain;
 
     public String getHakusana() {
         return hakusana;
@@ -50,4 +52,8 @@ public class KuvausSearchV1RDTO {
     public void setVuosi(Integer vuosi) {
         this.vuosi = vuosi;
     }
+
+    public void setAvain(String avain) { this.avain = avain; }
+
+    public String getAvain() { return avain; }
 }

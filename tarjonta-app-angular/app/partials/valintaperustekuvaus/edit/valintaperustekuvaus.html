@@ -17,7 +17,7 @@
         <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
-    
+
     <display-controls model="formControls" display="header"></display-controls>
 
     <hr/>
@@ -29,9 +29,9 @@
                         <th></th>
                         <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help">Valintaperuste edit HELP</td>
                     </tr>
-                    
+
                     <!-- -->
-                    <tr class="required">
+                    <tr ng-if="!isToinenAste" class="required">
 
                         <th tt="kk.valintaperustekuvaus.nimi">Kuvauksen nimi</th>
                         <td>
@@ -41,6 +41,17 @@
                             <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
                         </td>
                     </tr>
+                    <tr ng-if="isToinenAste">
+
+                        <th tt="kk.valintaperustekuvaus.nimi">Kuvauksen nimi</th>
+                        <td>
+                            <input class="input-xxlarge" ng-model="model.valintaperustekuvausryhma" readonly />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
+                        </td>
+                    </tr>
+
    			        <!-- väli -->
 			        <tr class="padding"><td colspan="3"><br/></td></tr>
                     <tr class="required">

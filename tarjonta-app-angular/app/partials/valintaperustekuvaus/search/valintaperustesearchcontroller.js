@@ -11,7 +11,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     		valintaperusteet: [],
     		sorat: []
     };
-    
+
     $scope.model = {};
 
     $scope.model.searchSpec = {};
@@ -108,8 +108,14 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     var showCreateNewDialog = function(vpkTyyppiParam) {
 
-          var modalInstance = $modal.open({
-            templateUrl: 'partials/valintaperustekuvaus/search/uusi-valintaperuste-dialog.html',
+        var modalInstance;
+
+        var template = $scope.canEditValintaperustekuvaus2Aste()
+            ? 'uusi-valintaperuste-choose-type-dialog.html'
+            : 'uusi-valintaperuste-dialog.html';
+
+        modalInstance = $modal.open({
+            templateUrl: 'partials/valintaperustekuvaus/search/' + template,
             controller: 'LuoUusiValintaPerusteDialog',
             windowClass: 'valintakoe-modal',
             resolve: {
@@ -125,14 +131,20 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
             }
         });
 
-        modalInstance.result.then(function(selectedOrgType){
-             if (selectedOrgType !== undefined) {
-                 var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +selectedOrgType + "/"+vpkTyyppiParam +"/NEW";
-                 $location.path(kuvausEditUri);
-             }
+        modalInstance.result.then(function(result){
+            var kuvausEditUri;
+
+            if (result.valintaperustekuvausryhma) {
+                kuvausEditUri = "/valintaPerusteKuvaus/edit/" +result.valintaperustekuvausryhma + "/"+vpkTyyppiParam +"/NEW";
+            }
+            else if (result.selectedOrgType) {
+                kuvausEditUri = "/valintaPerusteKuvaus/edit/" +result.selectedOrgType + "/"+vpkTyyppiParam +"/NEW";
+            }
+
+            $location.path(kuvausEditUri);
         });
     };
-    
+
     function koodistoToMap(res) {
     	var ret = {};
     	for (var i in res) {
@@ -153,9 +165,9 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         	for (var i in kuvaukset) {
         		var v = kuvaukset[i];
         		v.kausiNimi = koodisto[v.kausi] || v.kausi;
-        	}        	
+        	}
             doAfter();
-        });        
+        });
 
     };
 
@@ -167,7 +179,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         	for (var i in kuvaukset) {
         		var v = kuvaukset[i];
         		v.organisaatioTyyppiNimi = koodisto[v.organisaatioTyyppi] || v.organisaatioTyyppi;
-        	}        	
+        	}
             doAfter();
         });
    };
@@ -266,6 +278,10 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
     };
 
+    $scope.canEditValintaperustekuvaus2Aste = function() {
+        return AuthService.isUserOph();
+    };
+
     $scope.createNew = function(kuvausTyyppi) {
 
         if ($scope.model.userOrgTypes.length > 0 && $scope.model.userOrgTypes.length < 2) {
@@ -321,7 +337,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                 $log.info('GOT KUVAUS RESULT : ', resultData);
 
                 if (resultData.status === "OK") {
-                	
+
                 	localizeKuvausNames(resultData.result);
                     resolveOppilaitosTyyppi(resultData.result, function(){
                         resolveKausi(resultData.result, function(){
@@ -342,7 +358,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
     }
-    
+
     $scope.kuvauksetGetContent = function(row, col) {
     	console.log("GET CONTENT "+col, row);
     	switch (col) {
@@ -353,17 +369,18 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 		default:
 			return row.kuvauksenNimi;
     	}
-    }
-    
+    };
+
     $scope.kuvauksetGetIdentifier = function(row) {
     	return row.kuvauksenTunniste;
-    }
-    
+    };
+
     $scope.kuvauksetGetLink = function(row) {
-    	return "#/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+row.kuvauksenTyyppi +"/"+row.kuvauksenTunniste;
-    }
-    
-    $scope.kuvauksetGetOptions = function(row) {    	
+        var type = row.avain ? row.avain : $scope.model.userOrgTypes[0];
+    	return "#/valintaPerusteKuvaus/edit/" + type + "/" + row.kuvauksenTyyppi + "/" + row.kuvauksenTunniste;
+    };
+
+    $scope.kuvauksetGetOptions = function(row) {
     	return [{
     		title: LocalisationService.t("tarjonta.toiminnot.muokkaa"),
     		href: $scope.kuvauksetGetLink(row)
@@ -379,7 +396,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     		}
     	}
     	];
-    }
+    };
 
 });
 
@@ -430,7 +447,10 @@ app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,Loca
     };
 
     $scope.onOk = function() {
-        $modalInstance.close($scope.dialog.selectedType);
+        $modalInstance.close({
+            selectedOrgType: $scope.dialog.selectedType,
+            valintaperustekuvausryhma: $scope.dialog.valintaperustekuvausryhma
+        });
     };
 
     /*

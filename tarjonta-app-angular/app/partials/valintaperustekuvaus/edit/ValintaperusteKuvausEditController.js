@@ -23,20 +23,29 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
   $scope.model.valintaperustekuvaus.organisaatioTyyppi  = $route.current.params.oppilaitosTyyppi;
 
+    /**
+     * 2.-asteen koulutukset eivät käytä organisaatioTyyppiä, vaan sen sijaan
+     * avain-kenttää, joka on linkitetty koodistoon.
+     */
+    $scope.isToinenAste = $scope.model.valintaperustekuvaus.organisaatioTyyppi
+      && ($scope.model.valintaperustekuvaus.organisaatioTyyppi.indexOf('valintaperustekuvausryhma_') !== -1
+          || $scope.model.valintaperustekuvaus.organisaatioTyyppi.indexOf('sorakuvaus_') !== -1);
+    if ($scope.isToinenAste) {
+      $scope.model.valintaperustekuvaus.avain = $scope.model.valintaperustekuvaus.organisaatioTyyppi;
+      $scope.model.valintaperustekuvaus.organisaatioTyyppi = null;
+    }
+
   //var kuvausId = $route.current.params.kuvausId;
 
   $scope.model.valintaperustekuvaus.kuvaukset = {};
 
   $scope.formControls = {}; // controls-layouttia varten
 
-  $scope.model.userLang;
-
   $scope.model.showError = false;
 
   $scope.model.showSuccess = false;
 
   $scope.model.nimiValidationFailed = false;
-
 
 
   /*
@@ -150,9 +159,6 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     };
 
     var isNamesValid  = function() {
-
-      ;
-
         for(var i in $scope.model.valintaperustekuvaus.kuvauksenNimet){
 
             if ($scope.model.valintaperustekuvaus.kuvauksenNimet[i] && $scope.model.valintaperustekuvaus.kuvauksenNimet[i].trim().length > 1) {
@@ -182,14 +188,24 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     var showError = function(errorArray) {
         angular.forEach(errorArray,function(error) {
 
-        	var p = $scope.model.validationmsgs.indexOf(error.errorMessageKey);
-        	if (p==-1) {
-                $scope.model.validationmsgs.push(error.errorMessageKey);
-        	}
-            
+            if (error.errorTechnicalInformation && error.errorTechnicalInformation.indexOf('KUVAUS_ON_OLEMASSA_JO') !== -1) {
+                $scope.model.validationmsgs.push('valintaperustekuvaus.validation.kuvaus_on_olemassa_jo');
+
+                // TODO: poista alert ja käytä virhedialogia (controls-notify). Virhedialogissa on tällä hetkellä bugi,
+                // mistä syystä tilapäinen ratkaisu on alert. - 2014-09-15
+                alert(LocalisationService.t('valintaperustekuvaus.validation.kuvaus_on_olemassa_jo'));
+            }
+
+            else {
+                var p = $scope.model.validationmsgs.indexOf(error.errorMessageKey);
+                if (p == -1) {
+                    $scope.model.validationmsgs.push(error.errorMessageKey);
+                }
+            }
+
         });
 
-    }
+    };
 
 
     var showCommonUnknownErrorMsg = function() {
@@ -204,19 +220,31 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
         showError(errors);
 
-    }
+    };
 
     var createFormattedDateString = function(date) {
 
         return moment(date).format('DD.MM.YYYY HH:mm');
 
-    }
+    };
 
   var initialializeForm = function() {
 
 
       $scope.model.userLang = AuthService.getLanguage();
 
+      if ( $scope.isToinenAste ) {
+          var koodisto = $scope.model.valintaperustekuvaus.avain.indexOf('sorakuvaus_') !== -1
+                        ? 'sorakuvaus'
+                        : 'valintaperustekuvausryhma';
+          Koodisto.getKoodi(koodisto, $scope.model.valintaperustekuvaus.avain)
+              .then(function(koodi) {
+                  $scope.model.valintaperustekuvausryhma = koodi.koodiNimi;
+                  $scope.model.valintaperustekuvaus.kuvauksenNimet = {
+                      kieli_fi: koodi.koodiNimi
+                  };
+          });
+      }
 
       if ($route.current.locals.resolvedValintaPerusteKuvaus !== undefined ) {
 
@@ -259,7 +287,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     $scope.model.saveValmis = function(){
 
-
+        var resultPromise;
 
         resetErrorMsgs();
 
@@ -270,7 +298,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
             if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
 
-                var resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+                resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data){
                     if (data.status === "OK") {
 
@@ -285,7 +313,7 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
                 });
             } else {
 
-                var resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
+                resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,$scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data){
 
                     if (data.status === "OK") {
@@ -332,10 +360,10 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
     $scope.getNimetKey = function() {
         return $scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined  ? 'valintaperustekuvaus.edit.create.msg' : 'valintaperustekuvaus.edit.update.msg';
-    }
+    };
 
     $scope.getNimet = function() {
         return "";
-    }
+    };
 
 });

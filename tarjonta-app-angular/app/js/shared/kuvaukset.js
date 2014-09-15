@@ -211,6 +211,8 @@ app.factory('Kuvaus',function($http,Config,$q,$log,PermissionService){
 
                 $log.info('KUVAUS SEARCH SPEC URI : ', queryUri);
 
+                searchSpec.avain = searchSpec.valintaperustekuvausryhma || searchSpec.sorakuvaus;
+
                  $http.post(queryUri,searchSpec,{
                      headers : {'Content-Type': 'application/json; charset=UTF-8'}
 

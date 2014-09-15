@@ -377,6 +377,10 @@ public class ConverterV1 {
             kuvausV1RDTO.setKuvaukset(tekstis);
         }
 
+        if ( kuvaus.getAvain() != null ) {
+            kuvausV1RDTO.setAvain(kuvaus.getAvain());
+        }
+
         return kuvausV1RDTO;
     }
 
@@ -421,6 +425,8 @@ public class ConverterV1 {
             }
             valintaperusteSoraKuvaus.setTekstis(tekstit);
         }
+
+        valintaperusteSoraKuvaus.setAvain(kuvausV1RDTO.getAvain());
 
         return valintaperusteSoraKuvaus;
     }
