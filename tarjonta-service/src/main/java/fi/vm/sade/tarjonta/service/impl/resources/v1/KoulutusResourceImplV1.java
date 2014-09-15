@@ -299,7 +299,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 if (result.hasErrors()) {
                     return result;
                 }
-                
+
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);
             } else {
                 //create korkeakoulu koulutus
@@ -1163,7 +1163,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (String komotoOid : koulutusMultiCopy.getKomotoOids()) {
             ResultV1RDTO copyOrMove = copyOrMove(komotoOid, koulutusMultiCopy);
             if (copyOrMove.hasErrors()) {
-                result.getErrors().add(copyOrMove);
+                for (ErrorV1RDTO err : copyOrMove.getErrors()) {
+                    result.addError(err);
+                }
             }
         }
         
