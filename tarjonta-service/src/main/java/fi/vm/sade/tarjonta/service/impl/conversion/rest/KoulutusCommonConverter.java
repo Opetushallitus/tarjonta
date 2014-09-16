@@ -560,6 +560,12 @@ public class KoulutusCommonConverter {
         return mt;
     }
 
+    public MonikielinenTeksti convertToTextFi(final String str, final FieldNames msg) {
+        MonikielinenTeksti mt = new MonikielinenTeksti();
+        mt.addTekstiKaannos(KoodistoURI.KOODI_LANG_FI_URI, str);
+        return mt;
+    }
+
     public boolean isOsaamisala(final NimiV1RDTO dto) {
         KoodiType koodi = tarjontaKoodistoHelper.getKoodi(dto.getUri(), dto.getVersio());
         if (koodi == null) {

@@ -195,6 +195,12 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
             ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
 
+            if (komoto.getNimi() != null && komoto.getNimi().getKaannoksetAsList() != null && !komoto.getNimi().getKaannoksetAsList().isEmpty()) {
+                ammDto.setTarkenne(komoto.getNimi().getKaannoksetAsList().get(0).getArvo());
+            } else {
+                ammDto.setTarkenne("");
+            }
+
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
 
@@ -215,6 +221,13 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 nayttoDto.setValmistavaKoulutus(convertToValmistavaDto(komoto.getValmistavaKoulutus(), param));
             }
 
+            if (komoto.getNimi() != null && komoto.getNimi().getTekstiKaannos() != null) {
+                //only name in fi is needed.
+                TekstiKaannos fi = komoto.getNimi().getTekstiKaannos().iterator().next();
+                if (fi != null) {
+                    nayttoDto.setTunniste(fi.getArvo()); //fi
+                }
+            }
         }
 
         if (komoto.getTarjoaja() != null) {
@@ -248,9 +261,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         //
         // KJOH-778 multiple owners, API output
         //
-
         // TODO verify that this is what is wanted - these are the original organizer/holder
-
         if (komoto.getTarjoaja() != null) {
             dto.getOpetusTarjoajat().add(komoto.getTarjoaja());
         }
@@ -262,8 +273,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         for (KoulutusOwner owner : komoto.getOwners()) {
             if (KoulutusOwner.TARJOAJA.equalsIgnoreCase(owner.getOwnerType())) {
                 dto.getOpetusTarjoajat().add(owner.getOwnerOid());
-            }
-            else if (KoulutusOwner.JARJESTAJA.equalsIgnoreCase(owner.getOwnerType())) {
+            } else if (KoulutusOwner.JARJESTAJA.equalsIgnoreCase(owner.getOwnerType())) {
                 dto.getOpetusJarjestajat().add(owner.getOwnerOid());
             } else {
                 LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",

@@ -34,6 +34,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NayttotutkintoV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -132,13 +133,14 @@ public class KoulutusDTOConverterToEntity {
         return komoto;
     }
 
-
     /**
      * KJOH-778 multiple owners, API input to entity conversion
      *
      * @param komoto
      * @param dto
-     * @see EntityConverterToRDTO#convert(Class, fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus, fi.vm.sade.tarjonta.publication.model.RestParam)
+     * @see EntityConverterToRDTO#convert(Class,
+     * fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus,
+     * fi.vm.sade.tarjonta.publication.model.RestParam)
      */
     private void updateOwners(KoulutusmoduuliToteutus komoto, KoulutusKorkeakouluV1RDTO dto) {
         if (komoto == null || dto == null) {
@@ -342,6 +344,10 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getKoulutuslaji() != null) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
+        }
+
+        if (dto.getTarkenne() != null && !dto.getTarkenne().isEmpty()) {
+            komoto.setNimi(commonConverter.convertToTextFi(dto.getTarkenne(), FieldNames.TARKENNE));
         }
 
         /* CUSTOM DATA by object type */

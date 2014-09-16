@@ -46,6 +46,7 @@ public enum FieldNames {
     OPPILAITOSTYYPPI,
     KOULUTUSTYYPPI,
     TUNNISTE,
+    TARKENNE, //uses same db field as the name
     //Lukio:
     KOULUTUSLAJI,
     LUKIODIPLOMI,
