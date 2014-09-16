@@ -594,8 +594,9 @@ public class ConverterV1 {
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
         hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToMap(hakukohde.getLisatiedot(), false));
 
-        if (hakukohde.getValintaperusteKuvaus() != null) {
-            hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getValintaperusteKuvaus(), false));
+        MonikielinenTeksti valintaperustekuvaus = hakukohde.getValintaperusteKuvaus();
+        if (valintaperustekuvaus != null && valintaperustekuvaus.getKaannoksetAsList().size() > 0) {
+            hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToMap(valintaperustekuvaus, false));
         } else {
             String uri = tarjontaKoodistoHelper.getValintaperustekuvausryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
             if (uri != null) {
@@ -610,8 +611,9 @@ public class ConverterV1 {
             }
         }
 
-        if (hakukohde.getSoraKuvaus() != null) {
-            hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getSoraKuvaus(), false));
+        MonikielinenTeksti sorakuvaus = hakukohde.getSoraKuvaus();
+        if (sorakuvaus != null && sorakuvaus.getKaannoksetAsList().size() > 0) {
+            hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToMap(sorakuvaus, false));
         } else {
 
             String uri = tarjontaKoodistoHelper.getSORAKysymysryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
