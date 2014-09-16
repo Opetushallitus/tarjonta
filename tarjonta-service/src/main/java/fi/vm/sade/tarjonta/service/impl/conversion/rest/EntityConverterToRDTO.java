@@ -196,9 +196,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
 
             if (komoto.getNimi() != null && komoto.getNimi().getKaannoksetAsList() != null && !komoto.getNimi().getKaannoksetAsList().isEmpty()) {
+                //tarkenne is suffix for the aiku education
                 ammDto.setTarkenne(komoto.getNimi().getKaannoksetAsList().get(0).getArvo());
-            } else {
-                ammDto.setTarkenne("");
             }
 
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);

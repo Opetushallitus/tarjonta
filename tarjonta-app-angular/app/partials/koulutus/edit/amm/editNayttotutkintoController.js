@@ -121,8 +121,6 @@ app.controller('EditNayttotutkintoController',
                 } else {
                     $scope.uiModel.cbShowValmistavaKoulutus = false;
                 }
-
-
             };
 
             $scope.loadRelationKoodistoData = function(apiModel, uiModel, uri, tutkintoTyyppi) {
@@ -195,7 +193,7 @@ app.controller('EditNayttotutkintoController',
              * WATCHES
              */
             $scope.$watch("model.koulutusohjelma.uri", function(uri, oUri) {
-                if (angular.isDefined(uri) && uri != null && oUri != uri) {
+                if (angular.isDefined(uri) && uri !== null && oUri !== uri) {
 
                     if (angular.isDefined($scope.uiModel.koulutusohjelmaModules[uri])) {
                         $scope.updateKomoOidToModule($scope.uiModel.koulutusohjelmaModules[uri].oid);
@@ -207,7 +205,7 @@ app.controller('EditNayttotutkintoController',
             });
 
             $scope.$watch("model.koulutuskoodi.uri", function(uriNew, uriOld) {
-                if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
+                if (angular.isDefined(uriNew) && uriNew !== null && uriOld !== uriNew) {
                     $scope.uiModel.koulutusohjelmaModules = {};
                     $scope.uiModel.koulutusohjelma = [];
                     if (angular.isDefined($scope.model.koulutusohjelma)) {
