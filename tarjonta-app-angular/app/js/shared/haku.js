@@ -184,7 +184,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 "koulutuksenAlkamisVuosi": 1900 + new Date().getYear(),
                 "koulutuksenAlkamiskausiUri": "",
                 "tila": "LUONNOS",
-                "sijoittelu": true,
+                "sijoittelu": false,
                 "jarjestelmanHakulomake" : true,
                 "hakuaikas": [{
                         "nimi": "",
@@ -200,7 +200,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                     "kieli_en": ""
                 },
                 "maxHakukohdes": 0,
-                "usePriority" : true
+                "usePriority" : false
                 // "hakulomakeUri" : "http://www.hut.fi",
             }
         };
