@@ -286,11 +286,29 @@ app.factory('HakukohdeService', function($resource, Config) {
     }
 
 
+    function removeEmptyLiites(liitteetArray) {
+        console.log("poistetaan tyhjät liitteet");
+        for (var i in liitteetArray) {
+            var liite = liitteetArray[i];
+            if (liite.isNew === true && liite.liitteenNimi === "") {
+                var idx = liitteetArray.indexOf(liite);
+                liitteetArray.splice(idx, 1);
+                console.log("poistetaan liite:", liite);
+            }
+            console.log("ei poisteta liitettä:", liite);
+
+        }
+    }
+
     return {
         addValintakoeIfEmpty: addValintakoeIfEmpty,
         addValintakoe: addValintakoe,
         addLiiteIfEmpty: addLiiteIfEmpty,
-        addLiite: addLiite
+        addLiite: addLiite,
+        removeEmptyLiites: removeEmptyLiites
     };
+
+
+
 
 });

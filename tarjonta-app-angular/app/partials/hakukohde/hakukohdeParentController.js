@@ -364,6 +364,7 @@ app.controller('HakukohdeParentController', [
             }
 
             if (!$scope.status.validateLiitteet()) {
+
                 errors.push({
                     errorMessageKey: "hakukohde.edit.liitteet.errors"
                 });
@@ -971,7 +972,7 @@ app.controller('HakukohdeParentController', [
             if (!tila) {
                 throw "tila cannot be undefuned!";
             } else {
-                console.log("tallennetaan tila:", tila);
+                $log.debug(tallennetaan tila:", tila, hakukohdeValidationFunction);
             }
             $scope.model.showError = false;
             PermissionService.permissionResource().authorize({}, function(authResponse) {
@@ -979,6 +980,7 @@ app.controller('HakukohdeParentController', [
                 $log.debug('GOT AUTH RESPONSE : ', authResponse);
                 $scope.emptyErrorMessages();
 
+                HakukohdeService.removeEmptyLiites($scope.model.hakukohde.hakukohteenLiitteet);
                 if (hakukohdeValidationFunction()) {
                     $scope.model.showError = false;
 
