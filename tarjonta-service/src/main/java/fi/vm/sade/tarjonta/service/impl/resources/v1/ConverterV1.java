@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperusteetUtil;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
@@ -36,11 +37,6 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -85,6 +81,8 @@ public class ConverterV1 {
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
     @Autowired
     private ContextDataService contextDataService;
+    @Autowired
+    private KuvausDAO kuvausDAO;
 
     @Value("${koodisto.hakutapa.jatkuvaHaku.uri}")
     private String _jatkuvaHakutapaUri;
@@ -594,6 +592,12 @@ public class ConverterV1 {
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
         hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToMap(hakukohde.getLisatiedot(), false));
 
+        Set<KoulutusmoduuliToteutus> komotos = hakukohde.getKoulutusmoduuliToteutuses();
+        KoulutusmoduuliToteutus komoto = null;
+        if ( komotos != null && komotos.size() > 0 ) {
+            komoto = komotos.iterator().next();
+        }
+
         MonikielinenTeksti valintaperustekuvaus = hakukohde.getValintaperusteKuvaus();
         if (valintaperustekuvaus != null && valintaperustekuvaus.getKaannoksetAsList().size() > 0) {
             hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToMap(valintaperustekuvaus, false));
@@ -601,12 +605,15 @@ public class ConverterV1 {
             String uri = tarjontaKoodistoHelper.getValintaperustekuvausryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
             if (uri != null) {
                 hakukohdeRDTO.setValintaperustekuvausKoodiUri(uri);
-                HashMap<String, String> noLangVersionMap = Maps.<String, String>newHashMap();
-                HashMap<String, String> convertMonikielinenMetadata = convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri, MetaCategory.VALINTAPERUSTEKUVAUS.name()));
 
-                for (Entry<String, String> e : convertMonikielinenMetadata.entrySet()) {
-                    noLangVersionMap.put(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(e.getKey()), e.getValue());
-                    hakukohdeRDTO.setValintaperusteKuvaukset(noLangVersionMap);
+                // Hae koodiUria, kautta ja vuotta vastaava valintaperustekuvaus
+                if ( komoto != null ) {
+                    hakukohdeRDTO.setValintaperusteKuvaukset(getKuvausByAvainTyyppiKausiVuosi(
+                        uri,
+                        ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS,
+                        komoto.getAlkamiskausiUri(),
+                        komoto.getAlkamisVuosi()
+                    ));
                 }
             }
         }
@@ -620,9 +627,16 @@ public class ConverterV1 {
             if (uri != null) {
 
                 hakukohdeRDTO.setSoraKuvausKoodiUri(uri);
-                hakukohdeRDTO.setSoraKuvaukset(
-                        convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri, MetaCategory.SORA_KUVAUS.name()))
-                );
+
+                // Hae koodiUria, kautta ja vuotta vastaava sorakuvaus
+                if ( komoto != null ) {
+                    hakukohdeRDTO.setValintaperusteKuvaukset(getKuvausByAvainTyyppiKausiVuosi(
+                            uri,
+                            ValintaperusteSoraKuvaus.Tyyppi.SORA,
+                            komoto.getAlkamiskausiUri(),
+                            komoto.getAlkamisVuosi()
+                    ));
+                }
             }
 
         }
@@ -1569,5 +1583,23 @@ public class ConverterV1 {
         }
 
         return result;
+    }
+
+    private HashMap<String, String> getKuvausByAvainTyyppiKausiVuosi(String avain, ValintaperusteSoraKuvaus.Tyyppi tyyppi, String kausi, int vuosi) {
+        avain = checkAndRemoveForEmbeddedVersionInUri(avain);
+        kausi = checkAndRemoveForEmbeddedVersionInUri(kausi);
+        List<ValintaperusteSoraKuvaus> kuvauksetRaw = kuvausDAO.findByAvainTyyppiYearKausi(avain, tyyppi, kausi, vuosi);
+
+        HashMap<String, String> kuvaukset = null;
+
+        if ( kuvauksetRaw != null && kuvauksetRaw.size() > 0 ) {
+            kuvaukset = new HashMap<String, String>();
+            ValintaperusteSoraKuvaus kuvausRaw = kuvauksetRaw.get(0);
+            for (MonikielinenMetadata meta : kuvausRaw.getTekstis()) {
+                kuvaukset.put(meta.getKieli(), meta.getArvo());
+            }
+        }
+
+        return kuvaukset;
     }
 }
