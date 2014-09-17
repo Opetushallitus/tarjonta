@@ -544,10 +544,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             }
         }
 
-        List<Long> ids = Lists.<Long>newArrayList();
-        ids.add(komoto.getId());
-        indexerResource.indexKoulutukset(ids);
-
+        if (komoto != null) {
+            List<Long> ids = Lists.<Long>newArrayList();
+            ids.add(komoto.getId());
+            indexerResource.indexKoulutukset(ids);
+        }
 
         return result;
     }
