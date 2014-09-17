@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.dao;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
+import fi.vm.sade.tarjonta.model.KoulutusOwner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,10 +137,30 @@ public class KoulutusmoduuliToteutusDAOTest {
         komoto.setOid(KOMOTO_OID);
         komoto.setTarjoaja(TARJOAJA_OID);
         komoto.setKoulutusmoduuli(komo);
+
+        {
+            KoulutusOwner owner = new KoulutusOwner();
+            owner.setOwnerOid(TARJOAJA_OID);
+            owner.setOwnerType("TEST1");
+            komoto.getOwners().add(owner);
+        }
+        {
+            KoulutusOwner owner = new KoulutusOwner();
+            owner.setOwnerOid(TARJOAJA_OID);
+            owner.setOwnerType("TEST2");
+            komoto.getOwners().add(owner);
+        }
+
         komoto = this.koulutusmoduuliToteutusDAO.insert(komoto);
 
         KoulutusmoduuliToteutus komotoRes = this.koulutusmoduuliToteutusDAO.findKomotoByOid(KOMOTO_OID);
         assertTrue(komotoRes.getOid().equals(KOMOTO_OID));
+        assertEquals("There should be 2 'owners' for the komoto", 2, komotoRes.getOwners().size());
+
+        for(KoulutusOwner owner : komotoRes.getOwners()) {
+            assertEquals("Tarjoaja oid", TARJOAJA_OID, owner.getOwnerOid());
+            assertTrue("Type starts with TEST", owner.getOwnerType().startsWith("TEST"));
+        }
     }
 
 }

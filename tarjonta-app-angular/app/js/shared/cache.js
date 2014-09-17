@@ -137,7 +137,7 @@ angular.module('TarjontaCache', ['ngResource', 'config', 'Logging']).factory('Ca
 
 			query.promise.then(function(res){
 				//$log.debug("Cache RESOLVED "+key.key,res);
-				cacheService.insert(key, res);
+				//disabled caching... cacheService.insert(key, res);
 				cacheRequests[key.key] = undefined;
 				ret.resolve(res);
 			}/*, function(res){

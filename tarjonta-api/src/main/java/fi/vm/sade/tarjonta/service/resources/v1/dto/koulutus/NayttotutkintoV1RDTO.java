@@ -51,6 +51,9 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Valmistavan koulutukseen tarvittavat tiedot", required = false)
     private ValmistavaV1RDTO valmistavaKoulutus;
 
+    @ApiModelProperty(value = "Osaamisalan tarkenne", required = false)
+    private String tarkenne;
+
     protected NayttotutkintoV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
     }
@@ -169,6 +172,20 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setLinkkiOpetussuunnitelmaan(String linkkiOpetussuunnitelmaan) {
         this.linkkiOpetussuunnitelmaan = linkkiOpetussuunnitelmaan;
+    }
+
+    /**
+     * @return the tarkenne
+     */
+    public String getTarkenne() {
+        return tarkenne;
+    }
+
+    /**
+     * @param tarkenne the tarkenne to set
+     */
+    public void setTarkenne(String tarkenne) {
+        this.tarkenne = tarkenne;
     }
 
 }

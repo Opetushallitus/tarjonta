@@ -41,6 +41,13 @@
     </tr>
 
     <tr>
+        <th tt="koulutus.edit.tarkenne">Tarkenne</th>
+        <td>
+            <input class="wide" name="tarkenne" type="text" data-ng-model="model.tarkenne" /></td>
+        <td></td>
+    </tr>
+
+    <tr>
         <th tt="koulutus.edit.koulutusaste">Koulutusaste</th>
         <td>{{model.koulutusaste.nimi}}</td>
         <td></td>
@@ -171,8 +178,6 @@
     <p class="error" ng-show="vkUiModel.showValidationErrors && koulutusForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required">Opetusajat vaaditaan</p>
 </td>
 </tr>
-
-{{uiModel.opetusmuodos | json}}
 
 <!-- opetusmuodot -->
 <tr ng-if="uiModel.toggleTabs" class="required">

@@ -207,13 +207,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         komoto,
                         restParam));
                 break;
-            case AMMATTITUTKINTO: //no break
+            case AMMATTITUTKINTO:
                 result.setResult(converterToRDTO.convert(
                         AmmattitutkintoV1RDTO.class,
                         komoto,
                         restParam));
                 break;
-            case ERIKOISAMMATTITUTKINTO: // no break
+            case ERIKOISAMMATTITUTKINTO:
                 result.setResult(converterToRDTO.convert(
                         ErikoisammattitutkintoV1RDTO.class,
                         komoto,
@@ -299,7 +299,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 if (result.hasErrors()) {
                     return result;
                 }
-                
+
                 fullKomotoWithKomo = updateKoulutusKorkeakoulu(komoto, dto);
             } else {
                 //create korkeakoulu koulutus
@@ -1163,7 +1163,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (String komotoOid : koulutusMultiCopy.getKomotoOids()) {
             ResultV1RDTO copyOrMove = copyOrMove(komotoOid, koulutusMultiCopy);
             if (copyOrMove.hasErrors()) {
-                result.getErrors().add(copyOrMove);
+                result.getErrors().addAll(copyOrMove.getErrors());
             }
         }
         

@@ -77,6 +77,7 @@ app.controller('HakukohdeParentController', [
             },
             // alikontrollerit ylikirjoittavat nämä
             validateLiitteet: function() {
+                console.log("dummy liite validator, not validating anything!!");
                 return true;
             },
             validateValintakokeet: function() {
@@ -112,7 +113,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.tallennaLuonnoksenaEnabled = true;
         $scope.model.liitteidenToimitusOsoite = {};
         var deferredOsoite = $q.defer();
-        $scope.model.liitteenToimitusOsoitePromise = deferredOsoite.promise;
+        $scope.model.liitteenToimitusOsoitePromise = deferredOsoite.promise; //not used it seems
         $scope.model.liitteidenToimitusPvm = new Date();
         $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden
         // ja
@@ -363,6 +364,7 @@ app.controller('HakukohdeParentController', [
             }
 
             if (!$scope.status.validateLiitteet()) {
+
                 errors.push({
                     errorMessageKey: "hakukohde.edit.liitteet.errors"
                 });
@@ -970,7 +972,7 @@ app.controller('HakukohdeParentController', [
             if (!tila) {
                 throw "tila cannot be undefuned!";
             } else {
-                console.log("tallennetaan tila:", tila);
+                $log.debug("tallennetaan tila:", tila, hakukohdeValidationFunction);
             }
             $scope.model.showError = false;
             PermissionService.permissionResource().authorize({}, function(authResponse) {
@@ -978,6 +980,7 @@ app.controller('HakukohdeParentController', [
                 $log.debug('GOT AUTH RESPONSE : ', authResponse);
                 $scope.emptyErrorMessages();
 
+                HakukohdeService.removeEmptyLiites($scope.model.hakukohde.hakukohteenLiitteet);
                 if (hakukohdeValidationFunction()) {
                     $scope.model.showError = false;
 
@@ -1000,9 +1003,10 @@ app.controller('HakukohdeParentController', [
                         $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
                         var returnResource = $scope.model.hakukohde.$save();
                         returnResource.then(function(hakukohde) {
-                            $log.debug('SERVER RESPONSE WHEN SAVING: ', hakukohde);
+                            $log.debug('SERVER RESPONSE WHEN CREATING: ', hakukohde);
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                             HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+                            HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                                 $scope.showSuccess();
@@ -1034,10 +1038,10 @@ app.controller('HakukohdeParentController', [
                             if (hakukohde.status === 'OK') {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+                                HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde);
                                 $scope.status.dirty = false;
                                 $scope.editHakukohdeForm.$dirty = false;
                                 $scope.showSuccess();
-                                //TODO jos tyhjät valintakokeet, lisää tässä
                             } else {
                                 console.log("error", hakukohde);
 

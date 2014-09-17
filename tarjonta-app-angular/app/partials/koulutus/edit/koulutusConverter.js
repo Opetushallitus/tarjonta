@@ -381,7 +381,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutuksenAlkamisvuosi: {"default": ''},
             toteutustyyppi: {"default": null}, //no default value!
             tila: {'default': 'LUONNOS'},
-            tunniste: {"default": ''}
+            tunniste: {'default': ''},
+            tarkenne: {'default': ''}
         }, DATES: {
             koulutuksenAlkamisPvms: {"default": new Date()}
         }, BOOL: {
@@ -393,9 +394,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
                 ])}
         }
-    }
-
-
+    };
 
     factory.STRUCTURE = {
         /*********************************************/

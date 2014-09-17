@@ -30,9 +30,9 @@ import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 /**
@@ -114,6 +114,12 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
+
+    @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
+    private List<String> opetusJarjestajat = new ArrayList<String>();
+
+    @ApiModelProperty(value = "Opintojen järjestävät", required = false)
+    private List<String> opetusTarjoajat = new ArrayList<String>();
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.toteutustyyppi = toteutustyyppi;
@@ -460,4 +466,37 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
         this.moduulityyppi = moduulityyppi;
     }
 
+    /**
+     * @return list of opetus organisators oids
+     */
+    public List<String> getOpetusJarjestajat() {
+        return opetusJarjestajat;
+    }
+
+    /**
+     * Set organisation oids for koulutus organizers.
+     *
+     * @param opetusJarjestajat
+     */
+    public void setOpetusJarjestajat(List<String> opetusJarjestajat) {
+        opetusJarjestajat = (opetusJarjestajat != null) ? opetusJarjestajat : new ArrayList<String>();
+        this.opetusJarjestajat = opetusJarjestajat;
+    }
+
+    /**
+     * @return "offerer" oids for koulutus
+     */
+    public List<String> getOpetusTarjoajat() {
+        return opetusTarjoajat;
+    }
+
+    /**
+     * Set the "offerers" for koulutus.
+     *
+     * @param opetusTarjoajat list of oids offering the koulutus.
+     */
+    public void setOpetusTarjoajat(List<String> opetusTarjoajat) {
+        opetusTarjoajat = (opetusTarjoajat != null) ? opetusTarjoajat : new ArrayList<String>();
+        this.opetusTarjoajat = opetusTarjoajat;
+    }
 }
