@@ -523,9 +523,6 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             //no komotos found, I quess it's also ok to remove the komo.
                             koulutusmoduuliDAO.safeDelete(komoto.getKoulutusmoduuli().getOid(), userOid);
                         }
-                        List<Long> ids = Lists.<Long>newArrayList();
-                        ids.add(komoto.getId());
-                        indexerResource.indexKoulutukset(ids);
                     }
                     break;
                 case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
@@ -546,7 +543,13 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                     break;
             }
         }
-        
+
+        if (komoto != null) {
+            List<Long> ids = Lists.<Long>newArrayList();
+            ids.add(komoto.getId());
+            indexerResource.indexKoulutukset(ids);
+        }
+
         return result;
     }
 
