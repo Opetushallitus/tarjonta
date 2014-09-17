@@ -302,7 +302,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     dataFactory.saveKomoTekstis = function(komoOid, params) {
         var resource = new $resource(Config.env.tarjontaRestUrlPrefix + "komo/:oid/tekstis", {'oid': komoOid}, {
-            post: {method: 'POST', withCredentials: true}
+            post: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {'Content-Type': 'application/json; charset=UTF-8'}
+            }
         });
         return resource.post(params).$promise;
     };

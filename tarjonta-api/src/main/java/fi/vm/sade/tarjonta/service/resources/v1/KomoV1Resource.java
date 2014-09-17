@@ -125,6 +125,7 @@ public interface KomoV1Resource {
 
     @POST
     @Path("/{oid}/tekstis")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(
             value = "Lisää koulutusmoduuliin monikielisen kuvaustekstin",
