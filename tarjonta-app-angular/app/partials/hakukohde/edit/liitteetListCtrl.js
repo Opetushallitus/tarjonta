@@ -243,25 +243,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     }
 
 
-    function poistaTyhjat(liitteetArray){
-        console.log("poistetaan tyhjät");
-        for (var i in liitteetArray) {
-            var liite = liitteetArray[i];
-            if(liite.isNew===true && liite.liitteenNimi===""){
-                var idx = liitteetArray.indexOf(liite);
-                liitteetArray.splice(idx,1);
-                console.log("poistetaan liite:", liite);
-            }
-            console.log("ei poisteta liitettä:", liite);
-
-        }
-    }
-
     // kutsutaan parentista
     $scope.status.validateLiitteet = function() {
         console.log("validointi!");
-
-        poistaTyhjat($scope.model.hakukohde.hakukohteenLiitteet);
 
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
     		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
