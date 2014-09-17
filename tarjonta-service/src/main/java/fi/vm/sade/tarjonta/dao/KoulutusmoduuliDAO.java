@@ -132,9 +132,11 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
 
         private TarjontaTila tila;
 
-        private String likeKoulutusKoodiUriWithoutVersion;
-        private String likeKoulutusohjelmaKoodiUriWithoutVersion;
-        private String likeLukiolinjaKoodiUriUriWithoutVersion;
+        private String likeKoulutusohjelmaKoodiUriWithoutVersion; //old
+        private String likeLukiolinjaKoodiUriUriWithoutVersion; //old
+
+        private String likeKoulutusKoodiUriWithoutVersion; //rest
+        private String likeOhjelmaKoodiUriWithoutVersion; //rest
 
         private Class<? extends BaseKoulutusmoduuli> type;
         private GroupBy groupBy = GroupBy.ORGANISAATIORAKENNE;
@@ -369,6 +371,20 @@ public interface KoulutusmoduuliDAO extends JpaDAO<Koulutusmoduuli, Long> {
          */
         public void setKoulutustyyppiUris(Set koulutustyyppiUris) {
             this.koulutustyyppiUris = koulutustyyppiUris;
+        }
+
+        /**
+         * @return the likeOhjelmaKoodiUriWithoutVersion
+         */
+        public String getLikeOhjelmaKoodiUriWithoutVersion() {
+            return likeOhjelmaKoodiUriWithoutVersion;
+        }
+
+        /**
+         * @param likeOhjelmaKoodiUriWithoutVersion the likeOhjelmaKoodiUriWithoutVersion to set
+         */
+        public void setLikeOhjelmaKoodiUriWithoutVersion(String likeOhjelmaKoodiUriWithoutVersion) {
+            this.likeOhjelmaKoodiUriWithoutVersion = likeOhjelmaKoodiUriWithoutVersion;
         }
 
         public enum GroupBy {

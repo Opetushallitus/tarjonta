@@ -796,8 +796,6 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
             }
         });
 
-
-
         $scope.importAllGroups = function() {
             $scope.ctrl.showError = false;
             $scope.ctrl.showSuccess = false;
@@ -830,7 +828,6 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                             }
                             console.error("FAILED : ", res);
                         }
-
 
                         var koulutus = []
                         if (res.result[0].koulutuskoodiUri === keyKoulutusUri) {
@@ -867,14 +864,15 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                 });
             });
         };
-    }).controller('PreviewController', function($scope, XLSXReaderService, TarjontaService, $q) {
+    }).controller('PreviewController', function($scope, XLSXReaderService, TutkintoModule, TutkintoohjelmaModule, $q) {
 
     $scope.model = {
         isProcessing: false,
         showPreview: false,
         sheets: [],
         selectedSheet: null,
-        selectedSheetName: null
+        selectedSheetName: null,
+        docHandler: null
     };
 
     $scope.parse = function(excelFile) {
@@ -923,177 +921,17 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
         $scope.selectSheet();
     });
 
-    $scope.convertForSave = function() {
-        var COLS = {
-            'KOULUTUS': {
-                text: false,
-                key: 'KOULUTUS',
-                index: null
-            },
-            'KOULUTUSTYYPPI': {
-                text: false,
-                key: 'KOULUTUSTYYPPI',
-                index: null
-            },
-            'MODUULITYYPPI': {
-                text: false,
-                key: 'MODUULITYYPPI',
-                index: null
-            },
-            'TUTKINNON_TAVOITE': {
-                enum: 'TAVOITTEET',
-                text: true,
-                langs: [
-                    {code: 'kieli_fi', key: '_FI', index: null},
-                    {code: 'kieli_sv', key: '_SV', index: null},
-                    {code: 'kieli_en', key: '_EN', index: null},
-                ]
-            },
-            'TUTKINNON_RAKENNE': {
-                enum: 'KOULUTUKSEN_RAKENNE',
-                text: true,
-                langs: [
-                    {code: 'kieli_fi', key: '_FI', index: null},
-                    {code: 'kieli_sv', key: '_SV', index: null},
-                    {code: 'kieli_en', key: '_EN', index: null},
-                ]
-            },
-            'JATKO-OPINTOMAHDOLLISUUDET': {
-                enum: 'JATKOOPINTO_MAHDOLLISUUDET',
-                text: true,
-                langs: [
-                    {code: 'kieli_fi', key: '_FI', index: null},
-                    {code: 'kieli_sv', key: '_SV', index: null},
-                    {code: 'kieli_en', key: '_EN', index: null},
-                ]
-            }
-        };
-
-        //SEARCH HEADER KEYS
-        var headerRow = $scope.model.selectedSheet.data[0];
-
-        //search column indexes by key name
-        angular.forEach(COLS, function(col, keyPrefix) {
-            if (col.text) {
-                for (var langKeyIndex = 0; langKeyIndex < col.langs.length; langKeyIndex++) {
-                    for (var c = 0; c < headerRow.rowdata.length; c++) {
-                        if (!col.langs[langKeyIndex]) {
-                            throw new Error("Column index missing! Index : " + langKeyIndex);
-                        }
-
-                        if (headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
-                            col.langs[langKeyIndex].index = c;
-                        }
-                    }
-                }
-            } else {
-                for (var c = 0; c < headerRow.rowdata.length; c++) {
-                    if (headerRow.rowdata[c].trim() === keyPrefix) {
-                        col.index = c;
-                    }
-                }
-            }
-        });
-
-        var koulutusObj = {};
-        for (var rowIndex = 1; rowIndex < $scope.model.selectedSheet.data.length; rowIndex++) {
-            var row = $scope.model.selectedSheet.data[rowIndex].rowdata;
-
-            var koulutusIndex = COLS['KOULUTUS'].index;
-
-            if (!row[koulutusIndex] || row[koulutusIndex] === 'undefined') {
-                console.log("skip empty row", row);
-                continue;
-            }
-
-            var koulutusUri = 'koulutus_' + row[koulutusIndex];
-
-            koulutusObj[koulutusUri] = {
-                koulutustyyppis: row[COLS['KOULUTUSTYYPPI'].index],
-                moduulityyppi: row[COLS['MODUULITYYPPI'].index],
-                tekstis: {}
-            };
-
-            angular.forEach(COLS, function(col) {
-                if (col.text) {
-                    for (var langKeyIndex = 0; langKeyIndex < col.langs.length; langKeyIndex++) {
-                        var langObj = col.langs[langKeyIndex];
-
-                        if (!angular.isDefined(koulutusObj[koulutusUri].tekstis[col.enum])) {
-                            koulutusObj[koulutusUri].tekstis[col.enum] = {tekstis : {}};
-                        }
-
-                        if (row[langObj.index]) {
-                            koulutusObj[koulutusUri].tekstis[col.enum]['tekstis'][langObj.code] = row[langObj.index];
-                        } else {
-                            console.log("column not found : " + koulutusIndex + " " + langObj.code + " " + langObj.index);
-                        }
-                    }
-                }
-            });
-        }
-        console.log(koulutusObj);
-        return koulutusObj;
-    };
-
     $scope.updateKuvaus = function() {
-        var resource = TarjontaService.komo();
-
-        function searchKomoOid(koulutusUri, koulutustyyppiUri, moduulityyppiEnum) {
-            var deferred = $q.defer();
-
-            resource.searchModules({
-                koulutustyyppi: koulutustyyppiUri,
-                koulutus: koulutusUri,
-                moduuli: moduulityyppiEnum,
-                meta: false}, function(res) {
-                var arr = [];
-                if (res.status === 'OK') {
-                    for (var resultIndex = 0; resultIndex < res.result.length; resultIndex++) {
-                        arr.push({
-                            oid: res.result[resultIndex].oid,
-                            koulutus: res.result[resultIndex].koulutuskoodiUri
-                        });
-                    }
-                }
-                deferred.resolve(arr);
-            });
-
-            return  deferred.promise;
+        if ($scope.model.docHandler === 'KOULUTUS') {
+            //import tutkinto type of description data
+            TutkintoModule($scope.model.selectedSheet);
+        } else if ($scope.model.docHandler === 'OHJELMA') {
+            //import tutkinto-ohjelma type of description data
+            TutkintoohjelmaModule($scope.model.selectedSheet);
+        } else {
+            console.log("Ei valittua käsittelijää.");
         }
-
-
-        var map = $scope.convertForSave();
-        angular.forEach(map, function(val, koulutusCode) {
-            var promises = [];
-
-            if (val.koulutustyyppis && val.koulutustyyppis.split(",").length > 0) {
-                var arrTypes = val.koulutustyyppis.split(",");
-
-                for (var typeIndex = 0; typeIndex < arrTypes.length; typeIndex++) {
-                    if (arrTypes[typeIndex]) {
-                        promises.push(searchKomoOid(
-                            koulutusCode.trim(),
-                            arrTypes[typeIndex].trim(),
-                            val.moduulityyppi.trim()
-                            ));
-                    }
-                }
-
-                $q.all(promises).then(function(arrKomos) {
-                    for (var wrapperIndex = 0; wrapperIndex < arrKomos.length; wrapperIndex++) {
-                        for (var komoIndex = 0; komoIndex < arrKomos[wrapperIndex].length; komoIndex++) {
-                            var o = map[arrKomos[wrapperIndex][komoIndex].koulutus];
-                            if (o) {
-                                TarjontaService.saveKomoTekstis(arrKomos[wrapperIndex][komoIndex].oid, o.tekstis);
-                            }
-                        }
-                    }
-                });
-            }
-        });
     };
-
 
 }).factory("XLSXReaderService", ['$q', '$rootScope',
     function($q, $rootScope) {
@@ -1115,6 +953,392 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
         };
 
         return service;
+    }
+]).service("TutkintoModule", ['$q', '$rootScope', 'TarjontaService',
+    function($q, $scope, TarjontaService) {
+        function excelSheetConverter(selectedSheet) {
+            if (!selectedSheet || !selectedSheet.data) {
+                console.log("Empty excel sheet object!");
+                return;
+            }
+            var COLS = {
+                'KOULUTUS': {
+                    text: false,
+                    key: 'KOULUTUS',
+                    index: null
+                },
+                'KOULUTUSTYYPPI': {
+                    text: false,
+                    key: 'KOULUTUSTYYPPI',
+                    index: null
+                },
+                'MODUULITYYPPI': {
+                    text: false,
+                    key: 'MODUULITYYPPI',
+                    index: null
+                },
+                'TUTKINNON_TAVOITE': {
+                    enum: 'TAVOITTEET',
+                    text: true,
+                    langs: [
+                        {code: 'kieli_fi', key: '_FI', index: null},
+                        {code: 'kieli_sv', key: '_SV', index: null},
+                        {code: 'kieli_en', key: '_EN', index: null}
+                    ]
+                },
+                'TUTKINNON_RAKENNE': {
+                    enum: 'KOULUTUKSEN_RAKENNE',
+                    text: true,
+                    langs: [
+                        {code: 'kieli_fi', key: '_FI', index: null},
+                        {code: 'kieli_sv', key: '_SV', index: null},
+                        {code: 'kieli_en', key: '_EN', index: null}
+                    ]
+                },
+                'JATKO-OPINTOMAHDOLLISUUDET': {
+                    enum: 'JATKOOPINTO_MAHDOLLISUUDET',
+                    text: true,
+                    langs: [
+                        {code: 'kieli_fi', key: '_FI', index: null},
+                        {code: 'kieli_sv', key: '_SV', index: null},
+                        {code: 'kieli_en', key: '_EN', index: null}
+                    ]
+                }
+            };
+
+            //SEARCH HEADER KEYS
+
+
+            var headerRow = selectedSheet.data[0];
+
+            //search column indexes by key name
+            angular.forEach(COLS, function(col, keyPrefix) {
+                if (col.text) {
+                    for (var langKeyIndex = 0; langKeyIndex < col.langs.length; langKeyIndex++) {
+                        for (var c = 0; c < headerRow.rowdata.length; c++) {
+                            if (!col.langs[langKeyIndex]) {
+                                throw new Error("Column index missing! Index : " + langKeyIndex);
+                            }
+
+                            if (headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
+                                col.langs[langKeyIndex].index = c;
+                            }
+                        }
+                    }
+                } else {
+                    for (var c = 0; c < headerRow.rowdata.length; c++) {
+                        if (headerRow.rowdata[c].trim() === keyPrefix) {
+                            col.index = c;
+                        }
+                    }
+                }
+            });
+
+            var koulutusObj = {};
+            for (var rowIndex = 1; rowIndex < selectedSheet.data.length; rowIndex++) {
+                var row = selectedSheet.data[rowIndex].rowdata;
+
+                var koulutusIndex = COLS['KOULUTUS'].index;
+
+                if (!row[koulutusIndex] || row[koulutusIndex] === 'undefined') {
+                    console.log("skip empty row", row);
+                    continue;
+                }
+
+                var koulutusUri = 'koulutus_' + row[koulutusIndex];
+
+                koulutusObj[koulutusUri] = {
+                    koulutustyyppis: row[COLS['KOULUTUSTYYPPI'].index],
+                    moduulityyppi: row[COLS['MODUULITYYPPI'].index],
+                    tekstis: {}
+                };
+
+                angular.forEach(COLS, function(col) {
+                    if (col.text) {
+                        for (var langKeyIndex = 0; langKeyIndex < col.langs.length; langKeyIndex++) {
+                            var langObj = col.langs[langKeyIndex];
+
+                            if (!angular.isDefined(koulutusObj[koulutusUri].tekstis[col.enum])) {
+                                koulutusObj[koulutusUri].tekstis[col.enum] = {tekstis: {}};
+                            }
+
+                            if (row[langObj.index]) {
+                                koulutusObj[koulutusUri].tekstis[col.enum]['tekstis'][langObj.code] = row[langObj.index];
+                            } else {
+                                console.log("column not found : " + koulutusIndex + " " + langObj.code + " " + langObj.index);
+                            }
+                        }
+                    }
+                });
+            }
+            console.log(koulutusObj);
+            return koulutusObj;
+        }
+
+        return function(excel) {
+            if (!excel) {
+                console.log("Empty excel object!");
+                return;
+            }
+
+
+            var resource = TarjontaService.komo();
+
+            function searchKomoOid(koulutusUri, koulutustyyppiUri, moduulityyppiEnum) {
+                var deferred = $q.defer();
+
+                resource.searchModules({
+                    koulutustyyppi: koulutustyyppiUri,
+                    koulutus: koulutusUri,
+                    moduuli: moduulityyppiEnum,
+                    meta: false}, function(res) {
+                    var arr = [];
+                    if (res.status === 'OK') {
+                        for (var resultIndex = 0; resultIndex < res.result.length; resultIndex++) {
+                            arr.push({
+                                oid: res.result[resultIndex].oid,
+                                koulutus: res.result[resultIndex].koulutuskoodiUri
+                            });
+                        }
+                    }
+                    deferred.resolve(arr);
+                });
+
+                return  deferred.promise;
+            }
+
+            var map = excelSheetConverter(excel);
+            angular.forEach(map, function(val, koulutusCode) {
+                var promises = [];
+
+                if (val.koulutustyyppis && val.koulutustyyppis.split(",").length > 0) {
+                    var arrTypes = val.koulutustyyppis.split(",");
+
+                    for (var typeIndex = 0; typeIndex < arrTypes.length; typeIndex++) {
+                        if (arrTypes[typeIndex]) {
+                            promises.push(searchKomoOid(
+                                koulutusCode.trim(),
+                                arrTypes[typeIndex].trim(),
+                                val.moduulityyppi.trim()
+                                ));
+                        }
+                    }
+
+                    $q.all(promises).then(function(arrKomos) {
+                        for (var wrapperIndex = 0; wrapperIndex < arrKomos.length; wrapperIndex++) {
+                            for (var komoIndex = 0; komoIndex < arrKomos[wrapperIndex].length; komoIndex++) {
+                                var o = map[arrKomos[wrapperIndex][komoIndex].koulutus];
+                                if (o) {
+                                    TarjontaService.saveKomoTekstis(arrKomos[wrapperIndex][komoIndex].oid, o.tekstis);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        };
+    }
+]).service("TutkintoohjelmaModule", ['$q', '$rootScope', 'TarjontaService',
+    function($q, $scope, TarjontaService) {
+        function excelSheetConverter(selectedSheet) {
+            if (!selectedSheet || !selectedSheet.data) {
+                console.log("Empty excel sheet object!");
+                return;
+            }
+
+            var COLS = {
+                'KOODISTO': {
+                    text: false,
+                    key: 'KOODISTO',
+                    index: null
+                },
+                'KOODI_ARVO': {
+                    text: false,
+                    key: 'KOODI_ARVO',
+                    index: null
+                },
+                'KOULUTUSTYYPPI': {
+                    text: false,
+                    key: 'KOULUTUSTYYPPI',
+                    index: null
+                },
+                'MODUULITYYPPI': {
+                    text: false,
+                    key: 'MODUULITYYPPI',
+                    index: null
+                },
+                'KOULUTUSOHJELMAN_TAVOITE': {
+                    enum: 'TAVOITTEET',
+                    text: true,
+                    langs: [
+                        {code: 'kieli_fi', key: '_FI', index: null},
+                        {code: 'kieli_sv', key: '_SV', index: null},
+                        {code: 'kieli_en', key: '_EN', index: null}
+                    ]
+                }
+            };
+
+            //SEARCH HEADER KEYS
+            var headerRow = selectedSheet.data[0];
+
+            //search column indexes by key name
+            angular.forEach(COLS, function(col, keyPrefix) {
+                if (col.text) {
+                    for (var langKeyIndex = 0; langKeyIndex < col.langs.length; langKeyIndex++) {
+                        for (var c = 0; c < headerRow.rowdata.length; c++) {
+                            if (!col.langs[langKeyIndex]) {
+                                throw new Error("Column index missing! Index : " + langKeyIndex);
+                            }
+
+                            if (headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
+                                col.langs[langKeyIndex].index = c;
+                            }
+                        }
+                    }
+                } else {
+                    for (var c = 0; c < headerRow.rowdata.length; c++) {
+                        if (headerRow.rowdata[c].trim() === keyPrefix) {
+                            col.index = c;
+                        }
+                    }
+                }
+            });
+
+            var ohjelmaObj = {};
+            for (var rowIndex = 1; rowIndex < selectedSheet.data.length; rowIndex++) {
+                var row = selectedSheet.data[rowIndex].rowdata;
+
+                var koodiArvoIndex = COLS['KOODI_ARVO'].index;
+
+                if (!row[koodiArvoIndex] || row[koodiArvoIndex] === 'undefined') {
+                    console.log("skip row without koodi arvo : " + row && row[koodiArvoIndex] || koodiArvoIndex);
+                    continue;
+                }
+
+                var koodistoIndex = COLS['KOODISTO'].index;
+
+                if (!row[koodistoIndex] || row[koodistoIndex] === 'undefined') {
+                    console.log("skip row without koodisto : " + row && row[koodiArvoIndex] || koodiArvoIndex);
+                    continue;
+                }
+
+                var moduulityyppiIndex = COLS['MODUULITYYPPI'].index;
+
+                if (!row[moduulityyppiIndex] || row[moduulityyppiIndex] === 'undefined') {
+                    console.log("skip row without moduulityyppi : " + row && row[koodiArvoIndex] || koodiArvoIndex);
+                    continue;
+                }
+
+                //create real uri without version hash for komo search operation 
+                var ohjelmaUri = row[koodistoIndex] + '_' + row[koodiArvoIndex];
+
+                ohjelmaObj[ohjelmaUri] = {
+                    koulutustyyppis: row[COLS['KOULUTUSTYYPPI'].index],
+                    moduulityyppi: row[COLS['MODUULITYYPPI'].index],
+                    tekstis: {}
+                };
+
+                angular.forEach(COLS, function(col) {
+                    if (col.text) {
+                        for (var langKeyIndex = 0; langKeyIndex < col.langs.length; langKeyIndex++) {
+                            var langObj = col.langs[langKeyIndex];
+
+                            if (!angular.isDefined(ohjelmaObj[ohjelmaUri].tekstis[col.enum])) {
+                                ohjelmaObj[ohjelmaUri].tekstis[col.enum] = {tekstis: {}};
+                            }
+
+                            if (row[langObj.index]) {
+                                ohjelmaObj[ohjelmaUri].tekstis[col.enum]['tekstis'][langObj.code] = row[langObj.index];
+                            } else {
+                                console.log("column not found : " + koodiArvoIndex + " " + langObj.code + " " + langObj.index);
+                            }
+                        }
+                    }
+                });
+            }
+            return ohjelmaObj;
+        }
+
+        return function(excel) {
+            if (!excel) {
+                console.log("Empty excel object!");
+                return;
+            }
+
+            var resource = TarjontaService.komo();
+
+            function searchKomoOid(ohjelmaUri, koulutustyyppiUri, moduulityyppiEnum) {
+                var deferred = $q.defer();
+                var module = false;
+                var tyyppi = false;
+                var ohjelma = false;
+                if (moduulityyppiEnum === 'TUTKINTO' || moduulityyppiEnum === 'TUTKINTO_OHJELMA') {
+                    module = true;
+                }
+
+                if (koulutustyyppiUri.indexOf("koulutustyyppi") !== -1) {
+                    tyyppi = true;
+                }
+
+                if (ohjelmaUri.indexOf("osaamisala") !== -1 || ohjelmaUri.indexOf("lukiolinja") !== -1 || ohjelmaUri.indexOf("koulutusohjelma") !== -1) {
+                    ohjelma = true;
+                }
+
+                if (module && tyyppi && ohjelma) {
+                    resource.searchModules({
+                        koulutustyyppi: koulutustyyppiUri,
+                        ohjelma: ohjelmaUri,
+                        moduuli: moduulityyppiEnum,
+                        meta: false}, function(res) {
+                        var arr = [];
+                        if (res.status === 'OK') {
+                            for (var resultIndex = 0; resultIndex < res.result.length; resultIndex++) {
+                                arr.push({
+                                    oid: res.result[resultIndex].oid,
+                                    ohjelma: res.result[resultIndex].ohjelmaUri
+                                });
+                            }
+                        }
+                        deferred.resolve(arr);
+                    });
+                } else {
+                    console.log("Invalid excel row data : " + ohjelmaUri + "," + koulutustyyppiUri + "," + moduulityyppiEnum);
+                    deferred.resolve([]);
+                }
+
+                return deferred.promise;
+            }
+
+            var map = excelSheetConverter(excel);
+            angular.forEach(map, function(val, koulutusCode) {
+                var promises = [];
+
+                if (val.koulutustyyppis && val.koulutustyyppis.split(",").length > 0) {
+                    var arrTypes = val.koulutustyyppis.split(",");
+
+                    for (var typeIndex = 0; typeIndex < arrTypes.length; typeIndex++) {
+                        if (arrTypes[typeIndex]) {
+                            promises.push(searchKomoOid(
+                                koulutusCode.trim(),
+                                arrTypes[typeIndex].trim(),
+                                val.moduulityyppi.trim()
+                                ));
+                        }
+                    }
+
+                    $q.all(promises).then(function(arrKomos) {
+                        for (var wrapperIndex = 0; wrapperIndex < arrKomos.length; wrapperIndex++) {
+                            for (var komoIndex = 0; komoIndex < arrKomos[wrapperIndex].length; komoIndex++) {
+                                var o = map[arrKomos[wrapperIndex][komoIndex].ohjelma];
+                                if (o) {
+                                    TarjontaService.saveKomoTekstis(arrKomos[wrapperIndex][komoIndex].oid, o.tekstis);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        };
     }
 ]);
 

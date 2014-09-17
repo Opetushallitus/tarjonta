@@ -97,6 +97,7 @@ public interface KomoV1Resource {
     public ResultV1RDTO<List<ModuuliTuloksetV1RDTO>> searchModule(
             @PathParam("koulutustyyppi") ToteutustyyppiEnum koulutustyyppiUri,
             @QueryParam("koulutus") String koulutuskoodiUri,
+            @QueryParam("ohjelma") String ohjelmaUri,
             @QueryParam("tila") String tila);
 
     @GET
@@ -110,6 +111,7 @@ public interface KomoV1Resource {
             @PathParam("koulutustyyppi") ToteutustyyppiEnum koulutustyyppiUri,
             @PathParam("moduuli") KoulutusmoduuliTyyppi koulutusmoduuliTyyppi,
             @QueryParam("koulutus") String koulutuskoodiUri,
+            @QueryParam("ohjelma") String ohjelmaUri,
             @QueryParam("tila") String tila);
 
     @GET
