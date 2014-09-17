@@ -972,7 +972,7 @@ app.controller('HakukohdeParentController', [
             if (!tila) {
                 throw "tila cannot be undefuned!";
             } else {
-                $log.debug(tallennetaan tila:", tila, hakukohdeValidationFunction);
+                $log.debug("tallennetaan tila:", tila, hakukohdeValidationFunction);
             }
             $scope.model.showError = false;
             PermissionService.permissionResource().authorize({}, function(authResponse) {
