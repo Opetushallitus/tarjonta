@@ -16,6 +16,8 @@ app
 
             $log = $log.getInstance("HakukohdeAikuNayttoEditController");
 
+           
+
             $scope.ui = {
                 showPlaces: true
             };
@@ -29,7 +31,7 @@ app
             };
 
             var validateAikuHakukohde = function() {
-
+                
                 var errors = [];
 
                 console.log('AIKU HAKUKOHDE : ', $scope.model.hakukohde);
@@ -42,12 +44,22 @@ app
                     errors.push(err);
                 }
 
-                if (!$scope.model.hakukohde.hakuOid
-                    || $scope.model.hakukohde.hakuOid.trim().length < 1) {
-                    var err = {};
-                    err.errorMessageKey = 'hakukohde.edit.haku.missing';
+                if ($scope.model.hakus && $scope.model.hakus[0]
+                    && !$scope.model.hakus[0].jarjestelmanHakulomake
+                    && (!$scope.model.hakus[0].hakulomakeUri || $scope.model.hakus[0].hakulomakeUri.trim() > 0)) {
+                    var empty = true;
+                    angular.forEach($scope.model.hakukohde.lisatiedot, function(val) {
+                        if (val && val.trim().length > 0) {
+                            empty = false;
+                            return;
+                        }
+                    });
 
-                    errors.push(err);
+                    if (empty) {
+                        var err = {};
+                        err.errorMessageKey = 'hakukohde.edit.lisatietoja-hakemisesta.required';
+                        errors.push(err);
+                    }
                 }
 
                 if (errors.length < 1) {

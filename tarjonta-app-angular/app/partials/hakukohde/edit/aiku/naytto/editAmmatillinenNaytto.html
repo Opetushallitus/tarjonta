@@ -21,11 +21,11 @@
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs track by $index" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
 
-    <display-controls model="formControls" display="header"></display-controls>
+    <display-controls model="formControls" display="header" command="controlModelCommandApi"></display-controls>
      
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
@@ -79,19 +79,14 @@
                         </td>
                     </tr>
 
-
                     <!-- aloituspaikat -->
                     <tr data-ng-show="ui.showPlaces">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
                             <input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" />
                         </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
-                        </td>
+                        
                     </tr>
-
-
                 </table>
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
@@ -108,14 +103,9 @@
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">
             <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
         </tab>
-        <!-- <tab  heading="{{t('kk.hakukohde.valintakokeet')}}">
-             <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
-         </tab>-->
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
             <div data-ng-include="'partials/hakukohde/edit/liitteetList.html'"></div>
         </tab>
-
-
     </tabset>
 
     <display-controls model="formControls" display="footer"></display-controls>
