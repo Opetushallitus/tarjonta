@@ -91,7 +91,8 @@ angular.module('app',
             'ExportToParent',
             'debounce',
             'Parameter',
-            'Logging'
+            'Logging',
+            'ui.bootstrap.typeahead'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
