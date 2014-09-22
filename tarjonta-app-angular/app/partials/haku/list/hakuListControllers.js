@@ -21,12 +21,12 @@ app.controller('HakuListController',
             '$log', '$window', '$modal',
             'LocalisationService', 'HakuV1', 'dialogService',
             'HakuV1Service', 'Koodisto', 'PermissionService',
-            'loadingService',
+            'loadingService', 'OrganisaatioService', 'AuthService',
             function HakuListController($q, $scope, $location,
                     $log, $window, $modal,
                     LocalisationService, Haku, dialogService,
                     HakuV1Service, Koodisto, PermissionService,
-                    loadingService) {
+                    loadingService, OrganisaatioService, AuthService) {
 
 //
 // OVT-8275 ? Tama on myos tehty tuolla tarjontaApp init:ssä...
@@ -106,7 +106,7 @@ app.controller('HakuListController',
                 $scope.canCreateNew = function() {
                     // TODO käyttöoikeustarkistus
                     return true;
-                }
+                };
 
                 function kausiVuosiToString(kausi, vuosi) {
                     return kausi ? $scope.kaudet[kausi] + " " + vuosi : vuosi;
@@ -125,16 +125,16 @@ app.controller('HakuListController',
                         default:
                             return row.nimi;
                     }
-                }
+                };
                 $scope.hakuGetIdentifier = function(row) {
                     return row.oid;
-                }
+                };
                 $scope.hakuGetLink = function(row) {
                     return "#/haku/" + row.oid;
-                }
+                };
                 $scope.hakuGetOptions = function(row) {
                     return undefined;
-                }
+                };
 
                 /**
                  * Deletes single selected haku.
@@ -190,7 +190,7 @@ app.controller('HakuListController',
                 $scope.canDeleteSelected = function() {
                     // TODO käyttöoikeustarkistus -> jos ei saa poistaa mitään, palauta false
                     return $scope.selection.length > 0;
-                }
+                };
 
                 /**
                  * Go to review display.
@@ -319,7 +319,7 @@ app.controller('HakuListController',
                     });
 
                     return ret;
-                }
+                };
 
                 $scope.doSearch = function() {
                     $log.info("doSearch()");
@@ -337,11 +337,16 @@ app.controller('HakuListController',
                     params.KAUSI = undefined;
                     params.VUOSI = undefined;
 
+                    var $organisationFilter = angular.element('#organisationFilter');
+                    if ( $organisationFilter.val() !== selectedOrganisation.nimi ){
+                        delete params.TARJOAJAOID;
+                    }
+
                     HakuV1Service.search(params).then(function(haut) {
                         // TODO järjestys backendiin?
                         haut.sort(function(a, b) {
                             var ret = a.tila.localeCompare(b.tila);
-                            if (ret == 0) {
+                            if (ret === 0) {
                                 ret = a.nimi.localeCompare(b.nimi);
                             }
                             return ret;
@@ -360,6 +365,35 @@ app.controller('HakuListController',
                     );
                 };
 
+                $scope.searchOrganisations = function(qterm) {
+                    return OrganisaatioService.etsi({
+                        searchStr: qterm,
+                        lakkautetut: false,
+                        skipparents: true,
+                        suunnitellut: false
+                    }).then(function(result) {
+                        return result.organisaatiot;
+                    });
+                };
+
+                var selectedOrganisation;
+                $scope.filterByOrganisation = function(organisation) {
+                    selectedOrganisation = organisation;
+                    $scope.searchParams.TARJOAJAOID = [organisation.oid];
+                };
+
+                $scope.initOrganisationFilter = function() {
+                    var organisations = AuthService.getOrganisations();
+
+                    if (angular.isArray(organisations) && organisations.length > 0) {
+                        var organisation = organisations[0];
+                        OrganisaatioService.byOid(organisation).then(function(resultOrganisation) {
+                            $scope.filterByOrganisation(resultOrganisation);
+                            angular.element('#organisationFilter').val(resultOrganisation.nimi);
+                        });
+                    }
+                };
+
                 $scope.init = function() {
                     $log.info("init...");
 
@@ -374,6 +408,7 @@ app.controller('HakuListController',
                         place: "holder"
                     };
 
+                    $scope.initOrganisationFilter();
 
                     $log.info("init... done.");
                     $scope.model = model;
