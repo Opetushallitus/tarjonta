@@ -136,6 +136,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         value = TarjontaTila.valueOf(sValue);
                         break;
                     case HAKUSANA:
+                    case TARJOAJAOID:
                         match = Match.LIKE; // %foo% haku
                         value = "%" + sValue + "%";
                         break;

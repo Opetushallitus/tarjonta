@@ -1,11 +1,11 @@
 <div id="editHakukohde" ng-controller="HakukohdeAikuLukioEditController">
 
     <controls-model
-            model="formControls"
-            tt-create="hakukohde.create.header.title"
-            tt-edit="hakukohde.edit.header.title"
-            title="model.hakukohde.tekstis"
-            dto="model.hakukohde">
+        model="formControls"
+        tt-create="hakukohde.create.header.title"
+        tt-edit="hakukohde.edit.header.title"
+        title="model.hakukohde.tekstis"
+        dto="model.hakukohde">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAikuLukioAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
@@ -14,19 +14,18 @@
 
         <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
         <controls-button tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
-         -->
+        -->
         <!-- TODO uutta luotaessa vaihtoehtoinen teksti "olet luomassa... " tjsp. -->
         <controls-notify type="message" tt-expr="getKoulutustenNimetKey()" tt-params="[ getKoulutustenNimet() ]"></controls-notify>
 
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
-
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs track by $index" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
 
-    <display-controls model="formControls" display="header"></display-controls>
-    
+    <display-controls model="formControls" display="header" command="controlModelCommandApi"></display-controls>
+
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
@@ -56,35 +55,35 @@
                         </td>
                     </tr>
 
-<!--                     <tr>
-                        <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
-                        <td>
-                            <input name="ulkoinen tunniste" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
-
-                        </td>
-                    </tr>
-                     -->
+                    <!--                     <tr>
+                                            <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
+                                            <td>
+                                                <input name="ulkoinen tunniste" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
+                    
+                                            </td>
+                                        </tr>
+                    -->
 
                     <!-- haku -->
-                        <tr class="required">
-                            <th tt="kk.hakukohde.haut">Haut</th>
-                            <td>
-                                <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
-                            </td>
-                            <td>
-                                <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
-                            </td>
-                        </tr>
+                    <tr class="required">
+                        <th tt="kk.hakukohde.haut">Haut</th>
+                        <td>
+                            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
+                        </td>
+                    </tr>
 
-                        <tr class="required" data-ng-show="model.showHakuaikas">
-                            <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
-                            <td>
-                                <select class="wide" name="hakuaikaSelect" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
-                            </td>
-                            <td>
-                                <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
-                            </td>
-                        </tr>
+                    <tr class="required" data-ng-show="model.showHakuaikas">
+                        <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
+                        <td>
+                            <select class="wide" name="hakuaikaSelect" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
+                        </td>
+                    </tr>
 
 
                     <!-- aloituspaikat -->
@@ -103,7 +102,7 @@
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
 
                 <mk-rich-textarea model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
-     
+
                 <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
                 <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
 

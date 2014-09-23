@@ -6,7 +6,7 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app
     .controller(
         'HakukohdeAikuNayttoEditController',
-        function($scope, $q, $log, LocalisationService, OrganisaatioService,
+        function ($scope, $q, $log, LocalisationService, OrganisaatioService,
             Koodisto, Hakukohde, AuthService, HakuService, $route, $modal,
             Config, $location, $timeout, TarjontaService, Kuvaus,
             CommonUtilService, PermissionService, SharedStateService) {
@@ -16,19 +16,21 @@ app
 
             $log = $log.getInstance("HakukohdeAikuNayttoEditController");
 
+
+
             $scope.ui = {
                 showPlaces: true
             };
 
             console.log("setting canSave");
-            $scope.model.canSaveAsLuonnos = function() {
+            $scope.model.canSaveAsLuonnos = function () {
 
                 return CommonUtilService
                     .canSaveAsLuonnos($scope.model.hakukohde.tila);
 
             };
 
-            var validateAikuHakukohde = function() {
+            var validateAikuHakukohde = function () {
 
                 var errors = [];
 
@@ -42,13 +44,7 @@ app
                     errors.push(err);
                 }
 
-                if (!$scope.model.hakukohde.hakuOid
-                    || $scope.model.hakukohde.hakuOid.trim().length < 1) {
-                    var err = {};
-                    err.errorMessageKey = 'hakukohde.edit.haku.missing';
-
-                    errors.push(err);
-                }
+                $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected($scope.model.hakus, errors);
 
                 if (errors.length < 1) {
                     return true;
@@ -60,17 +56,17 @@ app
 
             };
 
-            $scope.saveAsLuonnos = function() {
+            $scope.saveAsLuonnos = function () {
                 if (CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila)) {
                     $scope.model.saveParent("LUONNOS", validateAikuHakukohde);
                 }
             };
 
-            $scope.saveAsValmis = function() {
+            $scope.saveAsValmis = function () {
                 $scope.model.saveParent("VALMIS", validateAikuHakukohde);
             };
 
-            var readOsaamisAlat = function() {
+            var readOsaamisAlat = function () {
                 var koulutukses = [];
 
                 if ($scope.model.hakukohde.oid) {
@@ -88,7 +84,7 @@ app
                 }
 
                 $q.all(koulutusPromiset).then(
-                    function(results) {
+                    function (results) {
                         // koulutuskoodit/koulutusohjelmat
                         var context = {
                             arvot: [],
@@ -104,12 +100,12 @@ app
 
                         context.arvot = _.keys(map);
                         return context;
-                    }).then(function(context) {
+                    }).then(function (context) {
                     $scope.osaamisalat = context.arvot;
                 });
             };
             // TODO: Add naytto specific haku filtering logic
-            var filterHakus = function(hakus) {
+            var filterHakus = function (hakus) {
                 var filteredHakus = $scope.filterHakusWithOrgs($scope
                     .filterHakuWithKohdejoukko($scope.filterPoistettuHaku(hakus),
                         'haku.kohdejoukko.aiku.uri'));
@@ -122,7 +118,7 @@ app
              * loads
              * 
              */
-            var init = function() {
+            var init = function () {
 
                 $scope.model.userLang = AuthService.getLanguage();
 
@@ -151,10 +147,10 @@ app
 
             init();
 
-            $scope.model.checkSelectedHaku = function() {
+            $scope.model.checkSelectedHaku = function () {
 
                 var jatkuvaHakuKoodi = "hakutapa_03";
-                angular.forEach($scope.model.hakus, function(haku) {
+                angular.forEach($scope.model.hakus, function (haku) {
 
                     if (haku.oid === $scope.model.hakukohde.hakuOid) {
                         if ($scope.aContainsB(haku.hakutapaUri, jatkuvaHakuKoodi)) {

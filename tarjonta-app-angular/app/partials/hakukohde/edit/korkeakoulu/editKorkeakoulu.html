@@ -21,12 +21,12 @@
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
 
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+         <controls-notify ng-repeat="e in model.validationmsgs track by $index" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
 
-    <display-controls model="formControls" display="header"></display-controls>
-    
+    <display-controls model="formControls" display="header" command="controlModelCommandApi"></display-controls>
+
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
 

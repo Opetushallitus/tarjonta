@@ -179,6 +179,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi)
             .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri)
             .put(Field.KOULUTUKSEN_ALKAMISVUOSI, QHaku.haku.koulutuksenAlkamisVuosi)
+            .put(Field.TARJOAJAOID, QHaku.haku.tarjoajaOidString)
             .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri)
             .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri)
             .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri)
