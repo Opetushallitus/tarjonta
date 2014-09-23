@@ -1112,7 +1112,6 @@ app.controller('HakukohdeParentController', [
 
                     } else {
                         $log.debug('UPDATE MODEL1 : ', $scope.model.hakukohde);
-                        console.log("Hei!");
                         returnResource = $scope.model.hakukohde.$update();
                         returnResource.then(function(hakukohde) {
                             if (hakukohde.status === 'OK') {
