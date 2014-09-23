@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Maps;
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -50,6 +51,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import java.util.Map.Entry;
 
 /**
@@ -321,11 +323,11 @@ public class ConverterV1 {
     // ----------------------------------------------------------------------
     // KUVAUS (esim. KK valintaperuste- tai SORA -kuvaus
     // ----------------------------------------------------------------------
+
     /**
      * Convert domain ValintaperusteSoraKuvaus to KuvausV1RDTO
      *
      * @param kuvaus
-     *
      * @return
      */
     public KuvausV1RDTO toKuvausRDTO(ValintaperusteSoraKuvaus kuvaus, boolean convertTeksti) {
@@ -375,7 +377,7 @@ public class ConverterV1 {
             kuvausV1RDTO.setKuvaukset(tekstis);
         }
 
-        if ( kuvaus.getAvain() != null ) {
+        if (kuvaus.getAvain() != null) {
             kuvausV1RDTO.setAvain(kuvaus.getAvain());
         }
 
@@ -464,6 +466,7 @@ public class ConverterV1 {
     // ----------------------------------------------------------------------
     // HAKUKOHDE
     // ----------------------------------------------------------------------
+
     /**
      * Convert domain Hakukohde to REST HakukohdeRDTO.
      *
@@ -594,7 +597,7 @@ public class ConverterV1 {
 
         Set<KoulutusmoduuliToteutus> komotos = hakukohde.getKoulutusmoduuliToteutuses();
         KoulutusmoduuliToteutus komoto = null;
-        if ( komotos != null && komotos.size() > 0 ) {
+        if (komotos != null && komotos.size() > 0) {
             komoto = komotos.iterator().next();
         }
 
@@ -607,12 +610,12 @@ public class ConverterV1 {
                 hakukohdeRDTO.setValintaperustekuvausKoodiUri(uri);
 
                 // Hae koodiUria, kautta ja vuotta vastaava valintaperustekuvaus
-                if ( komoto != null ) {
+                if (komoto != null) {
                     hakukohdeRDTO.setValintaperusteKuvaukset(getKuvausByAvainTyyppiKausiVuosi(
-                        uri,
-                        ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS,
-                        komoto.getAlkamiskausiUri(),
-                        komoto.getAlkamisVuosi()
+                            uri,
+                            ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS,
+                            komoto.getAlkamiskausiUri(),
+                            komoto.getAlkamisVuosi()
                     ));
                 }
             }
@@ -629,7 +632,7 @@ public class ConverterV1 {
                 hakukohdeRDTO.setSoraKuvausKoodiUri(uri);
 
                 // Hae koodiUria, kautta ja vuotta vastaava sorakuvaus
-                if ( komoto != null ) {
+                if (komoto != null) {
                     hakukohdeRDTO.setValintaperusteKuvaukset(getKuvausByAvainTyyppiKausiVuosi(
                             uri,
                             ValintaperusteSoraKuvaus.Tyyppi.SORA,
@@ -780,7 +783,7 @@ public class ConverterV1 {
         hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
         hakukohde.setLastUpdateDate(new Date());
 
-        if(hakukohdeRDTO.toisenAsteenKoulutus()) {
+        if (hakukohdeRDTO.toisenAsteenKoulutus()) {
             hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
             hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
         }
@@ -1170,13 +1173,25 @@ public class ConverterV1 {
         valintakoe.setKieli(valintakoeV1RDTO.getKieliUri());
         valintakoe.setTyyppiUri(valintakoeV1RDTO.getValintakoetyyppi());
 
-        List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
-        tekstiRDTOs.add(valintakoeV1RDTO.getValintakokeenKuvaus());
-        valintakoe.setKuvaus(convertTekstiRDTOToMonikielinenTeksti(tekstiRDTOs));
+        if (valintakoeV1RDTO.hasPisterajat()) {
+            MonikielinenTeksti kuvaus = convertMapToMonikielinenTeksti(valintakoeV1RDTO.getKuvaukset());
+            valintakoe.setKuvaus(kuvaus);
+
+            MonikielinenTeksti lisanaytot = convertMapToMonikielinenTeksti(valintakoeV1RDTO.getLisanaytot());
+            valintakoe.setLisanaytot(lisanaytot);
+        } else {
+            List<TekstiRDTO> tekstiRDTOs = new ArrayList<TekstiRDTO>();
+            tekstiRDTOs.add(valintakoeV1RDTO.getValintakokeenKuvaus());
+            valintakoe.setKuvaus(convertTekstiRDTOToMonikielinenTeksti(tekstiRDTOs));
+        }
+
         if (valintakoeV1RDTO.getValintakoeAjankohtas() != null) {
             valintakoe.getAjankohtas().addAll(convertAjankohtaRDTOToValintakoeAjankohta(valintakoe, valintakoeV1RDTO.getValintakoeAjankohtas()));
         }
 
+        for (ValintakoePisterajaV1RDTO pisterajaRDTO : valintakoeV1RDTO.getPisterajat()) {
+            valintakoe.getPisterajat().add(convertPisterajaRDTOToPisteraja(valintakoe, pisterajaRDTO));
+        }
         return valintakoe;
     }
 
@@ -1271,9 +1286,11 @@ public class ConverterV1 {
         valintakoeV1RDTO.setValintakoeNimi(valintakoe.getValintakoeNimi());
         valintakoeV1RDTO.setValintakoetyyppi(valintakoe.getTyyppiUri());
 
-        List<TekstiRDTO> lisatiedot = convertMonikielinenTekstiToTekstiDTOs(valintakoe.getKuvaus());
-        if (lisatiedot != null && lisatiedot.size() > 0) {
-            valintakoeV1RDTO.setValintakokeenKuvaus(lisatiedot.get(0));
+        if (valintakoe.hasPisterajas()) {
+            addMultilanguageValintakokeenKuvaus(valintakoe, valintakoeV1RDTO);
+            addMultilanguageValintakokeenLisanaytot(valintakoe, valintakoeV1RDTO);
+        } else {
+            addValintakokeenKuvausForSingleLanguageValintakoe(valintakoe, valintakoeV1RDTO);
         }
 
         if (valintakoeV1RDTO.getKieliUri() != null && tarjontaKoodistoHelper != null) {
@@ -1290,7 +1307,63 @@ public class ConverterV1 {
             }
         }
 
+        for (Pisteraja pisteraja : valintakoe.getPisterajat()) {
+            valintakoeV1RDTO.getPisterajat().add(convertPisterajaToPisterajaRDTO(pisteraja));
+        }
+
         return valintakoeV1RDTO;
+    }
+
+    private void addMultilanguageValintakokeenLisanaytot(Valintakoe valintakoe, ValintakoeV1RDTO valintakoeV1RDTO) {
+        MonikielinenTeksti lisanaytot = valintakoe.getLisanaytot();
+        if (lisanaytot != null) {
+            valintakoeV1RDTO.setLisanaytot(lisanaytot.asMapWithoutVersions());
+        }
+    }
+
+    private void addMultilanguageValintakokeenKuvaus(Valintakoe valintakoe, ValintakoeV1RDTO valintakoeV1RDTO) {
+        MonikielinenTeksti kuvaus = valintakoe.getKuvaus();
+        if (kuvaus != null) {
+            valintakoeV1RDTO.setKuvaukset(kuvaus.asMapWithoutVersions());
+        }
+    }
+
+    private void addValintakokeenKuvausForSingleLanguageValintakoe(Valintakoe valintakoe, ValintakoeV1RDTO valintakoeV1RDTO) {
+        List<TekstiRDTO> kuvaus = convertMonikielinenTekstiToTekstiDTOs(valintakoe.getKuvaus());
+        if (kuvaus != null && kuvaus.size() > 0) {
+            valintakoeV1RDTO.setValintakokeenKuvaus(kuvaus.get(0));
+        }
+    }
+
+    private ValintakoePisterajaV1RDTO convertPisterajaToPisterajaRDTO(Pisteraja pisteraja) {
+        ValintakoePisterajaV1RDTO valintakoePisterajaRDTO = new ValintakoePisterajaV1RDTO();
+
+        valintakoePisterajaRDTO.setAlinHyvaksyttyPistemaara(pisteraja.getAlinHyvaksyttyPistemaara());
+        if (valintakoePisterajaRDTO.getAlinHyvaksyttyPistemaara().equals(Pisteraja.DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA)) {
+            valintakoePisterajaRDTO.setAlinHyvaksyttyPistemaara(null);
+        }
+
+        valintakoePisterajaRDTO.setAlinPistemaara(pisteraja.getAlinPistemaara());
+        valintakoePisterajaRDTO.setPisterajatyyppi(pisteraja.getValinnanPisterajaTyyppi());
+        valintakoePisterajaRDTO.setYlinPistemaara(pisteraja.getYlinPistemaara());
+
+        return valintakoePisterajaRDTO;
+    }
+
+    private Pisteraja convertPisterajaRDTOToPisteraja(Valintakoe valintakoe, ValintakoePisterajaV1RDTO valintakoePisterajaRDTO) {
+        Pisteraja pisteraja = new Pisteraja();
+
+        pisteraja.setValintakoe(valintakoe);
+        pisteraja.setAlinPistemaara(valintakoePisterajaRDTO.getAlinPistemaara());
+        pisteraja.setYlinPistemaara(valintakoePisterajaRDTO.getYlinPistemaara());
+        pisteraja.setAlinHyvaksyttyPistemaara(valintakoePisterajaRDTO.getAlinHyvaksyttyPistemaara());
+        pisteraja.setValinnanPisterajaTyyppi(valintakoePisterajaRDTO.getPisterajatyyppi());
+
+        if (pisteraja.getAlinHyvaksyttyPistemaara() == null) {
+            pisteraja.setAlinHyvaksyttyPistemaara(Pisteraja.DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA);
+        }
+
+        return pisteraja;
     }
 
     private String getDefaultKoodinimi(List<KoodiMetadataType> koodiMetadataTypes) {
@@ -1539,7 +1612,7 @@ public class ConverterV1 {
 
     /**
      * Resolves given koodiUri to metadata (translatios);
-     *
+     * <p/>
      * Becomes: { arvo : koodiArvo, uri: koodiUri, version : koodiVersion, meta:
      * { kieli_fi#1 : "Koodin suomekielinen nimi", kieli_sv#1 : "Kod
      * ruattalainen namn", ... } }
@@ -1592,7 +1665,7 @@ public class ConverterV1 {
 
         HashMap<String, String> kuvaukset = null;
 
-        if ( kuvauksetRaw != null && kuvauksetRaw.size() > 0 ) {
+        if (kuvauksetRaw != null && kuvauksetRaw.size() > 0) {
             kuvaukset = new HashMap<String, String>();
             ValintaperusteSoraKuvaus kuvausRaw = kuvauksetRaw.get(0);
             for (MonikielinenMetadata meta : kuvausRaw.getTekstis()) {

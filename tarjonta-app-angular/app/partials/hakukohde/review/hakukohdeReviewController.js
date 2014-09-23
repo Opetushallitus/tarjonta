@@ -481,15 +481,17 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     };
 
-    /*
-     * 
-     * -----------> Controller "initialization" part where initialization
-     * functions are run <--------------
-     * 
-     */
+    var getPisterajat = function(valintakoe, targetPisterajaTyyppi) {
+        for(var i in valintakoe.pisterajat) {
+            var pisterajatyyppi = valintakoe.pisterajat[i].pisterajatyyppi;
+            if(pisterajatyyppi === targetPisterajaTyyppi) {
+                return valintakoe.pisterajat[i];
+            }
+        }
+        return undefined;
+    };
 
     var init = function() {
-
         var hakukohdeOid = $scope.model.hakukohde.oid;
 
         // permissiot
@@ -524,6 +526,13 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             $scope.showNimiUri = true;
         }
 
+        if($scope.model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
+            $scope.model.hakukohde.valintakoe =  $scope.model.hakukohde.valintakokeet[0];
+            $scope.model.hakukohde.paasykoe = getPisterajat($scope.model.hakukohde.valintakoe, 'Paasykoe');
+            $scope.model.hakukohde.lisapisteet = getPisterajat($scope.model.hakukohde.valintakoe, 'Lisapisteet');
+            $scope.model.hakukohde.kokonaispisteet = getPisterajat($scope.model.hakukohde.valintakoe, 'Kokonaispisteet');
+        }
+
         initLanguages();
         convertValintaPalveluValue();
         convertKaksoistutkintoValue();
@@ -533,8 +542,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         loadHakukelpoisuusVaatimukses();
         loadPainotettavatOppiaineet();
         loadKoulutukses();
-        // reloadFormControls();
-        // checkForHakuRemove();
     };
 
     init();

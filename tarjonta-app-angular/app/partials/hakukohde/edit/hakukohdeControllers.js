@@ -49,7 +49,6 @@ app.controller('HakukohdeEditController',
 
     var commonExceptionMsgKey = "tarjonta.common.unexpected.error.msg";
 
-    //Initialize all variables and scope object in the beginning
     var postinumero = undefined;
 
     $scope.model.canSaveHakukohde = function() {
@@ -62,7 +61,6 @@ app.controller('HakukohdeEditController',
 
 
     $scope.model.canSaveAsLuonnos = function() {
-
         if ($scope.model.isDeEnabled && $scope.model.isPartiallyDeEnabled) {
             var canSave = !$scope.model.isDeEnabled;
             $log.info('CanSaveAsLuonnos, parameter says not ok');
@@ -72,16 +70,10 @@ app.controller('HakukohdeEditController',
             var canSaveAsLuonnosByTila = CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
             return canSaveAsLuonnosByTila;
         }
-
-
-
     };
 
     $scope.model.canSaveAsValmis = function () {
-
         return $scope.model.isDeEnabled && $scope.model.isPartiallyDeEnabled;
-
-
     };
 
     if ($scope.model.hakukohde.lisatiedot !== undefined) {

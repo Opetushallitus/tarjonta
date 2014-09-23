@@ -13,6 +13,11 @@ public class BigDecimalDeserializer extends JsonDeserializer<BigDecimal> {
     @Override
     public BigDecimal deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         String stringValue = jsonParser.getValueAsString();
+
+        if (stringValue.isEmpty()) {
+            return null;
+        }
+
         try {
             return new BigDecimal(stringValue);
         } catch (NumberFormatException e) {

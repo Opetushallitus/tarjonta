@@ -152,6 +152,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.collapse.model = true;
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
+        $scope.model.valintakoe = {};
 
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
@@ -1083,6 +1084,7 @@ app.controller('HakukohdeParentController', [
                             $log.debug('SERVER RESPONSE WHEN CREATING: ', hakukohde);
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                             HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+                            $scope.$broadcast('reloadValintakokeet');
                             HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
@@ -1110,20 +1112,21 @@ app.controller('HakukohdeParentController', [
 
                     } else {
                         $log.debug('UPDATE MODEL1 : ', $scope.model.hakukohde);
+                        console.log("Hei!");
                         returnResource = $scope.model.hakukohde.$update();
                         returnResource.then(function(hakukohde) {
                             if (hakukohde.status === 'OK') {
                                 $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 $scope.handleConfigurableHakuaika();
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+                                $scope.$broadcast('reloadValintakokeet');
                                 HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde);
                                 $scope.status.dirty = false;
                                 $scope.editHakukohdeForm.$dirty = false;
                                 $scope.showSuccess();
                             } else {
-                                console.log("error", hakukohde);
-
-                                $scope.model.hakukohde = hakukohde.result;
+                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                                $scope.$broadcast('reloadValintakokeet');
 
                                 if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                     $scope.showSuccess();

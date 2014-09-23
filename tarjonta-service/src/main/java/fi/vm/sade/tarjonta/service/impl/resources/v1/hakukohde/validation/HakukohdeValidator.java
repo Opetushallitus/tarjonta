@@ -5,38 +5,28 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import static com.mysema.query.types.Projections.array;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeLiiteV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValitutKoulutuksetV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import org.apache.xmlbeans.impl.schema.StscState;
 
 /*
  * @author: Tuomas Katva 15/11/13
  */
 public class HakukohdeValidator {
+
+    private static final int PISTERAJA_MAX_PRECISION = 2;
 
     private static List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
@@ -180,38 +170,261 @@ public class HakukohdeValidator {
 
     }
 
-    //public static List<HakukohdeValidationMessages> validateValintakoe()
     public static List<HakukohdeValidationMessages> validateValintakokees(List<ValintakoeV1RDTO> valintakoeV1RDTOs) {
         Set<HakukohdeValidationMessages> validationMessages = new HashSet<HakukohdeValidationMessages>();
 
-        for (Iterator<ValintakoeV1RDTO> i = valintakoeV1RDTOs.iterator(); i.hasNext();) {
+        for (Iterator<ValintakoeV1RDTO> i = valintakoeV1RDTOs.iterator(); i.hasNext(); ) {
             ValintakoeV1RDTO valintakoeV1RDTO = i.next();
 
             // jos nimi on tyhjä eikä ajankohtia -> automaattisesti luotu ranka jonka voi hylätä
-            if (Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi())
-                    && (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty())) {
+            if (isEmptyValintakoe(valintakoeV1RDTO)) {
                 i.remove();
                 continue;
             }
 
-            if (Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi()) && Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoetyyppi())) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_NIMI_MISSING);
-            }
-            if (Strings.isNullOrEmpty(valintakoeV1RDTO.getKieliUri())) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_KIELI_MISSING);
-            }
-            for (ValintakoeAjankohtaRDTO ajankohta : valintakoeV1RDTO.getValintakoeAjankohtas()) {
-                if (ajankohta.getLoppuu().before(ajankohta.getAlkaa())) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
-                }
-                if (ajankohta.getOsoite() == null) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
-                }
-            }
-
+            validateNames(validationMessages, valintakoeV1RDTO);
+            validateAjankohdat(validationMessages, valintakoeV1RDTO);
+            validatePisterajat(validationMessages, valintakoeV1RDTO);
         }
 
         return new ArrayList<HakukohdeValidationMessages>(validationMessages);
+    }
+
+    private static boolean isEmptyValintakoe(ValintakoeV1RDTO valintakoeV1RDTO) {
+        return Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi())
+                && (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()
+                && !valintakoeV1RDTO.hasPisterajat());
+    }
+
+    private static void validateNames(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
+
+        if (valintakoeV1RDTO.hasPisterajat()) {
+            return;
+        }
+
+        if (Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi()) && Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoetyyppi())) {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_NIMI_MISSING);
+        }
+        if (Strings.isNullOrEmpty(valintakoeV1RDTO.getKieliUri())) {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_KIELI_MISSING);
+        }
+    }
+
+    private static void validateAjankohdat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
+
+        if (valintakoeV1RDTO.hasPisterajat()) {
+            for (ValintakoePisterajaV1RDTO pisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
+                if (pisterajaV1RDTO.isPaasykoe() && valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING);
+                }
+            }
+        }
+
+        for (ValintakoeAjankohtaRDTO ajankohta : valintakoeV1RDTO.getValintakoeAjankohtas()) {
+            if (ajankohta.getLoppuu() == null || ajankohta.getAlkaa() == null) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_OR_END_DATE_MISSING);
+            } else {
+                if (ajankohta.getLoppuu().before(ajankohta.getAlkaa())) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
+                }
+            }
+            if (ajankohta.getOsoite() == null) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
+            }
+        }
+    }
+
+    private static void validatePisterajat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
+        if (valintakoeV1RDTO.hasPisterajat()) {
+            if (validPrecision(valintakoeV1RDTO)) {
+                if (validRestictions(valintakoeV1RDTO)) {
+                    if (!validKokonaispisteet(valintakoeV1RDTO)) {
+                        validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_KOKONAISPISTEET_NOT_VALID);
+                    }
+                } else {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID);
+                }
+            } else {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE);
+            }
+            if (!validKuvaus(valintakoeV1RDTO)) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING);
+            }
+            if (!validLisanaytot(valintakoeV1RDTO)) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_LISANAYTOT_DATA_MISSING);
+            }
+        }
+    }
+
+    private static boolean validLisanaytot(ValintakoeV1RDTO valintakoeV1RDTO) {
+        for (ValintakoePisterajaV1RDTO valintakoePisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
+            if (valintakoePisterajaV1RDTO.isLisapisteet()) {
+                Map<String, String> lisanaytot = valintakoeV1RDTO.getLisanaytot();
+                if (allEmptyValues(lisanaytot)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean validKuvaus(ValintakoeV1RDTO valintakoeV1RDTO) {
+        for (ValintakoePisterajaV1RDTO valintakoePisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
+            if (valintakoePisterajaV1RDTO.isPaasykoe()) {
+                Map<String, String> kuvaukset = valintakoeV1RDTO.getKuvaukset();
+                if (allEmptyValues(kuvaukset)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean allEmptyValues(Map<String, String> kuvaukset) {
+        boolean allEmpty = true;
+        for (Entry<String, String> entry : kuvaukset.entrySet()) {
+            if (StringUtils.isNotBlank(entry.getValue())) {
+                allEmpty = false;
+            }
+        }
+        return allEmpty;
+    }
+
+    private static boolean validPrecision(ValintakoeV1RDTO valintakoeV1RDTO) {
+        for (ValintakoePisterajaV1RDTO valintakoePisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
+
+            BigDecimal alinHyvaksyttyPistemaara = valintakoePisterajaV1RDTO.getAlinHyvaksyttyPistemaara();
+            BigDecimal alinPistemaara = valintakoePisterajaV1RDTO.getAlinPistemaara();
+            BigDecimal ylinPistemaara = valintakoePisterajaV1RDTO.getYlinPistemaara();
+
+            if (valintakoePisterajaV1RDTO.isKokonaispisteet()) {
+                if (alinHyvaksyttyPistemaara == null || alinHyvaksyttyPistemaara.scale() > PISTERAJA_MAX_PRECISION) {
+                    return false;
+                }
+            } else {
+                if (alinPistemaara == null || ylinPistemaara == null) {
+                    return false;
+                }
+                if (alinPistemaara.scale() > PISTERAJA_MAX_PRECISION || ylinPistemaara.scale() > PISTERAJA_MAX_PRECISION) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean validRestictions(ValintakoeV1RDTO valintakoeV1RDTO) {
+
+        ValintakoePisterajaV1RDTO paasykoerajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.PAASYKOE);
+        ValintakoePisterajaV1RDTO lisapisterajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.LISAPISTEET);
+
+        double pkAlin = getAlinPistemaara(paasykoerajat);
+        double pkYlin = getYlinPistemaara(paasykoerajat);
+        double lpAlin = getAlinPistemaara(lisapisterajat);
+        double lpYlin = getYlinPistemaara(lisapisterajat);
+
+        if (isOutOfRange(pkAlin, pkYlin, lpAlin, lpYlin)) {
+            return false;
+        }
+
+        if (sumsExceedMaximum(pkYlin, lpYlin)) {
+            return false;
+        }
+
+        if (lisapisterajat != null && lisapisterajat.getAlinHyvaksyttyPistemaara() != null) {
+            if (rowRestrictionsViolated(lpAlin, lpYlin, lisapisterajat.getAlinHyvaksyttyPistemaara().doubleValue())) {
+                return false;
+            }
+        } else if (rowRestrictionsViolated(lpAlin, lpYlin)) {
+            return false;
+        }
+
+        if (paasykoerajat != null && paasykoerajat.getAlinHyvaksyttyPistemaara() != null) {
+            if (rowRestrictionsViolated(pkAlin, pkYlin, paasykoerajat.getAlinHyvaksyttyPistemaara().doubleValue())) {
+                return false;
+            }
+        } else if (rowRestrictionsViolated(pkAlin, pkYlin)) {
+            return false;
+        }
+        return true;
+    }
+
+    private static double getYlinPistemaara(ValintakoePisterajaV1RDTO pisteraja) {
+        if (pisteraja != null) {
+            return pisteraja.getYlinPistemaara().doubleValue();
+        }
+        return Double.parseDouble("0.0");
+    }
+
+    private static double getAlinPistemaara(ValintakoePisterajaV1RDTO pisteraja) {
+        if (pisteraja != null) {
+            return pisteraja.getAlinPistemaara().doubleValue();
+        }
+        return Double.parseDouble("0.0");
+    }
+
+    private static boolean rowRestrictionsViolated(double pkAlin, double pkYlin, double pkAlinHyvaksytty) {
+        return pkAlin > pkYlin ||
+                pkAlinHyvaksytty < pkAlin ||
+                pkAlinHyvaksytty > pkYlin;
+    }
+
+    private static boolean rowRestrictionsViolated(double pkAlin, double pkYlin) {
+        return pkAlin > pkYlin;
+    }
+
+    private static boolean isOutOfRange(double pkAlin,
+                                        double pkYlin,
+                                        double lpAlin,
+                                        double lpYlin) {
+        return pkAlin < 0 ||
+                pkAlin > 10 ||
+                pkYlin < 0 ||
+                pkYlin > 10 ||
+                lpAlin < 0 ||
+                lpAlin > 10 ||
+                lpYlin < 0 ||
+                lpYlin > 10;
+    }
+
+    private static boolean sumsExceedMaximum(double pkYlin, double lpYlin) {
+        return pkYlin + lpYlin > 10;
+    }
+
+    private static boolean validKokonaispisteet(ValintakoeV1RDTO valintakoeV1RDTO) {
+        ValintakoePisterajaV1RDTO kokonaispisterajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.KOKONAISPISTEET);
+
+        if (kokonaispisterajat == null) {
+            return true;
+        }
+
+        ValintakoePisterajaV1RDTO paasykoerajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.PAASYKOE);
+        ValintakoePisterajaV1RDTO lisapisterajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.LISAPISTEET);
+
+        double pkAlin = getAlinPistemaara(paasykoerajat);
+        double pkYlin = getYlinPistemaara(paasykoerajat);
+        double lpAlin = getAlinPistemaara(lisapisterajat);
+        double lpYlin = getYlinPistemaara(lisapisterajat);
+
+        if (paasykoerajat != null && paasykoerajat.getAlinHyvaksyttyPistemaara() != null) {
+            pkAlin = paasykoerajat.getAlinHyvaksyttyPistemaara().doubleValue();
+        }
+
+        if (lisapisterajat != null && lisapisterajat.getAlinHyvaksyttyPistemaara() != null) {
+            lpAlin = lisapisterajat.getAlinHyvaksyttyPistemaara().doubleValue();
+        }
+
+        if (kokonaispisterajat.getAlinHyvaksyttyPistemaara() != null) {
+            if (kpAlinHViolates(kokonaispisterajat.getAlinHyvaksyttyPistemaara().doubleValue(), pkAlin, pkYlin, lpAlin, lpYlin)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean kpAlinHViolates(double kpAlinH, double pkAlin, double pkYlin,
+                                           double lpAlin, double lpYlin) {
+        return kpAlinH < (pkAlin + lpAlin) || kpAlinH > (pkYlin + lpYlin);
     }
 
     public static ResultV1RDTO<ValitutKoulutuksetV1RDTO> getValidKomotoSelection(final KoulutuksetVastaus kv) {
@@ -306,7 +519,7 @@ public class HakukohdeValidator {
 
         return TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(
                 koodi1.getUri()).equals(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(
-                                koodi2.getUri()));
+                koodi2.getUri()));
     }
 
 }

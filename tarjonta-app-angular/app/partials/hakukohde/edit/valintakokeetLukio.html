@@ -1,0 +1,89 @@
+<div class="valintakokeet-lukio">
+    <tabset>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinpistemaara">Alin pistemäärä</th>
+                    <th tt="tarjonta.hakukohde.valintakoe.pisterajat.ylinpistemaara">Ylin pistemäärä</th>
+                    <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinhyvaksyttypistemaara">Alin hyväksytty pistemäärä</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <label>
+                            <input ng-change="paasykoeStateChanged()" type="checkbox" ng-model="valintakoe.hasPaasykoe">
+                            <span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span>
+                        </label>
+                    </td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeAlinPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.alinPistemaara" /></td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeYlinPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.ylinPistemaara" /></td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeAlinHyvaksyttyPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.alinHyvaksyttyPistemaara" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            <input ng-change="lisanaytotStateChanged()" type="checkbox" ng-model="valintakoe.hasLisanaytot">
+                            <span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisanaytot">Lisänäytöt</span>
+                        </label>
+                    </td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotAlinPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.alinPistemaara" /></td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotYlinPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.ylinPistemaara" /></td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotAlinHyvaksyttyPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.alinHyvaksyttyPistemaara" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet">Kokonaispisteet</span>
+                    </td>
+                    <td></td>
+                    <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet.max">max. 10</span></td>
+                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe && !valintakoe.hasLisanaytot" class="input-mini" name="kokonaispisteetAlinHyvaksyttyPistemaara" type="text" ng-change="kokonaispisteetChanged()" data-ng-model="valintakoe.kokonaispisteetPisterajat.alinHyvaksyttyPistemaara" /></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="rich-text" ng-if="valintakoe.hasPaasykoe">
+
+            <h4 tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</h4>
+            <mk-rich-textarea model="valintakoe.kuvaukset"></mk-rich-textarea>
+
+            <table class="valintakoeTilaisuudet">
+                <tbody ng-repeat="ajankohta in valintakoe.valintakoeAjankohtas">
+                <tr>
+                    <td colspan="4" class="vkOsoite">
+                        <osoite-field model="ajankohta.osoite" on-change="status.dirtify()"></osoite-field>
+                    </td>
+                    <td rowspan="2" class="vkPoista">
+                        <button ng-click="deleteAjankohta(valintakoe, ajankohta)" class="btn"><span class="icon-remove"></span><br/><span tt="tarjonta.toiminnot.poista"></span></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="vkAjankohta">
+                        <t-date-time timestamp="true" type="long" ng-model="ajankohta.alkaa" max="ajankohta.loppuu" ng-change="status.dirtify()"></t-date-time>
+                    </td>
+                    <td class="vkSeparator">-</td>
+                    <td class="vkAjankohta">
+                        <t-date-time timestamp="true" type="long" ng-model="ajankohta.loppuu" min="ajankohta.alkaa" ng-change="status.dirtify()"></t-date-time>
+                    </td>
+                    <td class="vkLisatieto">
+                        <input type="text" ng-model="ajankohta.lisatiedot" placeholder="{{t('tarjonta.hakukohde.valintakoe.modal.ajankohta.lisatieto')}}"  ng-change="status.dirtify()"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="vkErrors" ng-show="model.showError && !isValidAjankohta(ajankohta)">
+                        <p class="error" tt="tarjonta.hakukohde.valintakoe.errors.ajankohta">Valintakokeen osoite ja ajankohta ovat pakollisia.</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a href ng-click="addAjankohta(valintakoe)" tt="tarjonta.hakukohde.valintakoe.ajankohdat.lisää">Lisää uusi tilaisuus</a>
+        </div>
+
+        <div class="rich-text" ng-if="valintakoe.hasLisanaytot">
+            <h4 tt="tarjonta.hakukohde.valintakoe.pisterajat.lisanaytot">Pääsykoe</h4>
+            <mk-rich-textarea model="valintakoe.lisanaytot"></mk-rich-textarea>
+        </div>
+
+    </tabset>
+</div>

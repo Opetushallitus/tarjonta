@@ -92,7 +92,8 @@ angular.module('app',
             'ExportToParent',
             'debounce',
             'Parameter',
-            'Logging'
+            'Logging',
+            'ValidDecimal'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);

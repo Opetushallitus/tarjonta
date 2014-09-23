@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.model;
  * European Union Public Licence for more details.
  */
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.*;
 import org.codehaus.jackson.annotate.JsonBackReference;
@@ -31,6 +32,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class Pisteraja extends TarjontaBaseEntity  {
 
     private static final long serialVersionUID = 1878029033380865674L;
+
+    public static final BigDecimal DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA = new BigDecimal("1.00").negate();
 
     @JsonBackReference
     @ManyToOne (fetch = FetchType.LAZY, optional=false)
@@ -48,6 +51,19 @@ public class Pisteraja extends TarjontaBaseEntity  {
 
     @Column(name="alinhyvaksyttypistemaara", nullable=false)
     private BigDecimal alinHyvaksyttyPistemaara;
+
+    @PreUpdate
+    @PrePersist
+    protected void prePersist() {
+        if("Kokonaispisteet".equals(valinnanPisterajaTyyppi)) {
+            setAlinPistemaara(new BigDecimal("0.00"));
+            setYlinPistemaara(new BigDecimal("0.00"));
+        } else {
+            if(getAlinHyvaksyttyPistemaara() == null) {
+                setAlinHyvaksyttyPistemaara(DEFAULT_ALIN_HYVAKSYTTY_PISTEMAARA);
+            }
+        }
+    }
 
     public Valintakoe getValintakoe() {
 		return valintakoe;

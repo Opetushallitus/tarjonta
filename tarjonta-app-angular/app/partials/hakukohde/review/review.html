@@ -149,37 +149,98 @@
 	    <tr ng-show="!model.collapse.valintakokeet">
 	        <th></th>
 	        <td colspan="2">
-                <mk-tabs model="model.valintakoeKielet" selection="model.selectedValintakoeKieli"></mk-tabs>	           
-                <table class="table" ng-show="model.selectedValintakoeKieli">
-	                <tr>
-	                    <th>{{t('hakukohde.review.valintakokeet.nimi')}}</th>
-	                    <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
-	                    <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
-	                    <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>
-	                    <th>{{t('hakukohde.review.valintakokeet.lisatiedot')}}</th>
-	                </tr>
-	                <tbody data-ng-repeat="valintakoe in getLocalizedValintakoe(model.selectedValintakoeKieli)">
-                    <tr ng-show="valintakoe.valintakoeAjankohtas" data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
-                        <td ng-show="!$first" colspan="2"></td>
-                        <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
-                        <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
-                        <td>
-                            {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
-                        </td>
-                        <td>
-                            {{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}
-                        </td>
-                        <td>
-                            {{ valintakoeaika.lisatiedot }}
-                        </td>
-                    </tr>
-                    <tr ng-show="!valintakoe.valintakoeAjankohtas.length">
-                        <td>{{valintakoe.valintakoeNimi}}</td>
-                        <td data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
-	                </tbody>
-	             </table>
+                <div ng-if="model.hakukohde.toteutusTyyppi !== 'LUKIOKOULUTUS'">
+                    <mk-tabs model="model.valintakoeKielet" selection="model.selectedValintakoeKieli"></mk-tabs>
+                    <table class="table" ng-show="model.selectedValintakoeKieli">
+                        <tr>
+                            <th>{{t('hakukohde.review.valintakokeet.nimi')}}</th>
+                            <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
+                            <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
+                            <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>
+                            <th>{{t('hakukohde.review.valintakokeet.lisatiedot')}}</th>
+                        </tr>
+                        <tbody data-ng-repeat="valintakoe in getLocalizedValintakoe(model.selectedValintakoeKieli)">
+                        <tr ng-show="valintakoe.valintakoeAjankohtas" data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+                            <td ng-show="!$first" colspan="2"></td>
+                            <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
+                            <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
+                            <td>
+                                {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
+                            </td>
+                            <td>
+                                {{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}
+                            </td>
+                            <td>
+                                {{ valintakoeaika.lisatiedot }}
+                            </td>
+                        </tr>
+                        <tr ng-show="!valintakoe.valintakoeAjankohtas.length">
+                            <td>{{valintakoe.valintakoeNimi}}</td>
+                            <td data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
+                            <td colspan="3">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                     </table>
+                </div>
+
+                <div ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS' && model.hakukohde.valintakoe.pisterajat.length > 0">
+                    <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat">Pisterajat</span></h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinpistemaara">Alin pistemäärä</th>
+                                <th tt="tarjonta.hakukohde.valintakoe.pisterajat.ylinpistemaara">Ylin pistemäärä</th>
+                                <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinhyvaksyttypistemaara">Alin hyväksytty pistemäärä</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></td>
+                            <td>{{model.hakukohde.paasykoe.alinPistemaara}}</td>
+                            <td>{{model.hakukohde.paasykoe.ylinPistemaara}}</td>
+                            <td><span ng-show="model.hakukohde.paasykoe.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.paasykoe.alinHyvaksyttyPistemaara}}</span></td>
+                        </tr>
+                        <tr>
+                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisanaytot">Lisapisteet</span></td>
+                            <td>{{model.hakukohde.lisapisteet.alinPistemaara}}</td>
+                            <td>{{model.hakukohde.lisapisteet.ylinPistemaara}}</td>
+                            <td><span ng-show="model.hakukohde.lisapisteet.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.lisapisteet.alinHyvaksyttyPistemaara}}</span></td>
+                        </tr>
+                        <tr>
+                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet">Kokonaispisteet</span></td>
+                            <td></td>
+                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet.max">max. 10</span></td>
+                            <td><span ng-show="model.hakukohde.kokonaispisteet.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.kokonaispisteet.alinHyvaksyttyPistemaara}}</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div ng-if="model.hakukohde.valintakoe.valintakoeAjankohtas">
+                        <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></h2>
+                        <div><mk-text model="model.hakukohde.valintakoe.kuvaukset" display="tabs"/></div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th tt="tarjonta.hakukohde.valintakoe.ajankohta">Ajankohta</th>
+                                    <th tt="tarjonta.hakukohde.valintakoe.osoite">Osoite</th>
+                                    <th tt="tarjonta.hakukohde.valintakoe.lisatiedot">Lisätiedot</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-ng-repeat="valintakoeaika in model.hakukohde.valintakoe.valintakoeAjankohtas">
+                                    <td>{{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}</td>
+                                    <td>{{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}</td>
+                                    <td>{{ valintakoeaika.lisatiedot }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div ng-if="model.hakukohde.lisapisteet">
+                        <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisapisteet">Lisäpisteet</span></h2>
+                        <div><mk-text model="model.hakukohde.valintakoe.lisanaytot" display="tabs"/></div>
+                    </div>
+
+                </div>
 	        </td>
 	    </tr>
 	

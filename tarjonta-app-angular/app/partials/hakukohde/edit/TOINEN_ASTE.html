@@ -154,7 +154,8 @@
         </tab>
 
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled"  heading="{{t('kk.hakukohde.valintakokeet')}}">
-            <div data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
+            <div ng-if="model.hakukohde.toteutusTyyppi !== 'LUKIOKOULUTUS'" data-ng-include="'partials/hakukohde/edit/valintakokeetList.html'" data-ng-controller="ValintakokeetController"></div>
+            <div ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'" data-ng-include="'partials/hakukohde/edit/valintakokeetLukio.html'" data-ng-controller="ValintakokeetLukioController"></div>
         </tab>
 
         <tab ng-disabled="model.hakukohdeTabsDisabled" disabled="model.hakukohdeTabsDisabled" heading="{{t('kk.hakukohde.liitteet')}}">
