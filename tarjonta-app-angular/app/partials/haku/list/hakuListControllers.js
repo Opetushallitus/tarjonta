@@ -308,10 +308,12 @@ app.controller('HakuListController',
                                     $scope.doPublish(haku, haku.$update, true);
                                 }});
 
-                            //recursively
-                            ret.push({title: LocalisationService.t("haku.menu.julkaise.rekursiivisesti"), action: function() {
-                                $scope.doPublish(haku, haku.$update);
-                            }});
+                            if(AuthService.isUserOph())  {
+                                //recursively
+                                ret.push({title: LocalisationService.t("haku.menu.julkaise.rekursiivisesti"), action: function() {
+                                    $scope.doPublish(haku, haku.$update);
+                                }});
+                            }
 
                         }
 
