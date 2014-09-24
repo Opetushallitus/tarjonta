@@ -23,9 +23,7 @@
                tt="koulutus.edit.koulutuskoodi.required">Koulutus vaaditaan</p>
         </td>
     </tr>
-
-    <!-- koulutusohjelma -->
-    <tr class="required" ng-if="uiModel.disableOsaamisala">
+    <tr class="required" ng-if="uiModel.enableOsaamisala">
         <th tt="koulutus.edit.osaamisala">Osaamisala</th>
         <td>
             <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
@@ -36,7 +34,7 @@
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
-               tt="koulutus.edit.koulutusohjelma.required">Lukiolinja vaaditaan</p>
+               tt="koulutus.edit.osaamisala.required">Osaamisala vaaditaan</p>
         </td>
     </tr>
 
@@ -96,6 +94,12 @@
     <tr>
         <th tt="koulutus.edit.kuvaus-jatko-opintomahdollisuudet">Jatko-opintomahdollisuudet</th>
         <td><div ng-bind-html="uiModel.jatkoOpintomahdollisuudet"></div></td>
+        <td></td>
+    </tr>
+    
+    <tr>
+        <th tt="koulutus.edit.kuvaus-osaamisalan-tavoitteet">Osaamisalan tavoitteet</th>
+        <td><div ng-bind-html="uiModel.koulutusohjelmanTavoitteet"></div></td>
         <td></td>
     </tr>
 
