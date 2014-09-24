@@ -1293,7 +1293,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         if (hakukohdeRDTO.getHakukohdeKoulutusOids() != null && !hakukohdeRDTO.getHakukohdeKoulutusOids().isEmpty()) {
             koulutusAstetyyppi = getKoulutusKoulutusAstetyyppi(hakukohdeRDTO.getHakukohdeKoulutusOids().get(0));
         } else {
-            throw new RuntimeException("No komos for hakukohde!");
+            throw new RuntimeException("No komotos for hakukohde!");
         }
         
         hakukohdeRDTO.setKoulutusAsteTyyppi(koulutusAstetyyppi.get(KOULUTUSASTE_KEY));

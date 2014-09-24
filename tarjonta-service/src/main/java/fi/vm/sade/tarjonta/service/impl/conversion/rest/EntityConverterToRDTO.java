@@ -206,6 +206,15 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             //at least in some cases, the education erikoisammattitutkinto do not have parent komo
             mergeParentAndChildDataToRDTO(dto, parentKomo != null ? parentKomo : komo, komo, komoto, param);
 
+            if (komo.getModuuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+                //Prevent TAVOITTEET child komo desc overwrite by copying it to other map object named KOULUTUSOHJELMAN_TAVOITTEET.
+                //At least used in amm & amm aiku education, not required in kk education.
+                KuvausV1RDTO komoChildDesc = komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), param.getShowMeta());
+                if (komoChildDesc != null && komoChildDesc.get(KomoTeksti.TAVOITTEET) != null) {
+                    ammDto.getKuvausKomo().put(KomoTeksti.KOULUTUSOHJELMAN_TAVOITTEET, (NimiV1RDTO) komoChildDesc.get(KomoTeksti.TAVOITTEET));
+                }
+            }
+
             final NayttotutkintoV1RDTO nayttoDto = (NayttotutkintoV1RDTO) dto;
             //nayttoDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             nayttoDto.setAmmattinimikkeet(commonConverter.convertToKoodiUrisDTO(komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET, param));
@@ -284,7 +293,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     }
 
     /**
-     * Only common data for all 'koulutus' types, if the data has any kind of
+     * Common data for all 'koulutus' types, if the data has any kind of
      * 'koulutus' difference, do not add it here!
      */
     private void convertCommonToRDTO(TYPE dto, Koulutusmoduuli komo, KoulutusmoduuliToteutus komoto, final RestParam restParam) {
@@ -303,7 +312,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setTunniste(komoto.getUlkoinenTunniste() != null ? komoto.getUlkoinenTunniste() : komo.getUlkoinenTunniste());
 
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
+
         komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), restParam.getShowMeta()));
+
         dto.setKuvausKomo(komoKuvaus);
     }
 
