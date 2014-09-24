@@ -7,12 +7,12 @@
                placeholder="{{ t('organisaatiohaku.tekstihaku.placeholder') }}">
 
         <select ng-model="hakuehdot.organisaatiotyyppi"
-                ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit">
+                ng-options="organisaatiotyyppi.koodi as organisaatiotyyppi.nimi for organisaatiotyyppi in organisaatiotyypit | orderBy:'nimi'">
             <option value="">{{t("organisaatiohaku.organisaatiotyypit.prompt")}}</option>
         </select>
 
         <select ng-model="hakuehdot.oppilaitostyyppi"
-                ng-options="koodi.koodiUriWithVersion as koodi.koodiNimi for koodi in oppilaitostyypit">
+                ng-options="koodi.koodiUriWithVersion as koodi.koodiNimi for koodi in oppilaitostyypit | orderBy:'koodiNimi'">
             <option value="">{{t("organisaatiohaku.oppilaitostyypit.prompt")}}</option>
         </select>
 
