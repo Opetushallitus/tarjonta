@@ -236,7 +236,6 @@ app.controller('HakuListController',
 
 
                       function change(haku, doAfter) {
-                        $log.debug("changing state with service call... onlyHaku:", onlyHaku);
 
                         Haku.changeState({oid: haku.oid, state: targetState, "onlyHaku":onlyHaku||false}).$promise.then(function(result) {
                             $log.debug("call done:", result);
