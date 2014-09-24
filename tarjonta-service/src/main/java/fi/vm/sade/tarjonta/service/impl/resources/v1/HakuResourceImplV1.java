@@ -45,7 +45,6 @@ import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCommitProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.KoodistoValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
@@ -419,11 +418,24 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila) {
+    public ResultV1RDTO<Tilamuutokset> setHakuState(String oid, TarjontaTila tila, boolean onlyHaku) {
         LOG.info("setHakuState({}, {})", oid, tila);
 
         final Haku haku = hakuDAO.findByOid(oid);
         permissionChecker.checkUpdateHaku(haku.getTarjoajaOids());
+
+
+        //julkaise vain haku
+        if (onlyHaku) {
+            if (haku.getTila().acceptsTransitionTo(tila)) {
+                haku.setTila(tila);
+                hakuDAO.update(haku);
+            } else {
+                //siirtymä ei mahdollinen
+                return ResultV1RDTO.create(ResultStatus.ERROR, (Tilamuutokset)null, ErrorV1RDTO.createValidationError("tila", "tila", "transition.not.valid"));
+            }
+            return new ResultV1RDTO<Tilamuutokset>(new Tilamuutokset());
+        }
 
         Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
         Tilamuutokset tm = null;
