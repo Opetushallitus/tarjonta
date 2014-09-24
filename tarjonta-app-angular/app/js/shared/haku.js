@@ -82,7 +82,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
 
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
-        return $resource(serviceUrl, {oid: '@oid', state:'@state', processId:'@processId'}, {
+        return $resource(serviceUrl, {oid: '@oid', state:'@state', processId:'@processId', onlyHaku:'@onlyHaku'}, {
             save: {
                 method: 'POST',
                 withCredentials: true,
@@ -120,12 +120,12 @@ app.factory('HakuV1', function($resource, $log, Config) {
             checkStateChange: {
               url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
               method: 'GET',
-              withCredentials: true,
+              withCredentials: true
             },
             changeState: {
               url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
               method: 'PUT',
-              withCredentials: true,
+              withCredentials: true
           },
           copy: {
             url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/copy',

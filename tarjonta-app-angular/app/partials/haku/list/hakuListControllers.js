@@ -219,7 +219,7 @@ app.controller('HakuListController',
                   var errorAckTitle = LocalisationService.t(prefix + ".error.ack.title");
                   var errorAckDescription = LocalisationService.t(prefix + ".error.ack.description");
                   
-                    return function(haku, doAfter) {
+                    return function(haku, doAfter, onlyHaku) {
 
                       /**
                        * Kerro käyttäjälle että operaatio suoritettu
@@ -236,8 +236,9 @@ app.controller('HakuListController',
 
 
                       function change(haku, doAfter) {
-                        $log.debug("changing state with service call...");
-                        Haku.changeState({oid: haku.oid, state: targetState}).$promise.then(function(result) {
+                        $log.debug("changing state with service call... onlyHaku:", onlyHaku);
+
+                        Haku.changeState({oid: haku.oid, state: targetState, "onlyHaku":onlyHaku||false}).$promise.then(function(result) {
                             $log.debug("call done:", result);
                             if ("OK" === result.status) {
                                 haku.tila = targetState;
@@ -305,8 +306,14 @@ app.controller('HakuListController',
                         //publish
                         if (true === results[0] && true === results[2].result) {
                             ret.push({title: LocalisationService.t("haku.menu.julkaise"), action: function() {
-                                    $scope.doPublish(haku, haku.$update);
+                                    $scope.doPublish(haku, haku.$update, true);
                                 }});
+
+                            //recursively
+                            ret.push({title: LocalisationService.t("haku.menu.julkaise.rekursiivisesti"), action: function() {
+                                $scope.doPublish(haku, haku.$update);
+                            }});
+
                         }
 
                         //cancel
