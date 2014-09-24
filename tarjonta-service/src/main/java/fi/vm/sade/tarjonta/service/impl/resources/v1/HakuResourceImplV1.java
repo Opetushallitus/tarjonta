@@ -136,9 +136,14 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         value = TarjontaTila.valueOf(sValue);
                         break;
                     case HAKUSANA:
-                    case TARJOAJAOID:
                         match = Match.LIKE; // %foo% haku
                         value = "%" + sValue + "%";
+                        break;
+                    case TARJOAJAOID:
+                        // OR-type LIKE '%foo%' search
+                        // split string by comma "value1,value1" => "(field LIKE '%value1%' OR field LIKE '%value2%)'
+                        match = Match.LIKE_OR;
+                        value = sValue;
                         break;
                     case HAKUKAUSI:
                     case HAKUTAPA:

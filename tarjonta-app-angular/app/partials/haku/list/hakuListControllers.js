@@ -337,9 +337,16 @@ app.controller('HakuListController',
                     params.KAUSI = undefined;
                     params.VUOSI = undefined;
 
+                    /**
+                     * Allow user only to select values included in the typeahead response. If value is not
+                     * in the response (user wrote manually something else) => clear the input to indicate that
+                     * the filter value is invalid.
+                     */
                     var $organisationFilter = angular.element('#organisationFilter');
-                    if ( $organisationFilter.val() !== selectedOrganisation.nimi ){
+                    if ( selectedOrganisation === null || $organisationFilter.val() !== selectedOrganisation.nimi ){
                         delete params.TARJOAJAOID;
+                        $organisationFilter.val('');
+                        selectedOrganisation = null;
                     }
 
                     HakuV1Service.search(params).then(function(haut) {
@@ -366,20 +373,49 @@ app.controller('HakuListController',
                 };
 
                 $scope.searchOrganisations = function(qterm) {
+
+                    /**
+                     * Recursively process the organizations results, so that all the children are also
+                     * included in the final result set.
+                     */
+                    function processOrganizations(alreadyAddedOrganizations, newOrganizations, hierarchyLevel) {
+                        hierarchyLevel = hierarchyLevel || 0;
+
+                        angular.forEach(newOrganizations, function(org) {
+                            org.nimi = new Array(hierarchyLevel + 1).join('- ') + org.nimi;
+                            alreadyAddedOrganizations.push(org);
+
+                            if ( angular.isArray(org.children) ) {
+                                alreadyAddedOrganizations = processOrganizations(alreadyAddedOrganizations, org.children, hierarchyLevel + 1);
+                            }
+                        });
+
+                        return alreadyAddedOrganizations;
+                    }
+
                     return OrganisaatioService.etsi({
                         searchStr: qterm,
                         lakkautetut: false,
-                        skipparents: true,
+                        skipparents: false,
                         suunnitellut: false
                     }).then(function(result) {
-                        return result.organisaatiot;
+                        return processOrganizations([], result.organisaatiot);
                     });
                 };
 
                 var selectedOrganisation;
-                $scope.filterByOrganisation = function(organisation) {
-                    selectedOrganisation = organisation;
-                    $scope.searchParams.TARJOAJAOID = [organisation.oid];
+                $scope.filterByOrganisation = function(organization) {
+                    selectedOrganisation = organization;
+
+                    $scope.searchParams.TARJOAJAOID = organization.oid;
+
+                    function includeChildren(parent) {
+                        angular.forEach(parent.children, function(child) {
+                            $scope.searchParams.TARJOAJAOID += ',' + child.oid;
+                            includeChildren(child);
+                        });
+                    }
+                    includeChildren(organization);
                 };
 
                 $scope.initOrganisationFilter = function() {
