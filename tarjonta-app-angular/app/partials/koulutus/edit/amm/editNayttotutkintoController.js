@@ -54,10 +54,10 @@ app.controller('EditNayttotutkintoController',
                      * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                      */
                     $scope.lisatiedot = converter.STRUCTURE[$scope.CONFIG.TYYPPI].KUVAUS_ORDER;
-                    $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo);
+                    $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo, null);
                     $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                     $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
-                    
+
                     uiModel.enableOsaamisala = angular.isDefined(model.koulutusohjelma.uri);
 
                 } else if (!angular.isUndefined($routeParams.org)) {
@@ -162,7 +162,8 @@ app.controller('EditNayttotutkintoController',
                 $scope.getLisatietoKielet($scope.model, $scope.uiModel, false);
             }
 
-            $scope.loadKomoKuvausTekstis = function (komoOid, uiModel, kuvausKomoto) {
+            $scope.loadKomoKuvausTekstis = function (komoOid, uiModel, kuvausKomoto, moduulityyppi) {
+
                 if (angular.isDefined(kuvausKomoto) && komoOid === null && kuvausKomoto) {
                     if (angular.isDefined(kuvausKomoto['TAVOITTEET'])) {
                         uiModel.kuvausTavoite = $scope.getLang(kuvausKomoto['TAVOITTEET'].tekstis);
@@ -178,7 +179,6 @@ app.controller('EditNayttotutkintoController',
                     }
                 } else {
                     TarjontaService.komo().tekstis({oid: komoOid}, function (res) {
-                        console.log(res.result);
                         if (angular.isDefined(res.result['TAVOITTEET'])) {
                             $scope.uiModel.kuvausTavoite = $scope.getLang(res.result['TAVOITTEET'].tekstis);
                         }
@@ -189,9 +189,6 @@ app.controller('EditNayttotutkintoController',
 
                         if (angular.isDefined(res.result['JATKOOPINTO_MAHDOLLISUUDET'])) {
                             $scope.uiModel.jatkoOpintomahdollisuudet = $scope.getLang(res.result['JATKOOPINTO_MAHDOLLISUUDET'].tekstis);
-                        }
-                        if (angular.isDefined(kuvausKomoto['KOULUTUSOHJELMAN_TAVOITTEET'])) {
-                            uiModel.koulutusohjelmanTavoitteet = $scope.getLang(kuvausKomoto['KOULUTUSOHJELMAN_TAVOITTEET'].tekstis);
                         }
                     });
                 }
@@ -204,8 +201,16 @@ app.controller('EditNayttotutkintoController',
                 if (angular.isDefined(uri) && uri !== null && oUri !== uri) {
 
                     if (angular.isDefined($scope.uiModel.koulutusohjelmaModules[uri])) {
-                        $scope.updateKomoOidToModule($scope.uiModel.koulutusohjelmaModules[uri].oid);
+                        var komoOid = $scope.uiModel.koulutusohjelmaModules[uri].oid;
+                        TarjontaService.komo().tekstis({oid: komoOid}, function (res) {
+                            if (angular.isDefined(res.result['TAVOITTEET'])) {
+                                $scope.uiModel.koulutusohjelmanTavoitteet = $scope.getLang(res.result['TAVOITTEET'].tekstis);
+                            }
+                        });
+
+                        $scope.updateKomoOidToModule(komoOid);
                         $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+
                     } else {
                         $log.error("missing koulutus by " + uri);
                     }
