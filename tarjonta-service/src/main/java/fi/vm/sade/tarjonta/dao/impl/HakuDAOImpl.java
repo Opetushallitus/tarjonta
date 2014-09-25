@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -179,6 +180,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             .put(Field.HAKUVUOSI, QHaku.haku.hakukausiVuosi)
             .put(Field.KOULUTUKSEN_ALKAMISKAUSI, QHaku.haku.koulutuksenAlkamiskausiUri)
             .put(Field.KOULUTUKSEN_ALKAMISVUOSI, QHaku.haku.koulutuksenAlkamisVuosi)
+            .put(Field.TARJOAJAOID, QHaku.haku.tarjoajaOidString)
             .put(Field.HAKUTAPA, QHaku.haku.hakutapaUri)
             .put(Field.HAKUTYYPPI, QHaku.haku.hakutyyppiUri)
             .put(Field.KOHDEJOUKKO, QHaku.haku.kohdejoukkoUri)
@@ -197,6 +199,9 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
 
         String q = "SELECT distinct " + (oidOnly ? "haku.oid" : "haku") + " from Haku haku join haku.nimi nimi join nimi.tekstis tekstiKaannos" + (criteriaList.size() > 0 ? " where " : "");
 
+        int orOffset = 0;
+        ArrayList<Object> paramList = new ArrayList<Object>();
+
         for (int i = 0; i < criteriaList.size(); i++) {
             HakuSearchCriteria criteria = criteriaList.get(i);
             String field = mapping.get(criteria.getField()).toString();
@@ -206,22 +211,35 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             }
             String template = (criteria.getField() == Field.HAKUSANA ? "LOWER(%s)" : "%s");
 
-            q += String.format(template, field) + matchType.get(criteria.getMatch()) + "?" + (i + 1);
-
+            if ( criteria.getMatch() == Match.LIKE_OR ) {
+                q += "(1 = 2";
+                String[] orValues = criteria.getValue().toString().split(",");
+                orOffset --; // Decrement -1, so that the first loop isn't counted
+                for (String val : orValues) {
+                    orOffset ++;
+                    q += " OR " + String.format(template, field) + " LIKE ?" + (i + 1 + orOffset);
+                    paramList.add("%" + val + "%");
+                }
+                q += ")";
+            }
+            else {
+                q += String.format(template, field) + matchType.get(criteria.getMatch()) + "?" + (i + 1 + orOffset);
+                paramList.add(criteria.getField() == Field.HAKUSANA ? criteria.getValue().toString().toLowerCase() : criteria.getValue());
+            }
             if (i < criteriaList.size() - 1) {
                 q += " AND ";
             }
         }
 
         final Query query = getEntityManager().createQuery(q);
-        for (int i = 0; i < criteriaList.size(); i++) {
-            HakuSearchCriteria criteria = criteriaList.get(i);
-            query.setParameter(i + 1, (criteria.getField() == Field.HAKUSANA ? criteria.getValue().toString().toLowerCase() : criteria.getValue()));
+        for (int i = 0; i < paramList.size(); i++) {
+            query.setParameter(i + 1, paramList.get(i));
         }
 
         if (count > 0) {
             query.setMaxResults(count);
         }
+
         if (startIndex > 0) {
             query.setFirstResult(startIndex);
         }

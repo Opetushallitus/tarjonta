@@ -46,11 +46,13 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         var tempMeta = apiModel.meta;
         apiModel.meta = {};
 
-        for (var i in languageUri) {
+        var i;
+
+        for (i in languageUri) {
             apiModel.meta[languageUri[i]] = tempMeta[languageUri[i]];
         }
 
-        for (var i in tempMeta) {//add all other
+        for (i in tempMeta) {//add all other
             if (angular.isUndefined(apiModel.meta[i])) {
                 apiModel.meta[i] = tempMeta[i];
             }
@@ -270,7 +272,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             factory.throwError('API model must be object, or empty object');
         }
         //fetch org name and OID from Organisation service
-        apiModel.organisaatio = {"oid": oid, "nimi": nimi}
+        apiModel.organisaatio = {"oid": oid, "nimi": nimi};
     };
 
     /**
@@ -388,7 +390,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutuksenAlkamisvuosi: {"default": ''},
             toteutustyyppi: {"default": null}, //no default value!
             tila: {'default': 'LUONNOS'},
-            tunniste: {"default": ''}
+            tunniste: {"default": ''},
+            tarkenne: {'default': ''}
         },
         DATES: {
             koulutuksenAlkamisPvms: {"default": new Date()}

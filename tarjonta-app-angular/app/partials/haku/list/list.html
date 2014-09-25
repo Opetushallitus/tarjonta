@@ -37,7 +37,7 @@
             </td>
             <th colspan="2" tt="haku.list.alkamisKausiJaVuosi">Alkamiskausi- ja vuosi</th>
             <th tt="haku.list.tila">Haun tila</th>
-            <th>&nbsp;</th>
+            <th tt="haku.list.organisaatio">Organisaatio</th>
         </tr>
         <!-- 2. komponenttirivi -->
         <tr>
@@ -57,7 +57,16 @@
                     <option value="" data-tt="tarjonta.haku.kaikki"></option>
                 </select>
             </td>
-            <td class="controls">
+            <td>
+                <input type="text" ng-model="selectedOrganisation" typeahead-min-length="3" typeahead-wait-ms="500"
+                       typeahead-on-select="filterByOrganisation($item)"
+                       id="organisationFilter"
+                       typeahead="organisation.nimi for organisation in searchOrganisations($viewValue)"
+                       class="form-control" />
+            </td>
+        </tr>
+        <tr>
+            <td class="controls" colspan="5">
                 <button class="btn" ng-click="clearSearch()"><span tt="tarjonta.haku.tyhjenna">Tyhjennä</span></button>
                 <button class="btn btn-primary" ng-disabled="!searchParams.KAUSIVUOSI || unloadedKoodis>0" ng-click="doSearch()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></button>
             </td>

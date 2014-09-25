@@ -80,7 +80,7 @@ app.factory('HakuV1', function($resource, $log, Config) {
 
         var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
-        return $resource(serviceUrl, {oid: '@oid', state:'@state', processId:'@processId'}, {
+        return $resource(serviceUrl, {oid: '@oid', state:'@state', processId:'@processId', onlyHaku:'@onlyHaku'}, {
             save: {
                 method: 'POST',
                 withCredentials: true,
@@ -118,12 +118,12 @@ app.factory('HakuV1', function($resource, $log, Config) {
             checkStateChange: {
               url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
               method: 'GET',
-              withCredentials: true,
+              withCredentials: true
             },
             changeState: {
               url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
               method: 'PUT',
-              withCredentials: true,
+              withCredentials: true
           },
           copy: {
             url:Config.env.tarjontaRestUrlPrefix + 'haku/:oid/copy',
@@ -182,7 +182,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                 "koulutuksenAlkamisVuosi": 1900 + new Date().getYear(),
                 "koulutuksenAlkamiskausiUri": "",
                 "tila": "LUONNOS",
-                "sijoittelu": true,
+                "sijoittelu": false,
                 "jarjestelmanHakulomake" : true,
                 "hakuaikas": [{
                         "nimi": "",
@@ -198,7 +198,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
                     "kieli_en": ""
                 },
                 "maxHakukohdes": 0,
-                "usePriority" : true
+                "usePriority" : false
                 // "hakulomakeUri" : "http://www.hut.fi",
             }
         };

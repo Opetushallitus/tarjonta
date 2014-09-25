@@ -30,6 +30,7 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNa
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
+import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -123,7 +124,57 @@ public class KoulutusDTOConverterToEntity {
         korkeakouluKomotoDataUpdate(komoto, dto, userOid);
         addOrRemoveImages(dto, komoto, userOid);
 
+        updateOwners(komoto, dto);
+
         return komoto;
+    }
+
+    /**
+     * KJOH-778 multiple owners, API input to entity conversion
+     *
+     * @param komoto
+     * @param dto
+     * @see EntityConverterToRDTO#convert(Class,
+     * fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus,
+     * fi.vm.sade.tarjonta.publication.model.RestParam)
+     */
+    private void updateOwners(KoulutusmoduuliToteutus komoto, KoulutusKorkeakouluV1RDTO dto) {
+        if (komoto == null || dto == null) {
+            return;
+        }
+
+        LOG.info("updateOwners()... tarj={}, järj={}", dto.getOpetusTarjoajat(), dto.getOpetusJarjestajat());
+
+        komoto.getOwners().clear();
+
+        boolean isFirst = true;
+        for (String oid : dto.getOpetusJarjestajat()) {
+            // First "jarjestaja" / organizer is kind of "base" organizer
+            if (isFirst) {
+                komoto.setJarjesteja(oid);
+                isFirst = false;
+            } else {
+                KoulutusOwner owner = new KoulutusOwner();
+                owner.setOwnerOid(oid);
+                owner.setOwnerType(KoulutusOwner.JARJESTAJA);
+                komoto.getOwners().add(owner);
+            }
+        }
+
+        isFirst = true;
+        for (String oid : dto.getOpetusTarjoajat()) {
+            // First "tarjoaja" / offerer is kind of "base" offerer
+            if (isFirst) {
+                komoto.setTarjoaja(oid);
+                isFirst = false;
+            } else {
+                KoulutusOwner owner = new KoulutusOwner();
+                owner.setOwnerOid(oid);
+                owner.setOwnerType(KoulutusOwner.TARJOAJA);
+                komoto.getOwners().add(owner);
+            }
+        }
+        LOG.info("updateOwners()... done.");
     }
 
     /*
@@ -326,6 +377,10 @@ public class KoulutusDTOConverterToEntity {
         if (dto.getKoulutuslaji() != null) {
             komoto.getKoulutuslajis().clear();
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
+        }
+
+        if (dto.getTarkenne() != null && !dto.getTarkenne().isEmpty()) {
+            komoto.setNimi(commonConverter.convertToTextFi(dto.getTarkenne(), FieldNames.TARKENNE));
         }
 
         /* CUSTOM DATA by object type */

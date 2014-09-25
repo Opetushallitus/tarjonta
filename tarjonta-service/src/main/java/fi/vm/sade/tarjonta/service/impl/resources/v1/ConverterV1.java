@@ -1149,6 +1149,14 @@ public class ConverterV1 {
         hakukohdeLiiteV1RDTO.setSahkoinenToimitusOsoite(hakukohdeLiite.getSahkoinenToimitusosoite());
         hakukohdeLiiteV1RDTO.setLiitteenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohdeLiite.getToimitusosoite()));
         hakukohdeLiiteV1RDTO.setLiitteenTyyppi(hakukohdeLiite.getLiitetyyppi());
+
+        if (hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite() != null && hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite().getPostinumero() != null && tarjontaKoodistoHelper != null) {
+            KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite().getPostinumero());
+            if (postinumeroKoodi != null) {
+                hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite().setPostinumeroArvo(postinumeroKoodi.getKoodiArvo());
+            }
+        }
+
         hakukohdeLiiteV1RDTO.setLiitteenKuvaukset(BaseRDTOConverter.convertToMap(hakukohdeLiite.getKuvaus(), tarjontaKoodistoHelper));
 
         return hakukohdeLiiteV1RDTO;

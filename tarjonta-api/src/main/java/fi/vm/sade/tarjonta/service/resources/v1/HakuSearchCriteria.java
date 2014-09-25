@@ -30,11 +30,23 @@ public class HakuSearchCriteria {
     }
 
     public static enum Field {
-        TILA, HAKUKAUSI, HAKUVUOSI, KOULUTUKSEN_ALKAMISKAUSI, KOULUTUKSEN_ALKAMISVUOSI, HAKUTAPA, HAKUTYYPPI, KOHDEJOUKKO, HAKUSANA;
+        TILA,
+        HAKUKAUSI,
+        HAKUVUOSI,
+        KOULUTUKSEN_ALKAMISKAUSI,
+        KOULUTUKSEN_ALKAMISVUOSI,
+        HAKUTAPA,
+        HAKUTYYPPI,
+        KOHDEJOUKKO,
+        HAKUSANA,
+        TARJOAJAOID;
     }
 
     public static enum Match {
-        MUST_MATCH, MUST_NOT, LIKE;
+        MUST_MATCH,
+        MUST_NOT,
+        LIKE,
+        LIKE_OR;
     }
 
     @Override

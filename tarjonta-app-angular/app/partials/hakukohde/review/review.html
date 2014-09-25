@@ -1,354 +1,317 @@
 <div data-ng-controller="HakukohdeParentController">
-
-<div data-ng-controller="HakukohdeReviewController">
-  <controls-model
-        model="formControls"
-        dto="model.hakukohde">
-
-        <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
-       <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete()"></controls-button>
-       <controls-button disabled="!isMutable" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
-        <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
-        <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenJaOrganisaationNimi()]"></controls-notify>
-
-      <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
-
-    </controls-model>
-
-
-    <display-controls model="formControls" display="header"></display-controls>
-
-    <h2>{{ getHakukohteenNimi() }}</h2>
-	
-	<table class="tarjontaForm">
-	    <tr><th></th><td></td><td></td></tr>
-
-	    <!-- PERUSTIEDOT / TODO collapse -->
-	
-	    <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-	        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
-	    </tr>
-	
-	    <tbody ng-show="!model.collapse.perusTiedot">
-		
-            <tr>
-                <th tt="hakukohde.review.perustiedot.nimi"/>
-                <td colspan="2">
-                    <div ng-show="!showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                        <mk-text model="model.hakukohde.hakukohteenNimet" display="rows"/>
-                    </div>
-                    <div ng-show="showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                        <div koodi uri="model.hakukohde.hakukohteenNimiUri">resolved</div>
-                    </div>
-                    <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                        {{model.hakukohde.hakukohteenNimi}}
-                    </div>
-                </td>
+    <div data-ng-controller="HakukohdeReviewController">
+        <controls-model
+            model="formControls"
+            dto="model.hakukohde">
+            <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
+            <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete()"></controls-button>
+            <controls-button disabled="!isMutable" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
+            <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
+            <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenJaOrganisaationNimi()]"></controls-notify>
+            <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+        </controls-model>
+        <display-controls model="formControls" display="header"></display-controls>
+        <h2>{{ getHakukohteenNimi()}}</h2>
+        <table class="tarjontaForm">
+            <tr><th></th><td></td><td></td></tr>
+            <!-- PERUSTIEDOT / TODO collapse -->
+            <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
+                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
             </tr>
-		    <tr ng-show="isKK">
-		        <th tt="hakukohde.review.perustiedot.ulkoinenTunniste"></th>
-		        <td colspan="2">
-		            {{ model.hakukohde.ulkoinenTunniste }}
-		        </td>
-		    </tr>
-            
-            <tr>
-                <th tt="hakukohde.review.perustiedot.haku"/>
-                <td colspan="2">
-                    {{ model.hakuNimi }}
-                </td>
+            <tbody ng-show="!model.collapse.perusTiedot">
+                <tr>
+                    <th tt="hakukohde.review.perustiedot.nimi"/>
+                    <td colspan="2">
+                        <div ng-show="!showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                            <mk-text model="model.hakukohde.hakukohteenNimet" display="rows"/>
+                        </div>
+                        <div ng-show="showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                            <div koodi uri="model.hakukohde.hakukohteenNimiUri">resolved</div>
+                        </div>
+                        <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                            {{model.hakukohde.hakukohteenNimi}}
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-show="isKK">
+                    <th tt="hakukohde.review.perustiedot.ulkoinenTunniste"></th>
+                    <td colspan="2">
+                        {{ model.hakukohde.ulkoinenTunniste}}
+                    </td>
+                </tr>
+                <tr>
+                    <th tt="hakukohde.review.perustiedot.haku"/>
+                    <td colspan="2">
+                        {{ model.hakuNimi}}
+                    </td>
+                </tr>
+                <tr ng-show="!isAiku">
+                    <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
+                    <td colspan="2">
+                        <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
+                            {{ hakukelpoisuusvaatimus}}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
+                    <td colspan="2">
+                        {{ model.hakukohde.aloituspaikatLkm}}
+                    </td>
+                </tr>
+                <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
+                              'LUKIOKOULUTUS',
+                              'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                              'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                              'PERUSOPETUKSEN_LISAOPETUS',
+                              'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                              'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                              'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                              'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+                              ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
+                    <th tt="hakukohde.review.perustiedot.valintojenAloituspaikat"/>
+                    <td colspan="2">
+                        {{ model.hakukohde.valintojenAloituspaikatLkm }}
+                    </td>
+                </tr>
+
+                <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
+                              'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+                              ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
+                    <th tt="hakukohde.review.perustiedot.kaksoistutkinto"/>
+                    <td colspan="2">
+                        {{ model.kaksoisTutkinto}}
+                    </td>
+                </tr>
+
+                <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
+                    <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo"/>
+                    <td colspan="2">
+                        {{ model.hakukohde.alinHyvaksyttavaKeskiarvo != 0 ? model.hakukohde.alinHyvaksyttavaKeskiarvo : ""}}
+                    </td>
+                </tr>
+
+                <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
+                    <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet"/>
+                    <td colspan="2">
+                       <span data-ng-repeat="painotettavaOppiaine in model.painotettavatOppiaineet">
+                           {{ painotettavaOppiaine.nimi }} ( {{painotettavaOppiaine.painokerroin}} ){{$last ? '' : ', '}}
+                       </span>
+                    </td>
+                </tr>
+                <tr ng-show="!isAiku">
+                    <th tt="hakukohde.review.perustiedot.kaytetaanJarjestelmanValintaPalvelua"></th>
+                    <td colspan="2">
+                        {{ model.kaytetaanJarjestelmanValintaPalveluaArvo}}
+                    </td>
+                </tr>
+                <tr>
+                    <th tt="hakukohde.review.perustiedot.lisatiedot"/>
+                    <td colspan="2">
+                        <mk-text model="model.hakukohde.lisatiedot" display="tabs"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
+                    <td colspan="2">
+                        <mk-text model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" display="tabs"/>
+                    </td>
+                </tr>
+            </tbody>
+            <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
+                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
             </tr>
-
-		    <tr ng-show="!isAiku">
-		        <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
-		        <td colspan="2">
-		            <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
-		                {{ hakukelpoisuusvaatimus }}
-		            </span>
-		        </td>
-		    </tr>
-		
-		    <tr>
-		        <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
-		        <td colspan="2">
-		            {{ model.hakukohde.aloituspaikatLkm }}
-		        </td>
-		    </tr>
-
-            <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
-                          'LUKIOKOULUTUS',
-                          'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                          'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
-                          'PERUSOPETUKSEN_LISAOPETUS',
-                          'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
-                          'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
-                          'VAPAAN_SIVISTYSTYON_KOULUTUS',
-                          'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
-                          ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
-                <th tt="hakukohde.review.perustiedot.valintojenAloituspaikat"/>
+            <tr ng-show="!model.collapse.valintakokeet">
+                <th></th>
                 <td colspan="2">
-                    {{ model.hakukohde.valintojenAloituspaikatLkm }}
-                </td>
-            </tr>
-
-            <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
-                          'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
-                          ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
-                <th tt="hakukohde.review.perustiedot.kaksoistutkinto"/>
-                <td colspan="2">
-                    {{ model.kaksoisTutkinto}}
-                </td>
-            </tr>
-
-            <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
-                <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo"/>
-                <td colspan="2">
-                    {{ model.hakukohde.alinHyvaksyttavaKeskiarvo != 0 ? model.hakukohde.alinHyvaksyttavaKeskiarvo : ""}}
-                </td>
-            </tr>
-
-            <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
-                <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet"/>
-                <td colspan="2">
-		            <span data-ng-repeat="painotettavaOppiaine in model.painotettavatOppiaineet">
-		                {{ painotettavaOppiaine.nimi }} ( {{painotettavaOppiaine.painokerroin}} ){{$last ? '' : ', '}}
-		            </span>
-                </td>
-            </tr>
-
-            <tr ng-show="!isAiku">
-		        <th tt="hakukohde.review.perustiedot.kaytetaanJarjestelmanValintaPalvelua"></th>
-		        <td colspan="2">
-		            {{ model.kaytetaanJarjestelmanValintaPalveluaArvo }}
-		        </td>
-		    </tr>
-		
-            <tr>
-                <th tt="hakukohde.review.perustiedot.lisatiedot"/>
-                <td colspan="2">
-                    <mk-text model="model.hakukohde.lisatiedot" display="tabs"/>
-                </td>
-            </tr>
-
-            <tr>
-                <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
-                <td colspan="2">
-                    <mk-text model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" display="tabs"/>
-                </td>
-            </tr>
-            
-       	 
-	    </tbody>
-	
-	
-	    <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
-	        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
-	    </tr>
-	    <tr ng-show="!model.collapse.valintakokeet">
-	        <th></th>
-	        <td colspan="2">
-                <div ng-if="model.hakukohde.toteutusTyyppi !== 'LUKIOKOULUTUS'">
-                    <mk-tabs model="model.valintakoeKielet" selection="model.selectedValintakoeKieli"></mk-tabs>
-                    <table class="table" ng-show="model.selectedValintakoeKieli">
-                        <tr>
-                            <th>{{t('hakukohde.review.valintakokeet.nimi')}}</th>
-                            <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
-                            <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
-                            <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>
-                            <th>{{t('hakukohde.review.valintakokeet.lisatiedot')}}</th>
-                        </tr>
-                        <tbody data-ng-repeat="valintakoe in getLocalizedValintakoe(model.selectedValintakoeKieli)">
-                        <tr ng-show="valintakoe.valintakoeAjankohtas" data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
-                            <td ng-show="!$first" colspan="2"></td>
-                            <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
-                            <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
-                            <td>
-                                {{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}
-                            </td>
-                            <td>
-                                {{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}
-                            </td>
-                            <td>
-                                {{ valintakoeaika.lisatiedot }}
-                            </td>
-                        </tr>
-                        <tr ng-show="!valintakoe.valintakoeAjankohtas.length">
-                            <td>{{valintakoe.valintakoeNimi}}</td>
-                            <td data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
-                            <td colspan="3">&nbsp;</td>
-                        </tr>
-                        </tbody>
-                     </table>
-                </div>
-
-                <div ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS' && model.hakukohde.valintakoe.pisterajat.length > 0">
-                    <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat">Pisterajat</span></h2>
-                    <table class="table">
-                        <thead>
+                    <div ng-if="model.hakukohde.toteutusTyyppi !== 'LUKIOKOULUTUS'">
+                        <mk-tabs model="model.valintakoeKielet" selection="model.selectedValintakoeKieli"></mk-tabs>
+                        <table class="table" ng-show="model.selectedValintakoeKieli">
                             <tr>
-                                <th></th>
-                                <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinpistemaara">Alin pistemäärä</th>
-                                <th tt="tarjonta.hakukohde.valintakoe.pisterajat.ylinpistemaara">Ylin pistemäärä</th>
-                                <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinhyvaksyttypistemaara">Alin hyväksytty pistemäärä</th>
+                                <th>{{t('hakukohde.review.valintakokeet.nimi')}}</th>
+                                <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
+                                <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
+                                <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>
+                                <th>{{t('hakukohde.review.valintakokeet.lisatiedot')}}</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></td>
-                            <td>{{model.hakukohde.paasykoe.alinPistemaara}}</td>
-                            <td>{{model.hakukohde.paasykoe.ylinPistemaara}}</td>
-                            <td><span ng-show="model.hakukohde.paasykoe.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.paasykoe.alinHyvaksyttyPistemaara}}</span></td>
-                        </tr>
-                        <tr>
-                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisanaytot">Lisapisteet</span></td>
-                            <td>{{model.hakukohde.lisapisteet.alinPistemaara}}</td>
-                            <td>{{model.hakukohde.lisapisteet.ylinPistemaara}}</td>
-                            <td><span ng-show="model.hakukohde.lisapisteet.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.lisapisteet.alinHyvaksyttyPistemaara}}</span></td>
-                        </tr>
-                        <tr>
-                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet">Kokonaispisteet</span></td>
-                            <td></td>
-                            <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet.max">max. 10</span></td>
-                            <td><span ng-show="model.hakukohde.kokonaispisteet.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.kokonaispisteet.alinHyvaksyttyPistemaara}}</span></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div ng-if="model.hakukohde.valintakoe.valintakoeAjankohtas">
-                        <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></h2>
-                        <div><mk-text model="model.hakukohde.valintakoe.kuvaukset" display="tabs"/></div>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th tt="tarjonta.hakukohde.valintakoe.ajankohta">Ajankohta</th>
-                                    <th tt="tarjonta.hakukohde.valintakoe.osoite">Osoite</th>
-                                    <th tt="tarjonta.hakukohde.valintakoe.lisatiedot">Lisätiedot</th>
+                            <tbody data-ng-repeat="valintakoe in getLocalizedValintakoe(model.selectedValintakoeKieli)">
+                                <tr ng-show="valintakoe.valintakoeAjankohtas" data-ng-repeat="valintakoeaika in valintakoe.valintakoeAjankohtas">
+                                    <td ng-show="!$first" colspan="2"></td>
+                                    <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
+                                    <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
+                                    <td>
+                                        {{valintakoeaika.alkaa| date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu | date:'dd.MM.yyyy HH:mm '}}
+                                    </td>
+                                    <td>
+                                        {{ valintakoeaika.osoite.osoiterivi1}}, {{ valintakoeaika.osoite.postinumeroArvo}}, {{ valintakoeaika.osoite.postitoimipaikka}}
+                                    </td>
+                                    <td>
+                                        {{ valintakoeaika.lisatiedot}}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-ng-repeat="valintakoeaika in model.hakukohde.valintakoe.valintakoeAjankohtas">
-                                    <td>{{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}</td>
-                                    <td>{{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}</td>
-                                    <td>{{ valintakoeaika.lisatiedot }}</td>
+                                <tr ng-show="!valintakoe.valintakoeAjankohtas.length">
+                                    <td>{{valintakoe.valintakoeNimi}}</td>
+                                    <td data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
+                                    <td colspan="3">&nbsp;</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div ng-if="model.hakukohde.lisapisteet">
-                        <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisapisteet">Lisäpisteet</span></h2>
-                        <div><mk-text model="model.hakukohde.valintakoe.lisanaytot" display="tabs"/></div>
+
+                    <div ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS' && model.hakukohde.valintakoe.pisterajat.length > 0">
+                        <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat">Pisterajat</span></h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinpistemaara">Alin pistemäärä</th>
+                                    <th tt="tarjonta.hakukohde.valintakoe.pisterajat.ylinpistemaara">Ylin pistemäärä</th>
+                                    <th tt="tarjonta.hakukohde.valintakoe.pisterajat.alinhyvaksyttypistemaara">Alin hyväksytty pistemäärä</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></td>
+                                <td>{{model.hakukohde.paasykoe.alinPistemaara}}</td>
+                                <td>{{model.hakukohde.paasykoe.ylinPistemaara}}</td>
+                                <td><span ng-show="model.hakukohde.paasykoe.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.paasykoe.alinHyvaksyttyPistemaara}}</span></td>
+                            </tr>
+                            <tr>
+                                <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisanaytot">Lisapisteet</span></td>
+                                <td>{{model.hakukohde.lisapisteet.alinPistemaara}}</td>
+                                <td>{{model.hakukohde.lisapisteet.ylinPistemaara}}</td>
+                                <td><span ng-show="model.hakukohde.lisapisteet.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.lisapisteet.alinHyvaksyttyPistemaara}}</span></td>
+                            </tr>
+                            <tr>
+                                <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet">Kokonaispisteet</span></td>
+                                <td></td>
+                                <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet.max">max. 10</span></td>
+                                <td><span ng-show="model.hakukohde.kokonaispisteet.alinHyvaksyttyPistemaara > 0">{{model.hakukohde.kokonaispisteet.alinHyvaksyttyPistemaara}}</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div ng-if="model.hakukohde.valintakoe.valintakoeAjankohtas">
+                            <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></h2>
+                            <div><mk-text model="model.hakukohde.valintakoe.kuvaukset" display="tabs"/></div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th tt="tarjonta.hakukohde.valintakoe.ajankohta">Ajankohta</th>
+                                        <th tt="tarjonta.hakukohde.valintakoe.osoite">Osoite</th>
+                                        <th tt="tarjonta.hakukohde.valintakoe.lisatiedot">Lisätiedot</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-ng-repeat="valintakoeaika in model.hakukohde.valintakoe.valintakoeAjankohtas">
+                                        <td>{{valintakoeaika.alkaa | date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu  | date:'dd.MM.yyyy HH:mm '}}</td>
+                                        <td>{{ valintakoeaika.osoite.osoiterivi1 }}, {{ valintakoeaika.osoite.postinumeroArvo }}, {{ valintakoeaika.osoite.postitoimipaikka }}</td>
+                                        <td>{{ valintakoeaika.lisatiedot }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-if="model.hakukohde.lisapisteet">
+                            <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisapisteet">Lisäpisteet</span></h2>
+                            <div><mk-text model="model.hakukohde.valintakoe.lisanaytot" display="tabs"/></div>
+                        </div>
                     </div>
-
-                </div>
-	        </td>
-	    </tr>
-	
-	    <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
-	        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
-	    </tr>
-	    <tr ng-show="!model.collapse.liitteet">
-	        <th></th>
-	        <td colspan="2">
-                <mk-tabs model="model.liiteKielet" selection="model.selectedliiteKieli"></mk-tabs>
-	            <table class="table" ng-show="model.selectedliiteKieli">
-	                <tr>
-	                    <th tt="hakukohde.review.liitteet.nimi"/>
-	                    <th tt="hakukohde.review.liitteet.kuvaus"/>
-	                    <th tt="hakukohde.review.liitteet.toim.mennessa"/>
-	                    <th tt="hakukohde.review.liitteet.toim.osoite"/>
-	                </tr>
-	                <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
-	                    <td>{{ liite.liitteenNimi }}</td>
-	                    <td data-ng-bind-html="getLiitteenKuvaus(liite,model.selectedliiteKieli)"/>
-	                    <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
-	                    <td>{{ liite.liitteenToimitusOsoite.osoiterivi1 }}, {{ liite.liitteenToimitusOsoite.postinumeroArvo }}, {{ liite.liitteenToimitusOsoite.postitoimipaikka }}</td>
-	                </tr>
-	            </table>
- 	        </td>
-	    </tr>
-	
-	    <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
-	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="doEdit($event, 'VALINTAPERUSTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
-	    </tr>
-	
-	    <tr ng-show="!model.collapse.valintaperusteet">
-	        <th></th>
-            <td colspan="2">
-                <mk-text model="model.hakukohde.valintaperusteKuvaukset" display="tabs"/>
-            </td>
-	    </tr>
-	
-	    <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
-	        <td><a class="btn" href ng-disabled="!isMutable" ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
-	    </tr>
-	
-	    <tr ng-show="!model.collapse.sorakuvaukset">
-	        <th></th>
-            <td colspan="2">
-                <mk-text model="model.hakukohde.soraKuvaukset" display="tabs"/>
-            </td>
-	    </tr>
-	
-	    <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
-	        <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a>
-	    </tr>
-	    
-	    <tr ng-show="!model.collapse.koulutukset">
-	        <th></th>
-	        <td colspan="2">
-	            <table class="table">
-	                <tr data-ng-repeat="koulutus in  model.koulutukses">
-	                    <td>
-	                        <a ng-href="#/koulutus/{{koulutus.oid}}/edit">{{koulutus.nimi}}</a>
-	                    </td>
-	                    <td>
-	                        <div class="align-right">
-	                            <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
-	                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
-	                        </div>
-	                    </td>
-	                </tr>
-	            </table>
-	        </td>
-	    </tr>
-
-	    <tr class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
-	        <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
-	        <td>
+                </td>
+            </tr>
+            <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
+                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+            </tr>
+            <tr ng-show="!model.collapse.liitteet">
+                <th></th>
+                <td colspan="2">
+                    <mk-tabs model="model.liiteKielet" selection="model.selectedliiteKieli"></mk-tabs>
+                    <table class="table" ng-show="model.selectedliiteKieli">
+                        <tr>
+                            <th tt="hakukohde.review.liitteet.nimi"/>
+                            <th tt="hakukohde.review.liitteet.kuvaus"/>
+                            <th tt="hakukohde.review.liitteet.toim.mennessa"/>
+                            <th tt="hakukohde.review.liitteet.toim.osoite"/>
+                        </tr>
+                        <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
+                            <td>{{ liite.liitteenNimi}}</td>
+                            <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
+                            <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
+                            <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
+                <td><a class="btn" ng-disabled="!isMutable" href ng-click="doEdit($event, 'VALINTAPERUSTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+            </tr>
+            <tr ng-show="!model.collapse.valintaperusteet">
+                <th></th>
+                <td colspan="2">
+                    <mk-text model="model.hakukohde.valintaperusteKuvaukset" display="tabs"/>
+                </td>
+            </tr>
+            <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
+                <td><a class="btn" href ng-disabled="!isMutable" ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+            </tr>
+            <tr ng-show="!model.collapse.sorakuvaukset">
+                <th></th>
+                <td colspan="2">
+                    <mk-text model="model.hakukohde.soraKuvaukset" display="tabs"/>
+                </td>
+            </tr>
+            <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
+                <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a></td>
+            </tr>
+            <tr ng-show="!model.collapse.koulutukset">
+                <th></th>
+                <td colspan="2">
+                    <table class="table">
+                        <tr data-ng-repeat="koulutus in  model.koulutukses">
+                            <td>
+                                <a ng-href="#/koulutus/{{koulutus.oid}}/edit">{{koulutus.nimi}}</a>
+                            </td>
+                            <td>
+                                <div class="align-right">
+                                    <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
+                                    <a class="btn" href ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
+                <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
+                <td>
                     <!--
                     <a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaRyhmaModal()"><span tt="hakukohde.review.liita.ryhma"/> <span class="icon-plus-sign"></span></a>
                     -->
                 </td>
-	    </tr>
-
-	    <tr ng-show="!model.collapse.ryhmat">
-	        <th></th>
-	        <td colspan="2">
-	            <table class="table">
-	                <tr data-ng-repeat="(oid,nimi) in model.ryhmat">
-	                    <td>
-	                        {{nimi}}
-	                    </td>
-	                    <td>
-	                        <div class="align-right">
-	                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeRyhma(oid)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
-	                        </div>
-	                    </td>
-	                </tr>
-	            </table>
-	        </td>
-	    </tr>
-	    	    
-    </table>
-
-    <display-controls model="formControls" display="footer"></display-controls>
-
+            </tr>
+            <tr ng-show="!model.collapse.ryhmat">
+                <th></th>
+                <td colspan="2">
+                    <table class="table">
+                        <tr data-ng-repeat="(oid,nimi) in model.ryhmat">
+                            <td>
+                                {{nimi}}
+                            </td>
+                            <td>
+                                <div class="align-right">
+                                    <a class="btn" href ng-disabled="!isMutable" ng-click="removeRyhma(oid)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <display-controls model="formControls" display="footer"></display-controls>
+    </div>
 </div>
-</div>
-
 

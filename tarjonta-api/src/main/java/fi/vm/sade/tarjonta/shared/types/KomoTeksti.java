@@ -16,17 +16,20 @@
 package fi.vm.sade.tarjonta.shared.types;
 
 /**
- * Komoto lisätieto-avain.
- * 
- * <p>HUOM! Käytetään sekä tietokanta-avaimena että osana apia, eli älä muuta näitä arvoja.</p>
- * 
+ * Komo lisätieto-avain.
+ *
+ * <p>
+ * HUOM! Käytetään sekä tietokanta-avaimena että osana apia, eli älä muuta näitä
+ * arvoja.</p>
+ *
  * @author Timo Santasalo / Teknokala Ky
  */
 public enum KomoTeksti {
 
-	KOULUTUKSEN_RAKENNE,
-	JATKOOPINTO_MAHDOLLISUUDET,
-	TAVOITTEET,
-	PATEVYYS
+    KOULUTUKSEN_RAKENNE,
+    JATKOOPINTO_MAHDOLLISUUDET,
+    TAVOITTEET,
+    KOULUTUSOHJELMAN_TAVOITTEET, //currently used only in koulutus api to separate parent komo desc. from child komo desc.
+    PATEVYYS
 
 }

@@ -16,15 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
@@ -123,8 +115,8 @@ public interface HakuV1Resource {
     @PUT
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Päivittää haun tilan", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = Tilamuutokset.class)
-    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
+    @ApiOperation(value = "Päivittää haun tilan ja julkaisee samalla siihen liitetyt hakukohteet ja koulutukset jos onlyHaku=false", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = Tilamuutokset.class)
+    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila,  @QueryParam("onlyHaku") @DefaultValue("false")boolean onlyHaku);
 
     @PUT
     @Path("/{oid}/copy")

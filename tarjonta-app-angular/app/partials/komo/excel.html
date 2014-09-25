@@ -7,9 +7,11 @@
 
         <div class="checkbox">
             <label>
-                <input type="checkbox" ng-model="model.showPreview"  ng-model="model.showPreview">Näytä Excel tiedoston sisältö
+                <input type="checkbox" ng-model="model.showPreview">Näytä Excel tiedoston sisältö
             </label>
         </div>
+
+
         <div ng-show="model.isProcessing">
             <span>Odota tiedostoa luetaan ...</span>
         </div>
@@ -20,6 +22,16 @@
                 <option value="">---- Valitse välilehti ----</option>
             </select>
         </div>
+
+        <div class="checkbox">
+            <label>Valitse dokumentin käsittelijä
+                <select type="checkbox" ng-model="model.docHandler">
+                    <option value="KOULUTUS">Päivitä tutkinnon kuvaukset koulutus-koodilla</option>
+                    <option value="OHJELMA">Päivitä tutkinto-ohjelman kuvaukset osaamisala-, koulutusohjelma- tai lukiolinja-koodilla</option>
+                </select>
+            </label>
+        </div>
+
         <button  ng-click="updateKuvaus()">Päivitä koulutusmoduulien kuvaukset</button>
 
         <div ng-if="model.showPreview">

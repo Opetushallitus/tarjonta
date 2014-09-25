@@ -233,11 +233,25 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             ammDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
             ammDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
 
+            if (komoto.getNimi() != null && komoto.getNimi().getKaannoksetAsList() != null && !komoto.getNimi().getKaannoksetAsList().isEmpty()) {
+                //tarkenne is suffix for the aiku education
+                ammDto.setTarkenne(komoto.getNimi().getKaannoksetAsList().get(0).getArvo());
+            }
+
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
 
             //at least in some cases, the education erikoisammattitutkinto do not have parent komo
             mergeParentAndChildDataToRDTO(dto, parentKomo != null ? parentKomo : komo, komo, komoto, param);
+
+            if (komo.getModuuliTyyppi().equals(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA)) {
+                //Prevent TAVOITTEET child komo desc overwrite by copying it to other map object named KOULUTUSOHJELMAN_TAVOITTEET.
+                //At least used in amm & amm aiku education, not required in kk education.
+                KuvausV1RDTO komoChildDesc = komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), param.getShowMeta());
+                if (komoChildDesc != null && komoChildDesc.get(KomoTeksti.TAVOITTEET) != null) {
+                    ammDto.getKuvausKomo().put(KomoTeksti.KOULUTUSOHJELMAN_TAVOITTEET, (NimiV1RDTO) komoChildDesc.get(KomoTeksti.TAVOITTEET));
+                }
+            }
 
             final NayttotutkintoV1RDTO nayttoDto = (NayttotutkintoV1RDTO) dto;
             //nayttoDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
@@ -253,6 +267,13 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 nayttoDto.setValmistavaKoulutus(convertToValmistavaDto(komoto.getValmistavaKoulutus(), param));
             }
 
+            if (komoto.getNimi() != null && komoto.getNimi().getTekstiKaannos() != null) {
+                //only name in fi is needed.
+                TekstiKaannos fi = komoto.getNimi().getTekstiKaannos().iterator().next();
+                if (fi != null) {
+                    nayttoDto.setTunniste(fi.getArvo()); //fi
+                }
+            }
         }
 
         if (komoto.getTarjoaja() != null) {
@@ -283,11 +304,34 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
 
+        //
+        // KJOH-778 multiple owners, API output
+        //
+        // TODO verify that this is what is wanted - these are the original organizer/holder
+        if (komoto.getTarjoaja() != null) {
+            dto.getOpetusTarjoajat().add(komoto.getTarjoaja());
+        }
+
+        if (komoto.getJarjesteja() != null) {
+            dto.getOpetusJarjestajat().add(komoto.getJarjesteja());
+        }
+
+        for (KoulutusOwner owner : komoto.getOwners()) {
+            if (KoulutusOwner.TARJOAJA.equalsIgnoreCase(owner.getOwnerType())) {
+                dto.getOpetusTarjoajat().add(owner.getOwnerOid());
+            } else if (KoulutusOwner.JARJESTAJA.equalsIgnoreCase(owner.getOwnerType())) {
+                dto.getOpetusJarjestajat().add(owner.getOwnerOid());
+            } else {
+                LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
+                        komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
+            }
+        }
+
         return dto;
     }
 
     /**
-     * Only common data for all 'koulutus' types, if the data has any kind of
+     * Common data for all 'koulutus' types, if the data has any kind of
      * 'koulutus' difference, do not add it here!
      */
     private void convertCommonToRDTO(TYPE dto, Koulutusmoduuli komo, KoulutusmoduuliToteutus komoto, final RestParam restParam) {
@@ -306,7 +350,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         dto.setTunniste(komoto.getUlkoinenTunniste() != null ? komoto.getUlkoinenTunniste() : komo.getUlkoinenTunniste());
 
         KuvausV1RDTO<KomoTeksti> komoKuvaus = new KuvausV1RDTO<KomoTeksti>();
+
         komoKuvaus.putAll(komoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komo.getTekstit(), restParam.getShowMeta()));
+
         dto.setKuvausKomo(komoKuvaus);
     }
 
