@@ -282,7 +282,9 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         tilaMap = new HashMap<String, String>();
         int counter = 0;
         for (TarjontaTila tila : TarjontaTila.values()) {
-            if (!tila.equals(TarjontaTila.POISTETTU)) {
+
+            if (tila != null && !tila.equals(TarjontaTila.POISTETTU)) {
+                LOG.info("Added tila {}", tila);
                 String localizedTila = T(tila.value());
                 tilaMap.put(localizedTila, tila.value());
                 tilat[counter] = localizedTila;
