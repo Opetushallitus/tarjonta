@@ -20,12 +20,12 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService', 'CacheService',
+    'dialogService', 'CacheService', '$modal',
     function BaseEditController($scope, $log, Config,
         $routeParams, $route, $location,
         converter, TarjontaService, PermissionService,
         organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-        dialogService, CacheService) {
+        dialogService, CacheService, $modal) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -49,6 +49,10 @@ app.controller('BaseEditController', [
              },
              formControls: {}*/
         };
+
+        // Map containing organization names (oid as key)
+        // this is used for displaying organization names in the UI
+        $scope.organizationOidNameMap = {};
 
         $scope.controlModelCommandApi = {
             active: false,
@@ -409,6 +413,11 @@ app.controller('BaseEditController', [
             $scope.controlFormMessages(form, uiModel, "INIT");
             converter.createAPIModel(model, Config.app.userLanguages, tyyppi);
 
+            if ( $routeParams.opetusTarjoajat ) {
+                model.opetusTarjoajat = $routeParams.opetusTarjoajat.split(',');
+                $scope.initOpetustarjoajat(model);
+            }
+
             if (angular.isDefined($routeParams.org) || (angular.isDefined(model.organisaatio) && angular.isDefined(model.organisaatio.oid))) {
                 var promiseOrg = organisaatioService.nimi(angular.isDefined($routeParams.org) ? $routeParams.org : model.organisaatio.oid);
                 promiseOrg.then(function(vastaus) {
@@ -497,6 +506,8 @@ app.controller('BaseEditController', [
                     console.error("invalid key mapping : ", key);
                 }
             });
+
+            $scope.initOpetustarjoajat(model);
         };
 
         /*
@@ -596,6 +607,44 @@ app.controller('BaseEditController', [
                 } else {
                     $scope.model.kuvausKomoto[value.type].tekstis[kieliUri] = null;
                 }
+            });
+        };
+
+        /**
+         * tarjonta-service ei pidä yllä tarjoajien järjestystä, mistä syystä
+         * tästä pidetään huolta alla olevan $watchin avulla (eli varmistetaan,
+         * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
+         */
+        $scope.$watch('model.opetusTarjoajat', function() {
+            $scope.initOpetustarjoajat($scope.model);
+        });
+
+        $scope.initOpetustarjoajat = function(model) {
+            angular.forEach(model.opetusTarjoajat, function(orgOid, index) {
+                // Organisaatio joka loi koulutuksen pitää aina olla taulukon ensimmäisenä
+                if ( model.organisaatio.oid === orgOid ) {
+                    model.opetusTarjoajat.splice(index, 1);
+                    model.opetusTarjoajat.unshift(orgOid);
+                }
+
+                organisaatioService.nimi(orgOid).then(function(nimi) {
+                    $scope.organizationOidNameMap[orgOid] = nimi;
+                });
+            });
+        };
+
+        $scope.editOrganizations = function() {
+            $scope.selectedOrganizations = [];
+            angular.forEach($scope.model.opetusTarjoajat, function(orgOid) {
+                $scope.selectedOrganizations.push({
+                    oid: orgOid,
+                    nimi: $scope.organizationOidNameMap[orgOid]
+                });
+            });
+            $scope.organizationSelectionDialog = $modal.open({
+                scope: $scope,
+                templateUrl: 'partials/koulutus/organization-selection.html',
+                controller: 'OrganizationSelectionController'
             });
         };
 

@@ -4,8 +4,9 @@
 
 var app = angular.module('app.koulutus.ctrl');
 
-app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Koodisto', '$modal', 'OrganisaatioService', 'SharedStateService', 'AuthService', '$log',
-    function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService, $log) {
+app.controller('LuoKoulutusDialogiController',
+    function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
+             SharedStateService, AuthService, $log, $timeout) {
 
         $log = $log.getInstance("LuoKoulutusDialogiController");
 
@@ -82,8 +83,7 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
         // Watchi valitulle organisaatiolle
         $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
             $log.debug("oprganisaatio valittu", organisaatio);
-            //XXX nyt vain yksi organisaatio valittavissa
-            if ($scope.model.organisaatiot.length == 0 && organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
+            if (organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
                 lisaaOrganisaatio(organisaatio);
             }
         });
@@ -251,7 +251,11 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
                                     $scope.luoKoulutusDialog.close();
                                     if (selectedItem.koodiUri != null) {
                                         $log.debug("org:", $scope.model.organisaatiot[0]);
-                                        $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+                                        $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri
+                                            + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+                                        $location.search('opetusTarjoajat', _.map($scope.model.organisaatiot, function(org){
+                                            return org.oid;
+                                        }).join(','));
                                     }
                                 }, function() {
                                     $scope.tutkintoDialogModel.selected = null;
@@ -362,6 +366,35 @@ app.controller('LuoKoulutusDialogiController', ['$location', '$q', '$scope', 'Ko
             $scope.model.organisaatiot = valitut;
         };
 
-    }]);
+        var searchOrganizationTimeout = null;
+        $scope.searchOrganizations = function(qterm) {
+            if ( searchOrganizationTimeout != null ) {
+                $timeout.cancel(searchOrganizationTimeout);
+            }
+            searchOrganizationTimeout = $timeout(function() {
+                OrganisaatioService.etsi({
+                    searchStr: qterm,
+                    lakkautetut: false,
+                    skipparents: false,
+                    suunnitellut: false
+                }).then(function (result) {
+                    $scope.lkorganisaatiot = result.organisaatiot;
+                });
+            }, 500);
+        };
 
+        /**
+         * Palauta organisaatiopuunäkymän oletusarvo, jos käyttäjä
+         * poistaa ruksin "Näytä myös muut korkeakoulut".
+         */
+        var lkorganisaatiotInit = null;
+        $scope.toggleOtherOrganizations = function() {
+            if ( lkorganisaatiotInit === null ) {
+                lkorganisaatiotInit = angular.copy($scope.lkorganisaatiot);
+            }
+            if ( !$scope.showOtherOrganizations ) {
+                $scope.lkorganisaatiot = lkorganisaatiotInit;
+            }
+        };
 
+    });

@@ -1,4 +1,18 @@
    <table class="tarjontaForm">
+
+        <!-- koulutuksen tarjoajat, jos useita -->
+        <tr ng-if="model.opetusTarjoajat">
+            <th>Organisaatiot</th>
+            <td>
+                <ul>
+                    <li ng-repeat="orgOid in model.opetusTarjoajat">{{organizationOidNameMap[orgOid]}}</li>
+                </ul>
+            </td>
+            <td>
+                <button class="btn" ng-click="editOrganizations()"><i class="icon-pencil"></i> Muokkaa koulutuksen organisaatioita</button>
+            </td>
+        </tr>
+
         <!-- koulutuskoodi -->
         <tr class="info">
             <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
