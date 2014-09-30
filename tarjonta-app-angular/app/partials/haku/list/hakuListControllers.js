@@ -80,7 +80,9 @@ app.controller('HakuListController',
                 $scope.selection = [];
 
                 for (var s in CONFIG.env["tarjonta.tila"]) {
-                    $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
+                   if (s !== 'POISTETTU') {
+                       $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
+                   }
                 }
 
                 $scope.clearSearch = function() {

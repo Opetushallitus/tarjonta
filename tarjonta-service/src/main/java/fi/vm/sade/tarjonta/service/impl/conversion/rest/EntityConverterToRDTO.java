@@ -269,15 +269,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         //
         // KJOH-778 multiple owners, API output
         //
-        // TODO verify that this is what is wanted - these are the original organizer/holder
-        if (komoto.getTarjoaja() != null) {
-            dto.getOpetusTarjoajat().add(komoto.getTarjoaja());
-        }
-
-        if (komoto.getJarjesteja() != null) {
-            dto.getOpetusJarjestajat().add(komoto.getJarjesteja());
-        }
-
         for (KoulutusOwner owner : komoto.getOwners()) {
             if (KoulutusOwner.TARJOAJA.equalsIgnoreCase(owner.getOwnerType())) {
                 dto.getOpetusTarjoajat().add(owner.getOwnerOid());
