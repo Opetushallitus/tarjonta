@@ -278,13 +278,12 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     }
 
     private String[] getKoulutuksenTilat() {
-        String[] tilat = new String[TarjontaTila.values().length];
+        //do not add status of deleted 
+        String[] tilat = new String[TarjontaTila.values().length - 1];
         tilaMap = new HashMap<String, String>();
         int counter = 0;
         for (TarjontaTila tila : TarjontaTila.values()) {
-
-            if (tila != null && !tila.equals(TarjontaTila.POISTETTU)) {
-                LOG.info("Added tila {}", tila);
+            if (!tila.equals(TarjontaTila.POISTETTU)) {
                 String localizedTila = T(tila.value());
                 tilaMap.put(localizedTila, tila.value());
                 tilat[counter] = localizedTila;
