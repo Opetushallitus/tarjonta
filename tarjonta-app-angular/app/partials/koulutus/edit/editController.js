@@ -622,7 +622,7 @@ app.controller('BaseEditController', [
         $scope.initOpetustarjoajat = function(model) {
             angular.forEach(model.opetusTarjoajat, function(orgOid, index) {
                 // Organisaatio joka loi koulutuksen pitää aina olla taulukon ensimmäisenä
-                if ( model.organisaatio.oid === orgOid ) {
+                if ( model.organisaatio && model.organisaatio.oid === orgOid ) {
                     model.opetusTarjoajat.splice(index, 1);
                     model.opetusTarjoajat.unshift(orgOid);
                 }
