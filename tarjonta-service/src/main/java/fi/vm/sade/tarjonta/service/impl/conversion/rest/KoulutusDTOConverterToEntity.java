@@ -146,33 +146,18 @@ public class KoulutusDTOConverterToEntity {
         LOG.info("updateOwners()... tarj={}, järj={}", dto.getOpetusTarjoajat(), dto.getOpetusJarjestajat());
 
         komoto.getOwners().clear();
-
-        boolean isFirst = true;
         for (String oid : dto.getOpetusJarjestajat()) {
-            // First "jarjestaja" / organizer is kind of "base" organizer
-            if (isFirst) {
-                komoto.setJarjesteja(oid);
-                isFirst = false;
-            } else {
-                KoulutusOwner owner = new KoulutusOwner();
-                owner.setOwnerOid(oid);
-                owner.setOwnerType(KoulutusOwner.JARJESTAJA);
-                komoto.getOwners().add(owner);
-            }
+            KoulutusOwner owner = new KoulutusOwner();
+            owner.setOwnerOid(oid);
+            owner.setOwnerType(KoulutusOwner.JARJESTAJA);
+            komoto.getOwners().add(owner);
         }
 
-        isFirst = true;
         for (String oid : dto.getOpetusTarjoajat()) {
-            // First "tarjoaja" / offerer is kind of "base" offerer
-            if (isFirst) {
-                komoto.setTarjoaja(oid);
-                isFirst = false;
-            } else {
-                KoulutusOwner owner = new KoulutusOwner();
-                owner.setOwnerOid(oid);
-                owner.setOwnerType(KoulutusOwner.TARJOAJA);
-                komoto.getOwners().add(owner);
-            }
+            KoulutusOwner owner = new KoulutusOwner();
+            owner.setOwnerOid(oid);
+            owner.setOwnerType(KoulutusOwner.TARJOAJA);
+            komoto.getOwners().add(owner);
         }
         LOG.info("updateOwners()... done.");
     }

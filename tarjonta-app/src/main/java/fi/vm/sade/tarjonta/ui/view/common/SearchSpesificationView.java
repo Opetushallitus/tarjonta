@@ -99,7 +99,6 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         this.showTulostaRaporttiBtn = showTulostaRaporttiBtn;
     }
 
-
     public SearchSpesificationView(KoulutusSearchSpesificationViewModel model) {
         super(true, UiMarginEnum.BOTTOM);
         this.model = model;
@@ -155,7 +154,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         Label vuosiLabel = UiUtil.label(null, T(I18N_VUOSI));
         vuosiLayout.addComponent(vuosiLabel);
         cbVuosi = UiUtil.comboBox(null, null, new String[]{"2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"});
-        allowNulls(cbVuosi,  T(I18N_VUOSI + I18N_PROMPT));
+        allowNulls(cbVuosi, T(I18N_VUOSI + I18N_PROMPT));
         cbVuosi.setSizeUndefined();
         cbVuosi.setWidth("140px");
         vuosiLayout.addComponent(cbVuosi);
@@ -167,7 +166,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         Label kausiLabel = UiUtil.label(null, T(I18N_KAUSI));
         kausiLayout.addComponent(kausiLabel);
         kcKausi = uiBuilder.koodistoComboBox(this, KoodistoURI.KOODISTO_ALKAMISKAUSI_URI, null, null, T(I18N_KAUSI + I18N_PROMPT));
-        allowNulls(((ComboBox)kcKausi.getField()), T(I18N_KAUSI + I18N_PROMPT));
+        allowNulls(((ComboBox) kcKausi.getField()), T(I18N_KAUSI + I18N_PROMPT));
         kcKausi.setSizeUndefined();
         kcKausi.getField().setWidth("140px");
         kausiLayout.addComponent(kcKausi);
@@ -184,7 +183,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
                 tfSearch.setValue("");
                 cbTilat.select(null);
                 cbVuosi.select(null);
-                kcKausi.setValue(null);            }
+                kcKausi.setValue(null);
+            }
         });
         CssHorizontalLayout cssPadding5PxHae = new CssHorizontalLayout();
         cssPadding5PxHae.addComponent(btnTyhjenna, COMPONENT_STYLE);
@@ -199,25 +199,25 @@ public class SearchSpesificationView extends OphHorizontalLayout {
             }
         });
 
-        btnTulostaRaportti = UiBuilder.buttonSmallSecodary(null,T("tulostaRaporttiBtn"), new Button.ClickListener() {
+        btnTulostaRaportti = UiBuilder.buttonSmallSecodary(null, T("tulostaRaporttiBtn"), new Button.ClickListener() {
 
             @Override
             public void buttonClick(ClickEvent clickEvent) {
 
-                String selectedVuosi = cbVuosi.getValue() instanceof String ? (String)cbVuosi.getValue() : null;
-                String selectedKausi = kcKausi.getValue() instanceof String ? (String)kcKausi.getValue() : null;
+                String selectedVuosi = cbVuosi.getValue() instanceof String ? (String) cbVuosi.getValue() : null;
+                String selectedKausi = kcKausi.getValue() instanceof String ? (String) kcKausi.getValue() : null;
 
                 AloituspaikatRaporttiDialog dialog = new AloituspaikatRaporttiDialog(new AloituspaikatRaporttiDialog.DialogCloseListener() {
                     @Override
                     public void windowCloseEvent(String result) {
                         getWindow().removeWindow(aloituspaikatRaporttiDialog);
                         if (result != null) {
-                            getWindow().open(new ExternalResource(result),"",true);
+                            getWindow().open(new ExternalResource(result), "", true);
                         }
 
                     }
-                },selectedVuosi,selectedKausi,null);
-                aloituspaikatRaporttiDialog = new TarjontaDialogWindow(dialog,T("aloituspaikatDialogTitle"));
+                }, selectedVuosi, selectedKausi, null);
+                aloituspaikatRaporttiDialog = new TarjontaDialogWindow(dialog, T("aloituspaikatDialogTitle"));
                 aloituspaikatRaporttiDialog.setWidth("680px");
                 aloituspaikatRaporttiDialog.setHeight("500px");
 
@@ -248,7 +248,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
         buttons.addComponent(btnHae);
         if (showTulostaRaporttiBtn) {
-        buttons.addComponent(btnTulostaRaportti);
+            buttons.addComponent(btnTulostaRaportti);
         }
         searchSpecLayout.addComponent(buttons);
 
@@ -259,7 +259,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     private String T(String key) {
         return i18nHelper.getMessage(key);
     }
-    
+
     private void allowNulls(final ComboBox combo, String prompt) {
         combo.setNullSelectionAllowed(true);
         combo.setInputPrompt(prompt);
@@ -278,14 +278,17 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     }
 
     private String[] getKoulutuksenTilat() {
-        String[] tilat = new String[TarjontaTila.values().length];
+        //do not add status of deleted 
+        String[] tilat = new String[TarjontaTila.values().length - 1];
         tilaMap = new HashMap<String, String>();
         int counter = 0;
         for (TarjontaTila tila : TarjontaTila.values()) {
-            String localizedTila = T(tila.value());
-            tilaMap.put(localizedTila, tila.value());
-            tilat[counter] = localizedTila;
-            counter++;
+            if (!tila.equals(TarjontaTila.POISTETTU)) {
+                String localizedTila = T(tila.value());
+                tilaMap.put(localizedTila, tila.value());
+                tilat[counter] = localizedTila;
+                counter++;
+            }
         }
 
         return tilat;
@@ -298,8 +301,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
         LOG.info("doSearch()");
         model.setKoulutuksenAlkamiskausi(kcKausi.getValue() != null ? (String) kcKausi.getValue() : null);
         model.setKoulutuksenAlkamisvuosi(cbVuosi.getValue() != null ? Integer.parseInt((String) cbVuosi.getValue()) : -1);
-        model.setKoulutuksenTila(cbTilat.getValue()!=null?tilaMap.get(cbTilat.getValue()):null);
-        
+        model.setKoulutuksenTila(cbTilat.getValue() != null ? tilaMap.get(cbTilat.getValue()) : null);
+
         fireEvent(new SearchSpesificationView.SearchEvent(model));
     }
 
