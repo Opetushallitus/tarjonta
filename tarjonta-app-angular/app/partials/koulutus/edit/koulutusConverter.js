@@ -675,6 +675,35 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         }
     };
 
+    factory.getToteutustyyppiByKoulutustyyppiKoodiUri = function(koodiUri) {
+        for(var totetustyyppi in factory.STRUCTURE) {
+            var item = factory.STRUCTURE[totetustyyppi];
+            if (item && item.koulutustyyppiKoodiUri === koodiUri) {
+                return totetustyyppi;
+            }
+        }
+    };
+
+    /**
+     * Tämä funktio palauttaa koodiston arvoista vain ne, joista
+     * on olemassa koulutusmoduuli tietokannassa.
+     */
+    factory.filterByKomos = function(koodistoResult, komos) {
+        var tutkintoModules = {};
+
+        for (var i = 0; i < koodistoResult.uris.length; i++) {
+            for (var c = 0; c < komos.result.length; c++) {
+                if (!angular.isDefined(tutkintoModules[koodistoResult.uris[i]])
+                    && koodistoResult.uris[i] === komos.result[c].koulutuskoodiUri) {
+                    tutkintoModules[koodistoResult.uris[i]] = koodistoResult.map[ koodistoResult.uris[i]];
+                    tutkintoModules[koodistoResult.uris[i]].oid = komos.result[c].oid;
+                }
+            }
+        }
+
+        return tutkintoModules;
+    };
+
     factory.validateOutputData = function(m, toteutustyyppi) {
         //remove all meta data fields, if any
         angular.forEach(factory.STRUCTURE[toteutustyyppi], function(value, key) {

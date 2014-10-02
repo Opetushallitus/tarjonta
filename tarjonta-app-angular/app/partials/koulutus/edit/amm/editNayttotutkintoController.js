@@ -1,9 +1,8 @@
 var app = angular.module('app.edit.ctrl.amm', ['Koodisto', 'Yhteyshenkilo', 'ngResource', 'ngGrid', 'imageupload', 'MultiSelect', 'OrderByNumFilter', 'localisation', 'MonikielinenTextField', 'ControlsLayout']);
 app.controller('EditNayttotutkintoController',
-    ['$q', '$route', '$timeout', '$scope', '$location', '$log', 'TarjontaService', 'Config', '$routeParams', 'OrganisaatioService', 'LocalisationService',
-        '$window', 'KoulutusConverterFactory', 'Koodisto', '$modal', 'PermissionService', 'dialogService', 'CommonUtilService',
-        function EditLukioController($q, $route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService,
-            $window, converter, Koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
+        function EditLukioController($q, $route, $timeout, $scope, $location, $log, TarjontaService, Config,
+                                     $routeParams, OrganisaatioService, LocalisationService,
+                                     $window, KoulutusConverterFactory, Koodisto, $modal, PermissionService, dialogService) {
 
             var ENUM_KOMO_MODULE_TUTKINTO = 'TUTKINTO';
             var ENUM_KOMO_MODULE_TUTKINTO_OHJELMA = 'TUTKINTO_OHJELMA';
@@ -28,7 +27,7 @@ app.controller('EditNayttotutkintoController',
                     koulutusohjelma: [],
                     tutkintoModules: {},
                     koulutusohjelmaModules: {},
-                    valmistavaLisatiedot: converter.STRUCTURE[ENUM_OPTIONAL_TOTEUTUS].KUVAUS_ORDER
+                    valmistavaLisatiedot: KoulutusConverterFactory.STRUCTURE[ENUM_OPTIONAL_TOTEUTUS].KUVAUS_ORDER
                 };
 
                 //valmistava koulutus
@@ -53,7 +52,7 @@ app.controller('EditNayttotutkintoController',
                     /*
                      * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                      */
-                    $scope.lisatiedot = converter.STRUCTURE[$scope.CONFIG.TYYPPI].KUVAUS_ORDER;
+                    $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[$scope.CONFIG.TYYPPI].KUVAUS_ORDER;
                     $scope.loadKomoKuvausTekstis(null, uiModel, model.kuvausKomo, null);
                     $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUM_KOMO_MODULE_TUTKINTO);
                     $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
@@ -72,27 +71,20 @@ app.controller('EditNayttotutkintoController',
                      */
                     var resource = TarjontaService.komo();
                     var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit([$scope.CONFIG.KOULUTUSTYYPPI], 'koulutus', $scope.koodistoLocale);
-                    tutkintoPromise.then(function (kRes) {
-                        resource.searchModules({koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI, moduuli: ENUM_KOMO_MODULE_TUTKINTO}, function (tRes) {
-                            for (var i = 0; i < kRes.uris.length; i++) {
-                                for (var c = 0; c < tRes.result.length; c++) {
-                                    if (!angular.isDefined(uiModel['tutkintoModules'][ kRes.uris[i] ]) && kRes.uris[i] === tRes.result[c].koulutuskoodiUri) {
-                                        uiModel['tutkintoModules'][ kRes.uris[i]] = kRes.map[ kRes.uris[i]];
-                                        uiModel['tutkintoModules'][ kRes.uris[i]].oid = tRes.result[c].oid;
-                                    }
-                                }
-                            }
-                            uiModel.tutkinto = _.map(uiModel['tutkintoModules'], function (num, key) {
+                    tutkintoPromise.then(function (koodistoResult) {
+                        resource.searchModules({koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI, moduuli: ENUM_KOMO_MODULE_TUTKINTO}, function (komos) {
+                            uiModel.tutkintoModules = KoulutusConverterFactory.filterByKomos(koodistoResult, komos);
+                            uiModel.tutkinto = _.map(uiModel.tutkintoModules, function (num, key) {
                                 return num;
                             });
                         });
                     });
 
-                    //activate valmistava koulutus 
+                    //activate valmistava koulutus
                     $scope.initValmistavaKoulutus(model, uiModel, vkUiModel);
 
                 } else {
-                    converter.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
+                    KoulutusConverterFactory.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
                 }
 
                 /*
@@ -140,7 +132,7 @@ app.controller('EditNayttotutkintoController',
                     defaults: "tutkintonimike:tutkintonimikkeet_00000," + strSearchKoulutuslaji
                 }, function (response) {
                     var restRelationData = response.result;
-                    angular.forEach(converter.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function (value, key) {
+                    angular.forEach(KoulutusConverterFactory.STRUCTURE[$scope.CONFIG.TYYPPI].RELATION, function (value, key) {
                         if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
                             apiModel[key] = restRelationData[key];
                         } else if (tutkintoTyyppi === ENUM_KOMO_MODULE_TUTKINTO_OHJELMA && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
@@ -291,7 +283,7 @@ app.controller('EditNayttotutkintoController',
                 apiModel.toteutustyyppi = $scope.CONFIG.TYYPPI;
 
                 if (angular.isDefined(apiModel.valmistavaKoulutus) && apiModel.valmistavaKoulutus !== null) {
-                    apiModel.valmistavaKoulutus = converter.saveModelConverter(apiModel.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
+                    apiModel.valmistavaKoulutus = KoulutusConverterFactory.saveModelConverter(apiModel.valmistavaKoulutus, $scope.vkUiModel, ENUM_OPTIONAL_TOTEUTUS);
                 }
                 $scope.saveApimodelByStatus(apiModel, tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.customCallbackAfterSave);
             };
@@ -441,4 +433,4 @@ app.controller('EditNayttotutkintoController',
             };
 
             $scope.init();
-        }]);
+        });
