@@ -8,7 +8,7 @@
 
         <h4><span tt="luoKoulutsDialogi.koulutus">Koulutus</span></h4>
         <select ng-hide="piilotaKoulutustyyppi" ng-model="model.koulutustyyppi"
-                    ng-options="k.koodiNimi for k in sallitutKoulutustyypit">
+                    ng-options="k.koodiNimi for k in sallitutKoulutustyypit|orderBy:'koodiNimi'">
                         <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
         </select>
         <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>
