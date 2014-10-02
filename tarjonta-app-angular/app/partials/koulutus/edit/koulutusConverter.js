@@ -707,7 +707,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
             var koodis = uiModel[key].koodis;
             for (var i in koodis) {
-                if (koodis[i].koodiUri === apiModel[key].uri) {
+                if (apiModel[key] && koodis[i].koodiUri === apiModel[key].uri) {
                     apiModel[key] = {
                         uri: koodis[i].koodiUri,
                         versio: koodis[i].koodiVersio
