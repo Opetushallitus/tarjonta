@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.ui.view.koulutus.lukio;
 
+import fi.vm.sade.tarjonta.ui.model.TarjontaModel;
+import fi.vm.sade.tarjonta.ui.model.koulutus.lukio.KoulutusLukioPerustiedotViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +71,10 @@ public class EditLukioKoulutusKuvailevatTiedotView extends AbstractEditLayoutVie
         formView = new EditLukioKoulutusKuvailevatTiedotFormView(presenter, uiHelper, getUiBuilder(), model);
         buildFormLayout("kuvailevatTiedot", presenter, layout, model, formView);
 
-        final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
-        final boolean draftActive = !model.isLoaded() || TarjontaTila.LUONNOS.equals(model.getTila()); //enabloitu jos uusi tai tila==draft
+        final KoulutusLukioPerustiedotViewModel model = presenter.getModel().getKoulutusLukioPerustiedot();
+        final boolean draftActive = !model.isLoaded()
+                || TarjontaTila.LUONNOS.equals(model.getTila())
+                || TarjontaTila.KOPIOITU.equals(model.getTila()); //enabloitu jos uusi tai tila==draft,kopioitu
         enableButtonByListener(clickListenerSaveAsDraft,draftActive);
     }
 
