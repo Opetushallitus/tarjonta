@@ -637,6 +637,8 @@ app.controller('BaseEditController',
             // Need to access the child scope in some situations
             $scope.childScope = initValues.childScope || $log.error("childScope not initialized");
 
+            var koulutusStructure = KoulutusConverterFactory.STRUCTURE[$scope.CONFIG.TYYPPI];
+
             /*
              * HANDLE EDIT / CREATE NEW ROUTING
              */
@@ -652,7 +654,7 @@ app.controller('BaseEditController',
                 /*
                  * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                  */
-                $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[$scope.CONFIG.TYYPPI].KUVAUS_ORDER;
+                $scope.lisatiedot = koulutusStructure.KUVAUS_ORDER;
                 $scope.loadKomoKuvausTekstis(null, model.kuvausKomo);
                 $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
                 $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
@@ -680,7 +682,8 @@ app.controller('BaseEditController',
                         });
                     });
                 });
-            } else {
+            }
+            else {
                 KoulutusConverterFactory.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
             }
 
@@ -699,11 +702,21 @@ app.controller('BaseEditController',
              * INIT SCOPES FOR RENDERER IN koulutusController.js
              */
             model.toteutustyyppi = $scope.CONFIG.TYYPPI;
+
+            angular.extend(uiModel, $scope.uiModel);
             $scope.setUiModel(uiModel);
             $scope.setModel(model);
 
+            // Child edit controllerit voivat suorittaa tarvittaessa oman init-funktion
             if ( initFunction ) {
                 initFunction();
+            }
+
+            // Myös koulutusConverterissa voi ajaa initin. Tämä hack tarvittiin
+            // valmentavaa ja kuntouttavaa opetusta varten. Tästä olisi hyvä päästä eroon,
+            // ja tehdä koodista tämän myötä selkeämpi.
+            if ( koulutusStructure.initFunction ) {
+                koulutusStructure.initFunction($scope);
             }
         };
 
@@ -742,12 +755,18 @@ app.controller('BaseEditController',
                 koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI
             }, koulutusStructure.koodistoDefaults);
 
-            if ($routeParams.koulutuslaji) {
-                defaults.koulutuslaji = $routeParams.koulutuslaji;
-            }
-            else if (apiModel.koulutuslaji && apiModel.koulutuslaji.uri) {
-                defaults.koulutuslaji = apiModel.koulutuslaji.uri;
-            }
+            var overrideFromRouteParamsOrApiModel = [
+                'pohjakoulutusvaatimus',
+                'koulutuslaji'
+            ];
+            angular.forEach(overrideFromRouteParamsOrApiModel, function(key) {
+                if ($routeParams[key]) {
+                    defaults[key] = $routeParams[key];
+                }
+                else if (apiModel[key] && apiModel[key].uri) {
+                    defaults[key] = apiModel[key].uri;
+                }
+            });
 
             TarjontaService.getKoulutuskoodiRelations(
                 {
@@ -824,7 +843,6 @@ app.controller('BaseEditController',
         });
 
         $scope.$watch("model.koulutuskoodi.uri", function(uriNew, uriOld) {
-            window.alex = $scope;
             if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
                 $scope.uiModel.koulutusohjelmaModules = {};
                 $scope.uiModel.koulutusohjelma = [];

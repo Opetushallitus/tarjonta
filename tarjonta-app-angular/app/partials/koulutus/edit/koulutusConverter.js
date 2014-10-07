@@ -487,7 +487,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
         },
         /**
-         * TODO: vaihda tämä myöhemmin olemaan 'LUKIOKOULUTUS'. Nyt tällä nimellä,
+         * TODO alexGofore: vaihda tämä myöhemmin olemaan 'LUKIOKOULUTUS'. Nyt tällä nimellä,
          * koska tiimi2 tekee samanaikaisesti muutoksia ja halutaan saada myös heidän
          * muutokset mukaan.
          */
@@ -618,7 +618,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuslaji: 'koulutuslaji_n', // nuorten koulutus
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_1"
+            koulutustyyppiKoodiUri: "koulutustyyppi_1",
+            RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
@@ -629,7 +634,42 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_er' // yksillöllistetty perusopetus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_5",
-            templates: null // käytä oletusnimeä templalle
+            templates: null, // käytä oletusnimeä templalle
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            }),
+            initFunction: function($scope) {
+                if (!$scope.model.koulutusohjelmanNimiKannassa) {
+                    $scope.model.koulutusohjelmanNimiKannassa = {};
+                }
+                /**
+                 * Hack: tällä koulutustyypillä tutkinto-ohjelma kirjoitetaan käsin,
+                 * mutta kuitenkin pitää tallentaa myös koodiston arvo. Tästä syystä
+                 * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), ja sen
+                 * arvo pitää asettaa käsin täältä.
+                 */
+                $scope.$watch("uiModel.koulutusohjelmaModules", function(newVal) {
+                    if (!newVal) {
+                        return;
+                    }
+
+                    var keys = _.keys(newVal);
+
+                    if ( keys.length === 1) {
+                        var key = keys[0];
+                        $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[key].oid;
+                        $scope.model.koulutusohjelma = {
+                            uri: newVal[key].koodiUri,
+                            versio: 1
+                        };
+                    }
+                    else if (keys.length > 1) {
+                        $log.error("Found more than 1 matching koulutusohjelma");
+                    }
+                });
+            }
         }),
 
         /*******************************************/
@@ -640,7 +680,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuslaji: 'koulutuslaji_n', // nuorten koulutus
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_6"
+            koulutustyyppiKoodiUri: "koulutustyyppi_6",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
@@ -650,7 +695,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koodistoDefaults: {
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_7"
+            koulutustyyppiKoodiUri: "koulutustyyppi_7",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
@@ -660,7 +708,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koodistoDefaults: {
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_8"
+            koulutustyyppiKoodiUri: "koulutustyyppi_8",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
@@ -670,7 +721,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koodistoDefaults: {
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_9"
+            koulutustyyppiKoodiUri: "koulutustyyppi_9",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
@@ -680,7 +734,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koodistoDefaults: {
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_10"
+            koulutustyyppiKoodiUri: "koulutustyyppi_10",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
@@ -691,7 +748,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutuslaji: 'koulutuslaji_n', // aikuiskoulutus
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_er' // yksillöllistetty perusopetus
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_4"
+            koulutustyyppiKoodiUri: "koulutustyyppi_4",
+            RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
         }),
 
         /*******************************************/
