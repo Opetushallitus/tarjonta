@@ -16,7 +16,7 @@ exports.config = {
         maxInstances: 9 // max n.of parallel instances
     },
     baseUrl: 'http://localhost:8080',
-    allScriptsTimeout: 20000,
+    allScriptsTimeout: 30000,
     onPrepare: function() {
         // Kirjaudu järjestelmään ja aseta session keksi
         browser.driver.get('http://' + encodeURIComponent(credentials.username) + ':' +
@@ -28,6 +28,6 @@ exports.config = {
         isVerbose: true,
         showColors: true,
         includeStackTrace: true,
-        defaultTimeoutInterval: 2 * 60 * 1000 // 2min
+        defaultTimeoutInterval: 3 * 60 * 1000 // 3min
     }
 }
