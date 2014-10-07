@@ -15,14 +15,19 @@
  */
 package fi.vm.sade.tarjonta.rest.bean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.io.support.ResourcePropertySource;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 
 /**
- *
  * @author Jani Wilén
  */
 @Configuration
@@ -30,15 +35,32 @@ import org.springframework.core.env.Environment;
         "classpath:tarjonta-app.properties",
         "classpath:tarjonta-rest.properties",
         "file:///${user.home:''}/oph-configuration/common.properties",
-        "file:///${user.home:''}/oph-configuration/tarjonta-app.properties",
-        "file:///${user.home:''}/oph-configuration/override.properties"
+        "file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
 })
 public class Configurations {
 
-    @Autowired
-    private Environment env;
+    private static final Logger LOG = LoggerFactory.getLogger(Configurations.class);
 
-    public Environment getEnv() {
+    @Autowired
+    private ConfigurableEnvironment env;
+
+    public ConfigurableEnvironment getEnv() {
         return env;
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            tryToLoadOverrideProperties();
+        } catch (IOException e) {
+            LOG.info("override.properties not loaded.");
+        }
+    }
+
+    private void tryToLoadOverrideProperties() throws IOException {
+        MutablePropertySources propertySources = env.getPropertySources();
+        String path = "file:///" + env.getProperty("user.home") + "/oph-configuration/override.properties";
+        ResourcePropertySource overrideProperties = new ResourcePropertySource(path);
+        propertySources.addFirst(overrideProperties);
     }
 }
