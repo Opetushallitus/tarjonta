@@ -15,19 +15,14 @@
  */
 package fi.vm.sade.tarjonta.rest.bean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.io.support.ResourcePropertySource;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
+import org.springframework.core.env.Environment;
 
 /**
+ *
  * @author Jani Wilén
  */
 @Configuration
@@ -35,32 +30,15 @@ import java.io.IOException;
         "classpath:tarjonta-app.properties",
         "classpath:tarjonta-rest.properties",
         "file:///${user.home:''}/oph-configuration/common.properties",
-        "file:///${user.home:''}/oph-configuration/tarjonta-app.properties"
+        "file:///${user.home:''}/oph-configuration/tarjonta-app.properties",
+        "file:///${user.home:''}/oph-configuration/override.properties"
 })
 public class Configurations {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Configurations.class);
-
     @Autowired
-    private ConfigurableEnvironment env;
+    private Environment env;
 
-    public ConfigurableEnvironment getEnv() {
+    public Environment getEnv() {
         return env;
-    }
-
-    @PostConstruct
-    public void init() {
-        try {
-            tryToLoadOverrideProperties();
-        } catch (IOException e) {
-            LOG.info("override.properties not loaded.");
-        }
-    }
-
-    private void tryToLoadOverrideProperties() throws IOException {
-        MutablePropertySources propertySources = env.getPropertySources();
-        String path = "file:///" + env.getProperty("user.home") + "/oph-configuration/override.properties";
-        ResourcePropertySource overrideProperties = new ResourcePropertySource(path);
-        propertySources.addFirst(overrideProperties);
     }
 }
