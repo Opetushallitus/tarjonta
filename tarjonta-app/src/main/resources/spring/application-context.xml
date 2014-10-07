@@ -23,7 +23,7 @@
       Load configuration settings
     -->
     <context:property-placeholder
-        location="classpath:tarjonta-rest.properties, classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties, file:///${user.home:''}/oph-configuration/override.properties"
+        location="classpath:empty-placeholders.properties, classpath:tarjonta-rest.properties, classpath:tarjonta-app.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/tarjonta-app.properties, file:///${user.home:''}/oph-configuration/override.properties"
         ignore-resource-not-found="true" properties-ref="defaultProps" />
 
     <!--
