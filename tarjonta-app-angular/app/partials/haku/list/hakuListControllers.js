@@ -413,7 +413,7 @@ app.controller('HakuListController',
                     });
                 };
 
-                var selectedOrganisation;
+                var selectedOrganisation = null;
                 $scope.filterByOrganisation = function(organization) {
                     selectedOrganisation = organization;
 
