@@ -15,25 +15,39 @@
  */
 package fi.vm.sade.tarjonta.rest.helper;
 
-import java.io.IOException;
-import java.util.Properties;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.util.PropertyPlaceholderHelper;
 
-/**
- *
- * @author Jani Wilén
- */
+import java.util.Properties;
+
 public class PropertyPlaceholder extends PropertyPlaceholderConfigurer {
 
-    private static Properties mergeProperties;
+    private static Properties properties = new Properties();
+    private static final PropertyPlaceholderHelper propertyHelper = new PropertyPlaceholderHelper("${", "}");
 
-    @Override
-    protected Properties mergeProperties() throws IOException {
-        mergeProperties = super.mergeProperties();
-        return mergeProperties;
+    public static Properties getProperties() {
+        return properties;
     }
 
-    public static Properties getPropertyes() {
-        return mergeProperties;
+    @Override
+    protected void processProperties(ConfigurableListableBeanFactory beanFactory,
+                                     Properties props) throws BeansException {
+        super.processProperties(beanFactory, props);
+
+        for (Object keyObject : props.keySet()) {
+            String key = keyObject.toString();
+            String value = propertyHelper.replacePlaceholders(props.getProperty(key), props);
+            properties.put(key, value);
+        }
+    }
+
+    public static String getProperty(String name) {
+        Object o = properties.get(name);
+        if (o != null) {
+            return String.valueOf(o);
+        }
+        return null;
     }
 }

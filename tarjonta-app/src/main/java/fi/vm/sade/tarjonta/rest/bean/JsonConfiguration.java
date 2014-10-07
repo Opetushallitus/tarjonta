@@ -15,31 +15,20 @@
  */
 package fi.vm.sade.tarjonta.rest.bean;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import fi.vm.sade.tarjonta.rest.helper.PropertyPlaceholder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.rest.dto.JsonConfigObject;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import fi.vm.sade.tarjonta.rest.helper.PropertyPlaceholder;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- *
- * @author Jani Wilén
- */
+import java.util.*;
+
 @Controller
 @RequestMapping("/")
 public class JsonConfiguration {
@@ -49,8 +38,6 @@ public class JsonConfiguration {
     @Value("${importAllKeys.contains}")
     private String keysContains;
     private static String configurationJson;
-    @Autowired
-    ApplicationContext context;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -65,8 +52,8 @@ public class JsonConfiguration {
     @ResponseBody
     public String getEnvJsonConfig() {
         if (configurationJson == null) {
-            final Properties propertyes = PropertyPlaceholder.getPropertyes();
-            configurationJson = createJsonConfiguration(propertyes);
+            final Properties properties = PropertyPlaceholder.getProperties();
+            configurationJson = createJsonConfiguration(properties);
         }
 
         return configurationJson;
@@ -76,22 +63,19 @@ public class JsonConfiguration {
     @ResponseBody
     public String getEnvConfigurationJsFile() {
         if (configurationJson == null) {
-            final Properties propertyes = PropertyPlaceholder.getPropertyes();
-            configurationJson = createJsonConfiguration(propertyes);
+            final Properties properties = PropertyPlaceholder.getProperties();
+            configurationJson = createJsonConfiguration(properties);
         }
 
         return "window.CONFIG = " + configurationJson + ";";
     }
 
-    private String createJsonConfiguration(Properties propertyes) {
-        Set<String> visibleKeys = searchAllRequiredPropertyKeys(propertyes);
-
-        //create configuration object
-        final Configurations conf = context.getBean(Configurations.class);
+    private String createJsonConfiguration(Properties properties) {
+        Set<String> visibleKeys = searchAllRequiredPropertyKeys(properties);
 
         List<JsonConfigObject> jsons = Lists.<JsonConfigObject>newLinkedList();
         for (final String key : visibleKeys) {
-            jsons.add(new JsonConfigObject(key, conf.getEnv().getProperty(key)));
+            jsons.add(new JsonConfigObject(key, PropertyPlaceholder.getProperty(key)));
         }
 
         Collections.sort(jsons, new Comparator<JsonConfigObject>() {
