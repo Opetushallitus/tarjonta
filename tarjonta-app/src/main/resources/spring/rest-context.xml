@@ -22,7 +22,6 @@
         <property name="searchSystemEnvironment" value="true" />
         <property name="locations">
             <list>
-                <value>classpath:empty-placeholders.properties</value>
                 <value>classpath:tarjonta-app.properties</value>
                 <value>classpath:tarjonta-rest.properties</value>
                 <value>file:///${user.home:''}/oph-configuration/common.properties</value>
