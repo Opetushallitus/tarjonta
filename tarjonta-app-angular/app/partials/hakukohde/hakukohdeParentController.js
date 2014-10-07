@@ -1212,14 +1212,24 @@ app.controller('HakukohdeParentController', [
 
         $scope.temp = null;
 
+        $scope.getHakuByOid = function(oid) {
+            var haku = null;
+            angular.forEach($scope.model.hakus, function(element) {
+               if(element.oid === oid) {
+                   haku = element;
+               }
+            });
+            return haku;
+        }
+
         /*
          * Testaa onko haun 'Ei sähköistä hakua. Lisatietoa hakemisesta tarjotaan hakukohteen tiedoissa.' valittu.
          * Kaytossa : AIKU lukio / amm
          */
-        $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected = function (hakus, errors) {
-            if (hakus && hakus[0]
-                && !hakus[0].jarjestelmanHakulomake
-                && (![0].hakulomakeUri || hakus[0].hakulomakeUri.trim() > 0)) {
+        $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected = function (errors) {
+            var haku = $scope.getHakuByOid($scope.model.hakukohde.hakuOid);
+            if (haku && !haku.jarjestelmanHakulomake &&
+                (!haku.hakulomakeUri || haku.hakulomakeUri.trim().length === 0)) {
                 var empty = true;
                 angular.forEach($scope.model.hakukohde.lisatiedot, function (val) {
                     if (val && val.trim().length > 0) {

@@ -44,7 +44,7 @@ app
                     errors.push(err);
                 }
 
-                $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected($scope.model.hakus, errors);
+                $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected(errors);
 
                 if (errors.length < 1) {
                     return true;
