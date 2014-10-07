@@ -617,7 +617,14 @@ app.controller('HakukohdeParentController', [
                 var kohdeJoukkoUriNoVersion = $scope.splitUri(haku.kohdejoukkoUri);
 
                 if (kohdeJoukkoUriNoVersion === window.CONFIG.app[kohdejoukkoUriNimi]) {
-                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                    if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
+                        if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
+                            && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                            filteredHakus.push(haku);
+                        }
+                    }
+                    // Esim. jatkuvalla haulla ei ole koulutuksen alkamiskautta/vuotta
+                    else {
                         filteredHakus.push(haku);
                     }
                 }
