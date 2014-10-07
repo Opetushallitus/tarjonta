@@ -1,5 +1,5 @@
 <div id="edit" ng-controller="BaseEditController">
-    <div id="editKoulutus" ng-controller="EditLukioController">
+    <div id="editKoulutus" ng-controller="EditGenericController">
         <controls-model
             model="controlModel"
             tt-create="koulutus.edit.header.title"
@@ -16,7 +16,7 @@
 
             <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
             <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
-            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify> 
+            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify>
 
             <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
             <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
