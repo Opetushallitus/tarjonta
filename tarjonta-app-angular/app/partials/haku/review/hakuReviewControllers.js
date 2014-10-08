@@ -110,7 +110,7 @@ app.controller('HakuReviewController',
                         },
                         // Preloaded Haku result
                         hakux: $route.current.locals.hakux,
-                        nimi: HakuV1Service.resolveNimi($route.current.locals.hakux.result),
+                        nimi: HakuV1Service.resolveLocalizedValue($route.current.locals.hakux.result.nimi),
                         koodis: {
                             koodiX: "..."
                         },
@@ -138,6 +138,10 @@ app.controller('HakuReviewController',
                         OrganisaatioService.byOid(organisationOid).then(function(organisation) {
                           $scope.model.tarjoajaOrganisations.push(organisation);
                         });
+                    });
+
+                    angular.forEach($scope.model.hakux.result.hakuaikas, function(hakuaika) {
+                        hakuaika.nimi = HakuV1Service.resolveLocalizedValue(hakuaika.nimet);
                     });
 
                     //

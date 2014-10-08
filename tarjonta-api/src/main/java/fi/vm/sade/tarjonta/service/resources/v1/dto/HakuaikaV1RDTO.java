@@ -1,25 +1,15 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-/*
-* @author: Tuomas Katva 04/11/13
-*/
 public class HakuaikaV1RDTO {
 
     private String hakuaikaId;
-    private String nimi;
     private Date alkuPvm;
     private Date loppuPvm;
-
-
-    public String getNimi() {
-        return nimi;
-    }
-
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
-    }
+    private Map<String,String> nimet = new HashMap<String, String>();
 
     public Date getAlkuPvm() {
         return alkuPvm;
@@ -43,5 +33,13 @@ public class HakuaikaV1RDTO {
 
     public void setHakuaikaId(String hakuaikaId) {
         this.hakuaikaId = hakuaikaId;
+    }
+
+    public Map<String, String> getNimet() {
+        return nimet;
+    }
+
+    public void setNimet(Map<String, String> nimet) {
+        this.nimet = nimet;
     }
 }
