@@ -43,9 +43,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
 
-    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO ammattinimikkeet;
-
     @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
     private Boolean opintojenMaksullisuus;
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi")
@@ -112,24 +109,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setPohjakoulutusvaatimukset(KoodiUrisV1RDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
-    }
-
-    /**
-     * @return the ammattinimikkeet
-     */
-    public KoodiUrisV1RDTO getAmmattinimikkeet() {
-        if (ammattinimikkeet == null) {
-            ammattinimikkeet = new KoodiUrisV1RDTO();
-        }
-
-        return ammattinimikkeet;
-    }
-
-    /**
-     * @param ammattinimikkeet the ammattinimikkeet to set
-     */
-    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
-        this.ammattinimikkeet = ammattinimikkeet;
     }
 
     /**

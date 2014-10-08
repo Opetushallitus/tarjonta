@@ -230,6 +230,8 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
 
+        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
+
         /**
          * LUKIOKOULUTUKSEN erikoiskentät
          */
@@ -475,6 +477,8 @@ public class KoulutusDTOConverterToEntity {
 
     /**
      * Valmistava koulutus data conversion!
+     *
+     * Valmistava koulutus on liitetty johonkiin toiseen koulutuksen, se ei ole koulutus itsessään!
      *
      * @param dto
      * @param nayttoKomoto

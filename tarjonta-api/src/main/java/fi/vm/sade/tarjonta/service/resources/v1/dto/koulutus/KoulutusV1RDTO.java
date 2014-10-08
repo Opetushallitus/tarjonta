@@ -128,6 +128,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Opintojen järjestävät", required = false)
     private List<String> opetusTarjoajat = new ArrayList<String>();
 
+    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO ammattinimikkeet;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.toteutustyyppi = toteutustyyppi;
         this.moduulityyppi = moduulityyppi;
@@ -505,5 +508,24 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     public void setOpetusTarjoajat(List<String> opetusTarjoajat) {
         opetusTarjoajat = (opetusTarjoajat != null) ? opetusTarjoajat : new ArrayList<String>();
         this.opetusTarjoajat = opetusTarjoajat;
+    }
+
+
+    /**
+     * @return the ammattinimikkeet
+     */
+    public KoodiUrisV1RDTO getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = new KoodiUrisV1RDTO();
+        }
+
+        return ammattinimikkeet;
+    }
+
+    /**
+     * @param ammattinimikkeet the ammattinimikkeet to set
+     */
+    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
+        this.ammattinimikkeet = ammattinimikkeet;
     }
 }
