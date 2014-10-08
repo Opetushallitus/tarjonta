@@ -450,10 +450,12 @@ app.controller('BaseEditController',
                 uiModel.isMutable = false;
             }
 
-            PermissionService.koulutus.canEdit(model.oid).then(function(data) {
-                $log.debug("setting mutable to:", data);
-                uiModel.isMutable = data;
-            });
+            if ( model.oid ) {
+                PermissionService.koulutus.canEdit(model.oid).then(function (data) {
+                    $log.debug("setting mutable to:", data);
+                    uiModel.isMutable = data;
+                });
+            }
 
             uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
             //$scope.updateFormStatusInformation(model);
