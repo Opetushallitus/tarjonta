@@ -1164,6 +1164,7 @@ public class ConverterV1 {
             valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(valintakoeAjankohtaRDTO.getOsoite()));
             valintakoeAjankohta.setAlkamisaika(valintakoeAjankohtaRDTO.getAlkaa());
             valintakoeAjankohta.setPaattymisaika(valintakoeAjankohtaRDTO.getLoppuu());
+            valintakoeAjankohta.setKellonaikaKaytossa(valintakoeAjankohtaRDTO.isKellonaikaKaytossa());
             valintakoeAjankohtas.add(valintakoeAjankohta);
 
         }
@@ -1257,6 +1258,8 @@ public class ConverterV1 {
         valintakoeAjankohtaRDTO.setLoppuu(valintakoeAjankohta.getPaattymisaika());
         valintakoeAjankohtaRDTO.setLisatiedot(valintakoeAjankohta.getLisatietoja());
         valintakoeAjankohtaRDTO.setOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(valintakoeAjankohta.getAjankohdanOsoite()));
+        valintakoeAjankohtaRDTO.setKellonaikaKaytossa(valintakoeAjankohta.isKellonaikaKaytossa());
+
         if (valintakoeAjankohtaRDTO.getOsoite() != null && valintakoeAjankohtaRDTO.getOsoite().getPostinumero() != null && tarjontaKoodistoHelper != null) {
             KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(valintakoeAjankohtaRDTO.getOsoite().getPostinumero());
             if (postinumeroKoodi != null) {

@@ -1,0 +1,1 @@
+ALTER TABLE valintakoe_ajankohta ADD COLUMN kellonaika_kaytossa boolean DEFAULT true NOT NULL;

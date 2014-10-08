@@ -20,6 +20,7 @@ app
                             lisatiedot: "",
                             alkaa: null,
                             loppuu: null,
+                            kellonaikaKaytossa: true,
                             osoite: {
                                 osoiterivi1: "",
                                 postinumero: "",
