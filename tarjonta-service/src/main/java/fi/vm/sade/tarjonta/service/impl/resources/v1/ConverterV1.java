@@ -1019,7 +1019,10 @@ public class ConverterV1 {
 
         }
 
-        t.setHakuOid(hakukohde.getHaku() != null ? hakukohde.getHaku().getOid() : null);
+        if(hakukohde.getHaku() != null) {
+            t.setHakuOid(hakukohde.getHaku().getOid());
+            t.setHakuKohdejoukkoUri(hakukohde.getHaku().getKohdejoukkoUri());
+        }
 
         t.setHakukohdeNimiUri(hakukohde.getHakukohdeNimi());
         t.setTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);

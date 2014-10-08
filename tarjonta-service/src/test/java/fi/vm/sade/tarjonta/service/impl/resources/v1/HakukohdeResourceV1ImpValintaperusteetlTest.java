@@ -175,6 +175,7 @@ public class HakukohdeResourceV1ImpValintaperusteetlTest {
         assert(hd.getPaasykoeHylkaysMax().equals(new BigDecimal("3.0")));
         assert(hd.getLisapisteMin().equals(new BigDecimal("0.5")));
         assert(hd.getLisanayttoHylkaysMax().equals(new BigDecimal("8.0")));
+        assert(hd.getHakuKohdejoukkoUri().equals(haku.getKohdejoukkoUri()));
     }
 
 }
