@@ -166,6 +166,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
             result = result.result;  //unwrap v1
             for (var i in result.tulokset) {
+                var validKoulutukset = [];
                 var t = result.tulokset[i];
 
                 if (t.nimi === null || typeof t.nimi === 'undefined') {
@@ -176,6 +177,13 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
+
+                    // Jos ei ole vuotta, niin kyseessä on toiseen koulutukseen liitetty
+                    // valmistava koulutus, jota ei näytetä hakutuloksissa.
+                    if ( !r.vuosi ) {
+                        continue;
+                    }
+
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = r.oid;
                     } else {
@@ -184,7 +192,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
+
+                    validKoulutukset.push(r);
                 }
+                t.tulokset = validKoulutukset;
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);
