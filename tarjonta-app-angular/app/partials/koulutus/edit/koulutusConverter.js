@@ -486,13 +486,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([])},
             kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
         },
-        /**
-         * TODO alexGofore: vaihda tämä myöhemmin olemaan 'LUKIOKOULUTUS'. Nyt tällä nimellä,
-         * koska tiimi2 tekee samanaikaisesti muutoksia ja halutaan saada myös heidän
-         * muutokset mukaan.
-         */
         templates: {
-            edit: 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'
+            edit: 'LUKIOKOULUTUS'
         }
     };
 
@@ -596,7 +591,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutustyyppiKoodiUri: "koulutustyyppi_14",
             STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
                 toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'}
-            })
+            }),
+            templates: {
+                edit: 'LUKIOKOULUTUS'
+            }
         }),
 
         /*******************************************/
