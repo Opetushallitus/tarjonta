@@ -413,7 +413,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
         ],
         templates: {
-            edit: 'AMMATILLINEN_PERUSTUTKINTO'
+            edit: 'AMMATILLINEN_PERUSTUTKINTO',
+            review: 'GENERIC'
         }
     });
 
@@ -431,7 +432,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutuslaji: {koodisto: 'koodisto-uris.koulutuslaji'}
         }),
         templates: {
-            edit: 'VALMISTAVA_KOULUTUS'
+            edit: 'VALMISTAVA_KOULUTUS',
+            review: 'GENERIC'
         }
     });
 
@@ -591,10 +593,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutustyyppiKoodiUri: "koulutustyyppi_14",
             STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
                 toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'}
-            }),
-            templates: {
-                edit: 'LUKIOKOULUTUS'
-            }
+            })
         }),
 
         /*******************************************/
@@ -632,7 +631,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_er' // yksillöllistetty perusopetus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_5",
-            templates: null, // käytä oletusnimeä templalle
+            templates: {
+                edit: null, // käytä oletusnimeä templalle
+                review: 'GENERIC'
+            },
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
                 opintojenLaajuusarvo: {module: 'TUTKINTO'},
