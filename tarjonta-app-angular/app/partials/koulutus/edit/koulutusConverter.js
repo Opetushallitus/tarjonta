@@ -356,15 +356,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     var DEFAULT_REVIEW_FIELDS = [
         "TAVOITTEET",
         "KOULUTUKSEN_TAVOITTEET",
+        "KOULUTUKSEN_RAKENNE",
+        "JATKOOPINTO_MAHDOLLISUUDET",
         "KOULUTUSOHJELMAN_VALINTA",
         "SISALTO",
-        "KOULUTUKSEN_RAKENNE",
         "KOHDERYHMA",
         "SIJOITTUMINEN_TYOELAMAAN",
         "KANSAINVALISTYMINEN",
         "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
-        "AMMATTINIMIKKEET",
-        "JATKOOPINTO_MAHDOLLISUUDET"
+        "AMMATTINIMIKKEET"
     ];
 
     var GENERIC_STRUCTURE = {
@@ -511,9 +511,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             "TAVOITTEET",
             "SISALTO",
             "KOULUTUKSEN_RAKENNE",
+            "JATKOOPINTO_MAHDOLLISUUDET",
             "KANSAINVALISTYMINEN",
-            "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
-            "JATKOOPINTO_MAHDOLLISUUDET"
+            "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA"
         ]
     };
 
