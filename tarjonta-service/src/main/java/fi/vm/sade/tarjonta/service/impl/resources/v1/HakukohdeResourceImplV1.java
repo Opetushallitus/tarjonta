@@ -1483,13 +1483,19 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
         for (TekstiKaannos tekstiKaannos : oldValintakoe.getKuvaus().getKaannoksetAsList()) {
             Valintakoe valintakoe = new Valintakoe();
-            valintakoe.setAjankohtas(createNewAjankohdat(oldValintakoe));
             valintakoe.setKuvaus(createKuvaus(tekstiKaannos));
             valintakoe.setKieli(StringUtils.substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
             valintakoe.setTyyppiUri(oldValintakoe.getTyyppiUri());
             valintakoe.setLastUpdateDate(new Date());
             valintakoe.setLastUpdatedByOid(oldValintakoe.getLastUpdatedByOid());
             valintakoe.setVersion(oldValintakoe.getVersion());
+
+            Set<ValintakoeAjankohta> ajankohdat = createNewAjankohdat(oldValintakoe);
+            for (ValintakoeAjankohta valintakoeAjankohta : ajankohdat) {
+                valintakoeAjankohta.setValintakoe(valintakoe);
+                valintakoe.addAjankohta(valintakoeAjankohta);
+            }
+
             valintakokeet.add(valintakoe);
         }
         return valintakokeet;
@@ -1510,7 +1516,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             ajankohta.setAlkamisaika(oldAjankohta.getAlkamisaika());
             ajankohta.setPaattymisaika(oldAjankohta.getPaattymisaika());
             ajankohta.setLisatietoja(oldAjankohta.getLisatietoja());
-            ajankohta.setValintakoe(oldValintakoe);
             ajankohdat.add(ajankohta);
         }
         return ajankohdat;

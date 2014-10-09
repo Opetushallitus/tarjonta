@@ -243,16 +243,14 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     // kutsutaan parentista
     $scope.status.validateLiitteet = function() {
-        console.log("validointi!");
-
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
     		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
 
-    		if (!notEmpty([li.liitteenNimi, li.toimitettavaMennessa, li.liitteenTyyppi])
+    		if ((!notEmpty(li.liitteenNimi) && !notEmpty(li.liitteenTyyppi))
+                    || !notEmpty(li.toimitettavaMennessa)
     				|| !$scope.isValidSahkoinenOsoite(li)
     				|| !$scope.isValidToimitusOsoite(li)) {
 
-                console.log("not valid!");
     			return false;
     		}
     	}

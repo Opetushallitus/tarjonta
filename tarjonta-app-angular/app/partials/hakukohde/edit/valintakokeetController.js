@@ -12,7 +12,8 @@ app
                         langs: [],
                         selectedLangs: [],
                         selectedTab: {},
-                        valintakoeLangs: []
+                        valintakoeLangs: [],
+                        valintakoetyypit: []
                     };
 
                     function newAjankohta() {
@@ -152,17 +153,17 @@ app
                         for (var i in $scope.model.hakukohde.valintakokeet) {
                             var li = $scope.model.hakukohde.valintakokeet[i];
                             var nimiEmpty = !notEmpty(li.valintakoeNimi);
+                            var tyyppiEmpty = !notEmpty(li.valintakoetyyppi);
                             var kuvausEmpty = !notEmpty($(
                                     "<div>" + li.valintakokeenKuvaus.teksti + "</div>").text()
                                     .trim());
                             var ajankohtaEmpty = li.valintakoeAjankohtas.length == 0;
 
-                            if (nimiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
+                            if (nimiEmpty && tyyppiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
                                 continue;
-                                // uusi tyhjä
                             }
 
-                            if (nimiEmpty) {
+                            if (nimiEmpty && tyyppiEmpty) {
                                 return false;
                             }
                             if (kuvausEmpty) {
@@ -306,4 +307,33 @@ app
                             }
                         }
                     };
+
+                    var setValintakoetyypit = function (toteutusTyyppi) {
+                        var valintakoetyypit = [];
+
+                        valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_1", $scope.model.userLang));
+                        valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_2", $scope.model.userLang));
+                        valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_5", $scope.model.userLang));
+
+                        if(toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                            toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                            toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                            toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                            toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+                            toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+                            toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+                            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_6", $scope.model.userLang));
+                        }
+
+                        angular.forEach(valintakoetyypit, function(koodiPromise) {
+                            koodiPromise.then(function(koodi) {
+                                var valintakoetyyppi = {
+                                    nimi: koodi.koodiNimi,
+                                    uri: koodi.koodiUri + "#" + koodi.koodiVersio
+                                };
+                                $scope.kokeetModel.valintakoetyypit.push(valintakoetyyppi);
+                            });
+                        });
+                    };
+                    setValintakoetyypit($scope.model.hakukohde.toteutusTyyppi);
                 });

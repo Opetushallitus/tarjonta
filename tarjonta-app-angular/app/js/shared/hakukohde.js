@@ -253,17 +253,7 @@ app.factory('HakukohdeService', function($resource, Config) {
         if (hakukohde.hakukohteenLiitteet.length === 0) {
             var kieli = hakukohde.opetusKielet[0]||"kieli_fi";
             console.log("no there was not, adding one with lang", kieli);
-            if(hakukohde.toteutusTyyppi !== 'AMMATILLINEN_PERUSTUTKINTO' &&
-                hakukohde.toteutusTyyppi !== 'LUKIOKOULUTUS' &&
-                hakukohde.toteutusTyyppi !== 'PERUSOPETUKSEN_LISAOPETUS' &&
-                hakukohde.toteutusTyyppi !== 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' &&
-                hakukohde.toteutusTyyppi !== 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
-                hakukohde.toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
-                hakukohde.toteutusTyyppi !== 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' &&
-                hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS' &&
-                hakukohde.toteutusTyyppi !== 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
-                addLiite(hakukohde, kieli,{});
-            }
+            addLiite(hakukohde, kieli,{});
         }
     }
 
@@ -308,13 +298,10 @@ app.factory('HakukohdeService', function($resource, Config) {
         console.log("poistetaan tyhjät liitteet");
         for (var i in liitteetArray) {
             var liite = liitteetArray[i];
-            if (liite.isNew === true && liite.liitteenNimi === "") {
+            if (liite.isNew === true && liite.liitteenNimi === "" && liite.liitteenTyyppi == undefined) {
                 var idx = liitteetArray.indexOf(liite);
                 liitteetArray.splice(idx, 1);
-                console.log("poistetaan liite:", liite);
             }
-            console.log("ei poisteta liitettä:", liite);
-
         }
     }
 
