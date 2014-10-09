@@ -138,8 +138,6 @@ public class ConverterV1 {
         t.setHakutyyppiUri(haku.getHakutyyppiUri());
         t.setHaunTunniste(haku.getHaunTunniste());
         t.setKohdejoukkoUri(haku.getKohdejoukkoUri());
-        // t.setLastUpdatedByOid(haku.getLastUpdatedByOid());
-        // t.setLastUpdatedDate(haku.getLastUpdateDate());
         t.setTila(haku.getTila().name());
         t.setHakukausiVuosi(haku.getHakukausiVuosi());
         t.setMaxHakukohdes(haku.getMaxHakukohdes());
@@ -147,7 +145,6 @@ public class ConverterV1 {
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
         t.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
 
-        // Hakukohdes
         if (true) {
             List<String> tmp = hakukohdeDao.findByHakuOid(t.getOid(), null, 0, 0, null, null);
             t.setHakukohdeOids(tmp);
@@ -225,15 +222,14 @@ public class ConverterV1 {
                 ha = new Hakuaika();
                 ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
                 ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
-                ha.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
-
+                ha.setNimi(convertMapToMonikielinenTeksti(hakuaikaDTO.getNimet()));
                 haku.addHakuaika(ha);
             } else {
                 LOG.debug(" == old hakuaika TODO");
 
                 ha.setAlkamisPvm(hakuaikaDTO.getAlkuPvm());
                 ha.setPaattymisPvm(hakuaikaDTO.getLoppuPvm());
-                ha.setSisaisenHakuajanNimi(hakuaikaDTO.getNimi());
+                ha.setNimi(convertMapToMonikielinenTeksti(hakuaikaDTO.getNimet()));
 
                 // Remove update form the list to find out deleted hakuaikas
                 tmpHakuaikas.remove(ha);
@@ -299,8 +295,7 @@ public class ConverterV1 {
         hakuaikaV1RDTO.setHakuaikaId(hakuaika.getId().toString());
         hakuaikaV1RDTO.setAlkuPvm(hakuaika.getAlkamisPvm());
         hakuaikaV1RDTO.setLoppuPvm(hakuaika.getPaattymisPvm());
-        hakuaikaV1RDTO.setNimi(hakuaika.getSisaisenHakuajanNimi());
-
+        hakuaikaV1RDTO.setNimet(convertMonikielinenTekstiToMap(hakuaika.getNimi(), false));
         return hakuaikaV1RDTO;
     }
 
@@ -308,15 +303,10 @@ public class ConverterV1 {
         List<HakuaikaV1RDTO> hakuV1RDTOs = new ArrayList<HakuaikaV1RDTO>();
 
         if (hakuaikas != null) {
-
             for (Hakuaika hakuaika : hakuaikas) {
-
                 hakuV1RDTOs.add(convertHakuaikaToV1RDTO(hakuaika));
-
             }
-
         }
-
         return hakuV1RDTOs;
     }
 
@@ -1069,7 +1059,10 @@ public class ConverterV1 {
 
         }
 
-        t.setHakuOid(hakukohde.getHaku() != null ? hakukohde.getHaku().getOid() : null);
+        if(hakukohde.getHaku() != null) {
+            t.setHakuOid(hakukohde.getHaku().getOid());
+            t.setHakuKohdejoukkoUri(hakukohde.getHaku().getKohdejoukkoUri());
+        }
 
         t.setHakukohdeNimiUri(hakukohde.getHakukohdeNimi());
         t.setTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
@@ -1243,6 +1236,7 @@ public class ConverterV1 {
             valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.toOsoite(valintakoeAjankohtaRDTO.getOsoite()));
             valintakoeAjankohta.setAlkamisaika(valintakoeAjankohtaRDTO.getAlkaa());
             valintakoeAjankohta.setPaattymisaika(valintakoeAjankohtaRDTO.getLoppuu());
+            valintakoeAjankohta.setKellonaikaKaytossa(valintakoeAjankohtaRDTO.isKellonaikaKaytossa());
             valintakoeAjankohtas.add(valintakoeAjankohta);
 
         }
@@ -1396,6 +1390,8 @@ public class ConverterV1 {
         valintakoeAjankohtaRDTO.setLoppuu(valintakoeAjankohta.getPaattymisaika());
         valintakoeAjankohtaRDTO.setLisatiedot(valintakoeAjankohta.getLisatietoja());
         valintakoeAjankohtaRDTO.setOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(valintakoeAjankohta.getAjankohdanOsoite()));
+        valintakoeAjankohtaRDTO.setKellonaikaKaytossa(valintakoeAjankohta.isKellonaikaKaytossa());
+
         if (valintakoeAjankohtaRDTO.getOsoite() != null && valintakoeAjankohtaRDTO.getOsoite().getPostinumero() != null && tarjontaKoodistoHelper != null) {
             KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(valintakoeAjankohtaRDTO.getOsoite().getPostinumero());
             if (postinumeroKoodi != null) {

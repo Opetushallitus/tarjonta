@@ -15,7 +15,10 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import fi.vm.sade.tarjonta.model.Hakuaika;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.service.resources.dto.HakuaikaRDTO;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Conversion from domain Hakuaika to REST API DTO.
@@ -35,7 +38,7 @@ public class HakuaikaToHakuaikaRDTOConverter extends BaseRDTOConverter<Hakuaika,
 
         t.setAlkuPvm(s.getAlkamisPvm());
         t.setLoppuPvm(s.getPaattymisPvm());
-        t.setNimi(s.getSisaisenHakuajanNimi());
+        t.setNimi(getNimi(s));
 
         t.setOid("" + s.getId());
         t.setVersion(s.getVersion() != null ? s.getVersion().intValue() : 0);
@@ -43,4 +46,24 @@ public class HakuaikaToHakuaikaRDTOConverter extends BaseRDTOConverter<Hakuaika,
         return t;
     }
 
+    private String getNimi(Hakuaika s) {
+        MonikielinenTeksti nimi = s.getNimi();
+        if (nimi != null) {
+            String finnishName = getFinnishName(nimi);
+            if (StringUtils.isNotBlank(finnishName)) {
+                return finnishName;
+            } else {
+                for (TekstiKaannos kaannos : nimi.getKaannoksetAsList()) {
+                    if (StringUtils.isNotBlank(kaannos.getArvo())) {
+                        return kaannos.getArvo();
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    private String getFinnishName(MonikielinenTeksti nimi) {
+        return nimi.getTekstiForKieliKoodi("kieli_fi");
+    }
 }

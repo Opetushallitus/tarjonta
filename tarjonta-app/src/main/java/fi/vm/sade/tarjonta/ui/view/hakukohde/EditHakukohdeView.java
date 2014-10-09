@@ -126,7 +126,8 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
           
               
               //saa tallentaa draftina vain jos tila draft tai null
-              final boolean saveableAsDraft = tila==null || TarjontaTila.LUONNOS.equals(tila);
+              final boolean saveableAsDraft = tila==null || TarjontaTila.LUONNOS.equals(tila)
+                                                || TarjontaTila.KOPIOITU.equals(tila);
               
               enableButtonByListener(clickListenerSaveAsDraft, saveableAsDraft && hasEditPermission); 
               enableButtonByListener(clickListenerSaveAsReady, hasEditPermission);

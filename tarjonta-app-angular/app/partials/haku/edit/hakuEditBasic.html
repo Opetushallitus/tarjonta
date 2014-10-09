@@ -72,13 +72,13 @@
         <td colspan="2" class="help" tt="haku.edit.haunNimi.help"></td>
     </tr>
 
-    <tr class="required">
+    <tr class="required hakuajat">
         <th data-tt='haku.edit.hakuaika'>Hakuaika</th>
-        <td colspan="2">
+        <td>
             <table>
             <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas" ng-form="hakuaikaForm">
-                <td>
-                    <input type="text" placeholder="{{ t('haku.edit.hakuaika.nimi.placeholder') }}" ng-model="hakuaika.nimi"/>
+                <td class="nimet ">
+                    <mk-textfield model="hakuaika.nimet" required="true" name="haunNimet"></mk-textfield>
                 </td>
                 <td>
                     <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>

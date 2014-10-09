@@ -53,6 +53,9 @@ public class ValintakoeAjankohta extends TarjontaBaseEntity {
     @Column(name = "paattymisaika", nullable = false)
     private Date paattymisaika;
 
+    @Column(name = "kellonaika_kaytossa", nullable = false)
+    private boolean kellonaikaKaytossa = true;
+
     @FilterXss
     @Column(name = "lisatietoja")
     private String lisatietoja;
@@ -97,5 +100,13 @@ public class ValintakoeAjankohta extends TarjontaBaseEntity {
 
     public void setAjankohdanOsoite(Osoite ajankohdanOsoite) {
         this.ajankohdanOsoite = ajankohdanOsoite;
+    }
+
+    public boolean isKellonaikaKaytossa() {
+        return kellonaikaKaytossa;
+    }
+
+    public void setKellonaikaKaytossa(boolean kellonaikaKaytossa) {
+        this.kellonaikaKaytossa = kellonaikaKaytossa;
     }
 }

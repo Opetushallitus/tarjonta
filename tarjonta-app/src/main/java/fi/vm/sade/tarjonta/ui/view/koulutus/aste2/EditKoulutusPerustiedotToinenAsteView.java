@@ -66,7 +66,9 @@ public class EditKoulutusPerustiedotToinenAsteView extends AbstractEditLayoutVie
         buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
         this.makeFormDataUnmodified();
         
-        final boolean draftActive = !model.isLoaded() || TarjontaTila.LUONNOS.equals(model.getTila()); //enabloitu jos uusi tai tila==draft
+        final boolean draftActive = !model.isLoaded()
+                                    || TarjontaTila.LUONNOS.equals(model.getTila())
+                                    || TarjontaTila.KOPIOITU.equals(model.getTila()); //enabloitu jos uusi tai tila==draft,kopioitu
         enableButtonByListener(clickListenerSaveAsDraft,draftActive);
     }
 
