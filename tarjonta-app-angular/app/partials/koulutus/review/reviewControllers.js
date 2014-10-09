@@ -47,6 +47,31 @@ app.controller('BaseReviewController', [
             koulutus: koulutusModel, // preloaded in route resolve, see
             selectedKomoOid: [koulutusModel.komoOid]
         };
+
+        $scope.reviewFields = KoulutusConverterFactory.STRUCTURE[koulutusModel.toteutustyyppi].reviewFields;
+        var ammattinimikkeet = {};
+        if ( koulutusModel.ammattinimikkeet ) {
+            ammattinimikkeet.tekstis = {};
+            angular.forEach(koulutusModel.ammattinimikkeet.meta, function (ammattinimike) {
+                angular.forEach(ammattinimike.meta, function(meta, langCode) {
+                    if (!ammattinimikkeet.tekstis[langCode]) {
+                        ammattinimikkeet.tekstis[langCode] = "";
+                    }
+                    ammattinimikkeet.tekstis[langCode] += ", " + meta.nimi;
+                });
+            });
+            // Strip the first comma
+            angular.forEach(ammattinimikkeet.tekstis, function(text, key) {
+                ammattinimikkeet.tekstis[key] = text.substring(1);
+            });
+        }
+        $scope.reviewTexts = angular.extend({}, koulutusModel.kuvausKomo, koulutusModel.kuvausKomoto, {
+            KOULUTUKSEN_TAVOITTEET: {
+                tekstis: koulutusModel.koulutuksenTavoitteet
+            },
+            AMMATTINIMIKKEET: ammattinimikkeet
+        });
+
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
         $scope.model.userLangUri = "kieli_" + AuthService.getLanguage();

@@ -93,7 +93,7 @@
                 {{model.koulutus.pohjakoulutusvaatimus.meta[lang.koodi_uri].nimi}}
             </td>
         </tr>
-        
+
         <tr>
             <th></th>
             <td colspan="2"><br/></td>
@@ -169,17 +169,17 @@
         <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
 
-    <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">  
+    <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">
         <tr>
             <th><b>{{t('koulutus.review.yhteyshenkilo.'+yh.henkiloTyyppi)}}</b></th>
             <td colspan="2">{{yh.titteli}} {{yh.sukunimi}}, {{yh.etunimet}}</td>
         </tr>
-        
+
         <tr>
             <th tt="koulutus.review.yhteyshenkilo.puhelin">Puhelin</th>
             <td colspan="2">{{yh.puhelin}}</td>
         </tr>
-    
+
         <tr>
             <th tt="koulutus.review.yhteyshenkilo.sahkoposti">Sähköposti</th>
             <td colspan="2">{{yh.sahkoposti}}</td>
@@ -198,7 +198,7 @@
             <th>{{t('koulutus.review.kielivalikoima.' + key)}}</th>
             <td colspan="2">
                 <span ng-repeat="meta in val.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>
-                
+
             </td>
         </tr>
         <tr>
@@ -207,11 +207,10 @@
                 <span ng-repeat="meta in model.koulutus.lukiodiplomit.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>
             </td>
         </tr>
-        <tr ng-repeat="lisatieto in lisatiedot">
-            <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
-            <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
+        <tr ng-repeat="field in reviewFields">
+            <th>{{t('koulutus.review.kuvailevatTiedot.' + field)}}</th>
+            <td colspan="2" data-ng-bind-html="reviewTexts[field].tekstis[lang.koodi_uri]"></td>
         </tr>
-
     </tbody>
 
     <!-- HAKUKOHTEET -->

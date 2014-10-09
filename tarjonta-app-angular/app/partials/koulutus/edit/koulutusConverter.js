@@ -353,6 +353,20 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     /* INITIALIZATION PARAMETERS BY TOTEUTUSTYYPPI */
     /*************************************************/
 
+    var DEFAULT_REVIEW_FIELDS = [
+        "TAVOITTEET",
+        "KOULUTUKSEN_TAVOITTEET",
+        "KOULUTUSOHJELMAN_VALINTA",
+        "SISALTO",
+        "KOULUTUKSEN_RAKENNE",
+        "KOHDERYHMA",
+        "SIJOITTUMINEN_TYOELAMAAN",
+        "KANSAINVALISTYMINEN",
+        "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
+        "AMMATTINIMIKKEET",
+        "JATKOOPINTO_MAHDOLLISUUDET"
+    ];
+
     var GENERIC_STRUCTURE = {
         page: 'nayttotutkinto',
         KUVAUS_ORDER: [
@@ -415,7 +429,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         templates: {
             edit: 'AMMATILLINEN_PERUSTUTKINTO',
             review: 'GENERIC'
-        }
+        },
+        reviewFields: DEFAULT_REVIEW_FIELDS
     });
 
     var GENERIC_VALMISTAVA_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
@@ -434,7 +449,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         templates: {
             edit: 'VALMISTAVA_KOULUTUS',
             review: 'GENERIC'
-        }
+        },
+        reviewFields: DEFAULT_REVIEW_FIELDS
     });
 
     var GENERIC_LUKIOKOULUTUS_STRUCTURE = {
@@ -490,7 +506,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         },
         templates: {
             edit: 'LUKIOKOULUTUS'
-        }
+        },
+        reviewFields: [
+            "TAVOITTEET",
+            "SISALTO",
+            "KOULUTUKSEN_RAKENNE",
+            "KANSAINVALISTYMINEN",
+            "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
+            "JATKOOPINTO_MAHDOLLISUUDET"
+        ]
     };
 
     factory.STRUCTURE = {
