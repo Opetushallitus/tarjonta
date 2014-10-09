@@ -434,6 +434,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSMUODOS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSPAIKKAS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
         expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.OPETUSAIKAS, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
+        expect(commonConverterMock.convertToKoodiUrisDTO(Sets.<KoodistoUri>newHashSet(), FieldNames.AMMATTINIMIKKEET, PARAM)).andReturn(toKoodiUris(Type.NOT_TESTED));
     }
 
 }
