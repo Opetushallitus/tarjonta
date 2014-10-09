@@ -103,8 +103,6 @@ app.controller('HakukohdeRoutingController', [
         }
       }
 
-      HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
-
       $scope.hakukohdex = $route.current.locals.hakukohdex;
       $log.info("  --> hakukohdex == ", $scope.hakukohdex);
 

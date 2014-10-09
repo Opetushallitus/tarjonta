@@ -133,4 +133,6 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      */
     public void safeDelete(final String hakukohdeOid, final String userOid);
 
+    public List<String> findAllOids();
+
 }

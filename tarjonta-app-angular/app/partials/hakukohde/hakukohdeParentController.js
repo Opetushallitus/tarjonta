@@ -1162,7 +1162,6 @@ app.controller('HakukohdeParentController', [
                                 }
 
                                 $scope.showCommonUnknownErrorMsg();
-                                $scope.showError(hakukohde.errors);
 
                             }
                         }, function (error) {

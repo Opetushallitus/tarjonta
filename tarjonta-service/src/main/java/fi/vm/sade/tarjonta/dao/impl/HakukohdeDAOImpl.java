@@ -476,4 +476,10 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         findByOid.setLastUpdatedByOid(userOid);
     }
 
+    @Override
+    public List<String> findAllOids() {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return from(hakukohde).list(QHakukohde.hakukohde.oid);
+    }
+
 }
