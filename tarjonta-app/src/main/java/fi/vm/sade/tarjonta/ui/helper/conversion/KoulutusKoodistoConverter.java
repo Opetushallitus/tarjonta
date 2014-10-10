@@ -113,7 +113,12 @@ public class KoulutusKoodistoConverter {
 
         List<String> listKoodiUris = new ArrayList<String>();
         for (KoulutusmoduuliKoosteTyyppi t : komos) {
-            listKoodiUris.add(TarjontaUIHelper.noVersionUri(t.getKoulutusohjelmakoodiUri()));
+            // Ei pitäisi olla null, mutta koska siirrytään koodistossa käyttämään koulutusohjelmien
+            // sijasta osaamisalaa, oli joillakin koulutusmoduuleilla pelkkä osaamisala, mikä aiheutti virheen.
+            // Lisätietoja: https://jira.cybercom.com/browse/OPHASPA-1422
+            if ( t.getKoulutusohjelmakoodiUri() != null ) {
+                listKoodiUris.add(TarjontaUIHelper.noVersionUri(t.getKoulutusohjelmakoodiUri()));
+            }
         }
         SearchKoodisByKoodistoCriteriaType koodisByKoodistoUri = KoodiServiceSearchCriteriaBuilder.koodisByKoodistoUri(listKoodiUris, KoodistoURI.KOODISTO_KOULUTUSOHJELMA_URI);
         List<KoodiType> koodistoData = koodiService.searchKoodisByKoodisto(koodisByKoodistoUri);
