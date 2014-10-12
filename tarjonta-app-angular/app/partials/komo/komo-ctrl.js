@@ -502,7 +502,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     }, function(res) {
                         /*
                          * mapLoaded:
-                         * 
+                         *
                          * koulutus_123456 : {
                          * oid : 12345,
                          * mapOhjelmas : {
@@ -1065,7 +1065,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                             if (row[langObj.index]) {
                                 koulutusObj[koulutusUri].tekstis[col.enum]['tekstis'][langObj.code] = row[langObj.index];
                             } else {
-                                console.log("column not found : " + koulutusIndex + " " + langObj.code + " " + langObj.index);
+                                console.log("column '" + col.enum + "' not found, lang =", langObj.code, "row =", row);
                             }
                         }
                     }
@@ -1229,7 +1229,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                     continue;
                 }
 
-                //create real uri without version hash for komo search operation 
+                //create real uri without version hash for komo search operation
                 var ohjelmaUri = row[koodistoIndex] + '_' + row[koodiArvoIndex];
 
                 ohjelmaObj[ohjelmaUri] = {
@@ -1250,7 +1250,7 @@ angular.module('app.komo.ctrl', ['Tarjonta', 'ngResource', 'config', 'localisati
                             if (row[langObj.index]) {
                                 ohjelmaObj[ohjelmaUri].tekstis[col.enum]['tekstis'][langObj.code] = row[langObj.index];
                             } else {
-                                console.log("column not found : " + koodiArvoIndex + " " + langObj.code + " " + langObj.index);
+                                console.log("column '" + col.enum + "' not found, lang =", langObj.code, "row =", row);
                             }
                         }
                     }
