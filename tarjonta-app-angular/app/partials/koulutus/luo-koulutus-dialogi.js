@@ -377,10 +377,7 @@ app.controller('LuoKoulutusDialogiController',
             }
 
             var toteutustyyppi = KoulutusConverterFactory.getToteutustyyppiByKoulutustyyppiKoodiUri(newVal.koodiUri);
-            $scope.showPohjakoulutusvaatimus = [
-                "AMMATILLINEN_PERUSTUTKINTO",
-                "VAPAAN_SIVISTYSTYON_KOULUTUS"
-            ].indexOf(toteutustyyppi) !== -1
+            $scope.showPohjakoulutusvaatimus = KoulutusConverterFactory.STRUCTURE[toteutustyyppi].showPohjakoulutusvaatimus;
 
             if ( !$scope.showPohjakoulutusvaatimus ) {
                 $scope.model.pohjakoulutusvaatimus = null;

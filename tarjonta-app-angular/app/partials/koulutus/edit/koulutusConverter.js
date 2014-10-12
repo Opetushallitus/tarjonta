@@ -644,7 +644,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
                 opintojenLaajuusarvo: {module: 'TUTKINTO'},
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
-            })
+            }),
+            showPohjakoulutusvaatimus: true
         }),
 
         /*******************************************/
@@ -761,7 +762,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutustyyppiKoodiUri: "koulutustyyppi_10",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
-            })
+            }),
+            showPohjakoulutusvaatimus: true
         }),
 
         /*******************************************/
