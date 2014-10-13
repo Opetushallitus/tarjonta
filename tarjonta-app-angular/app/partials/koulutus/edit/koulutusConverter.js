@@ -611,8 +611,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
             koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_a', // aikuiskoulutus
-                pohjakoulutusvaatimus: 'pohjakoulutustoinenaste_1' // perusopetuksen oppimäärä
+                koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_14",
             STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
@@ -625,8 +624,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         LUKIOKOULUTUS: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
             koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n', // nuorten koulutus
-                pohjakoulutusvaatimus: 'pohjakoulutustoinenaste_1' // perusopetuksen oppimäärä
+                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_2"
         }),
@@ -636,25 +634,20 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         AMMATILLINEN_PERUSTUTKINTO: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
             koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n', // nuorten koulutus
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
+                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_1",
             RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
                 opintojenLaajuusarvo: {module: 'TUTKINTO'},
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
-            }),
-            showPohjakoulutusvaatimus: true
+            })
         }),
 
         /*******************************************/
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koodistoDefaults: {
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_er' // yksillöllistetty perusopetus
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_5",
             templates: {
                 edit: null, // käytä oletusnimeä templalle
@@ -702,8 +695,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         PERUSOPETUKSEN_LISAOPETUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
             koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n', // nuorten koulutus
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
+                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_6",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
@@ -717,9 +709,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koodistoDefaults: {
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_7",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
@@ -730,9 +719,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koodistoDefaults: {
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_8",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
@@ -743,9 +729,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koodistoDefaults: {
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_9",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
@@ -756,14 +739,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* VAPAAN_SIVISTYSTYON_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         VAPAAN_SIVISTYSTYON_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koodistoDefaults: {
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_pk' // peruskoulu
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_10",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
-            }),
-            showPohjakoulutusvaatimus: true
+            })
         }),
 
         /*******************************************/
@@ -771,8 +750,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
             koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n', // aikuiskoulutus
-                pohjakoulutusvaatimus: 'pohjakoulutusvaatimustoinenaste_er' // yksillöllistetty perusopetus
+                koulutuslaji: 'koulutuslaji_n' // aikuiskoulutus
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_4",
             RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {

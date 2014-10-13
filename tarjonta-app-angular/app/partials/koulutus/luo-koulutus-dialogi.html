@@ -14,7 +14,10 @@
 
         <div ng-if="showPohjakoulutusvaatimus">
             <h4>Valitse pohjakoulutusvaatimus</h4>
-            <koodistocombo koodistouri="'pohjakoulutusvaatimustoinenaste'" koodiuri="model.pohjakoulutusvaatimus" />
+            <select ng-model="model.pohjakoulutusvaatimus"
+                ng-options="obj.koodiUri as obj.koodiNimi for (key,obj) in pohjakoulutusvaatimusOptions|orderBy:'koodiNimi'">
+                <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
+            </select>
         </div>
 
         <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>

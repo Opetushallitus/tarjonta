@@ -269,7 +269,7 @@ app.controller('LuoKoulutusDialogiController',
                 $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri
                     + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
 
-                if ( $scope.showPohjakoulutusvaatimus ) {
+                if ( $scope.model.pohjakoulutusvaatimus ) {
                     $location.search('pohjakoulutusvaatimus', $scope.model.pohjakoulutusvaatimus);
                 }
 
@@ -376,12 +376,20 @@ app.controller('LuoKoulutusDialogiController',
                 return;
             }
 
-            var toteutustyyppi = KoulutusConverterFactory.getToteutustyyppiByKoulutustyyppiKoodiUri(newVal.koodiUri);
-            $scope.showPohjakoulutusvaatimus = KoulutusConverterFactory.STRUCTURE[toteutustyyppi].showPohjakoulutusvaatimus;
+            // Hae pohjakoulutusvaatimus koodistosta
+            Koodisto.getAlapuolisetKoodiUrit([newVal.koodiUri], "pohjakoulutusvaatimustoinenaste").then(function(res) {
+                $scope.pohjakoulutusvaatimusOptions = res.map;
 
-            if ( !$scope.showPohjakoulutusvaatimus ) {
-                $scope.model.pohjakoulutusvaatimus = null;
-            }
+                var keys = _.keys(res.map);
+                $scope.showPohjakoulutusvaatimus = keys.length > 1;
+
+                if ( keys.length === 1 ) {
+                    $scope.model.pohjakoulutusvaatimus = res.map[keys[0]].koodiUri;
+                }
+                else {
+                    $scope.model.pohjakoulutusvaatimus = null;
+                }
+            });
         });
 
     });
