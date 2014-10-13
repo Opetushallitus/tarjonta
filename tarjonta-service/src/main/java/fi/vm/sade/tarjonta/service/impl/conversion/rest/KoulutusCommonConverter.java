@@ -152,7 +152,7 @@ public class KoulutusCommonConverter {
 
     /*
      * Create JSON object:
-     * 
+     *
      * "kieli_sv" : {
      *    "kieliUri" : "kieli_sv",
      *    "kieliVersio" : 1,
@@ -389,7 +389,7 @@ public class KoulutusCommonConverter {
     private void handleDates(KoulutusmoduuliToteutus komoto, Set<Date> koulutuksenAlkamisPvms, KoodiV1RDTO kausi, Integer vuosi) {
 
         if (koulutuksenAlkamisPvms != null && !koulutuksenAlkamisPvms.isEmpty()) {
-            //one or many dates   
+            //one or many dates
             EntityUtils.keepSelectedDates(komoto.getKoulutuksenAlkamisPvms(), koulutuksenAlkamisPvms);
             final Date firstDate = koulutuksenAlkamisPvms.iterator().next();
             KoulutusValidationMessages checkDates = validateDates(firstDate, koulutuksenAlkamisPvms, komoto);
@@ -404,7 +404,7 @@ public class KoulutusCommonConverter {
             Preconditions.checkNotNull(vuosi, "Alkamisvuosi cannot be null!");
 
             komoto.clearKoulutuksenAlkamisPvms();
-            //only kausi + year, no date objects   
+            //only kausi + year, no date objects
             komoto.setAlkamisVuosi(vuosi);
             komoto.setAlkamiskausiUri(convertToUri(kausi, FieldNames.ALKAMISKAUSI));
         }
@@ -481,9 +481,12 @@ public class KoulutusCommonConverter {
     public Set<KoodistoUri> convertToUris(final KoodiUrisV1RDTO dto, Set<KoodistoUri> koodistoUris, final FieldNames msg) {
         Preconditions.checkNotNull(dto, "DTO object cannot be null! Error field : " + msg);
 
-        Set<KoodistoUri> modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
+        Set<KoodistoUri> modifiedUris;
         if (koodistoUris == null) {
             modifiedUris = Sets.<KoodistoUri>newHashSet();
+        }
+        else {
+            modifiedUris = Sets.<KoodistoUri>newHashSet(koodistoUris);
         }
 
         if (dto.getUris() != null) {

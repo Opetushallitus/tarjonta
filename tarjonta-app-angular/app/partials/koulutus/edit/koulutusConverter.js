@@ -911,7 +911,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                         apiModel[key][type].uris[uri] = map[uri];
                     });
                 });
-            } else if (angular.isDefined(uiModel[key].uris) && Object.keys(uiModel[key].uris).length > 0) {
+            }
+            else if (angular.isDefined(uiModel[key].uris)) {
                 apiModel[key] = {'uris': {}};
                 //search version information for list of uris;
                 var map = {};

@@ -112,7 +112,7 @@ public class KoulutusDTOConverterToEntity {
         }
 
         if (!addNewKomotoToKomo) {
-            /* 
+            /*
              * Only when user create new komo + komoto.
              */
             korkeakouluKomoDataUpdate(komo, dto);
@@ -230,7 +230,7 @@ public class KoulutusDTOConverterToEntity {
             komoto.setOpetusPaikkas(commonConverter.convertToUris(dto.getOpetusPaikkas(), komoto.getOpetusPaikkas(), FieldNames.OPETUSPAIKKAS));
         }
 
-        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
+        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), null, FieldNames.AMMATTINIMIKKEET));
 
         /**
          * LUKIOKOULUTUKSEN erikoiskentät
@@ -306,7 +306,7 @@ public class KoulutusDTOConverterToEntity {
             komoto = koulutusmoduuliToteutusDAO.findByOid(dto.getOid());
             komo = komoto.getKoulutusmoduuli();
         } else {
-            //insert only new komoto data to database, do not change or update komo. 
+            //insert only new komoto data to database, do not change or update komo.
             Preconditions.checkNotNull(dto.getKomoOid(), "KOMO OID cannot be null.");
             komo = koulutusmoduuliDAO.findByOid(dto.getKomoOid());
             Preconditions.checkNotNull(komo, "KOMO object not found.");
@@ -373,7 +373,7 @@ public class KoulutusDTOConverterToEntity {
         /* CUSTOM DATA by object type */
         komoto.setHinta(dto.getHinta() != null ? new BigDecimal(dto.getHinta().toString()) : null);
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus() != null ? dto.getOpintojenMaksullisuus().toString() : Boolean.FALSE.toString());
-        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
+        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), null, FieldNames.AMMATTINIMIKKEET));
         komoto.setJarjesteja(dto.getJarjestavaOrganisaatio() != null ? dto.getJarjestavaOrganisaatio().getOid() : null);
 
         if (dto.getValmistavaKoulutus() == null) { //delete if any
@@ -446,7 +446,7 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(dto.getOpintojenMaksullisuus(), "OpintojenMaksullisuus boolean cannot be null.");
         komoto.setMaksullisuus(dto.getOpintojenMaksullisuus().toString());
         komoto.setKkPohjakoulutusvaatimus(commonConverter.convertToUris(dto.getPohjakoulutusvaatimukset(), komoto.getKkPohjakoulutusvaatimus(), FieldNames.POHJALKOULUTUSVAATIMUS));
-        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), komoto.getAmmattinimikes(), FieldNames.AMMATTINIMIKKEET));
+        komoto.setAmmattinimikes(commonConverter.convertToUris(dto.getAmmattinimikkeet(), null, FieldNames.AMMATTINIMIKKEET));
         komoto.setHinta(dto.getHinta() != null ? new BigDecimal(dto.getHinta().toString()) : null);
         komoto.setNimi(commonConverter.convertToTexts(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA)); //OVT-7531
 
@@ -571,7 +571,7 @@ public class KoulutusDTOConverterToEntity {
         base.setOpintoalaUri(commonConverter.convertToUri(dto.getOpintoala(), FieldNames.OPINTOALA));
         base.setEqfUri(commonConverter.convertToUri(dto.getEqf(), FieldNames.EQF, ALLOW_NULL_KOODI_URI));
         base.setNqfUri(commonConverter.convertToUri(dto.getNqf(), FieldNames.NQF, ALLOW_NULL_KOODI_URI));
-        base.setTila(dto.getTila()); //has the same status as the komoto 
+        base.setTila(dto.getTila()); //has the same status as the komoto
         base.setKoulutusUri(commonConverter.convertToUri(dto.getKoulutuskoodi(), FieldNames.KOULUTUS));
         base.setKoulutustyyppiUri(commonConverter.convertToUri(dto.getKoulutustyyppi(), FieldNames.KOULUTUSTYYPPI, ALLOW_NULL_KOODI_URI));
         base.setUlkoinenTunniste(dto.getTunniste());
