@@ -1,15 +1,16 @@
 <table class="tarjontaForm">
-
     <!-- ammattinimikkeet -->
     <tr class="info">
         <th tt="koulutus.edit.ammattinimikkeet.title" />
-        <td><multi-select
-                      selection="uiModel.ammattinimikkeet.uris"
-                      promise="uiModel.ammattinimikkeet.promise" display="combobox"
-                      tt-show-all-title="koulutus.edit.ammattinimikkeet.title"/></td>
-<!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
-<td></td>
-</tr>
+        <td>
+            <multi-select
+                selection="uiModel.ammattinimikkeet.uris"
+                promise="uiModel.ammattinimikkeet.promise" display="combobox"
+                tt-show-all-title="koulutus.edit.ammattinimikkeet.title"/>
+        </td>
+        <!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
+        <td></td>
+    </tr>
 </table>
 
 <mk-tabs
