@@ -854,15 +854,11 @@ app.controller('BaseEditController',
                 $scope.loadKomoKuvausTekstis($scope.uiModel.tutkintoModules[uriNew].oid);
                 var resource = TarjontaService.komo();
 
-                var listOfTutkintoModules = _.map($scope.uiModel['tutkintoModules'], function(num) {
-                    return num.koodiUri;
-                });
-
-                $scope.uiModel.tutkinto = _.map($scope.uiModel['tutkintoModules'], function(num) {
+                $scope.uiModel.tutkinto = _.map($scope.uiModel.tutkintoModules, function(num) {
                     return num;
                 });
 
-                var promise = Koodisto.getAlapuolisetKoodiUrit(listOfTutkintoModules, null, $scope.koodistoLocale);
+                var promise = Koodisto.getAlapuolisetKoodiUrit([uriNew], null, $scope.koodistoLocale);
                 promise.then(function(koodistoResult) {
                     resource.searchModules({
                             koulutus: uriNew,
