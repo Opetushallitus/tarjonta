@@ -723,7 +723,6 @@ app.controller('BaseEditController',
         };
 
         $scope.loadKomoKuvausTekstis = function(komoOid, kuvausKomoto) {
-
             function setUiModelTexts(komoKomoto) {
                 var mapping = {
                     kuvausTavoite: 'TAVOITTEET',
@@ -829,6 +828,7 @@ app.controller('BaseEditController',
          */
         $scope.$watch("model.koulutusohjelma.uri", function(uri, oUri) {
             if (angular.isDefined(uri) && uri != null && oUri != uri) {
+                $scope.model.koulutuksenTavoitteet = null; // tyhjennä varmuuden vuoksi, jotta ei näytetä väärän koulutuksen tekstejä
                 if (angular.isDefined($scope.uiModel.koulutusohjelmaModules[uri])) {
                     $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[uri].oid;
                     $scope.loadRelationKoodistoData(
@@ -837,6 +837,16 @@ app.controller('BaseEditController',
                         uri,
                         ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
                     );
+
+                    /**
+                     * Osalla koulutuksista on omia KOMO-tekstejä lapsi KOMOISSA, jotka pitää hakea
+                     * erikseen tässä. Tällä hetkellä ainoa teksti on koulutuksenTavoitteet.
+                     */
+                    TarjontaService.komo().tekstis({oid: $scope.model.komoOid}, function (komoTekstisResponse) {
+                        if ( komoTekstisResponse.result && komoTekstisResponse.result.TAVOITTEET ) {
+                            $scope.model.koulutuksenTavoitteet = komoTekstisResponse.result.TAVOITTEET.tekstis;
+                        }
+                    });
                 }
                 else {
                     $log.error("missing koulutus by " + uri);
@@ -849,6 +859,7 @@ app.controller('BaseEditController',
                 $scope.uiModel.koulutusohjelmaModules = {};
                 $scope.uiModel.koulutusohjelma = [];
                 $scope.model.koulutusohjelma.uri = null;
+                $scope.model.koulutuksenTavoitteet = null; // tyhjennä varmuuden vuoksi, jotta ei näytetä väärän koulutuksen tekstejä
 
                 $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uriNew, ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
                 $scope.loadKomoKuvausTekstis($scope.uiModel.tutkintoModules[uriNew].oid);
