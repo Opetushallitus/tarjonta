@@ -523,31 +523,31 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 break;
             case LUKIOKOULUTUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case PERUSOPETUKSEN_LISAOPETUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             case VAPAAN_SIVISTYSTYON_KOULUTUS:
                 validationMessageses.addAll(HakukohdeValidator
-                        .validateAikuLukioHakukohde(hakukohdeV1RDTO));
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
                 break;
             default:
                 LOG.error("Toteutustyyppi:" + toteutustyyppi + " validation rules not implemented");

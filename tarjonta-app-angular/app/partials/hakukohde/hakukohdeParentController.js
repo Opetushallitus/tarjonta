@@ -168,7 +168,9 @@ app.controller('HakukohdeParentController', [
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
         $scope.model.valintakoe = {};
-
+        $scope.model.liitteidenMuuOsoiteEnabled = false;
+        $scope.model.liitteidenSahkoinenOsoiteEnabled = $scope.model.hakukohde.sahkoinenToimitusOsoite !== undefined && $scope.model.hakukohde.sahkoinenToimitusOsoite.length > 0;
+        $scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm =  $scope.model.hakukohde.liitteidenToimitusPvm === $scope.model.hakukohde.hakuaikaLoppuPvm;
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
 
@@ -379,6 +381,19 @@ app.controller('HakukohdeParentController', [
                 $scope.model.hakukelpoisuusValidationErrMsg = true;
                 errors.push(error);
 
+            }
+
+            if($scope.toisenAsteenKoulutus(toteutusTyyppi)) {
+                if(!$scope.isValidHakukohdeToimitusOsoite()) {
+                    var error = {};
+                    error.errorMessageKey = 'hakukohde.edit.liitteet.toimitusosoite.errors';
+                    errors.push(error);
+                }
+                if(!$scope.isValidHakukohdeSahkoinenOsoite()) {
+                    var error = {};
+                    error.errorMessageKey = 'hakukohde.edit.liitteet.sahkoinenosoite.errors';
+                    errors.push(error);
+                }
             }
 
             if(!$scope.toisenAsteenKoulutus(toteutusTyyppi)) {
@@ -1042,6 +1057,33 @@ app.controller('HakukohdeParentController', [
 
         };
 
+        $scope.resetHakukohdeLiitteidenToimitusOsoite = function() {
+            if($scope.model.liitteidenToimitusOsoite['kieli_fi'] !== undefined) {
+                $scope.model.hakukohde.liitteidenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite['kieli_fi']);
+            } else if ($scope.model.liitteidenToimitusOsoite['kieli_sv'] !== undefined) {
+                $scope.model.hakukohde.liitteidenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite['kieli_sv']);
+            } else if ($scope.model.liitteidenToimitusOsoite['kieli_en'] !== undefined) {
+                $scope.model.hakukohde.liitteidenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite['kieli_en']);
+            } else {
+                $scope.model.hakukohde.liitteidenToimitusOsoite = undefined;
+            }
+
+            if($scope.model.hakukohde.liitteidenToimitusOsoite !== undefined) {
+                $scope.model.liitteidenMuuOsoiteEnabled = false;
+            } else {
+                $scope.model.liitteidenMuuOsoiteEnabled = true;
+            }
+        }
+
+        $scope.isValidHakukohdeToimitusOsoite = function() {
+            return !$scope.model.liitteidenMuuOsoiteEnabled
+                || (!_.isEmpty($scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1) && !_.isEmpty($scope.model.hakukohde.liitteidenToimitusOsoite.postinumero));
+        }
+
+        $scope.isValidHakukohdeSahkoinenOsoite = function() {
+            return !$scope.model.liitteidenSahkoinenOsoiteEnabled || !_.isEmpty($scope.model.hakukohde.sahkoinenToimitusOsoite);
+        }
+
         var checkAndAddHakutoimisto = function (data) {
             var hakutoimistoFound = false;
             if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
@@ -1055,18 +1097,28 @@ app.controller('HakukohdeParentController', [
                         $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postitoimipaikka = yhteystieto.postitoimipaikka;
-                        // $scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1
-                        // = yhteystieto.osoite;
-                        // $scope.model.hakukohde.liitteidenToimitusOsoite.postinumero
-                        // = yhteystieto.postinumeroUri;
-                        // $scope.model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka
-                        // = yhteystieto.postitoimipaikka;
+
                         hakutoimistoFound = true;
 
                     }
 
                 });
 
+                if($scope.model.liitteidenToimitusOsoite['kieli_fi'] !== undefined) {
+                    var os1 = $scope.model.liitteidenToimitusOsoite['kieli_fi'];
+                    var os2 = $scope.model.hakukohde.liitteidenToimitusOsoite;
+                    $scope.model.liitteidenMuuOsoiteEnabled = (os1.osoiterivi1 != os2.osoiterivi1) || (os1.postinumero != os2.postinumero);
+                } else if ($scope.model.liitteidenToimitusOsoite['kieli_sv'] !== undefined) {
+                    var os1 = $scope.model.liitteidenToimitusOsoite['kieli_sv'];
+                    var os2 = $scope.model.hakukohde.liitteidenToimitusOsoite;
+                    $scope.model.liitteidenMuuOsoiteEnabled = (os1.osoiterivi1 != os2.osoiterivi1) || (os1.postinumero != os2.postinumero);
+                } else if ($scope.model.liitteidenToimitusOsoite['kieli_en'] !== undefined) {
+                    var os1 = $scope.model.liitteidenToimitusOsoite['kieli_en'];
+                    var os2 = $scope.model.hakukohde.liitteidenToimitusOsoite;
+                    $scope.model.liitteidenMuuOsoiteEnabled = (os1.osoiterivi1 != os2.osoiterivi1) || (os1.postinumero != os2.postinumero);
+                } else {
+                    $scope.model.liitteidenMuuOsoiteEnabled = true;
+                }
             }
 
             return hakutoimistoFound;
@@ -1365,4 +1417,9 @@ app.controller('HakukohdeParentController', [
             }
         };
 
+        $scope.useHaunPaattymisaikaChanged = function(value) {
+            if(value === true) {
+                $scope.model.hakukohde.liitteidenToimitusPvm = $scope.model.hakukohde.hakuaikaLoppuPvm;
+            }
+        }
     }]);

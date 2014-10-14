@@ -479,4 +479,8 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
                 ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi())) ||
                 ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
     }
+
+    public boolean isLukioKoulutus() {
+        return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
+    }
 }

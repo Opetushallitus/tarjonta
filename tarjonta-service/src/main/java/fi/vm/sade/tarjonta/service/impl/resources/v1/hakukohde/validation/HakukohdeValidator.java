@@ -67,6 +67,25 @@ public class HakukohdeValidator {
         return validationMessages;
     }
 
+    public static List<HakukohdeValidationMessages> validateToisenAsteenHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+
+        List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
+
+        validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
+
+        if (hakukohdeRDTO.getHakukohteenNimiUri() == null || hakukohdeRDTO.getHakukohteenNimiUri().trim().length() < 1) {
+            validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
+        }
+
+        if (hakukohdeRDTO.isLukioKoulutus() && hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() != 0) {
+            if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() < 4 || hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() > 10) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALIN_HYVAKSYTTY_KESKIARVO_RANGE);
+            }
+        }
+
+        return validationMessages;
+    }
+
     public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
@@ -85,6 +104,7 @@ public class HakukohdeValidator {
                 validationMessages.addAll(validateLiite(liite));
             }
         }
+
 
         return validationMessages;
     }

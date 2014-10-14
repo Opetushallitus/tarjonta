@@ -104,7 +104,7 @@
                     <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
                         <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo">Alin hyväksytty keskiarvo</th>
                         <td>
-                            <input name="alinHyvaksyttavaKeskiarvo" ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text" data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
+                            <input valid-decimal name="alinHyvaksyttavaKeskiarvo" ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text" data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.alinHyvaksyttavaKeskiarvo.$invalid" tt="tarjonta.hakukohde.alinHyvaksyttavaKeskiarvo.validation.failed">Tarkista alin hyväksyttävä keskiarvo</p>
@@ -129,16 +129,45 @@
                     </tr>
 
                     <tr>
-                        <th tt="kk.hakukohde.valintapalvelu">Valintapalvelu</th>
-                        <td ng-disabled="model.isDeEnabled">
-                            <p tt="kk.hakukohde.kaytetaanJarjestelmanValintaPalvelua">Käytetään järjestelmän valintapalvelua</p>
+                        <th tt="tarjonta.hakukohde.liitteet.toimitusosoite"></th>
+                        <td>
+                            <div><span tt="tarjonta.hakukohde.liitteidenToimitusosoite.ohje">Ilmoita tässä osoite, johon harkinnanvaraisen haun liitteet toimitetaan. Ilmoita tiedot muista mahdollisista liitteistä ja niiden toimitusosoitteista Liitteiden tiedot -välilehdellä.</span></div>
+                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="resetHakukohdeLiitteidenToimitusOsoite()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta"></span></label>
+                            <br/>
 
-                            <input type="radio" ng-disabled="model.isDeEnabled" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="true"/>
-                            <span tt="yes">Kyllä</span>
+                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="true"/><span tt="tarjonta.hakukohde.liitteet.kaytetaanMuutaOsoitetta"></span></label>
+                            <br/>
 
-                            <input type="radio" ng-disabled="model.isDeEnabled" ng-model="model.hakukohde.kaytetaanJarjestelmanValintaPalvelua" ng-value="false"/>
-                            <span tt="no">Ei</span>
+                            <div class="inset">
+                                <osoite-field required model="model.hakukohde.liitteidenToimitusOsoite" ng-disabled="!model.liitteidenMuuOsoiteEnabled"></osoite-field>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !isValidHakukohdeToimitusOsoite()" tt="tarjonta.hakukohde.liitteet.errors.toimitusOsoite">Liitteen toimistusosoite on pakollinen mikäli organisaation hakijapalveluiden postiosoitetta ei käytetä tai sitä ei ole määritelty.</p>
+                        </td>
+                    </tr>
 
+                    <tr>
+                        <th></th>
+                        <td>
+                            <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti"></span></label><br/>
+                            <div class="inset">
+                                <input type="text" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !isValidHakukohdeSahkoinenOsoite()" tt="tarjonta.hakukohde.liitteet.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
+                        </td>
+                    </tr>
+
+                    <tr class="required">
+                        <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa"></th>
+                        <td>
+                            <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="useHaunPaattymisaikaChanged(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa"></span></label><br/>
+                            <t-date-time required timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-model="model.hakukohde.liitteidenToimitusPvm" ng-change="status.dirtify()"></t-date-time>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && !model.hakukohde.liitteidenToimitusPvm" tt="tarjonta.hakukohde.liitteet.errors.toimitusaika">Liitteen toimitusaika on pakollinen.</p>
                         </td>
                     </tr>
 
@@ -147,8 +176,10 @@
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
                 <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
 
-                <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
-                <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
+                <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                    <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
+                    <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
+                </div>
 
             </form>
         </tab>

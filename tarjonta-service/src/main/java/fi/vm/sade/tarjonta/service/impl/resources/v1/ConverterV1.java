@@ -14,45 +14,39 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.collect.Maps;
-
-import java.math.BigDecimal;
-import java.util.*;
-
+import fi.vm.sade.koodisto.service.types.common.KieliType;
+import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
+import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperusteetUtil;
 import fi.vm.sade.tarjonta.service.resources.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
+import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.koodisto.service.types.common.KieliType;
-import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
-import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.service.OIDCreationException;
-import fi.vm.sade.tarjonta.service.OidService;
-import fi.vm.sade.tarjonta.service.business.ContextDataService;
-import fi.vm.sade.tarjonta.service.enums.MetaCategory;
-import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
-import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
-import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import java.util.Map.Entry;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * API V1 converters to/from model/domain.
@@ -583,7 +577,7 @@ public class ConverterV1 {
         hakukohdeRDTO.setTila(hakukohde.getTila().name());
         hakukohdeRDTO.setValintaperustekuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getValintaperustekuvausKoodiUri()));
         hakukohdeRDTO.setLiitteidenToimitusPvm(hakukohde.getLiitteidenToimitusPvm());
-        hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToMap(hakukohde.getLisatiedot(), false));
+        hakukohdeRDTO.setLisatiedot(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getLisatiedot()));
 
         Set<KoulutusmoduuliToteutus> komotos = hakukohde.getKoulutusmoduuliToteutuses();
         KoulutusmoduuliToteutus komoto = null;
@@ -782,10 +776,16 @@ public class ConverterV1 {
         hakukohde.setLiitteidenToimitusPvm(hakukohdeRDTO.getLiitteidenToimitusPvm());
         hakukohde.setValintojenAloituspaikatLkm(hakukohdeRDTO.getValintojenAloituspaikatLkm());
         hakukohde.setSahkoinenToimitusOsoite(hakukohdeRDTO.getSahkoinenToimitusOsoite());
-        hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeRDTO.isKaytetaanJarjestelmanValintaPalvelua());
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdeRDTO.isKaytetaanHaunPaattymisenAikaa());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
+
+        if (hakukohdeRDTO.toisenAsteenKoulutus()) {
+            hakukohde.setKaytetaanJarjestelmanValintapalvelua(true);
+        } else {
+            hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeRDTO.isKaytetaanJarjestelmanValintaPalvelua());
+        }
+
         if (hakukohdeRDTO.getValintaperusteKuvaukset() != null) {
             hakukohde.setValintaperusteKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getValintaperusteKuvaukset()));
         }
@@ -1059,7 +1059,7 @@ public class ConverterV1 {
 
         }
 
-        if(hakukohde.getHaku() != null) {
+        if (hakukohde.getHaku() != null) {
             t.setHakuOid(hakukohde.getHaku().getOid());
             t.setHakuKohdejoukkoUri(hakukohde.getHaku().getKohdejoukkoUri());
         }
@@ -1206,12 +1206,20 @@ public class ConverterV1 {
         return painotettavaOppiaine;
     }
 
-    /**
-     * Convert Map<S, S> to MonikielinenTeksti object.
-     *
-     * @param nimet
-     * @return
-     */
+    public HashMap<String, String> convertMonikielinenTekstiToMapWithoutVersions(MonikielinenTeksti teksti) {
+        HashMap<String, String> result = new HashMap<String, String>();
+
+        if (teksti == null) {
+            return result;
+        }
+
+        for (TekstiKaannos tekstiKaannos : teksti.getKaannoksetAsList()) {
+            String kieliKoodi = tekstiKaannos.getKieliKoodi();
+            result.put(kieliKoodi.split("#")[0], tekstiKaannos.getArvo());
+        }
+        return result;
+    }
+
     public MonikielinenTeksti convertMapToMonikielinenTeksti(Map<String, String> nimet) {
         if (nimet == null || nimet.isEmpty()) {
             return null;

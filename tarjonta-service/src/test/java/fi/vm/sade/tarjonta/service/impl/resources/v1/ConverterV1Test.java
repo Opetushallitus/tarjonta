@@ -170,4 +170,14 @@ public class ConverterV1Test {
         ValintakoeAjankohtaRDTO valintakoeAjankohtaDTO = new ValintakoeAjankohtaRDTO();
         return Arrays.asList(valintakoeAjankohtaDTO);
     }
+
+    @Test
+    public void thatToinenAsteUsesJarjestelmanValintapalvelua() {
+        HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
+        hakukohdeDTO.setKaytetaanJarjestelmanValintaPalvelua(false);
+
+        Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
+
+        assertTrue(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
+    }
 }
