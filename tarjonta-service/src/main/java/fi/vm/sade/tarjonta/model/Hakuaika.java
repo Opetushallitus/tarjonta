@@ -17,12 +17,8 @@ package fi.vm.sade.tarjonta.model;
 
 
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
@@ -37,8 +33,9 @@ public class Hakuaika extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 1492826641481066295L;
 
-    @Column(name = "sisaisenhakuajannimi")
-    private String sisaisenHakuajanNimi;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nimi_teksti_id")
+    private MonikielinenTeksti nimi;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "alkamispvm")
@@ -75,21 +72,12 @@ public class Hakuaika extends TarjontaBaseEntity {
         this.haku = haku;
     }
 
-    /**
-     * @return the sisaisenHakuajanNimi
-     */
-    public String getSisaisenHakuajanNimi() {
-        return sisaisenHakuajanNimi;
+    public MonikielinenTeksti getNimi() {
+        return nimi;
     }
 
-    /**
-     * @param sisaisenHakuajanNimi the sisaisenHakuajanNimi to set
-     */
-    public void setSisaisenHakuajanNimi(String sisaisenHakuajanNimi) {
-        this.sisaisenHakuajanNimi = sisaisenHakuajanNimi;
+    public void setNimi(MonikielinenTeksti nimi) {
+        this.nimi = MonikielinenTeksti.merge(this.nimi, nimi);
     }
-
-
-
 }
 

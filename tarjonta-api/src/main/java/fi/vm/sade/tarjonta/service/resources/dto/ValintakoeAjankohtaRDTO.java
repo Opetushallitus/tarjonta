@@ -27,6 +27,7 @@ public class ValintakoeAjankohtaRDTO extends BaseRDTO {
     private Date _alkaa;
     private Date _loppuu;
     private String _lisatiedot;
+    private boolean kellonaikaKaytossa = true;
 
     public OsoiteRDTO getOsoite() {
     	if (_osoite==null) {
@@ -61,5 +62,13 @@ public class ValintakoeAjankohtaRDTO extends BaseRDTO {
 
     public void setLisatiedot(String _lisatiedot) {
         this._lisatiedot = _lisatiedot;
+    }
+
+    public boolean isKellonaikaKaytossa() {
+        return kellonaikaKaytossa;
+    }
+
+    public void setKellonaikaKaytossa(boolean kellonaikaKaytossa) {
+        this.kellonaikaKaytossa = kellonaikaKaytossa;
     }
 }

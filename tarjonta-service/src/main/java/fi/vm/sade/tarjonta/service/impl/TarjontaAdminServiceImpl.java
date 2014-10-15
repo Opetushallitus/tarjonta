@@ -927,7 +927,6 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
             } else {
                 // vanha
                 Hakuaika na = ths.remove(ca.getId());
-                na.setSisaisenHakuajanNimi(ca.getSisaisenHakuajanNimi());
                 na.setAlkamisPvm(ca.getAlkamisPvm());
                 na.setPaattymisPvm(ca.getPaattymisPvm());
             }

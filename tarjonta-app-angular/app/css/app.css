@@ -559,6 +559,10 @@ input[type=checkbox], input[type=radio] {
 	box-shadow:none;
 }
 
+label input[type=checkbox] {
+    margin: 0 5px 0 0;
+}
+
 /* koulutuksen alkamispvm */
 
 div#koulutuksenAlkamisPvm ul {
@@ -823,4 +827,28 @@ table.valintakoeTilaisuudet td.vkPoista {
 table.valintakoeTilaisuudet td.vkPoista button {
 	width:72px;
 	height:72px;
+}
+
+table tr.hakuajat td {
+    vertical-align: top;
+}
+
+table tr.hakuajat td.controls button {
+    top: 0px;
+}
+
+table tr.hakuajat > td > table {
+    width: 100%;
+}
+
+table tr.hakuajat table.mkTextfield input {
+    margin-top: 0px;
+}
+
+table tr.hakuajat td.nimet {
+    min-width: 200px;
+}
+
+table tr.hakuajat td.nimet th {
+    padding-right: 5px;
 }
