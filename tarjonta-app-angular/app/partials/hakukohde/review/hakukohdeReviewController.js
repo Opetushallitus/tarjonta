@@ -80,10 +80,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
      * ----------------------------
      */
     /*
-     * 
+     *
      * ----------> This functions loops through hakukohde names and
      * lisätiedot to get hakukohdes languages
-     * 
+     *
      */
 
     var convertValintaPalveluValue = function() {
@@ -240,10 +240,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     /*
-     * 
+     *
      * ------------> Function to get koodisto koodis and call
      * resultHandler to process those results
-     * 
+     *
      */
 
     var getKoodisWithKoodisto = function(koodistoUri, resultHandlerFunction) {
@@ -257,11 +257,11 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     /*
-     * 
+     *
      * --------> Function to get specific koodi information and call
      * result handler to process that
-     * 
-     * 
+     *
+     *
      */
     var getKoodiWithUri = function(koodistoUri, koodiUri, resultHandlerFunction) {
 
@@ -274,10 +274,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     /*
-     * 
+     *
      * ------------> This function retrieves haku and it's name so that it
      * can be shown
-     * 
+     *
      */
 
     var loadHakuInformation = function() {
@@ -323,10 +323,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     /*
-     * 
+     *
      * ---------> This function retrieves hakukelpoisuusVaatimukses and
      * adds results to model
-     * 
+     *
      */
 
     var loadHakukelpoisuusVaatimukses = function() {
@@ -365,9 +365,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     /*
-     * 
+     *
      * ---------> Load koulutukses to show hakukohde related koulutukses
-     * 
+     *
      */
 
     var loadKoulutukses = function() {
@@ -436,7 +436,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     var checkForHakuRemove = function() {
 
-        var canRemoveHakukohde = TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+        var possibleStates = TarjontaService.getTilat()[$scope.model.hakukohde.tila];
+
+        var canRemoveHakukohde = possibleStates.removable && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
         var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
         var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
 
@@ -458,10 +460,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     /*
-     * 
+     *
      * -----------> Controller "initialization" part where initialization
      * functions are run <--------------
-     * 
+     *
      */
 
     var init = function() {
@@ -508,10 +510,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     init();
 
     /*
-     * 
+     *
      * -----------> Controller event/click handlers etc.
      * <------------------
-     * 
+     *
      */
 
     $scope.getHakukohteenJaOrganisaationNimi = function() {
@@ -628,9 +630,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                          * description:
                          * LocalisationService.t("hakukohde.review.remove.confirmation.desc"),
                          * ok: LocalisationService.t("ok")};
-                         * 
+                         *
                          * var dd = dialogService.showDialog(confTexts);
-                         * 
+                         *
                          * dd.result.then(function(daatta){
                          * $location.path('/etusivu'); });
                          */
@@ -844,10 +846,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 });
 
 /*
- * 
+ *
  * ----------------> Show koulutus hakukohdes modal controller definition
  * <-----------------
- * 
+ *
  */
 
 app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance, LocalisationService, hakukohtees, selectedLocale) {
@@ -875,11 +877,11 @@ app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance,
 });
 
 /*
- * 
+ *
  * ----------------> Liita koulutus modal controller definition
  * <------------------
- * 
- * 
+ *
+ *
  */
 
 app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalInstance, LocalisationService, Config, TarjontaService, organisaatioOids,
@@ -889,9 +891,9 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
     $log.debug("init...");
 
     /*
-     
+
      ----------> Init controller variables etc. <--------------
-     
+
      */
 
     $scope.model = {};
@@ -918,9 +920,9 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
     $scope.model.hakutulos = [];
 
     /*
-     
+
      ----------> Define "initialization functions <------------
-     
+
      */
     var loadKomotos = function() {
 
