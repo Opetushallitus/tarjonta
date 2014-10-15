@@ -277,9 +277,12 @@ app.controller('HakukohdeEditController',
 
      */
 
+    var resolveLocalizedValue = function(key) {
+        var userKieliUri = LocalisationService.getKieliUri();
+        return key[userKieliUri] || key["kieli_fi"] || key["kieli_sv"] || key["kieli_en"] || "[Ei nimeä]";
+    };
 
     $scope.model.hakuChanged = function() {
-
 
         if ($scope.model.hakukohde.hakuOid !== undefined) {
 
@@ -294,7 +297,7 @@ app.controller('HakukohdeEditController',
 
                     var formattedEndDate = $scope.createFormattedDateString(hakuaika.loppuPvm);
 
-                    hakuaika.formattedNimi = hakuaika.nimi + ", " + formattedStartDate + " - " + formattedEndDate;
+                    hakuaika.formattedNimi = resolveLocalizedValue(hakuaika.nimet) + ", " + formattedStartDate + " - " + formattedEndDate;
 
                     $scope.model.hakuaikas.push(hakuaika);
                 });
