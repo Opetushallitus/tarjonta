@@ -290,7 +290,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
                     return result;
                 }
-                publication.updatePublicationStatus(Lists.newArrayList(tila));
 
                 if (hakuToUpdate == null) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));

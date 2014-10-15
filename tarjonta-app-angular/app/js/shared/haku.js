@@ -150,8 +150,8 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
   /**
    * Palauttaa haun nimen käyttäjän kielellä, tai fallback fi,sv,en tai "[Ei nimeä]"
    */
-  var resolveNimi = function(haku) {
-    return haku.nimi[userKieliUri]||haku.nimi["kieli_fi"]||haku.nimi["kieli_sv"]||haku.nimi["kieli_en"]||"[Ei nimeä]";
+  var resolveLocalizedValue = function(key) {
+    return key[userKieliUri] || key["kieli_fi"] || key["kieli_sv"] || key["kieli_en"] || "[Ei nimeä]";
   };
 
   /**
@@ -161,7 +161,7 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
       //$log.debug("mget:", oids);
       return HakuV1.mget({oid:oids}).$promise.then(function(haut){
         angular.forEach(haut.result, function(haku, key){
-          haku.nimi=resolveNimi(haku);
+          haku.nimi = resolveLocalizedValue(haku.nimi);
         });
         return haut.result;
       });
@@ -236,8 +236,8 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
         return mget(data.result);
       });
     },
-  
-    resolveNimi: resolveNimi, 
+
+    resolveLocalizedValue: resolveLocalizedValue,
     
     createNewEmptyHaku : createNewEmptyHaku,
     

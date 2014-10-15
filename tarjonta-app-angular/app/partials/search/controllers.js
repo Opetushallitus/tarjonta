@@ -3,7 +3,7 @@
 
 angular.module('app.search.controllers', ['app.services', 'localisation', 'Organisaatio', 'config', 'ResultsTreeTable'])
     .controller('SearchController',
-        function($scope, $routeParams, $location,
+        function ($scope, $routeParams, $location,
             LocalisationService, Koodisto, OrganisaatioService,
             TarjontaService, PermissionService, Config,
             loadingService, $modal, $window,
@@ -16,15 +16,15 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             var selectOrg;
 
             //organisaation vaihtuessa suoritettavat toimenpiteet
-            $scope.$watch("selectedOrgOid", function(newObj, oldObj) {
+            $scope.$watch("selectedOrgOid", function (newObj, oldObj) {
                 if (newObj) {
                     //päivitä permissio
-                    PermissionService.koulutus.canCreate(newObj).then(function(data) {
+                    PermissionService.koulutus.canCreate(newObj).then(function (data) {
                         $scope.koulutusActions.canCreateKoulutus = data;
                     });
 
                     //päivitä nimi
-                    OrganisaatioService.nimi(newObj).then(function(nimi) {
+                    OrganisaatioService.nimi(newObj).then(function (nimi) {
                         $scope.selectedOrgName = nimi;
 
                         //päivitä lokaatio
@@ -73,16 +73,16 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 if (orgs.indexOf(OPH_ORG_OID) == -1) {
                     //hae orgsit jos ei oph
                     console.log("orgsit:", orgs);
-                    OrganisaatioService.etsi({oidRestrictionList: orgs}).then(function(vastaus) {
+                    OrganisaatioService.etsi({oidRestrictionList: orgs}).then(function (vastaus) {
                         $scope.$root.tulos = vastaus.organisaatiot;
                     });
                 }
 
             }
 
-            $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function(koodit) {
+            $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env["koodisto-uris.oppilaitostyyppi"], AuthService.getLanguage()).then(function (koodit) {
                 //console.log("oppilaitostyypit", koodit);
-                angular.forEach(koodit, function(koodi) {
+                angular.forEach(koodit, function (koodi) {
                     koodi.koodiUriWithVersion = koodi.koodiUri + "#" + koodi.koodiVersio;
                 });
                 $scope.oppilaitostyypit = koodit;
@@ -92,7 +92,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             $scope.organisaatio = {};
 
             //watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
-            $scope.$watch('organisaatio.currentNode', function(newObj, oldObj) {
+            $scope.$watch('organisaatio.currentNode', function (newObj, oldObj) {
 
                 //console.log("$scope.$watch( 'organisaatio.currentNode')");
 
@@ -106,14 +106,14 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 }
             }, false);
 
-            $scope.organisaatioValittu = function() {
+            $scope.organisaatioValittu = function () {
                 return $routeParams.oid && $routeParams.oid !== OPH_ORG_OID;
             };
 
             $scope.hakukohdeColumns = ['hakutapa', 'aloituspaikat', 'koulutuslaji'];
             $scope.koulutusColumns = ['koulutuslaji'];
 
-            $scope.tuloksetGetContent = function(row, col) {
+            $scope.tuloksetGetContent = function (row, col) {
                 //console.log("GET CONTENT FOR "+col,row);
                 switch (col) {
                     case undefined:
@@ -131,19 +131,19 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 }
             }
 
-            $scope.tuloksetGetChildren = function(row) {
+            $scope.tuloksetGetChildren = function (row) {
                 return row.tulokset;
             }
 
-            $scope.tuloksetGetIdentifier = function(row) {
+            $scope.tuloksetGetIdentifier = function (row) {
                 return row.tulokset == undefined && row.oid;
             }
 
-            $scope.koulutusGetLink = function(row) {
+            $scope.koulutusGetLink = function (row) {
                 return row.tulokset == undefined && ("#/koulutus/" + row.oid);
             }
 
-            $scope.hakukohdeGetLink = function(row) {
+            $scope.hakukohdeGetLink = function (row) {
                 return row.tulokset == undefined && ("#/hakukohde/" + row.oid);
             }
 
@@ -163,21 +163,21 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 }];
 
             // Kutsutaan formin submitissa, käynnistää haun
-            $scope.submitOrg = function() {
+            $scope.submitOrg = function () {
                 //console.log("organisaatiosearch clicked!: " + angular.toJson($scope.hakuehdot));
                 var hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
-                hakutulos.then(function(vastaus) {
+                hakutulos.then(function (vastaus) {
 //			console.log("result returned, hits:", vastaus);
                     $scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
                 });
             };
 
-            $scope.setDefaultOrg = function() {
+            $scope.setDefaultOrg = function () {
                 $scope.selectedOrgOid = getDefaultOrg();
             }
 
             // Kutsutaan formin resetissä, palauttaa default syötteet modeliin
-            $scope.resetOrg = function() {
+            $scope.resetOrg = function () {
                 setDefaultHakuehdot();
             };
 
@@ -206,12 +206,14 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             // tarjonnan tilat
             $scope.states = {"*": msgKaikki};
             for (var s in CONFIG.env["tarjonta.tila"]) {
-                $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
+                if (s !== 'POISTETTU') {
+                    $scope.states[s] = LocalisationService.t("tarjonta.tila." + s);
+                }
             }
 
             // alkamiskaudet
             $scope.seasons = {"*": msgKaikki};
-            Koodisto.getAllKoodisWithKoodiUri("kausi", AuthService.getLanguage()).then(function(koodit) {
+            Koodisto.getAllKoodisWithKoodiUri("kausi", AuthService.getLanguage()).then(function (koodit) {
                 console.log("koodit", koodit);
                 $scope.seasons = {"*": msgKaikki};
 
@@ -229,7 +231,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             }
 
             if (!$scope.selectedOrgName) {
-                OrganisaatioService.nimi($scope.selectedOrgOid).then(function(nimi) {
+                OrganisaatioService.nimi($scope.selectedOrgOid).then(function (nimi) {
                     $scope.selectedOrgName = nimi
                 });
             }
@@ -263,11 +265,11 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 $location.search(sargs);
             }
 
-            $scope.clearOrg = function() {
+            $scope.clearOrg = function () {
                 $scope.selectedOrgOid = OPH_ORG_OID;
             }
 
-            $scope.reset = function() {
+            $scope.reset = function () {
                 $scope.spec.terms = "";
                 $scope.spec.state = "*";
                 $scope.spec.year = "*";
@@ -279,7 +281,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 hakukohteet: []
             };
 
-            $scope.$watch('selection.koulutukset', function(newObj, oldObj) {
+            $scope.$watch('selection.koulutukset', function (newObj, oldObj) {
 
                 if (!newObj || newObj.length == 0) {
                     //mitään ei valittuna
@@ -290,7 +292,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     //yksi valittuna
                     $scope.koulutusActions.canMoveOrCopy = false;
                 } else {
-                    PermissionService.koulutus.canMoveOrCopy(newObj).then(function(result) {
+                    PermissionService.koulutus.canMoveOrCopy(newObj).then(function (result) {
                         $scope.koulutusActions.canMoveOrCopy = result;
                     });
                 }
@@ -298,10 +300,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 //lopullinen tulos tallennetaan tänne (on oikeus luoda hakukohde jos oikeus kaikkiin koulutuksiin):
                 var r = {result: true};
 
-                TarjontaService.haeKoulutukset({koulutusOid: newObj}).then(function(koulutukset) {
+                TarjontaService.haeKoulutukset({koulutusOid: newObj}).then(function (koulutukset) {
                     if (koulutukset && koulutukset.tulokset && koulutukset.tulokset.length > 0) {
                         for (var i = 0; i < koulutukset.tulokset.length; i++) {
-                            PermissionService.hakukohde.canCreate(koulutukset.tulokset[i].oid).then(function(result) {
+                            PermissionService.hakukohde.canCreate(koulutukset.tulokset[i].oid).then(function (result) {
                                 r.result = r.result && result;
                                 $scope.koulutusActions.canCreateHakukohde = r.result;
                             });
@@ -320,10 +322,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 canCreateKoulutus: false
             };
 
-            var canRemove = function(hakuOid) {
-                return ((TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid) &&
-                    TarjontaService.parameterCanEditHakukohde(hakuOid)));
-            };
+            function canRemoveHakukohde(hakukohde) {
+                return TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakukohde.hakuOid)
+                       && TarjontaService.parameterCanEditHakukohde(hakukohde.hakuOid);
+            }
 
             function rowActions(prefix, row, actions) {
                 var oid = row.oid;
@@ -332,7 +334,15 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
 
-                tt.removable = canRemove(row.hakuOid);
+                var actionsByPrefix = {
+                    hakukohde: function(row) {
+                        tt.removable = tt.removable && canRemoveHakukohde(row);
+                    }
+                };
+
+                if ( actionsByPrefix[prefix] ) {
+                    actionsByPrefix[prefix](row);
+                }
 
                 var canRead = PermissionService[prefix].canPreview(oid);
                 console.log("row actions can read (" + prefix + ")", canRead);
@@ -340,17 +350,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 // tarkastele
                 if (canRead) {
                     var url = "/" + prefix + "/" + oid;
-                    ret.push({action: function() {
+                    ret.push({action: function () {
                             $location.path(url);
                         }, title: LocalisationService.t("tarjonta.toiminnot.tarkastele")});
                 }
                 // muokkaa
                 if (tt.mutable) {
-                    PermissionService[prefix].canEdit(oid).then(function(result) {
+                    PermissionService[prefix].canEdit(oid).then(function (result) {
                         console.log("row actions can edit (" + prefix + ")", result);
                         var url = "/" + prefix + "/" + oid + "/edit";
                         if (result) {
-                            ret.push({action: function() {
+                            ret.push({action: function () {
                                     $location.path(url);
                                 }, title: LocalisationService.t("tarjonta.toiminnot.muokkaa")});
                         }
@@ -359,7 +369,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 // näytä hakukohteet
                 if (canRead) {
                     ret.push({title: LocalisationService.t("tarjonta.toiminnot." + prefix + ".linkit"),
-                        action: function(ev) {
+                        action: function (ev) {
                             $scope.openLinksDialog(prefix, oid, nimi);
                         }
                     });
@@ -368,13 +378,13 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 switch (tila) {
                     case "PERUTTU":
                     case "VALMIS":
-                        PermissionService[prefix].canTransition(oid, tila, "JULKAISTU").then(function(canTransition) {
+                        PermissionService[prefix].canTransition(oid, tila, "JULKAISTU").then(function (canTransition) {
                             console.log("row actions can transition (" + prefix + ")", tila, "JULKAISTU", canTransition);
 
                             if (canTransition) {
                                 ret.push({title: LocalisationService.t("tarjonta.toiminnot.julkaise"),
-                                    action: function() {
-                                        TarjontaService.togglePublished(prefix, oid, true).then(function(ns) {
+                                    action: function () {
+                                        TarjontaService.togglePublished(prefix, oid, true).then(function (ns) {
                                             row.tila = "JULKAISTU";
                                             actions.update();
                                             TarjontaService.evictHakutulokset();
@@ -385,11 +395,11 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         });
                         break;
                     case "JULKAISTU":
-                        PermissionService[prefix].canTransition(oid, tila, "PERUTTU").then(function(canTransition) {
+                        PermissionService[prefix].canTransition(oid, tila, "PERUTTU").then(function (canTransition) {
                             if (canTransition) {
                                 ret.push({title: LocalisationService.t("tarjonta.toiminnot.peruuta"),
-                                    action: function() {
-                                        TarjontaService.togglePublished(prefix, oid, false).then(function(ns) {
+                                    action: function () {
+                                        TarjontaService.togglePublished(prefix, oid, false).then(function (ns) {
                                             row.tila = "PERUTTU";
                                             actions.update();
                                             TarjontaService.evictHakutulokset();
@@ -402,10 +412,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 }
                 // poista
                 if (tt.removable) {
-                    PermissionService[prefix].canDelete(oid).then(function(canDelete) {
+                    PermissionService[prefix].canDelete(oid).then(function (canDelete) {
                         if (canDelete) {
                             ret.push({title: LocalisationService.t("tarjonta.toiminnot.poista"),
-                                action: function(ev) {
+                                action: function (ev) {
                                     $scope.openDeleteDialog(prefix, oid, nimi, actions.delete);
                                 }
                             });
@@ -418,14 +428,14 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 return ret;
             }
 
-            $scope.koulutusGetOptions = function(row, actions) {
+            $scope.koulutusGetOptions = function (row, actions) {
                 return rowActions("koulutus", row, actions);
             }
-            $scope.hakukohdeGetOptions = function(row, actions) {
+            $scope.hakukohdeGetOptions = function (row, actions) {
                 return rowActions("hakukohde", row, actions);
             }
 
-            $scope.search = function() {
+            $scope.search = function () {
                 var spec = {
                     oid: $scope.selectedOrgOid,
                     terms: $scope.spec.terms,
@@ -438,11 +448,11 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 updateLocation();
 
                 // valinnat
-                TarjontaService.haeKoulutukset(spec).then(function(data) {
+                TarjontaService.haeKoulutukset(spec).then(function (data) {
                     $scope.koulutusResults = data;
                 });
 
-                TarjontaService.haeHakukohteet(spec).then(function(data) {
+                TarjontaService.haeHakukohteet(spec).then(function (data) {
                     $scope.hakukohdeResults = data;
                 });
 
@@ -452,21 +462,21 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 return (res && res.tuloksia && res.tuloksia > 0) ? " (" + res.tuloksia + ")" : "";
             }
 
-            $scope.getKoulutusResultCount = function() {
+            $scope.getKoulutusResultCount = function () {
                 return getResultCount($scope.koulutusResults);
             }
 
-            $scope.getHakukohdeResultCount = function() {
+            $scope.getHakukohdeResultCount = function () {
                 return getResultCount($scope.hakukohdeResults);
             }
 
-            $scope.luoKoulutusDisabled = function() {
+            $scope.luoKoulutusDisabled = function () {
                 var disabled = !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
 //    	console.log("luoKoulutusDisabled, organisaatioValittu:", $scope.organisaatioValittu(), "canCreateKoulutus:", $scope.koulutusActions.canCreateKoulutus);
                 return disabled;
             };
 
-            $scope.luoHakukohdeEnabled = function() {
+            $scope.luoHakukohdeEnabled = function () {
                 return ($scope.selection.koulutukset !== undefined && $scope.selection.koulutukset.length > 0) && $scope.koulutusActions.canCreateHakukohde;
             };
 
@@ -479,14 +489,14 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 setTimeout($scope.search, 100);
             }
 
-            $scope.report = function() {
+            $scope.report = function () {
                 console.log("TODO raportti");
             };
 
-            var DeleteDialogCtrl = function($scope, $modalInstance, ns) {
+            var DeleteDialogCtrl = function ($scope, $modalInstance, ns) {
 
 
-                var init = function() {
+                var init = function () {
 
                     $scope.oid = ns.oid;
                     $scope.nimi = ns.nimi;
@@ -497,17 +507,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                 init();
 
-                $scope.ok = function() {
+                $scope.ok = function () {
                     $modalInstance.close();
                 };
 
-                $scope.cancel = function() {
+                $scope.cancel = function () {
                     $modalInstance.dismiss();
                 };
 
             };
 
-            $scope.openDeleteDialog = function(prefix, oid, nimi, deleteAction) {
+            $scope.openDeleteDialog = function (prefix, oid, nimi, deleteAction) {
 
                 var ns = {};
                 ns.oid = oid;
@@ -520,16 +530,16 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         controller: DeleteDialogCtrl,
                         templateUrl: "partials/search/delete-dialog.html",
                         resolve: {
-                            ns: function() {
+                            ns: function () {
                                 return ns;
                             }
 
                         }
                     });
 
-                    modalInstance.result.then(function() {
+                    modalInstance.result.then(function () {
 
-                        TarjontaService.deleteHakukohde(oid).then(function() {
+                        TarjontaService.deleteHakukohde(oid).then(function () {
                             deleteAction(); // poistaa rivin hakutuloslistasta
                             $scope.hakukohdeResults.tuloksia--;
                             TarjontaService.evictHakutulokset();
@@ -541,16 +551,16 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         templateUrl: 'partials/koulutus/remove/poista-koulutus.html',
                         controller: 'PoistaKoulutusCtrl',
                         resolve: {
-                            targetKomoto: function() {
+                            targetKomoto: function () {
                                 return {oid: oid, koulutuskoodi: '', nimi: nimi};
                             },
-                            organisaatioOid: function() {
+                            organisaatioOid: function () {
                                 return  {oid: '', nimi: ''}
                             }
                         }
                     });
 
-                    modalInstance.result.then(function() {
+                    modalInstance.result.then(function () {
                         deleteAction(); // poistaa rivin hakutuloslistasta
                         $scope.koulutusResults.tuloksia--;
                         TarjontaService.evictHakutulokset();
@@ -560,14 +570,14 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             };
 
-            var LinksDialogCtrl = function($scope, $modalInstance) {
+            var LinksDialogCtrl = function ($scope, $modalInstance) {
 
                 $scope.otsikko = "tarjonta.linkit.otsikko." + $scope.prefix;
                 $scope.eohje = "tarjonta.linkit.eohje." + $scope.prefix;
 
                 $scope.items = [];
 
-                $scope.ok = function() {
+                $scope.ok = function () {
                     $modalInstance.close();
                 }
 
@@ -577,7 +587,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     ? TarjontaService.getKoulutuksenHakukohteet($scope.oid)
                     : TarjontaService.getHakukohteenKoulutukset($scope.oid);
 
-                ret.then(function(ret) {
+                ret.then(function (ret) {
                     for (var i in ret) {
                         var s = ret[i];
                         $scope.items.push({
@@ -589,7 +599,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             }
 
-            $scope.openLinksDialog = function(prefix, oid, nimi) {
+            $scope.openLinksDialog = function (prefix, oid, nimi) {
 
                 var ns = $scope.$new();
                 ns.prefix = prefix;
@@ -607,17 +617,17 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             };
 
 
-            $scope.luoUusiHakukohde = function() {
+            $scope.luoUusiHakukohde = function () {
                 console.log("koulutukset:", $scope.selection.koulutukset);
                 if ($scope.selection.koulutukset.length === 0) {
                     return; // napin pitäisi olla disabloituna, eli tätä ei pitäisi tapahtua, mutta varmuuden vuoksi..
                 }
 
                 var promises = [];
-                angular.forEach($scope.selection.koulutukset, function(koulutusOid) {
+                angular.forEach($scope.selection.koulutukset, function (koulutusOid) {
                     promises.push(TarjontaService.getKoulutusPromise(koulutusOid));
                 });
-                $q.all(promises).then(function(results) {
+                $q.all(promises).then(function (results) {
                     var arrKomotoIds = [];
                     for (var i = 0; i < results.length; i++) {
                         if (results[i].result.oid) {
@@ -625,7 +635,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         }
                     }
 
-                    HakukohdeKoulutukses.geValidateHakukohdeKomotos(arrKomotoIds).then(function(response) {
+                    HakukohdeKoulutukses.geValidateHakukohdeKomotos(arrKomotoIds).then(function (response) {
                         if (response.status === 'OK' &&
                             $scope.selection.koulutukset.length === 1 &&
                             response.result &&
@@ -640,7 +650,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                                 templateUrl: 'partials/hakukohde/dialog/valitse-koulutus-dialog.html',
                                 controller: 'ValitseKoulutusDialogCtrl',
                                 resolve: {
-                                    input: function() {
+                                    input: function () {
                                         return {
                                             response: response,
                                             locale: LocalisationService.getLocale() ? LocalisationService.getLocale() : 'fi'
@@ -649,13 +659,13 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                                 }
                             });
 
-                            invalidSelection.result.then(function(response) {
+                            invalidSelection.result.then(function (response) {
                                 /* ok */
                                 SharedStateService.addToState('SelectedKoulutukses', response.oids);
                                 SharedStateService.addToState('SelectedToteutusTyyppi', response.toteutustyyppi);
                                 SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
                                 $location.path('/hakukohde/new/edit');
-                            }, function() {
+                            }, function () {
                                 /* dismissed */
                             })
                         }
@@ -668,7 +678,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             /**
              * Avaa "luoKoulutus 1. dialogi"
              */
-            $scope.openLuoKoulutusDialogi = function() {
+            $scope.openLuoKoulutusDialogi = function () {
                 //aseta esivalittu organisaatio
                 $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
                 $scope.luoKoulutusDialog = $modal.open({
@@ -678,7 +688,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 });
             };
 
-            $scope.siirraTaiKopioi = function() {
+            $scope.siirraTaiKopioi = function () {
                 var komotoOid = $scope.selection.koulutukset[0]; //single select
                 var koulutusNimi;
                 var organisaatioNimi;
@@ -705,10 +715,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
                     controller: 'CopyMoveKoulutusController',
                     resolve: {
-                        targetKoulutus: function() {
+                        targetKoulutus: function () {
                             return  [{oid: komotoOid, nimi: koulutusNimi}]
                         },
-                        targetOrganisaatio: function() {
+                        targetOrganisaatio: function () {
                             return  {oid: $scope.selectedOrgOid, nimi: organisaatioNimi}
                         }
                     }
@@ -719,10 +729,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             // KJOH-810 Valittujen hakukohteiden liittaminen (tyhmiin?) ryhmiin
             //
 
-            var AddHakukohdeToGroupController = function($scope, $modalInstance, valitutHakukohteet, ryhmat) {
+            var AddHakukohdeToGroupController = function ($scope, $modalInstance, valitutHakukohteet, ryhmat) {
                 $log.info("AddHakukohdeToGroupController()");
 
-                var init = function() {
+                var init = function () {
                     $log.info("AddHakukohdeToGroupController.init()", valitutHakukohteet, ryhmat);
 
                     $scope.model = $scope.model ? $scope.model : {};
@@ -735,10 +745,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                 /**
                  * Valitsee ryhmän nimen.
-                 * 
+                 *
                  * TODO käyttäjän kieli ryhmön nimen näyttäminen...
                  */
-                $scope.getNimi = function(ryhma) {
+                $scope.getNimi = function (ryhma) {
                     var nimi;
                     nimi = nimi ? nimi : ryhma.nimi.fi;
                     nimi = nimi ? nimi : ryhma.nimi.sv;
@@ -748,21 +758,21 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     return nimi;
                 }
 
-                $scope.okLiita = function() {
+                $scope.okLiita = function () {
                     $scope.teeLiitosRyhmaan("LISAA");
                 }
 
-                $scope.okPoista = function() {
+                $scope.okPoista = function () {
                     $scope.teeLiitosRyhmaan("POISTA");
                 }
 
                 /**
                  * Liitä valitut hakukohteet valittuihin ryhmiin TAI poistaa ne niistä.
                  */
-                $scope.teeLiitosRyhmaan = function(tyyppi) {
+                $scope.teeLiitosRyhmaan = function (tyyppi) {
                     $log.info("AddHakukohdeToGroupController.teeLiitosRyhmaan()", tyyppi);
 
-                    var valitutRyhmat = $scope.model.ryhmat.filter(function(ryhma) {
+                    var valitutRyhmat = $scope.model.ryhmat.filter(function (ryhma) {
                         return ryhma.selected;
                     });
 
@@ -770,8 +780,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                     // Create request data
                     var requestData = [];
-                    angular.forEach(valitutRyhmat, function(ryhma) {
-                        angular.forEach($scope.model.hakukohteet, function(hakukohdeOid) {
+                    angular.forEach(valitutRyhmat, function (ryhma) {
+                        angular.forEach($scope.model.hakukohteet, function (hakukohdeOid) {
                             requestData.push({toiminto: tyyppi, hakukohdeOid: hakukohdeOid, ryhmaOid: ryhma.oid});
                         });
                     });
@@ -781,13 +791,13 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                     TarjontaService.hakukohdeRyhmaOperaatiot(
                         requestData).then(
-                        function(res) {
+                        function (res) {
                             $log.info("RESULT OK", res);
                             $scope.model.completed = true;
                             $scope.model.result.status = res.status;
                             $scope.model.result.errors = res.errors;
                         },
-                        function(err) {
+                        function (err) {
                             $log.info("RESULT ERROR", err);
                             // TODO disable error dialog!
                             $scope.model.completed = true;
@@ -819,28 +829,28 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     //$modalInstance.close();
                 };
 
-                $scope.cancel = function() {
+                $scope.cancel = function () {
                     $log.info("AddHakukohdeToGroupController.cancel()");
                     $modalInstance.dismiss();
                 };
 
-                $scope.close = function() {
+                $scope.close = function () {
                     $log.info("AddHakukohdeToGroupController.close()");
                     $modalInstance.close();
                 };
             };
 
-            $scope.liitaHakukohteetRyhmaan = function() {
+            $scope.liitaHakukohteetRyhmaan = function () {
                 $log.info("liitaHakukohteetRyhmaan()", $scope.selection.hakukohteet);
 
                 var modalInstance = $modal.open({
                     templateUrl: 'partials/search/liita-hakukohde-ryhmaan-dialog.html',
                     controller: AddHakukohdeToGroupController,
                     resolve: {
-                        valitutHakukohteet: function() {
+                        valitutHakukohteet: function () {
                             return $scope.selection.hakukohteet;
                         },
-                        ryhmat: function() {
+                        ryhmat: function () {
                             return OrganisaatioService.getRyhmat();
                         }
                     }

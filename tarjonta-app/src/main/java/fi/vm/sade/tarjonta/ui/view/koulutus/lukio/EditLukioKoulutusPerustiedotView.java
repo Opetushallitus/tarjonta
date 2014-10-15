@@ -61,9 +61,10 @@ public class EditLukioKoulutusPerustiedotView extends AbstractEditLayoutView<Kou
         model = presenter.getModel().getKoulutusLukioPerustiedot();
         EditLukioKoulutusPerustiedotFormView formView = new EditLukioKoulutusPerustiedotFormView(presenter, getUiBuilder(), model);
         buildFormLayout("KoulutuksenPerustiedot", presenter, layout, model, formView);
-        
-        final KoulutusToisenAsteenPerustiedotViewModel model = presenter.getModel().getKoulutusPerustiedotModel();
-        final boolean draftActive = !model.isLoaded() || TarjontaTila.LUONNOS.equals(model.getTila()); //enabloitu jos uusi tai tila==draft
+
+        final boolean draftActive = !model.isLoaded()
+                                    || TarjontaTila.LUONNOS.equals(model.getTila())
+                                    || TarjontaTila.KOPIOITU.equals(model.getTila()); //enabloitu jos uusi tai tila==draft,kopioitu
 
         enableButtonByListener(clickListenerSaveAsDraft,draftActive);
     }

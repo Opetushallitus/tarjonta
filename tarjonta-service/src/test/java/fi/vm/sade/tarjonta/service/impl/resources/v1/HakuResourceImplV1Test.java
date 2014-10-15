@@ -168,7 +168,6 @@ public class HakuResourceImplV1Test {
 
         dto.setAlkuPvm(start);
         dto.setLoppuPvm(end);
-        dto.setNimi(nimi);
 
         return dto;
     }

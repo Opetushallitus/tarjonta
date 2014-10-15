@@ -29,6 +29,7 @@ public class HakukohdeValintaperusteetV1RDTO extends BaseV1RDTO {
     private Map<String, String> hakuKausi = new HashMap<String, String>();
 
     private String hakuOid;
+    private String hakuKohdejoukkoUri;
 
     private List<String> opetuskielet = new ArrayList<String>();
     private String hakukohdeNimiUri;
@@ -333,5 +334,13 @@ public class HakukohdeValintaperusteetV1RDTO extends BaseV1RDTO {
 
     public void setKielikoeTunniste(String kielikoeTunniste) {
         this.kielikoeTunniste = kielikoeTunniste;
+    }
+
+    public String getHakuKohdejoukkoUri() {
+        return hakuKohdejoukkoUri;
+    }
+
+    public void setHakuKohdejoukkoUri(String hakuKohdejoukkoUri) {
+        this.hakuKohdejoukkoUri = hakuKohdejoukkoUri;
     }
 }

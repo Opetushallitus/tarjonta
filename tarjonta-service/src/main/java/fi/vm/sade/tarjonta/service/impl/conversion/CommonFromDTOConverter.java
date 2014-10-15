@@ -60,7 +60,6 @@ public class CommonFromDTOConverter {
     		return null;
     	}
     	Hakuaika ret = new Hakuaika();
-    	ret.setSisaisenHakuajanNimi(ha.getHakuajanKuvaus());
     	ret.setAlkamisPvm(ha.getSisaisenHaunAlkamisPvm());
     	ret.setPaattymisPvm(ha.getSisaisenHaunPaattymisPvm());
     	ret.setId(ha.getOid()==null ? null : Long.parseLong(ha.getOid()));

@@ -31,7 +31,7 @@
     <!--
       Load configuration settings
     -->
-    <context:property-placeholder 
+    <context:property-placeholder
         location="tarjonta-data.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/override.properties"
         ignore-resource-not-found="true" properties-ref="defaultProps" />
       
