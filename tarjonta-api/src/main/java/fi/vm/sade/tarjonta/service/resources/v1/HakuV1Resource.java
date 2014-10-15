@@ -20,7 +20,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -124,10 +123,4 @@ public interface HakuV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Hakuun liittyvän tiedon kopiointi seuraavalle kaudelle.", notes = "Kopioi massana hakuun liittyvät hakukohteet ja koulutukset seuraavalle kaudelle.", response = Tilamuutokset.class)
     public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid, @QueryParam("step") String step);
-
-    @GET
-    @Path("/solr/reindex")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Käynnistää SOLRin uudelleen indeksoinnin.", notes = "", response = Response.class)
-    public Response reindex();
 }

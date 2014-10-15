@@ -24,16 +24,9 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +34,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -442,10 +433,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 //siirtymä ei mahdollinen
                 return ResultV1RDTO.create(ResultStatus.ERROR, (Tilamuutokset)null, ErrorV1RDTO.createValidationError("tila", "tila", "transition.not.valid"));
             }
-//            Client client = Client.create();
-//            WebResource webResource = client.resource("http://localhost:8302/tarjonta-service/rest/indexer/koulutukset?clear=true");
-//            Integer reindexed = webResource.accept("text/plain").get(Integer.class);
-            
             return new ResultV1RDTO<Tilamuutokset>(new Tilamuutokset());
         }
 
@@ -666,41 +653,5 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         ProcessV1RDTO result = processResource.start(processV1RDTO);
         return new ResultV1RDTO<String>(result.getId());
-    }
-    
-    @Override
-    public Response reindex() {
-        LOG.info("Starting SOLR reindexing");
-        Response resp = null;
-
-        try {
-            Client client = Client.create();
-            WebResource webResource = client.resource("http://localhost:8302/tarjonta-service/rest/indexer/koulutukset?clear=true");
-            Integer reindexed = webResource.accept("text/plain").get(Integer.class);
-            resp = Response.ok(reindexed).build();
-		} catch (Exception e) {
-			LOG.error("Solr reindexing failed: "+ e.getMessage());
-			resp = Response.status(Status.INTERNAL_SERVER_ERROR).entity("Unknown internal error").build();
-		}
-//        SolrServer solr = new HttpSolrServer("http://localhost:8983/solr");
-//
-//        ModifiableSolrParams params = new ModifiableSolrParams();
-//
-//        params.set("qt", "/dataimport");
-//        params.set("command", "full-import");
-//        params.set("clean", "true");
-//
-//        QueryResponse response = null;
-//
-//        try {
-//            response = solr.query(params);
-//            resp = Response.ok(response).build();
-//        } catch (SolrServerException e1) {
-//            e1.printStackTrace();
-//            LOG.error("Solr reindexing failed: "+ e1.getMessage());
-//            resp = Response.status(Status.INTERNAL_SERVER_ERROR).entity("Unknown internal error").build();
-//      } 
-        LOG.info("SOLR reindexing ended");
-        return resp;
     }
 }
