@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,11 +16,20 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.publication.model.Koulutustarjoaja;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.BooleanBuilder;
@@ -31,13 +40,6 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.path.DateTimePath;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.QHaku;
-import fi.vm.sade.tarjonta.model.QHakuaika;
-import fi.vm.sade.tarjonta.model.QHakukohde;
-import fi.vm.sade.tarjonta.model.QKoodistoUri;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuli;
-import fi.vm.sade.tarjonta.model.QKoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
@@ -52,6 +54,9 @@ public class IndexerDaoImpl implements IndexerDAO {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     @Override
     public List<HakukohdeIndexEntity> findAllHakukohteet() {
@@ -121,7 +126,7 @@ public class IndexerDaoImpl implements IndexerDAO {
         final QKoulutusmoduuli koulutusmoduuli = QKoulutusmoduuli.koulutusmoduuli;
         /* query dsl query should be something like this in sql:
          select MAX(kta.alkamispvm), kt.id
-         from koulutusmoduuli_toteutus kt left join koulutusmoduuli_toteutus_alkamispvm kta 
+         from koulutusmoduuli_toteutus kt left join koulutusmoduuli_toteutus_alkamispvm kta
          on kt.id=kta.koulutusmoduuli_toteutus_id group by kt.id, kta.koulutusmoduuli_toteutus_id
          */
         return q(komoto)
@@ -246,7 +251,34 @@ public class IndexerDaoImpl implements IndexerDAO {
     public void updateKoulutusIndexed(Long id, Date time) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-        u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
+        long updatedCount = u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
+
+        System.out.println(updatedCount);
+    }
+
+  /**
+   * Hakee tarjoajan/järjestäjän tyypin mukaan. Olisi varmaan parempi, jos tämän tiedon saisi suoraan
+   * tuotua left joinilla findAllKoulutukset / findKoulutusById metodeissa
+   * @param oid
+   * @param type
+   * @return
+   */
+    @Override
+    public Set<String> getOwners(String oid, String type) {
+
+        KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findKomotoByOid(oid);
+
+        Set<KoulutusOwner> owners = komoto.getOwners();
+
+        Set<String> ownerOids = new HashSet<String>();
+
+        for (KoulutusOwner owner : owners) {
+            if (owner.getOwnerType().equals(type)) {
+                ownerOids.add(owner.getOwnerOid());
+            }
+        }
+
+        return ownerOids;
     }
 
 }

@@ -22,11 +22,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
@@ -189,10 +185,20 @@ public class IndexDataUtils {
 
     public static Tarjoaja createTarjoaja(SolrDocument koulutusDoc,
             Map<String, OrganisaatioPerustieto> orgResponse) {
+
+        ArrayList<String> tarjoajat = (ArrayList) koulutusDoc.getFieldValue(ORG_OID);
         final Tarjoaja tarjoaja = new Tarjoaja();
-        tarjoaja.setOid("" + koulutusDoc.getFieldValue(ORG_OID));
-        final OrganisaatioPerustieto organisaatio = orgResponse.get(tarjoaja
-                .getOid());
+        OrganisaatioPerustieto organisaatio = null;
+
+        if (tarjoajat != null) {
+            for (String tmpOid : tarjoajat) {
+                if (orgResponse.get(tmpOid) != null) {
+                    organisaatio = orgResponse.get(tmpOid);
+                    tarjoaja.setOid(tmpOid);
+                    break;
+                }
+            }
+        }
         if (organisaatio != null) {
             tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
         }
