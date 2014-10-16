@@ -70,9 +70,9 @@ import fi.vm.sade.authentication.service.UserService;
 
 /**
  * Common UI helpers, formatters and so forth.
- * 
+ *
 * Koodisto related helpers to access koodisto data.
- * 
+ *
 * @author mlyly
  */
 @Component
@@ -163,7 +163,7 @@ public class TarjontaUIHelper {
     /**
      * Splits koodiUri to URI and Version. Default version for those uris
      * without version information is "-1".
-     *     
+     *
 * @param koodiUriWithVersion
      * @return String array with [koodiUri, koodiVersion]
      */
@@ -173,7 +173,7 @@ public class TarjontaUIHelper {
 
     /**
      * Extract version number from uri.
-     *     
+     *
 * @param koodiUriWithVersion
      * @return version number, -1 means no version available
      */
@@ -184,7 +184,7 @@ public class TarjontaUIHelper {
     /**
      * Get related hakukohde koodi URIs for given
      * {komoto.koulutus.[lukiolinjakoodi, koulutusohjelmakoodi]}* list.
-     *     
+     *
 * @param komotoOids
      * @return collection of codes from KoodistoURI.KOODISTO_HAKUKOHDE_URI
      * koodisto.
@@ -219,7 +219,7 @@ public class TarjontaUIHelper {
 
     /**
      * Construct versioned koodi uri (adds #version to the end of uri).
-     *     
+     *
 * @param koodiType
      * @return
      */
@@ -229,7 +229,7 @@ public class TarjontaUIHelper {
 
     /**
      * Split uri from "#" and extract uri without version number.
-     *     
+     *
 * @param koodiUriWithVersion
      * @return koodiUri without version information
      */
@@ -244,7 +244,7 @@ public class TarjontaUIHelper {
     /**
      * Get koodi's localized name with current UI locale. Uses versioned koodi
      * data if given.
-     *     
+     *
 * @param koodiUriWithPossibleVersionInformation
      * @return
      */
@@ -301,7 +301,7 @@ public class TarjontaUIHelper {
     /**
      * Load koodi with metadata, returns all values concatenated, usually
      * (always?) there's only one type.
-     *     
+     *
 * @param hakukohdeUriVersioned
      * @return concatenated name from koodi's metadata getNimi()'s
      */
@@ -370,7 +370,7 @@ public class TarjontaUIHelper {
     /**
      * Search koodis by koodi uri, the uri can be with or without koodi version
      * information.
-     *     
+     *
 * @param uri
      * @return
      */
@@ -385,7 +385,7 @@ public class TarjontaUIHelper {
 
     /**
      * Search koodis by koodi uri and version information.
-     *     
+     *
 * @param uri
      * @return
      */
@@ -405,11 +405,11 @@ public class TarjontaUIHelper {
     /**
      * Returns the koulutuskoodit related to one or more of the olTyyppiUris
      * given as parameter.
-     *     
+     *
 * <pre>
      * OppilaitosTyyppi -> KoulutusAsteKoodi -> KoulutusKoodi
      * </pre>
-     *     
+     *
 * As en exampple:
      * <pre>
      * Ammattikoulu -> ammattikoulutus -> Hevostalouden perustutkinto
@@ -417,7 +417,7 @@ public class TarjontaUIHelper {
      * Lukio -> lukiokoulutus -> Hevostalous
      * Lukio -> lukiokoulutus -> Ylioppilas
      * </pre>
-     *     
+     *
 * @param olTyyppiUris - the oppilaitostyyppi uris
      * @return list of koodis related from Oppilaitostyyppi to KoulutusAsteKoodi
      * to KoulutusKoodi
@@ -518,7 +518,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get koodis localized nimi for set of uris in given language.
-     *     
+     *
 * @param koodiUris
      * @param locale
      * @return comma separated string of names
@@ -558,7 +558,7 @@ public class TarjontaUIHelper {
 
     /**
      * Format date to string with default "dd.MM.yyyy" formatting.
-     *     
+     *
 * @param date
      * @return
      */
@@ -568,7 +568,7 @@ public class TarjontaUIHelper {
 
     /**
      * Format date to string with default "dd.MM.yyyy HH:mm" formatting.
-     *     
+     *
 * @param date
      * @return
      */
@@ -578,7 +578,7 @@ public class TarjontaUIHelper {
 
     /**
      * Format date to string with default "HH:mm" formatting.
-     *     
+     *
 * @param date
      * @return
      */
@@ -588,7 +588,7 @@ public class TarjontaUIHelper {
 
     /**
      * Format date to given format.
-     *     
+     *
 * @param date if null, returns empty string
      * @param format
      * @return date formatted as string
@@ -604,7 +604,7 @@ public class TarjontaUIHelper {
 
     /**
      * Creates koodi uro for storage, appends: koodi URI + "#" + version number.
-     *     
+     *
 * @param uri
      * @param version
      * @return
@@ -618,7 +618,7 @@ public class TarjontaUIHelper {
 
     /**
      * Extract components from the versioned koodi uri.
-     *     
+     *
 * @param koodiUriWithVersion
      * @return
      */
@@ -640,7 +640,7 @@ public class TarjontaUIHelper {
 
     /**
      * Extract koodi uri and version from mayve versioned koodi URI.
-     *     
+     *
 * @param koodiUriWithVersion
      * @return
      */
@@ -660,7 +660,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get koodi metadata by locale with language fallback to FI
-     *     
+     *
 * @param koodiType
      * @param locale
      * @return
@@ -678,7 +678,7 @@ public class TarjontaUIHelper {
     /**
      * Get text for "closest" match for a given language. Actully this means
      * exact match, if not found use fi, if not found use first existing
-     *     
+     *
 * @param locale
      * @param monikielinenTeksti
      * @return
@@ -763,7 +763,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get closet Haku name for given language, fallback order is [fi, se, en].
-     *     
+     *
 * @param locale
      * @param haku
      * @return
@@ -803,7 +803,7 @@ public class TarjontaUIHelper {
 
     /**
      * Select Teksti for a given locale.
-     *     
+     *
 * @param tekstis
      * @param locale
      * @return
@@ -849,7 +849,7 @@ public class TarjontaUIHelper {
     /**
      * Convert Tarjonta koodi uri and version string to KoodiUriAndVersioType
      * object.
-     *     
+     *
 * @param koodiUriWithVersion
      * @return
      */
@@ -868,7 +868,7 @@ public class TarjontaUIHelper {
      * Convert basic(fi,en,sv) language koodi URI to language enum. It also
      * converts 2 char language code to BasicLanguage enum. If no match, then it
      * will return BasicLanguage.FI.
-     *     
+     *
 * @param langCode
      * @return
      */
@@ -896,7 +896,7 @@ public class TarjontaUIHelper {
     /**
      * Traverse koodisto relations. Returned related koodis are filtered in
      * every step with given koodisto.
-     *     
+     *
 * An (pseudokode) example:
      * <pre>
      * oppilaitosTyyppiUri --> [koulutusAlaKoodiUris] --> [koulutusKoodiUris]
@@ -905,7 +905,7 @@ public class TarjontaUIHelper {
      *
      * NOTE: direction is always "alakoodi" == FALSE and "SISÄLTYY"
      * </pre>
-     *     
+     *
 * @param koodiUris the koodiUris to start from
      * @param koodistoUris the "path" to follow (assumed: koodiUri +
      * alaKoodi=false, relationType=SISALTYY)
@@ -924,9 +924,9 @@ public class TarjontaUIHelper {
 
     /**
      * Extract transitive koodisto relations with a path and koodi given.
-     *     
+     *
 * NOTE: direction is always "alakoodi" == FALSE and "SISÄLTYY"
-     *     
+     *
 * <nl>
      * <li>If koodisto uris == null or epty -> empty result</li>
      * <li>Get relations for given koodi in the first koodisto uri</li>
@@ -935,7 +935,7 @@ public class TarjontaUIHelper {
      * <li>If multiple koodistos, loop over koodis and create recursive calls
      * for each koodi + koodistos minus current koodisto</li>
      * </nl>
-     *     
+     *
 * @param koodiUri
      * @param koodistoUris
      * @return the end results for given koodisto relation "path"
@@ -953,7 +953,7 @@ public class TarjontaUIHelper {
 
     /**
      * Use this when kooditsto relation type or direction of relation matters.
-     *     
+     *
 * @param koodiUris koodis to start from
      * @param koodistoRelations relations to traverse
      * @return
@@ -973,9 +973,9 @@ public class TarjontaUIHelper {
 
     /**
      * Relations to desired koodisto, direction etc.
-     *     
+     *
 * Calls this method itself recursively.
-     *     
+     *
 * @param koodiUri source koodi
      * @param koodistoRelations relations definitions
      * @return
@@ -1036,7 +1036,7 @@ public class TarjontaUIHelper {
 
     /**
      * Get koodisto koodi relations.
-     *     
+     *
 * @param koodiUri koodi to search relatios for
      * @param koodistoUri only these will be returned, if null all relations
      * returned
@@ -1105,10 +1105,10 @@ public class TarjontaUIHelper {
 
     /**
      * Return koodi with uri and version.
-     *     
+     *
 * If koodi uri contains version it is constructed without service calls,
      * otherwise latest koodi version will be queried from the KoodiService.
-     *     
+     *
 * @param koodiUri
      * @return
      */
@@ -1144,16 +1144,16 @@ public class TarjontaUIHelper {
     /**
      * Returns the koulutuskoodit related to one or more of the opintoala given
      * as parameter.
-     *     
+     *
 * <pre>
      * opintoala -> koulutuskoodi
      * </pre>
-     *     
+     *
 * As en exampple:
      * <pre>
      * ???
      * </pre>
-     *     
+     *
 * @param koulutusala uri
      * @return list of koodis related from koulutusala to koulutusKoodi
      */
@@ -1173,7 +1173,7 @@ public class TarjontaUIHelper {
 
     /**
      * Remove version information ('#X') from Koodisto uri.
-     *     
+     *
 * @param uriWithVersion
      * @return
      */
@@ -1184,10 +1184,10 @@ public class TarjontaUIHelper {
 
     /**
      * Get data from koulutus koodi relations.
-     *     
+     *
 * Return Kooditypes from the relations to koulutuskoodi: Koulutusaste,
      * Koulutusala, Opintoala, Tutkinto, EQF, Opintojen laajuus tyyppi
-     *     
+     *
 * @return
      */
     public Collection<KoodiType> getKoulutusRelations(String koodiUri) {
@@ -1240,4 +1240,28 @@ public class TarjontaUIHelper {
 
         return latest;
     }
+    /**
+	 * OPHASPA-1449
+	 * tutkitaan näytetäänkö koulutus listausnäkymässä.
+	 * @param curKoulutus
+	 * @return
+	 */
+	public static boolean isNaytetaankoVaadinToteutuksessa(KoulutusPerustieto curKoulutus) {
+		switch (curKoulutus.getToteutustyyppi()) {
+		case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+		case AMMATILLINEN_PERUSTUTKINTO:
+		case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+		case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+		case VAPAAN_SIVISTYSTYON_KOULUTUS:
+		case PERUSOPETUKSEN_LISAOPETUS:
+		case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+		case LUKIOKOULUTUS:
+		case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+			return true;
+		default:
+			return false;
+		}
+
+	}
+
 }
