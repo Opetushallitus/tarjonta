@@ -52,9 +52,13 @@ import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import org.apache.commons.lang.time.DateUtils;
+
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import javax.persistence.Enumerated;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.opensaml.xml.signature.J;
@@ -62,10 +66,9 @@ import org.opensaml.xml.signature.J;
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
  * Koulutusmoduuli:n tietoja ja antaa moduulille aika seka paikka ulottuvuuden.
- *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id","version", "koulutuslajis"})
+@JsonIgnoreProperties({"koulutusmoduuli", "hakukohdes", "id", "version", "koulutuslajis"})
 @Table(name = KoulutusmoduuliToteutus.TABLE_NAME)
 public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
@@ -80,7 +83,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @JoinColumn(name = "koulutusmoduuli_id", nullable = false)
     private Koulutusmoduuli koulutusmoduuli;
 
-//    //Valmentava ja kuntouttava koulutus käyttää tätä nimeä
+    //    //Valmentava ja kuntouttava koulutus käyttää tätä nimeä
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nimi")
     private MonikielinenTeksti nimi;
@@ -197,9 +200,9 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "tarjoaja")
     private String tarjoaja;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = TABLE_NAME + "_owners", joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
-    private Set<KoulutusOwner> owners;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "koulutusmoduuli_toteutus_id")
+    private Set<KoulutusOwner> owners = new HashSet<KoulutusOwner>();
 
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
@@ -279,7 +282,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     *
      * @param moduuli Koulutusmoduuli jota tämä toteutus tarkentaa
      */
     public KoulutusmoduuliToteutus(Koulutusmoduuli moduuli) {
@@ -287,7 +289,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     *
      * @param moduuli
      */
     public final void setKoulutusmoduuli(Koulutusmoduuli moduuli) {
@@ -322,7 +323,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         if (koulutuslajis == null) {
             koulutuslajis = new HashSet<KoodistoUri>();
         }
-        
+
         return koulutuslajis;
     }
 
@@ -362,7 +363,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     *
      * @return the teemaUris
      * @deprecated not used!!
      */
@@ -381,7 +381,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     *
      * @param teemaUris the teemaUris to set
      */
     public void setTeemas(Set<KoodistoUri> teemaUris) {
@@ -504,7 +503,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     public void addLinkki(WebLinkki linkki) {
-        linkkis.add(linkki);;
+        linkkis.add(linkki);
     }
 
     public void removeLinkki(WebLinkki linkki) {
@@ -648,7 +647,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * edellytyksistä. Koulutuksen järjestäjät ja korkeakoulut voivat valita
      * hakijoita (1) opiskelijoiksi myös ilman pohjakoulutusvaatimusta, ks.
      * joustava valinta.
-     *
+     * <p/>
      * Arvo on koodisto uri.
      *
      * @return
@@ -658,8 +657,8 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     }
 
     /**
-     * @see #getPohjakoulutusvaatimusUri()
      * @param pohjakoulutusvaatimusUri
+     * @see #getPohjakoulutusvaatimusUri()
      */
     public void setPohjakoulutusvaatimusUri(String pohjakoulutusvaatimusUri) {
         this.pohjakoulutusvaatimusUri = pohjakoulutusvaatimusUri;
@@ -1085,9 +1084,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return
      */
     public Set<KoulutusOwner> getOwners() {
-        if (owners == null) {
-            owners = new HashSet<KoulutusOwner>();
-        }
         return owners;
     }
 
