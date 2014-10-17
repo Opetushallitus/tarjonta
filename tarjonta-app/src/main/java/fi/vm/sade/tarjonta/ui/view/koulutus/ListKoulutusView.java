@@ -136,7 +136,7 @@ public class ListKoulutusView extends VerticalLayout {
             LOG.debug("already attached : ListKoulutusView()");
             return;
         }
-        
+
         presenter.registerEventListener(this);
 
         LOG.debug("attach : ListKoulutusView()");
@@ -163,7 +163,7 @@ public class ListKoulutusView extends VerticalLayout {
         luoHakukohdeB.setEnabled(!presenter.getModel().getSelectedKoulutukset().isEmpty());
     }
 
-    
+
     @Override
     public void finalize() {
         presenter.unregisterEventListener(this);
@@ -175,12 +175,12 @@ public class ListKoulutusView extends VerticalLayout {
     private void addAndRebuildTutkintoResultList() {
         /*
          * A problem with Vaadin TreeTable:
-         * 
+         *
          * SearchResultsView must be initialized every time data rows are changed.
-         * 
-         * If there is a better way to make TreeTable to not show result rows 
-         * with right scrollbar, then the code on bottom can be modified so it only 
-         * attached once. 
+         *
+         * If there is a better way to make TreeTable to not show result rows
+         * with right scrollbar, then the code on bottom can be modified so it only
+         * attached once.
          */
         if (categoryTree != null) {
             this.removeComponent(categoryTree);
@@ -217,7 +217,10 @@ public class ListKoulutusView extends VerticalLayout {
                 KoulutusResultRow row = (KoulutusResultRow) item.getItemProperty(COLUMN_A).getValue();
 
                 for (KoulutusPerustieto curKoulutus : row.getChildren()) {
-                    addKoulutusRow(event.getItemId(), curKoulutus);
+                	//OPHASPA-1449
+                	if(TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(curKoulutus)){
+                		addKoulutusRow(event.getItemId(), curKoulutus);
+                	}
                 }
                 setPageLength(categoryTree.getItemIds().size());
             }
@@ -243,7 +246,7 @@ public class ListKoulutusView extends VerticalLayout {
         categoryTree.getContainerProperty(curKoulutus, COLUMN_KOULUTUSLAJI).setValue(uiHelper.getKoulutuslaji(curKoulutus));
         categoryTree.getContainerProperty(curKoulutus, COLUMN_TILA).setValue(getTilaStr(curKoulutus.getTila().name()));
     }
-    
+
     private void addValitsekaikki() {
         //Adding the select all checkbox.
         CssLayout wrapper = UiUtil.cssLayout(UiMarginEnum.BOTTOM);
@@ -548,7 +551,7 @@ public class ListKoulutusView extends VerticalLayout {
     }
 
     private void attachTree() {
-        //prepare data source unattached and then set it to the treetable 
+        //prepare data source unattached and then set it to the treetable
         addComponent(categoryTree);
         setExpandRatio(categoryTree, 1f);
         refreshLayout();
@@ -643,8 +646,8 @@ public class ListKoulutusView extends VerticalLayout {
         }
         return checkedKoulutukset;
     }
-    
-    
+
+
     private final Predicate<Object> filter(final Class type) {
         return new Predicate<Object>() {
             public boolean apply(Object o) {
@@ -652,22 +655,22 @@ public class ListKoulutusView extends VerticalLayout {
             }
         };
     }
-    
+
     /**
      * Event listeneri joka saa viestejä KoulutusPerustietopuun muutostarpeista, katso
      * {@link TarjontaPresenter#sendEvent(Object)}
      */
-    @Subscribe 
+    @Subscribe
     public void receiveKoulutusContainerEvent(KoulutusContainerEvent e) {
 
         LOG.debug("Received container event");
 
         final String eventKoulutusOid = e.oid;
-    
+
         switch (e.type) {
         case DELETE:
             LOG.debug("delete event");
-            
+
             for(Object itemid: Iterables.filter(categoryTree.getItemIds(), filter(KoulutusPerustieto.class))){
                     final KoulutusPerustieto currentKoulutus = (KoulutusPerustieto)itemid;
                     if(currentKoulutus.getKomotoOid().equals(eventKoulutusOid)) {
@@ -700,13 +703,16 @@ public class ListKoulutusView extends VerticalLayout {
                 //need to add new org to tree, falling back to reload for now!
                 reload();
             } else {
-                addKoulutusRow(parent, freshKoulutus);
+            	//OPHASPA-1449
+            	if(TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(freshKoulutus)){
+            		addKoulutusRow(parent, freshKoulutus);
+            	}
                 //TODO increase counter?
             }
-            
-            
+
+
             break;
-            
+
         default:
             LOG.warn("event not processed:" + e);
             break;
