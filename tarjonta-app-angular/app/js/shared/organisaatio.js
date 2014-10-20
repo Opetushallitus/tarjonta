@@ -263,16 +263,17 @@ angular
                 });
 
                 $q.all(promises).then(function() {
-                  // Sort organizations so that firstOrganizationOidInList is first in the array
-                  var index = 0;
-                  angular.forEach(organizations, function(org, i) {
-                      if (org.oid === firstOrganizationOidInList) {
-                          index = i;
-                      }
-                  });
-                  var shouldBeFirst = organizations.splice(index, 1);
-                  organizations.unshift(shouldBeFirst[0]);
-
+                  if (firstOrganizationOidInList) {
+                      // Sort organizations so that firstOrganizationOidInList is first in the array
+                      var index = 0;
+                      angular.forEach(organizations, function (org, i) {
+                          if (org.oid === firstOrganizationOidInList) {
+                             index = i;
+                          }
+                      });
+                      var shouldBeFirst = organizations.splice(index, 1);
+                      organizations.unshift(shouldBeFirst[0]);
+                  }
                   return defer.resolve(organizations);
                 });
 
