@@ -11,6 +11,7 @@
 
         <class>fi.vm.sade.tarjonta.model.Koulutusmoduuli</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus</class>
+        <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusOwner</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
         <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
