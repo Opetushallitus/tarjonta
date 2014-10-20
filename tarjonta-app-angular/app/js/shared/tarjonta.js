@@ -75,7 +75,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
      *   ...
      * ]
      * </pre>
-     * 
+     *
      * @param {type} params
      * @returns promise
      */
@@ -90,7 +90,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
     /**
      * Poista ryhmä hakukohteelta
-     * 
+     *
      */
     function poistaHakukohderyhma(hakukohdeOid, ryhmaOid) {
         var data = [{toiminto: "POISTA", hakukohdeOid: hakukohdeOid, ryhmaOid: ryhmaOid}];
@@ -162,6 +162,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisVuosi: args.year,
             koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"]
         };
+
+        if (args.organisationOid) {
+            params.organisationOid = args.organisationOid;
+        }
 
         $log.debug("haeKoulutukset()", params);
 
@@ -619,7 +623,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             //     param2: { date: yyy }
             //   },
             // }
-            // 
+            //
             // FIXME *** Only "date" value cached... *** Use the server side permission checker!
 
             var cache = dataFactory.ohjausparametritCache;
