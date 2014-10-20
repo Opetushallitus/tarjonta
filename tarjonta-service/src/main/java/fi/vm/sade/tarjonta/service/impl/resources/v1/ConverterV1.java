@@ -1462,6 +1462,8 @@ public class ConverterV1 {
         ret.setKoulutuksenAlkamisPvmMin(ht.getKoulutuksenAlkamisPvmMin());
         ret.setKoulutuksenAlkamisPvmMax(ht.getKoulutuksenAlkamisPvmMax());
 
+        ret.setTarjoajat(ht.getTarjoajat());
+
 //        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
 //        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
         return ret;
@@ -1471,6 +1473,7 @@ public class ConverterV1 {
             HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> tulos,
             Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat,
             KoulutusPerustieto ht) {
+
         TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht.getTarjoaja().getOid());
         if (ret == null) {
             ret = new TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>();
