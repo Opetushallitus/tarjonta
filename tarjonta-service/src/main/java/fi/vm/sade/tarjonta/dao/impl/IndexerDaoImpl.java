@@ -251,9 +251,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     public void updateKoulutusIndexed(Long id, Date time) {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         JPAUpdateClause u = new JPAUpdateClause(entityManager, komoto);
-        long updatedCount = u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
-
-        System.out.println(updatedCount);
+        u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
     }
 
   /**
