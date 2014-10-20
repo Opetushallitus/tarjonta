@@ -201,7 +201,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private String tarjoaja;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "koulutusmoduuli_toteutus_id")
+    @JoinColumn(name = "koulutusmoduuli_toteutus_id", nullable = false)
     private Set<KoulutusOwner> owners = new HashSet<KoulutusOwner>();
 
     @Column(name = "viimPaivittajaOid")
