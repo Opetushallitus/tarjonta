@@ -238,6 +238,8 @@ angular
              */
             getRyhmat: getRyhmat,
 
+            oidToOrgMap: {},
+
             getPopulatedOrganizations: function(organizationOids, firstOrganizationOidInList) {
                 var defer = $q.defer();
                 var promises = [];
@@ -247,13 +249,21 @@ angular
                 function getOrganizationName(oid) {
                   var defer = $q.defer();
 
-                  that.nimi(oid).then(function(nimi) {
-                    organizations.push({
-                      oid: oid,
-                      nimi: nimi
-                    });
-                    defer.resolve();
-                  });
+                  if (that.oidToOrgMap[oid]) {
+                      organizations.push(that.oidToOrgMap[oid]);
+                      defer.resolve();
+                  }
+                  else {
+                      that.nimi(oid).then(function (nimi) {
+                          var org = {
+                              oid: oid,
+                              nimi: nimi
+                          };
+                          that.oidToOrgMap[oid] = org;
+                          organizations.push(org);
+                          defer.resolve();
+                      });
+                  }
 
                   return defer.promise;
                 }
