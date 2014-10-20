@@ -22,6 +22,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import org.apache.solr.common.SolrDocument;
@@ -184,26 +185,53 @@ public class IndexDataUtils {
     }
 
     public static Tarjoaja createTarjoaja(SolrDocument koulutusDoc,
-            Map<String, OrganisaatioPerustieto> orgResponse) {
+            Map<String, OrganisaatioPerustieto> orgResponse, List<String> paramTarjoajaOids) {
+      final Tarjoaja tarjoaja = new Tarjoaja();
 
-        ArrayList<String> tarjoajat = (ArrayList) koulutusDoc.getFieldValue(ORG_OID);
-        final Tarjoaja tarjoaja = new Tarjoaja();
-        OrganisaatioPerustieto organisaatio = null;
+      if (koulutusDoc.getFieldValue(ORG_OID) != null ) {
+          ArrayList<String> orgOidCandidates = (ArrayList<String>) koulutusDoc.getFieldValue(ORG_OID);
 
-        if (tarjoajat != null) {
-            for (String tmpOid : tarjoajat) {
-                if (orgResponse.get(tmpOid) != null) {
-                    organisaatio = orgResponse.get(tmpOid);
-                    tarjoaja.setOid(tmpOid);
-                    break;
-                }
-            }
-        }
-        if (organisaatio != null) {
-            tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
-        }
+          // If query param for organization -> try to find matching organization in Solr doc
+          if (paramTarjoajaOids != null && paramTarjoajaOids.size() > 0) {
+              String paramOrgOid = paramTarjoajaOids.get(0);
 
-        return tarjoaja;
+              for ( String tmpOrgOid : orgOidCandidates ) {
+
+                  // Need to check whole organization path
+                  OrganisaatioPerustieto organisaatioPerustieto = orgResponse.get(tmpOrgOid);
+                  ArrayList<String> path = new ArrayList<String>();
+                  path.add(tmpOrgOid);
+                  path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
+
+                  if (path.indexOf(paramOrgOid) != -1) {
+                      tarjoaja.setOid(tmpOrgOid);
+                      break;
+                  }
+              }
+          }
+
+          // If no query param or invalid query param -> use first matching tarjoaja
+          if ( tarjoaja.getOid() == null ) {
+              for (String tmpOrgOid : orgOidCandidates) {
+                  if (orgResponse.get(tmpOrgOid) != null) {
+                      tarjoaja.setOid(tmpOrgOid);
+                      break;
+                  }
+              }
+          }
+      }
+
+      // Fallback KJOH-778 monta tarjoajaa
+      else if (koulutusDoc.getFieldValue("orgoid_s") != null) {
+          tarjoaja.setOid("" + koulutusDoc.getFieldValue("orgoid_s"));
+      }
+
+      final OrganisaatioPerustieto organisaatio = orgResponse.get(tarjoaja.getOid());
+      if (organisaatio != null) {
+          tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
+      }
+
+      return tarjoaja;
     }
 
     private static Nimi getOrganisaatioNimi(

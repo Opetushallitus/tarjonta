@@ -5,9 +5,7 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -15,7 +13,6 @@ import org.apache.solr.common.SolrDocumentList;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import java.util.Date;
 
 import org.apache.solr.common.util.Hash;
 import org.slf4j.Logger;
@@ -25,11 +22,13 @@ public class SolrDocumentToKoulutusConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrDocumentToKoulutusConverter.class);
 
-    public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, Map<String, OrganisaatioPerustieto> orgs) {
+    public KoulutuksetVastaus convertSolrToKoulutuksetVastaus(SolrDocumentList solrKomotoList, Map<String,
+          OrganisaatioPerustieto> orgs, List<String> paramTarjoajaOids) {
+
         KoulutuksetVastaus vastaus = new KoulutuksetVastaus();
         for (int i = 0; i < solrKomotoList.size(); ++i) {
             SolrDocument curDoc = solrKomotoList.get(i);
-            KoulutusPerustieto koulutus = convertKoulutus(curDoc, orgs);
+            KoulutusPerustieto koulutus = convertKoulutus(curDoc, orgs, paramTarjoajaOids);
             if (koulutus != null) {
                 vastaus.getKoulutukset().add(koulutus);
             }
@@ -37,7 +36,7 @@ public class SolrDocumentToKoulutusConverter {
         return vastaus;
     }
 
-    private KoulutusPerustieto convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs) {
+    private KoulutusPerustieto convertKoulutus(SolrDocument koulutusDoc, Map<String, OrganisaatioPerustieto> orgs, List<String> paramTarjoajaOids) {
         KoulutusPerustieto perustieto = new KoulutusPerustieto();
         perustieto.setKomotoOid("" + koulutusDoc.getFieldValue(OID));
         perustieto.setKoulutusKoodi(IndexDataUtils.createKoodistoKoodi(KOULUTUSKOODI_URI, KOULUTUSKOODI_FI, KOULUTUSKOODI_SV, KOULUTUSKOODI_EN, koulutusDoc));
@@ -55,7 +54,7 @@ public class SolrDocumentToKoulutusConverter {
         perustieto.setTila(IndexDataUtils.createTila(koulutusDoc));
         perustieto.setTutkintonimike(IndexDataUtils.createKoodistoKoodi(TUTKINTONIMIKE_URI, TUTKINTONIMIKE_FI, TUTKINTONIMIKE_SV, TUTKINTONIMIKE_EN, koulutusDoc));
 
-        perustieto.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs));
+        perustieto.setTarjoaja(IndexDataUtils.createTarjoaja(koulutusDoc, orgs, paramTarjoajaOids));
 
         // KJOH-778 monta tarjoajaa
         if (koulutusDoc.getFieldValue(ORG_OID) != null) {
