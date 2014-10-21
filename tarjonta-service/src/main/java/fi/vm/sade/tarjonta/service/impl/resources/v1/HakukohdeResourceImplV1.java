@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidationMessages;
@@ -1055,9 +1056,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
 
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
-        /*if (!parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHaku().getOid())) {
+        if (!parameterService.parameterCanAddHakukohdeToHaku(hakukohde.getHaku().getOid())) {
             throw new NotAuthorizedException("no.permission");
-        }*/
+        }
         permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(hakukohde.getOid());
 
         Set<KoulutusmoduuliToteutus> liitettavatKomotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(getKomotoOids(koulutukses)));
@@ -1165,6 +1166,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                             KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedotForKoulutus = hakukohde.getTarjoajatiedotForKoulutus(komotoOid);
                             if(tarjoajatiedotForKoulutus.containsOnlyTarjoaja(tarjoajaOid)) {
                                 komotoToRemove.add(komoto);
+                                hakukohde.removeTarjoajatiedotForKoulutus(komoto.getOid());
                             } else {
                                 tarjoajatiedotForKoulutus.removeTarjoaja(tarjoajaOid);
                                 hakukohdeDAO.update(hakukohde);

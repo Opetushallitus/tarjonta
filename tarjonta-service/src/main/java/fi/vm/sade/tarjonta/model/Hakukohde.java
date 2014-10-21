@@ -700,4 +700,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     public KoulutusmoduuliToteutusTarjoajatiedot getTarjoajatiedotForKoulutus(String koulutusOid) {
         return koulutusmoduuliToteutusTarjoajatiedot.get(koulutusOid);
     }
+
+    public void removeTarjoajatiedotForKoulutus(String oid) {
+        koulutusmoduuliToteutusTarjoajatiedot.remove(oid);
+    }
 }

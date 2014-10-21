@@ -338,7 +338,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
         var koodisto = koodistot[$scope.model.hakukohde.toteutusTyyppi];
         if (!koodisto) {
-            console.log($scope.model.hakukohde);
             $log.error("don't know which koodisto to use??!? toteutusTyyppi:", $scope.model.hakukohde.toteutusTyyppi);
         }
 
@@ -399,29 +398,18 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                                     oid: lopullinenTulos.oid
                                 };
 
-                                var addedKoulutus = false;
-
                                 // KJOH-778 monta tarjoajaa
-                                angular.forEach($scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot, function(tarjoajat, komotoOid) {
+                                OrganisaatioService.getPopulatedOrganizations($scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[lopullinenTulos.oid].tarjoajaOids).then(function(orgs) {
                                     var koulutusRef= koulutus;
-                                    addedKoulutus = true;
-                                    OrganisaatioService.getPopulatedOrganizations(tarjoajat.tarjoajaOids).then(function(orgs) {
-                                       angular.forEach(orgs, function(org) {
-                                           var copy = angular.copy(koulutusRef);
-                                           copy.nimi += " (" + org.nimi + ")";
-                                           copy.tarjoajaOid = org.oid;
-                                           $scope.model.koulutukses.push(copy);
-                                       });
-                                    });
+                                    angular.forEach(orgs, function(org) {
+                                        var copy = angular.copy(koulutusRef);
+                                        copy.nimi += " (" + org.nimi + ")";
+                                        copy.tarjoajaOid = org.oid;
+                                        $scope.model.koulutukses.push(copy);
+                                   });
                                 });
-
-                                // Fallback
-                                if (!addedKoulutus) {
-                                    $scope.model.koulutukses.push(koulutus);
-                                }
                             });
                         }
-
                     });
 
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
@@ -705,13 +693,19 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
         if ($scope.model.koulutukses.length > 0) {
 
+            var toBeRemoved = [];
+
             angular.forEach($scope.model.koulutukses, function(koulutusIndex) {
                 angular.forEach(koulutuksesArray, function(koulutus) {
-                    if (koulutusIndex.oid === koulutus) {
-                        var index = $scope.model.koulutukses.indexOf(koulutusIndex);
-                        $scope.model.koulutukses.splice(index, 1);
+                    if (koulutusIndex.oid === koulutus.oid && koulutusIndex.tarjoajaOid === koulutus.tarjoajaOid) {
+                        toBeRemoved.push({oid: koulutus.oid, tarjoajaOid: koulutus.tarjoajaOid});
                     }
                 });
+            });
+
+            angular.forEach(toBeRemoved, function(koulutus) {
+                $scope.model.koulutukses = _.without($scope.model.koulutukses,
+                    _.findWhere($scope.model.koulutukses, {oid: koulutus.oid, tarjoajaOid: koulutus.tarjoajaOid}));
             });
 
         } else {
@@ -722,27 +716,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     var reallyRemoveKoulutusFromHakukohde = function(koulutus) {
-
-        var koulutuksesArray = [];
-
-        if (angular.isArray(koulutus)) {
-
-            koulutuksesArray = koulutus;
-
-            angular.forEach(koulutus, function(koulutusOid) {
-                filterRemovedKoulutusFromHakukohde(koulutusOid);
-            });
-
-        } else {
-
-            koulutuksesArray.push(koulutus.oid);
-
-            filterRemovedKoulutusFromHakukohde(koulutus.oid);
-
-        }
-
-        removeKoulutusRelationsFromHakukohde(koulutuksesArray);
-
+        var koulutukset = [];
+        koulutukset.push({oid: koulutus.oid, tarjoajaOid: koulutus.tarjoajaOid});
+        removeKoulutusRelationsFromHakukohde(koulutukset);
     };
 
     $scope.showKoulutusHakukohtees = function(koulutus) {
@@ -851,9 +827,19 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         modalInstance.result.then(function(liitettavatKoulutukset) {
 
             angular.forEach(liitettavatKoulutukset, function(liitettavaKoulutus) {
+
                 $scope.model.hakukohde.hakukohdeKoulutusOids.push(liitettavaKoulutus.oid);
+
+                var tarjoajatiedot = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[liitettavaKoulutus.oid];
+                if(tarjoajatiedot === undefined) {
+                    var oids = [];
+                    oids.push(liitettavaKoulutus.tarjoajaOid);
+                    $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[liitettavaKoulutus.oid] = {tarjoajaOids: oids};
+                } else {
+                    tarjoajatiedot.tarjoajaOids.push(liitettavaKoulutus.tarjoajaOid);
+                }
             });
-            console.log(liitettavatKoulutukset);
+
             var liitaPromise = HakukohdeKoulutukses.addKoulutuksesToHakukohde($scope.model.hakukohde.oid, liitettavatKoulutukset);
             liitaPromise.then(function(data) {
                 if (data) {
@@ -1017,16 +1003,16 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                         });
                     });
                     $scope.model.hakutulos = hakutulos;
+                    $scope.model.hakutulos = $scope.model.hakutulos.reduce(function(prev, koulutus) {
+                        var found =_.find(selectedKoulutukses, function(selected){
+                            return selected.oid === koulutus.oid && selected.tarjoajaOid === koulutus.tarjoajaOid;
+                        });
+                        if (found === undefined) {
+                            prev.push(koulutus);
+                        }
+                        return prev;
+                    }, []);
                 });
-
-                //poimi hakutuloksesta koulutukset joita ei ole vielä liitettynä
-                $scope.model.hakutulos = $scope.model.hakutulos.reduce(function(prev, koulutus) {
-                    if (selectedKoulutukses.indexOf(koulutus.oid) == -1) {
-                        prev.push(koulutus);
-                    }
-                    return prev;
-                }, []);
-
             });
         });
 
@@ -1043,17 +1029,10 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
      * Kerää ja palauta setti koulutus-oideja jotka valittu + vanhat
      */
     $scope.model.save = function() {
-/*        var koulutukset = selectedKoulutukses.reduce(function(list, koulutus) {
-            list.push({oid: koulutus.oid, tarjoajaOid: koulutus.tarjoajaOid});
-            return list;
-        }, []);*/
-
         var koulutukset = [];
         angular.forEach($scope.model.selectedKoulutukses, function(koulutus) {
-            console.log("koulutus", koulutus);
             koulutukset.push({oid: koulutus.oid, tarjoajaOid: koulutus.tarjoajaOid});
         });
-
         $modalInstance.close(koulutukset);
     };
 
