@@ -73,56 +73,6 @@ public class TarjontaSearchService {
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
     }
 
-    /**
-     * 1st step in hakukohdehaku, returns organisation name (with provided
-     * locale), hit searchCount
-     *
-     * @param locale
-     * @param kysely
-     * @return
-     */
-    public List<OrganisaatioHakukohdeGroup> haeHakukohteetGroupedByOrganisaatio(Locale locale, HakukohteetKysely kysely) {
-        List<OrganisaatioHakukohdeGroup> hakukohteet = Lists.newArrayList();
-        SolrQuery q = createHakukohdeQuery(kysely);
-        q.add("group", "true");
-        q.add("group.field", Hakukohde.ORG_OID);
-        q.add("group.limit", "0");
-        try {
-            QueryResponse response = hakukohdeSolr.query(q);
-            List<NamedList<Object>> resultList = NamedListUtil.from(response.getResponse()).get("grouped").get(SolrFields.Hakukohde.ORG_OID).get("groups").value();
-            Set<String> orgOids = Sets.newHashSet();
-            for (NamedList<Object> group : resultList) {
-                final String oid = NamedListUtil.getValue(group, "groupValue");
-                final SolrDocumentList results = NamedListUtil.from(group).get("doclist").value();
-                final Long count = results.getNumFound();
-                final OrganisaatioHakukohdeGroup g = new OrganisaatioHakukohdeGroup(oid, count);
-                hakukohteet.add(g);
-                orgOids.add(oid);
-            }
-
-            if (orgOids.size() > 0) {
-                List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(orgOids);
-                Map<String, OrganisaatioPerustieto> oidOrgIndex = Maps.newHashMap();
-                for (OrganisaatioPerustieto perus : orgs) {
-                    oidOrgIndex.put(perus.getOid(), perus);
-                }
-
-                for (OrganisaatioHakukohdeGroup group : hakukohteet) {
-                    final OrganisaatioPerustieto perus = oidOrgIndex.get(group.getOrganisaatioOid());
-                    if (perus != null) {
-                        group.setOrganisaatioNimi(OrganisaatioDisplayHelper.getClosestBasic(locale, perus));
-                    } else {
-                        group.setOrganisaatioNimi(group.getOrganisaatioOid());
-                    }
-                }
-            }
-
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-        return hakukohteet;
-    }
-
     public HakukohteetVastaus haeHakukohteet(
             final HakukohteetKysely kysely) {
 

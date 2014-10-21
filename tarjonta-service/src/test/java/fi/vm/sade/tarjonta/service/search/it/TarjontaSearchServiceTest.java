@@ -343,28 +343,6 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 .getTarjoajaOid());
     }
 
-    @Ignore // todo alexGofore
-    @Test
-    public void testEtsiHakukohteitaGrouped() {
-        createTestDataInTransaction();
-
-        HakukohteetKysely kysely = new HakukohteetKysely();
-        List<OrganisaatioHakukohdeGroup> vastaus = tarjontaSearchService
-                .haeHakukohteetGroupedByOrganisaatio(new Locale("fi"), kysely);
-        assertEquals(3, vastaus.size());
-        for (OrganisaatioHakukohdeGroup group : vastaus) {
-            Assert.assertTrue(group.getOrganisaatioNimi().contains("fi"));
-        }
-
-        vastaus = tarjontaSearchService.haeHakukohteetGroupedByOrganisaatio(
-                new Locale("sv"), kysely);
-        assertEquals(3, vastaus.size());
-        for (OrganisaatioHakukohdeGroup group : vastaus) {
-            Assert.assertTrue(group.getOrganisaatioNimi().contains("sv"));
-        }
-    }
-
-    @Ignore // todo alexGofore
     @Test
     public void testKKKoulutus() throws SolrServerException {
 
