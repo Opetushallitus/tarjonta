@@ -129,7 +129,7 @@ public class KoulutusIndexEntityToSolrDocument implements
         }
 
         for(OrganisaatioPerustieto org : orgs) {
-            if (org.getOid() != firstOwner) {
+            if (!org.getOid().equals(firstOwner)) {
                 addOrganisaatioTiedot(komotoDoc, org, docs);
             }
 
