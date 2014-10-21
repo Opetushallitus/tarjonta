@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -23,7 +25,8 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private String koulutuskoodi;
     private Date koulutuksenAlkamisPvmMin = null;
     private Date koulutuksenAlkamisPvmMax = null;
-    
+    private ArrayList<String> tarjoajat;
+
     private String komoOid;
 
     public String getKomoOid() {
@@ -150,5 +153,13 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     public void setKoulutuksenAlkamisPvmMin(Date koulutuksenAlkamisPvmMin) {
         this.koulutuksenAlkamisPvmMin = koulutuksenAlkamisPvmMin;
     }
-  
+
+    public void setTarjoajat(ArrayList<String> tarjoajat) {
+        this.tarjoajat = tarjoajat;
+    }
+
+    public ArrayList<String> getTarjoajat() {
+        return tarjoajat;
+    }
+
 }

@@ -20,6 +20,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=false)
     private Map<String,String> hakukohteenNimet;
     private Map<String,String> tarjoajaNimet;
+    private Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot = new HashMap<String, KoulutusmoduuliTarjoajatiedotV1RDTO>();
     private Set<String> tarjoajaOids;
     @ApiModelProperty(value = "Hakukohde's haku's oid",required = true)
     private String hakuOid;
@@ -456,5 +457,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setOrganisaatioRyhmaOids(String[] organisaatioRyhmat) {
         this.organisaatioRyhmaOids = organisaatioRyhmat;
+    }
+
+    public Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> getKoulutusmoduuliToteutusTarjoajatiedot() {
+        return koulutusmoduuliToteutusTarjoajatiedot;
+    }
+
+    public void setKoulutusmoduuliToteutusTarjoajatiedot(Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot) {
+        this.koulutusmoduuliToteutusTarjoajatiedot = koulutusmoduuliToteutusTarjoajatiedot;
     }
 }

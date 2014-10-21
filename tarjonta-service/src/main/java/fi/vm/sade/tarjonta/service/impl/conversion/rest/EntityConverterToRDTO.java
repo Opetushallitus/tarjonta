@@ -270,11 +270,13 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         // KJOH-778 multiple owners, API output
         //
         for (KoulutusOwner owner : komoto.getOwners()) {
-            if (KoulutusOwner.TARJOAJA.equalsIgnoreCase(owner.getOwnerType())) {
+            if (KoulutusOwner.TARJOAJA.equals(owner.getOwnerType())) {
                 dto.getOpetusTarjoajat().add(owner.getOwnerOid());
-            } else if (KoulutusOwner.JARJESTAJA.equalsIgnoreCase(owner.getOwnerType())) {
+            }
+            else if (KoulutusOwner.JARJESTAJA.equals(owner.getOwnerType())) {
                 dto.getOpetusJarjestajat().add(owner.getOwnerOid());
-            } else {
+            }
+            else {
                 LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
                         komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
             }

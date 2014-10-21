@@ -1,0 +1,39 @@
+<div id="luo-koulutus-dialogi">
+    <div class="modal-header">
+        <h3>Muokkaa koulutuksen organisaatioita</h3>
+    </div>
+
+    <div class="modal-body">
+        <div>Dialogin kuvaus tähän...</div>
+
+        <table width="100%">
+            <tr>
+                <td width="50%">
+                    <input type="text" ng-model="organizationFilter"
+                           placeholder="Hae korkeakouluja" ng-change="searchOrganizations(organizationFilter)" />
+                    <div ng-if="lkorganisaatiot" class="treeview"
+                         data-angular-treeview="true" data-tree-id="lkorganisaatio"
+                         data-org-tree-model="lkorganisaatiot" data-node-id="oid"
+                         data-node-label="nimi" data-node-children="children">
+                    </div>
+                </td>
+                <td width="50%" ng-if="selectedOrganizations.length === 0" tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
+                <td width="50%" ng-if="selectedOrganizations.length > 0">
+                    <p><strong>Valitut organisaatiot</strong></p>
+                    <ul>
+                        <li ng-repeat="organisaatio in selectedOrganizations">
+                            <!-- älä salli sen organisaation poistoa, joka on luonut koulutuksen (ensimmäinen arvo taulukossa) -->
+                            <a ng-if="$index > 0" ng-click="deleteOrganization($index)">[X]</a>
+                            {{organisaatio.nimi}}
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="cancel()"><span tt="luoKoulutusDialogi.peruuta">Peruuta</span></button>
+        <button class="btn btn-primary" ng-disabled="selectedOrganizations.length === 0" ng-click="done()"><span>Valmis</span></button>
+    </div>
+</div>

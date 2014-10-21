@@ -19,12 +19,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.PersistenceException;
 
+import fi.vm.sade.tarjonta.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,11 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.MonikielinenMetadata;
-import fi.vm.sade.tarjonta.model.Valintakoe;
 
 /**
  */
@@ -116,6 +113,22 @@ public class HakukohdeDAOTest {
         Hakukohde loaded = hakukohdeDAO.read(hakukohde.getId());
 
         assertEquals(numToteutuses, loaded.getKoulutusmoduuliToteutuses().size());
+    }
+
+    @Test
+    public void insertWithKoulutusmoduuliToteutusTarjoajat() {
+        Hakukohde hakukohde = fixtures.simpleHakukohde;
+        hakukohde.setHaku(fixtures.createPersistedHaku());
+
+        KoulutusmoduuliToteutusTarjoajatiedot koulutusmoduuliToteutusTarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+        koulutusmoduuliToteutusTarjoajatiedot.setTarjoajaOids(new HashSet<String>(Arrays.asList("1.2.3")));
+        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put("4.5.6", koulutusmoduuliToteutusTarjoajatiedot);
+
+        hakukohdeDAO.insert(hakukohde);
+        Hakukohde loaded = hakukohdeDAO.read(hakukohde.getId());
+
+        assertTrue(loaded.getKoulutusmoduuliToteutusTarjoajatiedot().size() == 1);
+        assertEquals("1.2.3", loaded.getKoulutusmoduuliToteutusTarjoajatiedot().get("4.5.6").getTarjoajaOids().iterator().next());
     }
 
     @Test

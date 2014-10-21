@@ -16,17 +16,17 @@ angular
           /**
            * Hakee organisaatiopalvelusta ryhmät ja filtteroi niistä vain "hakukohde" käyttöön tarkoitetut ryhmät.
            * Eli jos "ryhmatyypit"-array sisältää "hakukohde" stringing.
-           * 
+           *
            * Esimerkkidataa:
            * https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/perse/ryhmat
-           * 
+           *
            * @returns {$q@call;defer.promise}
            */
           function getRyhmat() {
               $log.info("getRyhmat()");
               var ret = $q.defer();
-              
-              var orgRyhmat =                      
+
+              var orgRyhmat =
                       $resource(Config.env["organisaatio.api.rest.url"] + "organisaatio/:oid/ryhmat",
                           { oid : "@oid", },
                           {
@@ -59,7 +59,7 @@ angular
                   $log.error("  got error", err);
                   ret.reject(err);
               });
-              
+
               return ret.promise;
           }
 
@@ -176,14 +176,14 @@ angular
 
             /**
              * query (hakuehdot)
-             * 
+             *
              * @param hakuehdot,
              *                muodossa: (java OrganisaatioSearchCriteria
              *                -luokka) { "searchStr" : "", "organisaatiotyyppi" :
              *                "", "oppilaitostyyppi" : "", "lakkautetut" :
              *                false, "suunnitellut" : false }
-             * 
-             * 
+             *
+             *
              * @returns promise
              */
             etsi : etsi,
@@ -194,7 +194,7 @@ angular
             localize: localize,
             /**
              * Hakee organisaatiolle voimassaolevan localen mukaisen nimen.
-             * 
+             *
              * @param oid
              * @returns promise
              */
@@ -236,7 +236,59 @@ angular
             /**
              * Palauttaa organisaatioryhmat promisen. (organisaatioita)
              */
-            getRyhmat: getRyhmat
+            getRyhmat: getRyhmat,
+
+            oidToOrgMap: {},
+
+            getPopulatedOrganizations: function(organizationOids, firstOrganizationOidInList) {
+                var defer = $q.defer();
+                var promises = [];
+                var organizations = [];
+                var that = this;
+
+                function getOrganizationName(oid) {
+                  var defer = $q.defer();
+
+                  if (that.oidToOrgMap[oid]) {
+                      organizations.push(that.oidToOrgMap[oid]);
+                      defer.resolve();
+                  }
+                  else {
+                      that.nimi(oid).then(function (nimi) {
+                          var org = {
+                              oid: oid,
+                              nimi: nimi
+                          };
+                          that.oidToOrgMap[oid] = org;
+                          organizations.push(org);
+                          defer.resolve();
+                      });
+                  }
+
+                  return defer.promise;
+                }
+
+                angular.forEach(organizationOids, function(oid) {
+                  promises.push(getOrganizationName(oid));
+                });
+
+                $q.all(promises).then(function() {
+                  if (firstOrganizationOidInList) {
+                      // Sort organizations so that firstOrganizationOidInList is first in the array
+                      var index = 0;
+                      angular.forEach(organizations, function (org, i) {
+                          if (org.oid === firstOrganizationOidInList) {
+                             index = i;
+                          }
+                      });
+                      var shouldBeFirst = organizations.splice(index, 1);
+                      organizations.unshift(shouldBeFirst[0]);
+                  }
+                  return defer.resolve(organizations);
+                });
+
+                return defer.promise;
+           }
 
           };
         });

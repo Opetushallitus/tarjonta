@@ -6,9 +6,7 @@
 		<div style="height: 200px" ng-grid="gridOptions"></div>
 		<div style="overflow: scroll; height: 100px">
 			<ul>
-				<li ng-repeat="obj in model.selectedKoulutukses|orderBy:'nimi'">{{obj.nimi}}
-					<!-- <a href="" ng-click="removeItem(obj)">{{model.translations.poistaBtn}}</a> -->
-				</li>
+				<li ng-repeat="obj in model.selectedKoulutukses|orderBy:'nimi'">{{obj.nimi}}, {{obj.tarjoaja}}</li>
 			</ul>
 		</div>
 	</div>

@@ -12,20 +12,30 @@
                         <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
         </select>
         <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>
+        <label for="showOtherOrganizations" ng-show="model.organisaatiot.length">
+            <input id="showOtherOrganizations" ng-click="toggleOtherOrganizations()"
+                   type="checkbox" ng-model="showOtherOrganizations" />
+            <span>Näytä myös muut korkeakoulut</span>
+        </label>
 
 		<table width="100%">
 			<tr>
-				<td width="50%"><div class="treeview"
+				<td width="50%">
+                    <input ng-if="showOtherOrganizations" type="text" ng-model="organizationFilter"
+                           placeholder="Hae korkeakouluja" ng-change="searchOrganizations(organizationFilter)" />
+                    <div class="treeview"
 						data-angular-treeview="true" data-tree-id="lkorganisaatio"
 						data-org-tree-model="lkorganisaatiot" data-node-id="oid"
-						data-node-label="nimi" data-node-children="children" autoselect="luoKoulutusDialogOrg"></div></td>
-                        <td width="50%" ng-hide="organisaatioValittu()" tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
+						data-node-label="nimi" data-node-children="children" autoselect="luoKoulutusDialogOrg">
+					</div>
+                </td>
+                <td width="50%" ng-hide="organisaatioValittu()" tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
 				<td width="50%" ng-show="organisaatioValittu()">
                     <p tt="luoKoulutusDialogi.koulutusLuodaanSeuraaviinOrganisaatioihin">Luodaan seuraaviin organisaatioihin</p>
 				    <ul>
-                    <li ng-repeat="organisaatio in model.organisaatiot">
-                        <a ng-click="poistaValittu(organisaatio)">[X]</a> {{organisaatio.nimi}}
-                    </li>
+                        <li ng-repeat="organisaatio in model.organisaatiot">
+                            <a ng-show="$index > 0 || model.organisaatiot.length <= 1" ng-click="poistaValittu(organisaatio)">[X]</a> {{organisaatio.nimi}}
+                        </li>
 				    </ul>
 				</td>
 			</tr>

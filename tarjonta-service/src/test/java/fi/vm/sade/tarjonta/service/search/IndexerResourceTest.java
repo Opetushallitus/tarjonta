@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
@@ -57,6 +59,10 @@ public class IndexerResourceTest {
         IndexerDAO indexerDao = Mockito.mock(IndexerDAO.class);
         ReflectionTestUtils.setField(indexer, "indexerDao", indexerDao);
         ReflectionTestUtils.setField(hakukohdeToSolr, "indexerDao", indexerDao);
+
+        HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
+        Whitebox.setInternalState(hakukohdeToSolr, "hakukohdeDAO", hakukohdeDAO);
+        Mockito.stub(hakukohdeDAO.findHakukohdeByOid(Mockito.anyString())).toReturn(new Hakukohde());
 
         stub(indexerDao.findHakukohdeById(1l)).toReturn(getHakukohdeIndexEntity(1l));
         stub(indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(1l)).toReturn(getHakukohdeKoulutukset(1l));

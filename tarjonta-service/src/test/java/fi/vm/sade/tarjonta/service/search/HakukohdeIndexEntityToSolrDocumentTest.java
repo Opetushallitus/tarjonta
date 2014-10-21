@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import junit.framework.Assert;
 
 import org.apache.solr.common.SolrInputDocument;
@@ -11,6 +13,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.Whitebox;
 
@@ -31,7 +34,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 public class HakukohdeIndexEntityToSolrDocumentTest {
 
-    
+
 
     private static final String RYHMA_OID = "oid-1";
     private static final String KOMO_OID = "komo-oid";
@@ -49,11 +52,11 @@ public class HakukohdeIndexEntityToSolrDocumentTest {
     private static final String KAUSI_URI = "kausi_uri";
     private static final int VUOSI = 2014;
     private static final String KOULUTUSTYYPPI_URI = SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO.uri();
-    
+
     @Test
     public void test() {
         HakukohdeIndexEntityToSolrDocument converter = new HakukohdeIndexEntityToSolrDocument();
-        
+
         OrganisaatioSearchService organisaatioSearchService = Mockito
                 .mock(OrganisaatioSearchService.class);
         Whitebox.setInternalState(converter, "organisaatioSearchService",
@@ -73,16 +76,21 @@ public class HakukohdeIndexEntityToSolrDocumentTest {
 
         IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
         Whitebox.setInternalState(converter, "indexerDao", indexerDao);
+
+        HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
+        Whitebox.setInternalState(converter, "hakukohdeDAO", hakukohdeDAO);
+        Mockito.stub(hakukohdeDAO.findHakukohdeByOid(Mockito.anyString())).toReturn(new Hakukohde());
+
         Mockito.stub(indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(Mockito.anyLong())).toReturn(Lists.newArrayList(new KoulutusIndexEntity("oid", "tarjoaja-oid", "foo", "bar",
                 ModuulityyppiEnum.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS, ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA, "koulutus_1", "kevat_k", Integer.valueOf(2014))));
-        
+
         HakukohdeIndexEntity hk = new HakukohdeIndexEntity(1l,  "hk-oid",  "NIMI",  null,  null,  null,  null,  null,  null,  null,  null,  RYHMA_OID);
         List<SolrInputDocument> doc = converter.apply(hk);
         Assert.assertSame(1,  doc.size());
         Assert.assertEquals(RYHMA_OID,  doc.get(0).get(SolrFields.Hakukohde.ORGANISAATIORYHMAOID).getFirstValue());
     }
 
-    
+
     private void stubKoodi(KoodiService koodiService, String uri) {
         List<KoodiType> vastaus = Lists.newArrayList(getKoodiType(uri));
         Mockito.stub(
