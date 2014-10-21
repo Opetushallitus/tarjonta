@@ -398,7 +398,27 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                                     nimi: lopullinenTulos.nimi,
                                     oid: lopullinenTulos.oid
                                 };
-                                $scope.model.koulutukses.push(koulutus);
+
+                                var addedKoulutus = false;
+
+                                // KJOH-778 monta tarjoajaa
+                                angular.forEach($scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot, function(tarjoajat, komotoOid) {
+                                    var koulutusRef= koulutus;
+                                    addedKoulutus = true;
+                                    OrganisaatioService.getPopulatedOrganizations(tarjoajat.tarjoajaOids).then(function(orgs) {
+                                       angular.forEach(orgs, function(org) {
+                                           var copy = angular.copy(koulutusRef);
+                                           copy.nimi += " (" + org.nimi + ")";
+                                           copy.tarjoajaOid = org.oid;
+                                           $scope.model.koulutukses.push(copy);
+                                       });
+                                    });
+                                });
+
+                                // Fallback
+                                if (!addedKoulutus) {
+                                    $scope.model.koulutukses.push(koulutus);
+                                }
                             });
                         }
 
