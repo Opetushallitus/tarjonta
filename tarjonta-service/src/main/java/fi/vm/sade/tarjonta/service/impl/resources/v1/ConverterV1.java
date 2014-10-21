@@ -463,9 +463,7 @@ public class ConverterV1 {
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
             hakukohdeRDTO.getHakukohdeKoulutusOids().add(komoto.getOid());
 
-            for (KoulutusOwner owner : komoto.getOwners()) {
-                hakukohdeRDTO.getTarjoajaOids().add(owner.getOwnerOid());
-            }
+            hakukohdeRDTO.getTarjoajaOids().add(komoto.getTarjoaja());
         }
 
         addTarjoajatiedot(hakukohde, hakukohdeRDTO);
@@ -655,9 +653,9 @@ public class ConverterV1 {
                 String oid = koulutusmoduuliToteutus.getOid();
 
                 KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
-                for (KoulutusOwner owner : koulutusmoduuliToteutus.getOwners()) {
-                    koulutusmoduuliTarjoajatiedotV1RDTO.getTarjoajaOids().add(owner.getOwnerOid());
-                }
+
+                // Lisää oletuksena vain se tarjoja, joka loi koulutuksen
+                koulutusmoduuliTarjoajatiedotV1RDTO.getTarjoajaOids().add(koulutusmoduuliToteutus.getTarjoaja());
 
                 hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
             }
