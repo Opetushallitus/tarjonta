@@ -636,6 +636,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             hakukohde.setId(hakukohdeTemp.getId());
             hakukohde.setVersion(hakukohdeTemp.getVersion());
 
+            hakukohde.setKoulutusmoduuliToteutusTarjoajatiedot(hakukohdeTemp.getKoulutusmoduuliToteutusTarjoajatiedot());
+
             // Just in case remove kuvaukses if tunniste is defined
             if (hakukohde.getValintaPerusteKuvausTunniste() != null) {
                 hakukohde.setValintaperusteKuvaus(null);
