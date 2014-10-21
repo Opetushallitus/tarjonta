@@ -21,12 +21,11 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TOTEUTUSTYY
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +69,9 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     @Autowired
     private IndexerDAO indexerDao;
 
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+
     @Override
     public List<SolrInputDocument> apply(final HakukohdeIndexEntity hakukohde) {
         Preconditions.checkNotNull(hakukohde);
@@ -110,18 +112,41 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
         docs.add(hakukohdeDoc);
 
-        if(koulutuses.size()>0) {
-            final String tarjoaja = koulutuses.get(0).getTarjoaja();
-            boolean orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs, tarjoaja);
+        boolean orgFound = false;
+        String tarjoaja = "not initialized";
 
-            if (!orgFound) {
-                logger.warn("Skipping hakukohde:" + hakukohde.getOid()
-                        + " no organisation found with oid " + tarjoaja);
-                return Lists.newArrayList();
+        // KJOH-778 koulutuksella/hakukohteella monta tarjoajaa
+        Hakukohde hakukohdeDao = hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
+        Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot
+            = hakukohdeDao.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+        // Jos ei ole monta tarjoajaa -> indeksoi kuten ennen KJOH-778
+        if ( koulutusmoduuliToteutusTarjoajatiedot.isEmpty() ) {
+            if(koulutuses.size()>0) {
+                tarjoaja = koulutuses.get(0).getTarjoaja();
+                orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs, tarjoaja);
+            }
+            else {
+                logger.warn("No koulutuses found, this should not be possible!");
             }
         }
+
+        // Monta tarjoajaa
         else {
-            logger.warn("No koulutuses found, this should not be possible!");
+            // Loop all komotos attached to hakukohde
+            for(KoulutusmoduuliToteutusTarjoajatiedot tarjoajaTiedot : koulutusmoduuliToteutusTarjoajatiedot.values()) {
+                // Loop all tarjoajas attached to this komoto and this hakukohde
+                for (String tarjoajaOid : tarjoajaTiedot.getTarjoajaOids()) {
+                    tarjoaja = tarjoajaOid;
+                    orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs, tarjoaja);
+                }
+            }
+        }
+
+        if (!orgFound) {
+            logger.warn("Skipping hakukohde:" + hakukohde.getOid()
+                + " no organisation found with oid " + tarjoaja);
+            return Lists.newArrayList();
         }
 
         return docs;
