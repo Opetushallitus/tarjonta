@@ -629,7 +629,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
              * hakukohde.getValintakoes().clear();
              * hakukohde.getValintakoes().addAll
              * (hakukohdeTemp.getValintakoes());
-             * 
+             *
              * hakukohde.getLiites().clear();
              * hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
              */
@@ -1101,6 +1101,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     }
 
     private void updateTarjoajatiedot(Hakukohde hakukohde, List<KoulutusTarjoajaV1RDTO> koulutukses) {
+        handleOldTarjontatiedot(hakukohde);
+
         for (KoulutusTarjoajaV1RDTO koulutusTarjoajaV1RDTO : koulutukses) {
             String oid = koulutusTarjoajaV1RDTO.getOid();
             String tarjoajaOid = koulutusTarjoajaV1RDTO.getTarjoajaOid();
@@ -1114,8 +1116,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             tarjoajatiedot.getTarjoajaOids().add(tarjoajaOid);
             hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, tarjoajatiedot);
         }
-
-        handleOldTarjontatiedot(hakukohde);
     }
 
     private void handleOldTarjontatiedot(Hakukohde hakukohde) {
