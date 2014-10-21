@@ -20,12 +20,12 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService', 'CacheService', '$modal',
+    'dialogService', 'CacheService', '$modal', 'OrganisaatioService', 'AuthService',
     function BaseEditController($scope, $log, Config,
         $routeParams, $route, $location,
         converter, TarjontaService, PermissionService,
         organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-        dialogService, CacheService, $modal) {
+        dialogService, CacheService, $modal, OrganisaatioService, AuthService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -50,16 +50,12 @@ app.controller('BaseEditController', [
              formControls: {}*/
         };
 
-        // Map containing organization names (oid as key)
-        // this is used for displaying organization names in the UI
-        $scope.organizationOidNameMap = {};
-
         $scope.controlModelCommandApi = {
             active: false,
             clear: function() {
                 throw new Error("Component command link failed : ref not assigned!");
             }
-        }; //clear 
+        }; //clear
 
         /*
          * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
@@ -83,7 +79,7 @@ app.controller('BaseEditController', [
 
         $scope.commonCreatePageConfig = function(routeParams, result) {
             if (angular.isDefined(routeParams) && angular.isDefined(routeParams.toteutustyyppi)) {
-                //create new 
+                //create new
                 $scope.CONFIG = {
                     TYYPPI: routeParams.toteutustyyppi,
                     KOULUTUSTYYPPI: routeParams.koulutustyyppi
@@ -455,7 +451,9 @@ app.controller('BaseEditController', [
                 uiModel.isMutable = false;
             }
 
-            PermissionService.koulutus.canEdit(model.oid).then(function(data) {
+            PermissionService.koulutus.canEdit(model.oid, {
+                organisationOid: AuthService.getUserDefaultOid()
+            }).then(function(data) {
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;
 
@@ -513,12 +511,12 @@ app.controller('BaseEditController', [
         /*
          * LISATIEDOT PAGE FUNCTIONS
          */
-        
-        
+
+
         /**
          * Try to find all language uris for textarea objects.
          * Set founded uris to uiModel.lisatietoKielet property.
-         * 
+         *
          * @param {type} model
          * @param {type} uiModel
          */
@@ -533,7 +531,7 @@ app.controller('BaseEditController', [
                     });
                 });
             }
-            
+
              if (requireKomoTexts && model.kuvausKomo) {
                 angular.forEach(model.kuvausKomo, function(tekstis, key) {
                     angular.forEach(tekstis, function(value, key) {
@@ -547,11 +545,11 @@ app.controller('BaseEditController', [
             if (model.opetuskielis && model.opetuskielis.uris) {
                 arrLanguageUris = arrLanguageUris.concat(_.keys(model.opetuskielis.uris));
             }
-            
+
             if(!angular.isDefined(uiModel.lisatietoKielet)){
-                uiModel.lisatietoKielet = [];  
+                uiModel.lisatietoKielet = [];
             }
-            
+
             return uiModel.lisatietoKielet = _.uniq(uiModel.lisatietoKielet.concat(arrLanguageUris));
         };
 
@@ -616,30 +614,21 @@ app.controller('BaseEditController', [
          * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
          */
         $scope.$watch('model.opetusTarjoajat', function() {
-            $scope.initOpetustarjoajat($scope.model);
+           $scope.initOpetustarjoajat();
         });
 
         $scope.initOpetustarjoajat = function(model) {
-            angular.forEach(model.opetusTarjoajat, function(orgOid, index) {
-                // Organisaatio joka loi koulutuksen pitää aina olla taulukon ensimmäisenä
-                if ( model.organisaatio && model.organisaatio.oid === orgOid ) {
-                    model.opetusTarjoajat.splice(index, 1);
-                    model.opetusTarjoajat.unshift(orgOid);
-                }
-
-                organisaatioService.nimi(orgOid).then(function(nimi) {
-                    $scope.organizationOidNameMap[orgOid] = nimi;
-                });
+            model = model || $scope.model;
+            OrganisaatioService.getPopulatedOrganizations(model.opetusTarjoajat, model.organisaatio.oid)
+            .then(function(orgs) {
+              $scope.model.organisaatiot = orgs;
             });
         };
 
         $scope.editOrganizations = function() {
             $scope.selectedOrganizations = [];
-            angular.forEach($scope.model.opetusTarjoajat, function(orgOid) {
-                $scope.selectedOrganizations.push({
-                    oid: orgOid,
-                    nimi: $scope.organizationOidNameMap[orgOid]
-                });
+            angular.forEach($scope.model.organisaatiot, function(org) {
+                $scope.selectedOrganizations.push(org);
             });
             $scope.organizationSelectionDialog = $modal.open({
                 scope: $scope,

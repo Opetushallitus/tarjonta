@@ -21,12 +21,11 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TOTEUTUSTYY
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +69,9 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
     @Autowired
     private IndexerDAO indexerDao;
 
+    @Autowired
+    private HakukohdeDAO hakukohdeDAO;
+
     @Override
     public List<SolrInputDocument> apply(final HakukohdeIndexEntity hakukohde) {
         Preconditions.checkNotNull(hakukohde);
@@ -79,13 +81,13 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             logger.warn("There is a hakukohde without oid???" + hakukohde.toString());
             return Collections.EMPTY_LIST;
         }
-        
+
         List<KoulutusIndexEntity> koulutuses = indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(hakukohde.getId());
         if(koulutuses.size()==0){
             logger.warn("There is a hakukohde without komotos???" + hakukohde.toString());
             return Collections.EMPTY_LIST;
         }
-        
+
         add(hakukohdeDoc, OID, hakukohde.getOid());
         IndexDataUtils.addKausikoodiTiedot(hakukohdeDoc, koulutuses.get(0).getKausi(), koodiService);
         add(hakukohdeDoc, VUOSI_KOODI, koulutuses.get(0).getVuosi());
@@ -102,30 +104,53 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         addKoulutuslajit(hakukohdeDoc, koulutuses);
         addKoulutusAsteTyyppi(hakukohdeDoc, koulutuses);
         addToteutustyyppi(hakukohdeDoc, koulutuses);
-        
+
 
         addPohjakoulutusvaatimus(hakukohdeDoc, koulutuses);
-        
+
         add(hakukohdeDoc, HAKUTYYPPI_URI, hakukohde.getHakutyyppiUri());
 
         docs.add(hakukohdeDoc);
 
-        if(koulutuses.size()>0) {
-            final String tarjoaja = koulutuses.get(0).getTarjoaja();
-            boolean orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs,
-            tarjoaja);
-            
-            if (!orgFound) {
-                logger.warn("Skipping hakukohde:" + hakukohde.getOid()
-                        + " no organisation found with oid " + tarjoaja);
-                return Lists.newArrayList();
+        boolean orgFound = false;
+        String tarjoaja = "not initialized";
+
+        // KJOH-778 koulutuksella/hakukohteella monta tarjoajaa
+        Hakukohde hakukohdeDao = hakukohdeDAO.findHakukohdeByOid(hakukohde.getOid());
+        Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot
+            = hakukohdeDao.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+        // Jos ei ole monta tarjoajaa -> indeksoi kuten ennen KJOH-778
+        if ( koulutusmoduuliToteutusTarjoajatiedot.isEmpty() ) {
+            if(koulutuses.size()>0) {
+                tarjoaja = koulutuses.get(0).getTarjoaja();
+                orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs, tarjoaja);
             }
-        } else {
-            logger.warn("No koulutuses found, this should not be possible!");
+            else {
+                logger.warn("No koulutuses found, this should not be possible!");
+            }
+        }
+
+        // Monta tarjoajaa
+        else {
+            // Loop all komotos attached to hakukohde
+            for(KoulutusmoduuliToteutusTarjoajatiedot tarjoajaTiedot : koulutusmoduuliToteutusTarjoajatiedot.values()) {
+                // Loop all tarjoajas attached to this komoto and this hakukohde
+                for (String tarjoajaOid : tarjoajaTiedot.getTarjoajaOids()) {
+                    tarjoaja = tarjoajaOid;
+                    orgFound = addOrganisaatioTiedot(hakukohdeDoc, docs, tarjoaja);
+                }
+            }
+        }
+
+        if (!orgFound) {
+            logger.warn("Skipping hakukohde:" + hakukohde.getOid()
+                + " no organisation found with oid " + tarjoaja);
+            return Lists.newArrayList();
         }
 
         return docs;
-        }
+    }
 
     private void addRyhmat(SolrInputDocument hakukohdeDoc, String ryhmaOidit) {
         if (ryhmaOidit==null) {
@@ -136,16 +161,14 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
     }
 
-    private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc,
-            List<KoulutusIndexEntity> koulutuses) {
+    private void addKoulutusAsteTyyppi(SolrInputDocument hakukohdeDoc, List<KoulutusIndexEntity> koulutuses) {
         if(koulutuses!=null && koulutuses.size()>0) {
             String koulutusastetyyppi = koulutuses.get(0).getBaseKoulutustyyppiEnum().getKoulutusasteTyyppi().value();
             hakukohdeDoc.addField(KOULUTUSASTETYYPPI, koulutusastetyyppi);
         }
     }
 
-    private void addToteutustyyppi(SolrInputDocument hakukohdeDoc,
-            List<KoulutusIndexEntity> koulutuses) {
+    private void addToteutustyyppi(SolrInputDocument hakukohdeDoc, List<KoulutusIndexEntity> koulutuses) {
         if(koulutuses!=null && koulutuses.size()>0) {
             final KoulutusIndexEntity koulutus = koulutuses.get(0);
             if (koulutus.getSubKoulutustyyppiEnum() != null) {
@@ -155,8 +178,7 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
     }
 
-    private void addPohjakoulutusvaatimus(SolrInputDocument hakukohdeDoc,
-            List<KoulutusIndexEntity> koulutuses) {
+    private void addPohjakoulutusvaatimus(SolrInputDocument hakukohdeDoc, List<KoulutusIndexEntity> koulutuses) {
         if (koulutuses == null) {
             return;
         }
@@ -202,26 +224,26 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             // kk? nimi monikielisenä tekstinä
             MonikielinenTeksti nimi = indexerDao.getNimiForHakukohde(id);
             for(TekstiKaannos tekstikaannos: nimi.getTekstiKaannos()) {
+
                 Preconditions.checkNotNull(koodiService);
                 KoodiType type = IndexDataUtils.getKoodiByUriWithVersion(tekstikaannos.getKieliKoodi(), koodiService);
-                
-                
+
                 if(type!=null) {
                     add(doc, NIMET, tekstikaannos.getArvo());
                     add(doc, NIMIEN_KIELET, type.getKoodiArvo().toLowerCase());
                     add(doc, TEKSTIHAKU, tekstikaannos.getArvo());
                 }
             }
-            
+
             return;
         }
-       
+
         //Vapaan sivistyon koulutus has an edited name, not a koodiuri
-        if (!koulutuses.isEmpty() 
+        if (!koulutuses.isEmpty()
                 && !koulutuses.get(0).getBaseKoulutustyyppiEnum().equals(ModuulityyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS)) {
-            
+
             KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(hakukohdeNimi, koodiService);
-            
+
             if (koodi != null) {
                 KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
                 add(doc, HAKUKOHTEEN_NIMI_FI, metadata.getNimi());
@@ -231,13 +253,13 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
                 add(doc, HAKUKOHTEEN_NIMI_EN, metadata.getNimi());
                 add(doc, HAKUKOHTEEN_NIMI_URI, hakukohdeNimi);
             }
-        } else {
+        }
+        else {
             add(doc, HAKUKOHTEEN_NIMI_FI, hakukohdeNimi);
             add(doc, HAKUKOHTEEN_NIMI_SV, hakukohdeNimi);
             add(doc, HAKUKOHTEEN_NIMI_EN, hakukohdeNimi);
             add(doc, HAKUKOHTEEN_NIMI_URI, hakukohdeNimi);
         }
-        
     }
 
     private void addHakutapaTiedot(SolrInputDocument doc, String hakutapaUri) {
@@ -255,7 +277,6 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
             add(doc, HAKUTAPA_EN, metadata.getNimi());
             add(doc, HAKUTAPA_URI, hakutapaUri);
         }
-
     }
 
 
@@ -263,13 +284,12 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         if (koulutuses == null || koulutuses.size()==0) {
             return;
         }
-        
-        
+
         KoulutusIndexEntity koulutus = koulutuses.get(0);
+
         if(koulutus.getKoulutuslaji()==null) {
             return;
         }
-        
 
         KoodiType koodi = IndexDataUtils.getKoodiByUriWithVersion(koulutus.getKoulutuslaji(),  koodiService);
 
@@ -285,10 +305,10 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
 
     /**
      * Add field if value is not null
-     * 
+     *
      * @param doc
-     * @param nimifi
-     * @param string
+     * @param fieldName
+     * @param value
      */
     private void add(final SolrInputDocument doc, final String fieldName, final Object value) {
         if (value != null) {
@@ -296,30 +316,27 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         }
     }
 
-    private boolean addOrganisaatioTiedot(SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs,
-            String tarjoaja) {
+    private boolean addOrganisaatioTiedot(SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs, String tarjoaja) {
         boolean orgFound = false;
         orgFound = handleOrganisaatio(tarjoaja, hakukohdeDoc, docs);
         return orgFound;
     }
 
-    private boolean handleOrganisaatio(String tarjoaja, SolrInputDocument hakukohdeDoc,
-            List<SolrInputDocument> docs) {
+    private boolean handleOrganisaatio(String tarjoaja, SolrInputDocument hakukohdeDoc, List<SolrInputDocument> docs) {
         //final SolrInputDocument orgDoc = new SolrInputDocument();
 
         final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(tarjoaja));
         if (orgs.size()==0) {
             return false;
         }
-        
+
         final OrganisaatioPerustieto perus = orgs.get(0);
-        
+
         add(hakukohdeDoc, ORG_OID, perus.getOid());
         ArrayList<String> oidPath = Lists.newArrayList();
-        
+
         if (perus.getParentOidPath() != null) {
-            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings()
-                    .split(perus.getParentOidPath()));
+            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(perus.getParentOidPath()));
             Collections.reverse(oidPath);
 
             for (String path : oidPath) {
@@ -334,7 +351,8 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         for (HakuAikaIndexEntity aika : hakuaikas) {
             if (startDate == null) {
                 startDate = aika.getAlkamisPvm();
-            } else if (aika.getAlkamisPvm().before(startDate)) {
+            }
+            else if (aika.getAlkamisPvm().before(startDate)) {
                 startDate = aika.getAlkamisPvm();
             }
         }
@@ -355,7 +373,8 @@ public class HakukohdeIndexEntityToSolrDocument implements Function<HakukohdeInd
         for (HakuAikaIndexEntity aika : hakuaikas) {
             if (endDate == null) {
                 endDate = aika.getPaattymisPvm();
-            } else if (aika.getPaattymisPvm().after(endDate)) {
+            }
+            else if (aika.getPaattymisPvm().after(endDate)) {
                 endDate = aika.getPaattymisPvm();
             }
         }

@@ -151,8 +151,8 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
         	throw "missing org oid!";
         }
-        
-       
+
+
         var deferred = $q.defer();
 //        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
       	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
@@ -165,7 +165,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
       	} else {
       	  $http.get(url,{cache:true}).then(function(result) {
       	    // $log.debug("got:", result);
-      	  
+
       	    var ooids = result.data.split("/");
 
       	    for(var i=0;i<ooids.length;i++) {
@@ -232,6 +232,17 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
         },
 
         /**
+         * Palauttaa oletus käyttäjän tarjonnalle
+         */
+        getUserDefaultOid: function() {
+            var orgs = this.getOrganisations(["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE", "APP_TARJONTA_READ"]);
+            //käyttäjän oletusorganisaatio
+            if (orgs && orgs.length > 0) {
+                return orgs[0];
+            }
+         },
+
+        /**
          * Palauttaa käyttäjän etunimen
          */
         getFirstName: function(){
@@ -262,7 +273,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
 
         /**
          * Returns true IFF organisations of user has in given "roles" contains any of given "organisationOids".
-         * 
+         *
          * @param {type} roles
          * @param {type} organisationOids
          * @returns {Boolean}
@@ -277,7 +288,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             if (!(roles instanceof Array)) {
                 roles = [roles];
             }
-          
+
             // Default org == OPH
             organisationOids = organisationOids ? organisationOids : [Config.env['root.organisaatio.oid']];
 
@@ -296,10 +307,10 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                     }
                 });
             });
-            
+
             $log.debug("isUserInAnyOfRolesInOneOfOrganisations()", roles, organisationOids, result);
-            
-            return result;            
+
+            return result;
         },
 
         /**

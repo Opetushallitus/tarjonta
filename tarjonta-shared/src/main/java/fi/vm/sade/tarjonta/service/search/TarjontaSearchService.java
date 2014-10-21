@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -136,15 +137,23 @@ public class TarjontaSearchService {
             Set<String> orgOids = Sets.newHashSet();
 
             for (SolrDocument doc : hakukohdeResponse.getResults()) {
+                // KJOH-778 fallback
+                String fallBackField = "orgoid_s";
+
                 if (doc.getFieldValue(Hakukohde.ORG_OID) != null) {
-                    orgOids.add((String) doc.getFieldValue(Hakukohde.ORG_OID));
+                    for(String tmpOrgOid : (ArrayList<String>) doc.getFieldValue(Hakukohde.ORG_OID)) {
+                        orgOids.add(tmpOrgOid);
+                    }
+                }
+                else if (doc.getFieldValue(fallBackField) != null) {
+                    orgOids.add((String) doc.getFieldValue(fallBackField));
                 }
             }
 
             if (orgOids.size() > 0) {
                 Map<String, OrganisaatioPerustieto> orgResponse = searchOrgs(orgOids);
                 SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
-                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse);
+                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse, kysely.getTarjoajaOids());
             } else {
                 //empty result
                 response = new HakukohteetVastaus();
@@ -312,7 +321,7 @@ public class TarjontaSearchService {
 
                 SolrDocumentToKoulutusConverter converter = new SolrDocumentToKoulutusConverter();
 
-                response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs);
+                response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs, kysely.getTarjoajaOids());
 
             } else {
                 response = new KoulutuksetVastaus();

@@ -23,9 +23,10 @@ app.controller('OrganizationSelectionController',
         };
 
         $scope.done = function() {
+            $scope.model.organisaatiot = [];
             $scope.model.opetusTarjoajat = [];
             angular.forEach($scope.selectedOrganizations, function(org) {
-                $scope.organizationOidNameMap[org.oid] = org.nimi;
+                $scope.model.organisaatiot.push(org);
                 $scope.model.opetusTarjoajat.push(org.oid);
             });
             $scope.organizationSelectionDialog.dismiss();
