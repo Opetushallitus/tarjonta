@@ -121,8 +121,17 @@ public class KoulutusIndexEntityToSolrDocument implements
             return Lists.newArrayList();
         }
 
+        // Varmista, että se organisaatio joka luo koulutuksen indeksoidaan ensimmäisenä
+        String firstOwner = koulutus.getTarjoaja();
+
+        if (firstOwner != null) {
+            add(komotoDoc, ORG_OID, firstOwner);
+        }
+
         for(OrganisaatioPerustieto org : orgs) {
-            addOrganisaatioTiedot(komotoDoc, org, docs);
+            if (org.getOid() != firstOwner) {
+                addOrganisaatioTiedot(komotoDoc, org, docs);
+            }
 
             if (org.getParentOidPath() != null) {
                 ArrayList<String> oidPath = Lists.newArrayList();
