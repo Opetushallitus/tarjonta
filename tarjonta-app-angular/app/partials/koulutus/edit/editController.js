@@ -619,7 +619,13 @@ app.controller('BaseEditController', [
 
         $scope.initOpetustarjoajat = function(model) {
             model = model || $scope.model;
-            OrganisaatioService.getPopulatedOrganizations(model.opetusTarjoajat, model.organisaatio.oid)
+            
+            var shouldBeFirst = null;
+            if (model.organisaatio) {
+                shouldBeFirst = model.organisaatio.oid;
+            }
+
+            OrganisaatioService.getPopulatedOrganizations(model.opetusTarjoajat, shouldBeFirst)
             .then(function(orgs) {
               $scope.model.organisaatiot = orgs;
             });
