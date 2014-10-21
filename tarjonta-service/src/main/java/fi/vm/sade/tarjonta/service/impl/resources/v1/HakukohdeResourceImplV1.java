@@ -1140,7 +1140,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     @Transactional(readOnly = false)
-    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(String hakukohdeOid, List<String> koulutukses) {
+    public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(String hakukohdeOid, List<KoulutusTarjoajaV1RDTO> koulutukses) {
 
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(hakukohdeOid);
@@ -1152,9 +1152,24 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
                 LOG.debug("Looping hakukohde komoto : {}", komoto.getOid());
-                for (String komotoOid : koulutukses) {
+
+                for (KoulutusTarjoajaV1RDTO koulutusTarjoajaV1RDTO : koulutukses) {
+                    String komotoOid = koulutusTarjoajaV1RDTO.getOid();
+                    String tarjoajaOid = koulutusTarjoajaV1RDTO.getTarjoajaOid();
+
                     if (komoto.getOid().trim().equals(komotoOid)) {
-                        komotoToRemove.add(komoto);
+
+                        if(!hakukohde.hasTarjoajatiedotForKoulutus(komotoOid)) {
+                            komotoToRemove.add(komoto);
+                        } else {
+                            KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedotForKoulutus = hakukohde.getTarjoajatiedotForKoulutus(komotoOid);
+                            if(tarjoajatiedotForKoulutus.containsOnlyTarjoaja(tarjoajaOid)) {
+                                komotoToRemove.add(komoto);
+                            } else {
+                                tarjoajatiedotForKoulutus.removeTarjoaja(tarjoajaOid);
+                                hakukohdeDAO.update(hakukohde);
+                            }
+                        }
                     }
                 }
             }
@@ -1190,7 +1205,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                 } else {
 
-                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(koulutukses);
+                    List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuulisWithHakukohdesByOids(getKomotoOids(koulutukses));
 
                     for (KoulutusmoduuliToteutus komoto : komotos) {
                         komoto.removeHakukohde(hakukohde);
@@ -1210,12 +1225,12 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             }
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult(koulutukses);
+            resultV1RDTO.setResult(getKomotoOids(koulutukses));
 
         } else {
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-            resultV1RDTO.setResult(koulutukses);
+            resultV1RDTO.setResult(getKomotoOids(koulutukses));
 
         }
 

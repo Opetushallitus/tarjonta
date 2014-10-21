@@ -243,14 +243,14 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Poistaa annetun hakukohteen ja koulutusten välisen relaation", notes = "Poistaa annetun hakukohteen ja koulutusten välisen relaation, huom. mikäli hakukohteelle ei jää yhtään koulutusrelaatiota se poistetaan")
     public ResultV1RDTO<List<String>> removeKoulutuksesFromHakukohde(@ApiParam(value = "Hakukohteen oid", required = true) @PathParam("oid") String hakukohdeOid,
-            @ApiParam(value = "Lista hakukohteelta poistettavista koulutus oideista") List<String> koulutukses);
+            @ApiParam(value = "Lista hakukohteelta poistettavista koulutuksista") List<KoulutusTarjoajaV1RDTO> koulutukses);
 
     @POST
     @Path("/{oid}/koulutukset/lisaa")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää annetut koulutukset hakukohteelle")
     public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään", required = true) @PathParam("oid") String hakukohdeOid,
-            @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<KoulutusTarjoajaV1RDTO> koulutukses);
+            @ApiParam(value = "Koulutusten tiedot jotka liitetään hakukohteelle", required = true) List<KoulutusTarjoajaV1RDTO> koulutukses);
 
     @GET
     @Path("/{oid}/stateChangeCheck")

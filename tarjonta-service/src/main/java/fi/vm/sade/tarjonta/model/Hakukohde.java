@@ -692,4 +692,12 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setKoulutusmoduuliToteutusTarjoajatiedot(Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot) {
         this.koulutusmoduuliToteutusTarjoajatiedot = koulutusmoduuliToteutusTarjoajatiedot;
     }
+
+    public boolean hasTarjoajatiedotForKoulutus(String koulutusOid) {
+        return koulutusmoduuliToteutusTarjoajatiedot.get(koulutusOid) != null;
+    }
+
+    public KoulutusmoduuliToteutusTarjoajatiedot getTarjoajatiedotForKoulutus(String koulutusOid) {
+        return koulutusmoduuliToteutusTarjoajatiedot.get(koulutusOid);
+    }
 }
