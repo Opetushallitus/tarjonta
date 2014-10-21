@@ -297,8 +297,13 @@ public class TarjontaSearchService {
             Set<String> orgOids = Sets.newHashSet();
 
             for (SolrDocument doc : koulutusResponse.getResults()) {
-                if (doc.getFieldValue(Hakukohde.ORG_OID) != null) {
-                    orgOids.add((String) doc.getFieldValue(Hakukohde.ORG_OID));
+                if (doc.getFieldValue(Koulutus.ORG_OID) != null ) {
+                    //ArrayList<String> docOrgs = (ArrayList<String>) doc.getFieldValue(Koulutus.ORG_OID);
+                    orgOids.addAll((ArrayList) doc.getFieldValue(Koulutus.ORG_OID));
+                }
+                // KJOH-778 fallback
+                else if ( doc.get("orgoid_s") != null ) {
+                    orgOids.add((String) doc.getFieldValue("orgoid_s"));
                 }
             }
 

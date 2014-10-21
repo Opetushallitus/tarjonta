@@ -15,32 +15,14 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Maps;
-import java.math.BigDecimal;
-import java.util.*;
-
-import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
-import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperusteetUtil;
-import fi.vm.sade.tarjonta.service.resources.dto.*;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import fi.vm.sade.tarjonta.service.search.*;
-import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
-import fi.vm.sade.tarjonta.dao.HakuDAO;
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.MonikielinenMetadataDAO;
+import fi.vm.sade.tarjonta.dao.*;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -48,12 +30,25 @@ import fi.vm.sade.tarjonta.service.enums.MetaCategory;
 import fi.vm.sade.tarjonta.service.impl.conversion.BaseRDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.CommonToDTOConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.CommonRestConverters;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.util.ValintaperusteetUtil;
+import fi.vm.sade.tarjonta.service.resources.dto.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
+import fi.vm.sade.tarjonta.service.search.*;
+import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -313,11 +308,11 @@ public class ConverterV1 {
     // ----------------------------------------------------------------------
     // KUVAUS (esim. KK valintaperuste- tai SORA -kuvaus
     // ----------------------------------------------------------------------
+
     /**
      * Convert domain ValintaperusteSoraKuvaus to KuvausV1RDTO
      *
      * @param kuvaus
-     *
      * @return
      */
     public KuvausV1RDTO toKuvausRDTO(ValintaperusteSoraKuvaus kuvaus, boolean convertTeksti) {
@@ -450,6 +445,7 @@ public class ConverterV1 {
     // ----------------------------------------------------------------------
     // HAKUKOHDE
     // ----------------------------------------------------------------------
+
     /**
      * Convert domain Hakukohde to REST HakukohdeRDTO.
      *
@@ -467,9 +463,12 @@ public class ConverterV1 {
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
             hakukohdeRDTO.getHakukohdeKoulutusOids().add(komoto.getOid());
 
-            hakukohdeRDTO.getTarjoajaOids().add(komoto.getTarjoaja());
-
+            for (KoulutusOwner owner : komoto.getOwners()) {
+                hakukohdeRDTO.getTarjoajaOids().add(owner.getOwnerOid());
+            }
         }
+
+        addTarjoajatiedot(hakukohde, hakukohdeRDTO);
 
         if (hakukohde.getHakukohdeKoodistoNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimi(hakukohde.getHakukohdeKoodistoNimi());
@@ -648,6 +647,29 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setOrganisaatioRyhmaOids(hakukohde.getOrganisaatioRyhmaOids());
         return hakukohdeRDTO;
+    }
+
+    private void addTarjoajatiedot(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        if (hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().isEmpty()) {
+            for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+                String oid = koulutusmoduuliToteutus.getOid();
+
+                KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
+                koulutusmoduuliTarjoajatiedotV1RDTO.getTarjoajaOids().add(koulutusmoduuliToteutus.getTarjoaja());
+
+                hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
+            }
+        } else {
+            for (Entry<String, KoulutusmoduuliToteutusTarjoajatiedot> entry : hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().entrySet()) {
+                String oid = entry.getKey();
+                KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = entry.getValue();
+
+                KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
+                koulutusmoduuliTarjoajatiedotV1RDTO.setTarjoajaOids(tarjoajatiedot.getTarjoajaOids());
+
+                hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
+            }
+        }
     }
 
     private HashMap<String, String> convertMonikielinenMetadata(List<MonikielinenMetadata> metadatas) {
@@ -1009,7 +1031,7 @@ public class ConverterV1 {
 
         }
 
-        if(hakukohde.getHaku() != null) {
+        if (hakukohde.getHaku() != null) {
             t.setHakuOid(hakukohde.getHaku().getOid());
             t.setHakuKohdejoukkoUri(hakukohde.getHaku().getKohdejoukkoUri());
         }
@@ -1487,7 +1509,7 @@ public class ConverterV1 {
 
     /**
      * Resolves given koodiUri to metadata (translatios);
-     *
+     * <p/>
      * Becomes: { arvo : koodiArvo, uri: koodiUri, version : koodiVersion, meta:
      * { kieli_fi#1 : "Koodin suomekielinen nimi", kieli_sv#1 : "Kod
      * ruattalainen namn", ... } }

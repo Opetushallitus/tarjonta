@@ -250,7 +250,7 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Liittää annetut koulutukset hakukohteelle")
     public ResultV1RDTO<List<String>> lisaaKoulutuksesToHakukohde(@ApiParam(value = "Hakukohteen oid jolle koulutukset liitetään", required = true) @PathParam("oid") String hakukohdeOid,
-            @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<String> koulutukses);
+            @ApiParam(value = "Koulutusten oidit jotka liitetään hakukohteelle", required = true) List<KoulutusTarjoajaV1RDTO> koulutukses);
 
     @GET
     @Path("/{oid}/stateChangeCheck")

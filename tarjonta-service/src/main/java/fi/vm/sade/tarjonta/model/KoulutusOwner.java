@@ -16,8 +16,9 @@
 
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = KoulutusOwner.TABLE_NAME)
