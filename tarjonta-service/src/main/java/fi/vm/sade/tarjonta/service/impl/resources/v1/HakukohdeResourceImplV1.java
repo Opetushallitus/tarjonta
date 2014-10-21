@@ -19,10 +19,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiParam;
-import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
@@ -40,16 +38,8 @@ import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.Hakuko
 import fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation.HakukohdeValidator;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
-
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -57,25 +47,15 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import javax.annotation.Nullable;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author mlyly
@@ -1132,6 +1112,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             tarjoajatiedot.getTarjoajaOids().add(tarjoajaOid);
             hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, tarjoajatiedot);
+        }
+
+        handleOldTarjontatiedot(hakukohde);
+    }
+
+    private void handleOldTarjontatiedot(Hakukohde hakukohde) {
+        for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+            String oid = koulutusmoduuliToteutus.getOid();
+            KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().get(oid);
+            if (tarjoajatiedot == null) {
+                tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+                tarjoajatiedot.getTarjoajaOids().add(koulutusmoduuliToteutus.getTarjoaja());
+                hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, tarjoajatiedot);
+            }
         }
     }
 

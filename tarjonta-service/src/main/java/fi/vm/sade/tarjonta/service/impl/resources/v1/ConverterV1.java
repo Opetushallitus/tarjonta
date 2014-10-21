@@ -665,7 +665,10 @@ public class ConverterV1 {
                 KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = entry.getValue();
 
                 KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
-                koulutusmoduuliTarjoajatiedotV1RDTO.setTarjoajaOids(tarjoajatiedot.getTarjoajaOids());
+
+                for (String tarjoajaOid : tarjoajatiedot.getTarjoajaOids()) {
+                    koulutusmoduuliTarjoajatiedotV1RDTO.addTarjoajaOid(tarjoajaOid);
+                }
 
                 hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
             }
