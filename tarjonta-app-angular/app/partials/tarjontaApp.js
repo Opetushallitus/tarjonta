@@ -284,13 +284,30 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 var deferredPermission = $q.defer();
                 Hakukohde.get({oid: $route.current.params.id}, function(data) {
 
-                    var canEditVar = PermissionService.canEdit(data.result.tarjoajaOids[0]);
+                    var promises = [];
+                    var canEdit = false;
 
-                    //deferredPermission.resolve(canEditVar);
-                    canEditVar.then(function(permission) {
+                    function checkCanEdit(tarjoaja) {
+                        var defer = $q.defer();
 
-                        deferredPermission.resolve(permission);
+                        PermissionService.canEdit(tarjoaja).then(function(permission) {
+                            if (permission) {
+                                canEdit = true;
+                            }
+                            defer.resolve();
+                        });
 
+                        return defer.promise;
+                    }
+
+                    angular.forEach(data.result.koulutusmoduuliToteutusTarjoajatiedot, function(tarjoajat, komotoId) {
+                        angular.forEach(tarjoajat.tarjoajaOids, function(tarjoaja) {
+                            promises.push(checkCanEdit(tarjoaja));
+                        });
+                    });
+
+                    $q.all(promises).then(function() {
+                        return deferredPermission.resolve(canEdit);
                     });
 
                 });
