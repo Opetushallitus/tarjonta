@@ -276,6 +276,11 @@ public class IndexerDaoImpl implements IndexerDAO {
             }
         }
 
+        // Fallback Vaadinta varten
+        if (ownerOids.isEmpty()) {
+            ownerOids.add(komoto.getTarjoaja());
+        }
+
         return ownerOids;
     }
 
