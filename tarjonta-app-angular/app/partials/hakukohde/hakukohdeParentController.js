@@ -42,7 +42,7 @@ app.controller('HakukohdeParentController', [
         };
 
 
-        /** 
+        /**
          * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
          */
         function updateTila(tila) {
@@ -60,12 +60,12 @@ app.controller('HakukohdeParentController', [
             clear: function () {
                 throw new Error("Component command link failed : ref not assigned!");
             }
-        }; //clear 
+        }; //clear
 
         /*
-         * 
+         *
          * Common hakukohde controller variables
-         * 
+         *
          */
 
         $scope.modifiedObj = {
@@ -385,9 +385,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         * 
+         *
          * ------> Load hakukohde koulutusnames
-         * 
+         *
          */
 
         $scope.loadKoulutukses = function (hakuFilterFunction) {
@@ -521,9 +521,9 @@ app.controller('HakukohdeParentController', [
         }
 
         /*
-         * 
+         *
          * -----> Retrieve all hakus
-         * 
+         *
          */
         $scope.retrieveHakus = function (filterHakuFunction) {
 
@@ -1012,6 +1012,15 @@ app.controller('HakukohdeParentController', [
                         var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
                         $scope.model.hakukohde.toteutusTyyppi = toteutusTyyppi;
 
+                        // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
+                        var tarjoajatiedot = {};
+                        angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
+                            tarjoajatiedot[komotoOid] = {
+                                tarjoajaOids: [AuthService.getUserDefaultOid()]
+                            };
+                        });
+                        $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
+
                         $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
                         var returnResource = $scope.model.hakukohde.$save();
                         returnResource.then(function (hakukohde) {
@@ -1080,9 +1089,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         
+
          ------>  Koodisto helper methods
-         
+
          */
         var findKoodiWithArvo = function (koodi, koodis) {
 

@@ -195,6 +195,17 @@ public class PermissionChecker {
         }
     }
 
+    public void checkCreateHakukohde(String hakuOid, String tarjoajaOid) {
+        if(permissionService.userIsOphCrud()) {
+            return;
+        }
+
+        //saako hakuun liittää hakukohteita
+        checkPermission(parameterServices.parameterCanAddHakukohdeToHaku(hakuOid));
+
+        checkPermission(permissionService.userCanCreateHakukohde(OrganisaatioContext.getContext(tarjoajaOid)));
+    }
+
     public void checkUpdateHakukohdeByHakukohdeliiteTunniste(
             String hakukohdeLiiteTunniste) {
         HakukohdeLiite liite = hakukohdeDaoImpl

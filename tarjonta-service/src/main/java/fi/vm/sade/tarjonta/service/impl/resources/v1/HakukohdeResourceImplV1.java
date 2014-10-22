@@ -21,7 +21,13 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.authentication.service.UserService;
+import fi.vm.sade.authentication.service.types.dto.HenkiloFatType;
+import fi.vm.sade.authentication.service.types.dto.OrganisaatioHenkiloType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
+import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
@@ -81,6 +87,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     TarjontaSearchService tarjontaSearchService;
+
+    @Autowired(required = true)
+    private OrganisaatioService organisaatioService;
 
     @Autowired
     private IndexerResource indexerResource;
@@ -529,7 +538,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
     @Override
     @Transactional
     public ResultV1RDTO<HakukohdeV1RDTO> createHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
-        permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakuOid(), hakukohdeRDTO.getHakukohdeKoulutusOids());
         String hakuOid = hakukohdeRDTO.getHakuOid();
         Date today = new Date();
         List<HakukohdeValidationMessages> validationMessageses = validateHakukohde(hakukohdeRDTO);
@@ -539,6 +547,53 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
+
+        // Loop komotot ja tarkista, jos kirjautunut käyttäjä on tarjoajana kaikille komotoille
+        Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> tmpTarjoajatiedot = hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+        String hakukohdeOwner = null;
+        if (!tmpTarjoajatiedot.isEmpty()) {
+            hakukohdeOwner = tmpTarjoajatiedot.entrySet().iterator().next().getValue().getTarjoajaOids().iterator().next();
+        }
+
+        Map<String, KoulutusmoduuliToteutusTarjoajatiedot> tarjoajatiedot = new HashMap<String, KoulutusmoduuliToteutusTarjoajatiedot>();
+
+        for (KoulutusmoduuliToteutus komoto : komotot) {
+            for (KoulutusOwner owner : komoto.getOwners()) {
+                if (!owner.getOwnerType().equals(KoulutusOwner.TARJOAJA)) {
+                    continue;
+                }
+
+                OrganisaatioDTO tmpOrg = organisaatioService.findByOid(owner.getOwnerOid());
+
+                if (tmpOrg == null) {
+                    continue;
+                }
+
+                ArrayList<String> orgPath = new ArrayList<String>(Arrays.asList(tmpOrg.getParentOidPath().split("\\|")));
+                orgPath.add(owner.getOwnerOid());
+
+                for (String orgOidCandidate : orgPath) {
+                    if (orgOidCandidate.equals(hakukohdeOwner)) {
+                        KoulutusmoduuliToteutusTarjoajatiedot tarjojaTiedotKoulutukselle = new KoulutusmoduuliToteutusTarjoajatiedot();
+                        HashSet<String> tarjoajatHashSet = new HashSet<String>();
+                        tarjoajatHashSet.add(owner.getOwnerOid());
+                        tarjojaTiedotKoulutukselle.setTarjoajaOids(tarjoajatHashSet);
+                        tarjoajatiedot.put(komoto.getOid(), tarjojaTiedotKoulutukselle);
+                        break;
+                    }
+                }
+            }
+
+            // Check permission to komoto
+            if (tarjoajatiedot.get(komoto.getOid()) != null) {
+                String tmpTarjoaja = tarjoajatiedot.get(komoto.getOid()).getTarjoajaOids().iterator().next();
+                permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakuOid(), tmpTarjoaja);
+            }
+            else {
+                permissionChecker.checkCreateHakukohde(hakukohdeRDTO.getHakuOid(), komoto.getTarjoaja());
+            }
+        }
 
         validationMessageses.addAll(HakukohdeValidator.checkKoulutukset(komotot));
 
@@ -551,6 +606,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         Hakukohde hakukohde = converterV1.toHakukohde(hakukohdeRDTO);
+
+        if (!tarjoajatiedot.isEmpty()) {
+            hakukohde.setKoulutusmoduuliToteutusTarjoajatiedot(tarjoajatiedot);
+        }
 
         //oidi
         String newHakukohdeOid = null;
@@ -1172,12 +1231,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                             } else {
                                 tarjoajatiedotForKoulutus.removeTarjoaja(tarjoajaOid);
                                 hakukohdeDAO.update(hakukohde);
+                                indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
                             }
                         }
                     }
                 }
             }
 
+            // Tätä ei suoriteta, jos saman koulutuksen yksittäinen tarjoaja poistetaan
             if (komotoToRemove.size() > 0) {
                 Collection<KoulutusmoduuliToteutus> remainingKomotos = CollectionUtils.subtract(hakukohde.getKoulutusmoduuliToteutuses(), komotoToRemove);
 
@@ -1231,7 +1292,8 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(getKomotoOids(koulutukses));
 
-        } else {
+        }
+        else {
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             resultV1RDTO.setResult(getKomotoOids(koulutukses));
