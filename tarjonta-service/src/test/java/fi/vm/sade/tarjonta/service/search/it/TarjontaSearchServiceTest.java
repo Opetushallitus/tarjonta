@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -79,7 +75,6 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
-import java.util.Map;
 import org.joda.time.DateTime;
 
 
@@ -343,9 +338,11 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 .getTarjoajaOid());
     }
 
-    @Ignore // todo alexGofore
     @Test
     public void testKKKoulutus() throws SolrServerException {
+        OrganisaatioPerustieto organisaatioPerustieto = new OrganisaatioPerustieto();
+        organisaatioPerustieto.setOid("1.2.3.4.5.6.7.8.9");
+        Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(organisaatioPerustieto));
 
         // tee kk koulutus
         executeInTransaction(new Runnable() {
