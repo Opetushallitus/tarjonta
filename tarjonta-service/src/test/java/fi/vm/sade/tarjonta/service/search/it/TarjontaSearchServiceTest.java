@@ -343,6 +343,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                 .getTarjoajaOid());
     }
 
+    @Ignore // todo alexGofore
     @Test
     public void testKKKoulutus() throws SolrServerException {
 
