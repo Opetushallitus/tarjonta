@@ -620,11 +620,6 @@ app.controller('BaseEditController', [
         $scope.initOpetustarjoajat = function(model) {
             model = model || $scope.model;
 
-            // Tarkista jos koulutuksella on monta opetustarjoajaa
-            if ( !angular.isArray(model.opetusTarjoajat) || !model.opetusTarjoajat.length ) {
-                return;
-            }
-
             var shouldBeFirst = null;
             if (model.organisaatio) {
                 shouldBeFirst = model.organisaatio.oid;
