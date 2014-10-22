@@ -350,7 +350,9 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                     canMoveOrCopy: function(koulutusOid) {
                         $log.debug("canMoveOrCopy koulutus");
                         var deferred = $q.defer();
-                        var promise = _canEditKoulutus(koulutusOid);
+                        var promise = _canEditKoulutus(koulutusOid, {
+                            organisationOid: AuthService.getUserDefaultOid()
+                        });
                         promise.then(function(result) {
                             deferred.resolve(result);
                         });
