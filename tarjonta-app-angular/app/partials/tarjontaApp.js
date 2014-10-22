@@ -371,6 +371,31 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             });
         };
 
+        function resolveKoulutus(TarjontaService, OrganisaatioService, $log, $route, $q) {
+            $log.info("/koulutus/ID", $route);
+            var defer = $q.defer();
+
+            TarjontaService.getKoulutus({oid: $route.current.params.id}).$promise.then(function(res) {
+
+                OrganisaatioService.getPopulatedOrganizations(
+                    res.result.opetusTarjoajat,
+                    res.result.organisaatio.oid
+                ).then(function(orgs) {
+                    res.result.organisaatiot = orgs;
+                    var nimet = "";
+                    angular.forEach(orgs, function(org) {
+                        nimet += " | " + org.nimi;
+                    });
+
+                    res.result.organisaatioidenNimet = nimet.substring(3);
+
+                    defer.resolve(res);
+                });
+            });
+
+            return defer.promise;
+        }
+
         $routeProvider
                 .when("/etusivu", {
                     action: "home.default",
@@ -399,20 +424,14 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "koulutus.review",
                     controller: 'KoulutusRoutingController',
                     resolve: {
-                        koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID", $route);
-                            return TarjontaService.getKoulutus({oid: $route.current.params.id}).$promise;
-                        }
+                        koulutusModel: resolveKoulutus
                     }
                 })
                 .when('/koulutus/:id/edit', {
                     action: "koulutus.edit",
                     controller: 'KoulutusRoutingController',
                     resolve: {
-                        koulutusModel: function(TarjontaService, $log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);
-                            return TarjontaService.getKoulutus({oid: $route.current.params.id}).$promise;
-                        }
+                        koulutusModel: resolveKoulutus
                     }
                 })
                 .when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi', {

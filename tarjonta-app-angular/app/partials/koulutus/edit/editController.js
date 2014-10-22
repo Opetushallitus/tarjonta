@@ -619,7 +619,7 @@ app.controller('BaseEditController', [
 
         $scope.initOpetustarjoajat = function(model) {
             model = model || $scope.model;
-            
+
             var shouldBeFirst = null;
             if (model.organisaatio) {
                 shouldBeFirst = model.organisaatio.oid;
@@ -627,7 +627,13 @@ app.controller('BaseEditController', [
 
             OrganisaatioService.getPopulatedOrganizations(model.opetusTarjoajat, shouldBeFirst)
             .then(function(orgs) {
-              $scope.model.organisaatiot = orgs;
+                $scope.model.organisaatiot = orgs;
+                var nimet = "";
+                angular.forEach(orgs, function(org) {
+                    nimet += " | " + org.nimi;
+                });
+
+                $scope.model.organisaatioidenNimet = nimet.substring(3);
             });
         };
 

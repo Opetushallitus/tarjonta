@@ -482,19 +482,5 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         return "data:" + img.mimeType + ";base64," + img.base64data;
     };
-
-    OrganisaatioService.getPopulatedOrganizations(
-        $scope.model.koulutus.opetusTarjoajat,
-        $scope.model.koulutus.organisaatio.oid
-    ).then(function(orgs) {
-        $scope.model.koulutus.organisaatiot = orgs;
-        var nimet = "";
-        angular.forEach(orgs, function(org) {
-          nimet += ", " + org.nimi;
-        });
-
-        // Todo: alexGofore (tämä pitää saada controls headeriin)
-        $scope.model.koulutus.organisaatioidenNimet = nimet.substring(2);
-    });
 });
 
