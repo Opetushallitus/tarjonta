@@ -975,7 +975,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                 var tarjoajaOids = [];
                 _.each(result.tulokset, function(rootTulos){
                     _.each(rootTulos.tulokset, function(childTulos){
-                        if(childTulos.tarjoajat.length > 0) {
+                        if(childTulos.tarjoajat && childTulos.tarjoajat.length > 0) {
                             _.each(childTulos.tarjoajat, function(tarjoajaOid){
                                 if(tarjoajaOids.indexOf(tarjoajaOid) === -1) {
                                     tarjoajaOids.push(tarjoajaOid);
