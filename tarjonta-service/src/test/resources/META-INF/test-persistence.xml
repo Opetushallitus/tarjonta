@@ -11,6 +11,8 @@
 
         <class>fi.vm.sade.tarjonta.model.Koulutusmoduuli</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus</class>
+        <class>fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutusTarjoajatiedot</class>
+        <class>fi.vm.sade.tarjonta.model.KoulutusOwner</class>
         <class>fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys</class>
         <class>fi.vm.sade.tarjonta.model.KoodistoUri</class>
         <class>fi.vm.sade.tarjonta.model.Oid</class>
@@ -29,7 +31,7 @@
         <class>fi.vm.sade.tarjonta.model.Kielivalikoima</class>
         <class>fi.vm.sade.tarjonta.model.BinaryData</class>
         <class>fi.vm.sade.tarjonta.model.Massakopiointi</class>
-        
+
         <!-- oid service: -->
         <class>fi.vm.sade.oid.model.OID</class>
         <class>fi.vm.sade.oid.model.NodeClass</class>

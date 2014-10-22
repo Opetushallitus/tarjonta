@@ -20,12 +20,12 @@ app.controller('BaseEditController', [
     '$routeParams', '$route', '$location',
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
-    'dialogService', 'CacheService',
+    'dialogService', 'CacheService', '$modal', 'OrganisaatioService', 'AuthService',
     function BaseEditController($scope, $log, Config,
         $routeParams, $route, $location,
         converter, TarjontaService, PermissionService,
         organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-        dialogService, CacheService) {
+        dialogService, CacheService, $modal, OrganisaatioService, AuthService) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -55,7 +55,7 @@ app.controller('BaseEditController', [
             clear: function() {
                 throw new Error("Component command link failed : ref not assigned!");
             }
-        }; //clear 
+        }; //clear
 
         /*
          * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
@@ -79,7 +79,7 @@ app.controller('BaseEditController', [
 
         $scope.commonCreatePageConfig = function(routeParams, result) {
             if (angular.isDefined(routeParams) && angular.isDefined(routeParams.toteutustyyppi)) {
-                //create new 
+                //create new
                 $scope.CONFIG = {
                     TYYPPI: routeParams.toteutustyyppi,
                     KOULUTUSTYYPPI: routeParams.koulutustyyppi
@@ -409,6 +409,11 @@ app.controller('BaseEditController', [
             $scope.controlFormMessages(form, uiModel, "INIT");
             converter.createAPIModel(model, Config.app.userLanguages, tyyppi);
 
+            if ( $routeParams.opetusTarjoajat ) {
+                model.opetusTarjoajat = $routeParams.opetusTarjoajat.split(',');
+                $scope.initOpetustarjoajat(model);
+            }
+
             if (angular.isDefined($routeParams.org) || (angular.isDefined(model.organisaatio) && angular.isDefined(model.organisaatio.oid))) {
                 var promiseOrg = organisaatioService.nimi(angular.isDefined($routeParams.org) ? $routeParams.org : model.organisaatio.oid);
                 promiseOrg.then(function(vastaus) {
@@ -446,7 +451,9 @@ app.controller('BaseEditController', [
                 uiModel.isMutable = false;
             }
 
-            PermissionService.koulutus.canEdit(model.oid).then(function(data) {
+            PermissionService.koulutus.canEdit(model.oid, {
+                organisationOid: AuthService.getUserDefaultOid()
+            }).then(function(data) {
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;
 
@@ -497,17 +504,19 @@ app.controller('BaseEditController', [
                     console.error("invalid key mapping : ", key);
                 }
             });
+
+            $scope.initOpetustarjoajat(model);
         };
 
         /*
          * LISATIEDOT PAGE FUNCTIONS
          */
-        
-        
+
+
         /**
          * Try to find all language uris for textarea objects.
          * Set founded uris to uiModel.lisatietoKielet property.
-         * 
+         *
          * @param {type} model
          * @param {type} uiModel
          */
@@ -522,7 +531,7 @@ app.controller('BaseEditController', [
                     });
                 });
             }
-            
+
              if (requireKomoTexts && model.kuvausKomo) {
                 angular.forEach(model.kuvausKomo, function(tekstis, key) {
                     angular.forEach(tekstis, function(value, key) {
@@ -536,11 +545,11 @@ app.controller('BaseEditController', [
             if (model.opetuskielis && model.opetuskielis.uris) {
                 arrLanguageUris = arrLanguageUris.concat(_.keys(model.opetuskielis.uris));
             }
-            
+
             if(!angular.isDefined(uiModel.lisatietoKielet)){
-                uiModel.lisatietoKielet = [];  
+                uiModel.lisatietoKielet = [];
             }
-            
+
             return uiModel.lisatietoKielet = _.uniq(uiModel.lisatietoKielet.concat(arrLanguageUris));
         };
 
@@ -596,6 +605,47 @@ app.controller('BaseEditController', [
                 } else {
                     $scope.model.kuvausKomoto[value.type].tekstis[kieliUri] = null;
                 }
+            });
+        };
+
+        /**
+         * tarjonta-service ei pidä yllä tarjoajien järjestystä, mistä syystä
+         * tästä pidetään huolta alla olevan $watchin avulla (eli varmistetaan,
+         * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
+         */
+        $scope.$watch('model.opetusTarjoajat', function() {
+           $scope.initOpetustarjoajat();
+        });
+
+        $scope.initOpetustarjoajat = function(model) {
+            model = model || $scope.model;
+
+            var shouldBeFirst = null;
+            if (model.organisaatio) {
+                shouldBeFirst = model.organisaatio.oid;
+            }
+
+            OrganisaatioService.getPopulatedOrganizations(model.opetusTarjoajat, shouldBeFirst)
+            .then(function(orgs) {
+                $scope.model.organisaatiot = orgs;
+                var nimet = "";
+                angular.forEach(orgs, function(org) {
+                    nimet += " | " + org.nimi;
+                });
+
+                $scope.model.organisaatioidenNimet = nimet.substring(3);
+            });
+        };
+
+        $scope.editOrganizations = function() {
+            $scope.selectedOrganizations = [];
+            angular.forEach($scope.model.organisaatiot, function(org) {
+                $scope.selectedOrganizations.push(org);
+            });
+            $scope.organizationSelectionDialog = $modal.open({
+                scope: $scope,
+                templateUrl: 'partials/koulutus/organization-selection.html',
+                controller: 'OrganizationSelectionController'
             });
         };
 

@@ -16,19 +16,23 @@
 
 package fi.vm.sade.tarjonta.model;
 
-import javax.persistence.Embeddable;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-/**
- * @author mlyly
- */
-@Embeddable
-public class KoulutusOwner implements Serializable {
+@Entity
+@Table(name = KoulutusOwner.TABLE_NAME)
+public class KoulutusOwner extends TarjontaBaseEntity {
+
+    public static final String TABLE_NAME = "koulutusmoduuli_toteutus_owner";
 
     public static final String TARJOAJA = "TARJOAJA";
     public static final String JARJESTAJA = "JARJESTAJA";
 
+    @Column(name = "owneroid")
     private String ownerOid;
+
+    @Column(name = "ownertype")
     private String ownerType = TARJOAJA;
 
     public String getOwnerOid() {
@@ -46,4 +50,5 @@ public class KoulutusOwner implements Serializable {
     public void setOwnerType(String ownerType) {
         this.ownerType = ownerType;
     }
+
 }

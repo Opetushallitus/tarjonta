@@ -1,4 +1,18 @@
    <table class="tarjontaForm">
+
+        <!-- koulutuksen tarjoajat, jos useita -->
+        <tr ng-if="model.opetusTarjoajat">
+            <th>Organisaatiot</th>
+            <td>
+                <ul>
+                    <li ng-repeat="org in model.organisaatiot">{{org.nimi}}</li>
+                </ul>
+            </td>
+            <td>
+                <button class="btn" ng-click="editOrganizations()"><i class="icon-pencil"></i> Muokkaa koulutuksen organisaatioita</button>
+            </td>
+        </tr>
+
         <!-- koulutuskoodi -->
         <tr class="info">
             <th tt="koulutus.edit.koulutuskoodi">Koulutuskoodi</th>
@@ -87,7 +101,7 @@
                 <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
             </td>
         </tr>
-        
+
          <tr>
             <th tt="koulutus.edit.koulutuskoodi-kandidaatti">Koulutukseen sisältyy kandidaatin koulutus</th>
             <td>
@@ -95,10 +109,10 @@
                 {{model.kandidaatinKoulutuskoodi.nimi}} {{model.kandidaatinKoulutuskoodi.arvo}} <a href="" ng-if="isKandiUri()" ng-click="removeKandidaatinKoulutuskoodi()" tt="koulutus.edit.poista">Poista</a>
             </td>
             <td></td>
-            
-            
+
+
         </tr>
-        
+
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>
@@ -143,7 +157,7 @@
         <tr class="required">
             <th tt="koulutus.edit.opetuskielet">Opetuskielet</th>
             <td>
-                
+
         <multi-select
             order-with="userLanguages"
             selection="uiModel.opetuskielis.uris"

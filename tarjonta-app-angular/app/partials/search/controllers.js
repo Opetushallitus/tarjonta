@@ -356,7 +356,9 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 }
                 // muokkaa
                 if (tt.mutable) {
-                    PermissionService[prefix].canEdit(oid).then(function (result) {
+                    PermissionService[prefix].canEdit(oid, {
+                        organisationOid: AuthService.getUserDefaultOid()
+                    }).then(function (result) {
                         console.log("row actions can edit (" + prefix + ")", result);
                         var url = "/" + prefix + "/" + oid + "/edit";
                         if (result) {

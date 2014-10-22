@@ -17,31 +17,9 @@ package fi.vm.sade.tarjonta.model;
 
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
@@ -185,6 +163,11 @@ public class Hakukohde extends TarjontaBaseEntity {
     @CollectionTable(name = TABLE_NAME + "_sora_kielet", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
     private Set<String> soraKuvausKielet = new HashSet<String>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name = "hakukohde_koulutusmoduuli_toteutus_tarjoajatiedot", inverseJoinColumns = @JoinColumn(name = "koulutusmoduuli_toteutus_tarjoajatiedot_id"))
+    @MapKeyColumn(name = "koulutusmoduuli_toteutus_oid", nullable = false)
+    private Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot = new HashMap<String, KoulutusmoduuliToteutusTarjoajatiedot>();
 
     /**
      * KJOH-810 Hakukohteen ryhmän valinta
@@ -702,4 +685,23 @@ public class Hakukohde extends TarjontaBaseEntity {
         }
     }
 
+    public Map<String, KoulutusmoduuliToteutusTarjoajatiedot> getKoulutusmoduuliToteutusTarjoajatiedot() {
+        return koulutusmoduuliToteutusTarjoajatiedot;
+    }
+
+    public void setKoulutusmoduuliToteutusTarjoajatiedot(Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot) {
+        this.koulutusmoduuliToteutusTarjoajatiedot = koulutusmoduuliToteutusTarjoajatiedot;
+    }
+
+    public boolean hasTarjoajatiedotForKoulutus(String koulutusOid) {
+        return koulutusmoduuliToteutusTarjoajatiedot.get(koulutusOid) != null;
+    }
+
+    public KoulutusmoduuliToteutusTarjoajatiedot getTarjoajatiedotForKoulutus(String koulutusOid) {
+        return koulutusmoduuliToteutusTarjoajatiedot.get(koulutusOid);
+    }
+
+    public void removeTarjoajatiedotForKoulutus(String oid) {
+        koulutusmoduuliToteutusTarjoajatiedot.remove(oid);
+    }
 }

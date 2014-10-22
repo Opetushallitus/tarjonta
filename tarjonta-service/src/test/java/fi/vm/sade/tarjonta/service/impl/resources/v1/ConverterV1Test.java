@@ -1,12 +1,11 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliTarjoajatiedotV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -17,11 +16,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -33,6 +30,9 @@ public class ConverterV1Test {
 
     @Mock
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
+    @Mock
+    private OrganisaatioService organisaatioService;
 
     @InjectMocks
     private ConverterV1 converter;
@@ -106,4 +106,41 @@ public class ConverterV1Test {
         return Arrays.asList(valintakoeAjankohtaDTO);
     }
 
+    @Test
+    public void thatHakukohdeWithKoulutusmoduuliTarjontatiedotAreConverted() {
+        Hakukohde hakukohde = getHakukohde();
+        KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+        tarjoajatiedot.getTarjoajaOids().add("4.5.6");
+        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put("1.2.3", tarjoajatiedot);
+
+        HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> tarjoajatiedotMap = hakukohdeDTO.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+        assertTrue(tarjoajatiedotMap.size() == 1);
+        assertTrue(tarjoajatiedotMap.containsKey("1.2.3"));
+        assertTrue(tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().size() == 1);
+        assertEquals("4.5.6", tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().iterator().next());
+    }
+
+    @Test
+    public void thatHakukohdeWithoutKoulutusmoduuliTarjoajatiedotAreConverted() {
+        when(organisaatioService.findByOid("4.5.6")).thenReturn(null);
+
+        Hakukohde hakukohde = getHakukohde();
+        KoulutusmoduuliToteutus koulutusmoduuliToteutus = new KoulutusmoduuliToteutus();
+        koulutusmoduuliToteutus.setOid("1.2.3");
+        koulutusmoduuliToteutus.setTarjoaja("4.5.6");
+
+        hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus);
+
+        HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> tarjoajatiedotMap = hakukohdeDTO.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+        assertTrue(tarjoajatiedotMap.size() == 1);
+        assertTrue(tarjoajatiedotMap.containsKey("1.2.3"));
+        assertTrue(tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().size() == 1);
+        assertEquals("4.5.6", tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().iterator().next());
+    }
 }

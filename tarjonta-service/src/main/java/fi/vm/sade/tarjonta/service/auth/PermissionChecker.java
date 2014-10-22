@@ -17,8 +17,10 @@ package fi.vm.sade.tarjonta.service.auth;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import fi.vm.sade.tarjonta.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +30,6 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliToteutusDAOImpl;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.Valintakoe;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.PaivitaTilaTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
@@ -67,7 +63,7 @@ public class PermissionChecker {
     }
 
     private void checkPermission(final boolean result, final String... message) {
-        final String msg = message.length==1?message[0]:"no.permission"; 
+        final String msg = message.length==1?message[0]:"no.permission";
         if (!result) {
             throw new NotAuthorizedException(msg);
         }
@@ -85,6 +81,28 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanUpdateHakuWithOrgs(orgs));
     }
 
+
+    // KJOH-778 monta tarjoajaa
+    public boolean canEditHakukohdeMultipleOwners(Hakukohde hakukohde) {
+        Map<String, KoulutusmoduuliToteutusTarjoajatiedot> tarjoajatiedot = hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot();
+
+        if (!tarjoajatiedot.isEmpty()) {
+            for(KoulutusmoduuliToteutusTarjoajatiedot value : tarjoajatiedot.values()) {
+                for(String tarjoajaOid : value.getTarjoajaOids()) {
+                    try {
+                        checkPermission(permissionService.userCanUpdateHakukohde(OrganisaatioContext.getContext(tarjoajaOid)));
+                        return true;
+                    }
+                    catch (NotAuthorizedException e) {
+                        // Do nothing
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Saako käyttäjä muokata hakukohdetta, huom tämä ei ota huomioon parametreja!!!!!!
      * Saa käyttää ainoastaan silloin kun koulutuksia/haun tietoja ei muuteta
@@ -92,20 +110,24 @@ public class PermissionChecker {
      */
     public void checkUpdateHakukohdeAndIgnoreParametersWhileChecking(String hakukohdeOid) {
         Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
-        Set<KoulutusmoduuliToteutus> komot = hakukohde
-                .getKoulutusmoduuliToteutuses();
+
+        if ( canEditHakukohdeMultipleOwners(hakukohde)) {
+            return;
+        }
+
+        Set<KoulutusmoduuliToteutus> komot = hakukohde.getKoulutusmoduuliToteutuses();
         if (komot.size() > 0) {
             checkPermission(permissionService
-                    .userCanUpdateHakukohde(OrganisaatioContext
-                            .getContext(komot.iterator().next().getTarjoaja())));
+                .userCanUpdateHakukohde(OrganisaatioContext
+                    .getContext(komot.iterator().next().getTarjoaja())));
         } // hakukohde must always have komoto?
     }
 
-    
+
     /**
      * Saako käyttäjä muokata hakukohdetta, ottaa huomioon hakuparametrit, tarkistaa koulutus lisäykset poistot
      * XXX HJVO-55 suodata pois haut joihin ei saa koskea (permissiot!) älä anna lisätä/poistaa koulutuksia jos parametri estäää
-     * 
+     *
      * @param hakukohdeOid hakukohteen oid jota ollaan muokkaamassa
      * @param targetHakuOid hakukohteen oid (muutettavissa rajapinann kautta)
      * @param newKoulutusOids lista koulutusoideja jotka ilmoitettu rajapinnassa
@@ -122,27 +144,30 @@ public class PermissionChecker {
         final Haku currentHaku = currentHakukohde.getHaku();
 
         // 1. rajapinnassa hakukohde voidaan "siirtää" hausta toiseen, jolloin pitää tarkistaa uusi haku + vanha haku
-        
-        //jos "kohde" haku lukittu voidaan failata heti 
+
+        //jos "kohde" haku lukittu voidaan failata heti
         if(!currentHaku.getOid().equals(targetHakuOid)){
             checkPermission(parameterServices.parameterCanAddHakukohdeToHaku(targetHakuOid));
-        } 
-        
+        }
+
         final Set<KoulutusmoduuliToteutus> komot = currentHakukohde
                 .getKoulutusmoduuliToteutuses();
 
-        
+
         if(!parameterServices.parameterCanAddHakukohdeToHaku(targetHakuOid) && !parameterServices.parameterCanRemoveHakukohdeFromHaku(targetHakuOid)){
             Set<String> komotoOids = Sets.newHashSet();
             for(KoulutusmoduuliToteutus komoto: komot) {
                 komotoOids.add(komoto.getOid());
             }
-            
+
             //tarkista että hakukohteen koulutussetti ei ole muuttunut
             checkPermission(newKoulutusOids.size()==komotoOids.size() && Sets.intersection(komotoOids, Sets.newHashSet(newKoulutusOids)).size()==newKoulutusOids.size());
         }
-        
-        
+
+        if (canEditHakukohdeMultipleOwners(currentHakukohde)) {
+            return;
+        }
+
         if (komot.size() > 0) {
             checkPermission(permissionService
                     .userCanUpdateHakukohde(OrganisaatioContext
@@ -151,9 +176,9 @@ public class PermissionChecker {
             throw new RuntimeException("hakukohde without komos" + hakukohdeOid);
         }
     }
-    
+
     public void checkCreateHakukohde(String hakuOid, List<String> komotoOids) {
-        
+
         if(permissionService.userIsOphCrud()) {
             return;
         }
@@ -163,13 +188,24 @@ public class PermissionChecker {
 
         //saako hakuun liittää hakukohteita
         checkPermission(parameterServices.parameterCanAddHakukohdeToHaku(hakuOid));
-        
+
         for(String koulutusOid: komotoOids) {
             final KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAOImpl.findByOid(koulutusOid);
             checkPermission(permissionService.userCanCreateHakukohde(OrganisaatioContext.getContext(komoto.getTarjoaja())));
         }
     }
-    
+
+    public void checkCreateHakukohde(String hakuOid, String tarjoajaOid) {
+        if(permissionService.userIsOphCrud()) {
+            return;
+        }
+
+        //saako hakuun liittää hakukohteita
+        checkPermission(parameterServices.parameterCanAddHakukohdeToHaku(hakuOid));
+
+        checkPermission(permissionService.userCanCreateHakukohde(OrganisaatioContext.getContext(tarjoajaOid)));
+    }
+
     public void checkUpdateHakukohdeByHakukohdeliiteTunniste(
             String hakukohdeLiiteTunniste) {
         HakukohdeLiite liite = hakukohdeDaoImpl
@@ -201,13 +237,13 @@ public class PermissionChecker {
     public void checkRemoveHakukohde(String hakukohdeOid) {
         final Hakukohde hakukohde = hakukohdeDaoImpl.findHakukohdeByOid(hakukohdeOid);
 
-        
+
         final Set<KoulutusmoduuliToteutus> komot = hakukohde
                 .getKoulutusmoduuliToteutuses();
         Preconditions.checkArgument(komot.size()>0, "Hakukohde cannot exist without koulutus");
         //XXX why are we checking only first org???
         checkPermission(permissionService.userCanDeleteHakukohde(OrganisaatioContext.getContext(komot.iterator().next().getTarjoaja())));
-        
+
         checkPermission(parameterServices.parameterCanRemoveHakukohdeFromHaku(hakukohde.getHaku().getOid()), "error.parameters.deny.removal");
     }
 
@@ -328,7 +364,7 @@ public class PermissionChecker {
     }
 
     /**
-     * 
+     *
      * @param orgOids
      */
     public void checkUpdateHaku(String... orgOids) {
@@ -337,11 +373,11 @@ public class PermissionChecker {
 
     /**
      * Returns true if user is OPH CRUD user.
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isOphCrud() {
         return permissionService.userIsOphCrud();
     }
-    
+
 }
