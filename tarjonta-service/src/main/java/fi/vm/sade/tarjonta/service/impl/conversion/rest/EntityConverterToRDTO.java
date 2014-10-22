@@ -164,7 +164,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             lukioDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
             lukioDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             lukioDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
-            //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
+            //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
             mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
@@ -280,6 +280,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
                         komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
             }
+        }
+
+        // Always ensure that we have at least something in opetusTarjoajat (JavaScript depends on it)
+        if (dto.getOpetusTarjoajat().isEmpty()) {
+            dto.getOpetusTarjoajat().add(komoto.getTarjoaja());
         }
 
         return dto;
