@@ -22,7 +22,6 @@ import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import org.apache.solr.common.SolrDocument;
@@ -185,15 +184,14 @@ public class IndexDataUtils {
     }
 
     public static Tarjoaja createTarjoaja(SolrDocument koulutusDoc,
-            Map<String, OrganisaatioPerustieto> orgResponse, List<String> paramTarjoajaOids) {
+            Map<String, OrganisaatioPerustieto> orgResponse, String defaultTarjoaja) {
       final Tarjoaja tarjoaja = new Tarjoaja();
 
       if (koulutusDoc.getFieldValue(ORG_OID) != null ) {
           ArrayList<String> orgOidCandidates = (ArrayList<String>) koulutusDoc.getFieldValue(ORG_OID);
 
           // If query param for organization -> try to find matching organization in Solr doc
-          if (paramTarjoajaOids != null && paramTarjoajaOids.size() > 0) {
-              String paramOrgOid = paramTarjoajaOids.get(0);
+          if (defaultTarjoaja != null) {
 
               for ( String tmpOrgOid : orgOidCandidates ) {
 
@@ -203,7 +201,7 @@ public class IndexDataUtils {
                   path.add(tmpOrgOid);
                   path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
 
-                  if (path.indexOf(paramOrgOid) != -1) {
+                  if (path.indexOf(defaultTarjoaja) != -1) {
                       tarjoaja.setOid(tmpOrgOid);
                       break;
                   }

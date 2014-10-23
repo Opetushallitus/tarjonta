@@ -450,7 +450,66 @@ app.controller('HakukohdeParentController', [
             });
         };
 
-        $scope.getKoulutustenNimet = function () {
+        $scope.getHakukohteenNimet = function() {
+            var ret = "";
+            var ja = LocalisationService.t("tarjonta.yleiset.ja");
+
+            for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+                if (i > 0) {
+                    ret = ret + ((i == $scope.model.hakukohde.hakukohteenNimet.length - 1) ? " " + ja + " " : ", ");
+                }
+                ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
+            }
+
+            return ret;
+        };
+
+        $scope.getHakukohteenJaOrganisaationNimi = function() {
+            return $scope.getHakukohteenNimet() + $scope.getOrganisaatioidenNimet();
+        };
+
+        $scope.getOrganisaatioidenNimet = function() {
+            var ret = "";
+            var uniqueTarjoajat = $scope.model.hakukohde.uniqueTarjoajat;
+            var organisaationNimi = $scope.model.organisaatioNimet[0];
+
+            // Kun luodaan uutta tämä muuttuja asetetaan true/false
+            if ( $scope.model.hakukohde.multipleOwners ) {
+                organisaationNimi = null;
+            }
+
+            else if (uniqueTarjoajat && uniqueTarjoajat.length) {
+                if (uniqueTarjoajat.length === 1) {
+                    organisaationNimi = uniqueTarjoajat[0].nimi;
+                }
+                else {
+                    // Ei listata mitään organisaatioita, jos niitä on useita
+                    organisaationNimi = null;
+                }
+            }
+
+            // Kun uusi hakukohde on tallennettu uniqueTarjoajat ei ole asetettu
+            else {
+                try {
+                    var map = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot;
+                    var firstTarjoajaInMap = map[_.keys(map)[0]].tarjoajaOids[0];
+                    var organizationsMatch = $scope.model.hakukohde.tarjoajaOids[0] === firstTarjoajaInMap;
+                    if (!organizationsMatch) {
+                        organisaationNimi = null;
+                    }
+                }
+                catch(e){}
+            }
+
+            if (organisaationNimi) {
+                var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
+                ret = ret + ". " + organisaatiolleMsg + " : <b>" + organisaationNimi + "</b>";
+            }
+
+            return ret;
+        };
+
+        $scope.getKoulutustenNimet = function() {
             var ret = "";
             var ja = LocalisationService.t("tarjonta.yleiset.ja");
 
@@ -461,35 +520,7 @@ app.controller('HakukohdeParentController', [
                 ret = ret + "<b>" + $scope.model.koulutusnimet[i] + "</b>";
             }
 
-            if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0) {
-
-                var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
-
-                ret = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
-
-            } else {
-                var counter = 0;
-                var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
-                angular.forEach($scope.model.organisaatioNimet, function (organisaatioNimi) {
-
-                    if (counter === 0) {
-
-                        ret = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
-
-                    } else {
-
-                        // ret = ret +
-                        // ((counter===$scope.model.organisaatioNimet.length-1) ?
-                        // " " : ", ");
-
-                        ret = ret + ", <b>" + organisaatioNimi + "</b>";
-
-                    }
-                    counter++;
-
-                });
-
-            }
+            ret += $scope.getOrganisaatioidenNimet();
 
             return ret;
         };

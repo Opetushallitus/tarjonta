@@ -73,8 +73,11 @@ public class TarjontaSearchService {
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
     }
 
-    public HakukohteetVastaus haeHakukohteet(
-            final HakukohteetKysely kysely) {
+    public HakukohteetVastaus haeHakukohteet(final HakukohteetKysely kysely) {
+        return haeHakukohteet(kysely, null);
+    }
+
+    public HakukohteetVastaus haeHakukohteet(final HakukohteetKysely kysely, String defaultTarjoaja) {
 
         HakukohteetVastaus response = new HakukohteetVastaus();
 
@@ -103,7 +106,7 @@ public class TarjontaSearchService {
             if (orgOids.size() > 0) {
                 Map<String, OrganisaatioPerustieto> orgResponse = searchOrgs(orgOids);
                 SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
-                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse, kysely.getTarjoajaOids());
+                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse, defaultTarjoaja);
             } else {
                 //empty result
                 response = new HakukohteetVastaus();
@@ -242,6 +245,10 @@ public class TarjontaSearchService {
     }
 
     public KoulutuksetVastaus haeKoulutukset(final KoulutuksetKysely kysely) {
+        return haeKoulutukset(kysely, null);
+    }
+
+    public KoulutuksetVastaus haeKoulutukset(final KoulutuksetKysely kysely, String defaultTarjoaja) {
 
         KoulutuksetVastaus response = new KoulutuksetVastaus();
 
@@ -271,7 +278,7 @@ public class TarjontaSearchService {
 
                 SolrDocumentToKoulutusConverter converter = new SolrDocumentToKoulutusConverter();
 
-                response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs, kysely.getTarjoajaOids());
+                response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs, defaultTarjoaja);
 
             } else {
                 response = new KoulutuksetVastaus();

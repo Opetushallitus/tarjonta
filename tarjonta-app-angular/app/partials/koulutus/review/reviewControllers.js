@@ -20,7 +20,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
 
     //käyttöoikeudet
     PermissionService.koulutus.canEdit(koulutusModel.oid, {
-        organisationOid: AuthService.getUserDefaultOid()
+        defaultTarjoaja: AuthService.getUserDefaultOid()
     }).then(function(data) {
         var tila = TarjontaService.getTilat()[koulutusModel.tila];
         $scope.isMutable = tila.mutable && data;

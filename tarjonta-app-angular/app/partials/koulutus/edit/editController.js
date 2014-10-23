@@ -452,7 +452,7 @@ app.controller('BaseEditController', [
             }
 
             PermissionService.koulutus.canEdit(model.oid, {
-                organisationOid: AuthService.getUserDefaultOid()
+                defaultTarjoaja: AuthService.getUserDefaultOid()
             }).then(function(data) {
                 $log.debug("setting mutable to:", data);
                 uiModel.isMutable = data;

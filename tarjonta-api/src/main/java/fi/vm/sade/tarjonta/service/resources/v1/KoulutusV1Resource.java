@@ -280,7 +280,9 @@ public interface KoulutusV1Resource {
             @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid,
             @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs,
-            @QueryParam("koulutuslaji") String koulutuslaji
+            @QueryParam("koulutuslaji") String koulutuslaji,
+            // Mikä organisaatio asetetaan oletusorganisaatioksi (jos koulutuksella on monta tarjoajaa)
+            @QueryParam("defaultTarjoaja") String defaultTarjoaja
     );
 
     /**

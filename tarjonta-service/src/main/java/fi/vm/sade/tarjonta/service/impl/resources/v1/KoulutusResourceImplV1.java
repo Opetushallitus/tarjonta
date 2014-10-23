@@ -795,7 +795,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
             String komoOid,
             String alkamisPvmAlkaenTs,
-            String koulutuslaji) {
+            String koulutuslaji,
+            String defaultTarjoaja) {
 
         // Process alkamispvm search criteria
         // TODO alkamispvm not used yet!
@@ -831,7 +832,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutustyyppi().addAll(koulutustyyppi); //uri
         q.getTotetustyyppi().addAll(toteutustyyppi); //enum
         q.setKoulutuslaji(koulutuslaji);
-        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
+        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q, defaultTarjoaja);
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));
     }

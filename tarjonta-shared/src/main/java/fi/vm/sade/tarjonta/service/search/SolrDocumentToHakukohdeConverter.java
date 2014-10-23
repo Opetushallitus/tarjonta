@@ -45,12 +45,12 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 public class SolrDocumentToHakukohdeConverter {
 
     public HakukohteetVastaus convertSolrToHakukohteetVastaus(SolrDocumentList solrHakukohdeList, Map<String,
-        OrganisaatioPerustieto> orgResponse, List<String> paramTarjoajaOids) {
+        OrganisaatioPerustieto> orgResponse, String defaultTarjoaja) {
 
         HakukohteetVastaus vastaus = new HakukohteetVastaus();
         for (int i = 0; i < solrHakukohdeList.size(); ++i) {
             SolrDocument hakukohdeDoc = solrHakukohdeList.get(i);
-            HakukohdePerustieto hakukohde = convertHakukohde(hakukohdeDoc, orgResponse, paramTarjoajaOids);
+            HakukohdePerustieto hakukohde = convertHakukohde(hakukohdeDoc, orgResponse, defaultTarjoaja);
             if (hakukohde != null) {
                 vastaus.getHakukohteet().add(hakukohde);
             }
@@ -60,7 +60,7 @@ public class SolrDocumentToHakukohdeConverter {
     }
 
     private HakukohdePerustieto convertHakukohde(SolrDocument hakukohdeDoc,
-            Map<String, OrganisaatioPerustieto> orgResponse, List<String> paramTarjoajaOids) {
+            Map<String, OrganisaatioPerustieto> orgResponse, String defaultTarjoaja) {
         HakukohdePerustieto hakukohde = new HakukohdePerustieto();
 
         if (hakukohdeDoc.getFieldValue(ALOITUSPAIKAT) != null) {
@@ -95,9 +95,7 @@ public class SolrDocumentToHakukohdeConverter {
             ArrayList<String> orgOidCandidates = (ArrayList<String>) hakukohdeDoc.getFieldValue(SolrFields.Hakukohde.ORG_OID);
 
             // If query param for organization -> try to find matching organization in Solr doc
-            if (paramTarjoajaOids != null && paramTarjoajaOids.size() > 0) {
-                String paramOrgOid = paramTarjoajaOids.get(0);
-
+            if (defaultTarjoaja != null) {
                 for ( String tmpOrgOid : orgOidCandidates ) {
 
                     // Need to check whole organization path
@@ -106,7 +104,7 @@ public class SolrDocumentToHakukohdeConverter {
                     path.add(tmpOrgOid);
                     path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
 
-                    if (path.indexOf(paramOrgOid) != -1) {
+                    if (path.indexOf(defaultTarjoaja) != -1) {
                         hakukohde.setTarjoajaOid(tmpOrgOid);
                         break;
                     }

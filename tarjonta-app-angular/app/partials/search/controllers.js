@@ -357,7 +357,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 // muokkaa
                 if (tt.mutable) {
                     PermissionService[prefix].canEdit(oid, {
-                        organisationOid: AuthService.getUserDefaultOid()
+                        defaultTarjoaja: AuthService.getUserDefaultOid()
                     }).then(function (result) {
                         console.log("row actions can edit (" + prefix + ")", result);
                         var url = "/" + prefix + "/" + oid + "/edit";
@@ -443,7 +443,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     terms: $scope.spec.terms,
                     state: $scope.spec.state == "*" ? null : $scope.spec.state,
                     year: $scope.spec.year == "*" ? null : $scope.spec.year,
-                    season: $scope.spec.season == "*" ? null : $scope.spec.season + '#1'
+                    season: $scope.spec.season == "*" ? null : $scope.spec.season + '#1',
+                    defaultTarjoaja: $scope.selectedOrgOid
                 };
 
                 //console.log("search", spec);

@@ -233,7 +233,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             return TarjontaService.haeKoulutukset(spec);
 
         };
-        var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService) {
+        var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService, TarjontaService) {
             $log.info("/hakukohde/ID", $route);
             if ("new" === $route.current.params.id) {
 
@@ -251,9 +251,12 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 } else {
                     selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
                 }
-                //Initialize model and arrays inside it
 
-                return new Hakukohde({
+                var deferred = $q.defer();
+
+
+                //Initialize model and arrays inside it
+                var hakukohde = new Hakukohde({
                     liitteidenToimitusOsoite: {
                     },
                     tarjoajaOids: selectedTarjoajaOids,
@@ -267,14 +270,48 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     soraKuvaukset: {}
                 });
 
+                // Check if komoto has multiple owners
+                TarjontaService.haeKoulutukset({koulutusOid: selectedKoulutusOids[0]}).then(function(res) {
+                    var multipleOwners = false;
+                    try {
+                        multipleOwners = res.tulokset[0].tulokset[0].tarjoajat.length > 1;
+                    }
+                    catch(e) {
+                        // Should'nt happen
+                    }
+                    hakukohde.multipleOwners = multipleOwners;
+                    deferred.resolve(hakukohde);
+                });
 
+                return deferred.promise;
+            }
 
-            } else {
+            else {
+                var deferred = $q.defer();
 
-                var deferredHakukohde = Hakukohde.get({oid: $route.current.params.id});
+                Hakukohde.get({oid: $route.current.params.id}).$promise.then(function(res) {
+                    var tarjoajat = [];
 
-                return deferredHakukohde.$promise;
+                    angular.forEach(res.result.koulutusmoduuliToteutusTarjoajatiedot, function(tiedot) {
+                        angular.forEach(tiedot.tarjoajaOids, function(oid) {
+                            if (tarjoajat.indexOf(oid) === -1) {
+                                tarjoajat.push(oid);
+                            }
+                        });
+                    });
 
+                    if (tarjoajat.length) {
+                        OrganisaatioService.getPopulatedOrganizations(tarjoajat).then(function(orgs) {
+                            res.result.uniqueTarjoajat = orgs;
+                            deferred.resolve(res);
+                        });
+                    }
+                    else {
+                        deferred.resolve(res);
+                    }
+                });
+
+                return deferred.promise;
             }
         };
 
@@ -515,10 +552,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     action: "hakukohde.review",
                     controller: 'HakukohdeRoutingController',
                     resolve: {
-                        hakukohdex: function(Hakukohde, $log, $route) {
-                            $log.info("/hakukohde/ID", $route);
-                            return Hakukohde.get({oid: $route.current.params.id}).$promise;
-                        }
+                        hakukohdex: resolveHakukohde
                     }
                 })
                 .when('/hakukohde/:id/edit/copy', {

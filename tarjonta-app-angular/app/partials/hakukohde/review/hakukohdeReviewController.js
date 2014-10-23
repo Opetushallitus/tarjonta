@@ -524,54 +524,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
      *
      */
 
-    $scope.getHakukohteenJaOrganisaationNimi = function() {
-
-        console.log('ORGANISAATION NIMET : ', $scope.model.organisaatioNimet);
-
-        var ret = "";
-        var ja = LocalisationService.t("tarjonta.yleiset.ja");
-
-        for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-            if (i > 0) {
-                ret = ret + ((i == $scope.model.hakukohde.hakukohteenNimet.length - 1) ? " " + ja + " " : ", ");
-            }
-            ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
-        }
-
-        if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0) {
-
-            var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
-
-            ret = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
-
-        } else {
-            var counter = 0;
-            var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
-            angular.forEach($scope.model.organisaatioNimet, function(organisaatioNimi) {
-
-                if (counter === 0) {
-
-                    ret = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
-
-                } else {
-
-                    // ret = ret +
-                    // ((counter===$scope.model.organisaatioNimet.length-1) ? " "
-                    // : ", ");
-
-                    ret = ret + ", <b>" + organisaatioNimi + "</b>";
-
-                }
-                counter++;
-
-            });
-
-        }
-
-        return ret;
-
-    };
-
     $scope.getHakukohteenNimi = function() {
 
         if ($scope.model == undefined || $scope.model.hakukohde == undefined || $scope.model.hakukohde.hakukohteenNimet == undefined) {
