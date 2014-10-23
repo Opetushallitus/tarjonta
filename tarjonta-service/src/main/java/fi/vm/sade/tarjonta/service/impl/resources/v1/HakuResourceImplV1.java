@@ -132,7 +132,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         value = Integer.parseInt(sValue);
                         break;
                     case TILA:
-                        value = TarjontaTila.valueOf(sValue);
+                        if (sValue.equals("NOT_POISTETTU")) {
+                            match = Match.MUST_NOT;
+                            value = TarjontaTila.POISTETTU;
+                        }
+                        else {
+                            value = TarjontaTila.valueOf(sValue);
+                        }
                         break;
                     case HAKUSANA:
                         match = Match.LIKE; // %foo% haku
@@ -644,9 +650,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step) {
         LOG.info("copyHaku");
-        
+
         Haku h = hakuDAO.findByOid(fromHakuOid);
-        
+
         permissionChecker.checkUpdateHaku(h.getTarjoajaOids());
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid, step);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);
