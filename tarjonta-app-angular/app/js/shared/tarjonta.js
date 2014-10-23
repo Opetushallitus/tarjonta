@@ -118,7 +118,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             hakuOid: args.hakuOid,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"]
+            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"],
+            defaultTarjoaja: args.defaultTarjoaja
         };
 
         $log.debug("haeHakukohteet()", params);
@@ -163,8 +164,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"]
         };
 
-        if (args.organisationOid) {
-            params.organisationOid = args.organisationOid;
+        if (args.defaultTarjoaja) {
+            params.defaultTarjoaja = args.defaultTarjoaja;
         }
 
         $log.debug("haeKoulutukset()", params);

@@ -102,7 +102,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
     return factory;
 });
 
-app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config) {
+app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config, SharedStateService) {
 
     $log = $log.getInstance("AuthService");
 
@@ -236,6 +236,16 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
          */
         getUserDefaultOid: function() {
             var orgs = this.getOrganisations(["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE", "APP_TARJONTA_READ"]);
+
+            var selectedOrg = SharedStateService.getFromState('SelectedOrgOid');
+
+            if (selectedOrg) {
+                if (angular.isArray(selectedOrg)) {
+                    selectedOrg = selectedOrg[0];
+                }
+                return selectedOrg;
+            }
+
             //käyttäjän oletusorganisaatio
             if (orgs && orgs.length > 0) {
                 return orgs[0];
