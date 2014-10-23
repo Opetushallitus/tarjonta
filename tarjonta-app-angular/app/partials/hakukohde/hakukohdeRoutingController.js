@@ -66,41 +66,45 @@ app.controller('HakukohdeRoutingController', [
       $scope.canEdit = $route.current.locals.canEdit;
 
       if ($route.current.locals.hakukohdex.result === undefined) {
-        $scope.model = {
-          collapse : {
-            model : true
-          },
-          hakukohdeTabsDisabled : true,
-          hakukohde : {
-            valintaperusteKuvaukset : {},
-            soraKuvaukset : {},
-            kaytetaanJarjestelmanValintaPalvelua : false,
-            hakukohteenLiitteet:[]
-          }
-        }
+            $scope.model = {
+              collapse : {
+                model : true
+              },
+              hakukohdeTabsDisabled : true,
+              hakukohde : {
+                valintaperusteKuvaukset : {},
+                soraKuvaukset : {},
+                kaytetaanJarjestelmanValintaPalvelua : false,
+                hakukohteenLiitteet:[]
+              }
+            }
 
-        $scope.model.hakukohde = $route.current.locals.hakukohdex;
-
+            $scope.model.hakukohde = $route.current.locals.hakukohdex;
       } else {
-        var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
-        HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
-        HakukohdeService.addLiiteIfEmpty(hakukohdeResource);
+            var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
 
-        if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
-          hakukohdeResource.valintaperusteKuvaukset = {};
-        }
+            if($route.current.locals.isCopy === undefined) {
+                HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
+                HakukohdeService.addLiiteIfEmpty(hakukohdeResource);
+            } else {
+                SharedStateService.addToState('SelectedToteutusTyyppi', hakukohdeResource.toteutusTyyppi);
+            }
 
-        if (hakukohdeResource.soraKuvaukset === undefined) {
-          hakukohdeResource.soraKuvaukset = {};
-        }
+            if (hakukohdeResource.valintaperusteKuvaukset === undefined) {
+              hakukohdeResource.valintaperusteKuvaukset = {};
+            }
 
-        $scope.model = {
-          collapse : {
-            model : true
-          },
-          hakukohdeTabsDisabled : false,
-          hakukohde : hakukohdeResource
-        }
+            if (hakukohdeResource.soraKuvaukset === undefined) {
+              hakukohdeResource.soraKuvaukset = {};
+            }
+
+            $scope.model = {
+              collapse : {
+                model : true
+              },
+              hakukohdeTabsDisabled : false,
+              hakukohde : hakukohdeResource
+            }
       }
 
       $scope.hakukohdex = $route.current.locals.hakukohdex;
