@@ -35,6 +35,7 @@ describe('auth', function() {
         }
     };
 
+    beforeEach(module('SharedStateService'));
     beforeEach(module('Logging'));
 
     describe('AuthService', function() {
