@@ -36,6 +36,7 @@ describe('Edit koulutus testeja', function() {
 
     beforeEach(module('test.module')); //mock module with the mock data
     beforeEach(module('Tarjonta'));
+    beforeEach(module('SharedStateService'));
     beforeEach(module('KoulutusConverter'));
     beforeEach(module('imageupload'));
     beforeEach(module('TarjontaCache'));
@@ -272,6 +273,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('app.edit.ctrl'));
     beforeEach(module('app.edit.ctrl.kk'));
     beforeEach(module('TarjontaPermissions'));
+    beforeEach(module('SharedStateService'));
 
 
     var scope, localisationService, routeParams, tarjontaService, cfg, organisaatioService;
