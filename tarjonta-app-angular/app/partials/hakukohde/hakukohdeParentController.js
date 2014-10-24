@@ -329,12 +329,13 @@ app.controller('HakukohdeParentController', [
         };
 
         $scope.validateHakukohde = function () {
+        	alert("validateHakukohde");
 
             $scope.model.aloituspaikatKuvauksetFailed = false;
 
-            if (!$scope.model.canSaveHakukohde()) {
-                return false;
-            }
+//            if (!$scope.model.canSaveHakukohde()) {
+//                return false;
+//            }
 
             var errors = [];
 
@@ -346,7 +347,7 @@ app.controller('HakukohdeParentController', [
                 errors.push(error);
 
             }
-
+            
             if (!validateNames()) {
 
                 var err = {};
@@ -1056,7 +1057,7 @@ app.controller('HakukohdeParentController', [
 
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
-                        angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
+                        angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
                             tarjoajatiedot[komotoOid] = {
                                 tarjoajaOids: [AuthService.getUserDefaultOid()]
                             };
