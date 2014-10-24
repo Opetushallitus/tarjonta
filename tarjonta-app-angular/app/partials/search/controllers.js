@@ -267,14 +267,15 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.clearOrg = function () {
                 $scope.selectedOrgOid = OPH_ORG_OID;
-            }
+                $scope.$broadcast('clearOrg');
+            };
 
             $scope.reset = function () {
                 $scope.spec.terms = "";
                 $scope.spec.state = "*";
                 $scope.spec.year = "*";
                 $scope.spec.season = "*";
-            }
+            };
 
             $scope.selection = {
                 koulutukset: [],

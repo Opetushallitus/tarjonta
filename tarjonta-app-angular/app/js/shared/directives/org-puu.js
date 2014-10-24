@@ -69,58 +69,54 @@
 				 * Solmu avataan/suljetaan
 				 */
 				scope.toggleOrg=function(id){
-//					console.log("toggle valittu!");
-
-//					console.log("id param:", id);
 					var org = getOrg(id, SharedStateService.state.puut[treeId].data);
-					//console.log("selected org:", org);
-					if(org.open===undefined){
-						org.open=true;
-					} else {
-						org.open=!org.open;
+
+					if(org.open === undefined){
+						org.open = true;
+					}
+                    else {
+						org.open = !org.open;
 					}
 
 					redraw(org);
 				};
 
+                /**
+                 * Tyhjentää organisaatiovalinnan. Palauttaa tyhjennetyn organisaation oidin.
+                 * @returns orgOid
+                 */
+                scope.unselectOrg = function() {
+                    var orgOid = SharedStateService.state.puut[treeId].selected;
+
+                    if (orgOid) {
+                        SharedStateService.state.puut[treeId].selected = undefined;
+                        scope[treeId].currentNode = undefined;
+                        var org = getOrg(orgOid, SharedStateService.state.puut[treeId].data);
+                        if (org !== undefined) {
+                            org.selected = false;
+                            redraw(org);
+                        }
+                        return orgOid;
+                    }
+                };
+
 				/**
 				 * Organisaatio valitaan
 				 */
 				scope.selectOrg=function(oid){
-                    var org;
-					console.log("selecting from puu "+treeId, SharedStateService.state.puut[treeId]);
+                    var unselectedOrgOid = scope.unselectOrg();
+                    if (unselectedOrgOid === oid) {
+                        return;
+                    }
 
-					console.log("organisaatio valittu!", treeId);
-					var current = SharedStateService.state.puut[treeId].selected;
+					var org = getOrg(oid, SharedStateService.state.puut[treeId].data);
 
-					console.log("vanha valinta", current);
-					if(current!==undefined) {
-//						console.log("etsitään vanhaa", current);
-						org = getOrg(current, SharedStateService.state.puut[treeId].data);
-//						console.log("vanha:", org);
-						if(org!==undefined){
-							org.selected=false;
-							redraw(org);
-						}
-					}
-					var unselect = (oid===SharedStateService.state.puut[treeId].selected);
-					console.log("unselect:" + unselect);
-					console.log("scope check:", (scope == SharedStateService.state.puut[treeId].scope));
-					if (unselect) {
-						SharedStateService.state.puut[treeId].selected=undefined;
-						scope[treeId].currentNode=undefined;
-						return;
-					}
-//					console.log("etsitään uutta");
-					org = getOrg(oid, SharedStateService.state.puut[treeId].data);
-//					console.log("uusi:", org);
-
-					org.selected=true;
-					SharedStateService.state.puut[treeId].selected=oid;
+					org.selected = true;
+					SharedStateService.state.puut[treeId].selected = oid;
 					redraw(org);
 
 					//aseta valittu organisaatio scopeen jotta voidaan watchilla seurata kun organisaatio valitaan puusta
-					scope[treeId].currentNode=org;
+					scope[treeId].currentNode = org;
 				};
 
 				//tree id
@@ -172,11 +168,13 @@
 
 
 				//alusta tietorakenne
-				console.log("org-puu.init()" + treeId, SharedStateService.state.puut);
-				SharedStateService.state.puut = SharedStateService.state.puut || {};
-				//if (!SharedStateService.state.puut[treeId]) {
-					SharedStateService.state.puut[treeId] = {scope:scope};
-				///}
+                var puut = SharedStateService.state.puut || {};
+                var prevSelected = puut[treeId] && puut[treeId].selected;
+				SharedStateService.state.puut = puut;
+			    SharedStateService.state.puut[treeId] = {
+                    scope:scope,
+                    selected: prevSelected
+                };
 
 				/**
 				 * Watchi puun datalle
@@ -194,6 +192,10 @@
                       autoSelect = undefined;
                     }
 				});
+
+                scope.$on('clearOrg', function() {
+                    scope.unselectOrg();
+                });
 
 			}
 		};
