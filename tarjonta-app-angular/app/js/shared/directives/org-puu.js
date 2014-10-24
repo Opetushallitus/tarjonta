@@ -1,18 +1,18 @@
 /*
 	Original work:
-	
+
 	@license Angular Treeview version 0.1.6
 	ⓒ 2013 AHN JAE-HA http://github.com/eu81273/angular.treeview
 	License: MIT
 
-    Enhanced by OPH, 
+    Enhanced by OPH,
 
 	[TREE attribute]
 	angular-treeview: the treeview directive
 	tree-id : each tree's unique id.  //NOT implemented
-	tree-model : the tree model on $scope. 
+	tree-model : the tree model on $scope.
 	node-id : each node's id //NOT implemented
-	node-label : each node's label 
+	node-label : each node's label
 	node-children: each node's children
 
     <div id="orgSearchResults" class="treeview" data-angular-treeview="true"
@@ -25,19 +25,18 @@
 (function ( angular ) {
 	'use strict';
 
-	angular.module( 'orgAngularTreeview', [] ).directive( 'orgTreeModel', ['SharedStateService', '$compile', function( SharedStateService, $compile ) {
+	angular.module( 'orgAngularTreeview', [] ).directive( 'orgTreeModel', function( SharedStateService, $compile ) {
 		return {
 			restrict: 'A',
 			link: function ( scope, element, attrs ) {
 
-				
 				/**
 				 * "piirtää" organisaation dom puussa
 				 */
 				var redraw = function(org){
-					// dom elementin id... 
+					// dom elementin id...
 					var eid = angular.copy(org.oid).replace(/\./g,'-');
-					
+
 					var template = drawChildren([org]);
 					var dom = $compile(template);
 					//poista c-<oid>, päivitä o-<oid>
@@ -61,7 +60,7 @@
 							return org;
 						}
 					}
-					
+
 //					console.log("Organisaatiota ei löytynyt!", id);
 				}
 
@@ -79,8 +78,8 @@
 						org.open=true;
 					} else {
 						org.open=!org.open;
-					};
-					
+					}
+
 					redraw(org);
 				};
 
@@ -88,16 +87,16 @@
 				 * Organisaatio valitaan
 				 */
 				scope.selectOrg=function(oid){
+                    var org;
 					console.log("selecting from puu "+treeId, SharedStateService.state.puut[treeId]);
 
 					console.log("organisaatio valittu!", treeId);
 					var current = SharedStateService.state.puut[treeId].selected;
-					
-					
+
 					console.log("vanha valinta", current);
 					if(current!==undefined) {
 //						console.log("etsitään vanhaa", current);
-						var org = getOrg(current, SharedStateService.state.puut[treeId].data);
+						org = getOrg(current, SharedStateService.state.puut[treeId].data);
 //						console.log("vanha:", org);
 						if(org!==undefined){
 							org.selected=false;
@@ -113,33 +112,26 @@
 						return;
 					}
 //					console.log("etsitään uutta");
-					var org = getOrg(oid, SharedStateService.state.puut[treeId].data);
+					org = getOrg(oid, SharedStateService.state.puut[treeId].data);
 //					console.log("uusi:", org);
 
 					org.selected=true;
 					SharedStateService.state.puut[treeId].selected=oid;
 					redraw(org);
-					
+
 					//aseta valittu organisaatio scopeen jotta voidaan watchilla seurata kun organisaatio valitaan puusta
 					scope[treeId].currentNode=org;
 				};
-				
-				
-				var bind = attrs.ng-bind;
-				
+
 				//tree id
 				var treeId = attrs.treeId;
-//				console.log("treeid:", treeId);
-			
+
 				//tree model
 				var treeModel = attrs.orgTreeModel;
 
-				//node id
-//				var nodeId = attrs.nodeId || 'id';
-
 				//node label
 				var nodeLabel = attrs.nodeLabel || 'label';
-				
+
 				var autoSelect = scope[attrs.autoselect];
 
 				//children
@@ -153,41 +145,38 @@
 
 					var template="";
 					if(children!==undefined) {
-					for(var i=0;i<children.length;i++){
-						var org = children[i];
-						var hasChildren = org[nodeChildren]!==undefined && org[nodeChildren].length>0;
-						var open = org.open===true;
-						var eid=angular.copy(org.oid).replace(/\./g,'-'); //element id millä oikea dom node löydetään
-						if(hasChildren) {
-							if(open) {
-								//auki
-								template = template + orgToString(eid, org.oid,org[nodeLabel], "expanded", org.selected);
-								//lapset
-								template = template + "<div id=\"" + treeId + "-c-" + eid + "\" class=\"treeview\"><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
-							} else {
-								//kiinni
-								template = template + orgToString(eid, org.oid,org[nodeLabel], "collapsed", org.selected);
-							}
-						} else {
-							//lehti
-							template = template + orgToString(eid, org.oid,org[nodeLabel], "normal", org.selected);
-						}
-					};
-					}				
+                        for(var i=0;i<children.length;i++){
+                            var org = children[i];
+                            var hasChildren = org[nodeChildren]!==undefined && org[nodeChildren].length>0;
+                            var open = org.open===true;
+                            var eid=angular.copy(org.oid).replace(/\./g,'-'); //element id millä oikea dom node löydetään
+                            if(hasChildren) {
+                                if(open) {
+                                    //auki
+                                    template = template + orgToString(eid, org.oid,org[nodeLabel], "expanded", org.selected);
+                                    //lapset
+                                    template = template + "<div id=\"" + treeId + "-c-" + eid + "\" class=\"treeview\"><ul>" +  drawChildren(org[nodeChildren]) + "</ul></div>";
+                                } else {
+                                    //kiinni
+                                    template = template + orgToString(eid, org.oid,org[nodeLabel], "collapsed", org.selected);
+                                }
+                            } else {
+                                //lehti
+                                template = template + orgToString(eid, org.oid,org[nodeLabel], "normal", org.selected);
+                            }
+                        }
+					}
 					//console.log("template:", template);
 					return template;
 				};
-				
-				
+
+
 				//alusta tietorakenne
 				console.log("org-puu.init()" + treeId, SharedStateService.state.puut);
 				SharedStateService.state.puut = SharedStateService.state.puut || {};
 				//if (!SharedStateService.state.puut[treeId]) {
 					SharedStateService.state.puut[treeId] = {scope:scope};
 				///}
-				//SharedStateService.state.puut[treeId].data = SharedStateService.state.puut[treeId].data || [];
-				//SharedStateService.state.puut[treeId].selected = SharedStateService.state.puut[treeId].selected || undefined;
-				//SharedStateService.state.puut[treeId].scope = SharedStateService.state.puut[treeId].scope || scope;
 
 				/**
 				 * Watchi puun datalle
@@ -199,15 +188,14 @@
 					var template = "<ul>" + drawChildren(newList) + "</ul>";
 					var dom = $compile( template );
 					element.html('').append( dom (scope) );
-	                                   //autoselect
-                                        if(autoSelect && newList && newList.length>0) {
-                                          scope.selectOrg(autoSelect);
-                                          autoSelect = undefined;
-                                        }
-
+                    //autoselect
+                    if(autoSelect && newList && newList.length>0) {
+                      scope.selectOrg(autoSelect);
+                      autoSelect = undefined;
+                    }
 				});
 
 			}
 		};
-	}]);
+	});
 })( angular );
