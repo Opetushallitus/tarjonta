@@ -69,6 +69,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     private int aloituspaikatLkm;
     @Column(name = "valintojenAloituspaikatLkm", nullable = false)
     private int valintojenAloituspaikatLkm;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "aloituspaikat_teksti_id")
+    private MonikielinenTeksti aloituspaikatKuvaus;
     @Column(name = "kaytetaanHaunPaattymisenAikaa", nullable = false)
     private boolean kaytetaanHaunPaattymisenAikaa;
     @Column(name = "kaytetaanJarjestelmanValintapalvelua", nullable = false)
@@ -703,5 +706,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void removeTarjoajatiedotForKoulutus(String oid) {
         koulutusmoduuliToteutusTarjoajatiedot.remove(oid);
+    }
+
+    public MonikielinenTeksti getAloituspaikatKuvaus() {
+        return aloituspaikatKuvaus;
+    }
+
+    public void setAloituspaikatKuvaus(MonikielinenTeksti aloituspaikatKuvaus) {
+        this.aloituspaikatKuvaus = aloituspaikatKuvaus;
     }
 }

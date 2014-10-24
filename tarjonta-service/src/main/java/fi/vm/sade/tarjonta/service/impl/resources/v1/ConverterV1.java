@@ -476,6 +476,10 @@ public class ConverterV1 {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
         }
 
+        if (hakukohde.getAloituspaikatKuvaus() != null) {
+            hakukohdeRDTO.setAloituspaikatKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getAloituspaikatKuvaus(), false));
+        }
+
         hakukohdeRDTO.setKaksoisTutkinto(hakukohde.isKaksoisTutkinto());
 
         Set<String> opetusKielet = new TreeSet<String>();
@@ -727,7 +731,9 @@ public class ConverterV1 {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
+        hakukohde.setAloituspaikatKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getAloituspaikatKuvaukset()));
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
+
         if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
             hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
         }

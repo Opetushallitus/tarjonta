@@ -10,6 +10,8 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
 
     function controller($scope) {
 
+        $scope.showUserLanguages = angular.isDefined($scope.showUserLanguages) ? $scope.showUserLanguages : true;
+
         $scope.codes = {};
 
         if (!$scope.model) {
@@ -91,18 +93,41 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             }
             $scope.codes = nc;
         });
-        
+
+        var isRemovable = function(kieliUri) {
+            if($scope.showUserLanguages) {
+                return userLangs.indexOf(kieliUri) == -1;
+            } else {
+                return true;
+            }
+        }
+
         // data
         for (var kieliUri in $scope.model) {
-            $scope.data.push({uri: kieliUri, value: $scope.model[kieliUri], removable: userLangs.indexOf(kieliUri) == -1});
+            $scope.data.push({uri: kieliUri, value: $scope.model[kieliUri], removable: isRemovable(kieliUri)});
+        }
+
+        var hasAtLeastOneLanguage = function() {
+            for (var key in $scope.model) {
+                if ($scope.model.hasOwnProperty(key)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // vakiokielet näkyviin
-        for (var i in userLangs) {
-            var lang = userLangs[i];
-            if ($scope.model[lang]==undefined || $scope.model[lang]==null) {
-            	$scope.model[lang] = "";
-                $scope.data.push({uri: lang, value: "", removable: false});
+        if($scope.showUserLanguages === true) {
+            for (var i in userLangs) {
+                var lang = userLangs[i];
+                if ($scope.model[lang]==undefined || $scope.model[lang]==null) {
+                    $scope.model[lang] = "";
+                    $scope.data.push({uri: lang, value: "", removable: false});
+                }
+            }
+        } else {
+            if(!hasAtLeastOneLanguage()) {
+                $scope.data.push({uri: "kieli_fi", value: "", removable: true});
             }
         }
         
@@ -186,7 +211,8 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
             disable : "=",
             // angular-form-logiikkaa varten
             name: "@", // nimi formissa
-            required: "@" // jos tosi, vähintään yksi arvo vaaditaan
+            required: "@", // jos tosi, vähintään yksi arvo vaaditaan
+            showUserLanguages: "=?"
         }
     };
 

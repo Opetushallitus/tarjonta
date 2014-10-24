@@ -1,0 +1,1 @@
+alter table hakukohde add column aloituspaikat_teksti_id int8 default null;

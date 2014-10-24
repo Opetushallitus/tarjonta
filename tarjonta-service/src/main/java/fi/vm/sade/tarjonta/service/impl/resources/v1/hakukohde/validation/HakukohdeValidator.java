@@ -5,7 +5,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import static com.mysema.query.types.Projections.array;
+
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -21,6 +23,7 @@ import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.impl.schema.StscState;
 
 /*
@@ -93,6 +98,13 @@ public class HakukohdeValidator {
         if (hakukohdeRDTO.getHakukohteenLiitteet() != null && hakukohdeRDTO.getHakukohteenLiitteet().size() > 0) {
             for (HakukohdeLiiteV1RDTO liite : hakukohdeRDTO.getHakukohteenLiitteet()) {
                 validationMessages.addAll(validateLiite(liite));
+            }
+        }
+
+        for (String kuvaus : hakukohdeRDTO.getAloituspaikatKuvaukset().values()) {
+            if (kuvaus.length() > 20) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALOITUSPAIKAT_KUVAUS_TOO_LONG);
+                break;
             }
         }
 
@@ -184,7 +196,7 @@ public class HakukohdeValidator {
     public static List<HakukohdeValidationMessages> validateValintakokees(List<ValintakoeV1RDTO> valintakoeV1RDTOs) {
         Set<HakukohdeValidationMessages> validationMessages = new HashSet<HakukohdeValidationMessages>();
 
-        for (Iterator<ValintakoeV1RDTO> i = valintakoeV1RDTOs.iterator(); i.hasNext();) {
+        for (Iterator<ValintakoeV1RDTO> i = valintakoeV1RDTOs.iterator(); i.hasNext(); ) {
             ValintakoeV1RDTO valintakoeV1RDTO = i.next();
 
             // jos nimi on tyhjä eikä ajankohtia -> automaattisesti luotu ranka jonka voi hylätä
@@ -306,7 +318,7 @@ public class HakukohdeValidator {
 
         return TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(
                 koodi1.getUri()).equals(TarjontaKoodistoHelper.getKoodiURIFromVersionedUri(
-                                koodi2.getUri()));
+                koodi2.getUri()));
     }
 
 }
