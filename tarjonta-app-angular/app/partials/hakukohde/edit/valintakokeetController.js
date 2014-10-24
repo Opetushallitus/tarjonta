@@ -152,9 +152,7 @@ app
                         for (var i in $scope.model.hakukohde.valintakokeet) {
                             var li = $scope.model.hakukohde.valintakokeet[i];
                             var nimiEmpty = !notEmpty(li.valintakoeNimi);
-                            var kuvausEmpty = !notEmpty($(
-                                    "<div>" + li.valintakokeenKuvaus.teksti + "</div>").text()
-                                    .trim());
+                            var kuvausEmpty = !notEmpty(li.valintakokeenKuvaus.teksti);
                             var ajankohtaEmpty = li.valintakoeAjankohtas.length == 0;
 
                             if (nimiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {

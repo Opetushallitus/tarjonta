@@ -77,7 +77,7 @@ app.controller('HakukohdeRoutingController', [
                 kaytetaanJarjestelmanValintaPalvelua : false,
                 hakukohteenLiitteet:[]
               }
-            }
+            };
 
             $scope.model.hakukohde = $route.current.locals.hakukohdex;
       } else {
@@ -104,7 +104,7 @@ app.controller('HakukohdeRoutingController', [
               },
               hakukohdeTabsDisabled : false,
               hakukohde : hakukohdeResource
-            }
+            };
       }
 
       $scope.hakukohdex = $route.current.locals.hakukohdex;
