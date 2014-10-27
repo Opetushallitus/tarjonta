@@ -22,6 +22,8 @@ import com.google.common.base.Preconditions;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
 
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+
 /**
  *
  */
@@ -76,9 +78,15 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     private String lastUpdatedByOid;
 
 
+    @PreUpdate
+    public void filterHTMLFields() {
+        filter(getKuvaus());
+    }
+
     @PrePersist
     public void checkConstraints() {
     	Preconditions.checkState(liitetyyppi!=null || kieli!=null, "Either liitetyyppiuri or kieli must be set");
+        filter(getKuvaus());
     }
     
     public Date getErapaiva() {
