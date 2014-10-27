@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import java.util.Comparator;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -37,7 +38,7 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     @ManyToOne (fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name="hakukohde_id", nullable=false)
     private Hakukohde hakukohde;
-  
+
     @Column(name="hakukohde_liite_nimi", nullable=false)
     private String hakukohdeLiiteNimi;
 
@@ -73,10 +74,12 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     @Column(name="viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate;
-    
+
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
 
+    @Column(name="jarjestys")
+    private Integer jarjestys;
 
     @PreUpdate
     public void filterHTMLFields() {
@@ -88,7 +91,7 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     	Preconditions.checkState(liitetyyppi!=null || kieli!=null, "Either liitetyyppiuri or kieli must be set");
         filter(getKuvaus());
     }
-    
+
     public Date getErapaiva() {
         return erapaiva;
     }
@@ -179,6 +182,14 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     public void setHakukohdeLiiteNimi(String hakukohdeLiiteNimi) {
 
         this.hakukohdeLiiteNimi = hakukohdeLiiteNimi;
+    }
+
+    public void setJarjestys(Integer jarjestys) {
+        this.jarjestys = jarjestys;
+    }
+
+    public Integer getJarjestys() {
+        return jarjestys;
     }
 
 }

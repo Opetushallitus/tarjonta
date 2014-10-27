@@ -1100,6 +1100,7 @@ public class ConverterV1 {
         hakukohdeLiite.setErapaiva(hakukohdeLiiteV1RDTO.getToimitettavaMennessa());
         hakukohdeLiite.setToimitusosoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
         hakukohdeLiite.setKuvaus(convertMapToMonikielinenTeksti(hakukohdeLiiteV1RDTO.getLiitteenKuvaukset()));
+        hakukohdeLiite.setJarjestys(hakukohdeLiiteV1RDTO.getJarjestys());
 
         return hakukohdeLiite;
     }
@@ -1129,6 +1130,7 @@ public class ConverterV1 {
         }
 
         hakukohdeLiiteV1RDTO.setLiitteenKuvaukset(BaseRDTOConverter.convertToMap(hakukohdeLiite.getKuvaus(), tarjontaKoodistoHelper));
+        hakukohdeLiiteV1RDTO.setJarjestys(hakukohdeLiite.getJarjestys());
 
         return hakukohdeLiiteV1RDTO;
     }

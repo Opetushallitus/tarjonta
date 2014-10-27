@@ -347,7 +347,7 @@ app.controller('HakukohdeParentController', [
                 errors.push(error);
 
             }
-            
+
             if (!validateNames()) {
 
                 var err = {};
@@ -1043,6 +1043,11 @@ app.controller('HakukohdeParentController', [
 
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
+
+                    // Hakukohteiden liitteiden järjestys
+                    angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite, index) {
+                        liite.jarjestys = index;
+                    });
 
                     // Check if hakukohde is copy, then remove oid and
                     // save hakukohde as new
