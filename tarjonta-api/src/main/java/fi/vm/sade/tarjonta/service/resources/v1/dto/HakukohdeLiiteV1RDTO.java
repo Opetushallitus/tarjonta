@@ -16,7 +16,7 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@ApiModelProperty(value = "Liite's hakukohde oid", required=true)
     private String hakukohdeOid;
     @ApiModelProperty(value = "Liite's name language uri", required = true)
@@ -25,6 +25,8 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     private String kieliNimi;
     @ApiModelProperty(value = "Liite's name", required = true)
     private String liitteenNimi;
+    @ApiModelProperty(value = "Liite's order", required = false)
+    private Integer jarjestys;
 
     private Map<String,String> liitteenKuvaukset;
 
@@ -96,5 +98,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public void setLiitteenKuvaukset(Map<String, String> liitteenKuvaukset) {
         this.liitteenKuvaukset = liitteenKuvaukset;
+    }
+
+    public void setJarjestys(Integer jarjestys) {
+        this.jarjestys = jarjestys;
+    }
+
+    public Integer getJarjestys() {
+        return jarjestys;
     }
 }

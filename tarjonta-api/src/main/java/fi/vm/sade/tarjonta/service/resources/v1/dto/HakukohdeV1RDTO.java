@@ -52,6 +52,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Map<String,String> valintaperusteKuvaukset;
     private Map<String,String> soraKuvaukset;
     private Map<String,String> hakukelpoisuusVaatimusKuvaukset;
+    private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
     private boolean kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
@@ -465,5 +466,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setKoulutusmoduuliToteutusTarjoajatiedot(Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot) {
         this.koulutusmoduuliToteutusTarjoajatiedot = koulutusmoduuliToteutusTarjoajatiedot;
+    }
+
+    public Map<String, String> getAloituspaikatKuvaukset() {
+        return aloituspaikatKuvaukset;
+    }
+
+    public void setAloituspaikatKuvaukset(Map<String, String> aloituspaikatKuvaukset) {
+        this.aloituspaikatKuvaukset = aloituspaikatKuvaukset;
     }
 }

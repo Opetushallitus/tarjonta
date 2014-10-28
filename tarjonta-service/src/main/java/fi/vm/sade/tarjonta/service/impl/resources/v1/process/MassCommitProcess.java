@@ -61,7 +61,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Component
 public class MassCommitProcess {
 
-    private static final int BATCH_KOMOTO_SIZE = 100; 
+    private static final int BATCH_KOMOTO_SIZE = 100;
     private static final int BATCH_HAKUKOHDE_SIZE = 50;
     private static final Logger LOG = LoggerFactory.getLogger(MassCommitProcess.class);
 
@@ -151,7 +151,7 @@ public class MassCommitProcess {
             insertHaku(fromHakuOid);
 
             /*
-             * KOMOTO INSERT 
+             * KOMOTO INSERT
              */
             Set<String> oidBatch = Sets.<String>newHashSet();
             for (String oldKomotoOid : oldKomotoOids) {
@@ -166,7 +166,7 @@ public class MassCommitProcess {
             insertKomotoBatch(processId, oidBatch);
 
             /*
-             * HAKUKOHDE INSERT 
+             * HAKUKOHDE INSERT
              */
             oidBatch = Sets.<String>newHashSet();
             for (String oldHakukohdeOid : oldHakukohdeOids) {
@@ -207,7 +207,7 @@ public class MassCommitProcess {
             public void run() {
                 final Haku sourceHaku = hakuDAO.findByOid(oldHakuOid);
                 String hakuJson = EntityToJsonHelper.convertToJson(sourceHaku);
-                
+
                 final Haku haku = (Haku) EntityToJsonHelper.convertToEntity(hakuJson, Haku.class);
                 haku.setTila(TarjontaTila.KOPIOITU);
                 try {
@@ -238,11 +238,11 @@ public class MassCommitProcess {
                         haku.setHakukausiVuosi(haku.getHakukausiVuosi() + 1);
                     }
                 }
-                
+
                 targetHakuoid = haku.getOid();
                 getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
                 Date d = new Date();
-                
+
                 //TODO jostain syystä haun nimi ei kopioitunut??
                 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
                 for(TekstiKaannos k:  sourceHaku.getNimi().getKaannoksetAsList()){
@@ -376,7 +376,7 @@ public class MassCommitProcess {
                 /*
                  * LIITE
                  */
-                Set<HakukohdeLiite> liites = hk.getLiites();
+                List<HakukohdeLiite> liites = hk.getLiites();
                 for (HakukohdeLiite l : liites) {
                     l.setHakukohde(hk);
 

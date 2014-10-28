@@ -688,6 +688,12 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
+
+            // FIX OPHASPA-1522
+            if ( !TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(curKoulutus) ) {
+                continue;
+            }
+
             if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutusKoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri())
@@ -2303,6 +2309,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
         if (vastaus.getKoulutukset() != null && !vastaus.getKoulutukset().isEmpty()) {
             for (KoulutusPerustieto curTulos : vastaus.getKoulutukset()) {
+
+                if ( !TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(curTulos) ) {
+                    continue;
+                }
 
                 if (pohjakoulutusMatches(pohjakoulutusvaatimus, curTulos)
                         && tarjoajaMatches(getTarjoaja().getSingleSelectRowResultOrganisationOid(), curTulos)) {

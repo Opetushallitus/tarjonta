@@ -7,12 +7,12 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     $scope.liitteetModel.opetusKielet = [];
     
-    var initialTabSelected = false;
     $scope.liitteetModel.selectedTab = {};
     
     $scope.liitteetModel.langs = [];
     $scope.liitteetModel.selectedLangs = [];
 
+    var initialTabSelected = false;
     var osoitteetReceived = false;
 
     function postProcessLiite(liite) {
@@ -48,16 +48,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         return HakukohdeService.addLiite($scope.model.hakukohde, lc, $scope.model.liitteidenToimitusOsoite[lc]);
     }
     
-    for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-    	var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
-       	if ($scope.liitteetModel.selectedLangs.indexOf(li.kieliUri)==-1) {
-    		$scope.liitteetModel.selectedLangs.push(li.kieliUri);
-    	}
-    }
-
     function containsOpetuskieli(lc) {
     	for (var i in $scope.liitteetModel.opetusKielet) {
-    		if ($scope.liitteetModel.opetusKielet[i].koodiUri==lc) {
+    		if ($scope.liitteetModel.opetusKielet[i].koodiUri === lc) {
     			return true;
     		}
     	}
@@ -71,7 +64,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	if (!$scope.model.hakukohde.opetusKielet) {
     		$scope.model.hakukohde.opetusKielet = [];
     	}
-       	
+
        	$scope.liitteetModel.langs = ret;
         updateLanguages();
     });
@@ -79,27 +72,23 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
 
     function updateLanguages(){
-        console.log("update languages");
 
-        $scope.liitteetModel.opetusKielet=[];
+        for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+            var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+            if ($scope.liitteetModel.selectedLangs.indexOf(li.kieliUri) === -1) {
+                $scope.liitteetModel.selectedLangs.push(li.kieliUri);
+            }
+        }
+
+        $scope.liitteetModel.opetusKielet = [];
 
         for (var i in $scope.liitteetModel.langs) {
-            var lc = $scope.liitteetModel.langs[i].koodiUri;
-            var p = $scope.model.hakukohde.opetusKielet.indexOf(lc);
-            if (p!=-1) {
+            var koodiUri = $scope.liitteetModel.langs[i].koodiUri;
+            if($scope.model.hakukohde.opetusKielet.indexOf(koodiUri) !== -1 || $scope.liitteetModel.selectedLangs.indexOf(koodiUri) !== -1) {
+                $scope.liitteetModel.opetusKielet.push($scope.liitteetModel.langs[i]);
 
-                console.log("initial tab selected", initialTabSelected);
-
-                $scope.liitteetModel.selectedTab[lc] = !initialTabSelected;
+                $scope.liitteetModel.selectedTab[koodiUri] = !initialTabSelected;
                 initialTabSelected = true;
-
-                if (!containsOpetuskieli(lc)) {
-                    $scope.liitteetModel.opetusKielet.push($scope.liitteetModel.langs[i]);
-                }
-
-                if ($scope.liitteetModel.selectedLangs.indexOf(lc)==-1) {
-                    $scope.liitteetModel.selectedLangs.push(lc);
-                }
             }
         }
     }
@@ -113,7 +102,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		var si = $scope.liitteetModel.selectedLangs.indexOf(k.koodiUri);
     		if (si==-1) {
     			// poista tabi
-    			$scope.liitteetModel.opetusKielet.splice(i,1);
+    			//$scope.liitteetModel.opetusKielet.splice(i,1);
                 $scope.status.dirtify();
 			}
     	}
@@ -229,7 +218,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	var r= !liite.muuOsoiteEnabled
     		|| notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
     	                    liite.liitteenToimitusOsoite.postinumero]);
-        console.log("toimitusosoite valid:", r);
         return r;
 
     }
@@ -238,14 +226,12 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	var r = !liite.sahkoinenOsoiteEnabled
     	|| notEmpty(liite.sahkoinenToimitusOsoite);
 
-        console.log("sahkoinen osoite valid:", r);
         return r;
     }
 
 
     // kutsutaan parentista
     $scope.status.validateLiitteet = function() {
-        console.log("validointi!");
 
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
     		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
@@ -261,11 +247,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         return true;
     }
 
-    console.log("model is:", $scope.model);
-    $scope.$watchCollection("model.hakukohde.opetusKielet", function (nv, ov) {
-            updateLanguages();
-        }
-    )
 
     function notEmpty(v) {
         if (v instanceof Array) {

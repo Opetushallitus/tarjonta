@@ -98,7 +98,7 @@ app.controller('HakukohdeParentController', [
 
             var error = {};
 
-            error.errorMessageKey = commonExceptionMsgKey;
+            error.errorMessageKey = "Tuntematon virhe";
 
             errors.push(error);
 
@@ -329,10 +329,11 @@ app.controller('HakukohdeParentController', [
         };
 
         $scope.validateHakukohde = function () {
+            $scope.model.aloituspaikatKuvauksetFailed = false;
 
-            if (!$scope.model.canSaveHakukohde()) {
-                return false;
-            }
+//            if (!$scope.model.canSaveHakukohde()) {
+//                return false;
+//            }
 
             var errors = [];
 
@@ -374,8 +375,20 @@ app.controller('HakukohdeParentController', [
                     errorMessageKey: "hakukohde.edit.liitteet.errors"
                 });
             }
+            angular.forEach($scope.model.hakukohde.aloituspaikatKuvaukset, function(arvo) {
+                if(arvo.length > 20) {
+                    errors.push({
+                        errorMessageKey: "hakukohde.edit.aloituspaikatKuvaukset.too.long"
+                    });
+                    $scope.model.aloituspaikatKuvauksetFailed = true;
+                    return;
+                }
+            });
 
             if (errors.length < 1) {
+            	if (!$scope.model.canSaveHakukohde()) {
+            		return false;
+            	}
                 return true;
             } else {
                 $scope.showError(errors);
@@ -1032,6 +1045,11 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
 
+                    // Hakukohteiden liitteiden järjestys
+                    angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite, index) {
+                        liite.jarjestys = index;
+                    });
+
                     // Check if hakukohde is copy, then remove oid and
                     // save hakukohde as new
                     $scope.checkIsCopy($scope.luonnosVal);
@@ -1045,7 +1063,7 @@ app.controller('HakukohdeParentController', [
 
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
-                        angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
+                        angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
                             tarjoajatiedot[komotoOid] = {
                                 tarjoajaOids: [AuthService.getUserDefaultOid()]
                             };
@@ -1087,8 +1105,8 @@ app.controller('HakukohdeParentController', [
                         $log.debug('UPDATE MODEL1 : ', $scope.model.hakukohde);
                         var returnResource = $scope.model.hakukohde.$update();
                         returnResource.then(function (hakukohde) {
+                            $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                             if (hakukohde.status === 'OK') {
-                                $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                 HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde);
                                 $scope.status.dirty = false;
@@ -1105,10 +1123,7 @@ app.controller('HakukohdeParentController', [
                                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                                     $scope.model.hakukohde.soraKuvaukset = {};
                                 }
-
-                                $scope.showCommonUnknownErrorMsg();
                                 $scope.showError(hakukohde.errors);
-
                             }
                         }, function (error) {
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);

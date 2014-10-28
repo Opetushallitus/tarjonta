@@ -1,0 +1,4 @@
+alter table hakukohde
+add constraint aloituspaikat_monikielinen_teksti_constraint
+foreign key (aloituspaikat_teksti_id)
+references monikielinen_teksti;

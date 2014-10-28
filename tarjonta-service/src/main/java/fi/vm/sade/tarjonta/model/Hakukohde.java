@@ -26,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 /**
  *
@@ -69,6 +71,9 @@ public class Hakukohde extends TarjontaBaseEntity {
     private int aloituspaikatLkm;
     @Column(name = "valintojenAloituspaikatLkm", nullable = false)
     private int valintojenAloituspaikatLkm;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "aloituspaikat_teksti_id")
+    private MonikielinenTeksti aloituspaikatKuvaus;
     @Column(name = "kaytetaanHaunPaattymisenAikaa", nullable = false)
     private boolean kaytetaanHaunPaattymisenAikaa;
     @Column(name = "kaytetaanJarjestelmanValintapalvelua", nullable = false)
@@ -100,7 +105,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hakukohde", orphanRemoval = true)
-    private Set<HakukohdeLiite> liites = new HashSet<HakukohdeLiite>();
+    @OrderBy("jarjestys")
+    private List<HakukohdeLiite> liites = new ArrayList<HakukohdeLiite>();
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_hakukelpoisuusvaatimus", joinColumns
             = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -353,9 +359,9 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.haku = haku;
     }
 
-    public Set<HakukohdeLiite> getLiites() {
+    public List<HakukohdeLiite> getLiites() {
         if (liites == null) {
-            liites = new HashSet<HakukohdeLiite>();
+            liites = new ArrayList<HakukohdeLiite>();
         }
 
         return liites;
@@ -669,7 +675,7 @@ public class Hakukohde extends TarjontaBaseEntity {
         organisaatioRyhmaOids = oids;
     }
 
-    
+
     public String[] getOrganisaatioRyhmaOids() {
         if (organisaatioRyhmaOids == null || organisaatioRyhmaOids.isEmpty()) {
             return new String[0];
@@ -703,5 +709,13 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void removeTarjoajatiedotForKoulutus(String oid) {
         koulutusmoduuliToteutusTarjoajatiedot.remove(oid);
+    }
+
+    public MonikielinenTeksti getAloituspaikatKuvaus() {
+        return aloituspaikatKuvaus;
+    }
+
+    public void setAloituspaikatKuvaus(MonikielinenTeksti aloituspaikatKuvaus) {
+        this.aloituspaikatKuvaus = aloituspaikatKuvaus;
     }
 }
