@@ -1097,17 +1097,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                             persisted = insertKoulutusLukiokoulu((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                            persisted = insertKoulutusNayttotutkintona((ErikoisammattitutkintoV1RDTO) koulutusDtoForCopy(ErikoisammattitutkintoV1RDTO.class, komoto, orgOid));
-                            break;
-                        case ERIKOISAMMATTITUTKINTO:
-                            persisted = insertKoulutusNayttotutkintona((AmmattitutkintoV1RDTO) koulutusDtoForCopy(AmmattitutkintoV1RDTO.class, komoto, orgOid));
-                            break;
-                        case AMMATTITUTKINTO:
                             persisted = insertKoulutusNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
                             break;
+                        case ERIKOISAMMATTITUTKINTO:
+                            persisted = insertKoulutusNayttotutkintona((ErikoisammattitutkintoV1RDTO) koulutusDtoForCopy(ErikoisammattitutkintoV1RDTO.class, komoto, orgOid));
+                            break;
+                        case AMMATTITUTKINTO:
+                            persisted = insertKoulutusNayttotutkintona((AmmattitutkintoV1RDTO) koulutusDtoForCopy(AmmattitutkintoV1RDTO.class, komoto, orgOid));
+                            break;
                         default:
-                            throw new RuntimeException(
-                                    "Not implemented type : " + getType(komoto));
+                            throw new RuntimeException("Not implemented type : " + getType(komoto));
                     }
 
                     if (persisted == null) {
