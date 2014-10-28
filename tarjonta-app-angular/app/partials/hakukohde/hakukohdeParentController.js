@@ -329,8 +329,6 @@ app.controller('HakukohdeParentController', [
         };
 
         $scope.validateHakukohde = function () {
-        	alert("validateHakukohde");
-
             $scope.model.aloituspaikatKuvauksetFailed = false;
 
 //            if (!$scope.model.canSaveHakukohde()) {
@@ -388,6 +386,9 @@ app.controller('HakukohdeParentController', [
             });
 
             if (errors.length < 1) {
+            	if (!$scope.model.canSaveHakukohde()) {
+            		return false;
+            	}
                 return true;
             } else {
                 $scope.showError(errors);
