@@ -276,6 +276,7 @@ app.controller('HakukohdeParentController', [
                 if (hakukohde.oid !== undefined) {
 
                     $scope.model.isCopy = false;
+                    $scope.isCopy = false;
 
                     $location.path('/hakukohde/' + hakukohde.oid + '/edit');
                 }
@@ -289,21 +290,17 @@ app.controller('HakukohdeParentController', [
         $scope.checkIsCopy = function (tilaParam) {
 
             // If scope or route has isCopy parameter defined as true remove
-            // oid,
-            // so that new hakukohde will be created
+            // oid so that new hakukohde will be created
 
             if ($route.current.locals && $route.current.locals.isCopy) {
-                $log.debug('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
 
             }
 
-            $log.debug('IS COPY : ', $scope.isCopy);
             if ($scope.isCopy !== undefined && $scope.isCopy) {
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
-
             }
 
             $scope.model.isCopy = true;
@@ -1053,6 +1050,7 @@ app.controller('HakukohdeParentController', [
                     // Check if hakukohde is copy, then remove oid and
                     // save hakukohde as new
                     $scope.checkIsCopy($scope.luonnosVal);
+
                     if ($scope.model.hakukohde.oid === undefined) {
 
                         $log.debug('LISATIEDOT : ', $scope.model.hakukohde.lisatiedot);
