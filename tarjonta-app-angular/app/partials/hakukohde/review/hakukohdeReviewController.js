@@ -655,15 +655,36 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                 });
             });
 
+            var tarjoajatiedot = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot;
+
             angular.forEach(toBeRemoved, function(koulutus) {
                 $scope.model.koulutukses = _.without($scope.model.koulutukses,
                     _.findWhere($scope.model.koulutukses, {oid: koulutus.oid, tarjoajaOid: koulutus.tarjoajaOid}));
+
+                if (tarjoajatiedot[koulutus.oid]){
+                    var newTarjoajaOids = [];
+                    _.each(tarjoajatiedot[koulutus.oid].tarjoajaOids, function(tarjoajaOid) {
+                        if (tarjoajaOid !== koulutus.tarjoajaOid) {
+                            newTarjoajaOids.push(tarjoajaOid);
+                        }
+                    });
+                    if (newTarjoajaOids.length === 0) {
+                        delete tarjoajatiedot[koulutus.oid];
+                    }
+                    else {
+                        tarjoajatiedot[koulutus.oid].tarjoajaOids = newTarjoajaOids;
+                    }
+                }
+
+                var index = $scope.model.hakukohde.hakukohdeKoulutusOids.indexOf(koulutus.oid);
+                if (index !== -1) {
+                    $scope.model.hakukohde.hakukohdeKoulutusOids.splice(index, 1);
+                }
             });
 
-        } else {
-
+        }
+        else {
             $location.path("/etusivu");
-
         }
     };
 
