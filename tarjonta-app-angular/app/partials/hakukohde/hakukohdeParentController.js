@@ -390,7 +390,7 @@ app.controller('HakukohdeParentController', [
                 }
             });
 
-            if (errors.length < 1) {
+            if (errors.length < 1 && $scope.editHakukohdeForm.$valid) {
             	if (!$scope.model.canSaveHakukohde()) {
             		return false;
             	}
