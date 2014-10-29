@@ -447,16 +447,6 @@ public class ConverterV1 {
 
     }
 
-    // ----------------------------------------------------------------------
-    // HAKUKOHDE
-    // ----------------------------------------------------------------------
-
-    /**
-     * Convert domain Hakukohde to REST HakukohdeRDTO.
-     *
-     * @param hakukohde
-     * @return
-     */
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
@@ -587,7 +577,7 @@ public class ConverterV1 {
 
         MonikielinenTeksti valintaperustekuvaus = hakukohde.getValintaperusteKuvaus();
         if (valintaperustekuvaus != null && valintaperustekuvaus.getKaannoksetAsList().size() > 0) {
-            hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToMap(valintaperustekuvaus, false));
+            hakukohdeRDTO.setValintaperusteKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(valintaperustekuvaus));
         } else {
             String uri = tarjontaKoodistoHelper.getValintaperustekuvausryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
             if (uri != null) {
@@ -630,8 +620,16 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
-        hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
-        LOG.debug("HAKUKOHDE LISATIEDOT : {} ", hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY");
+
+        if(hakukohde.getLiitteidenToimitusOsoite() != null) {
+            hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
+            if (hakukohdeRDTO.getLiitteidenToimitusOsoite().getPostinumero() != null) {
+                KoodiType postinumeroKoodi = tarjontaKoodistoHelper.getKoodiByUri(hakukohdeRDTO.getLiitteidenToimitusOsoite().getPostinumero());
+                if (postinumeroKoodi != null) {
+                    hakukohdeRDTO.getLiitteidenToimitusOsoite().setPostinumeroArvo(postinumeroKoodi.getKoodiArvo());
+                }
+            }
+        }
 
         if (hakukohde.getValintakoes() != null) {
             List<ValintakoeV1RDTO> valintakoeDtos = new ArrayList<ValintakoeV1RDTO>();

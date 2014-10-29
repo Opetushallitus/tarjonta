@@ -64,6 +64,14 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     $scope.model.ryhmat = {};
 
+    $scope.showLiitteidenToimitustiedot = function(toteutusTyyppi) {
+        return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
+            toteutusTyyppi === 'LUKIOKOULUTUS' ||
+            toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+            toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+            toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
+    };
+
     if ($scope.model.hakukohde.organisaatioRyhmaOids) {
         for (var i = 0; i < $scope.model.hakukohde.organisaatioRyhmaOids.length; i++) {
             var oid = $scope.model.hakukohde.organisaatioRyhmaOids[i];

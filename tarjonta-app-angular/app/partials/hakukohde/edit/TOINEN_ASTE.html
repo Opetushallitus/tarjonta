@@ -128,14 +128,14 @@
                         </td>
                     </tr>
 
-                    <tr>
-                        <th tt="tarjonta.hakukohde.liitteet.toimitusosoite"></th>
+                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
+                        <th tt="tarjonta.hakukohde.liitteet.toimitusosoite">Liitteiden toimitusosoite</th>
                         <td>
                             <div><span tt="tarjonta.hakukohde.liitteidenToimitusosoite.ohje">Ilmoita tässä osoite, johon harkinnanvaraisen haun liitteet toimitetaan. Ilmoita tiedot muista mahdollisista liitteistä ja niiden toimitusosoitteista Liitteiden tiedot -välilehdellä.</span></div>
-                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="resetHakukohdeLiitteidenToimitusOsoite()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta"></span></label>
+                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="resetHakukohdeLiitteidenToimitusOsoite()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta">Käytetään oletuksena järjestävän organisaation ensisijaista postiosoitetta</span></label>
                             <br/>
 
-                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="true"/><span tt="tarjonta.hakukohde.liitteet.kaytetaanMuutaOsoitetta"></span></label>
+                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="true"/><span tt="tarjonta.hakukohde.liitteet.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span></label>
                             <br/>
 
                             <div class="inset">
@@ -147,10 +147,10 @@
                         </td>
                     </tr>
 
-                    <tr>
+                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
                         <th></th>
                         <td>
-                            <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti"></span></label><br/>
+                            <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti">Voidaan toimittaa myös sähköisesti</span></label><br/>
                             <div class="inset">
                                 <input type="text" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
                             </div>
@@ -160,10 +160,10 @@
                         </td>
                     </tr>
 
-                    <tr class="required">
-                        <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa"></th>
+                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)" class="required">
+                        <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa">Liitteet toimitettava mennessä</th>
                         <td>
-                            <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="useHaunPaattymisaikaChanged(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa"></span></label><br/>
+                            <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="useHaunPaattymisaikaChanged(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa">Käytä haun päättymisen aikaa</span></label><br/>
                             <t-date-time required timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-model="model.hakukohde.liitteidenToimitusPvm" ng-change="status.dirtify()"></t-date-time>
                         </td>
                         <td>
@@ -176,7 +176,7 @@
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>
                 <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
 
-                <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
+                <div ng-show="editableValintaperustekuvaus(model.hakukohde.toteutusTyyppi)">
                     <h4 tt="kk.hakukohde.valintaperusteKuvaukset">Valintaperustekuvaus</h4>
                     <mk-rich-textarea model="model.hakukohde.valintaperusteKuvaukset" max="1500"></mk-rich-textarea>
                 </div>

@@ -74,6 +74,21 @@ app.controller('HakukohdeParentController', [
                 toteutusTyyppi !== 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
         };
 
+        $scope.needsLiitteidenToimitustiedot = function(toteutusTyyppi) {
+            return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
+                toteutusTyyppi === 'LUKIOKOULUTUS' ||
+                toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
+        };
+
+        $scope.editableValintaperustekuvaus = function(toteutusTyyppi) {
+            return toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+                toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS';
+        };
+
         /**
          * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
          */
@@ -374,13 +389,14 @@ app.controller('HakukohdeParentController', [
 
             var errors = [];
 
-            if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
+            if($scope.needsHakukelpoisuus($scope.model.hakukohde.toteutusTyyppi)) {
+                if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
 
-                var error = {};
-                error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
-                $scope.model.hakukelpoisuusValidationErrMsg = true;
-                errors.push(error);
-
+                    var error = {};
+                    error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
+                    $scope.model.hakukelpoisuusValidationErrMsg = true;
+                    errors.push(error);
+                }
             }
 
             if($scope.toisenAsteenKoulutus(toteutusTyyppi)) {
@@ -1419,7 +1435,9 @@ app.controller('HakukohdeParentController', [
 
         $scope.useHaunPaattymisaikaChanged = function(value) {
             if(value === true) {
-                $scope.model.hakukohde.liitteidenToimitusPvm = $scope.model.hakukohde.hakuaikaLoppuPvm;
+                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+                var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                $scope.model.hakukohde.liitteidenToimitusPvm = hakuaika.loppuPvm;
             }
         }
     }]);
