@@ -142,7 +142,7 @@
                     };
 
                     var template = "";
-                    if (children !== undefined) {
+                    if (children && children.length) {
                         for (var i = 0; i < children.length; i++) {
                             var org = children[i];
                             var hasChildren = org[nodeChildren] !== undefined && org[nodeChildren].length > 0;
