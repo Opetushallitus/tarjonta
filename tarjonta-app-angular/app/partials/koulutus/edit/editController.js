@@ -624,6 +624,9 @@ app.controller('BaseEditController', [
             if (model.organisaatio) {
                 shouldBeFirst = model.organisaatio.oid;
             }
+            else if (model.opetusTarjoajat) {
+                shouldBeFirst = model.opetusTarjoajat[0];
+            }
 
             OrganisaatioService.getPopulatedOrganizations(model.opetusTarjoajat, shouldBeFirst)
             .then(function(orgs) {
