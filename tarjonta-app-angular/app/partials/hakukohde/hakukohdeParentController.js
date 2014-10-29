@@ -328,10 +328,6 @@ app.controller('HakukohdeParentController', [
         $scope.validateHakukohde = function () {
             $scope.model.aloituspaikatKuvauksetFailed = false;
 
-//            if (!$scope.model.canSaveHakukohde()) {
-//                return false;
-//            }
-
             var errors = [];
 
             if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
@@ -339,6 +335,16 @@ app.controller('HakukohdeParentController', [
                 var error = {};
                 error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
                 $scope.model.hakukelpoisuusValidationErrMsg = true;
+                errors.push(error);
+
+            } else {
+                $scope.model.hakukelpoisuusValidationErrMsg = false;
+            }
+
+            if ($scope.model.hakukohde.hakuOid === undefined || $scope.model.hakukohde.hakuOid.length < 1) {
+
+                var error = {};
+                error.errorMessageKey = 'hakukohde.edit.haku.missing';
                 errors.push(error);
 
             }
@@ -350,6 +356,8 @@ app.controller('HakukohdeParentController', [
                 $scope.model.nimiValidationFailed = true;
                 errors.push(err);
 
+            } else {
+                $scope.model.nimiValidationFailed = false;
             }
 
             if (!$scope.validateNameLengths($scope.model.hakukohde.hakukohteenNimet)) {
@@ -382,7 +390,7 @@ app.controller('HakukohdeParentController', [
                 }
             });
 
-            if (errors.length < 1) {
+            if (errors.length < 1 && $scope.editHakukohdeForm.$valid) {
             	if (!$scope.model.canSaveHakukohde()) {
             		return false;
             	}
@@ -971,7 +979,9 @@ app.controller('HakukohdeParentController', [
 
         var validateNames = function () {
             for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-                return true;
+            	if ($scope.model.hakukohde.hakukohteenNimet[i]) {
+                    return true;
+				}
             }
             return false;
         };
