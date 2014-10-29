@@ -92,12 +92,9 @@ app.controller('LuoKoulutusDialogiController',
         $scope.organisaatiomap = $scope.organisaatiomap || {};
         $scope.sallitutKoulutustyypit = $scope.sallitutKoulutustyypit || [];
 
-//	$log.debug("organisaatio:", $scope.luoKoulutusDialogOrg);
-
         $scope.lkorganisaatiot = {};
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
         OrganisaatioService.etsi({oidRestrictionList: $scope.luoKoulutusDialogOrg || AuthService.getOrganisations()}).then(function(vastaus) {
-            //$log.debug("asetetaan org hakutulos modeliin.");
             $scope.lkorganisaatiot = vastaus.organisaatiot;
             //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
             var buildMapFrom = function(orglist) {
@@ -128,29 +125,12 @@ app.controller('LuoKoulutusDialogiController',
                 });
             }
 
-            //$log.debug("oppilaitostyyppejä:", oltUrit.length);
-
-            //jos valittavissa vain yksi, 2. selectiä ei pitäisi näyttää.
-            //$scope.piilotaKoulutustyyppi=oltUrit.length<2;
-
             $q.all(oltpromises).then(function() {
                 $q.all(promises).then(function() {
                     paivitaKoulutustyypit(oltUrit);
                     //$log.debug("all done!");
                 });
             });
-
-//		$q.all(promises).then(function(){
-//			paivitaKoulutustyypit(oltUrit);
-//		    //$log.debug("all done!");
-//		 });
-
-            /*
-             //allaoleva bugaa koska tätä suorittaessa pitäisi olla koodistot ja relaatiot haettuna, disabloitu for now
-             paivitaKoulutustyypit(oltUrit);
-             */
-
-
         });
 
 
@@ -162,8 +142,6 @@ app.controller('LuoKoulutusDialogiController',
             oppilaitostyypit.then(function(data) {
                 paivitaKoulutustyypit(data);
             });
-            //$log.debug("oppilaitostyypit:", oppilaitostyypit);
-            //    $log.debug("kaikki koulutustyypit:", SharedStateService.state.luoKoulutusaDialogi.koulutustyypit);
         };
 
         var paivitaKoulutustyypit = function(oppilaitostyypit) {
@@ -173,29 +151,23 @@ app.controller('LuoKoulutusDialogiController',
                     var oppilaitostyyppiUri = oppilaitostyypit[i];
                     $log.debug("getting koulutustyyppi for ", oppilaitostyyppiUri);
                     var koulutustyypit = SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oppilaitostyyppiUri];
-                    //$log.debug("got:", koulutustyypit);
                     if (koulutustyypit) {
                         for (var j = 0; j < koulutustyypit.length; j++) {
                             if (sallitutKoulutustyypit.indexOf(koulutustyypit[j]) == -1) {
                                 sallitutKoulutustyypit.push(koulutustyypit[j]);
                             }
                         }
-                    } else {
+                    }
+                    else {
                         $log.debug("oppilaitostyypille: '", oppilaitostyyppiUri, "' ei löydy koulutustyyppejä");
                     }
-
                 }
-                //$log.debug("asetetaan koulutustyypit: ", sallitutKoulutustyypit);
             }
             $scope.sallitutKoulutustyypit = sallitutKoulutustyypit;
         };
 
         //alusta koulutustyypit (kaikki valittavissa olevat)
         paivitaKoulutustyypit();
-
-        function organisaatio(orgResult) {
-
-        }
 
         /**
          * Peruuta nappulaa klikattu, sulje dialogi
