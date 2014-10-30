@@ -26,6 +26,7 @@ import java.util.Random;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,13 +53,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -199,8 +193,18 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(boolean addHakukohdes) {
+    public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params) {
+        return findAllHakus(params);
+    }
 
+    @Override
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
+        HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+        params.addHakukohdes = true;
+        return findAllHakus(params);
+    }
+
+    private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus = hakuDAO.findAll();
 
         LOG.debug("FOUND  : {} hakus", hakus.size());
@@ -208,7 +212,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus != null && hakus.size() > 0) {
             for (Haku haku : hakus) {
-                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, addHakukohdes);
+                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes);
                 hakuDtos.add(hakuV1RDTO);
             }
 

@@ -21,11 +21,10 @@ app.factory('HakuService', function ($http, $q, Config, $log) {
 
     $log = $log.getInstance("HakuService");
 
-    var hakuUri = Config.env.tarjontaRestUrlPrefix + "haku/findAll";
-
     return {
         getAllHakus: function (params) {
             var hakuPromise = $q.defer();
+            var hakuUri = Config.env.tarjontaRestUrlPrefix + "haku/find";
 
             params = params || {
                 addHakukohdes: false
