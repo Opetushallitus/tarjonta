@@ -275,7 +275,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 					
 					$scope.ok = function() {
 						ctrl.model = $scope.model;
-						updateModels();
+                        ctrl.model = applyConstraints(ctrl.model);
+                        updateModels();
 						modalInstance.dismiss();
 					}
 					

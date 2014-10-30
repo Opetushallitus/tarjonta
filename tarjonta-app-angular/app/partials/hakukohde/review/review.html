@@ -53,7 +53,10 @@
                 <tr>
                     <th tt="hakukohde.review.perustiedot.haku"/>
                     <td colspan="2">
-                        {{ model.hakuNimi}}
+                        {{ model.hakuNimiInformation.nimi }} (
+                        {{ model.hakuNimiInformation.hakuaikaNimi }} {{ model.hakuNimiInformation.alkuPvm | date:'dd.MM.yyyy HH:mm ' }} -
+                        {{ model.hakuNimiInformation.loppuPvm | date:'dd.MM.yyyy HH:mm ' }}
+                        )
                     </td>
                 </tr>
 

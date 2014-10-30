@@ -273,61 +273,54 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     };
 
-    /*
-     *
-     * ------------> This function retrieves haku and it's name so that it
-     * can be shown
-     *
-     */
+    var getHakuNimiInformation = function(haku) {
+
+        var getNimi = function() {
+            var nimi = haku.nimi["kieli_" + $scope.model.userLang.toLowerCase()];
+
+            if(nimi === undefined) {
+                nimi = haku.nimi[Object.keys(haku.nimi)[0]];
+            }
+            return nimi;
+        }
+
+        var getHakuaika = function() {
+            var hakuaika = _.find(haku.hakuaikas, function(hakuaika) {
+                return hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId;
+            });
+            return hakuaika;
+        }
+
+        var getHakuaikaNimi = function(hakuaika) {
+            var hakuaikaNimi = hakuaika.nimet[$scope.model.userLang.toLowerCase()];
+
+            if(hakuaikaNimi === undefined) {
+                hakuaikaNimi = hakuaika.nimet[Object.keys(hakuaika.nimet)[0]];
+            }
+            return hakuaikaNimi;
+        }
+
+        var nimi = getNimi();
+        var hakuaika = getHakuaika();
+        var hakuaikaNimi = getHakuaikaNimi(hakuaika);
+        var alkuPvm = $scope.model.hakukohde.hakuaikaAlkuPvm ? $scope.model.hakukohde.hakuaikaAlkuPvm : hakuaika.alkuPvm;
+        var loppuPvm = $scope.model.hakukohde.hakuaikaLoppuPvm ? $scope.model.hakukohde.hakuaikaLoppuPvm : hakuaika.loppuPvm;
+
+        return { nimi: nimi, hakuaikaNimi: hakuaikaNimi, alkuPvm: alkuPvm, loppuPvm: loppuPvm };
+    }
 
     var loadHakuInformation = function() {
         if ($scope.model.hakukohde.hakuOid) {
 
             var hakuPromise = HakuService.getHakuWithOid($scope.model.hakukohde.hakuOid);
+
             hakuPromise.then(function(haku) {
-                {
-                    $log.debug('HAKU: ', haku);
-                    if (haku && haku.nimi)
-                        for (var kieliUri in haku.nimi) {
-                            var upperCaseKieliUri = kieliUri.toUpperCase();
-                            var upperUserLang = $scope.model.userLang.toUpperCase();
-                            if (upperCaseKieliUri.indexOf(upperUserLang) != -1) {
-                                $scope.model.hakuNimi = haku.nimi[kieliUri];
-                            }
-                        }
-
-                    if (haku.hakuaikas !== undefined && haku.hakuaikas.length > 0 && $scope.model.hakukohde.hakuaikaId !== undefined) {
-
-                        var valittuHakuAika = undefined;
-                        angular.forEach(haku.hakuaikas, function(hakuaika) {
-
-                            if (hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId) {
-                                valittuHakuAika = hakuaika;
-                            }
-
-                        });
-
-                        if (valittuHakuAika !== undefined) {
-
-                            var prefix = valittuHakuAika.nimi !== undefined ? valittuHakuAika.nimi + " : " : "";
-
-                            $scope.model.hakuNimi = $scope.model.hakuNimi + "  ( " + prefix + createFormattedDateString(valittuHakuAika.alkuPvm) + " - "
-                                    + createFormattedDateString(valittuHakuAika.loppuPvm) + " ) ";
-
-                        }
-
-                    }
+                if (haku && haku.nimi) {
+                    $scope.model.hakuNimiInformation = getHakuNimiInformation(haku);
                 }
             });
         }
     };
-
-    /*
-     *
-     * ---------> This function retrieves hakukelpoisuusVaatimukses and
-     * adds results to model
-     *
-     */
 
     var loadHakukelpoisuusVaatimukses = function() {
 
