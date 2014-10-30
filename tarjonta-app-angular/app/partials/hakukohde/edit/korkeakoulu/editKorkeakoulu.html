@@ -68,7 +68,7 @@
                     <tr class="required" data-ng-show="model.showHakuaikas">
                         <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
                         <td>
-                            <select class="wide" name="hakuaikaSelect" ng-disabled="model.isDeEnabled" data-ng-required="model.showHakuaikas" data-ng-change="handleConfigurableHakuaika()" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
+                            <select class="wide" name="hakuaikaSelect" ng-disabled="model.isDeEnabled" data-ng-required="model.showHakuaikas" data-ng-change="handleConfigurableHakuaika()" ng-model="model.hakukohde.hakuaikaId" data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
