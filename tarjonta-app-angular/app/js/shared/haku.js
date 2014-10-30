@@ -24,10 +24,14 @@ app.factory('HakuService', function ($http, $q, Config, $log) {
     var hakuUri = Config.env.tarjontaRestUrlPrefix + "haku/findAll";
 
     return {
-        getAllHakus: function (locale) {
+        getAllHakus: function (params) {
             var hakuPromise = $q.defer();
 
-            $http({method: 'GET', url: hakuUri}).success(function (data, status, headers, config) {
+            params = params || {
+                addHakukohdes: false
+            };
+
+            $http({method: 'GET', url: hakuUri, params: params}).success(function (data, status, headers, config) {
                 // this callback will be called asynchronously
 
                 hakuPromise.resolve(data.result);

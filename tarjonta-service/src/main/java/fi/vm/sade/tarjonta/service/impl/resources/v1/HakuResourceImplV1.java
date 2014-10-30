@@ -187,7 +187,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(hakuDtos);
         for (Haku haku : hakus) {
-            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, false);
+            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, true);
             hakuDtos.add(hakuV1RDTO);
         }
 
@@ -199,7 +199,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(boolean addHakukohdes) {
 
         List<Haku> hakus = hakuDAO.findAll();
 
@@ -208,8 +208,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus != null && hakus.size() > 0) {
             for (Haku haku : hakus) {
-
-                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, false);
+                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, addHakukohdes);
                 hakuDtos.add(hakuV1RDTO);
             }
 
@@ -329,7 +328,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             // Convert to DTO - reload to get hakuaika id's for example
             hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
-            result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, false));
+            result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, true));
 
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
         } catch (Throwable ex) {
