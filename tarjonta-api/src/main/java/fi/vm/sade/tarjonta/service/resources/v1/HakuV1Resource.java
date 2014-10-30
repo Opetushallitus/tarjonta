@@ -86,7 +86,7 @@ public interface HakuV1Resource {
     @Path("/findAll")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa kaikki haut", notes = "Palauttaa kaikki haut", response = HakuV1RDTO.class)
-    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus();
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(@QueryParam("addHakukohdes") @DefaultValue("true") boolean addHakukohdes);
 
     @DELETE
     @Path("/{oid}")

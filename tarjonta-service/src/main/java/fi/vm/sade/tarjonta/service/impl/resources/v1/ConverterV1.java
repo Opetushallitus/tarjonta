@@ -140,7 +140,7 @@ public class ConverterV1 {
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
         t.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
 
-        if (true) {
+        if (addHakukohdes) {
             List<String> tmp = hakukohdeDao.findByHakuOid(t.getOid(), null, 0, 0, null, null);
             t.setHakukohdeOids(tmp);
         }
