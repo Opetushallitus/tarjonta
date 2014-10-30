@@ -189,12 +189,6 @@ public class PublicationDataServiceImpl implements PublicationDataService {
             throw new IllegalArgumentException("tilasiirtyma.error.null.list");
         }
 
-// disabled for now:  because tests started to fail      
-//        for(Tila tila:tilaChanges) {
-//            if(!isValidStatusChange(tila)) {
-//                throw new IllegalArgumentException("tilasiirtyma.error.impossible");
-//            }
-//        }
         //filter given data to map
         for (Tila tila : tilaChanges) {
             getListOfOids(getSubMapByQHakukohde(map, tila.getTyyppi()), tila.getTila()).add(tila.getOid());

@@ -154,9 +154,7 @@ app
                             var li = $scope.model.hakukohde.valintakokeet[i];
                             var nimiEmpty = !notEmpty(li.valintakoeNimi);
                             var tyyppiEmpty = !notEmpty(li.valintakoetyyppi);
-                            var kuvausEmpty = !notEmpty($(
-                                    "<div>" + li.valintakokeenKuvaus.teksti + "</div>").text()
-                                    .trim());
+                            var kuvausEmpty = !notEmpty(li.valintakokeenKuvaus.teksti);
                             var ajankohtaEmpty = li.valintakoeAjankohtas.length == 0;
 
                             if (nimiEmpty && tyyppiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {

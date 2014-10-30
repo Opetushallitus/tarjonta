@@ -5,7 +5,10 @@ import java.io.Serializable;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 public class KoulutusPerustieto implements Serializable {
 
@@ -29,6 +32,7 @@ public class KoulutusPerustieto implements Serializable {
     private ToteutustyyppiEnum toteutustyyppi;
     private Date koulutuksenAlkamisPvmMin;
     private Date koulutuksenAlkamisPvmMax;
+    private ArrayList<String> tarjoajat;
 
     /**
      * oikeasti tämä on koulutusohjelman nimi
@@ -139,7 +143,7 @@ public class KoulutusPerustieto implements Serializable {
     public void setKoulutusasteTyyppi(KoulutusasteTyyppi value) {
         this.koulutusasteTyyppi = value;
     }
-    
+
     public KoodistoKoodi getKoulutuksenAlkamiskausi() {
         return koulutuksenAlkamiskausi;
     }
@@ -198,6 +202,14 @@ public class KoulutusPerustieto implements Serializable {
 
     public Date getKoulutuksenAlkamisPvmMin() {
         return koulutuksenAlkamisPvmMin;
+    }
+
+    public void setTarjoajat(ArrayList<String> tarjoajat) {
+        this.tarjoajat = tarjoajat;
+    }
+
+    public ArrayList<String> getTarjoajat() {
+        return tarjoajat;
     }
 
 }

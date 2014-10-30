@@ -852,3 +852,7 @@ table tr.hakuajat td.nimet {
 table tr.hakuajat td.nimet th {
     padding-right: 5px;
 }
+
+table tr.aloituspaikatKuvaukset table {
+    width: 350px;
+}

@@ -117,7 +117,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakukohdeOid: args.hakukohdeOid,
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
-            hakuOid: args.hakuOid
+            hakuOid: args.hakuOid,
+            defaultTarjoaja: args.defaultTarjoaja
         };
 
         $log.debug("haeHakukohteet()", params);
@@ -160,6 +161,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year
         };
+
+        if (args.defaultTarjoaja) {
+            params.defaultTarjoaja = args.defaultTarjoaja;
+        }
 
         $log.debug("haeKoulutukset()", params);
 

@@ -145,7 +145,8 @@
                                     <td ng-show="$first">{{valintakoe.valintakoeNimi}}</td>
                                     <td ng-show="$first" data-ng-bind-html="valintakoe.valintakokeenKuvaus.teksti"></td>
                                     <td>
-                                        {{valintakoeaika.alkaa| date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu | date:'dd.MM.yyyy HH:mm '}}
+                                        <span ng-show="valintakoeaika.kellonaikaKaytossa">{{valintakoeaika.alkaa| date:'dd.MM.yyyy HH:mm '}}   - {{ valintakoeaika.loppuu | date:'dd.MM.yyyy HH:mm '}}</span>
+                                        <span ng-show="!valintakoeaika.kellonaikaKaytossa">{{valintakoeaika.alkaa| date:'dd.MM.yyyy '}}   - {{ valintakoeaika.loppuu | date:'dd.MM.yyyy '}}</span>
                                     </td>
                                     <td>
                                         {{ valintakoeaika.osoite.osoiterivi1}}, {{ valintakoeaika.osoite.postinumeroArvo}}, {{ valintakoeaika.osoite.postitoimipaikka}}

@@ -6,16 +6,13 @@
 		<div style="height: 200px" ng-grid="gridOptions"></div>
 		<div style="overflow: scroll; height: 100px">
 			<ul>
-				<li ng-repeat="obj in model.selectedKoulutukses|orderBy:'nimi'">{{obj.nimi}}
-					<!-- <a href="" ng-click="removeItem(obj)">{{model.translations.poistaBtn}}</a> -->
-				</li>
+				<li ng-repeat="obj in model.selectedKoulutukses|orderBy:'nimi'">{{obj.nimi}}, {{obj.tarjoaja}}</li>
 			</ul>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-warning" ng-click="model.cancel()">{{
 			model.translations.cancelBtn }}</button>
-			{{model.selectedKoulutukses.length>0}}
 		<button class="btn btn-primary" ng-disabled="model.selectedKoulutukses.length==0" ng-click="model.save()">{{
 			model.translations.saveBtn }}</button>
 	</div>

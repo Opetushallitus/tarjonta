@@ -23,6 +23,8 @@ import org.codehaus.jackson.annotate.JsonBackReference;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
 
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
+
 /**
  *
  */
@@ -75,16 +77,13 @@ public class Valintakoe extends TarjontaBaseEntity {
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
 
-    /**
-     * Collection of times when this Valintakoe is to be held. This collection
-     * is loaded eagerly since the number of items and amount of data will be
-     * very small.
-     */
-    /**
-     * Returns an immutable set of Ajankohtas.
-     *
-     * @return
-     */
+    @PrePersist
+    @PreUpdate
+    public void filterHTMLFields() {
+        filter(getLisanaytot());
+        filter(getKuvaus());
+    }
+
     public Set<ValintakoeAjankohta> getAjankohtas() {
         return ajankohtas;
     }

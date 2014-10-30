@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
- * 
+ *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,7 +16,9 @@
 package fi.vm.sade.tarjonta.dao;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
@@ -27,7 +29,7 @@ import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
  * DAO for indexer.
  */
 public interface IndexerDAO {
-    
+
     /**
      * Find all hakukohteet for indexer. Used for bulk indexing.
      */
@@ -53,12 +55,12 @@ public interface IndexerDAO {
      */
     List<Long> findAllHakukohdeIds();
 
-    
+
     /**
      * Find all koulutus (koulutusmoduulitoteutus) ids
      */
     List<Long> findAllKoulutusIds();
-    
+
     /**
      * Find hakuajat for haku. Used to find hakuajat for hakukohde.
      * @param id
@@ -71,7 +73,7 @@ public interface IndexerDAO {
      * @return
      */
     List<KoulutusIndexEntity> findAllKoulutukset();
-    
+
     /**
      * Find koulutus by id
      * @param koulutusmoduuliId
@@ -79,12 +81,12 @@ public interface IndexerDAO {
      */
     KoulutusIndexEntity findKoulutusById(Long koulutusmoduulitoteutusId);
 
-    
+
     /**
      * Find hakukohteet for koulutusmoduulitoteutus.
      */
     List<HakukohdeIndexEntity> findhakukohteetByKoulutusmoduuliToteutusId(Long id);
-    
+
     /**
      * Find koulutuslajis for koulutus
      * @param koulutusmoduuliToteutusId
@@ -117,7 +119,7 @@ public interface IndexerDAO {
      * @return
      */
     List<Long> findUnindexedKoulutusIds();
-    
+
     /**
      * Päivitä viimIndeksointi pvm
      * @param id
@@ -138,5 +140,7 @@ public interface IndexerDAO {
      * @return
      */
     MonikielinenTeksti getKomotoNimi(Long koulutusId);
+
+    Set<String> getOwners(String oid, String type);
 
 }

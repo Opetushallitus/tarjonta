@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import static com.mysema.query.types.Projections.array;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -16,10 +17,9 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
-
+import org.apache.xmlbeans.impl.schema.StscState;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.Map.Entry;
 
 /*
  * @author: Tuomas Katva 15/11/13
@@ -105,6 +105,12 @@ public class HakukohdeValidator {
             }
         }
 
+        for (String kuvaus : hakukohdeRDTO.getAloituspaikatKuvaukset().values()) {
+            if (kuvaus.length() > 20) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALOITUSPAIKAT_KUVAUS_TOO_LONG);
+                break;
+            }
+        }
 
         return validationMessages;
     }
@@ -302,7 +308,7 @@ public class HakukohdeValidator {
 
     private static boolean allEmptyValues(Map<String, String> kuvaukset) {
         boolean allEmpty = true;
-        for (Entry<String, String> entry : kuvaukset.entrySet()) {
+        for (Map.Entry<String, String> entry : kuvaukset.entrySet()) {
             if (StringUtils.isNotBlank(entry.getValue())) {
                 allEmpty = false;
             }
@@ -465,7 +471,7 @@ public class HakukohdeValidator {
             }
 
             for (KoulutusPerustieto o : kv.getKoulutukset()) {
-                //search all invalid koulutus compinations 
+                //search all invalid koulutus compinations
                 if (kp.getKomotoOid().equals(o.getKomotoOid())) {
                     continue;
                 }
@@ -485,7 +491,7 @@ public class HakukohdeValidator {
                 }
             }
         }
-        for (Entry<HakukohdeValidationMessages, Set<String>> e : map.entrySet()) {
+        for (Map.Entry<HakukohdeValidationMessages, Set<String>> e : map.entrySet()) {
             switch (e.getKey()) {
                 case KOMOTO_KOULUTUS_URI:
                     result.addError(ErrorV1RDTO.createValidationError("koulutus", "hakukohde.luonti.virhe.koulutus",

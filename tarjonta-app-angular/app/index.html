@@ -146,6 +146,7 @@
 
         <script src="partials/koulutus/koulutusController.js"></script>
         <script src="partials/koulutus/luo-koulutus-dialogi.js"></script>
+        <script src="partials/koulutus/organization-selection.js"></script>
         <script src="partials/koulutus/sisaltyvyys/liita-sisaltyvyys-ctrl.js"></script>
         <script src="partials/koulutus/sisaltyvyys/poista-sisaltyvyys-ctrl.js"></script>
 
@@ -253,11 +254,11 @@
                     <div data-ng-switch-when="hakukohde">
                         <h2 tt="hakukohde.title">Hakukohteiden hallinta</h2>
 
-                        <div data-ng-switch on="renderPath[1]" data-ng-controller="HakukohdeRoutingController">
-                            <div data-ng-switch-when="review">
+                        <div data-ng-switch on="renderPath[1]">
+                            <div data-ng-switch-when="review" data-ng-controller="HakukohdeRoutingController">
                                 <div data-ng-include="'partials/hakukohde/review/review.html'"></div>
                             </div>
-                            <div data-ng-switch-when="edit">
+                            <div data-ng-switch-when="edit" data-ng-controller="HakukohdeRoutingController">
                                 <div data-ng-include="'partials/hakukohde/edit/edit.html'"></div>
                             </div>
                             <div data-ng-switch-default>

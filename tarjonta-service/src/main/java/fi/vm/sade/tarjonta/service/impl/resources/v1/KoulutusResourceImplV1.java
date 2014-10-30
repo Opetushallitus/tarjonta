@@ -32,14 +32,12 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
-import fi.vm.sade.tarjonta.model.BinaryData;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
+import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
@@ -60,13 +58,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
@@ -466,7 +458,24 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
     }
 
     private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(KoulutusmoduuliToteutus komoto, final KoulutusKorkeakouluV1RDTO dto) {
-        permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+        // KJOH-778 monta tarjoajaa
+        Boolean validUser = false;
+        if ( komoto.getOwners() != null && komoto.getOwners().size() > 0 ) {
+            for( KoulutusOwner owner : komoto.getOwners() ) {
+                if (owner.getOwnerType().equals(KoulutusOwner.TARJOAJA)) {
+                    try {
+                        permissionChecker.checkUpdateKoulutusByTarjoajaOid(owner.getOwnerOid());
+                        validUser = true;
+                        break;
+                    } catch (NotAuthorizedException e) {
+                        // Do nothing
+                    }
+                }
+            }
+        }
+        if(!validUser) {
+            permissionChecker.checkUpdateKoulutusByTarjoajaOid(komoto.getTarjoaja());
+        }
         return convertToEntity.convert(dto, contextDataService.getCurrentUserOid(), false);
     }
 
@@ -790,7 +799,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             @Deprecated List<KoulutusasteTyyppi> koulutusastetyyppi,
             String komoOid,
             String alkamisPvmAlkaenTs,
-            String koulutuslaji) {
+            String koulutuslaji,
+            String defaultTarjoaja) {
 
         // Process alkamispvm search criteria
         // TODO alkamispvm not used yet!
@@ -826,7 +836,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutustyyppi().addAll(koulutustyyppi); //uri
         q.getTotetustyyppi().addAll(toteutustyyppi); //enum
         q.setKoulutuslaji(koulutuslaji);
-        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q);
+        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q, defaultTarjoaja);
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));
     }
@@ -1093,14 +1103,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                             persisted = insertKoulutusGeneric((KoulutusLukioAikuistenOppimaaraV1RDTO) koulutusDtoForCopy(KoulutusLukioAikuistenOppimaaraV1RDTO.class, komoto, orgOid));
                             break;
+                        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                            persisted = insertKoulutusNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
+                            break;
                         case ERIKOISAMMATTITUTKINTO:
                             persisted = insertKoulutusNayttotutkintona((ErikoisammattitutkintoV1RDTO) koulutusDtoForCopy(ErikoisammattitutkintoV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATTITUTKINTO:
                             persisted = insertKoulutusNayttotutkintona((AmmattitutkintoV1RDTO) koulutusDtoForCopy(AmmattitutkintoV1RDTO.class, komoto, orgOid));
-                            break;
-                        case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
-                            persisted = insertKoulutusNayttotutkintona((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, komoto, orgOid));
                             break;
                         case AMMATILLINEN_PERUSTUTKINTO:
                             persisted = insertKoulutusGeneric((KoulutusAmmatillinenPerustutkintoV1RDTO) koulutusDtoForCopy(KoulutusAmmatillinenPerustutkintoV1RDTO.class, komoto, orgOid));

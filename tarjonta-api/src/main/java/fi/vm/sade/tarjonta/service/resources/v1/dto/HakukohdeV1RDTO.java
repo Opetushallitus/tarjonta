@@ -18,9 +18,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String hakukohteenNimi;
     private String hakukohteenNimiUri;
-    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required = false)
-    private Map<String, String> hakukohteenNimet;
-    private Map<String, String> tarjoajaNimet;
+    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=false)
+    private Map<String,String> hakukohteenNimet;
+    private Map<String,String> tarjoajaNimet;
+    private Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot = new HashMap<String, KoulutusmoduuliTarjoajatiedotV1RDTO>();
     private Set<String> tarjoajaOids;
     @ApiModelProperty(value = "Hakukohde's haku's oid", required = true)
     private String hakuOid;
@@ -48,10 +49,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String koulutusAsteTyyppi;
     private String toteutusTyyppi;
     private String koulutuslaji;
-    private Map<String, String> lisatiedot;
-    private Map<String, String> valintaperusteKuvaukset;
-    private Map<String, String> soraKuvaukset;
-    private Map<String, String> hakukelpoisuusVaatimusKuvaukset;
+    private Map<String,String> lisatiedot;
+    private Map<String,String> valintaperusteKuvaukset;
+    private Map<String,String> soraKuvaukset;
+    private Map<String,String> hakukelpoisuusVaatimusKuvaukset;
+    private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
     private boolean kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
@@ -482,5 +484,21 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public boolean isLukioKoulutus() {
         return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
+    }
+
+    public Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> getKoulutusmoduuliToteutusTarjoajatiedot() {
+        return koulutusmoduuliToteutusTarjoajatiedot;
+    }
+
+    public void setKoulutusmoduuliToteutusTarjoajatiedot(Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot) {
+        this.koulutusmoduuliToteutusTarjoajatiedot = koulutusmoduuliToteutusTarjoajatiedot;
+    }
+
+    public Map<String, String> getAloituspaikatKuvaukset() {
+        return aloituspaikatKuvaukset;
+    }
+
+    public void setAloituspaikatKuvaukset(Map<String, String> aloituspaikatKuvaukset) {
+        this.aloituspaikatKuvaukset = aloituspaikatKuvaukset;
     }
 }

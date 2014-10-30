@@ -634,7 +634,6 @@
                 <literal value="table-column"/>
                 <literal value="table-cell"/>
                 <literal value="table-caption"/>
-                <literal value="none"/>
                 <literal value="inherit"/>
             </literal-list>
         </property>

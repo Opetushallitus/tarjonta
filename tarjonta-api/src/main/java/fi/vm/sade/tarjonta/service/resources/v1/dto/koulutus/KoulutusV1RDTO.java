@@ -122,11 +122,11 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Opintojen laajuuden arvo", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
 
-    @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
-    private List<String> opetusJarjestajat = new ArrayList<String>();
+    @ApiModelProperty(value = "Opintojen järjestäjät", required = false)
+    private HashSet<String> opetusJarjestajat = new HashSet<String>();
 
-    @ApiModelProperty(value = "Opintojen järjestävät", required = false)
-    private List<String> opetusTarjoajat = new ArrayList<String>();
+    @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
+    private HashSet<String> opetusTarjoajat = new HashSet<String>();
 
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
@@ -479,7 +479,7 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     /**
      * @return list of opetus organisators oids
      */
-    public List<String> getOpetusJarjestajat() {
+    public HashSet<String> getOpetusJarjestajat() {
         return opetusJarjestajat;
     }
 
@@ -488,15 +488,15 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      *
      * @param opetusJarjestajat
      */
-    public void setOpetusJarjestajat(List<String> opetusJarjestajat) {
-        opetusJarjestajat = (opetusJarjestajat != null) ? opetusJarjestajat : new ArrayList<String>();
+    public void setOpetusJarjestajat(HashSet<String> opetusJarjestajat) {
+        opetusJarjestajat = (opetusJarjestajat != null) ? opetusJarjestajat : new HashSet<String>();
         this.opetusJarjestajat = opetusJarjestajat;
     }
 
     /**
      * @return "offerer" oids for koulutus
      */
-    public List<String> getOpetusTarjoajat() {
+    public HashSet<String> getOpetusTarjoajat() {
         return opetusTarjoajat;
     }
 
@@ -505,8 +505,8 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      *
      * @param opetusTarjoajat list of oids offering the koulutus.
      */
-    public void setOpetusTarjoajat(List<String> opetusTarjoajat) {
-        opetusTarjoajat = (opetusTarjoajat != null) ? opetusTarjoajat : new ArrayList<String>();
+    public void setOpetusTarjoajat(HashSet<String> opetusTarjoajat) {
+        opetusTarjoajat = (opetusTarjoajat != null) ? opetusTarjoajat : new HashSet<String>();
         this.opetusTarjoajat = opetusTarjoajat;
     }
 

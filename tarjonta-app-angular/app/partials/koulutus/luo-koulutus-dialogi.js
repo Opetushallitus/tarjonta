@@ -6,7 +6,7 @@ var app = angular.module('app.koulutus.ctrl');
 
 app.controller('LuoKoulutusDialogiController',
     function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService, $log,
-             KoulutusConverterFactory) {
+             KoulutusConverterFactory, $timeout, LocalisationService) {
 
         $log = $log.getInstance("LuoKoulutusDialogiController");
 
@@ -79,13 +79,29 @@ app.controller('LuoKoulutusDialogiController',
                 }
         );
 
+        var userRootOrganization = null;
+
         $scope.lkorganisaatio = $scope.lkorganisaatio || {currentNode: undefined};
         // Watchi valitulle organisaatiolle
         $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
             $log.debug("oprganisaatio valittu", organisaatio);
-            //XXX nyt vain yksi organisaatio valittavissa
-            if ($scope.model.organisaatiot.length == 0 && organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
+            if (organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
                 lisaaOrganisaatio(organisaatio);
+                if (userRootOrganization === null) {
+                    userRootOrganization = organisaatio;
+                }
+            }
+        });
+
+        $scope.$watch('model.koulutustyyppi', function(val) {
+            // If korkeakoulutus
+            if (val && val.koodiUri === "koulutustyyppi_3") {
+                $scope.showOtherOrganizationsCheckbox = true;
+            }
+            else {
+                $scope.showOtherOrganizations = false;
+                $scope.showOtherOrganizationsCheckbox = false;
+                $scope.toggleOtherOrganizations(true);
             }
         });
 
@@ -93,12 +109,9 @@ app.controller('LuoKoulutusDialogiController',
         $scope.organisaatiomap = $scope.organisaatiomap || {};
         $scope.sallitutKoulutustyypit = $scope.sallitutKoulutustyypit || [];
 
-//	$log.debug("organisaatio:", $scope.luoKoulutusDialogOrg);
-
         $scope.lkorganisaatiot = {};
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
         OrganisaatioService.etsi({oidRestrictionList: $scope.luoKoulutusDialogOrg || AuthService.getOrganisations()}).then(function(vastaus) {
-            //$log.debug("asetetaan org hakutulos modeliin.");
             $scope.lkorganisaatiot = vastaus.organisaatiot;
             //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
             var buildMapFrom = function(orglist) {
@@ -129,29 +142,11 @@ app.controller('LuoKoulutusDialogiController',
                 });
             }
 
-            //$log.debug("oppilaitostyyppejä:", oltUrit.length);
-
-            //jos valittavissa vain yksi, 2. selectiä ei pitäisi näyttää.
-            //$scope.piilotaKoulutustyyppi=oltUrit.length<2;
-
             $q.all(oltpromises).then(function() {
                 $q.all(promises).then(function() {
                     paivitaKoulutustyypit(oltUrit);
-                    //$log.debug("all done!");
                 });
             });
-
-//		$q.all(promises).then(function(){
-//			paivitaKoulutustyypit(oltUrit);
-//		    //$log.debug("all done!");
-//		 });
-
-            /*
-             //allaoleva bugaa koska tätä suorittaessa pitäisi olla koodistot ja relaatiot haettuna, disabloitu for now
-             paivitaKoulutustyypit(oltUrit);
-             */
-
-
         });
 
 
@@ -163,8 +158,6 @@ app.controller('LuoKoulutusDialogiController',
             oppilaitostyypit.then(function(data) {
                 paivitaKoulutustyypit(data);
             });
-            //$log.debug("oppilaitostyypit:", oppilaitostyypit);
-            //    $log.debug("kaikki koulutustyypit:", SharedStateService.state.luoKoulutusaDialogi.koulutustyypit);
         };
 
         var paivitaKoulutustyypit = function(oppilaitostyypit) {
@@ -174,29 +167,23 @@ app.controller('LuoKoulutusDialogiController',
                     var oppilaitostyyppiUri = oppilaitostyypit[i];
                     $log.debug("getting koulutustyyppi for ", oppilaitostyyppiUri);
                     var koulutustyypit = SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oppilaitostyyppiUri];
-                    //$log.debug("got:", koulutustyypit);
                     if (koulutustyypit) {
                         for (var j = 0; j < koulutustyypit.length; j++) {
                             if (sallitutKoulutustyypit.indexOf(koulutustyypit[j]) == -1) {
                                 sallitutKoulutustyypit.push(koulutustyypit[j]);
                             }
                         }
-                    } else {
+                    }
+                    else {
                         $log.debug("oppilaitostyypille: '", oppilaitostyyppiUri, "' ei löydy koulutustyyppejä");
                     }
-
                 }
-                //$log.debug("asetetaan koulutustyypit: ", sallitutKoulutustyypit);
             }
             $scope.sallitutKoulutustyypit = sallitutKoulutustyypit;
         };
 
         //alusta koulutustyypit (kaikki valittavissa olevat)
         paivitaKoulutustyypit();
-
-        function organisaatio(orgResult) {
-
-        }
 
         /**
          * Peruuta nappulaa klikattu, sulje dialogi
@@ -210,6 +197,34 @@ app.controller('LuoKoulutusDialogiController',
          * Jatka nappulaa klikattu, avaa seuraava dialogi TODO jos ei kk pitäisi mennä suoraan lomakkeelle?
          */
         $scope.jatka = function() {
+
+            // Tarkista, että valittuna vähintään yksi oma organisaatio
+            var firstOwnOrg;
+            var ownOrgSelected = _.some($scope.model.organisaatiot, function(org) {
+                var oidpath = org.parentOidPath.split("/");
+                oidpath.push(org.oid);
+                var isOwnOrg = oidpath.indexOf(userRootOrganization.oid) !== -1;
+
+                if (isOwnOrg) {
+                    firstOwnOrg = org;
+                }
+
+                return isOwnOrg;
+            });
+
+            if (!ownOrgSelected) {
+                // alert OK tässä (vaikka ei muuten käytetty), koska niin harvinainen tilanne
+                alert(LocalisationService.t("luoKoulutusDialogi.valitseVahintaanOmaOrganisaatio"));
+                return;
+            }
+
+            // Varmista, että oma organisaatio on ensimmäisenä
+            var index = $scope.model.organisaatiot.indexOf(firstOwnOrg);
+            if (index > 0) {
+                $scope.model.organisaatiot.splice(index, 1);
+                $scope.model.organisaatiot.unshift(firstOwnOrg);
+            }
+
             $scope.tutkintoDialogModel = {};
 
             var toteutustyyppi = KoulutusConverterFactory.getToteutustyyppiByKoulutustyyppiKoodiUri($scope.model.koulutustyyppi.koodiUri);
@@ -243,6 +258,9 @@ app.controller('LuoKoulutusDialogiController',
                                         $log.debug("org:", $scope.model.organisaatiot[0]);
                                         $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri
                                             + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+                                        $location.search('opetusTarjoajat', _.map($scope.model.organisaatiot, function(org){
+                                            return org.oid;
+                                        }).join(','));
                                     }
                                 }, function() {
                                     $scope.tutkintoDialogModel.selected = null;
@@ -392,6 +410,35 @@ app.controller('LuoKoulutusDialogiController',
             });
         });
 
+        var searchOrganizationTimeout = null;
+        $scope.searchOrganizations = function(qterm) {
+            if ( searchOrganizationTimeout != null ) {
+                $timeout.cancel(searchOrganizationTimeout);
+            }
+            searchOrganizationTimeout = $timeout(function() {
+                OrganisaatioService.etsi({
+                    searchStr: qterm,
+                    lakkautetut: false,
+                    skipparents: false,
+                    suunnitellut: false
+                }).then(function (result) {
+                    $scope.lkorganisaatiot = result.organisaatiot;
+                });
+            }, 500);
+        };
+
+        /**
+         * Palauta organisaatiopuunäkymän oletusarvo, jos käyttäjä
+         * poistaa ruksin "Näytä myös muut korkeakoulut".
+         */
+        var lkorganisaatiotInit = null;
+        $scope.toggleOtherOrganizations = function(skipInit) {
+            if ( lkorganisaatiotInit === null && !skipInit ) {
+                lkorganisaatiotInit = angular.copy($scope.lkorganisaatiot);
+            }
+            if ( !$scope.showOtherOrganizations ) {
+                $scope.lkorganisaatiot = lkorganisaatiotInit;
+            }
+        };
+
     });
-
-

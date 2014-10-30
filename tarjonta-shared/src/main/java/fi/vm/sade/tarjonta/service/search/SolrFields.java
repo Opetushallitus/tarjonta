@@ -28,7 +28,7 @@ public class SolrFields {
         protected static final String NIMET = "nimi_ss";
         protected static final String NIMIEN_KIELET = "nimikieli_ss";
         protected static final String OID = "id";
-        protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
+        protected static final String ORG_OID = "orgoid_ss";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String KOULUTUSOHJELMA_FI = "koulutusohjelmafi_t";               //this is used in search
         protected static final String KOULUTUSOHJELMA_SV = "koulutusohjelmasv_t";               //this is used in search
@@ -74,7 +74,7 @@ public class SolrFields {
         protected static final String NIMET = "nimi_ss";
         protected static final String NIMIEN_KIELET = "nimikieli_ss";
         protected static final String OID = "id";
-        protected static final String ORG_OID = "orgoid_s";                                     //needed for permissions
+        protected static final String ORG_OID = "orgoid_ss";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";

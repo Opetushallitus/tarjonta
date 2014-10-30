@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -139,7 +140,7 @@ public class ConverterV1 {
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
         t.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
 
-        if (true) {
+        if (addHakukohdes) {
             List<String> tmp = hakukohdeDao.findByHakuOid(t.getOid(), null, 0, 0, null, null);
             t.setHakukohdeOids(tmp);
         }
@@ -447,6 +448,16 @@ public class ConverterV1 {
 
     }
 
+    // ----------------------------------------------------------------------
+    // HAKUKOHDE
+    // ----------------------------------------------------------------------
+
+    /**
+     * Convert domain Hakukohde to REST HakukohdeRDTO.
+     *
+     * @param hakukohde
+     * @return
+     */
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
@@ -459,8 +470,9 @@ public class ConverterV1 {
             hakukohdeRDTO.getHakukohdeKoulutusOids().add(komoto.getOid());
 
             hakukohdeRDTO.getTarjoajaOids().add(komoto.getTarjoaja());
-
         }
+
+        addTarjoajatiedot(hakukohde, hakukohdeRDTO);
 
         if (hakukohde.getHakukohdeKoodistoNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimi(hakukohde.getHakukohdeKoodistoNimi());
@@ -468,6 +480,10 @@ public class ConverterV1 {
 
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
+        }
+
+        if (hakukohde.getAloituspaikatKuvaus() != null) {
+            hakukohdeRDTO.setAloituspaikatKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getAloituspaikatKuvaus(), false));
         }
 
         hakukohdeRDTO.setKaksoisTutkinto(hakukohde.isKaksoisTutkinto());
@@ -683,6 +699,33 @@ public class ConverterV1 {
         }
     }
 
+    private void addTarjoajatiedot(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        if (hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().isEmpty()) {
+            for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
+                String oid = koulutusmoduuliToteutus.getOid();
+
+                KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
+
+                // Lisää oletuksena vain se tarjoja, joka loi koulutuksen
+                koulutusmoduuliTarjoajatiedotV1RDTO.getTarjoajaOids().add(koulutusmoduuliToteutus.getTarjoaja());
+
+                hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
+            }
+        } else {
+            for (Map.Entry<String, KoulutusmoduuliToteutusTarjoajatiedot> entry : hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().entrySet()) {
+                String oid = entry.getKey();
+                KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = entry.getValue();
+
+                KoulutusmoduuliTarjoajatiedotV1RDTO koulutusmoduuliTarjoajatiedotV1RDTO = new KoulutusmoduuliTarjoajatiedotV1RDTO();
+                for (String tarjoajaOid : tarjoajatiedot.getTarjoajaOids()) {
+                    koulutusmoduuliTarjoajatiedotV1RDTO.addTarjoajaOid(tarjoajaOid);
+                }
+
+                hakukohdeRDTO.getKoulutusmoduuliToteutusTarjoajatiedot().put(oid, koulutusmoduuliTarjoajatiedotV1RDTO);
+            }
+        }
+    }
+
     private HashMap<String, String> convertMonikielinenMetadata(List<MonikielinenMetadata> metadatas) {
 
         if (metadatas != null) {
@@ -736,7 +779,9 @@ public class ConverterV1 {
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
+        hakukohde.setAloituspaikatKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getAloituspaikatKuvaukset()));
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
+
         if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
             hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
         }
@@ -1119,6 +1164,7 @@ public class ConverterV1 {
         hakukohdeLiite.setToimitusosoite(CommonRestConverters.toOsoite(hakukohdeLiiteV1RDTO.getLiitteenToimitusOsoite()));
         hakukohdeLiite.setKuvaus(convertMapToMonikielinenTeksti(hakukohdeLiiteV1RDTO.getLiitteenKuvaukset()));
         hakukohdeLiite.setLiitetyyppi(hakukohdeLiiteV1RDTO.getLiitteenTyyppi());
+        hakukohdeLiite.setJarjestys(hakukohdeLiiteV1RDTO.getJarjestys());
 
         return hakukohdeLiite;
     }
@@ -1149,6 +1195,7 @@ public class ConverterV1 {
         }
 
         hakukohdeLiiteV1RDTO.setLiitteenKuvaukset(BaseRDTOConverter.convertToMap(hakukohdeLiite.getKuvaus(), tarjontaKoodistoHelper));
+        hakukohdeLiiteV1RDTO.setJarjestys(hakukohdeLiite.getJarjestys());
 
         return hakukohdeLiiteV1RDTO;
     }
@@ -1600,6 +1647,8 @@ public class ConverterV1 {
         ret.setKoulutuksenAlkamisPvmMin(ht.getKoulutuksenAlkamisPvmMin());
         ret.setKoulutuksenAlkamisPvmMax(ht.getKoulutuksenAlkamisPvmMax());
 
+        ret.setTarjoajat(ht.getTarjoajat());
+
 //        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
 //        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
         return ret;
@@ -1609,6 +1658,7 @@ public class ConverterV1 {
             HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO> tulos,
             Map<String, TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>> tarjoajat,
             KoulutusPerustieto ht) {
+
         TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO> ret = tarjoajat.get(ht.getTarjoaja().getOid());
         if (ret == null) {
             ret = new TarjoajaHakutulosV1RDTO<KoulutusHakutulosV1RDTO>();

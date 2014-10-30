@@ -267,14 +267,15 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
             $scope.clearOrg = function () {
                 $scope.selectedOrgOid = OPH_ORG_OID;
-            }
+                $scope.$broadcast('clearOrg');
+            };
 
             $scope.reset = function () {
                 $scope.spec.terms = "";
                 $scope.spec.state = "*";
                 $scope.spec.year = "*";
                 $scope.spec.season = "*";
-            }
+            };
 
             $scope.selection = {
                 koulutukset: [],
@@ -322,10 +323,10 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 canCreateKoulutus: false
             };
 
-            var canRemove = function (hakuOid) {
-                return ((TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid) &&
-                    TarjontaService.parameterCanEditHakukohde(hakuOid)));
-            };
+            function canRemoveHakukohde(hakukohde) {
+                return TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakukohde.hakuOid)
+                       && TarjontaService.parameterCanEditHakukohde(hakukohde.hakuOid);
+            }
 
             function rowActions(prefix, row, actions) {
                 var oid = row.oid;
@@ -334,7 +335,15 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 var ret = [];
                 var tt = TarjontaService.getTilat()[tila];
 
-                tt.removable = canRemove(row.hakuOid);
+                var actionsByPrefix = {
+                    hakukohde: function(row) {
+                        tt.removable = tt.removable && canRemoveHakukohde(row);
+                    }
+                };
+
+                if ( actionsByPrefix[prefix] ) {
+                    actionsByPrefix[prefix](row);
+                }
 
                 var canRead = PermissionService[prefix].canPreview(oid);
                 console.log("row actions can read (" + prefix + ")", canRead);
@@ -348,7 +357,9 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                 }
                 // muokkaa
                 if (tt.mutable) {
-                    PermissionService[prefix].canEdit(oid).then(function (result) {
+                    PermissionService[prefix].canEdit(oid, {
+                        defaultTarjoaja: AuthService.getUserDefaultOid()
+                    }).then(function (result) {
                         console.log("row actions can edit (" + prefix + ")", result);
                         var url = "/" + prefix + "/" + oid + "/edit";
                         if (result) {
@@ -433,7 +444,8 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                     terms: $scope.spec.terms,
                     state: $scope.spec.state == "*" ? null : $scope.spec.state,
                     year: $scope.spec.year == "*" ? null : $scope.spec.year,
-                    season: $scope.spec.season == "*" ? null : $scope.spec.season + '#1'
+                    season: $scope.spec.season == "*" ? null : $scope.spec.season + '#1',
+                    defaultTarjoaja: $scope.selectedOrgOid
                 };
 
                 //console.log("search", spec);
@@ -737,7 +749,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
                 /**
                  * Valitsee ryhmän nimen.
-                 * 
+                 *
                  * TODO käyttäjän kieli ryhmön nimen näyttäminen...
                  */
                 $scope.getNimi = function (ryhma) {

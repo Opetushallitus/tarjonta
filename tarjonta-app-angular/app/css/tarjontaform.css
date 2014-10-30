@@ -189,3 +189,9 @@ table.tarjontaForm tr.header th {
    	font-weight:bold;
 	text-align:left;
 }
+
+/* Rukseihin [x] on usein käytetty a-tagia ilman href-attribuuttia, jolloin selain
+ei näytä pointer-cursoria. Alla oleva korjaa asian. */
+a[ng-click] {
+    cursor:pointer;
+}

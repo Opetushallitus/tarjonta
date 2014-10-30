@@ -26,6 +26,7 @@ import java.util.Random;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,13 +53,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.GenericSearchParamsV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuaikaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OidV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ProcessV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -132,7 +126,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         value = Integer.parseInt(sValue);
                         break;
                     case TILA:
-                        value = TarjontaTila.valueOf(sValue);
+                        if (sValue.equals("NOT_POISTETTU")) {
+                            match = Match.MUST_NOT;
+                            value = TarjontaTila.POISTETTU;
+                        }
+                        else {
+                            value = TarjontaTila.valueOf(sValue);
+                        }
                         break;
                     case HAKUSANA:
                         match = Match.LIKE; // %foo% haku
@@ -181,7 +181,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>(hakuDtos);
         for (Haku haku : hakus) {
-            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, false);
+            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, true);
             hakuDtos.add(hakuV1RDTO);
         }
 
@@ -193,8 +193,18 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
+    public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params) {
+        return findAllHakus(params);
+    }
 
+    @Override
+    public ResultV1RDTO<List<HakuV1RDTO>> findAllHakus() {
+        HakuSearchParamsV1RDTO params = new HakuSearchParamsV1RDTO();
+        params.addHakukohdes = true;
+        return findAllHakus(params);
+    }
+
+    private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus = hakuDAO.findAll();
 
         LOG.debug("FOUND  : {} hakus", hakus.size());
@@ -202,8 +212,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus != null && hakus.size() > 0) {
             for (Haku haku : hakus) {
-
-                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, false);
+                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes);
                 hakuDtos.add(hakuV1RDTO);
             }
 
@@ -290,7 +299,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
                     return result;
                 }
-                publication.updatePublicationStatus(Lists.newArrayList(tila));
 
                 if (hakuToUpdate == null) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.not.exists", hakuDto.getOid()));
@@ -324,7 +332,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             // Convert to DTO - reload to get hakuaika id's for example
             hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
-            result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, false));
+            result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, true));
 
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
         } catch (Throwable ex) {
@@ -645,9 +653,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Override
     public ResultV1RDTO<String> copyHaku(final String fromHakuOid, final String step) {
         LOG.info("copyHaku");
-        
+
         Haku h = hakuDAO.findByOid(fromHakuOid);
-        
+
         permissionChecker.checkUpdateHaku(h.getTarjoajaOids());
         ProcessV1RDTO processV1RDTO = MassCopyProcess.getDefinition(fromHakuOid, step);
         processV1RDTO.getParameters().put(MassCopyProcess.PROCESS_SKIP_STEP, step);

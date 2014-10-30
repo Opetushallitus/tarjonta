@@ -154,7 +154,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
 
 /**
  * This class is used to control the "tarjonta" UI.
- * 
+ *
 * @author jwilen
  * @author tkatva
  * @author mholi
@@ -163,7 +163,7 @@ import fi.vm.sade.tarjonta.ui.view.koulutus.aste2.EditKoulutusView;
  */
 public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
-    
+
     @Value("${koodisto-uris.yhteishaku}")
     private String hakutapaYhteishakuUrl;
 
@@ -559,7 +559,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
                 foundHaut.add(new HakuViewModel(foundHaku));
             }
         }
-        
+
         Predicate<HakuViewModel> pr1 = new HakuParameterPredicate(currentHakuOid, parameterServices, tarjontaPermissionService);
         Predicate<HakuViewModel> pr2 = new HakuHakuaikaPredicate(getModel().getHakukohde()!=null?getModel().getHakukohde().getHakuaika():null, hakutyyppiLisahakuUrl, hakutapaErillishakuUrl, getPermission());
         Predicate<HakuViewModel> pr3 = new HakuTilaPredicate();
@@ -688,6 +688,12 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         HakuTyyppi hakuT = hakuVastaus.getResponse().get(0);
         List<KoulutusPerustieto> validKoulutukses = new ArrayList<KoulutusPerustieto>();
         for (KoulutusPerustieto curKoulutus : vastaus.getKoulutukset()) {
+
+            // FIX OPHASPA-1522
+            if ( !TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(curKoulutus) ) {
+                continue;
+            }
+
             if (curKoulutus.getTarjoaja().getOid().equals(tarjoajaOid) && curKoulutus.getKoulutusKoodi().getUri().equals(koulutuskoodi.getUri())
                     && curKoulutus.getPohjakoulutusvaatimus().getUri().contains(pohjakoulutuskoodi.getUri())
                     && curKoulutus.getKoulutuksenAlkamiskausi().getUri().equals(hakuT.getKoulutuksenAlkamisKausiUri())
@@ -1330,7 +1336,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Show hakukohde edit view.
-     *     
+     *
 * @param koulutusOids
      * @param hakukohdeOid
      */
@@ -1499,7 +1505,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Gets the currently selected hakukohde objects.
-     *     
+     *
 * @return
      */
     public List<HakukohdePerustieto> getSelectedhakukohteet() {
@@ -1681,7 +1687,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Gets the currently selected koulutus objects.
-     *     
+     *
 * @return
      */
     public List<KoulutusPerustieto> getSelectedKoulutukset() {
@@ -1732,7 +1738,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Saves koulutus/tukinto, other synonyms: LOI, KOMOTO.
-     *     
+     *
 * @param tila (save state)
      * @throws ExceptionMessage
      */
@@ -1824,7 +1830,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Get UI model.
-     *     
+     *
 * @return
      */
     public TarjontaModel getModel() {
@@ -1858,7 +1864,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      * Reload koulutus and hakukohde views when an user hasn't selected root
      * organization OID. If the root organization is selected, then all data
      * items are cleared from the views.
-     *     
+     *
 */
     public void reloadMainView() {
         reloadMainView(false);
@@ -1870,7 +1876,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      * organization OID. If the root organization is selected, then all data
      * items are cleared from the views. There is also an option to force reload
      * to the views.
-     *     
+     *
 * @param forceReload
      */
     public void reloadMainView(final boolean forceReload) {
@@ -1907,7 +1913,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Retrieves the koulutus objects for ListKoulutusView.
-     *     
+     *
 * @return the koulutus objects
      */
     public Map<String, List<KoulutusPerustieto>> getKoulutusDataSource() {
@@ -1933,8 +1939,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
             if (!map.containsKey(koulutusKey)) {
                 //LOG.info("Adding a new key to the map: " + koulutusKey);
                 List<KoulutusPerustieto> koulutuksetM = new ArrayList<KoulutusPerustieto>();
-                koulutuksetM.add(curKoulutus);
-                map.put(koulutusKey, koulutuksetM);
+				// OPHASPA-1449
+				if (TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(curKoulutus)) {
+					koulutuksetM.add(curKoulutus);
+					map.put(koulutusKey, koulutuksetM);
+				}
             } else {
                 map.get(koulutusKey).add(curKoulutus);
             }
@@ -1947,7 +1956,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Gets the oids of the selectd koulutuses.
-     *     
+     *
 * @return the oids
      */
     public List<String> getSelectedKoulutusOids() {
@@ -1979,7 +1988,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Removal of a komoto object.
-     *     
+     *
 * @param koulutusOid
      */
     public boolean removeKoulutus(String koulutusOid) {
@@ -2000,7 +2009,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Shows the koulutus objects for a hakukohde in the ListHakukohdeView.
-     *     
+     *
 * @param hakukohde
      */
     public void showKoulutuksetForHakukohde(HakukohdePerustieto hakukohde) {
@@ -2023,7 +2032,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      * Selects the organisaatio in tarjonta, by setting the organisaatio name in
      * breadcrumb and setting the organisaatioOid and organisaatioNimi in
      * tarjonta model. Enables the create koulutus button in koulutus list view.
-     *     
+     *
 * @param organisaatioOid - the organisaatio oid to select
      * @param organisaatioName - the organisaatio name to select
      */
@@ -2069,7 +2078,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Gets koulutus by its oid.
-     *     
+     *
 * @param komotoOid - the koulutus oid for which the name is returned
      * @return the koulutus
      */
@@ -2301,6 +2310,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
         if (vastaus.getKoulutukset() != null && !vastaus.getKoulutukset().isEmpty()) {
             for (KoulutusPerustieto curTulos : vastaus.getKoulutukset()) {
 
+                if ( !TarjontaUIHelper.isNaytetaankoVaadinToteutuksessa(curTulos) ) {
+                    continue;
+                }
+
                 if (pohjakoulutusMatches(pohjakoulutusvaatimus, curTulos)
                         && tarjoajaMatches(getTarjoaja().getSingleSelectRowResultOrganisationOid(), curTulos)) {
                     LueKoulutusKyselyTyyppi lueKysely = new LueKoulutusKyselyTyyppi();
@@ -2426,7 +2439,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /**
      * Search yhteyshenkilo for a koulutus using user service based on on name
      * of the user and the organisation of the koulutus.
-     *     
+     *
 * @param value - the name or part of the name of the user to search for
      */
     public List<HenkiloType> searchYhteyshenkilo(String value) {
@@ -2476,7 +2489,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /**
      * Returns true if there are koulutuskoodis that are related to the
      * oppilaitostyyppis of the currently selected organisaatio.
-     *     
+     *
 * @return
      */
     public boolean availableKoulutus() {
@@ -2489,11 +2502,11 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
     /**
      * FIXME shouldn't this check that the (given) koulutus is allowed for ALL
      * of the given organisations?
-     *     
+     *
 * Only used from KoulutusKopiointiDialog, safe to modify. Maybe rename to
      * "checkKoulutusCanBeAddedToOrganisations(String koulutusKoodiUri,
      * Collection<> orgs)" ?
-     *     
+     *
 * @param orgs
      * @return
      */
@@ -2510,10 +2523,10 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Used only from UusiKoulutusDialog.
-     *     
+     *
 * Make sure selected Organisaatios have at least one common organisation
      * type.
-     *     
+     *
 * @param orgs
      * @return true if there is at leas one common organisaatio type in selected
      * organisation types
@@ -2547,7 +2560,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
      * "KOULUTUSTOIMIJA" then we use the types for the child organisations. OR
      * If org is of type "OPETUSPISTE" then we use the parents OppilaitosTyyppi
      * uris also)
-     *     
+     *
 * @param org
      * @return
      */
@@ -2584,7 +2597,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Open edit koulutus view.
-     *     
+     *
 * @param koulutusOid
      * @param tab
      */
@@ -2614,7 +2627,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Get koulutustarjoaja.
-     *     
+     *
 * @return
      */
     public TarjoajaModel getTarjoaja() {
@@ -2623,7 +2636,7 @@ public class TarjontaPresenter extends CommonPresenter<TarjontaModel> {
 
     /**
      * Get organisation data for navigation component.
-     *     
+     *
 * @return
      */
     public NavigationModel getNavigationOrganisation() {

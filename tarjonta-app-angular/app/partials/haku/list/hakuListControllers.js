@@ -30,7 +30,7 @@ app.controller('HakuListController',
 
 //
 // OVT-8275 ? Tama on myos tehty tuolla tarjontaApp init:ssä...
-// 
+//
 //                PermissionService.permissionResource().authorize({}, function(response) {
 //                    $log.debug("Authorization check : " + response.result);
 //                });
@@ -140,7 +140,7 @@ app.controller('HakuListController',
 
                 /**
                  * Deletes single selected haku.
-                 * 
+                 *
                  * @param {type} haku
                  * @param {type} doAfter
                  * @returns {undefined}
@@ -160,7 +160,7 @@ app.controller('HakuListController',
 
                 /**
                  * Delete selected hakus.
-                 * 
+                 *
                  * @returns {undefined}
                  */
                 $scope.doDeleteSelected = function() {
@@ -186,7 +186,7 @@ app.controller('HakuListController',
 
                 /**
                  * If true, selected hakus "delete" button is active.
-                 * 
+                 *
                  * @returns {Boolean}
                  */
                 $scope.canDeleteSelected = function() {
@@ -196,7 +196,7 @@ app.controller('HakuListController',
 
                 /**
                  * Go to review display.
-                 * 
+                 *
                  * @param {type} haku
                  * @returns {undefined}
                  */
@@ -206,21 +206,21 @@ app.controller('HakuListController',
 
                 /**
                  * Change state of haku to targetState.
-                 * 
+                 *
                  * Returns function that will be bound to correct haku row.
-                 * 
+                 *
                  * @param {type} targetState
                  * @returns {Function}
                  */
                 function changeState(targetState, prefix, confirmationDescription) {
-                  
+
                   var title = LocalisationService.t(prefix + ".confirmation.title");
                   var description = LocalisationService.t(prefix + ".confirmation.description");
                   var okAckTitle = LocalisationService.t(prefix + ".ack.title");
                   var okAckDescription = LocalisationService.t(prefix + ".ack.description");
                   var errorAckTitle = LocalisationService.t(prefix + ".error.ack.title");
                   var errorAckDescription = LocalisationService.t(prefix + ".error.ack.description");
-                  
+
                     return function(haku, doAfter, onlyHaku) {
 
                       /**
@@ -250,10 +250,10 @@ app.controller('HakuListController',
                                 after(errorAckTitle, errorAckDescription);
                             }
                         }, function(reason) {
-                          
+
                         });
                       }
-                      
+
                       return dialogService.showSimpleDialog(
                           title,
                           description,
@@ -346,6 +346,11 @@ app.controller('HakuListController',
                     params.KAUSIVUOSI = undefined;
                     params.KAUSI = undefined;
                     params.VUOSI = undefined;
+
+                    // Oletuksena haetaan kaikki muut, paitsi poistetut
+                    if (!params.TILA) {
+                        params.TILA = "NOT_POISTETTU";
+                    }
 
                     /**
                      * Allow user only to select values included in the typeahead response. If value is not

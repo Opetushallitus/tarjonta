@@ -54,6 +54,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import fi.vm.sade.tarjonta.model.KoulutusOwner;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,24 +112,36 @@ public class KoulutusIndexEntityToSolrDocument implements
             add(komotoDoc, KOULUTUSTYYPPI_URI, koulutus.getSubKoulutustyyppiEnum().uri());
             add(komotoDoc, TOTEUTUSTYYPPI_ENUM, koulutus.getSubKoulutustyyppiEnum());
         }
-        final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(Sets.newHashSet(koulutus.getTarjoaja()));
+        final List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(
+            indexerDao.getOwners(koulutus.getOid(), KoulutusOwner.TARJOAJA)
+        );
 
         if (orgs.size() == 0) {
             logger.warn("No org found for komoto: " + koulutus.getOid() + " skipping indexing!");
             return Lists.newArrayList();
         }
 
-        final OrganisaatioPerustieto org = orgs.get(0);
-        addOrganisaatioTiedot(komotoDoc, org, docs);
+        // Varmista, että se organisaatio joka luo koulutuksen indeksoidaan ensimmäisenä
+        String firstOwner = koulutus.getTarjoaja();
 
-        if (org.getParentOidPath() != null) {
-            ArrayList<String> oidPath = Lists.newArrayList();
+        if (firstOwner != null) {
+            add(komotoDoc, ORG_OID, firstOwner);
+        }
 
-            Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(org.getParentOidPath()));
-            Collections.reverse(oidPath);
+        for(OrganisaatioPerustieto org : orgs) {
+            if (!org.getOid().equals(firstOwner)) {
+                addOrganisaatioTiedot(komotoDoc, org, docs);
+            }
 
-            for (String path : oidPath) {
-                add(komotoDoc, ORG_PATH, path);
+            if (org.getParentOidPath() != null) {
+                ArrayList<String> oidPath = Lists.newArrayList();
+
+                Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(org.getParentOidPath()));
+                Collections.reverse(oidPath);
+
+                for (String path : oidPath) {
+                  add(komotoDoc, ORG_PATH, path);
+                }
             }
         }
 

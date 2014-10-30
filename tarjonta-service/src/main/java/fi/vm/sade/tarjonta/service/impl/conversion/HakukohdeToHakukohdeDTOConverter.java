@@ -48,7 +48,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 
 /**
  * Conversion for the REST services.
- * 
+ *
  * @author mlyly
  */
 public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohde, HakukohdeDTO> {
@@ -112,7 +112,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             // Name resolved from koodisto
             t.setHakukohdeNimi(tarjontaKoodistoHelper.getKoodiMetadataNimi(s.getHakukohdeNimi()));
         }
-        
+
         t.setAlinHyvaksyttavaKeskiarvo(s.getAlinHyvaksyttavaKeskiarvo() != null ? s.getAlinHyvaksyttavaKeskiarvo()
                 .doubleValue() : 0.0d);
         t.setAlinValintaPistemaara(s.getAlinValintaPistemaara() != null ? s.getAlinValintaPistemaara().intValue() : 0);
@@ -195,7 +195,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
                         t.getValintaperustekuvausKoodiUri(), MetaCategory.VALINTAPERUSTEKUVAUS.name())));
             }
         }
-        
+
 
 
         // SORAKUVAUS DESCRIPTION, (relation from koodisto, description data
@@ -252,7 +252,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
     /**
      * Convert PainotettavaOppiaine to list of [ [ "oppiaine", "9.7"], ... ]
-     * 
+     *
      * @param s
      * @return
      */
@@ -272,11 +272,11 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
     /**
      * Convert liite information.
-     * 
+     *
      * @param s
      * @return
      */
-    private List<HakukohdeLiiteDTO> convertLiitteet(Set<HakukohdeLiite> s) {
+    private List<HakukohdeLiiteDTO> convertLiitteet(List<HakukohdeLiite> s) {
         List<HakukohdeLiiteDTO> result = new ArrayList<HakukohdeLiiteDTO>();
 
         for (HakukohdeLiite hakukohdeLiite : s) {
@@ -289,7 +289,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
     /**
      * Extract metadata - key + category ("uri: soste-alue", "SORA") from many
      * languages.
-     * 
+     *
      * @param metas
      * @return map if language keyed translations
      */
@@ -303,7 +303,7 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
 
         return result.isEmpty() ? null : result;
     }
-    
+
     private Map<String, String> getMap(MonikielinenTeksti valintaperusteKuvaus) {
         // TODO Auto-generated method stub
         return null;

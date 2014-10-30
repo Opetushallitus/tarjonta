@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -72,58 +73,11 @@ public class TarjontaSearchService {
         this.hakukohdeSolr = factory.getSolrServer("hakukohteet");
     }
 
-    /**
-     * 1st step in hakukohdehaku, returns organisation name (with provided
-     * locale), hit searchCount
-     *
-     * @param locale
-     * @param kysely
-     * @return
-     */
-    public List<OrganisaatioHakukohdeGroup> haeHakukohteetGroupedByOrganisaatio(Locale locale, HakukohteetKysely kysely) {
-        List<OrganisaatioHakukohdeGroup> hakukohteet = Lists.newArrayList();
-        SolrQuery q = createHakukohdeQuery(kysely);
-        q.add("group", "true");
-        q.add("group.field", Hakukohde.ORG_OID);
-        q.add("group.limit", "0");
-        try {
-            QueryResponse response = hakukohdeSolr.query(q);
-            List<NamedList<Object>> resultList = NamedListUtil.from(response.getResponse()).get("grouped").get(SolrFields.Hakukohde.ORG_OID).get("groups").value();
-            Set<String> orgOids = Sets.newHashSet();
-            for (NamedList<Object> group : resultList) {
-                final String oid = NamedListUtil.getValue(group, "groupValue");
-                final SolrDocumentList results = NamedListUtil.from(group).get("doclist").value();
-                final Long count = results.getNumFound();
-                final OrganisaatioHakukohdeGroup g = new OrganisaatioHakukohdeGroup(oid, count);
-                hakukohteet.add(g);
-                orgOids.add(oid);
-            }
-
-            if (orgOids.size() > 0) {
-                List<OrganisaatioPerustieto> orgs = organisaatioSearchService.findByOidSet(orgOids);
-                Map<String, OrganisaatioPerustieto> oidOrgIndex = Maps.newHashMap();
-                for (OrganisaatioPerustieto perus : orgs) {
-                    oidOrgIndex.put(perus.getOid(), perus);
-                }
-
-                for (OrganisaatioHakukohdeGroup group : hakukohteet) {
-                    final OrganisaatioPerustieto perus = oidOrgIndex.get(group.getOrganisaatioOid());
-                    if (perus != null) {
-                        group.setOrganisaatioNimi(OrganisaatioDisplayHelper.getClosestBasic(locale, perus));
-                    } else {
-                        group.setOrganisaatioNimi(group.getOrganisaatioOid());
-                    }
-                }
-            }
-
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-        return hakukohteet;
+    public HakukohteetVastaus haeHakukohteet(final HakukohteetKysely kysely) {
+        return haeHakukohteet(kysely, null);
     }
 
-    public HakukohteetVastaus haeHakukohteet(
-            final HakukohteetKysely kysely) {
+    public HakukohteetVastaus haeHakukohteet(final HakukohteetKysely kysely, String defaultTarjoaja) {
 
         HakukohteetVastaus response = new HakukohteetVastaus();
 
@@ -136,15 +90,23 @@ public class TarjontaSearchService {
             Set<String> orgOids = Sets.newHashSet();
 
             for (SolrDocument doc : hakukohdeResponse.getResults()) {
+                // KJOH-778 fallback
+                String fallBackField = "orgoid_s";
+
                 if (doc.getFieldValue(Hakukohde.ORG_OID) != null) {
-                    orgOids.add((String) doc.getFieldValue(Hakukohde.ORG_OID));
+                    for(String tmpOrgOid : (ArrayList<String>) doc.getFieldValue(Hakukohde.ORG_OID)) {
+                        orgOids.add(tmpOrgOid);
+                    }
+                }
+                else if (doc.getFieldValue(fallBackField) != null) {
+                    orgOids.add((String) doc.getFieldValue(fallBackField));
                 }
             }
 
             if (orgOids.size() > 0) {
                 Map<String, OrganisaatioPerustieto> orgResponse = searchOrgs(orgOids);
                 SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
-                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse);
+                response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse, defaultTarjoaja);
             } else {
                 //empty result
                 response = new HakukohteetVastaus();
@@ -283,6 +245,10 @@ public class TarjontaSearchService {
     }
 
     public KoulutuksetVastaus haeKoulutukset(final KoulutuksetKysely kysely) {
+        return haeKoulutukset(kysely, null);
+    }
+
+    public KoulutuksetVastaus haeKoulutukset(final KoulutuksetKysely kysely, String defaultTarjoaja) {
 
         KoulutuksetVastaus response = new KoulutuksetVastaus();
 
@@ -297,8 +263,13 @@ public class TarjontaSearchService {
             Set<String> orgOids = Sets.newHashSet();
 
             for (SolrDocument doc : koulutusResponse.getResults()) {
-                if (doc.getFieldValue(Hakukohde.ORG_OID) != null) {
-                    orgOids.add((String) doc.getFieldValue(Hakukohde.ORG_OID));
+                if (doc.getFieldValue(Koulutus.ORG_OID) != null ) {
+                    //ArrayList<String> docOrgs = (ArrayList<String>) doc.getFieldValue(Koulutus.ORG_OID);
+                    orgOids.addAll((ArrayList) doc.getFieldValue(Koulutus.ORG_OID));
+                }
+                // KJOH-778 fallback
+                else if ( doc.get("orgoid_s") != null ) {
+                    orgOids.add((String) doc.getFieldValue("orgoid_s"));
                 }
             }
 
@@ -307,7 +278,7 @@ public class TarjontaSearchService {
 
                 SolrDocumentToKoulutusConverter converter = new SolrDocumentToKoulutusConverter();
 
-                response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs);
+                response = converter.convertSolrToKoulutuksetVastaus(koulutusResponse.getResults(), orgs, defaultTarjoaja);
 
             } else {
                 response = new KoulutuksetVastaus();

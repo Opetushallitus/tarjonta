@@ -35,7 +35,6 @@ app.controller('HakukohdeParentController', [
         var routing = {
             "KORKEAKOULUTUS": korkeakoulutusHakukohdePartialUri,
             "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA": aikuLukioHakukohdePartialUri,
-            "LUKIOKOULUTUS": aikuLukioHakukohdePartialUri,
             "AMMATILLINEN_PERUSKOULUTUS": aikuNayttoHakukohdePartialUri,
             "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA": aikuNayttoHakukohdePartialUri,
             "ERIKOISAMMATTITUTKINTO": aikuNayttoHakukohdePartialUri,
@@ -50,7 +49,6 @@ app.controller('HakukohdeParentController', [
             "VAPAAN_SIVISTYSTYON_KOULUTUS": toinenAsteHakukohdePartialUri,
             "AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA": toinenAsteHakukohdePartialUri
         };
-
 
         $scope.toisenAsteenKoulutus = function(toteutusTyyppi) {
             return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
@@ -145,7 +143,7 @@ app.controller('HakukohdeParentController', [
 
             var error = {};
 
-            error.errorMessageKey = commonExceptionMsgKey;
+            error.errorMessageKey = "Tuntematon virhe";
 
             errors.push(error);
 
@@ -329,6 +327,7 @@ app.controller('HakukohdeParentController', [
                 if (hakukohde.oid !== undefined) {
 
                     $scope.model.isCopy = false;
+                    $scope.isCopy = false;
 
                     $location.path('/hakukohde/' + hakukohde.oid + '/edit');
                 }
@@ -342,21 +341,17 @@ app.controller('HakukohdeParentController', [
         $scope.checkIsCopy = function (tilaParam) {
 
             // If scope or route has isCopy parameter defined as true remove
-            // oid,
-            // so that new hakukohde will be created
+            // oid so that new hakukohde will be created
 
             if ($route.current.locals && $route.current.locals.isCopy) {
-                $log.debug('HAKUKOHDE IS COPY, SETTING OID UNDEFINED');
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
 
             }
 
-            $log.debug('IS COPY : ', $scope.isCopy);
             if ($scope.isCopy !== undefined && $scope.isCopy) {
                 $scope.model.hakukohde.oid = undefined;
                 $scope.model.hakukohde.tila = tilaParam;
-
             }
 
             $scope.model.isCopy = true;
@@ -382,21 +377,26 @@ app.controller('HakukohdeParentController', [
         };
 
         $scope.validateHakukohde = function (toteutusTyyppi) {
-
-            if (!$scope.model.canSaveHakukohde()) {
-                return false;
-            }
+            $scope.model.aloituspaikatKuvauksetFailed = false;
 
             var errors = [];
 
             if($scope.needsHakukelpoisuus($scope.model.hakukohde.toteutusTyyppi)) {
                 if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
-
                     var error = {};
                     error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
                     $scope.model.hakukelpoisuusValidationErrMsg = true;
                     errors.push(error);
                 }
+            }
+            else {
+                $scope.model.hakukelpoisuusValidationErrMsg = false;
+            }
+
+            if ($scope.model.hakukohde.hakuOid === undefined || $scope.model.hakukohde.hakuOid.length < 1) {
+                var error = {};
+                error.errorMessageKey = 'hakukohde.edit.haku.missing';
+                errors.push(error);
             }
 
             if($scope.toisenAsteenKoulutus(toteutusTyyppi)) {
@@ -426,6 +426,9 @@ app.controller('HakukohdeParentController', [
                     errors.push(err);
                 }
             }
+            else {
+                $scope.model.nimiValidationFailed = false;
+            }
 
             if(toteutusTyyppi === 'LUKIOKOULUTUS') {
                 if(!validPainotettavatOppiaineet()) {
@@ -448,8 +451,20 @@ app.controller('HakukohdeParentController', [
                     errorMessageKey: "hakukohde.edit.liitteet.errors"
                 });
             }
+            angular.forEach($scope.model.hakukohde.aloituspaikatKuvaukset, function(arvo) {
+                if(arvo.length > 20) {
+                    errors.push({
+                        errorMessageKey: "hakukohde.edit.aloituspaikatKuvaukset.too.long"
+                    });
+                    $scope.model.aloituspaikatKuvauksetFailed = true;
+                    return;
+                }
+            });
 
-            if (errors.length < 1) {
+            if (errors.length < 1 && $scope.editHakukohdeForm.$valid) {
+            	if (!$scope.model.canSaveHakukohde()) {
+            		return false;
+            	}
                 return true;
             } else {
                 $scope.showError(errors);
@@ -459,9 +474,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         * 
+         *
          * ------> Load hakukohde koulutusnames
-         * 
+         *
          */
 
         $scope.loadKoulutukses = function (hakuFilterFunction) {
@@ -524,7 +539,66 @@ app.controller('HakukohdeParentController', [
             });
         };
 
-        $scope.getKoulutustenNimet = function () {
+        $scope.getHakukohteenNimet = function() {
+            var ret = "";
+            var ja = LocalisationService.t("tarjonta.yleiset.ja");
+
+            for (var i in $scope.model.hakukohde.hakukohteenNimet) {
+                if (i > 0) {
+                    ret = ret + ((i == $scope.model.hakukohde.hakukohteenNimet.length - 1) ? " " + ja + " " : ", ");
+                }
+                ret = ret + "<b>" + $scope.model.hakukohde.hakukohteenNimet[i] + "</b>";
+            }
+
+            return ret;
+        };
+
+        $scope.getHakukohteenJaOrganisaationNimi = function() {
+            return $scope.getHakukohteenNimet() + $scope.getOrganisaatioidenNimet();
+        };
+
+        $scope.getOrganisaatioidenNimet = function() {
+            var ret = "";
+            var uniqueTarjoajat = $scope.model.hakukohde.uniqueTarjoajat;
+            var organisaationNimi = $scope.model.organisaatioNimet[0];
+
+            // Kun luodaan uutta tämä muuttuja asetetaan true/false
+            if ( $scope.model.hakukohde.multipleOwners ) {
+                organisaationNimi = null;
+            }
+
+            else if (uniqueTarjoajat && uniqueTarjoajat.length) {
+                if (uniqueTarjoajat.length === 1) {
+                    organisaationNimi = uniqueTarjoajat[0].nimi;
+                }
+                else {
+                    // Ei listata mitään organisaatioita, jos niitä on useita
+                    organisaationNimi = null;
+                }
+            }
+
+            // Kun uusi hakukohde on tallennettu uniqueTarjoajat ei ole asetettu
+            else {
+                try {
+                    var map = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot;
+                    var firstTarjoajaInMap = map[_.keys(map)[0]].tarjoajaOids[0];
+                    var organizationsMatch = $scope.model.hakukohde.tarjoajaOids[0] === firstTarjoajaInMap;
+                    if (!organizationsMatch) {
+                        organisaationNimi = null;
+                    }
+                }
+                catch(e){}
+            }
+
+            if (organisaationNimi) {
+                var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
+                ret = ret + ". " + organisaatiolleMsg + " : <b>" + organisaationNimi + "</b>";
+            }
+
+            return ret;
+        };
+
+        $scope.getKoulutustenNimet = function() {
             var ret = "";
             var ja = LocalisationService.t("tarjonta.yleiset.ja");
 
@@ -535,35 +609,7 @@ app.controller('HakukohdeParentController', [
                 ret = ret + "<b>" + $scope.model.koulutusnimet[i] + "</b>";
             }
 
-            if ($scope.model.organisaatioNimet.length < 2 && $scope.model.organisaatioNimet.length > 0) {
-
-                var organisaatiolleMsg = LocalisationService.t("tarjonta.hakukohde.title.org");
-
-                ret = ret + ". " + organisaatiolleMsg + " : <b>" + $scope.model.organisaatioNimet[0] + " </b>";
-
-            } else {
-                var counter = 0;
-                var organisaatioilleMsg = LocalisationService.t("tarjonta.hakukohde.title.orgs");
-                angular.forEach($scope.model.organisaatioNimet, function (organisaatioNimi) {
-
-                    if (counter === 0) {
-
-                        ret = ret + ". " + organisaatioilleMsg + " : <b>" + organisaatioNimi + " </b>";
-
-                    } else {
-
-                        // ret = ret +
-                        // ((counter===$scope.model.organisaatioNimet.length-1) ?
-                        // " " : ", ");
-
-                        ret = ret + ", <b>" + organisaatioNimi + "</b>";
-
-                    }
-                    counter++;
-
-                });
-
-            }
+            ret += $scope.getOrganisaatioidenNimet();
 
             return ret;
         };
@@ -615,9 +661,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         * 
+         *
          * -----> Retrieve all hakus
-         * 
+         *
          */
         $scope.retrieveHakus = function (filterHakuFunction) {
 
@@ -1043,7 +1089,9 @@ app.controller('HakukohdeParentController', [
 
         var validateNames = function () {
             for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-                return true;
+            	if ($scope.model.hakukohde.hakukohteenNimet[i]) {
+                    return true;
+				}
             }
             return false;
         };
@@ -1058,7 +1106,7 @@ app.controller('HakukohdeParentController', [
             }
             return true;
         };
-        
+
         $scope.getHakuWithOid = function (hakuOid) {
 
             var foundHaku;
@@ -1163,9 +1211,15 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
 
+                    // Hakukohteiden liitteiden järjestys
+                    angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite, index) {
+                        liite.jarjestys = index;
+                    });
+
                     // Check if hakukohde is copy, then remove oid and
                     // save hakukohde as new
                     $scope.checkIsCopy($scope.luonnosVal);
+
                     if ($scope.model.hakukohde.oid === undefined) {
 
                         $log.debug('LISATIEDOT : ', $scope.model.hakukohde.lisatiedot);
@@ -1173,6 +1227,15 @@ app.controller('HakukohdeParentController', [
                         // OVT-8199, OVT-8205 Fix "toteutusTyyppi", was not sent to server side... was validated though :)
                         var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
                         $scope.model.hakukohde.toteutusTyyppi = toteutusTyyppi;
+
+                        // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
+                        var tarjoajatiedot = {};
+                        angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
+                            tarjoajatiedot[komotoOid] = {
+                                tarjoajaOids: [AuthService.getUserDefaultOid()]
+                            };
+                        });
+                        $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
 
                         $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
                         returnResource = $scope.model.hakukohde.$save();
@@ -1231,9 +1294,7 @@ app.controller('HakukohdeParentController', [
                                 if ($scope.model.hakukohde.soraKuvaukset === undefined) {
                                     $scope.model.hakukohde.soraKuvaukset = {};
                                 }
-
                                 $scope.showError(hakukohde.errors);
-
                             }
                         }, function (error) {
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
@@ -1247,9 +1308,9 @@ app.controller('HakukohdeParentController', [
         };
 
         /*
-         
+
          ------>  Koodisto helper methods
-         
+
          */
         var findKoodiWithArvo = function (koodi, koodis) {
 

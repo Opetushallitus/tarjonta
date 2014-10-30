@@ -43,6 +43,7 @@ describe('TarjontaPermissions', function() {
     beforeEach(module('Haku'));
     beforeEach(module('auth'));
     beforeEach(module('Tarjonta'));
+    beforeEach(module('SharedStateService'));
     beforeEach(module('TarjontaCache'));
     beforeEach(module('Logging'));
 
@@ -149,8 +150,7 @@ describe('TarjontaPermissions', function() {
         $httpBackend.whenGET('/organisaatio/1.2.3.4/parentoids').respond("1/1.2/1.2.3/1.2.3.4");
         $httpBackend.whenGET('/organisaatio/1.2.4/parentoids').respond("1/1.2/1.2.4");
         $httpBackend.whenGET('/organisaatio/1.2.5/parentoids').respond("1/1.2/1.2.5");
-        
-        
+
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.5').respond(koulutushaku('1.2.5'));
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.4').respond(koulutushaku('1.2.4'));
         $httpBackend.whenGET('/koulutus/search?koulutusOid=koulutus.1.2.3').respond(koulutushaku('1.2.3'));

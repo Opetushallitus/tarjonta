@@ -159,7 +159,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             lukioDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
             lukioDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             lukioDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
-            //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet	
+            //has parent texts data : Tavoite, Opintojen rakenne and Jatko-opintomahdollisuudet
             final Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
             //override parent komo data by the child komo data
             mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
@@ -315,14 +315,21 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         // KJOH-778 multiple owners, API output
         //
         for (KoulutusOwner owner : komoto.getOwners()) {
-            if (KoulutusOwner.TARJOAJA.equalsIgnoreCase(owner.getOwnerType())) {
+            if (KoulutusOwner.TARJOAJA.equals(owner.getOwnerType())) {
                 dto.getOpetusTarjoajat().add(owner.getOwnerOid());
-            } else if (KoulutusOwner.JARJESTAJA.equalsIgnoreCase(owner.getOwnerType())) {
+            }
+            else if (KoulutusOwner.JARJESTAJA.equals(owner.getOwnerType())) {
                 dto.getOpetusJarjestajat().add(owner.getOwnerOid());
-            } else {
+            }
+            else {
                 LOG.error("SKIPPING komoto oid: {}, invalid KoulutusOwner oid/type: {}/{}, accepted; TARJOAJA/JARJESTAJA",
                         komoto.getOid(), owner.getOwnerOid(), owner.getOwnerType());
             }
+        }
+
+        // Always ensure that we have at least something in opetusTarjoajat (JavaScript depends on it)
+        if (dto.getOpetusTarjoajat().isEmpty()) {
+            dto.getOpetusTarjoajat().add(komoto.getTarjoaja());
         }
 
         return dto;

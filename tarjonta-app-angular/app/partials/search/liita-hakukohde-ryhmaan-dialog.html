@@ -15,7 +15,7 @@
 
         <div ng-show="model.completed && model.result.errors">
             <p data-tt="search.ryhmat.liita.valimisErrors">
-                Valitut hakukohteet on liitetty haluttuihin ryhmiin. 
+                Valitut hakukohteet on liitetty haluttuihin ryhmiin.
                 Liittäessä tapahtui seuraavat virheet:
             </p>
 
@@ -23,7 +23,7 @@
                 <li>
                     {{ virhe | json }}
                 </li>
-            </ul>            
+            </ul>
         </div>
 
         <div ng-show="model.completed && !model.result.errors">
@@ -31,14 +31,14 @@
                 Valitut hakukohteet on liitetty haluttuihin ryhmiin. Ei virheitä.
             </p>
         </div>
-        
+
     </div>
 
     <div class="modal-footer">
         <button class="btn" ng-click="cancel()" ng-show="!model.completed" tt="tarjonta.toiminnot.cancel">Peruuta</button>
         <button class="btn btn-primary" ng-click="okLiita()" ng-show="!model.completed" tt="tarjonta.toiminnot.liita">Liitä ryhmiin</button>
         <button class="btn btn-primary" ng-click="okPoista()" ng-show="!model.completed" tt="tarjonta.toiminnot.poista">Poista ryhmistä</button>
-        <button class="btn" ng-click="close()" ng-show="model.completed" tt="tarjonta.toiminnot.lopeta">Lopeta</button>
+        <button class="btn" ng-click="close()" ng-show="model.completed" tt="tarjonta.toiminnot.sulje">Sulje</button>
     </div>
 
 </div>

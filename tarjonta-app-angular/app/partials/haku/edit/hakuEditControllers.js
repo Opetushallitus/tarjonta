@@ -310,48 +310,53 @@ app.controller('HakuEditController',
 
             $scope.filterKohdejoukkos = function () {
 
-              if(!AuthService.isUserOph())
-               {
+              if(!AuthService.isUserOph()) {
 
+                    var kkOppilaitosTyypit = [
+                        "oppilaitostyyppi_41",
+                        "oppilaitostyyppi_42",
+                        "oppilaitostyyppi_43"
+                    ]
 
-                    var kkOppilaitosTyypit = {};
-                    kkOppilaitosTyypit["oppilaitostyyppi_42"] = "";
-                    kkOppilaitosTyypit["oppilaitostyyppi_41"] = "";
-                    kkOppilaitosTyypit["oppilaitostyyppi_43"] = "";
+                    var haunKohdejoukot = ["haunkohdejoukko_10",
+                        "haunkohdejoukko_11",
+                        "haunkohdejoukko_13",
+                        "haunkohdejoukko_14",
+                        "haunkohdejoukko_15",
+                        "haunkohdejoukko_16",
+                        "haunkohdejoukko_17",
+                        "haunkohdejoukko_18"];
 
                     var userOrgs = AuthService.getOrganisations();
 
-                    //CHeck if user has KK - orgs
+                    $scope.model.kohdejoukkoFilterUris = [];
+
                     angular.forEach(userOrgs, function (org) {
                         OrganisaatioService.haeOppilaitostyypit(org).then(function (oppilaitosTyypit) {
 
                             angular.forEach(oppilaitosTyypit, function (oppilaitosTyyppi) {
-                                var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split("#");
-                                //User belongs to KK - org, check if he/she has CRUD
-                                if(oppilaitosTyyppiUriWithoutVersion[0] in kkOppilaitosTyypit) {
+                                var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split("#")[0];
+
+                                if(_.contains(kkOppilaitosTyypit, oppilaitosTyyppiUriWithoutVersion)) {
                                     AuthService.crudOrg(org).then(function (isCrud) {
-                                         console.log('IS CRUD : ', isCrud);
                                         if(isCrud) {
-                                               $scope.model.kohdejoukkoFilterUris = ["haunkohdejoukko_12"];
-
+                                            if(!_.contains($scope.model.kohdejoukkoFilterUris, "haunkohdejoukko_12")) {
+                                                $scope.model.kohdejoukkoFilterUris.push("haunkohdejoukko_12");
+                                            }
                                         }
-
-
-
                                     });
-
+                                } else {
+                                    _.each(haunKohdejoukot, function(kohdejoukko) {
+                                        if(!_.contains($scope.model.kohdejoukkoFilterUris, kohdejoukko)) {
+                                            $scope.model.kohdejoukkoFilterUris.push(kohdejoukko);
+                                        }
+                                    })
                                 }
                             })
-
                         });
-
                     });
                 }
-
-
-
             };
-
 
             $scope.isJatkuvaHaku = function() {
                 var result = $scope.isHakuJatkuvaHaku($scope.model.hakux.result);
