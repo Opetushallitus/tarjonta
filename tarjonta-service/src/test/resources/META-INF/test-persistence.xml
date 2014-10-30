@@ -31,6 +31,7 @@
         <class>fi.vm.sade.tarjonta.model.Kielivalikoima</class>
         <class>fi.vm.sade.tarjonta.model.BinaryData</class>
         <class>fi.vm.sade.tarjonta.model.Massakopiointi</class>
+        <class>fi.vm.sade.tarjonta.model.Yhteystiedot</class>
 
         <!-- oid service: -->
         <class>fi.vm.sade.oid.model.OID</class>

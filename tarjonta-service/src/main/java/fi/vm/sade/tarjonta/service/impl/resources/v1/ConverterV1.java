@@ -612,6 +612,7 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
+        hakukohdeRDTO.setYhteystiedot(CommonToDTOConverter.convertYhteystiedotToYhteystiedotRDTO(hakukohde.getYhteystiedot()));
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
         LOG.debug("HAKUKOHDE LISATIEDOT : {} ", hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY");
 
@@ -805,6 +806,9 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset() != null) {
             hakukohde.setHakukelpoisuusVaatimusKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
+        }
+        if (hakukohdeRDTO.getYhteystiedot() != null) {
+            hakukohde.setYhteystiedot(CommonRestConverters.convertYhteystiedotRDTOToYhteystiedot(hakukohdeRDTO.getYhteystiedot()));
         }
         if (hakukohdeRDTO.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
