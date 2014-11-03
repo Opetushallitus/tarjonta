@@ -3,7 +3,9 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.Osoite;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
+import fi.vm.sade.tarjonta.model.Yhteystiedot;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.YhteystiedotRDTO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,5 +47,20 @@ public class CommonRestConverters {
         }
 
         return map;
+    }
+
+    public static Yhteystiedot convertYhteystiedotRDTOToYhteystiedot(YhteystiedotRDTO yhteystiedotRDTO) {
+        if (yhteystiedotRDTO != null) {
+            Yhteystiedot yh = new Yhteystiedot();
+
+            yh.setOsoiterivi1(yhteystiedotRDTO.getOsoiterivi1());
+            yh.setOsoiterivi2(yhteystiedotRDTO.getOsoiterivi2());
+            yh.setPostinumero(yhteystiedotRDTO.getPostinumero());
+            yh.setPostitoimipaikka(yhteystiedotRDTO.getPostitoimipaikka());
+
+            return yh;
+        } else {
+            return null;
+        }
     }
 }

@@ -43,7 +43,10 @@
                 <tr>
                     <th tt="hakukohde.review.perustiedot.haku"/>
                     <td colspan="2">
-                        {{ model.hakuNimi}}
+                        {{ model.hakuNimiInformation.nimi }} (
+                        {{ model.hakuNimiInformation.hakuaikaNimi }} {{ model.hakuNimiInformation.alkuPvm | date:'dd.MM.yyyy HH:mm ' }} -
+                        {{ model.hakuNimiInformation.loppuPvm | date:'dd.MM.yyyy HH:mm ' }}
+                        )
                     </td>
                 </tr>
                 <tr ng-show="!isAiku">
@@ -54,7 +57,15 @@
                         </span>
                     </td>
                 </tr>
-                <tr>
+
+                <tr ng-show="isKK">
+                    <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
+                    <td colspan="2">
+                        <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
+                    </td>
+                </tr>
+
+                <tr ng-show="isAiku">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.aloituspaikatLkm}}

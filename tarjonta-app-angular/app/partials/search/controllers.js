@@ -622,7 +622,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
 
 
             $scope.luoUusiHakukohde = function () {
-                console.log("koulutukset:", $scope.selection.koulutukset);
+
                 if ($scope.selection.koulutukset.length === 0) {
                     return; // napin pitäisi olla disabloituna, eli tätä ei pitäisi tapahtua, mutta varmuuden vuoksi..
                 }

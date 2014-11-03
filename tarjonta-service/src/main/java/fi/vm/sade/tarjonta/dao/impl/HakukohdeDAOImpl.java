@@ -57,10 +57,12 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus toteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QYhteystiedot yhteystiedot = QYhteystiedot.yhteystiedot;
         BooleanExpression oidEq = toteutus.oid.eq(koulutusmoduuliToteutusOid);
 
         return from(hakukohde).
                 join(hakukohde.koulutusmoduuliToteutuses, toteutus).
+                leftJoin(hakukohde.yhteystiedot, yhteystiedot).fetch().
                 where(oidEq.and(hakukohde.tila.notIn(poistettuTila))).
                 list(hakukohde);
 
@@ -71,9 +73,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QYhteystiedot yhteystiedot = QYhteystiedot.yhteystiedot;
 
         return from(qHakukohde)
                 .join(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .leftJoin(qHakukohde.yhteystiedot, yhteystiedot).fetch()
                 .where(qHakukohde.ulkoinenTunniste.eq(ulkoinenTunniste).and(qKomoto.tarjoaja.eq(tarjoajaOid)).and(qHakukohde.tila.notIn(poistettuTila)))
                 .singleResult(qHakukohde);
 
@@ -199,9 +203,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QYhteystiedot qYhteystiedot = QYhteystiedot.yhteystiedot;
 
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .leftJoin(qHakukohde.yhteystiedot, qYhteystiedot).fetch()
                 .where(qHakukohde.hakukohdeNimi.eq(name)
                         .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))
                         .and(qKomoto.alkamiskausiUri.eq(term).and(qKomoto.alkamisVuosi.eq(year).and(qKomoto.tarjoaja.eq(providerOid))))).list(qHakukohde);
@@ -213,9 +219,11 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QKoulutusmoduuliToteutus qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+        QYhteystiedot qYhteystiedot = QYhteystiedot.yhteystiedot;
 
         return from(qHakukohde)
                 .innerJoin(qHakukohde.koulutusmoduuliToteutuses, qKomoto)
+                .leftJoin(qHakukohde.yhteystiedot, qYhteystiedot).fetch()
                 .where(qKomoto.alkamiskausiUri.eq(term).and(qKomoto.alkamisVuosi.eq(year)
                         .and(qHakukohde.tila.notIn(TarjontaTila.POISTETTU))
                         .and(qKomoto.tarjoaja.eq(providerOid)))).list(qHakukohde);

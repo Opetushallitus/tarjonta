@@ -7,6 +7,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import fi.vm.sade.tarjonta.service.resources.dto.YhteystiedotRDTO;
 
 /*
 * @author: Tuomas Katva 10/11/13
@@ -58,6 +59,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
     private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
+    private YhteystiedotRDTO yhteystiedot;
     private OsoiteRDTO liitteidenToimitusOsoite;
     private List<ValintakoeV1RDTO> valintakokeet;
     private Long valintaPerusteKuvausTunniste;
@@ -232,6 +234,14 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setHakukohteenLiitteet(List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet) {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
+    }
+
+    public YhteystiedotRDTO getYhteystiedot() {
+        return yhteystiedot;
+    }
+
+    public void setYhteystiedot(YhteystiedotRDTO yhteystiedot) {
+        this.yhteystiedot = yhteystiedot;
     }
 
     public OsoiteRDTO getLiitteidenToimitusOsoite() {

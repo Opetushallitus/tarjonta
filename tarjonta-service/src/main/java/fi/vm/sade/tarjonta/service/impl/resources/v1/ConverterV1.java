@@ -14,7 +14,6 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -647,6 +646,10 @@ public class ConverterV1 {
             }
         }
 
+        hakukohdeRDTO.setYhteystiedot(CommonToDTOConverter.convertYhteystiedotToYhteystiedotRDTO(hakukohde.getYhteystiedot()));
+        hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
+        LOG.debug("HAKUKOHDE LISATIEDOT : {} ", hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY");
+
         if (hakukohde.getValintakoes() != null) {
             List<ValintakoeV1RDTO> valintakoeDtos = new ArrayList<ValintakoeV1RDTO>();
             for (Valintakoe valintakoe : hakukohde.getValintakoes()) {
@@ -780,7 +783,8 @@ public class ConverterV1 {
         hakukohde.setOid(hakukohdeRDTO.getOid());
         hakukohde.setAloituspaikatLkm(hakukohdeRDTO.getAloituspaikatLkm());
         hakukohde.setAloituspaikatKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getAloituspaikatKuvaukset()));
-        hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
+        hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
+        hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
         if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
             hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
@@ -863,6 +867,9 @@ public class ConverterV1 {
 
         if (hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset() != null) {
             hakukohde.setHakukelpoisuusVaatimusKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
+        }
+        if (hakukohdeRDTO.getYhteystiedot() != null) {
+            hakukohde.setYhteystiedot(CommonRestConverters.convertYhteystiedotRDTOToYhteystiedot(hakukohdeRDTO.getYhteystiedot()));
         }
         if (hakukohdeRDTO.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.toOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));

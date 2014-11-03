@@ -22,6 +22,7 @@ import java.util.*;
 import javax.persistence.*;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
@@ -90,6 +91,10 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "tila")
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
+    
+    @OneToOne(mappedBy = "hakukohde", cascade = CascadeType.ALL)
+    private Yhteystiedot yhteystiedot;
+    
     @Embedded
     private Osoite liitteidenToimitusOsoite;
     @Column(name = "sahkoinenToimitusOsoite")
@@ -424,6 +429,14 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setEdellisenVuodenHakijat(Integer edellisenVuodenHakijat) {
         this.edellisenVuodenHakijat = edellisenVuodenHakijat;
+    }
+
+    public Yhteystiedot getYhteystiedot() {
+        return yhteystiedot;
+    }
+
+    public void setYhteystiedot(Yhteystiedot yhteystiedot) {
+        this.yhteystiedot = yhteystiedot;
     }
 
     public Osoite getLiitteidenToimitusOsoite() {

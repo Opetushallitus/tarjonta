@@ -246,9 +246,7 @@ app
                     };
 
                     $scope.addValintakoe = function(lc) {
-                        console.log("add valintakoe");
                         return HakukohdeService.addValintakoe($scope.model.hakukohde, lc);
-                        console.log("add valintakoe-->");
                     };
 
                     $scope.getValintakokeetByKieli = function(lc) {

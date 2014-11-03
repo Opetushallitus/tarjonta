@@ -235,7 +235,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
 
         };
         var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService, TarjontaService) {
-            $log.info("/hakukohde/ID", $route);
+
             if ("new" === $route.current.params.id) {
 
                 var selectedTarjoajaOids;
@@ -271,16 +271,16 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     soraKuvaukset: {}
                 });
 
-                // Check if komoto has multiple owners
-                TarjontaService.haeKoulutukset({koulutusOid: selectedKoulutusOids[0]}).then(function(res) {
+                TarjontaService.getKoulutusPromise(selectedKoulutusOids[0]).then(function(res) {
                     var multipleOwners = false;
                     try {
-                        multipleOwners = res.tulokset[0].tulokset[0].tarjoajat.length > 1;
+                        multipleOwners = res.result.opetusTarjoajat.length > 1;
                     }
                     catch(e) {
                         // Should'nt happen
                     }
                     hakukohde.multipleOwners = multipleOwners;
+                    hakukohde.opetusKielet = Object.keys(res.result.opetuskielis.uris);
                     deferred.resolve(hakukohde);
                 });
 
