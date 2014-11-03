@@ -69,7 +69,14 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr ng-show="isKK">
+                    <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
+                    <td colspan="2">
+                        <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
+                    </td>
+                </tr>
+
+                <tr ng-show="isAiku">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.aloituspaikatLkm}}
