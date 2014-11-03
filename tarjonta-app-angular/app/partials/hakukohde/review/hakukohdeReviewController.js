@@ -288,6 +288,11 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             var hakuaika = _.find(haku.hakuaikas, function(hakuaika) {
                 return hakuaika.hakuaikaId === $scope.model.hakukohde.hakuaikaId;
             });
+
+            if(hakuaika === undefined) {
+                hakuaika = _.first(haku.hakuaikas);
+            }
+
             return hakuaika;
         }
 
