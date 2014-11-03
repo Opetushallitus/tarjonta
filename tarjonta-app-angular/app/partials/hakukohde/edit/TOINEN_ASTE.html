@@ -46,7 +46,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.toisenAsteenHakuChanged()" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus | orderBy: 'lokalisoituNimi'"/>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged()" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus | orderBy: 'lokalisoituNimi'"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
@@ -132,7 +132,7 @@
                         <th tt="tarjonta.hakukohde.liitteet.toimitusosoite">Liitteiden toimitusosoite</th>
                         <td>
                             <div><span tt="tarjonta.hakukohde.liitteidenToimitusosoite.ohje">Ilmoita tässä osoite, johon harkinnanvaraisen haun liitteet toimitetaan. Ilmoita tiedot muista mahdollisista liitteistä ja niiden toimitusosoitteista Liitteiden tiedot -välilehdellä.</span></div>
-                            <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="resetHakukohdeLiitteidenToimitusOsoite()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta">Käytetään oletuksena järjestävän organisaation ensisijaista postiosoitetta</span></label>
+                            <label><input type="radio" ng-disabled="toimitusosoiteIsEmpty()" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="resetHakukohdeLiitteidenToimitusOsoite()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta">Käytetään oletuksena järjestävän organisaation ensisijaista postiosoitetta</span></label>
                             <br/>
 
                             <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="true"/><span tt="tarjonta.hakukohde.liitteet.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span></label>
@@ -163,7 +163,7 @@
                     <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)" class="required">
                         <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa">Liitteet toimitettava mennessä</th>
                         <td>
-                            <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="useHaunPaattymisaikaChanged(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa">Käytä haun päättymisen aikaa</span></label><br/>
+                            <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="updateKaytaHaunPaattymisenAikaa(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa">Käytä haun päättymisen aikaa</span></label><br/>
                             <t-date-time required timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-model="model.hakukohde.liitteidenToimitusPvm" ng-change="status.dirtify()"></t-date-time>
                         </td>
                         <td>

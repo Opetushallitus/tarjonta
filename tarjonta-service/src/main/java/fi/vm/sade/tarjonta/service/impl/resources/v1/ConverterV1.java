@@ -647,7 +647,6 @@ public class ConverterV1 {
         }
 
         hakukohdeRDTO.setYhteystiedot(CommonToDTOConverter.convertYhteystiedotToYhteystiedotRDTO(hakukohde.getYhteystiedot()));
-        hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
         LOG.debug("HAKUKOHDE LISATIEDOT : {} ", hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY");
 
         if (hakukohde.getValintakoes() != null) {

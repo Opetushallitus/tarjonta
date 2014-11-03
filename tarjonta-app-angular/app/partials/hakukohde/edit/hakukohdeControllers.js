@@ -364,11 +364,8 @@ app.controller('HakukohdeEditController',
             }
 
             $scope.handleConfigurableHakuaika();
+            $scope.updateKaytaHaunPaattymisenAikaa($scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm);
         }
-    };
-
-    $scope.model.toisenAsteenHakuChanged = function(hakuOid) {
-        $scope.handleConfigurableHakuaika()
     };
 
     var validateHakukohdeFunction = function() {

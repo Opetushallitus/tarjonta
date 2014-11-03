@@ -64,6 +64,7 @@ app.controller('HakukohdeParentController', [
 
         $scope.needsHakukelpoisuus = function(toteutusTyyppi) {
             return toteutusTyyppi !== 'PERUSOPETUKSEN_LISAOPETUS' &&
+                toteutusTyyppi !== 'LUKIOKOULUTUS' &&
                 toteutusTyyppi !== 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' &&
                 toteutusTyyppi !== 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
                 toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
@@ -1142,6 +1143,10 @@ app.controller('HakukohdeParentController', [
 
         };
 
+        $scope.toimitusosoiteIsEmpty = function() {
+            return _.isEmpty($scope.model.liitteidenToimitusOsoite);
+        }
+
         $scope.resetHakukohdeLiitteidenToimitusOsoite = function() {
             if($scope.model.liitteidenToimitusOsoite['kieli_fi'] !== undefined) {
                 $scope.model.hakukohde.liitteidenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite['kieli_fi']);
@@ -1515,7 +1520,7 @@ app.controller('HakukohdeParentController', [
             }
         };
 
-        $scope.useHaunPaattymisaikaChanged = function(value) {
+        $scope.updateKaytaHaunPaattymisenAikaa = function(value) {
             if(value === true) {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);

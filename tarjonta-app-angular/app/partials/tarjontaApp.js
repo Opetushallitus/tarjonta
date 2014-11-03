@@ -281,13 +281,13 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     }
                     hakukohde.multipleOwners = multipleOwners;
                     hakukohde.opetusKielet = Object.keys(res.result.opetuskielis.uris);
+                    hakukohde.toteutusTyyppi = res.result.toteutustyyppi;
                     deferred.resolve(hakukohde);
                 });
 
                 return deferred.promise;
-            }
 
-            else {
+            } else {
                 var deferred = $q.defer();
 
                 Hakukohde.get({oid: $route.current.params.id}).$promise.then(function(res) {

@@ -60,6 +60,10 @@ app.controller('ValintakokeetLukioController',
         var init = function() {
             $scope.valintakoe = $scope.model.hakukohde.valintakokeet[0];
 
+            if($scope.valintakoe === undefined) {
+                $scope.valintakoe = {};
+            }
+
             if($scope.valintakoe.pisterajat === undefined) {
                 $scope.valintakoe.pisterajat= [];
             }
@@ -97,10 +101,6 @@ app.controller('ValintakokeetLukioController',
         $scope.$on('reloadValintakokeet', function(){
             init();
         });
-
-        window.getHakukohde = function(){
-            return $scope.model.hakukohde;
-        }
 
         $scope.kokonaispisteetChanged = function() {
             var value = $scope.valintakoe.kokonaispisteetPisterajat.alinHyvaksyttyPistemaara;
