@@ -108,6 +108,5 @@ app.controller('HakukohdeRoutingController', [
       }
 
       $scope.hakukohdex = $route.current.locals.hakukohdex;
-      $log.info("  --> hakukohdex == ", $scope.hakukohdex);
 
     } ]);
