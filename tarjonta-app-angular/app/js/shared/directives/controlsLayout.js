@@ -188,8 +188,12 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     appendMetadata($scope.model.metadata, lokalisointiKey, userOid, date);
                 }
             };
+            
             $scope.isNew = function() {
-                return !$scope.model.dto.oid && $scope.model.metadata.length == 0;
+            	if ($scope.model && $scope.model.dto && $scope.model.dto.oid) {
+					return false;
+				}
+            	return true;
             };
 
             function titleText() {

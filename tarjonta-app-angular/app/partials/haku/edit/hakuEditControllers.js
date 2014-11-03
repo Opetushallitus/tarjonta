@@ -193,15 +193,8 @@ app.controller('HakuEditController',
                         $scope.saveParameters(result.result);
                         $log.info("saveparameters->");
 
-                        // If this is new haku, then move to edit url
-                        if ($scope.isNewHaku()) {
-                            $log.debug("  change model to be fresh from server AND update browser URL");
-                            // Also update UI model to be fresh from the server
-                            // TODO any other changes to UI model needed?
-                            $scope.model.hakux = result;
-                            // Change url
-                            $location.path("/haku/" + result.result.oid + "/edit");
-                        }                        
+                        $scope.model.hakux = result;
+                        $location.path("/haku/" + result.result.oid + "/edit");
                     } else {
                         // Failed to save Haku... show errors
                         $scope.model.showError = true;
