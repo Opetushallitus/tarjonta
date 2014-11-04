@@ -420,22 +420,22 @@ a.btn span {
 
 /* tarjontaControlsLayout / ilmoitusviestit */
 
-div.tarjontaControlsLayout .msgInfo, div.tarjontaControlsLayout .msgError, div.tarjontaControlsLayout .msgOk {
+.msgInfo, .msgError, .msgOk {
 	border-radius: 4px;	
 	padding: 40px 40px 40px 86px;
 	margin:18px 0 18px 0;
 	box-shadow: 0 2px 3px rgba(0,0,0,0.275);
 }
 
-div.tarjontaControlsLayout .msgOk {
+.msgOk {
 	background: #e4f4f9 url('../img/icon28-ok.png') 36px 36px no-repeat;
 }
 
-div.tarjontaControlsLayout .msgInfo {
+.msgInfo {
 	background: #e4f4f9 url('../img/icon28-info.png') 36px 36px no-repeat;
 }
 
-div.tarjontaControlsLayout .msgError {
+.msgError {
 	background: #fef3d3 url('../img/icon28-error.png') 36px 36px no-repeat;
 }
 
@@ -855,4 +855,8 @@ table tr.hakuajat td.nimet th {
 
 table tr.aloituspaikatKuvaukset table {
     width: 350px;
+}
+
+.valintaperustekuvaukset .search {
+    float: right;
 }
