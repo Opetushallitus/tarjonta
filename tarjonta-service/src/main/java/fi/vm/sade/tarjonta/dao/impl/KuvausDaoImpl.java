@@ -34,7 +34,10 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
 
 
         return from(qValintaperusteSoraKuvaus)
-                .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi))
+                .where(
+                    qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi)
+                    .and(qValintaperusteSoraKuvaus.tila.ne("POISTETTU"))
+                )
                 .list(qValintaperusteSoraKuvaus);
 
     }
@@ -47,7 +50,11 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
 
 
         return from(qValintaperusteSoraKuvaus)
-                .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType)))
+                .where(
+                    qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi)
+                    .and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType))
+                    .and(qValintaperusteSoraKuvaus.tila.ne("POISTETTU"))
+                )
                 .list(qValintaperusteSoraKuvaus);
 
 
@@ -59,8 +66,11 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
         QValintaperusteSoraKuvaus qValintaperusteSoraKuvaus = QValintaperusteSoraKuvaus.valintaperusteSoraKuvaus;
 
         return from(qValintaperusteSoraKuvaus)
-                .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType))
-                        .and(qValintaperusteSoraKuvaus.kausi.eq(kausi)).and(qValintaperusteSoraKuvaus.vuosi.eq(year)))
+                .where(
+                    qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType))
+                    .and(qValintaperusteSoraKuvaus.kausi.eq(kausi)).and(qValintaperusteSoraKuvaus.vuosi.eq(year))
+                    .and(qValintaperusteSoraKuvaus.tila.ne("POISTETTU"))
+                )
                 .list(qValintaperusteSoraKuvaus);
 
     }
@@ -73,8 +83,11 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
 
 
         return from(qValintaperusteSoraKuvaus)
-                .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType))
-                .and(qValintaperusteSoraKuvaus.vuosi.eq(year)))
+                .where(
+                    qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(orgType))
+                    .and(qValintaperusteSoraKuvaus.vuosi.eq(year))
+                    .and(qValintaperusteSoraKuvaus.tila.ne("POISTETTU"))
+                )
                 .list(qValintaperusteSoraKuvaus);
 
     }
@@ -87,7 +100,11 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
 
 
         return from(qValintaperusteSoraKuvaus)
-                .where(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi).and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(oppilaitosTyyppi.trim()))).list(qValintaperusteSoraKuvaus);
+                .where(
+                    qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi)
+                    .and(qValintaperusteSoraKuvaus.organisaatioTyyppi.eq(oppilaitosTyyppi.trim()))
+                    .and(qValintaperusteSoraKuvaus.tila.ne("POISTETTU"))
+                ).list(qValintaperusteSoraKuvaus);
                 //TODO: how to query "IN" monikielinentekstis ?
 
 
@@ -115,6 +132,8 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
         if (searchSpec.getKausiUri() != null) {
             whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.kausi.eq(searchSpec.getKausiUri()));
         }
+
+        whereExpr = QuerydslUtils.and(whereExpr, qValintaperusteSoraKuvaus.tila.ne("POISTETTU"));
 
         //TODO: add search for nimi
 

@@ -297,7 +297,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         try {
             Long id = new Long(tunniste);
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(id);
-            if (valintaperusteSoraKuvaus != null) {
+            if (valintaperusteSoraKuvaus != null && !valintaperusteSoraKuvaus.getTila().equals("POISTETTU")) {
 
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
                 resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
@@ -325,6 +325,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
                 LOG.debug("NO EXISTING KUVAUS FOUND, CREATING NEW");
                 valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
+                valintaperusteSoraKuvaus.setTila("VALMIS");
                 valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
                 KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
 
@@ -442,7 +443,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             permissionChecker.checkRemoveValintaPeruste();
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.parseLong(tunniste));
 
-            kuvausDAO.remove(valintaperusteSoraKuvaus);
+            valintaperusteSoraKuvaus.setTila("POISTETTU");
 
             resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);

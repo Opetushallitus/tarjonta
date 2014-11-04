@@ -271,4 +271,10 @@ public interface HakukohdeV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Tutkii onko valituista koulutuksista mahdollista luoda uusi hakukohde", response = ResultV1RDTO.class)
     public ResultV1RDTO<ValitutKoulutuksetV1RDTO> isValidKoulutusSelection(@QueryParam("oid") List<String> oids);
+
+    @GET
+    @Path("/findHakukohdesByKuvausId/{id}")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(value = "Palauttaa hakukohteet, jotka on liittetty annettuun valintaperuste/SORA -kuvaukseen", response = ResultV1RDTO.class)
+    public ResultV1RDTO<List<HakukohdeV1RDTO>> findHakukohdesByKuvausId(@PathParam("id") Long id);
 }

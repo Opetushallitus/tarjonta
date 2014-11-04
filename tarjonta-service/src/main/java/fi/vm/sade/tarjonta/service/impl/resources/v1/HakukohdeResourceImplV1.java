@@ -1433,4 +1433,25 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         return validKomotoSelection;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<List<HakukohdeV1RDTO>> findHakukohdesByKuvausId(Long id) {
+        ResultV1RDTO<List<HakukohdeV1RDTO>> result = new ResultV1RDTO<List<HakukohdeV1RDTO>>();
+
+        ArrayList<Hakukohde> hakukohdes = new ArrayList<Hakukohde>();
+        hakukohdes.addAll(hakukohdeDAO.findBy("valintaPerusteKuvausTunniste", id));
+        hakukohdes.addAll(hakukohdeDAO.findBy("soraKuvausTunniste", id));
+
+        ArrayList<HakukohdeV1RDTO> hakukohdeV1RDTOs = new ArrayList<HakukohdeV1RDTO>();
+        for (Hakukohde hakukohde : hakukohdes) {
+            if (hakukohde.getTila() != TarjontaTila.POISTETTU) {
+                hakukohdeV1RDTOs.add(converterV1.toHakukohdeRDTO(hakukohde));
+            }
+        }
+
+        result.setStatus(ResultV1RDTO.ResultStatus.OK);
+        result.setResult(hakukohdeV1RDTOs);
+        return result;
+    }
+
 }

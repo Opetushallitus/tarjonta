@@ -200,7 +200,7 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
 
 });
 
-app.factory('HakukohdeService', function($resource, Config) {
+app.factory('HakukohdeService', function($resource, Config, $http) {
 
     function addValintakoeIfEmpty(hakukohde) {
         if (hakukohde.valintakokeet.length == 0) {
@@ -301,10 +301,10 @@ app.factory('HakukohdeService', function($resource, Config) {
         addValintakoe: addValintakoe,
         addLiiteIfEmpty: addLiiteIfEmpty,
         addLiite: addLiite,
-        removeEmptyLiites: removeEmptyLiites
+        removeEmptyLiites: removeEmptyLiites,
+        findHakukohdesByKuvausId: function(kuvausId) {
+            return $http.get(Config.env.tarjontaRestUrlPrefix + "hakukohde/findHakukohdesByKuvausId/" + kuvausId);
+        }
     };
-
-
-
 
 });
