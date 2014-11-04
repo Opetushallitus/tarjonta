@@ -200,7 +200,7 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
 
 });
 
-app.factory('HakukohdeService', function($resource, Config) {
+app.factory('HakukohdeService', function($resource, Config, $http) {
 
     function addValintakoeIfEmpty(hakukohde) {
         if (hakukohde.valintakokeet.length == 0) {
@@ -236,7 +236,6 @@ app.factory('HakukohdeService', function($resource, Config) {
      * @param hakukohde
      */
     function addLiiteIfEmpty(hakukohde) {
-        console.log("checking if there is liite in hakukohde");
 
         if(!hakukohde.hakukohteenLiitteet){
             hakukohde.hakukohteenLiitteet=[];
@@ -244,7 +243,6 @@ app.factory('HakukohdeService', function($resource, Config) {
 
         if (hakukohde.hakukohteenLiitteet.length === 0) {
             var kieli = hakukohde.opetusKielet[0]||"kieli_fi";
-            console.log("no there was not, adding one with lang", kieli);
             addLiite(hakukohde, kieli,{});
         }
     }
@@ -255,9 +253,7 @@ app.factory('HakukohdeService', function($resource, Config) {
      * @param kieliUri
      */
     function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite){
-        console.log("lisätään liite hakukohteeseen:", kieliUri);
         hakukohde.hakukohteenLiitteet.push(newLiite(hakukohde.oid, kieliUri,liitteidenToimitusosoite));
-        console.log("hakukohde:", hakukohde);
     }
 
 
@@ -305,10 +301,10 @@ app.factory('HakukohdeService', function($resource, Config) {
         addValintakoe: addValintakoe,
         addLiiteIfEmpty: addLiiteIfEmpty,
         addLiite: addLiite,
-        removeEmptyLiites: removeEmptyLiites
+        removeEmptyLiites: removeEmptyLiites,
+        findHakukohdesByKuvausId: function(kuvausId) {
+            return $http.get(Config.env.tarjontaRestUrlPrefix + "hakukohde/findHakukohdesByKuvausId/" + kuvausId);
+        }
     };
-
-
-
 
 });

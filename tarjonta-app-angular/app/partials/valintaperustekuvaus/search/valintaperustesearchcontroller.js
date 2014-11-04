@@ -2,7 +2,6 @@ var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.service
 
 app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal,$log) {
 
-
     var oppilaitosKoodistoUri = "oppilaitostyyppi";
 
     var kausiKoodistoUri = "kausi";
@@ -11,7 +10,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     		valintaperusteet: [],
     		sorat: []
     };
-    
+
     $scope.model = {};
 
     $scope.model.searchSpec = {};
@@ -132,7 +131,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
              }
         });
     };
-    
+
     function koodistoToMap(res) {
     	var ret = {};
     	for (var i in res) {
@@ -153,9 +152,9 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         	for (var i in kuvaukset) {
         		var v = kuvaukset[i];
         		v.kausiNimi = koodisto[v.kausi] || v.kausi;
-        	}        	
+        	}
             doAfter();
-        });        
+        });
 
     };
 
@@ -167,7 +166,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         	for (var i in kuvaukset) {
         		var v = kuvaukset[i];
         		v.organisaatioTyyppiNimi = koodisto[v.organisaatioTyyppi] || v.organisaatioTyyppi;
-        	}        	
+        	}
             doAfter();
         });
    };
@@ -227,13 +226,19 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     };
 
     var removeKuvaus = function(kuvaus, doAfter) {
-    	var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.kuvauksenTunniste);
-        removedKuvausPromise.then(function(removedKuvaus){
-            console.log('REMOVED KUVAUS: ' , removedKuvaus);
-            if (removedKuvaus.status === "OK")  {
-            	doAfter();
-            }
 
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/valintaperustekuvaus/remove/poista.html',
+            controller: 'PoistaValintaperustekuvausCtrl',
+            resolve: {
+                selectedKuvaus: function() {
+                    return kuvaus;
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+            doAfter();
         });
     };
 
@@ -321,7 +326,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                 $log.info('GOT KUVAUS RESULT : ', resultData);
 
                 if (resultData.status === "OK") {
-                	
+
                 	localizeKuvausNames(resultData.result);
                     resolveOppilaitosTyyppi(resultData.result, function(){
                         resolveKausi(resultData.result, function(){
@@ -342,7 +347,7 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
 
     }
-    
+
     $scope.kuvauksetGetContent = function(row, col) {
     	console.log("GET CONTENT "+col, row);
     	switch (col) {
@@ -354,16 +359,16 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 			return row.kuvauksenNimi;
     	}
     }
-    
+
     $scope.kuvauksetGetIdentifier = function(row) {
     	return row.kuvauksenTunniste;
     }
-    
+
     $scope.kuvauksetGetLink = function(row) {
     	return "#/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+row.kuvauksenTyyppi +"/"+row.kuvauksenTunniste;
     }
-    
-    $scope.kuvauksetGetOptions = function(row) {    	
+
+    $scope.kuvauksetGetOptions = function(row) {
     	return [{
     		title: LocalisationService.t("tarjonta.toiminnot.muokkaa"),
     		href: $scope.kuvauksetGetLink(row)

@@ -1,22 +1,21 @@
-<div>
+<div class="valintaperustekuvaukset">
 
     <h3 tt="kk.hakukohde.valintaperustekuvaus.title"></h3>
 
     <p tt="kk.hakukohde.valintaperustekuvaus.addl.title"></p>
-    <p><a href data-ng-click="haeValintaPerusteKuvaus()" >{{t('tarjonta.hakukohde.hae.valintaperustekuvaus')}}</a></p>
-    
-    <!-- 
-    <multi-lang-simple-textarea xng-show="!model.isValintaPerusteEditable()" model="model.hakukohde.valintaperusteKuvaukset"></multi-lang-simple-textarea>
-     -->
+    <p class="search"><a href data-ng-click="haeValintaPerusteKuvaus()" >{{t('tarjonta.hakukohde.hae.valintaperustekuvaus')}}</a></p>
+    <p ng-show="model.selectedValintaperusteKuvaus !== undefined"><span tt="kk.hakukohde.valintaperustekuvaus.valittukuvaus">Valittu kuvaus</span>: <strong>{{model.selectedValintaperusteKuvaus.title}}</strong> <a ng-click="removeValintaperustekuvaus()" tt="poista">Poista</a></p>
+    <p class="msgInfo" ng-show="model.selectedValintaperusteKuvaus !== undefined"><span tt="tarjonta.hakukohde.valintaperustekuvaus.muokattava.ei">Olet hakenut valintaperustekuvauksen sellaisenaan hakukohteelle. Et voi muokata tekstiä. Jos kuvaukseen tehdään muutos valintaperustekuvausten ylläpidossa, se päivittyy myös hakukohteelle.</span></p>
+
     <mk-rich-textarea is-disabled="!model.isValintaPerusteEditable()" model="model.hakukohde.valintaperusteKuvaukset" max="50000"></mk-rich-textarea>
 
     <h3 tt="kk.hakukohde.sora.title"></h3>
-    <p tt="kk.hakukohde.sora.addl.title"> </p>
-    <p><a href data-ng-click="haeSora()" >{{t('tarjonta.hakukohde.hae.sora')}}</a></p>
-    <!-- 
-    <multi-lang-simple-textarea ng-show="!model.isSoraEditable()" model="model.hakukohde.soraKuvaukset"></multi-lang-simple-textarea>
-     -->
-    <mk-rich-textarea is-disabled="!model.isSoraEditable()" model="model.hakukohde.soraKuvaukset" max="1500"></mk-rich-textarea>
 
+    <p tt="kk.hakukohde.sora.addl.title"> </p>
+    <p class="search"><a href data-ng-click="haeSora()" >{{t('tarjonta.hakukohde.hae.sora')}}</a></p>
+    <p ng-show="model.selectedSoraKuvaus !== undefined"><span tt="kk.hakukohde.sorakuvaus.valittukuvaus">Valittu kuvaus</span>: <strong>{{model.selectedSoraKuvaus.title}}</strong> <a ng-click="removeSoraKuvaus()" tt="poista">Poista</a></p>
+    <p class="msgInfo" ng-show="model.selectedSoraKuvaus !== undefined"><span tt="tarjonta.hakukohde.sorakuvaus.muokattava.ei">Olet hakenut sora-kuvauksen sellaisenaan hakukohteelle. Et voi muokata tekstiä. Jos kuvaukseen tehdään muutos sora-kuvausten ylläpidossa, se päivittyy myös hakukohteelle.</span></p>
+
+    <mk-rich-textarea is-disabled="!model.isSoraEditable()" model="model.hakukohde.soraKuvaukset" max="1500"></mk-rich-textarea>
 
 </div>

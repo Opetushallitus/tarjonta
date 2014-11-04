@@ -68,3 +68,6 @@ div.tarjontaDateTime.timestamp {
     width: 220px;
 }
 
+.datetimepicker-label {
+    margin-right: 10px;
+}

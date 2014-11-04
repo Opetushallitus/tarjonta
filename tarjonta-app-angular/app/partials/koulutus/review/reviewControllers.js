@@ -278,7 +278,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         if (!$scope.isMutable) {
             return;
         }
-        $log.debug('KOULUTUS : ', $scope.model.koulutus);
+
         var koulutusOids = [];
         koulutusOids.push($scope.model.koulutus.oid);
         SharedStateService.addToState('SelectedKoulutukses', koulutusOids);

@@ -73,14 +73,18 @@ app.service('CommonUtilService',function($resource, $log,$q, Config,Organisaatio
         }
 
         else if(organisaatio.organisaatiotyypit.indexOf("TOIMIPISTE")!=-1) {
-            //opetuspiste, kerää parentin tyyppi
-                //parentti ei ole saatavilla, kysytään organisaatioservicestä
-                OrganisaatioService.etsi({oidRestrictionList:organisaatio.parentOid}).then(function(vastaus) {
+            var findOppilaitosFromParents = function(oid) {
+                OrganisaatioService.etsi({oidRestrictionList:oid}).then(function(vastaus) {
+                if(vastaus.organisaatiot[0].organisaatiotyypit.indexOf("TOIMIPISTE") !== -1) {
+                    findOppilaitosFromParents(vastaus.organisaatiot[0].parentOid);
+                } else {
                     deferred.resolve([vastaus.organisaatiot[0].oppilaitostyyppi]);
+                }
                 }, function(){
                     deferred.resolve([]);
                 });
-
+            }
+            findOppilaitosFromParents(organisaatio.parentOid);
         } else {
             console.log( "Tuntematon organisaatiotyyppi:", organisaatio.organisaatiotyypit );
         }
