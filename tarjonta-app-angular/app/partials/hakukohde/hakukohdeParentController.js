@@ -579,6 +579,11 @@ app.controller('HakukohdeParentController', [
             }
         };
 
+        $scope.clearHakuajat = function() {
+            $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
+            $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+        };
+
         $scope.handleConfigurableHakuaika = function() {
 
             if($scope.model.hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS') {
@@ -592,8 +597,9 @@ app.controller('HakukohdeParentController', [
                 $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                 $scope.model.hakuaikaMax = hakuaika.loppuPvm;
 
-                $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
-                $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+                if(!$scope.model.configurableHakuaika) {
+                    $scope.clearHakuajat();
+                }
             }
         };
 
