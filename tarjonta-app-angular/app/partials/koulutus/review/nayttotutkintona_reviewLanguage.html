@@ -197,12 +197,12 @@
 
     <!-- VALMISTAVAN PERUSTIEDOT -->
 
-    <tr class="collapse" ng-class="model.collapse.kuvailevatTiedot ? '' : 'open'">
-        <th colspan="2" tt="koulutus.review.kuvailevatTiedot.valmistavan.otsikko" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">Valmistavan koulutuksen perustiedot</th>
+    <tr class="collapse" ng-class="model.collapse.valmistavanPerustiedot ? '' : 'open'">
+        <th colspan="2" tt="koulutus.review.valmistavanPerustiedot" ng-click="model.collapse.valmistavanPerustiedot = !model.collapse.valmistavanPerustiedot">Valmistavan koulutuksen perustiedot</th>
         <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'KUVAILEVATTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
 
-    <tbody ng-show="!model.collapse.kuvailevatTiedot">
+    <tbody ng-show="!model.collapse.valmistavanPerustiedot">
 
 
         <!-- suunniteltu kesto -->
@@ -257,15 +257,15 @@
 
     <!-- VALMISTAVAN KUVAILEVAT TIEDOT -->
 
-    <tr class="collapse" ng-class="model.collapse.kuvailevatTiedot ? '' : 'open'">
-        <th colspan="2" tt="koulutus.review.kuvailevatTiedot.valmistavan.otsikko" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">Valmistavan koulutuksen kuvailevat tiedot</th>
+    <tr class="collapse" ng-class="model.collapse.valmistavanKuvailevatTiedot ? '' : 'open'">
+        <th colspan="2" tt="koulutus.review.kuvailevatTiedot.valmistavan.otsikko" ng-click="model.collapse.valmistavanKuvailevatTiedot = !model.collapse.valmistavanKuvailevatTiedot">Valmistavan koulutuksen kuvailevat tiedot</th>
         <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'KUVAILEVATTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
 
-    <tbody ng-show="!model.collapse.kuvailevatTiedot">
-        <tr ng-repeat="lisatieto in lisatiedot">
+    <tbody ng-show="!model.collapse.valmistavanKuvailevatTiedot">
+        <tr ng-repeat="lisatieto in valmistavaLisatiedot">
             <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
-            <td colspan="2" data-ng-bind-html="getValmistavaKoulutusKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
+            <td colspan="2" data-ng-bind-html="getValmistavaKoulutusKuvausApiModelLanguageUri()[lisatieto.type].tekstis[lang.koodi_uri]"></td>
         </tr>
     </tbody>
 
