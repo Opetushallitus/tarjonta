@@ -584,9 +584,18 @@ app.controller('HakukohdeParentController', [
             $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
         };
 
-        $scope.handleConfigurableHakuaika = function() {
+        var getToteutustyyppiFromHakukohdeOrSharedState = function() {
+            if($scope.model.hakukohde.toteutusTyyppi !== undefined) {
+                return $scope.model.hakukohde.toteutusTyyppi;
+            } else {
+                return SharedStateService.getFromState('SelectedToteutusTyyppi');
+            }
+        }
 
-            if($scope.model.hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS') {
+        $scope.handleConfigurableHakuaika = function() {
+            var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
+
+            if(toteutustyyppi === 'KORKEAKOULUTUS') {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
 
                 $scope.model.configurableHakuaika = !(haku.hakutapaUri.split('#')[0] === 'hakutapa_01' &&
