@@ -297,7 +297,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         }
 
         var getHakuaikaNimi = function(hakuaika) {
-            var hakuaikaNimi = hakuaika.nimet[$scope.model.userLang.toLowerCase()];
+            var hakuaikaNimi = hakuaika.nimet["kieli_" + $scope.model.userLang.toLowerCase()];
 
             if(hakuaikaNimi === undefined) {
                 hakuaikaNimi = hakuaika.nimet[Object.keys(hakuaika.nimet)[0]];
