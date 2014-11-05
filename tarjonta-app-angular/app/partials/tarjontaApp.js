@@ -480,7 +480,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             return {
                                 'result': {
                                     toteutustyyppi: $route.current.params.toteutustyyppi,
-                                    koulutustyyppi: $route.current.params.koulutustyyppi
+                                    koulutustyyppi: $route.current.params.koulutustyyppi,
+                                    isNew: true
                                 }
                             };
                         }
@@ -495,7 +496,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                             return {
                                 'result': {
                                     toteutustyyppi: $route.current.params.toteutustyyppi,
-                                    koulutustyyppi: $route.current.params.koulutustyyppi
+                                    koulutustyyppi: $route.current.params.koulutustyyppi,
+                                    isNew: true
                                 }
                             };
                         }

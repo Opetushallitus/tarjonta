@@ -41,6 +41,7 @@ app.controller('BaseEditController', [
         $scope.model = {};
         $scope.uiModel = {};
         $scope.lisatiedot = null;
+        $scope.now = new Date();
         $scope.controlModel = {
             /*formStatus: {
              modifiedBy: '',
@@ -388,6 +389,7 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonNewModelHandler = function(form, model, uiModel, tyyppi) {
+
             if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
@@ -406,6 +408,7 @@ app.controller('BaseEditController', [
 
             converter.createUiModels(uiModel, tyyppi);
             uiModel.isMutable = true;
+            model.isNew = true;
             $scope.controlFormMessages(form, uiModel, "INIT");
             converter.createAPIModel(model, Config.app.userLanguages, tyyppi);
 

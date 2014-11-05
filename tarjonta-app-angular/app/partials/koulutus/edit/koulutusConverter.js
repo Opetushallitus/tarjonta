@@ -356,11 +356,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     var GENERIC_VALMISTAVA_STRUCTURE = {
         page: 'nayttotutkinto',
         KUVAUS_ORDER: [
+            {type: "TAVOITTEET", isKomo: true},
+            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
             {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
             {type: "NAYTTOTUTKINNON_SUORITTAMINEN", isKomo: false, length: 1500},
             {type: "MAKSULLISUUS", isKomo: false, length: 1500},
             {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 1500},
-            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500}
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500},
+            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true}
         ],
         MLANG: {},
         RELATION: {
@@ -579,7 +582,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         //remove all meta data fields, if any
         angular.forEach(factory.STRUCTURE[toteutustyyppi], function(value, key) {
             if ('MLANG' !== key) {
-                //MLANG objects needs the meta fields                
+                //MLANG objects needs the meta fields
                 angular.forEach(value, function(value, key) {
                     factory.deleteMetaField(m[key]);
                 });
