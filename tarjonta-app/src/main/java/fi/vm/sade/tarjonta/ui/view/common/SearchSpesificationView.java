@@ -81,7 +81,8 @@ public class SearchSpesificationView extends OphHorizontalLayout {
 
     private TarjontaDialogWindow aloituspaikatRaporttiDialog;
 
-    boolean showTulostaRaporttiBtn = true;
+    // 2014-11-06 Aloituspaikkaraportti ei toimi oikein, disabloidaan
+    boolean showTulostaRaporttiBtn = false;
 
     @Autowired(required = true)
     private RaportointiRestClientHelper raportointiRestHelper;
@@ -278,7 +279,7 @@ public class SearchSpesificationView extends OphHorizontalLayout {
     }
 
     private String[] getKoulutuksenTilat() {
-        //do not add status of deleted 
+        //do not add status of deleted
         String[] tilat = new String[TarjontaTila.values().length - 1];
         tilaMap = new HashMap<String, String>();
         int counter = 0;
