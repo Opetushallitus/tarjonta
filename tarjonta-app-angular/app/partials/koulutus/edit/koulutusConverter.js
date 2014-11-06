@@ -370,11 +370,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
     var GENERIC_STRUCTURE = {
         page: 'nayttotutkinto',
         KUVAUS_ORDER: [
+            {type: "TAVOITTEET", isKomo: true},
+            {type: "KOULUTUKSEN_RAKENNE", isKomo: true},
             {type: "OSAAMISALAN_VALINTA", isKomo: false, length: 1500},
             {type: "NAYTTOTUTKINNON_SUORITTAMINEN", isKomo: false, length: 1500},
             {type: "MAKSULLISUUS", isKomo: false, length: 1500},
             {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 1500},
-            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500}
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 1500},
+            {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true}
         ],
         MLANG: {},
         RELATION: {

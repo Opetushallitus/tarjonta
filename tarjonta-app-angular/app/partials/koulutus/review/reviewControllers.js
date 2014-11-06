@@ -127,6 +127,10 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     });
 
     $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.toteutustyyppi].KUVAUS_ORDER;
+
+    // Valmistavan koulutuksen sisältäviä koulutuksia varten
+    $scope.valmistavaLisatiedot = KoulutusConverterFactory.STRUCTURE.AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA.KUVAUS_ORDER;
+
     var kieliUri;
     if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
         for (kieliUri in $scope.model.koulutus.koulutusohjelma.tekstis) {
@@ -160,18 +164,10 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         return kuvaus;
     };
 
-    $scope.getValmistavaKoulutusKuvausApiModelLanguageUri = function(boolIsKomo) {
+    $scope.getValmistavaKoulutusKuvausApiModelLanguageUri = function() {
         var kuvaus = null;
-        if (angular.isDefined($scope.model.koulutus.valmistavaKoulutus)) {
-            if (typeof boolIsKomo !== 'boolean') {
-                converter.throwError('An invalid boolean variable : ' + boolIsKomo);
-            }
-
-            if (boolIsKomo) {
-                kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomo;
-            } else {
-                kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvausKomoto;
-            }
+        if ($scope.model.koulutus.valmistavaKoulutus) {
+            kuvaus = $scope.model.koulutus.valmistavaKoulutus.kuvaus;
         }
 
         return kuvaus;

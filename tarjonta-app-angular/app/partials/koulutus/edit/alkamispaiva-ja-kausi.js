@@ -120,7 +120,8 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 vuosi: "=",
                 kausiUiModel: "=",
                 kausiUri: "=",
-                fieldNamePrefix: "@"
+                fieldNamePrefix: "@",
+                min: "="
             }
         };
     }]);
@@ -135,9 +136,6 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 ignoreDateListChanges: false,
                 alkamisPvmFieldName: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisPvm" : "alkamisPvm"
             };
-
-            var now = new Date();
-            $scope.thisYear = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
 
             $scope.clickAddDate = function() {
                 $scope.ctrl.addedDates.push({id: $scope.ctrl.index++, date: null});
@@ -295,7 +293,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 fnClearKausi: "=",
                 enabled: "=",
                 multi: "=",
-                fieldNamePrefix: "@"
+                fieldNamePrefix: "@",
+                min: "="
             }
         };
     }]);

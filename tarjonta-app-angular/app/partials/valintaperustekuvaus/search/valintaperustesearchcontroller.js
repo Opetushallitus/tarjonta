@@ -2,7 +2,6 @@ var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl',['app.service
 
 app.controller('ValintaperusteSearchController', function($scope,$rootScope,$route,$q,LocalisationService,Koodisto,Kuvaus,AuthService,$location,dialogService,OrganisaatioService,CommonUtilService,$modal,$log) {
 
-
     var oppilaitosKoodistoUri = "oppilaitostyyppi";
 
     var kausiKoodistoUri = "kausi";
@@ -239,13 +238,19 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     };
 
     var removeKuvaus = function(kuvaus, doAfter) {
-    	var removedKuvausPromise = Kuvaus.removeKuvausWithId(kuvaus.kuvauksenTunniste);
-        removedKuvausPromise.then(function(removedKuvaus){
-            console.log('REMOVED KUVAUS: ' , removedKuvaus);
-            if (removedKuvaus.status === "OK")  {
-            	doAfter();
-            }
 
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/valintaperustekuvaus/remove/poista.html',
+            controller: 'PoistaValintaperustekuvausCtrl',
+            resolve: {
+                selectedKuvaus: function() {
+                    return kuvaus;
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+            doAfter();
         });
     };
 

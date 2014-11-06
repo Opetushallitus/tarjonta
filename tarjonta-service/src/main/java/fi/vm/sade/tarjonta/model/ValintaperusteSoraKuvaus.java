@@ -55,6 +55,9 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
     @Column ( name = "avain")
     private String avain;
 
+    @Column(name="tila")
+    private String tila;
+
     public MonikielinenTeksti getMonikielinenNimi() {
         return monikielinenNimi;
     }
@@ -122,4 +125,12 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
     public void setAvain(String avain) { this.avain = avain; }
 
     public String getAvain() { return avain; }
+
+    public String getTila() {
+        return tila;
+    }
+
+    public void setTila(String tila) {
+        this.tila = tila;
+    }
 }

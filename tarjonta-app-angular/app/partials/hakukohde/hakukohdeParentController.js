@@ -651,8 +651,22 @@ app.controller('HakukohdeParentController', [
             }
         };
 
+        $scope.clearHakuajat = function() {
+            $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
+            $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+        };
+
+        var getToteutustyyppiFromHakukohdeOrSharedState = function() {
+            if($scope.model.hakukohde.toteutusTyyppi !== undefined) {
+                return $scope.model.hakukohde.toteutusTyyppi;
+            } else {
+                return SharedStateService.getFromState('SelectedToteutusTyyppi');
+            }
+        }
+
         $scope.handleConfigurableHakuaika = function() {
-            if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
+            var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
+            if($scope.toisenAsteenKoulutus(toteutustyyppi)) {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
                 $scope.model.hakukohde.configurableHakuaika = haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_03' || haku.hakutapaUri.split('#')[0] === 'hakutapa_02';
@@ -665,7 +679,8 @@ app.controller('HakukohdeParentController', [
                 $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                 $scope.model.hakuaikaMax = hakuaika.loppuPvm;
 
-            } else if($scope.model.hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS') {
+            }
+            else if(toteutustyyppi === 'KORKEAKOULUTUS') {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
 
                 $scope.model.configurableHakuaika = !(haku.hakutapaUri.split('#')[0] === 'hakutapa_01' && haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_01');
@@ -677,10 +692,8 @@ app.controller('HakukohdeParentController', [
             }
 
             if (!$scope.model.hakukohde.configurableHakuaika) {
-                $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
-                $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+                $scope.clearHakuajat();
             }
-
         };
 
         var getHakuaikaForToisenAsteenKoulutus = function(haku) {
@@ -997,13 +1010,13 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukohde.valintaperusteKuvaukset = nkuvaukset;
                     $scope.model.hakukohde.valintaPerusteKuvausKielet = nkuvausKielet;
                     $scope.model.hakukohde.valintaPerusteKuvausTunniste = nkuvausTunniste;
-
+                    $scope.setSelectedValintaPerusteKuvausByTunniste();
                 } else if (type === "SORA") {
 
                     $scope.model.hakukohde.soraKuvaukset = nkuvaukset;
                     $scope.model.hakukohde.soraKuvausKielet = nkuvausKielet;
                     $scope.model.hakukohde.soraKuvausTunniste = nkuvausTunniste;
-
+                    $scope.setSelectedSoraKuvausByTunniste();
                 } else {
                     throw ("'valintaperustekuvaus' | 'SORA' != " + type);
                 }
@@ -1526,5 +1539,76 @@ app.controller('HakukohdeParentController', [
                 var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
                 $scope.model.hakukohde.liitteidenToimitusPvm = hakuaika.loppuPvm;
             }
+        }
+
+        $scope.setSelectedValintaPerusteKuvausByTunniste = function() {
+            if($scope.model.hakukohde.valintaPerusteKuvausTunniste !== undefined) {
+                Kuvaus.findKuvausWithId($scope.model.hakukohde.valintaPerusteKuvausTunniste).then(function(data) {
+                    $scope.model.selectedValintaperusteKuvaus = data.result;
+
+                    $scope.model.selectedValintaperusteKuvaus.title = data.result.kuvauksenNimet["kieli_" + AuthService.getLanguage().toLowerCase()];
+
+                    if($scope.model.selectedValintaperusteKuvaus.title === undefined) {
+                        $scope.model.selectedValintaperusteKuvaus.title = Object.keys(data.result.kuvauksenNimet)[0];
+                    }
+                });
+            } else {
+                $scope.model.selectedValintaperusteKuvaus = undefined;
+            }
+        }
+
+        $scope.setSelectedSoraKuvausByTunniste = function() {
+            if($scope.model.hakukohde.soraKuvausTunniste !== undefined) {
+                Kuvaus.findKuvausWithId($scope.model.hakukohde.soraKuvausTunniste).then(function(data) {
+                    $scope.model.selectedSoraKuvaus = data.result;
+
+                    $scope.model.selectedSoraKuvaus.title = data.result.kuvauksenNimet["kieli_" + AuthService.getLanguage().toLowerCase()];
+
+                    if($scope.model.selectedSoraKuvaus.title === undefined) {
+                        $scope.model.selectedSoraKuvaus.title = Object.keys(data.result.kuvauksenNimet)[0];
+                    }
+                });
+            } else {
+                $scope.model.selectedSoraKuvaus = undefined;
+            }
+        }
+
+        $scope.setSelectedValintaPerusteKuvausByTunniste();
+        $scope.setSelectedSoraKuvausByTunniste();
+
+        $scope.removeValintaperustekuvaus = function() {
+            var d = dialogService.showDialog({
+                ok: LocalisationService.t("ok"),
+                cancel: LocalisationService.t("cancel"),
+                title: LocalisationService.t("tarjonta.tyhjennäValintaperustekuvausDialogi.otsikko"),
+                description: LocalisationService.t("tarjonta.tyhjennäValintaperustekuvausDialogi.kuvaus")
+            });
+
+            d.result.then(function(data) {
+                if (data) {
+                    $scope.model.selectedValintaperusteKuvaus = undefined;
+                    $scope.model.hakukohde.valintaPerusteKuvausTunniste = undefined;
+                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
+                    $scope.model.hakukohde.valintaPerusteKuvausKielet = [];
+                }
+            });
+        }
+
+        $scope.removeSoraKuvaus = function() {
+            var d = dialogService.showDialog({
+                ok: LocalisationService.t("ok"),
+                cancel: LocalisationService.t("cancel"),
+                title: LocalisationService.t("tarjonta.tyhjennäSoraKuvausDialogi.otsikko"),
+                description: LocalisationService.t("tarjonta.tyhjennäSoraKuvausDialogi.kuvaus")
+            });
+
+            d.result.then(function(data) {
+                if (data) {
+                    $scope.model.selectedSoraKuvaus = undefined;
+                    $scope.model.hakukohde.soraKuvausTunniste = undefined;
+                    $scope.model.hakukohde.soraKuvaukset = {};
+                    $scope.model.hakukohde.soraKuvausKielet = [];
+                }
+            });
         }
     }]);

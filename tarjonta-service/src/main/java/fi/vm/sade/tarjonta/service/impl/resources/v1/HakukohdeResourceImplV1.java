@@ -348,13 +348,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             if (hakukohde != null) {
                 HakukohdeV1RDTO hakukohdeRDTO = converterV1.toHakukohdeRDTO(hakukohde);
 
-                if (hakukohdeRDTO.getSoraKuvausTunniste() != null) {
-                    hakukohdeRDTO.setSoraKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getSoraKuvausTunniste(), hakukohdeRDTO.getSoraKuvausKielet()));
-                }
-
-                if (hakukohdeRDTO.getValintaPerusteKuvausTunniste() != null) {
-                    hakukohdeRDTO.setValintaperusteKuvaukset(getKuvauksetWithId(hakukohdeRDTO.getValintaPerusteKuvausTunniste(), hakukohdeRDTO.getValintaPerusteKuvausKielet()));
-                }
                 updateKoulutusTypesToHakukohdeDto(hakukohdeRDTO);
                 ResultV1RDTO<HakukohdeV1RDTO> result = new ResultV1RDTO<HakukohdeV1RDTO>();
                 result.setResult(hakukohdeRDTO);
@@ -422,25 +415,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         return koulutusAstetyyppi;
-    }
-
-    private HashMap<String, String> getKuvauksetWithId(Long kuvausId, Set<String> kielet) {
-
-        HashMap<String, String> kuvaukset = new HashMap<String, String>();
-        LOG.debug("TRYING TO GET VALINTAPERUSTEKUVAUS WITH KIELET: " + kielet.size());
-        ValintaperusteSoraKuvaus kuvaus = kuvausDAO.read(kuvausId);
-        LOG.debug("FOUND " + kuvaus.getTekstis().size() + " VALINTAPERUSTEKUVAUS TEKSTIS");
-        if (kielet != null) {
-            for (MonikielinenMetadata meta : kuvaus.getTekstis()) {
-                for (String kieli : kielet) {
-                    if (kieli.trim().equals(meta.getKieli().trim())) {
-                        kuvaukset.put(meta.getKieli(), meta.getArvo());
-                    }
-                }
-            }
-        }
-
-        return kuvaukset;
     }
 
     private Hakuaika getHakuAikaForHakukohde(HakukohdeV1RDTO hakukohdeRDTO, Haku haku) {
@@ -724,15 +698,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Hakukohde hakukohdeTemp = hakukohdeDAO
                     .findHakukohdeByOid(hakukohdeRDTO.getOid());
 
-            // These are updated in a separate resource -> ei enää
-            /*
-             * hakukohde.getValintakoes().clear();
-             * hakukohde.getValintakoes().addAll
-             * (hakukohdeTemp.getValintakoes());
-             *
-             * hakukohde.getLiites().clear();
-             * hakukohde.getLiites().addAll(hakukohdeTemp.getLiites());
-             */
             hakukohde.setId(hakukohdeTemp.getId());
             hakukohde.setVersion(hakukohdeTemp.getVersion());
 
@@ -1658,4 +1623,26 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
         return ajankohdat;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResultV1RDTO<List<HakukohdeV1RDTO>> findHakukohdesByKuvausId(Long id) {
+        ResultV1RDTO<List<HakukohdeV1RDTO>> result = new ResultV1RDTO<List<HakukohdeV1RDTO>>();
+
+        ArrayList<Hakukohde> hakukohdes = new ArrayList<Hakukohde>();
+        hakukohdes.addAll(hakukohdeDAO.findBy("valintaPerusteKuvausTunniste", id));
+        hakukohdes.addAll(hakukohdeDAO.findBy("soraKuvausTunniste", id));
+
+        ArrayList<HakukohdeV1RDTO> hakukohdeV1RDTOs = new ArrayList<HakukohdeV1RDTO>();
+        for (Hakukohde hakukohde : hakukohdes) {
+            if (hakukohde.getTila() != TarjontaTila.POISTETTU) {
+                hakukohdeV1RDTOs.add(converterV1.toHakukohdeRDTO(hakukohde));
+            }
+        }
+
+        result.setStatus(ResultV1RDTO.ResultStatus.OK);
+        result.setResult(hakukohdeV1RDTOs);
+        return result;
+    }
+
 }

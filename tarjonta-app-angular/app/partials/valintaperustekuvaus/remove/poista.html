@@ -1,0 +1,28 @@
+<div class="tarjonta-dialog" id="poista-valintaperustekuvaus">
+    <div class="modal-header">
+        <h3 tt="kuvaus.dialogTitle.poista"></h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind-html="model.text.info"></p>
+
+        <ul ng-show="model.errors.length > 0" class="errors">
+            <li ng-repeat="error in model.errors">{{error.msg}}</li>
+        </ul>
+
+        <div ng-if="liitetytHakukohteet" class="well">
+            <p tt="valintaperustekuvaus.eiVoiPoistaaKoskaHakukohteitaLiitetty">
+                Kuvausta ei voi poistaa, koska alla olevat hakukohteet käyttävät tätä kuvausta.
+                Jos haluat poistaa tämän kuvauksen, pitää alla olevista hakukohteista poistaa viittaus tähän kuvaukseen.
+            </p>
+            <ul>
+                <li ng-repeat="hakukohde in liitetytHakukohteet">
+                    <a ng-click="goToHakukohde(hakukohde.oid)">{{hakukohde.nimi}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="cancel()"><span tt="kuvaus.peruuta">Peruuta</span></button>
+        <button class="btn btn-primary" ng-disabled="model.btnDisableRemove" ng-click="remove()"><span tt="kuvaus.poista">Poista</span></button>
+    </div>
+</div>
