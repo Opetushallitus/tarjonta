@@ -103,6 +103,23 @@ app.controller('LuoKoulutusDialogiController',
                 $scope.showOtherOrganizationsCheckbox = false;
                 $scope.toggleOtherOrganizations(true);
             }
+
+            if (val) {
+                // Hae pohjakoulutusvaatimus koodistosta
+                Koodisto.getAlapuolisetKoodiUrit([val.koodiUri], "pohjakoulutusvaatimustoinenaste").then(function (res) {
+                    $scope.pohjakoulutusvaatimusOptions = res.map;
+
+                    var keys = _.keys(res.map);
+                    $scope.showPohjakoulutusvaatimus = keys.length > 1;
+
+                    if (keys.length === 1) {
+                        $scope.model.pohjakoulutusvaatimus = res.map[keys[0]].koodiUri;
+                    }
+                    else {
+                        $scope.model.pohjakoulutusvaatimus = null;
+                    }
+                });
+            }
         });
 
         $scope.valitut = $scope.valitut || [];
@@ -387,28 +404,6 @@ app.controller('LuoKoulutusDialogiController',
             }
             $scope.model.organisaatiot = valitut;
         };
-
-        $scope.$watch('model.koulutustyyppi', function(newVal) {
-
-            if (!newVal) {
-                return;
-            }
-
-            // Hae pohjakoulutusvaatimus koodistosta
-            Koodisto.getAlapuolisetKoodiUrit([newVal.koodiUri], "pohjakoulutusvaatimustoinenaste").then(function(res) {
-                $scope.pohjakoulutusvaatimusOptions = res.map;
-
-                var keys = _.keys(res.map);
-                $scope.showPohjakoulutusvaatimus = keys.length > 1;
-
-                if ( keys.length === 1 ) {
-                    $scope.model.pohjakoulutusvaatimus = res.map[keys[0]].koodiUri;
-                }
-                else {
-                    $scope.model.pohjakoulutusvaatimus = null;
-                }
-            });
-        });
 
         var searchOrganizationTimeout = null;
         $scope.searchOrganizations = function(qterm) {
