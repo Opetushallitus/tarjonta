@@ -126,7 +126,6 @@ app.controller('LuoKoulutusDialogiController',
         $scope.organisaatiomap = $scope.organisaatiomap || {};
         $scope.sallitutKoulutustyypit = $scope.sallitutKoulutustyypit || [];
 
-        $scope.lkorganisaatiot = {};
         // haetaan organisaatihierarkia joka valittuna kälissä tai jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
         OrganisaatioService.etsi({oidRestrictionList: $scope.luoKoulutusDialogOrg || AuthService.getOrganisations()}).then(function(vastaus) {
             $scope.lkorganisaatiot = vastaus.organisaatiot;
@@ -428,10 +427,10 @@ app.controller('LuoKoulutusDialogiController',
          */
         var lkorganisaatiotInit = null;
         $scope.toggleOtherOrganizations = function(skipInit) {
-            if ( lkorganisaatiotInit === null && !skipInit ) {
+            if ( lkorganisaatiotInit === null && !skipInit && $scope.lkorganisaatiot ) {
                 lkorganisaatiotInit = angular.copy($scope.lkorganisaatiot);
             }
-            if ( !$scope.showOtherOrganizations ) {
+            if ( !$scope.showOtherOrganizations && lkorganisaatiotInit ) {
                 $scope.lkorganisaatiot = lkorganisaatiotInit;
             }
         };
