@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-var app = angular.module('app.koulutus.remove.ctrl', []);
+var app = angular.module('app.koulutus.kuvausRemove.ctrl', []);
 
 app.controller('PoistaValintaperustekuvausCtrl', function ($scope, Kuvaus, selectedKuvaus, LocalisationService,
                    $modalInstance, HakukohdeService, $location) {
