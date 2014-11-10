@@ -2,7 +2,6 @@
 
     <table class="seachSpecLayout">
 
-        <!-- otsikkorivi -->
         <tr>
             <th>&nbsp;</th>
             <th tt="tarjonta.valintaperustekuvaus.vuosi">Vuosi</th>
@@ -11,13 +10,14 @@
             <th>&nbsp;</th>
         </tr>
 
-        <!-- kontrollit -->
         <tr>
             <td class="query">
                 <input type="text" ng-model="model.searchSpec.hakusana" ng-enter="search()"/>
             </td>
             <td>
-                <select class="thin" data-ng-model="model.searchSpec.vuosi" data-ng-options="year for year in model.years"></select>
+                <select class="thin" data-ng-model="model.searchSpec.vuosi" data-ng-options="year for year in model.years">
+                    <option value=""></option>
+                </select>
             </td>
             <td>
                 <koodistocombo class="thin" koodistouri="'kausi'" koodiuri="model.searchSpec.kausiUri" locale="'fi'"/>
@@ -53,25 +53,6 @@
                     get-link="kuvauksetGetLink"
                     get-options="kuvauksetGetOptions"
                     ></results-tree-table>
-                    
-
-                <!--
-                <table>
-                    <tr>
-                        <th tt="tarjonta.valintaperustekuvaus.list.nimi">Nimi</th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi">Oppilaitostyyppi</th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi">Vuosi ja kausi</th>
-                    </tr>
-                    <tr data-ng-repeat="valintaperuste in model.valintaperusteet">
-                            <td ><a href="" data-ng-click="selectKuvaus(valintaperuste)">{{valintaperuste.kuvauksenNimi}}</a> </td>
-                            <td data-ng-bind-html="valintaperuste.organisaatioTyyppi"></td>
-                            <td data-ng-bind-html="valintaperuste.vuosikausi"></td>
-                            <td><a href="" data-ng-click="removeKuvaus(valintaperuste)"><span tt="tarjonta.valintaperustekuvaus.poista.link">Poista</span></a> </td>
-                            <td><a href="" data-ng-click="copyKuvaus(valintaperuste)"><span tt="tarjonta.valintaperustekuvaus.kopioi.link">Kopioi</span></a> </td>
-                    </tr>
-                </table>
-                -->
-
             </tab>
             <tab heading="{{t('kk.valintaperusteet.tab.sora')}}">
                 <div class="controls">
@@ -88,25 +69,6 @@
                     get-link="kuvauksetGetLink"
                     get-options="kuvauksetGetOptions"
                     ></results-tree-table>
-                    
-
-                <!--
-                <table>
-                    <tr>
-                        <th tt="tarjonta.valintaperustekuvaus.list.nimi">Nimi</th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.oppilaitostyyppi">Oppilaitostyyppi</th>
-                        <th tt="tarjonta.valintaperustekuvaus.list.vuosikausi">Vuosi ja kausi</th>
-                    </tr>
-                    <tr data-ng-repeat="sora in model.sorat" >
-                            <td ><a href="" data-ng-click="selectKuvaus(sora)">{{sora.kuvauksenNimi}}</a> </td>
-
-                            <td data-ng-bind-html="sora.organisaatioTyyppi"></td>
-                            <td data-ng-bind-html="sora.vuosikausi"></td>
-                            <td><a href="" data-ng-click="removeKuvaus(sora)"><span tt="tarjonta.valintaperustekuvaus.poista.link">Poista</span></a> </td>
-                            <td><a href="" data-ng-click="copyKuvaus(sora)"><span tt="tarjonta.valintaperustekuvaus.kopioi.link">Kopioi</span></a> </td>
-                    </tr>
-                </table>
-                 -->
             </tab>
 
         </tabset>

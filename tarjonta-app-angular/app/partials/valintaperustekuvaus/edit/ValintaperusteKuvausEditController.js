@@ -38,7 +38,6 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
   $scope.model.nimiValidationFailed = false;
 
 
-
   /*
 
         -----------------> Helper and initialization functions etc.
@@ -219,34 +218,21 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
 
 
       if ($route.current.locals.resolvedValintaPerusteKuvaus !== undefined ) {
-
          $scope.model.valintaperustekuvaus =  $route.current.locals.resolvedValintaPerusteKuvaus.result;
 
           if ($route.current.locals.action !== undefined && $route.current.locals.action === "COPY") {
-
               $scope.model.valintaperustekuvaus.kuvauksenTunniste = undefined;
           }
 
          if ($scope.model.valintaperustekuvaus.modifiedBy !== undefined) {
-
-
-
              if ($scope.model.valintaperustekuvaus.created === undefined) {
                  $scope.model.valintaperustekuvaus.created  = $scope.model.valintaperustekuvaus.modified;
              }
-
-
          }
-
       }  else {
           console.log('DID NOT GET VALINTAPERUSTEKUVAUS');
       }
-
   };
-
-  /*
-        ------------------> Run initialization functions
-  */
 
   getYears();
   initialializeForm();
@@ -331,11 +317,28 @@ app.controller('ValintaperusteEditController', function($scope,$rootScope,$route
     };
 
     $scope.getNimetKey = function() {
-        return $scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined  ? 'valintaperustekuvaus.edit.create.msg' : 'valintaperustekuvaus.edit.update.msg';
+        if($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
+            return $scope.model.valintaperustekuvaus.kuvauksenTyyppi.toLowerCase() + '.edit.create.msg'
+        }else {
+            return $scope.model.valintaperustekuvaus.kuvauksenTyyppi.toLowerCase() + '.edit.update.msg';
+        }
     }
 
     $scope.getNimet = function() {
-        return "";
-    }
+        var nimi = "";
 
+        if($scope.model.valintaperustekuvaus.kuvauksenNimet !== undefined) {
+            nimi =  $scope.model.valintaperustekuvaus.kuvauksenNimet[LocalisationService.getLocale()];
+
+            if(nimi === "" || nimi === undefined) {
+                for(var key in $scope.model.valintaperustekuvaus.kuvauksenNimet) {
+                    if($scope.model.valintaperustekuvaus.kuvauksenNimet[key] !== "") {
+                        nimi = $scope.model.valintaperustekuvaus.kuvauksenNimet[key];
+                        break;
+                    }
+                }
+            }
+        }
+        return nimi;
+    }
 });

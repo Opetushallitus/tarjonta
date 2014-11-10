@@ -23,6 +23,7 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
     public  static final  String VALINTAPERUSTEKUVAUSORA_TABLE_NAME = "valintaperuste_sora_kuvaus";
 
     public static enum Tyyppi { VALINTAPERUSTEKUVAUS, SORA };
+    public static enum Tila { VALMIS, POISTETTU };
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -52,8 +53,9 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
     @Column(name="viimPaivittajaOid")
     private String viimPaivittajaOid;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="tila")
-    private String tila;
+    private Tila tila;
 
     public MonikielinenTeksti getMonikielinenNimi() {
         return monikielinenNimi;
@@ -119,11 +121,11 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
         this.viimPaivittajaOid = viimPaivittajaOid;
     }
 
-    public String getTila() {
+    public Tila getTila() {
         return tila;
     }
 
-    public void setTila(String tila) {
+    public void setTila(Tila tila) {
         this.tila = tila;
     }
 }

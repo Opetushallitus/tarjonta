@@ -297,7 +297,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         try {
             Long id = new Long(tunniste);
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(id);
-            if (valintaperusteSoraKuvaus != null && !valintaperusteSoraKuvaus.getTila().equals("POISTETTU")) {
+            if (valintaperusteSoraKuvaus != null && !valintaperusteSoraKuvaus.getTila().equals(ValintaperusteSoraKuvaus.Tila.POISTETTU)) {
 
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
                 resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
@@ -325,7 +325,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
                 LOG.debug("NO EXISTING KUVAUS FOUND, CREATING NEW");
                 valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
-                valintaperusteSoraKuvaus.setTila("VALMIS");
+                valintaperusteSoraKuvaus.setTila(ValintaperusteSoraKuvaus.Tila.VALMIS);
                 valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
                 KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
 
@@ -443,7 +443,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             permissionChecker.checkRemoveValintaPeruste();
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.parseLong(tunniste));
 
-            valintaperusteSoraKuvaus.setTila("POISTETTU");
+            valintaperusteSoraKuvaus.setTila(ValintaperusteSoraKuvaus.Tila.POISTETTU);
 
             resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -467,11 +467,6 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         try {
 
             ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
-
-            LOG.debug("SEARCHING WITH TYYPPI : " + tyyppi);
-
-            LOG.debug("SEARCHING WITH SEARCH SPEC KAUSI : "  + searchParam.getKausiUri());
-
             List<ValintaperusteSoraKuvaus> resultList = kuvausDAO.findBySearchSpec(searchParam,vpsTyyppi);
 
             if (resultList != null && resultList.size() > 0) {
