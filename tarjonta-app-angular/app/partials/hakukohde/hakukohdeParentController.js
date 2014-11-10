@@ -575,7 +575,12 @@ app.controller('HakukohdeParentController', [
                 return _.first($scope.model.hakuaikas);
             } else {
                 var hakuaikaId = $scope.model.hakukohde.hakuaikaId;
-                return _.find($scope.model.hakuaikas, function (hakuaika) { return hakuaika.hakuaikaId ===  hakuaikaId });
+                var hakuaika = _.find($scope.model.hakuaikas, function (hakuaika) { return hakuaika.hakuaikaId ===  hakuaikaId });
+                if(hakuaika !== undefined) {
+                    return hakuaika;
+                } else {
+                    return _.first($scope.model.hakuaikas);
+                }
             }
         };
 
@@ -602,6 +607,10 @@ app.controller('HakukohdeParentController', [
                     haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_01');
 
                 var hakuaika = $scope.getSelectedHakuaika();
+
+                if($scope.model.hakukohde.hakuaikaId !== hakuaika.hakuaikaId) {
+                    $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
+                }
 
                 $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                 $scope.model.hakuaikaMax = hakuaika.loppuPvm;
