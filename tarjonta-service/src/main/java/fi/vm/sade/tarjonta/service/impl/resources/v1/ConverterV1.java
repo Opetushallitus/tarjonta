@@ -1425,8 +1425,7 @@ public class ConverterV1 {
         Map<String, TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO>> tarjoajat = new HashMap<String, TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO>>();
 
         for (HakukohdePerustieto ht : source.getHakukohteet()) {
-            TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> rets = getTarjoaja(
-                    ret, tarjoajat, ht);
+            TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> rets = getTarjoaja(ret, tarjoajat, ht);
             rets.getTulokset().add(convert(ht));
         }
 
@@ -1436,22 +1435,23 @@ public class ConverterV1 {
         return ret;
     }
 
-    private HakukohdeHakutulosV1RDTO convert(HakukohdePerustieto ht) {
-        HakukohdeHakutulosV1RDTO ret = new HakukohdeHakutulosV1RDTO();
+    private HakukohdeHakutulosV1RDTO convert(HakukohdePerustieto hakukohdePerustieto) {
+        HakukohdeHakutulosV1RDTO dto = new HakukohdeHakutulosV1RDTO();
 
-        ret.setOid(ht.getOid());
-        ret.setNimi(ht.getNimi());
-        ret.setKausi(ht.getKoulutuksenAlkamiskausi() == null ? null : ht
+        dto.setOid(hakukohdePerustieto.getOid());
+        dto.setNimi(hakukohdePerustieto.getNimi());
+        dto.setKausi(hakukohdePerustieto.getKoulutuksenAlkamiskausi() == null ? null : hakukohdePerustieto
                 .getKoulutuksenAlkamiskausi().getNimi());
-        ret.setVuosi(ht.getKoulutuksenAlkamisvuosi());
-        ret.setHakuOid(ht.getHakuOid());
-        ret.setHakutapa(ht.getHakutapaNimi());
-        ret.setAloituspaikat(Integer.valueOf(ht.getAloituspaikat()));
-        ret.setKoulutuslaji(ht.getKoulutuslaji() == null ? null : ht
+        dto.setVuosi(hakukohdePerustieto.getKoulutuksenAlkamisvuosi());
+        dto.setHakuOid(hakukohdePerustieto.getHakuOid());
+        dto.setHakutapa(hakukohdePerustieto.getHakutapaNimi());
+        dto.setAloituspaikat(Integer.valueOf(hakukohdePerustieto.getAloituspaikat()));
+        dto.setKoulutuslaji(hakukohdePerustieto.getKoulutuslaji() == null ? null : hakukohdePerustieto
                 .getKoulutuslaji().getNimi());
-        ret.setTila(TarjontaTila.valueOf(ht.getTila()));
-
-        return ret;
+        dto.setTila(TarjontaTila.valueOf(hakukohdePerustieto.getTila()));
+        dto.setAloituspaikatKuvaukset(hakukohdePerustieto.getAloituspaikatKuvaukset());
+        dto.setKoulutusasteTyyppi(hakukohdePerustieto.getKoulutusastetyyppi());
+        return dto;
     }
 
     private TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> getTarjoaja(

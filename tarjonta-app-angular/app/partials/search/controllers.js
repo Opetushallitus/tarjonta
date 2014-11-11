@@ -114,7 +114,7 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
             $scope.koulutusColumns = ['koulutuslaji'];
 
             $scope.tuloksetGetContent = function (row, col) {
-                //console.log("GET CONTENT FOR "+col,row);
+
                 switch (col) {
                     case undefined:
                     case null:
@@ -126,6 +126,12 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         var ks = row.kausi ? row.kausi[LocalisationService.getLocale()] : "";
                         var vs = row.vuosi | "";
                         return ks + " " + vs;
+                    case "aloituspaikat":
+                        if(row.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
+                            return row.aloituspaikatKuvaukset[LocalisationService.getLocale()];
+                        } else {
+                            return row.aloituspaikat;
+                        }
                     default:
                         return row[col];
                 }
