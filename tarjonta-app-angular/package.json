@@ -2,19 +2,24 @@
   "name": "angualrjs-seed",
   "description": "Tarjonta dev/test env",
   "scripts": {
-	"start": "node scripts/web-server.js",
-	"test": "karma start config/karma.conf.js --single-run"
+    "start": "node scripts/web-server.js",
+    "test": "karma start config/karma.conf.js --single-run"
   },
   "devDependencies": {
-    "phantomjs": "*",
-    "karma": "*",
-    "karma-junit-reporter": "*",
-    "karma-jasmine": "*",
-    "karma-ng-scenario": "*",
-    "karma-phantomjs-launcher":"*",
-    "karma-chrome-launcher":"*",
-    "karma-ng-html2js-preprocessor": "~0.1.0",
+    "async": "^0.9.0",
     "express": "3.4.4",
+    "gulp": "^3.8.10",
+    "gulp-jshint": "^1.9.0",
+    "gulp-protractor": "0.0.11",
+    "karma": "*",
+    "karma-chrome-launcher": "*",
+    "karma-jasmine": "*",
+    "karma-junit-reporter": "*",
+    "karma-ng-html2js-preprocessor": "~0.1.0",
+    "karma-ng-scenario": "*",
+    "karma-phantomjs-launcher": "*",
+    "phantomjs": "*",
+    "q": "^1.1.1",
     "request": "2.34.0"
   }
 }
