@@ -200,7 +200,7 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
 
 });
 
-app.factory('HakukohdeService', function($resource, Config, $http) {
+app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
 
     function addValintakoeIfEmpty(hakukohde) {
         if (hakukohde.valintakokeet.length == 0) {
@@ -253,7 +253,9 @@ app.factory('HakukohdeService', function($resource, Config, $http) {
      * @param kieliUri
      */
     function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite){
-        hakukohde.hakukohteenLiitteet.push(newLiite(hakukohde.oid, kieliUri,liitteidenToimitusosoite));
+        var liite = newLiite(hakukohde.oid, kieliUri,liitteidenToimitusosoite);
+        hakukohde.hakukohteenLiitteet.push(liite);
+        $rootScope.$broadcast('liiteAdded', liite);
     }
 
 
