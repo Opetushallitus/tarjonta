@@ -128,7 +128,12 @@ angular.module('app.search.controllers', ['app.services', 'localisation', 'Organ
                         return ks + " " + vs;
                     case "aloituspaikat":
                         if(row.koulutusasteTyyppi === 'KORKEAKOULUTUS') {
-                            return row.aloituspaikatKuvaukset[LocalisationService.getLocale()];
+                            var locale = LocalisationService.getLocale();
+                            return row.aloituspaikatKuvaukset[locale] ||
+                                row.aloituspaikatKuvaukset["fi"] ||
+                                row.aloituspaikatKuvaukset["sv"] ||
+                                row.aloituspaikatKuvaukset["en"] ||
+                                row.aloituspaikatKuvaukset[Object.keys(row.aloituspaikatKuvaukset)[0]];
                         } else {
                             return row.aloituspaikat;
                         }
