@@ -1136,6 +1136,7 @@ app.controller('HakukohdeParentController', [
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                             HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                             HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
                                 $scope.showSuccess();

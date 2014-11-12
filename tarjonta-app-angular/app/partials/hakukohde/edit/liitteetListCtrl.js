@@ -31,7 +31,12 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	
 		return liite;
     }
-    
+
+    $scope.$on('liiteAdded', function(event, liite) {
+        liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]);
+        postProcessLiite(liite);
+    });
+
     $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
     	osoitteetReceived = true;
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
