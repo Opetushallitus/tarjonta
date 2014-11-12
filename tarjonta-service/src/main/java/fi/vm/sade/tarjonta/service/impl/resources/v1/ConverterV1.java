@@ -444,16 +444,6 @@ public class ConverterV1 {
 
     }
 
-    // ----------------------------------------------------------------------
-    // HAKUKOHDE
-    // ----------------------------------------------------------------------
-
-    /**
-     * Convert domain Hakukohde to REST HakukohdeRDTO.
-     *
-     * @param hakukohde
-     * @return
-     */
     public HakukohdeV1RDTO toHakukohdeRDTO(Hakukohde hakukohde) {
         HakukohdeV1RDTO hakukohdeRDTO = new HakukohdeV1RDTO();
 
@@ -582,6 +572,7 @@ public class ConverterV1 {
             hakukohdeRDTO.setHakuaikaLoppuPvm(hakukohde.getHakuaikaLoppuPvm());
         }
 
+        hakukohdeRDTO.setKaytetaanHakukohdekohtaistaHakuaikaa(hakukohde.hakuaikasSet());
         hakukohdeRDTO.setSahkoinenToimitusOsoite(hakukohde.getSahkoinenToimitusOsoite());
         hakukohdeRDTO.setSoraKuvausKoodiUri(checkAndRemoveForEmbeddedVersionInUri(hakukohde.getSoraKuvausKoodiUri()));
         hakukohdeRDTO.setTila(hakukohde.getTila().name());
