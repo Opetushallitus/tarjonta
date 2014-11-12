@@ -651,6 +651,7 @@ app.controller('BaseEditController',
             $scope.childScope = initValues.childScope || $log.error("childScope not initialized");
 
             var koulutusStructure = KoulutusConverterFactory.STRUCTURE[$scope.CONFIG.TYYPPI];
+            $scope.koulutusStructure = koulutusStructure;
 
             /*
              * HANDLE EDIT / CREATE NEW ROUTING

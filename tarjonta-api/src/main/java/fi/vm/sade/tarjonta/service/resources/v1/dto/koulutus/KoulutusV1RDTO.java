@@ -131,6 +131,9 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO ammattinimikkeet;
 
+    @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO aihees;
+
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.toteutustyyppi = toteutustyyppi;
         this.moduulityyppi = moduulityyppi;
@@ -527,5 +530,17 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
      */
     public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
         this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    public KoodiUrisV1RDTO getAihees() {
+        if (aihees == null) {
+            aihees = new KoodiUrisV1RDTO();
+        }
+
+        return aihees;
+    }
+
+    public void setAihees(KoodiUrisV1RDTO aihees) {
+        this.aihees = aihees;
     }
 }

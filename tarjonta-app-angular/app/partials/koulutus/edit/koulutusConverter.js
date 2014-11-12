@@ -745,6 +745,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutustyyppiKoodiUri: "koulutustyyppi_10",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            }),
+            MCOMBO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.MCOMBO, {
+                aihees: {koodisto: 'koodisto-uris.aiheet'}
             })
         }),
 

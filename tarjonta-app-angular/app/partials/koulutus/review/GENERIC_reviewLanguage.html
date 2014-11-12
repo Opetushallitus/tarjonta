@@ -61,6 +61,14 @@
             </td>
         </tr>
 
+        <!-- teemat ja aiheet -->
+        <tr ng-if="model.koulutus.aihees.meta">
+            <th tt="koulutus.review.perustiedot.teematJaAiheet">Teemat ja aiheet</th>
+            <td colspan="2">
+                <span data-ng-repeat='aihe in model.koulutus.aihees.meta'>{{ aihe.meta[lang.koodi_uri].nimi }}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.review.perustiedot.tutkintonimike">Tutkintonimike</th>

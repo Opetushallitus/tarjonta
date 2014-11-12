@@ -122,10 +122,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komoto.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE, param));
             }
 
-            if (komoto.getAihees() != null) {
-                kkDto.setAihees(commonConverter.convertToKoodiUrisDTO(komoto.getAihees(), FieldNames.AIHEES, param));
-            }
-
             final String maksullisuus = komoto.getMaksullisuus();
             kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
 
@@ -305,6 +301,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
         if (komoto.getSuunniteltukestoYksikkoUri() != null) {
             dto.setSuunniteltuKestoTyyppi(commonConverter.convertToKoodiDTO(komoto.getSuunniteltukestoYksikkoUri(), NO_OVERRIDE_URI, FieldNames.SUUNNITELTUKESTON_TYYPPI, YES, param));
+        }
+
+        if (komoto.getAihees() != null) {
+            dto.setAihees(commonConverter.convertToKoodiUrisDTO(komoto.getAihees(), FieldNames.AIHEES, param));
         }
 
         dto.setSuunniteltuKestoArvo(komoto.getSuunniteltukestoArvo());

@@ -216,6 +216,21 @@
     <td></td>
 </tr>
 
+<!-- teemat -->
+<tr ng-if="koulutusStructure.MCOMBO.aihees" class="required">
+    <th tt="koulutus.edit.aiheet">Aiheet</th>
+    <td>
+        <aiheet-ja-teemat  model="uiModel.aihees.uris"></aiheet-ja-teemat>
+    </td>
+    <td>
+        <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/>
+    </td>
+</tr>
+<tr ng-if="koulutusStructure.MCOMBO.aihees">
+    <th></th>
+    <td colspan="2" class="help" tt="koulutus.edit.aihe-teema.help">Aiheet vaaditaan</td>
+</tr>
+
 <!-- väli -->
 <tr class="padding"><td colspan="3"></td></tr>
 <tbody ng-include="'partials/koulutus/edit/editYhteyshenkilo.html'"></tbody>
