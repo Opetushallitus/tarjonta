@@ -2,7 +2,7 @@
 
 var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation', 'TarjontaDateTime']);
 
-app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', 'DataService', function($log, $modal, LocalisationService, DataService) {
+app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
 
         $log = $log.getInstance("alkamispaivaJaKausi");
 
@@ -15,7 +15,8 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', '
                                 && $scope.kausiUri.length > 0);
             };
 
-            var lukittu = DataService.get('lukittu');
+            var pScope = $scope.$parent.$parent.$parent.$parent;
+            var lukittu = pScope.model ? pScope.model.isMinmax : false;
 
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
@@ -31,8 +32,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', '
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
 
-            // asetetaan min/maxYear myös tähän scopeen, kun maxYear on asetettu BaseEditControllerissa
-            var pScope = $scope.$parent.$parent.$parent.$parent;
+            // asetetaan tähän scopeen sama min/maxYear kuin BaseEditControllerissa (maxYearin muuttuessa)
             pScope.$watch("maxYear", function(valNew, valOld) {
             	if (lukittu) {
     	            $scope.minYear = pScope.minYear;

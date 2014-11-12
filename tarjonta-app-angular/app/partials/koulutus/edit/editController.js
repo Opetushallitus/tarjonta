@@ -21,13 +21,13 @@ app.controller('BaseEditController', [
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
     'dialogService', 'CacheService', '$modal', 'OrganisaatioService', 'AuthService',
-    'DataService', 'HakukohdeKoulutukses',
+    'HakukohdeKoulutukses',
     function BaseEditController($scope, $log, Config,
         $routeParams, $route, $location,
         converter, TarjontaService, PermissionService,
         organisaatioService, Koodisto, KoodistoURI, LocalisationService,
         dialogService, CacheService, $modal, OrganisaatioService, AuthService,
-        DataService, HakukohdeKoulutukses) {
+        HakukohdeKoulutukses) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -476,23 +476,17 @@ app.controller('BaseEditController', [
                 
                 if (uiModel.isMutable) {
                     model.isNew = false;
-                    var lukittu = DataService.get('lukittu');
-                    if (lukittu == undefined) {
-                    	var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
-                    	hakukohdePromise.then(function(hakukohteet) {
-                    		if (hakukohteet.result && hakukohteet.result.length > 0) {
-                    			DataService.set('lukittu', true);
-                    			$scope.setMinMax(true, model);
-                    		} else {
-                    			DataService.set('lukittu', false);
-                    			$scope.setMinMax(false, model);
-                    		}
-                    	}, function() {
+                    
+                    var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
+                    hakukohdePromise.then(function(hakukohteet) {
+                    	if (hakukohteet.result && hakukohteet.result.length > 0) {
+                    		$scope.setMinMax(true, model);
+                    	} else {
                     		$scope.setMinMax(false, model);
-                        });
-        			} else {
-        				$scope.setMinMax(lukittu, model);
-        			}
+                    	}
+                    }, function() {
+                    	$scope.setMinMax(false, model);
+                    });
 				} // if (uiModel.isMutable)
             }); // koulutus.canEdit.then
 
@@ -697,6 +691,7 @@ app.controller('BaseEditController', [
 					$scope.max = maxY;
 					$scope.minYear = minY.getFullYear();
 					$scope.maxYear = $scope.minYear;
+					alert("alkamispvm: min="+ JSON.stringify($scope.min) +", max="+ JSON.stringify($scope.max) +", minYear="+ JSON.stringify($scope.minYear) +", maxYear="+ JSON.stringify($scope.maxYear));
 				} else {
     				var minY = new Date();
     				var maxY = new Date();
@@ -713,6 +708,7 @@ app.controller('BaseEditController', [
     					$scope.max = maxY;
     					$scope.minYear = minY.getFullYear();
     					$scope.maxYear = $scope.minYear;
+    					alert("kausi: min="+ JSON.stringify($scope.min) +", max="+ JSON.stringify($scope.max) +", minYear="+ JSON.stringify($scope.minYear) +", maxYear="+ JSON.stringify($scope.maxYear));
 					} else {
         				model.isMinmax = false;
 					}
