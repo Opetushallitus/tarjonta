@@ -1,5 +1,5 @@
 <div id="koulutuksenAlkamisPvm">
-    <input type="radio" name="{{ctrl.kausiVaiPvm}}" ng-model="ctrl.kausi" ng-value="false"/>
+    <input type="radio" name="{{ctrl.kausiVaiPvm}}" ng-model="ctrl.kausi" ng-value="false" />
     <span tt="koulutus.alkamispvm.singlePvm">Yksi alkamispäivämäärä</span><br/>
     <div class="indent">
         <alkamispaivat
@@ -10,6 +10,7 @@
             multi="multi"
             field-name-prefix={{fieldNamePrefix}}
             min="min"
+            max="max"
             >
         </alkamispaivat>
 
@@ -29,7 +30,7 @@
             ng-required="ctrl.kausi"
             ng-model="kausiUri"
             ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in ctrl.koodis | orderByNum:'koodiNimi'"
-            ng-disabled="!ctrl.kausi">
+            ng-disabled="!ctrl.kausi || ctrl.lukittu">
                 <option value="" tt="koulutus.edit.alkamispaiva.ei-valittua-kautta"></option>
         </select>
         <span tt="koulutus.alkamispvm.vuosi">Alkamisvuosi</span>
@@ -40,6 +41,6 @@
             name="{{ctrl.alkamisvuosi}}" 
             min="{{minYear}}"
             max="{{maxYear}}"
-            ng-disabled="!ctrl.kausi"/>
+            ng-disabled="!ctrl.kausi || ctrl.lukittu"/>
     </div>
 </div>

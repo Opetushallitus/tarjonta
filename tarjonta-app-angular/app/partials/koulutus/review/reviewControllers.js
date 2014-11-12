@@ -7,7 +7,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     LocalisationService, dialogService, Koodisto,
     KoodistoURI, $modal, KoulutusConverterFactory,
     HakukohdeKoulutukses, SharedStateService, AuthService,
-    OrganisaatioService) {
+    OrganisaatioService, DataService) {
 
     $log = $log.getInstance("BaseReviewController");
 
@@ -62,6 +62,11 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
     hakukohdePromise.then(function(hakukohteet) {
         $scope.model.hakukohteet = hakukohteet.result;
+        if (hakukohteet.result.length > 0) {
+        	DataService.set("lukittu", true);
+		} else {
+        	DataService.set("lukittu", false);
+		}
     });
     var checkIsOkToRemoveHakukohde = function(hakukohde) {
 

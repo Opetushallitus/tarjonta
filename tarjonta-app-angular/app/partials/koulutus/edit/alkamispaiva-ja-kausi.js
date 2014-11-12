@@ -2,7 +2,7 @@
 
 var app = angular.module('app.edit.ctrl.alkamispaiva', ['localisation', 'TarjontaDateTime']);
 
-app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', function($log, $modal, LocalisationService) {
+app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', 'DataService', function($log, $modal, LocalisationService, DataService) {
 
         $log = $log.getInstance("alkamispaivaJaKausi");
 
@@ -15,6 +15,8 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                                 && $scope.kausiUri.length > 0);
             };
 
+            var lukittu = DataService.get('lukittu');
+
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
                 multi: $scope.pvms.length > 1,
@@ -22,11 +24,21 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausiVaiPvm" : "kausiVaiPvm",
                 alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamiskausi" : "alkamiskausi",
                 alkamisvuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisvuosi" : "alkamisvuosi",
-                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausivuosi" : "kausivuosi"
+                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausivuosi" : "kausivuosi",
+                lukittu: lukittu
             };
-
+            
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
+
+            // asetetaan min/maxYear myös tähän scopeen, kun maxYear on asetettu BaseEditControllerissa
+            var pScope = $scope.$parent.$parent.$parent.$parent;
+            pScope.$watch("maxYear", function(valNew, valOld) {
+            	if (lukittu) {
+    	            $scope.minYear = pScope.minYear;
+    	            $scope.maxYear = pScope.maxYear;
+				}
+            }); 
 
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
                 $scope.form[$scope.ctrl.kausivuosi] = valNew;
@@ -40,7 +52,9 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             });
 
             $scope.clearKausiSelection = function() {
-                $scope.kausiUri = "";
+            	if (!lukittu) {
+                    $scope.kausiUri = "";
+				}
             };
 
             $scope.onAddDate = function() {
@@ -121,7 +135,8 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 kausiUiModel: "=",
                 kausiUri: "=",
                 fieldNamePrefix: "@",
-                min: "="
+                min: "=",
+                max: "="
             }
         };
     }]);
@@ -294,7 +309,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 enabled: "=",
                 multi: "=",
                 fieldNamePrefix: "@",
-                min: "="
+                min: "=",
+                max: "="
             }
         };
     }]);
