@@ -38,23 +38,31 @@ import org.springframework.stereotype.Component;
 public class TarjontaFixtures {
 
     public static final String OID_ORGANISAATIO = "1.2.3.4.555";
-    public static final String OID_TIETOJENKASITTELYN_KOULUTUS = "dummy";
     public Koulutusmoduuli simpleTutkintoOhjelma;
     public KoulutusmoduuliToteutus simpleTutkintoOhjelmaToteutus;
     public Koulutusmoduuli simpleTutkinnonOsa;
     public Hakukohde simpleHakukohde;
     public Hakukohde hakukohdeWithValintakoe;
     public Haku simpleHaku;
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
     @Autowired
     private HakuDAO hakuDAO;
+
     @Autowired
     private KoulutusSisaltyvyysDAO rakenneDAO;
+
+    @Autowired
+    private KuvausDAO kuvausDAO;
+
     private static final Random random = new Random(System.currentTimeMillis());
 
     public void recreate() {
@@ -521,5 +529,20 @@ public class TarjontaFixtures {
 
         return teksti;
 
+    }
+
+    public void createPersistedValintaperusteSoraKuvaus() {
+        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+
+        kuvaus.setTyyppi(ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+        kuvaus.setTila(ValintaperusteSoraKuvaus.Tila.VALMIS);
+        kuvaus.setVuosi(2014);
+
+        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
+        monikielinenTeksti.addTekstiKaannos("kieli_fi", "Suomi");
+        monikielinenTeksti.addTekstiKaannos("kieli_en", "English");
+        kuvaus.setMonikielinenNimi(monikielinenTeksti);
+
+        kuvausDAO.insert(kuvaus);
     }
 }

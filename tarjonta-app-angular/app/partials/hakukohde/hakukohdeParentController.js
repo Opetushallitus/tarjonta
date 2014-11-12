@@ -587,6 +587,10 @@ app.controller('HakukohdeParentController', [
         $scope.clearHakuajat = function() {
             $scope.model.hakukohde.hakuaikaAlkuPvm = undefined;
             $scope.model.hakukohde.hakuaikaLoppuPvm = undefined;
+
+            var hakuaika = $scope.getSelectedHakuaika();
+            $scope.model.hakuaikaMin = hakuaika.alkuPvm;
+            $scope.model.hakuaikaMax = hakuaika.loppuPvm;
         };
 
         var getToteutustyyppiFromHakukohdeOrSharedState = function() {

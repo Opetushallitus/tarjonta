@@ -17,9 +17,9 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import java.util.Calendar;
-import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -51,9 +51,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class IndexerDaoImplTest extends TestData {
 
     @Autowired(required = true)
-    private HakukohdeDAOImpl instance;
+    private HakukohdeDAOImpl hakukohdeDAO;
+
     @Autowired(required = true)
     private TarjontaFixtures fixtures;
+
     private EntityManager em;
 
     @Autowired(required = true)
@@ -61,17 +63,9 @@ public class IndexerDaoImplTest extends TestData {
 
     @Before
     public void setUp() {
-        em = instance.getEntityManager();
+        em = hakukohdeDAO.getEntityManager();
         super.initializeData(em, fixtures);
     }
-
-//    Not working in Bamboo, result size is always six in bamboo.    
-//    @Test
-//    @DirtiesContext 
-//    public void testFindAllKoulutukset() {
-//        List<KoulutusIndexEntity> result = indexerDao.findAllKoulutukset();
-//        assertEquals(4, result.size());
-//    }
 
     @Test
     @DirtiesContext 
@@ -101,5 +95,15 @@ public class IndexerDaoImplTest extends TestData {
         assertEquals(null, result.getKoulutuksenAlkamisPvmMin());
         assertEquals(null, result.getKoulutuksenAlkamisPvmMax());
 
+    }
+
+    @Test
+    public void thatAloituspaikatKuvausForHakukohdeIsFound() {
+        Long id = hakukohdeDAO.findHakukohdeByOid("hakukohde_oid_1").getId();
+
+        MonikielinenTeksti aloituspaikatKuvaus = indexerDao.getAloituspaikatKuvausForHakukohde(id);
+
+        assertNotNull(aloituspaikatKuvaus);
+        assertEquals("Max 10", aloituspaikatKuvaus.getTekstiForKieliKoodi("kieli_en"));
     }
 }

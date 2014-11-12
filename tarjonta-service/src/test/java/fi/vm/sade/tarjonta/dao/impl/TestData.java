@@ -16,13 +16,7 @@
 package fi.vm.sade.tarjonta.dao.impl;
 
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.Valintakoe;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -146,6 +140,12 @@ public class TestData {
          * CREATE OBJECTS
          */
         kohde1 = createHakukohde(HAKUKOHDE_OID1);  //three exams
+
+        MonikielinenTeksti aloituspaikatKuvaus = new MonikielinenTeksti();
+        aloituspaikatKuvaus.addTekstiKaannos("kieli_en", "Max 10");
+
+        kohde1.setAloituspaikatKuvaus(aloituspaikatKuvaus);
+
         kohde1.setHakukohdeKoodistoNimi(HUMAN_READABLE_NAME_1);
         kohde1.setHakukohdeNimi(KOODISTO_URI_1);
 

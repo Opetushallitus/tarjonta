@@ -731,4 +731,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void setAloituspaikatKuvaus(MonikielinenTeksti aloituspaikatKuvaus) {
         this.aloituspaikatKuvaus = aloituspaikatKuvaus;
     }
+
+    public boolean hakuaikasSet() {
+        return getHakuaikaAlkuPvm() != null && getHakuaikaLoppuPvm() != null;
+    }
 }

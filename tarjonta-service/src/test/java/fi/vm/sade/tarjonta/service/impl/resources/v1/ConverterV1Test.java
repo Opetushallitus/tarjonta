@@ -13,14 +13,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConverterV1Test {
@@ -142,5 +142,21 @@ public class ConverterV1Test {
         assertTrue(tarjoajatiedotMap.containsKey("1.2.3"));
         assertTrue(tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().size() == 1);
         assertEquals("4.5.6", tarjoajatiedotMap.get("1.2.3").getTarjoajaOids().iterator().next());
+    }
+
+    @Test
+    public void thatHakukohdekohtainenHakuaikaIsConverted() {
+        Date alkuPvm = new Date();
+        Date loppuPvm = new Date();
+
+        Hakukohde hakukohde = getHakukohde();
+        hakukohde.setHakuaikaAlkuPvm(alkuPvm);
+        hakukohde.setHakuaikaLoppuPvm(loppuPvm);
+
+        HakukohdeV1RDTO hakukohdeV1RDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertEquals(alkuPvm, hakukohdeV1RDTO.getHakuaikaAlkuPvm());
+        assertEquals(loppuPvm, hakukohdeV1RDTO.getHakuaikaLoppuPvm());
+        assertTrue(hakukohdeV1RDTO.isKaytetaanHakukohdekohtaistaHakuaikaa());
     }
 }

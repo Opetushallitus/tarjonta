@@ -12,30 +12,16 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     };
 
     $scope.model = {};
-
     $scope.model.searchSpec = {};
-
     $scope.model.kuvaustyyppis = ["valintaperustekuvaus","SORA"];
-
     $scope.model.valintaperusteet = [];
-
     $scope.model.sorat = [];
-
     $scope.model.years = [];
-
     $scope.model.userLang  =  AuthService.getLanguage();
-
     $scope.model.userOrgTypes = [];
-
     $scope.valintaperusteColumns =['kuvauksenNimi','organisaatioTyyppi','vuosikausi'];
 
     var oppilaitosTyyppiPromises = [];
-
-    /*
-
-        -------------> "Inner" functions and "Helper" function declarations
-
-     */
 
     var getUserOrgs = function() {
         $log.info('AUTH SERVICE : ', AuthService.getUsername());
@@ -50,46 +36,29 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 
                 });
         }
-
-
     };
 
 
     var getYears = function() {
 
         var today = new Date();
-
         var currentYear = today.getFullYear();
-
         $scope.model.years.push(currentYear);
 
         var incrementYear = currentYear;
-
         var decrementYear = currentYear;
 
         for (var i = 0; i < 10;i++) {
-
-
             incrementYear++;
 
             if (i < 2) {
                 decrementYear--;
                 $scope.model.years.push(decrementYear);
             }
-
-
-
             $scope.model.years.push(incrementYear);
-
-
-
         }
 
-        if ($scope.model.searchSpec.vuosi === undefined) {
-            $scope.model.searchSpec.vuosi = currentYear;
-        }
         $scope.model.years.sort();
-
     };
 
 
@@ -213,16 +182,10 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                         if (kuvaus.kuvauksenNimet[prop] && kuvaus.kuvauksenNimet[prop].trim().length > 1) {
                             kuvaus.kuvauksenNimi = kuvaus.kuvauksenNimet[prop];
                         }
-
                     }
-
                 }
             }
-
-
-
         });
-
     };
 
     var removeKuvaus = function(kuvaus, doAfter) {
@@ -242,21 +205,8 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         });
     };
 
-    /*
-
-        ----------> Controller "initialization functions"
-
-     */
-
-     //getKuvaukses();
     getUserOrgs();
     getYears();
-
-    /*
-
-        ----------> Controller "event handlers and listeners" a
-
-     */
 
     $scope.selectKuvaus = function(kuvaus) {
 
@@ -284,7 +234,6 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     };
 
     $scope.removeKuvaus = function(kuvaus) {
-
         var texts = {
             title: LocalisationService.t("valintaperuste.list.remove.title"),
             description: LocalisationService.t("valintaperuste.list.remove.desc"),
@@ -298,33 +247,21 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                 removeKuvaus(kuvaus);
             }
         });
-
-
-
-    }
+    };
 
     $scope.copyKuvaus = function(kuvaus) {
-
-        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+kuvaus.kuvauksenTyyppi +"/"+kuvaus.kuvauksenTunniste+"/COPY";
+        var kuvausEditUri = "/valintaPerusteKuvaus/edit/" + $scope.model.userOrgTypes[0] + "/" + kuvaus.kuvauksenTyyppi + "/" + kuvaus.kuvauksenTunniste + "/COPY";
         $location.path(kuvausEditUri);
-    }
+    };
 
     $scope.search = function() {
+        $scope.model.valintaperusteet = [];
 
         checkForUserOrgs();
         angular.forEach($scope.model.kuvaustyyppis,function(tyyppi){
 
-            $log.info('SEARCHING KUVAUKSES WITH : ', tyyppi);
-
             var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec,tyyppi);
-
-            //$scope.model.valintaperusteet = [];
-            //$scope.model.sorat = [];
-
             searchPromise.then(function(resultData){
-
-                $log.info('GOT KUVAUS RESULT : ', resultData);
-
                 if (resultData.status === "OK") {
 
                 	localizeKuvausNames(resultData.result);
@@ -338,15 +275,10 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
                         });
                     });
                 };
-
             });
 
         });
-
-
-
-
-    }
+    };
 
     $scope.kuvauksetGetContent = function(row, col) {
     	console.log("GET CONTENT "+col, row);
@@ -358,15 +290,15 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
 		default:
 			return row.kuvauksenNimi;
     	}
-    }
+    };
 
     $scope.kuvauksetGetIdentifier = function(row) {
     	return row.kuvauksenTunniste;
-    }
+    };
 
     $scope.kuvauksetGetLink = function(row) {
     	return "#/valintaPerusteKuvaus/edit/" +$scope.model.userOrgTypes[0] + "/"+row.kuvauksenTyyppi +"/"+row.kuvauksenTunniste;
-    }
+    };
 
     $scope.kuvauksetGetOptions = function(row) {
     	return [{
@@ -380,34 +312,20 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
     	},{
     		title: LocalisationService.t("tarjonta.toiminnot.kopioi"),
     		action: function() {
-    			copyKuvaus(row);
+    			$scope.copyKuvaus(row);
     		}
-    	}
-    	];
-    }
+    	}];
+    };
 
 });
 
 app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,LocalisationService,Koodisto,filterUris, selectedUri, Tyyppi){
-
-    /*
-
-        ------> Variable declaration etc.
-
-     */
-
 
     $scope.dialog = {
         type : Tyyppi
     };
 
     $scope.dialog.userOrgTypes = [];
-
-    /*
-
-        ------> Private functions
-
-     */
 
     var initializeDialog = function() {
 
@@ -424,12 +342,6 @@ app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,Loca
            }
     };
 
-    /*
-
-     ----------> Controller "event handlers and listeners"
-
-     */
-
     $scope.onCancel = function() {
         $modalInstance.dismiss('cancel');
     };
@@ -438,11 +350,5 @@ app.controller('LuoUusiValintaPerusteDialog',function($scope,$modalInstance,Loca
         $modalInstance.close($scope.dialog.selectedType);
     };
 
-    /*
-
-        -----> Controller initialization functions
-
-     */
     initializeDialog();
-
 });

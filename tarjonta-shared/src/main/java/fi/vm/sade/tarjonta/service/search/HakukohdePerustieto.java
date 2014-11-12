@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
@@ -29,6 +30,7 @@ public class HakukohdePerustieto implements Serializable
     private String hakutyyppiUri;
     private KoodistoKoodi pohjakoulutusvaatimus; 
     private KoulutusasteTyyppi koulutusastetyyppi;
+    private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
 
     public KoulutusasteTyyppi getKoulutusastetyyppi() {
         return koulutusastetyyppi;
@@ -205,5 +207,13 @@ public class HakukohdePerustieto implements Serializable
                 + koulutuslaji + ", hakutyyppiUri=" + hakutyyppiUri
                 + ", pohjakoulutusvaatimus=" + pohjakoulutusvaatimus
                 + ", koulutusastetyyppi=" + koulutusastetyyppi + "]";
+    }
+
+    public Map<String, String> getAloituspaikatKuvaukset() {
+        return aloituspaikatKuvaukset;
+    }
+
+    public void setAloituspaikatKuvaukset(Map<String, String> aloituspaikatKuvaukset) {
+        this.aloituspaikatKuvaukset = aloituspaikatKuvaukset;
     }
 }

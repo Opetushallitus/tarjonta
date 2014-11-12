@@ -1,24 +1,6 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
-
-import fi.vm.sade.tarjonta.dao.impl.HakukohdeDAOImpl;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import junit.framework.Assert;
-
-import org.apache.solr.common.SolrInputDocument;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.Whitebox;
-
 import com.google.common.collect.Lists;
-
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -26,77 +8,96 @@ import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
-import fi.vm.sade.tarjonta.dao.impl.IndexerDaoImpl;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
 import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.solr.common.SolrInputDocument;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collection;
+import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
 public class HakukohdeIndexEntityToSolrDocumentTest {
 
-
-
     private static final String RYHMA_OID = "oid-1";
-    private static final String KOMO_OID = "komo-oid";
-    private static final String OID = "oid";
-    private static final String TUTKINTONIMIKEKOODI = "tutkintonimikekoodi";
-    private static final ModuulityyppiEnum BASE_AMM_KOULUTUSTYYPPI = ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS;
-    private static final ToteutustyyppiEnum SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO = ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO;
-    private static final String LUKIOLINJA_URI = "lukiolinjakoodi";
-    private static final String KOULUTUSOHJELMA_URI = "koulutusohjelmakoodi";
-    private static final String OSAAMISALA_URI = "osaamisala_uri";
-
-    private static final String KOULUTUS_URI = "koulutuskoodi";
-    private static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimuskoodi";
     private static final String TARJOAJA_OID = "tarjoaja-oid";
-    private static final String KAUSI_URI = "kausi_uri";
-    private static final int VUOSI = 2014;
-    private static final String KOULUTUSTYYPPI_URI = SUB_AMM_KOULUTUSTYYPPI_AMMATILLINEN_PERUSTUTKINTO.uri();
 
-    @Test
-    public void test() {
-        HakukohdeIndexEntityToSolrDocument converter = new HakukohdeIndexEntityToSolrDocument();
+    @Mock
+    private OrganisaatioSearchService organisaatioSearchService;
 
-        OrganisaatioSearchService organisaatioSearchService = Mockito
-                .mock(OrganisaatioSearchService.class);
-        Whitebox.setInternalState(converter, "organisaatioSearchService",
-                organisaatioSearchService);
-        Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet()))
-                .toReturn(Lists.newArrayList(getOrg(TARJOAJA_OID)));
+    @Mock
+    private KoodiService koodiService;
 
-        KoodiService koodiService = Mockito.mock(KoodiService.class);
-        Whitebox.setInternalState(converter, "koodiService", koodiService);
-        Mockito.reset(koodiService);
-        stubKoodi(koodiService, LUKIOLINJA_URI);
-        stubKoodi(koodiService, KOULUTUSOHJELMA_URI);
-        stubKoodi(koodiService, OSAAMISALA_URI);
-        stubKoodi(koodiService, KOULUTUS_URI);
-        stubKoodi(koodiService, POHJAKOULUTUSVAATIMUS_URI);
-        stubKoodi(koodiService, "kausi_k");
+    @Mock
+    private IndexerDAO indexerDAO;
 
-        IndexerDaoImpl indexerDao = Mockito.mock(IndexerDaoImpl.class);
-        Whitebox.setInternalState(converter, "indexerDao", indexerDao);
+    @Mock
+    private HakukohdeDAO hakukohdeDAO;
 
-        HakukohdeDAOImpl hakukohdeDAO = Mockito.mock(HakukohdeDAOImpl.class);
-        Whitebox.setInternalState(converter, "hakukohdeDAO", hakukohdeDAO);
-        Mockito.stub(hakukohdeDAO.findHakukohdeByOid(Mockito.anyString())).toReturn(new Hakukohde());
+    @InjectMocks
+    private HakukohdeIndexEntityToSolrDocument converter;
 
-        Mockito.stub(indexerDao.findKoulutusmoduuliToteutusesByHakukohdeId(Mockito.anyLong())).toReturn(Lists.newArrayList(new KoulutusIndexEntity("oid", "tarjoaja-oid", "foo", "bar",
+    @Before
+    public void before() {
+        when(organisaatioSearchService.findByOidSet(anySet())).thenReturn(Lists.newArrayList(getOrg(TARJOAJA_OID)));
+        when(koodiService.searchKoodis(Matchers.argThat(new KoodistoCriteriaMatcher("kieli_fi")))).thenReturn(Lists.newArrayList(getKoodiType("kieli_fi")));
+
+        when(hakukohdeDAO.findHakukohdeByOid(anyString())).thenReturn(getHakukohde());
+
+        when(indexerDAO.getAloituspaikatKuvausForHakukohde(1L)).thenReturn(getAloituspaikatKuvaus());
+        when(indexerDAO.findKoulutusmoduuliToteutusesByHakukohdeId(anyLong())).thenReturn(Lists.newArrayList(new KoulutusIndexEntity("oid", "tarjoaja-oid", "foo", "bar",
                 ModuulityyppiEnum.AMM_OHJAAVA_JA_VALMISTAVA_KOULUTUS, ToteutustyyppiEnum.AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA, "koulutus_1", "kevat_k", Integer.valueOf(2014))));
-
-        HakukohdeIndexEntity hk = new HakukohdeIndexEntity(1l,  "hk-oid",  "NIMI",  null,  null,  null,  null,  null,  null,  null,  null,  RYHMA_OID);
-        List<SolrInputDocument> doc = converter.apply(hk);
-        Assert.assertSame(1,  doc.size());
-        Assert.assertEquals(RYHMA_OID,  doc.get(0).get(SolrFields.Hakukohde.ORGANISAATIORYHMAOID).getFirstValue());
     }
 
+    @Test
+    public void testThatHakukohdeIsConvertedToDocument() {
+        HakukohdeIndexEntity hk = new HakukohdeIndexEntity(1l, "hk-oid", "NIMI", null, null, null, null, null, null, null, null, RYHMA_OID);
 
-    private void stubKoodi(KoodiService koodiService, String uri) {
-        List<KoodiType> vastaus = Lists.newArrayList(getKoodiType(uri));
-        Mockito.stub(
-                koodiService.searchKoodis(Matchers
-                        .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
-                        vastaus);
+        List<SolrInputDocument> docs = converter.apply(hk);
+
+        assertTrue(docs.size() == 1);
+
+        SolrInputDocument doc = docs.get(0);
+
+        assertEquals(RYHMA_OID, doc.get(SolrFields.Hakukohde.ORGANISAATIORYHMAOID).getFirstValue().toString());
+
+        Collection<Object> aloituspaikatValues = doc.getFieldValues(SolrFields.Hakukohde.ALOITUSPAIKAT_KUVAUKSET);
+        assertTrue(aloituspaikatValues.size() == 1);
+        assertEquals("Maksimi 20", aloituspaikatValues.iterator().next().toString());
+
+        Collection<Object> aloituspaikatkielet = doc.getFieldValues(SolrFields.Hakukohde.ALOITUSPAIKAT_KIELET);
+        assertTrue(aloituspaikatkielet.size() == 1);
+        assertEquals("kieli_fi", aloituspaikatkielet.iterator().next().toString());
+    }
+
+    private Hakukohde getHakukohde() {
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setId(1L);
+        return new Hakukohde();
+    }
+
+    private MonikielinenTeksti getAloituspaikatKuvaus() {
+        MonikielinenTeksti aloituspaikatKuvaus = new MonikielinenTeksti();
+        aloituspaikatKuvaus.addTekstiKaannos("kieli_fi", "Maksimi 20");
+        return aloituspaikatKuvaus;
     }
 
     private KoodiType getKoodiType(String uri) {
@@ -145,6 +146,5 @@ public class HakukohdeIndexEntityToSolrDocumentTest {
         @Override
         public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
         }
-    };
-
+    }
 }
