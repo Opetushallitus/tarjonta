@@ -40,9 +40,12 @@ app.directive('aiheetJaTeemat', function (LocalisationService, Koodisto, $log) {
         $scope.teemat = [];
 
         function updateErrors() {
-            $scope.errors.required = $scope.model.length === 0;
+            var isInvalid = $scope.model.length === 0;
+            $scope.errors.required = isInvalid;
             $scope.errors.dirty = true;
             $scope.errors.pristine = false;
+
+            $scope.form.$setValidity('aihees', !isInvalid);
         }
 
         $scope.toggle = function (auri, turi) {
@@ -122,6 +125,7 @@ app.directive('aiheetJaTeemat', function (LocalisationService, Koodisto, $log) {
         link: function (scope, element, attrs, controller) {
             scope.errors.required = true;
             controller.$addControl({"$name": "aiheetJaTeemat", "$error": scope.errors});
+            scope.form = controller;
         },
         scope: {
             model: "=",
