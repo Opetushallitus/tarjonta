@@ -27,7 +27,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		} else {
     			liite.muuOsoiteEnabled = true;
     		}
-    		console.log("WTF LI", [ liite, angular.copy($scope.model.liitteidenToimitusOsoite), $scope.model.liitteidenToimitusOsoite[liite.kieliUri] ]);
     	}
     	
 		return liite;
@@ -35,6 +34,13 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     
     $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
     	osoitteetReceived = true;
+        for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+            var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+            if(Object.keys(li.liitteenToimitusOsoite).length === 0) {
+                li.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[li.kieliUri]);
+                postProcessLiite(li);
+            }
+        }
     });
 
     function containsOpetuskieli(lc) {
