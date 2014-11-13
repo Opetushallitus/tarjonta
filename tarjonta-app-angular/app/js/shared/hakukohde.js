@@ -285,16 +285,12 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
 
 
     function removeEmptyLiites(liitteetArray) {
-        console.log("poistetaan tyhjät liitteet");
-        for (var i in liitteetArray) {
-            var liite = liitteetArray[i];
+        var loopIndex = liitteetArray.length
+        while (loopIndex--) {
+            var liite = liitteetArray[loopIndex];
             if (liite.isNew === true && liite.liitteenNimi === "") {
-                var idx = liitteetArray.indexOf(liite);
-                liitteetArray.splice(idx, 1);
-                console.log("poistetaan liite:", liite);
+                liitteetArray.splice(loopIndex, 1);
             }
-            console.log("ei poisteta liitettä:", liite);
-
         }
     }
 

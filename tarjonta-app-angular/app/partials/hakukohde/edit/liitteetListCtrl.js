@@ -37,10 +37,15 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         postProcessLiite(liite);
     });
 
+    $scope.$on('addEmptyLitteet', function() {
+        addEmptyLitteet();
+    });
+
     $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
     	osoitteetReceived = true;
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
             var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+
             if(Object.keys(li.liitteenToimitusOsoite).length === 0) {
                 li.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[li.kieliUri]);
                 postProcessLiite(li);
@@ -57,9 +62,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	return false;
     }
 
-    var kielet = Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale());
-    kielet.then(function(ret){
-    	
+    Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale()).then(function(ret) {
+
     	if (!$scope.model.hakukohde.opetusKielet) {
     		$scope.model.hakukohde.opetusKielet = [];
     	}
@@ -67,6 +71,21 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
        	$scope.liitteetModel.langs = ret;
         updateLanguages();
     });
+
+    function addEmptyLitteet() {
+        for(var opetuskieli in $scope.liitteetModel.opetusKielet) {
+            var kieliUri = $scope.liitteetModel.opetusKielet[opetuskieli].koodiUri;
+            var found = false;
+            for(var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+                if($scope.model.hakukohde.hakukohteenLiitteet[i].kieliUri === kieliUri) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                HakukohdeService.addLiite($scope.model.hakukohde, kieliUri,  $scope.model.liitteidenToimitusOsoite[kieliUri]);
+            }
+        }
+    }
 
     function updateLanguages(){
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
@@ -87,6 +106,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
                 initialTabSelected = true;
             }
         }
+
+        addEmptyLitteet();
     }
 
     function doAfterLangSelection() {
@@ -118,6 +139,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     			}
     		}
     	}
+
+        addEmptyLitteet();
     }
     
     $scope.onLangSelection = function() {

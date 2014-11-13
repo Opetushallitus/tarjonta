@@ -1095,6 +1095,7 @@ app.controller('HakukohdeParentController', [
                 $scope.emptyErrorMessages();
 
                 HakukohdeService.removeEmptyLiites($scope.model.hakukohde.hakukohteenLiitteet);
+
                 if (hakukohdeValidationFunction()) {
                     $scope.model.showError = false;
 
@@ -1129,13 +1130,13 @@ app.controller('HakukohdeParentController', [
                         });
                         $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
 
-                        $log.debug('INSERTING MODEL: ', $scope.model.hakukohde);
                         var returnResource = $scope.model.hakukohde.$save();
+
                         returnResource.then(function (hakukohde) {
-                            $log.debug('SERVER RESPONSE WHEN CREATING: ', hakukohde);
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                            $scope.$broadcast('addEmptyLitteet');
+
                             HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
-                            HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
 
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
@@ -1162,13 +1163,13 @@ app.controller('HakukohdeParentController', [
                         });
 
                     } else {
-                        $log.debug('UPDATE MODEL1 : ', $scope.model.hakukohde);
                         var returnResource = $scope.model.hakukohde.$update();
                         returnResource.then(function (hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                            $scope.$broadcast('addEmptyLitteet');
+
                             if (hakukohde.status === 'OK') {
                                 HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
-                                HakukohdeService.addLiiteIfEmpty($scope.model.hakukohde);
                                 $scope.status.dirty = false;
                                 if ($scope.editHakukohdeForm) {
                                     $scope.editHakukohdeForm.$dirty = false;
@@ -1190,25 +1191,19 @@ app.controller('HakukohdeParentController', [
                             $scope.showCommonUnknownErrorMsg();
                         });
                     }
+                } else {
+                    $scope.$broadcast('addEmptyLitteet');
                 }
             });
         };
 
-        /*
-
-         ------>  Koodisto helper methods
-
-         */
         var findKoodiWithArvo = function (koodi, koodis) {
-
             var foundKoodi;
-
             angular.forEach(koodis, function (koodiLoop) {
                 if (koodiLoop.koodiArvo === koodi) {
                     foundKoodi = koodiLoop;
                 }
             });
-
             return foundKoodi;
         };
 
