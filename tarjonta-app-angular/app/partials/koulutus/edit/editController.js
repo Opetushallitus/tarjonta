@@ -691,7 +691,6 @@ app.controller('BaseEditController', [
 					$scope.max = maxY;
 					$scope.minYear = minY.getFullYear();
 					$scope.maxYear = $scope.minYear;
-					alert("alkamispvm: min="+ JSON.stringify($scope.min) +", max="+ JSON.stringify($scope.max) +", minYear="+ JSON.stringify($scope.minYear) +", maxYear="+ JSON.stringify($scope.maxYear));
 				} else {
     				var minY = new Date();
     				var maxY = new Date();
@@ -708,7 +707,6 @@ app.controller('BaseEditController', [
     					$scope.max = maxY;
     					$scope.minYear = minY.getFullYear();
     					$scope.maxYear = $scope.minYear;
-    					alert("kausi: min="+ JSON.stringify($scope.min) +", max="+ JSON.stringify($scope.max) +", minYear="+ JSON.stringify($scope.minYear) +", maxYear="+ JSON.stringify($scope.maxYear));
 					} else {
         				model.isMinmax = false;
 					}
