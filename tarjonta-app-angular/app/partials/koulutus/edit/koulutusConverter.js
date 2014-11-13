@@ -349,6 +349,37 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         $log.debug("createAPIModel", apiModel);
     };
 
+    /**
+     * Osalla koulutuksista tutkinto-ohjelma kirjoitetaan vapaasti käsin,
+     * mutta kuitenkin pitää tallentaa myös koodiston arvo. Tästä syystä
+     * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), joten
+     * sen arvo asetetaan automaattisesti tällä funktiolla.
+     */
+    function koulutusohjelmanNimiKannassaInit($scope) {
+        if (!$scope.model.koulutusohjelmanNimiKannassa) {
+            $scope.model.koulutusohjelmanNimiKannassa = {};
+        }
+        $scope.$watch("uiModel.koulutusohjelmaModules", function(newVal) {
+            if (!newVal) {
+                return;
+            }
+
+            var keys = _.keys(newVal);
+
+            if ( keys.length === 1) {
+                var key = keys[0];
+                $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[key].oid;
+                $scope.model.koulutusohjelma = {
+                    uri: newVal[key].koodiUri,
+                    versio: newVal[key].koodiVersio
+                };
+            }
+            else if (keys.length > 1) {
+                $log.error("Found more than 1 matching koulutusohjelma");
+            }
+        });
+    }
+
     /*************************************************/
     /* INITIALIZATION PARAMETERS BY TOTEUTUSTYYPPI */
     /*************************************************/
@@ -652,45 +683,12 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
             koulutustyyppiKoodiUri: "koulutustyyppi_5",
-            templates: {
-                edit: null, // käytä oletusnimeä templalle
-                review: 'GENERIC'
-            },
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
                 opintojenLaajuusarvo: {module: 'TUTKINTO'},
                 pohjakoulutusvaatimus: {module: 'TUTKINTO'}
             }),
-            initFunction: function($scope) {
-                if (!$scope.model.koulutusohjelmanNimiKannassa) {
-                    $scope.model.koulutusohjelmanNimiKannassa = {};
-                }
-                /**
-                 * Hack: tällä koulutustyypillä tutkinto-ohjelma kirjoitetaan käsin,
-                 * mutta kuitenkin pitää tallentaa myös koodiston arvo. Tästä syystä
-                 * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), ja sen
-                 * arvo pitää asettaa käsin täältä.
-                 */
-                $scope.$watch("uiModel.koulutusohjelmaModules", function(newVal) {
-                    if (!newVal) {
-                        return;
-                    }
-
-                    var keys = _.keys(newVal);
-
-                    if ( keys.length === 1) {
-                        var key = keys[0];
-                        $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[key].oid;
-                        $scope.model.koulutusohjelma = {
-                            uri: newVal[key].koodiUri,
-                            versio: 1
-                        };
-                    }
-                    else if (keys.length > 1) {
-                        $log.error("Found more than 1 matching koulutusohjelma");
-                    }
-                });
-            }
+            initFunction: koulutusohjelmanNimiKannassaInit
         }),
 
         /*******************************************/
@@ -748,7 +746,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }),
             MCOMBO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.MCOMBO, {
                 aihees: {koodisto: 'koodisto-uris.aiheet'}
-            })
+            }),
+            initFunction: koulutusohjelmanNimiKannassaInit
         }),
 
         /*******************************************/

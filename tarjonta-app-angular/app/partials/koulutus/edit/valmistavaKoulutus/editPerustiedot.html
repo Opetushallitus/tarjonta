@@ -19,11 +19,14 @@
     <tr class="required">
         <th tt="koulutus.edit.koulutusohjelma">Koulutusohjelma</th>
         <td>
-            <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
-                <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
-                <option value="" ng-disabled="model.koulutusohjelma.uri"></option>
-            </select>
-            <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
+            <div ng-if="!model.koulutusohjelmanNimiKannassa">
+                <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
+                    <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
+                    <option value="" ng-disabled="model.koulutusohjelma.uri"></option>
+                </select>
+                <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
+            </div>
+            <input ng-if="model.koulutusohjelmanNimiKannassa" required class="input-xxlarge" ng-model="model.koulutusohjelmanNimiKannassa['kieli_' + koodistoLocale + '#1']" />
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
