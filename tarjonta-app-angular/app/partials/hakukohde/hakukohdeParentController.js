@@ -472,7 +472,7 @@ app.controller('HakukohdeParentController', [
                                 }
                             }
                             
-                            getHakukohteenYhteystiedot(data);
+                            //getHakukohteenYhteystiedot(data);
 
                             counter++;
 
