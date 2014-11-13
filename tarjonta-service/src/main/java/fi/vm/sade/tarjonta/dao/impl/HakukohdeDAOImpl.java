@@ -15,17 +15,6 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import java.util.*;
-
-import javax.persistence.Query;
-
-import fi.vm.sade.tarjonta.model.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mysema.query.Tuple;
@@ -34,11 +23,18 @@ import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.expr.BooleanExpression;
-
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
+import java.util.*;
 
 /**
  */
@@ -97,7 +93,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
 
         hakukohde.getValintakoes().addAll(valintakoes);
 
-       //getEntityManager().flush();
+        //getEntityManager().flush();
     }
 
     @Override
@@ -242,7 +238,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public void removeHakukohdeLiite(HakukohdeLiite hakukohdeLiite) {
         if (hakukohdeLiite != null && hakukohdeLiite.getId() != null) {
             getEntityManager().remove(getEntityManager().find(HakukohdeLiite.class, hakukohdeLiite.getId()));
-           // getEntityManager().flush();
+            // getEntityManager().flush();
         }
     }
 
@@ -271,7 +267,6 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Preconditions.checkNotNull(oid, "Hakukohde OID cannot be null.");
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         if (showDeleted) {
-
 
 
             return from(qHakukohde)
@@ -316,7 +311,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
             // Convert Enums from API enum to DB enum
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.tila.eq(fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(tila.name())));
         } else {
-            whereExpr = QuerydslUtils.and(whereExpr,hakukohde.tila.notIn(poistettuTila));
+            whereExpr = QuerydslUtils.and(whereExpr, hakukohde.tila.notIn(poistettuTila));
         }
         if (lastModifiedBefore != null) {
             whereExpr = QuerydslUtils.and(whereExpr, hakukohde.lastUpdateDate.before(lastModifiedBefore));
@@ -437,15 +432,15 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         Preconditions.checkNotNull(getEntityManager().find(Hakukohde.class, entity.getId()));
         super.update(entity);
     }
-    
+
     @Override
     public void merge(Hakukohde hk) {
-	    getEntityManager().merge(hk);	
+        getEntityManager().merge(hk);
     }
-    
+
     @Override
     public boolean removeHakuKohdeLiiteById(String id) {
-    	return getEntityManager().createQuery("delete from "+HakukohdeLiite.class.getName()+" where id = ?").setParameter(1, Long.parseLong(id)).executeUpdate() != 0;
+        return getEntityManager().createQuery("delete from " + HakukohdeLiite.class.getName() + " where id = ?").setParameter(1, Long.parseLong(id)).executeUpdate() != 0;
     }
 
     public void updateTilat(TarjontaTila toTila, List<String> oidit, Date updateDate, String userOid) {
@@ -484,4 +479,9 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         findByOid.setLastUpdatedByOid(userOid);
     }
 
+    @Override
+    public List<String> findAllOids() {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return from(hakukohde).list(hakukohde.oid);
+    }
 }

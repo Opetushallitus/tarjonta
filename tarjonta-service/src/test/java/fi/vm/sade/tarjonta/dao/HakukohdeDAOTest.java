@@ -55,36 +55,32 @@ import fi.vm.sade.tarjonta.dao.impl.MonikielinenMetatdataDAOImpl;
 @Transactional
 public class HakukohdeDAOTest {
 
-    private static final String KOODI_URI_METADATA_RELATION = "uri:included_test_object";
     @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    /**
-     * Set of Koulutusmoduulitoteutus persisted into database.
-     */
+
     private Set<KoulutusmoduuliToteutus> koulutusmoduuliToteutuses = new HashSet<KoulutusmoduuliToteutus>();
+
     @Autowired
     private TarjontaFixtures fixtures;
 
     @Before
     public void setUp() {
-
         fixtures.recreate();
-
         setUpKoulutusmoduuliToteutuses();
-
     }
 
     @Test(expected = PersistenceException.class)
     public void testCreateWithoutName() {
-
         hakukohdeDAO.insert(new Hakukohde());
-
     }
 
     @Test
@@ -230,55 +226,6 @@ public class HakukohdeDAOTest {
         // assertEquals(0, loaded.getValintakoes().size());
     }
 
-//    @Test
-//    public void testMonikielinenValintaperusteKuvaus() {
-//        Hakukohde h = fixtures.createHakukohde();
-//        h.setValintaperustekuvausKoodiUri(KOODI_URI_METADATA_RELATION);
-//        h.setHaku(fixtures.createPersistedHaku());
-//
-//        hakukohdeDAO.insert(h);
-//        flush();
-//
-//        /*
-//         * The object will be included to a query result.
-//         */
-//        MonikielinenMetadata metaIncluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
-//        metaIncluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
-//        metaIncluded.setKieli("URI:FI");
-//        metaIncluded.setArvo("Value");
-//        assertNotNull("koodi uri was null?", h.getHakukohdeNimi());
-//        metaIncluded.setAvain(KOODI_URI_METADATA_RELATION);
-//        monikielinenMetadataDAO.insert(metaIncluded);
-//
-//        /*
-//         * The object has no reference to Hakukohde object.
-//         */
-//        MonikielinenMetadata metaExcluded = new fi.vm.sade.tarjonta.model.MonikielinenMetadata();
-//        metaExcluded.setKategoria(MetaCategory.VALINTAPERUSTEKUVAUS.toString());
-//        metaExcluded.setKieli("URI:FI");
-//        metaExcluded.setArvo("Value");
-//        metaExcluded.setAvain("uri:excluded_test_object");
-//
-//        monikielinenMetadataDAO.insert(metaExcluded);
-//        flush();
-//        detach(metaExcluded);
-//        detach(metaIncluded);
-//        detach(h);
-//
-//        final Hakukohde result = hakukohdeDAO.read(h.getId());
-//        final List<MonikielinenMetadata> metaResult = monikielinenMetadataDAO.findByAvain(metaIncluded.getAvain());
-//
-//        assertNotNull("MonikielinenMetadata entity was null", metaResult);
-//        assertEquals("KuvausV1RDTO not inserted", 1, metaResult.size());
-//        
-//        assertEquals("query join key mismatch", KOODI_URI_METADATA_RELATION, metaResult.get(0).getAvain());
-//        assertNotNull("Hakukohde entity was null", result);
-//        assertEquals("Missing meta data", 1, result.getValintaperustekuvaus().size());
-//        assertEquals("Missing category", MetaCategory.VALINTAPERUSTEKUVAUS.toString(), metaResult.get(0).getKategoria());
-//        assertEquals("An invalid class", true, metaResult.get(0) instanceof MonikielinenMetadata);
-//
-//    }
-
     @Test
     public void testFindByKoulutusOid() {
         KoulutusmoduuliToteutus t = fixtures.createPersistedKoulutusmoduuliToteutusWithMultipleHakukohde();
@@ -288,20 +235,10 @@ public class HakukohdeDAOTest {
         assertEquals(3, hakukohdes.size());
     }
 
-
-    /*  @Test
-     public void testValintakoeInsert() {
-     Hakukohde nonOrphan = fixtures.createPersistedHakukohdeWithKoulutus();
-     Valintakoe valintakoe = fixtures.createValintakoe();
-
-     nonOrphan.addValintakoe(valintakoe);
-
-     hakukohdeDAO.insert(nonOrphan);
-     }*/
     @Test
     public void testFindOrphanHakukohteet() {
-        Hakukohde nonOrphan = fixtures.createPersistedHakukohdeWithKoulutus();
-        Hakukohde orphan = fixtures.createPersistedHakukohde();
+        fixtures.createPersistedHakukohdeWithKoulutus();
+        fixtures.createPersistedHakukohde();
 
         List<Hakukohde> hakukohdes = this.hakukohdeDAO.findAll();
 
@@ -311,9 +248,16 @@ public class HakukohdeDAOTest {
         assertTrue(hakukohdes.size() > orphanHakukohdes.size());
     }
 
-    /**
-     *
-     */
+    @Test
+    public void thatAllOidsAreFound() {
+        fixtures.createPersistedHakukohdeWithKoulutus();
+        fixtures.createPersistedHakukohde();
+
+        List<String> allOids = hakukohdeDAO.findAllOids();
+
+        assertTrue(allOids.size() == 2);
+    }
+
     private void setUpKoulutusmoduuliToteutuses() {
 
         koulutusmoduuliToteutuses.clear();
@@ -331,16 +275,4 @@ public class HakukohdeDAOTest {
         }
     }
 
-    private void flush() {
-        ((HakukohdeDAOImpl) hakukohdeDAO).getEntityManager().flush();
-        ((MonikielinenMetatdataDAOImpl) monikielinenMetadataDAO).getEntityManager().flush();
-    }
-
-    private void detach(Object o) {
-        if (o instanceof MonikielinenMetadata) {
-            ((MonikielinenMetatdataDAOImpl) monikielinenMetadataDAO).getEntityManager().detach(o);
-        } else if (o instanceof Hakukohde) {
-            ((HakukohdeDAOImpl) hakukohdeDAO).getEntityManager().detach(o);
-        }
-    }
 }

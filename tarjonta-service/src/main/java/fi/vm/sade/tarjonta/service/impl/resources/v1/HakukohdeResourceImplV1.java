@@ -304,20 +304,21 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     public ResultV1RDTO<List<OidV1RDTO>> search() {
-        List<Hakukohde> hakukohdeList = hakukohdeDAO.findAll();
+        List<String> hakukohdeOids = hakukohdeDAO.findAllOids();
 
         List<OidV1RDTO> oidList = new ArrayList<OidV1RDTO>();
-        if (hakukohdeList != null && hakukohdeList.size() > 0) {
+        if (hakukohdeOids != null && hakukohdeOids.size() > 0) {
 
-            for (Hakukohde hakukohde : hakukohdeList) {
-
+            for (String hakukohdeOid : hakukohdeOids) {
                 OidV1RDTO oidi = new OidV1RDTO();
-                oidi.setOid(hakukohde.getOid());
+                oidi.setOid(hakukohdeOid);
                 oidList.add(oidi);
             }
+
             ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
             result.setResult(oidList);
+
             return result;
         } else {
             ResultV1RDTO<List<OidV1RDTO>> result = new ResultV1RDTO<List<OidV1RDTO>>();
