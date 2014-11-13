@@ -2,11 +2,14 @@ package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import fi.vm.sade.generic.service.conversion.AbstractToDomainConverter;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.Yhteystiedot;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
+import fi.vm.sade.tarjonta.service.resources.dto.YhteystiedotRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +89,16 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         // TODO  organisaatio ryhmät!
         // FIXME organisaatio ryhmät
         hakukohde.setOrganisaatioRyhmaOids(hakukohdeDTO.getOrganisaatioRyhmaOids());
+        
+        for (YhteystiedotRDTO yh : hakukohdeDTO.getYhteystiedot()) {
+            Yhteystiedot newYhs = new Yhteystiedot();
+            newYhs.setLang(yh.getLang());
+            newYhs.setOsoiterivi1(yh.getOsoiterivi1());
+            newYhs.setOsoiterivi2(yh.getOsoiterivi2());
+            newYhs.setPostinumero(yh.getPostinumero());
+            newYhs.setPostitoimipaikka(yh.getPostitoimipaikka());
+            hakukohde.addYhteystiedot(newYhs);
+        }
 
         return hakukohde;
     }

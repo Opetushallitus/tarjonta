@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.collect.Maps;
+
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -41,6 +42,7 @@ import fi.vm.sade.tarjonta.service.types.ValinnanPisterajaTyyppi;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -598,22 +600,28 @@ public class ConverterV1 {
 
         if (hakukohde.getSoraKuvaus() != null) {
             hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getSoraKuvaus(), false));
-        } else {
-
+        }
+        else {
             String uri = tarjontaKoodistoHelper.getSORAKysymysryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
             if (uri != null) {
-
                 hakukohdeRDTO.setSoraKuvausKoodiUri(uri);
                 hakukohdeRDTO.setSoraKuvaukset(
                         convertMonikielinenMetadata(monikielinenMetadataDAO.findByAvainAndKategoria(uri, MetaCategory.SORA_KUVAUS.name()))
                 );
             }
-
         }
 
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
-        hakukohdeRDTO.setYhteystiedot(CommonToDTOConverter.convertYhteystiedotToYhteystiedotRDTO(hakukohde.getYhteystiedot()));
+        
+        if (hakukohde.getYhteystiedot() != null) {
+            List<YhteystiedotRDTO> yhList = new ArrayList<YhteystiedotRDTO>();
+            for (Yhteystiedot yh : hakukohde.getYhteystiedot()) {
+                yhList.add(CommonToDTOConverter.convertYhteystiedotToYhteystiedotRDTO(yh));
+            }
+            hakukohdeRDTO.setYhteystiedot(yhList);
+        }
+        
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
         LOG.debug("HAKUKOHDE LISATIEDOT : {} ", hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY");
 
@@ -809,7 +817,9 @@ public class ConverterV1 {
             hakukohde.setHakukelpoisuusVaatimusKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukelpoisuusVaatimusKuvaukset()));
         }
         if (hakukohdeRDTO.getYhteystiedot() != null) {
-            hakukohde.setYhteystiedot(CommonRestConverters.convertYhteystiedotRDTOToYhteystiedot(hakukohdeRDTO.getYhteystiedot()));
+            for (YhteystiedotRDTO yh : hakukohdeRDTO.getYhteystiedot()) {
+                hakukohde.addYhteystiedot(CommonRestConverters.convertYhteystiedotRDTOToYhteystiedot(yh));
+            }
         }
         if (hakukohdeRDTO.getLiitteidenToimitusOsoite() != null) {
             hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
