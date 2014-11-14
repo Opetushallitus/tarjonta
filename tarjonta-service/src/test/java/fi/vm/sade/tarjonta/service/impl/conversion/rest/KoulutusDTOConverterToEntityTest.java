@@ -203,6 +203,7 @@ public class KoulutusDTOConverterToEntityTest extends KoulutusRestBase {
         expectFieldsNotTested(FieldNames.OPETUSAIKAS);
         expectFieldsNotTested(FieldNames.LUKIODIPLOMI);
         expectFieldsNotTested(FieldNames.AMMATTINIMIKKEET);
+        expectFieldsNotTested(FieldNames.AIHEES);
 
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
