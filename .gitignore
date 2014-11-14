@@ -26,3 +26,4 @@ tarjonta-app-angular/nbproject
 /.gradle
 /tarjonta-service/nbactions.xml
 tarjonta-app-angular/config/protractor-credentials.js
+pom.xml.versionsBackup
