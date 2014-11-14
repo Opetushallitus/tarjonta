@@ -690,3 +690,19 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
 angular.module('app').config(function($logProvider) {
     $logProvider.debugEnabled(true);
 });
+
+/**
+ * Fix IE caching AJAX-requests to tarjonta-service.
+ */
+angular.module('app').factory('ieCacheInterceptor', function() {
+    return {
+        request: function(config) {
+            if (config.method === 'GET' && config.url.indexOf('/tarjonta-service/') !== -1) {
+                config.headers['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT';
+            }
+            return config;
+        }
+    };
+}).config(function($httpProvider) {
+    $httpProvider.interceptors.push('ieCacheInterceptor');
+});
