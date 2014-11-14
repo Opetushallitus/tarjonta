@@ -185,15 +185,6 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.onPreselection(selection);
         }
 
-        // poistetaan valinnat joita ei ole (uudessa) modelissa
-        function filterSelection() {
-            for (var i in $scope.selection) {
-                if (!$scope.names[$scope.selection[i]]) {
-                    $scope.selection.splice(i, 1);
-                }
-            }
-        }
-
         // salli valintojen muuttaminen "ulkopuolelta"
         $scope.$watch('selection', function(newValue, oldValue) {
             if (!$scope.initialized) {
@@ -207,7 +198,6 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                     item.selected = true;
                 }
             }
-            filterSelection();
             sortSelection();
             updateErrors();
         });
@@ -328,7 +318,6 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.rows = columnize($scope.items, columns);
             $scope.initialized = true;
 
-            filterSelection();
             updateErrors();
         }
 

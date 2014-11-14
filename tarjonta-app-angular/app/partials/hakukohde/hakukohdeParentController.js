@@ -1113,14 +1113,12 @@ app.controller('HakukohdeParentController', [
 */
         $scope.model.saveParent = function (tila, hakukohdeValidationFunction) {
             if (!tila) {
-                throw "tila cannot be undefuned!";
-            } else {
-                $log.debug("tallennetaan tila:", tila, hakukohdeValidationFunction);
+                throw "tila cannot be undefined!";
             }
-            $scope.model.showError = false;
-            PermissionService.permissionResource().authorize({}, function (authResponse) {
 
-                $log.debug('GOT AUTH RESPONSE : ', authResponse);
+            $scope.model.showError = false;
+            PermissionService.permissionResource().authorize({}, function () {
+
                 $scope.emptyErrorMessages();
 
                 HakukohdeService.removeEmptyLiites($scope.model.hakukohde.hakukohteenLiitteet);
@@ -1138,13 +1136,9 @@ app.controller('HakukohdeParentController', [
                         liite.jarjestys = index;
                     });
 
-                    // Check if hakukohde is copy, then remove oid and
-                    // save hakukohde as new
                     $scope.checkIsCopy($scope.luonnosVal);
 
                     if ($scope.model.hakukohde.oid === undefined) {
-
-                        $log.debug('LISATIEDOT : ', $scope.model.hakukohde.lisatiedot);
 
                         // OVT-8199, OVT-8205 Fix "toteutusTyyppi", was not sent to server side... was validated though :)
                         var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
@@ -1157,15 +1151,16 @@ app.controller('HakukohdeParentController', [
                                 tarjoajaOids: [AuthService.getUserDefaultOid()]
                             };
                         });
+
                         $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
 
                         var returnResource = $scope.model.hakukohde.$save();
 
                         returnResource.then(function (hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
-                            $scope.$broadcast('addEmptyLitteet');
 
-                            HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
+                            $scope.$broadcast('addEmptyLitteet');
+                            $scope.$broadcast('addEmptyValintakokeet');
 
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
@@ -1184,7 +1179,6 @@ app.controller('HakukohdeParentController', [
                             $scope.model.continueToReviewEnabled = true;
                             $scope.status.dirty = false;
                             $scope.editHakukohdeForm.$dirty = false;
-                            $log.debug('SAVED MODEL : ', $scope.model.hakukohde);
                         }, function (error) {
                             $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
                             $scope.showCommonUnknownErrorMsg();
@@ -1195,18 +1189,17 @@ app.controller('HakukohdeParentController', [
                         var returnResource = $scope.model.hakukohde.$update();
                         returnResource.then(function (hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+
                             $scope.$broadcast('addEmptyLitteet');
+                            $scope.$broadcast('addEmptyValintakokeet');
 
                             if (hakukohde.status === 'OK') {
-                                HakukohdeService.addValintakoe($scope.model.hakukohde, $scope.model.hakukohde.opetusKielet[0]);
                                 $scope.status.dirty = false;
                                 if ($scope.editHakukohdeForm) {
                                     $scope.editHakukohdeForm.$dirty = false;
                                 }
                                 $scope.showSuccess();
                             } else {
-                                console.log("error", hakukohde);
-
                                 if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
                                     $scope.model.hakukohde.valintaperusteKuvaukset = {};
                                 }
@@ -1222,18 +1215,9 @@ app.controller('HakukohdeParentController', [
                     }
                 } else {
                     $scope.$broadcast('addEmptyLitteet');
+                    $scope.$broadcast('addEmptyValintakokeet');
                 }
             });
-        };
-
-        var findKoodiWithArvo = function (koodi, koodis) {
-            var foundKoodi;
-            angular.forEach(koodis, function (koodiLoop) {
-                if (koodiLoop.koodiArvo === koodi) {
-                    foundKoodi = koodiLoop;
-                }
-            });
-            return foundKoodi;
         };
 
         var processPermissions = function (resourcePermissions) {
@@ -1462,4 +1446,20 @@ app.controller('HakukohdeParentController', [
                 }
             });
         }
+
+        $scope.sortLanguageTabs = function(a, b) {
+            if (a.koodiUri === 'kieli_fi') {
+                return -1;
+            } else if (a.koodiUri === 'kieli_sv' && b.koodiUri !== 'kieli_fi') {
+                return -1;
+            } else if (a.koodiUri === 'kieli_en' && b.koodiUri !== 'kieli_fi' && b.koodiUri !== 'kieli_sv') {
+                return -1;
+            } else {
+                if (b.koodiUri === 'kieli_fi' || b.koodiUri === 'kieli_sv' || b.koodiUri === 'kieli_en') {
+                    return 1;
+                } else {
+                    return a.koodiUri.localeCompare(b.koodiUri);
+                }
+            }
+        };
     }]);

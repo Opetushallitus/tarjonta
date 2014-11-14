@@ -51,6 +51,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
                 postProcessLiite(li);
             }
         }
+        addEmptyLitteet();
     });
 
     function containsOpetuskieli(lc) {
@@ -95,6 +96,13 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
             }
         }
 
+        for (var i in $scope.model.hakukohde.opetusKielet) {
+            var kieliUri = $scope.model.hakukohde.opetusKielet[i];
+            if ($scope.liitteetModel.selectedLangs.indexOf(kieliUri) === -1) {
+                $scope.liitteetModel.selectedLangs.push(kieliUri);
+            }
+        }
+
         $scope.liitteetModel.opetusKielet = [];
 
         for (var i in $scope.liitteetModel.langs) {
@@ -106,8 +114,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
                 initialTabSelected = true;
             }
         }
-
-        addEmptyLitteet();
     }
 
     function doAfterLangSelection() {
@@ -270,4 +276,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		return v && (""+v).trim().length>0;
     	}
     }
+
+    $scope.$watch('liitteetModel.opetusKielet.length', function() {
+        $scope.liitteetModel.opetusKielet.sort($scope.sortLanguageTabs);
+    });
 });
