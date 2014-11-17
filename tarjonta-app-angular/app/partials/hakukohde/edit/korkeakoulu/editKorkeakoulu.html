@@ -30,7 +30,7 @@
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
 
-        	<form name="editHakukohdeForm" novalidate>
+                <form name="editHakukohdeForm" novalidate>
                 <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
                 
                 <table class="tarjontaForm">
@@ -152,9 +152,23 @@
                         <td>
                         </td>
                     </tr>
-                    
-                    
 
+                    <!-- osoitetiedot -- >TODO! Kommentoitu pois, jottei tarjonta ottaisi itseensä, vasta alustava versio tästä toteutuksesta!
+                    <tr>
+                        <th tt="kk.hakukohde.yhteystiedot.label">Yhteystiedot</th>
+                        <td>
+                            <input type="radio" ng-model="model.hakukohde.muuYhteystieto" ng-value="false" ng-disabled="!model.hakukohde.yhteystiedot"/>
+                            <span class="{{model.hakukohde.yhteystiedot ? '' : 'disabled'}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span><br/>
+                            
+                            <input type="radio" ng-model="model.hakukohde.muuYhteystieto" ng-change="status.dirtify()" ng-value="true"/>
+                            <span tt="kk.hakukohde.yhteystiedot.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span><br/>
+                            
+                            <div class="inset">
+                                <osoite-field required model="model.hakukohde.yhteystiedot" ng-disabled="!model.hakukohde.muuYhteystieto" on-change="status.dirtify()"></osoite-field>
+                            </div>
+                        </td>
+                    </tr>
+                    -->
                 </table>
 
                 <h4 tt="kk.hakukohde.lisatietoja.hakemisesta">Lisätietoja hakemisesta</h4>

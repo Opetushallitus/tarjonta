@@ -16,18 +16,18 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import static fi.vm.sade.generic.common.validation.ValidationConstants.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import static fi.vm.sade.generic.common.validation.ValidationConstants.WWW_PATTERN;
 
 /**
  * Haku entity.
@@ -37,7 +37,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Entity
 @JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler"})
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
-    @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
+        @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
 })
 public class Haku extends TarjontaBaseEntity {
 
@@ -133,7 +133,7 @@ public class Haku extends TarjontaBaseEntity {
     /**
      * Array of organisation OIDs, comma separated. This lists the organisations
      * that can bind hakukohdes to this haku.
-     *
+     * <p/>
      * This is needed for KK-spesific functionality. See task KJOH-744 --
      * (https://jira.oph.ware.fi/jira/browse/KJOH-744)
      */
@@ -143,11 +143,18 @@ public class Haku extends TarjontaBaseEntity {
     /**
      * Array of organisation OIDs, comma separated. This lists the "tarjoaja"
      * oids for the haku (allowed to edit/delete it)
-     *
+     * <p/>
      * Tarjoaja organisation oids;
      */
     @Column(name = "tarjoajaOid")
     private String tarjoajaOidString;
+
+    @ManyToOne()
+    @JoinColumn(name = "parent_haku_id")
+    private Haku parentHaku;
+
+    @OneToMany(mappedBy = "parentHaku", cascade = CascadeType.ALL)
+    private Set<Haku> sisaltyvatHaut = new HashSet<Haku>();
 
     /**
      * If this is true, then the hakukohde choises users make should be arranged
@@ -198,8 +205,6 @@ public class Haku extends TarjontaBaseEntity {
     }
 
     /**
-     *
-     *
      * @param hakutyyppi uri to koodisto
      */
     public void setHakutyyppiUri(String hakutyyppi) {
@@ -473,4 +478,20 @@ public class Haku extends TarjontaBaseEntity {
         this.jarjestelmanHakulomake = jarjestelmanHakulomake;
     }
 
+
+    public Set<Haku> getSisaltyvatHaut() {
+        return sisaltyvatHaut;
+    }
+
+    public void setSisaltyvatHaut(Set<Haku> sisaltyvatHaut) {
+        this.sisaltyvatHaut = sisaltyvatHaut;
+    }
+
+    public Haku getParentHaku() {
+        return parentHaku;
+    }
+
+    public void setParentHaku(Haku parentHaku) {
+        this.parentHaku = parentHaku;
+    }
 }

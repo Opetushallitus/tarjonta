@@ -79,14 +79,14 @@ public class IndexerDaoImpl implements IndexerDAO {
 
         return q(hakukohde).join(hakukohde.koulutusmoduuliToteutuses, komoto).join(
                 komoto.koulutusmoduuli, komo).leftJoin(
-                        komoto.koulutuslajis, koodistoUri).where(
-                        hakukohde.id.eq(hakukohdeId)).list(
-                        new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja,
-                                koodistoUri.koodiUri,
-                                komoto.pohjakoulutusvaatimusUri,
-                                komo.koulutustyyppiEnum,
-                                komoto.toteutustyyppi,
-                                komo.koulutusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi));
+                komoto.koulutuslajis, koodistoUri).where(
+                hakukohde.id.eq(hakukohdeId)).list(
+                new QKoulutusIndexEntity(komoto.oid, komoto.tarjoaja,
+                        koodistoUri.koodiUri,
+                        komoto.pohjakoulutusvaatimusUri,
+                        komo.koulutustyyppiEnum,
+                        komoto.toteutustyyppi,
+                        komo.koulutusUri, komoto.alkamiskausiUri, komoto.alkamisVuosi));
     }
 
     @Override
@@ -254,13 +254,14 @@ public class IndexerDaoImpl implements IndexerDAO {
         u.where(komoto.id.eq(id)).set(komoto.viimIndeksointiPvm, time).execute();
     }
 
-  /**
-   * Hakee tarjoajan/järjestäjän tyypin mukaan. Olisi varmaan parempi, jos tämän tiedon saisi suoraan
-   * tuotua left joinilla findAllKoulutukset / findKoulutusById metodeissa
-   * @param oid
-   * @param type
-   * @return
-   */
+    /**
+     * Hakee tarjoajan/järjestäjän tyypin mukaan. Olisi varmaan parempi, jos tämän tiedon saisi suoraan
+     * tuotua left joinilla findAllKoulutukset / findKoulutusById metodeissa
+     *
+     * @param oid
+     * @param type
+     * @return
+     */
     @Override
     public Set<String> getOwners(String oid, String type) {
 
@@ -284,4 +285,9 @@ public class IndexerDaoImpl implements IndexerDAO {
         return ownerOids;
     }
 
+    @Override
+    public MonikielinenTeksti getAloituspaikatKuvausForHakukohde(long hakukohdeId) {
+        final QHakukohde hakukohde = QHakukohde.hakukohde;
+        return q(hakukohde).join(hakukohde.aloituspaikatKuvaus).where(hakukohde.id.eq(hakukohdeId)).singleResult(hakukohde.aloituspaikatKuvaus);
+    }
 }

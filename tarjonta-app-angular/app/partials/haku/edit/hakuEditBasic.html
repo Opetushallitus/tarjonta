@@ -13,7 +13,14 @@
     <tr class="required">
         <th data-tt='haku.edit.hakutyyppi'>Hakutyyppi</th>
         <td>
-            <div koodistocombo koodistouri="'hakutyyppi'" locale="getLocale()" koodiuri="model.hakux.result.hakutyyppiUri" version="true" isrequired="true" name="hakuTyyppi"></div>
+            <div koodistocombo
+                 koodistouri="'hakutyyppi'"
+                 locale="getLocale()"
+                 koodiuri="model.hakux.result.hakutyyppiUri"
+                 version="true"
+                 isrequired="true"
+                 name="hakuTyyppi"
+                 onchangecallback="haunTyyppiChanged"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="hakuTyyppi" tt-prefix="haku.edit" field-check="model.showError"></div>
@@ -51,10 +58,25 @@
     <tr class="required">
         <th data-tt='haku.edit.haunKohdejoukko'>Haun kohdejoukko</th>
         <td>
-            <div koodistocombo koodistouri="'haunkohdejoukko'" locale="getLocale()" filteruris="model.kohdejoukkoFilterUris" koodiuri="model.hakux.result.kohdejoukkoUri" version="true" isrequired="true" name="haunKohdejoukko"></div>
+            <div koodistocombo
+                 koodistouri="'haunkohdejoukko'"
+                 locale="getLocale()"
+                 filteruris="model.kohdejoukkoFilterUris"
+                 koodiuri="model.hakux.result.kohdejoukkoUri"
+                 version="true"
+                 isrequired="true"
+                 name="haunKohdejoukko"
+                 onchangecallback="haunKohdejoukkoChanged"></div>
         </td>
         <td>
             <div show-errors form="hakuForm" field="haunKohdejoukko" tt-prefix="haku.edit" field-check="model.showError"></div>
+        </td>
+    </tr>
+
+    <tr class="required" ng-show="shouldSelectParentHaku(model.hakux.result.hakutyyppiUri)">
+        <th data-tt='haku.edit.kuuluuHakuun'>Kuuluu hakuun</th>
+        <td>
+            <select name="hakuselect" class="wide" ng-model="model.hakux.result.parentHakuOid" data-ng-options="haku.oid as haku.nimi for haku in model.parentHakuCandidates"/>
         </td>
     </tr>
 

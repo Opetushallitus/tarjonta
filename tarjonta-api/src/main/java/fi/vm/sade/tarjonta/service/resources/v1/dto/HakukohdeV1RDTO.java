@@ -59,7 +59,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
     private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
-    private YhteystiedotRDTO yhteystiedot;
+    private List<YhteystiedotRDTO> yhteystiedot;
     private OsoiteRDTO liitteidenToimitusOsoite;
     private List<ValintakoeV1RDTO> valintakokeet;
     private Long valintaPerusteKuvausTunniste;
@@ -236,11 +236,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
     }
 
-    public YhteystiedotRDTO getYhteystiedot() {
+    public List<YhteystiedotRDTO> getYhteystiedot() {
         return yhteystiedot;
     }
 
-    public void setYhteystiedot(YhteystiedotRDTO yhteystiedot) {
+    public void setYhteystiedot(List<YhteystiedotRDTO> yhteystiedot) {
         this.yhteystiedot = yhteystiedot;
     }
 

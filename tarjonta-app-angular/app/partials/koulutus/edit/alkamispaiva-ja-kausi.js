@@ -15,6 +15,9 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                                 && $scope.kausiUri.length > 0);
             };
 
+            var pScope = $scope.$parent.$parent.$parent.$parent;
+            var lukittu = pScope.model ? pScope.model.isMinmax : false;
+
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
                 multi: $scope.pvms.length > 1,
@@ -22,11 +25,20 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausiVaiPvm" : "kausiVaiPvm",
                 alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamiskausi" : "alkamiskausi",
                 alkamisvuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisvuosi" : "alkamisvuosi",
-                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausivuosi" : "kausivuosi"
+                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausivuosi" : "kausivuosi",
+                lukittu: lukittu
             };
-
+            
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
+
+            // asetetaan tähän scopeen sama min/maxYear kuin BaseEditControllerissa (maxYearin muuttuessa)
+            pScope.$watch("maxYear", function(valNew, valOld) {
+            	if (lukittu) {
+    	            $scope.minYear = pScope.minYear;
+    	            $scope.maxYear = pScope.maxYear;
+				}
+            }); 
 
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
                 $scope.form[$scope.ctrl.kausivuosi] = valNew;
@@ -40,7 +52,9 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             });
 
             $scope.clearKausiSelection = function() {
-                $scope.kausiUri = "";
+            	if (!lukittu) {
+                    $scope.kausiUri = "";
+				}
             };
 
             $scope.onAddDate = function() {
@@ -121,7 +135,8 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 kausiUiModel: "=",
                 kausiUri: "=",
                 fieldNamePrefix: "@",
-                min: "="
+                min: "=",
+                max: "="
             }
         };
     }]);
@@ -294,7 +309,8 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 enabled: "=",
                 multi: "=",
                 fieldNamePrefix: "@",
-                min: "="
+                min: "=",
+                max: "="
             }
         };
     }]);

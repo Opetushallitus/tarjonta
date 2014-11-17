@@ -100,7 +100,7 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
      */
     public String getTekstiForKieliKoodi(String kieliKoodi) {
         final TekstiKaannos kaannos = findKaannos(kieliKoodi);
-        return (kaannos != null ? kaannos.getArvo() : null);
+        return kaannos != null ? kaannos.getArvo() : null;
     }
 
     /**

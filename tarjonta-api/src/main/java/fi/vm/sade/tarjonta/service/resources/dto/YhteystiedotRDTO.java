@@ -4,11 +4,20 @@ public class YhteystiedotRDTO extends BaseRDTO {
 
     private static final long serialVersionUID = 2716121730126623555L;
     
+    private String lang;
     private String osoiterivi1;
     private String osoiterivi2;
     private String postinumero;
     private String postinumeroArvo;
     private String postitoimipaikka;
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
 
     public String getOsoiterivi1() {
         return osoiterivi1;

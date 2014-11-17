@@ -33,10 +33,11 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
 
     public List<Hakukohde> findByKoulutusOid(String koulutusmoduuliToteutusOid);
 
-//    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
+    //    public List<Hakukohde> haeHakukohteetJaKoulutukset(HaeHakukohteetKyselyTyyppi kysely);
     public List<Hakukohde> findOrphanHakukohteet();
 
     HakukohdeLiite findHakuKohdeLiiteById(String id);
+
     boolean removeHakuKohdeLiiteById(String id);
 
     List<HakukohdeLiite> findHakukohdeLiitesByHakukohdeOid(String oid);
@@ -80,8 +81,9 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<Hakukohde> findByTermYearAndProvider(String term, int year, String providerOid);
 
     List<KoulutusmoduuliToteutus> komotoTest(String term, int year, String providerOid);
-    
+
     // String getAlkamiskausiUri();
+
     /**
      * Find list of OIDs with given search specs.
      *
@@ -103,7 +105,6 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     List<String> findOidsByKoulutusId(long id);
 
     /**
-     *
      * @param hakuOid
      * @param searchTerms
      * @param count
@@ -133,6 +134,5 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      */
     public void safeDelete(final String hakukohdeOid, final String userOid);
 
-    public List<String> findAllOids();
-
+    List<String> findAllOids();
 }

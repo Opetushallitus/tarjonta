@@ -1,62 +1,67 @@
 package fi.vm.sade.tarjonta.model;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-/*
-* @author: Tuomas Katva 16/12/13
-*
-* This entity holds either SORA-kuvaukses or Valintaperuste-kuvaukses for
-* university and polytechnic education
-*
-*/
 @Entity
-@JsonIgnoreProperties({"id","version"})
-@Table( name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME)
-public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
+@JsonIgnoreProperties({"id", "version"})
+@Table(name = ValintaperusteSoraKuvaus.VALINTAPERUSTEKUVAUSORA_TABLE_NAME)
+public class ValintaperusteSoraKuvaus extends TarjontaBaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    public  static final  String VALINTAPERUSTEKUVAUSORA_TABLE_NAME = "valintaperuste_sora_kuvaus";
+    public static final String VALINTAPERUSTEKUVAUSORA_TABLE_NAME = "valintaperuste_sora_kuvaus";
 
-    public static enum Tyyppi { VALINTAPERUSTEKUVAUS, SORA };
+    public String getAvain() {
+        return avain;
+    }
+
+    public void setAvain(String avain) {
+        this.avain = avain;
+    }
+
+    public static enum Tyyppi {VALINTAPERUSTEKUVAUS, SORA}
+
+    public static enum Tila {VALMIS, POISTETTU}
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn( name = "monikielinen_nimi_id")
+    @JoinColumn(name = "monikielinen_nimi_id")
     private MonikielinenTeksti monikielinenNimi;
 
-    @Column( name = "organisaatio_tyyppi")
+    @Column(name = "organisaatio_tyyppi")
     private String organisaatioTyyppi;
 
-    @Column( name =  "tyyppi")
+    @Column(name = "tyyppi")
     private Tyyppi tyyppi;
 
-    @Column ( name = "kausi")
+    @Column(name = "kausi")
     private String kausi;
 
-    @Column ( name =  "vuosi" )
+    @Column(name = "vuosi")
     private Integer vuosi;
 
-    @Column( name = "tekstis")
+    @Column(name = "tekstis")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MonikielinenMetadata> tekstis;
 
-    @Column(name="viimPaivitysPvm")
+    @Column(name = "viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date viimPaivitysPvm = new Date();
 
-    @Column(name="viimPaivittajaOid")
+    @Column(name = "viimPaivittajaOid")
     private String viimPaivittajaOid;
 
-    @Column ( name = "avain")
+    @Column(name = "avain")
     private String avain;
 
-    @Column(name="tila")
-    private String tila;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tila")
+    private Tila tila;
 
     public MonikielinenTeksti getMonikielinenNimi() {
         return monikielinenNimi;
@@ -122,15 +127,11 @@ public class ValintaperusteSoraKuvaus  extends  TarjontaBaseEntity {
         this.viimPaivittajaOid = viimPaivittajaOid;
     }
 
-    public void setAvain(String avain) { this.avain = avain; }
-
-    public String getAvain() { return avain; }
-
-    public String getTila() {
+    public Tila getTila() {
         return tila;
     }
 
-    public void setTila(String tila) {
+    public void setTila(Tila tila) {
         this.tila = tila;
     }
 }

@@ -228,6 +228,7 @@ describe('Edit koulutus insert/edit/load', function() {
     beforeEach(module('app.dialog'));
     beforeEach(module('TarjontaPermissions'));
     beforeEach(module('Haku'));
+    beforeEach(module('Hakukohde'));
 
     beforeEach(function() {
         module(function($provide) {

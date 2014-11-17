@@ -18,11 +18,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * DTO representing Haku.
@@ -97,7 +93,13 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
 	@ApiModelProperty(value = "Hakukohteet järjestettävä prioriteettijärjestykseen.", required=false)
     private boolean usePriority;
-        
+
+    @ApiModelProperty(value = "Isäntähaku, johon haku mahdollisesti linkittyy", required=false)
+    private String parentHakuOid;
+
+    @ApiModelProperty(value = "Sisältyvät haut", required=false)
+    private Set<String> sisaltyvatHaut = new HashSet<String>();
+
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
             return;
@@ -274,5 +276,21 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setJarjestelmanHakulomake(boolean jarjestelmanHakulomake) {
         this.jarjestelmanHakulomake = jarjestelmanHakulomake;
+    }
+
+    public Set<String> getSisaltyvatHaut() {
+        return sisaltyvatHaut;
+    }
+
+    public void setSisaltyvatHaut(Set<String> sisaltyvatHaut) {
+        this.sisaltyvatHaut = sisaltyvatHaut;
+    }
+
+    public String getParentHakuOid() {
+        return parentHakuOid;
+    }
+
+    public void setParentHakuOid(String parentHakuOid) {
+        this.parentHakuOid = parentHakuOid;
     }
 }

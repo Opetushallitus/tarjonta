@@ -190,7 +190,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             };
             
             $scope.isNew = function() {
-            	if ($scope.model && $scope.model.dto && $scope.model.dto.oid) {
+            	if ($scope.model && $scope.model.dto && ($scope.model.dto.oid || $scope.model.dto.modified)) {
 					return false;
 				}
             	return true;

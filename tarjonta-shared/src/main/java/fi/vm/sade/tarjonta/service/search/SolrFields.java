@@ -94,6 +94,8 @@ public class SolrFields {
         protected static final String HAKUTAPA_EN = "hakutapaen_s";
         protected static final String HAKUTAPA_URI = "hakutapauri_s";
         protected static final String ALOITUSPAIKAT = "aloituspaikat_s";
+        protected static final String ALOITUSPAIKAT_KUVAUKSET = "aloituspaikatnimi_ss";
+        protected static final String ALOITUSPAIKAT_KIELET = "aloituspaikatkieli_ss";
         protected static final String TILA = "tila_s";
         protected static final String HAKUKOHTEEN_NIMI_FI = "hakukohteennimifi_t";              //this is used in search
         protected static final String HAKUKOHTEEN_NIMI_SV = "hakukohteennimisv_t";              //this is used in search

@@ -57,7 +57,7 @@ public class TarjontaSearchService {
 
     private static final String QUERY_ALL = "*:*";
     private static final String TEKSTIHAKU_TEMPLATE = "%s:*%s*";
-    private static final String TILAHAKU_TEMPLATE = "%s:*%s*";
+
     @Value("${root.organisaatio.oid}")
     private String rootOrganisaatioOid;
     private final SolrServer koulutusSolr;
@@ -79,14 +79,12 @@ public class TarjontaSearchService {
 
     public HakukohteetVastaus haeHakukohteet(final HakukohteetKysely kysely, String defaultTarjoaja) {
 
-        HakukohteetVastaus response = new HakukohteetVastaus();
+        HakukohteetVastaus response;
 
         final SolrQuery q = createHakukohdeQuery(kysely);
         try {
-            // query solr
             QueryResponse hakukohdeResponse = hakukohdeSolr.query(q);
 
-            //now we have the hakukohteet, fetch orgs
             Set<String> orgOids = Sets.newHashSet();
 
             for (SolrDocument doc : hakukohdeResponse.getResults()) {
@@ -108,7 +106,6 @@ public class TarjontaSearchService {
                 SolrDocumentToHakukohdeConverter converter = new SolrDocumentToHakukohdeConverter();
                 response = converter.convertSolrToHakukohteetVastaus(hakukohdeResponse.getResults(), orgResponse, defaultTarjoaja);
             } else {
-                //empty result
                 response = new HakukohteetVastaus();
             }
 

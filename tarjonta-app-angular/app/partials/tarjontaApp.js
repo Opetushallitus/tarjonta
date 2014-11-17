@@ -483,7 +483,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                 'result': {
                                     toteutustyyppi: $route.current.params.toteutustyyppi,
                                     koulutustyyppi: $route.current.params.koulutustyyppi,
-                                    isNew: true
+                                    isNew: true,
+                                    isMinmax: true
                                 }
                             };
                         }
@@ -499,7 +500,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                                 'result': {
                                     toteutustyyppi: $route.current.params.toteutustyyppi,
                                     koulutustyyppi: $route.current.params.koulutustyyppi,
-                                    isNew: true
+                                    isNew: true,
+                                    isMinmax: true
                                 }
                             };
                         }

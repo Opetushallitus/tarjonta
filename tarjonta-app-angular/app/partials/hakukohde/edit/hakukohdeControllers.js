@@ -339,6 +339,7 @@ app.controller('HakukohdeEditController',
     $scope.model.hakuChanged = function() {
 
         if ($scope.model.hakukohde.hakuOid !== undefined) {
+
             $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
             var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
 
@@ -353,7 +354,6 @@ app.controller('HakukohdeEditController',
                     $scope.model.hakuaikas.push(hakuaika);
                 });
 
-                $scope.model.hakukohde.hakuaikaId = _.first($scope.model.hakuaikas).hakuaikaId;
                 $scope.model.showHakuaikas = true;
 
             } else {

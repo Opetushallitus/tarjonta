@@ -41,7 +41,8 @@ app.controller('HakuEditController',
                 KoodistoURI, 
                 PermissionService, 
                 HakuV1Service,
-                TarjontaService) {
+                HAKUTAPA,
+                HAKUTYYPPI) {
             $log = $log.getInstance("HakuEditController");
             $log.debug("initializing (scope, route)", $scope, $route);
 
@@ -160,16 +161,6 @@ app.controller('HakuEditController',
                   haku.tila = tila;
                 }
 
-                // When saving JATKUVA HAKU, reset year and term info
-                if ($scope.isJatkuvaHaku()) {
-                    $log.info("  this seems to be JATKUVA HALU - maybe reset vuosi kausi info?", haku);
-//                    haku.hakukausiUri = null;
-//                    haku.hakukausiVuosi = 0;
-//                    haku.koulutuksenAlkamiskausiUri = null;
-//                    haku.koulutuksenAlkamisVuosi = 0;
-                }
-
-                // Save it
                 HakuV1.save(haku, function(result) {
                     $log.debug("doSaveHakuAndParameters() - haku save OK", result);
 
@@ -229,11 +220,6 @@ app.controller('HakuEditController',
             };
 
 
-            /**
-             * Check if Haku is "new".
-             *
-             * @returns {boolean} true is haku in "model.hakux.result" is NEW (ie. doesn't have OID)
-             */
             $scope.isNewHaku = function() {
                 var result = !angular.isDefined($scope.model.hakux.result.oid);
                 // $log.debug("isNewHaku()", result);
@@ -260,11 +246,6 @@ app.controller('HakuEditController',
                 return result;
             };
 
-            /**
-             * Try to get name of the Haku.
-             *
-             * @returns {String}
-             */
             $scope.getHaunNimi = function() {
                 var nimi = $scope.model.hakux.result.nimi;
                 var kielet = [LocalisationService.getKieliUri(), "kieli_fi", "kieli_sv", "kieli_en"];
@@ -283,22 +264,6 @@ app.controller('HakuEditController',
                 }
 
                 return result;
-            };
-
-            var stringContainsOther = function (fullString,otherString) {
-
-                if(fullString && otherString) {
-
-                    if(fullString.indexOf(otherString) != -1) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-
-                } else {
-                    return false;
-                }
-
             };
 
             $scope.filterKohdejoukkos = function () {
@@ -553,15 +518,7 @@ app.controller('HakuEditController',
                 return result;
             };
 
-            /**
-             * Initialize controller and ui state.
-             *
-             * @returns {undefined}
-             */
             $scope.init = function() {
-                $log.info("init...");
-
-
                 var model = {
                     formControls: {},
                     showError: false,
@@ -570,24 +527,21 @@ app.controller('HakuEditController',
                     collapse: {
                         model: true
                     },
-                    // Preloaded Haku result
                     hakux: $route.current.locals.hakux,
                     haku: {
                         // Possible UI state for Haku
                         hakulomake : 
                                 "SYSTEM" // Possible values SYSTEM, OTHER, NONE
                     },
-                    parameter: {
-                        //parametrit populoituu tänne... ks. haeHaunParametrit(...)
-                    },
-                    selectedOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
-                    selectedTarjoajaOrganisations: [], // updated in $scope.updateSelectedOrganisationsList()
+                    parameter: {},
+                    selectedOrganisations: [],
+                    selectedTarjoajaOrganisations: [],
                     config: Config.env
                 };
 
-                $log.info("init... done.");
                 $scope.model = model;
-                
+                $scope.model.parentHakuCandidates = [];
+
                 // Update UI state for radio buttons on load
                 $scope.updatedHakulomakeSelectionFromModelToUI();                
                 
@@ -598,9 +552,6 @@ app.controller('HakuEditController',
                   });
                 }
 
-                /**
-                 * If this is new haku initialize selected organisations with users list of organisations.
-                 */
                 if ($scope.isNewHaku()) {
                     $scope.model.hakux.result.organisaatioOids = AuthService.getOrganisations();
                     $scope.model.hakux.result.tarjoajaOids = AuthService.getOrganisations();
@@ -608,43 +559,87 @@ app.controller('HakuEditController',
                     $log.info("NEW HAKU: tarjoaja organisationOids: ", $scope.model.hakux.result.organisaatioOids);
                 }
 
-                // Fetch organisations for display
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
-                //Filter kohdejoukkos
                 $scope.filterKohdejoukkos();
+                $scope.initParentHaku();
                 checkIsOphAdmin();
             };
-            $scope.init();
-            
-            var hakuOid = $route.current.params.id;
-            
-//
-//            TarjontaService.parameterCanEditHakukohde(hakuOid);
-//            TarjontaService.parameterCanEditHakukohdeLimited(hakuOid);
-//            TarjontaService.parameterCanAddHakukohdeToHaku(hakuOid);
-//            TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakuOid);
-//
-
-            if(!$scope.isNewHaku()) {
-              //permissiot
-              $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
-                $scope.isMutable=results[0];
-                $scope.isRemovable=results[1] && results[2];
-              });
-              
-              PermissionService.getPermissions("haku", hakuOid).then(function(permissions) {
-                  $log.info("got permissions! ", permissions);
-              });
-              
-            } else {
-              //uusi haku
-              $scope.isMutable=true;
-            }
 
             $scope.isLuonnosOrNew = function(){
               return $scope.isNewHaku() || $scope.model.hakux.result.tila==='LUONNOS';
             };
 
+            var populateParentHakuCandidates = function(valittuKohdejoukkoUri) {
+                var params = {};
+                params.KOHDEJOUKKO = valittuKohdejoukkoUri;
 
+                HakuV1Service.search(params).then(function(data) {
+
+                    var filtered = _.filter(data, function(haku){
+                        var validTyyppiAndTapa = (haku.hakutapaUri.indexOf(HAKUTAPA.YHTEISHAKU) !== -1 ||
+                            haku.hakutapaUri.indexOf(HAKUTAPA.ERILLISHAKU) !== -1) &&
+                            haku.hakutyyppiUri.indexOf(HAKUTYYPPI.VARSINAINEN_HAKU) !== 1;
+                        var validHakukausiVuosi = haku.hakukausiVuosi >= (new Date().getFullYear() - 1);
+                        return validTyyppiAndTapa && validHakukausiVuosi;
+                    });
+
+                    filtered.sort(function (a, b) {
+                        return a.nimi.localeCompare(b.nimi);
+                    });
+
+                    $scope.model.parentHakuCandidates = filtered;
+                });
+            };
+
+            $scope.initParentHaku = function() {
+                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri)) {
+                    populateParentHakuCandidates($scope.model.hakux.result.kohdejoukkoUri);
+                }
+            };
+
+            $scope.haunKohdejoukkoChanged = function(valittuKohdejoukko) {
+                $scope.model.hakux.result.parentHakuOid = undefined;
+
+                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri)) {
+                    if(valittuKohdejoukko) {
+                        populateParentHakuCandidates(valittuKohdejoukko.koodiUri);
+                    }
+                }
+            };
+
+            $scope.haunTyyppiChanged = function(valittuTyyppi) {
+                $scope.model.hakux.result.parentHakuOid = undefined;
+                if(valittuTyyppi && $scope.shouldSelectParentHaku(valittuTyyppi.koodiUri)) {
+                    populateParentHakuCandidates($scope.model.hakux.result.kohdejoukkoUri);
+                }
+            };
+
+            $scope.shouldSelectParentHaku = function(hakutyyppiUri) {
+                if(!hakutyyppiUri ||
+                   !$scope.model.hakux.result.kohdejoukkoUri) {
+                    return false;
+                }
+
+                return hakutyyppiUri.indexOf(HAKUTYYPPI.LISAHAKU) !== -1;
+            };
+
+            $scope.init();
+
+            var hakuOid = $route.current.params.id;
+
+            if(!$scope.isNewHaku()) {
+                $q.all([PermissionService.haku.canEdit(hakuOid), PermissionService.haku.canDelete(hakuOid), HakuV1Service.checkStateChange({oid: hakuOid, state: 'POISTETTU'})]).then(function(results) {
+                    $scope.isMutable=results[0];
+                    $scope.isRemovable=results[1] && results[2];
+                });
+
+                PermissionService.getPermissions("haku", hakuOid).then(function(permissions) {
+                    $log.info("got permissions! ", permissions);
+                });
+
+            } else {
+                //uusi haku
+                $scope.isMutable=true;
+            }
         });

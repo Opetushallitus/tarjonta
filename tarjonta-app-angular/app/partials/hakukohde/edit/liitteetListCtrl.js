@@ -9,6 +9,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     $scope.liitteetModel.selectedTab = {};
     $scope.liitteetModel.langs = [];
     $scope.liitteetModel.selectedLangs = [];
+    $scope.liitteetModel.liitetyypit = [];
 
     var initialTabSelected = false;
     var osoitteetReceived = false;
@@ -27,14 +28,31 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		} else {
     			liite.muuOsoiteEnabled = true;
     		}
-    		console.log("WTF LI", [ liite, angular.copy($scope.model.liitteidenToimitusOsoite), $scope.model.liitteidenToimitusOsoite[liite.kieliUri] ]);
     	}
 
 		return liite;
     }
 
+    $scope.$on('liiteAdded', function(event, liite) {
+        liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[liite.kieliUri]);
+        postProcessLiite(liite);
+    });
+
+    $scope.$on('addEmptyLitteet', function() {
+        addEmptyLitteet();
+    });
+
     $scope.model.liitteenToimitusOsoitePromise.then(function(osoitteet) {
     	osoitteetReceived = true;
+        for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+            var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+
+            if(!li.liitteenToimitusOsoite || Object.keys(li.liitteenToimitusOsoite).length === 0) {
+                li.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[li.kieliUri]);
+                postProcessLiite(li);
+            }
+        }
+        addEmptyLitteet();
     });
 
     function containsOpetuskieli(lc) {
@@ -46,8 +64,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     	return false;
     }
 
-    var kielet = Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale());
-    kielet.then(function(ret){
+    Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale()).then(function(ret) {
     	if (!$scope.model.hakukohde.opetusKielet) {
     		$scope.model.hakukohde.opetusKielet = [];
     	}
@@ -56,11 +73,33 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         updateLanguages();
     });
 
+    function addEmptyLitteet() {
+        for(var opetuskieli in $scope.liitteetModel.opetusKielet) {
+            var kieliUri = $scope.liitteetModel.opetusKielet[opetuskieli].koodiUri;
+            var found = false;
+            for(var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+                if($scope.model.hakukohde.hakukohteenLiitteet[i].kieliUri === kieliUri) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                HakukohdeService.addLiite($scope.model.hakukohde, kieliUri,  $scope.model.liitteidenToimitusOsoite[kieliUri]);
+            }
+        }
+    }
+
     function updateLanguages(){
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
             var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
             if ($scope.liitteetModel.selectedLangs.indexOf(li.kieliUri) === -1) {
                 $scope.liitteetModel.selectedLangs.push(li.kieliUri);
+            }
+        }
+
+        for (var i in $scope.model.hakukohde.opetusKielet) {
+            var kieliUri = $scope.model.hakukohde.opetusKielet[i];
+            if ($scope.liitteetModel.selectedLangs.indexOf(kieliUri) === -1) {
+                $scope.liitteetModel.selectedLangs.push(kieliUri);
             }
         }
 
@@ -106,6 +145,8 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     			}
     		}
     	}
+
+        addEmptyLitteet();
     }
 
     $scope.onLangSelection = function() {
@@ -254,15 +295,18 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
         angular.forEach(liitetyypit, function(koodiPromise) {
             koodiPromise.then(function(koodi) {
-                var valintakoetyyppi = {
+                var liitetyyppi = {
                     nimi: koodi.koodiNimi,
                     uri: koodi.koodiUri + "#" + koodi.koodiVersio
                 };
-                $scope.liitteetModel.liitetyypit.push(valintakoetyyppi);
+                $scope.liitteetModel.liitetyypit.push(liitetyyppi);
             });
         });
     };
 
     setLiitetyypit($scope.model.hakukohde.toteutusTyyppi);
 
+    $scope.$watch('liitteetModel.opetusKielet.length', function() {
+        $scope.liitteetModel.opetusKielet.sort($scope.sortLanguageTabs);
+    });
 });
