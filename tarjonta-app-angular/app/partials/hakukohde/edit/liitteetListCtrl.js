@@ -46,7 +46,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
             var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
 
-            if(Object.keys(li.liitteenToimitusOsoite).length === 0) {
+            if(!li.liitteenToimitusOsoite || Object.keys(li.liitteenToimitusOsoite).length === 0) {
                 li.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[li.kieliUri]);
                 postProcessLiite(li);
             }
