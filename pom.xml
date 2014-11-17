@@ -4,7 +4,7 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>vaadin-angular-conversion-SNAPSHOT</version>
+    <version>9.7-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
