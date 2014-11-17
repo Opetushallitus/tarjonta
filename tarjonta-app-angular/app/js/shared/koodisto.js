@@ -76,6 +76,29 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
         return tarjontaKoodi;
     };
 
+    var checkKoodiValidity = function(koodi, locale) {
+    	var koodiValid = true;
+    	if (koodi && koodi.voimassaLoppuPvm) {
+    		var endDate = null;
+    		var currentDate = new Date();
+    		currentDate.setHours(0, 0, 0, 0);
+
+    		try {
+	    		var loppuPvmParts = koodi.voimassaLoppuPvm.split("-");
+				endDate = new Date(loppuPvmParts[0], loppuPvmParts[1]-1, loppuPvmParts[2]);
+			} catch (e) {
+	            $log.warn("koodin "+ koodi.koodiUri +" voimassaLoppuPvm "+ JSON.stringify(koodi.voimassaLoppuPvm) +" ei voitu konvertoida");
+			}
+
+			if (endDate && endDate < currentDate) {
+				koodiValid = false;
+	            $log.warn("koodi "+ JSON.stringify(getKoodiViewModelFromKoodi(koodi, locale)) +" ei voimassa");
+			}
+		}
+
+    	return koodiValid;
+    };
+
     return {
         /*
          * Utility for checking active Koodisto codes.
@@ -343,14 +366,16 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 $resource(koodiUri, {koodistoUri: '@koodistoUri'}, {cache: true}).query({koodistoUri: koodistoUriParam}, function(koodis) {
                     angular.forEach(koodis, function(koodi) {
 
-                        if (includePassive) {
-                            returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                        } else {
-                            if (koodi.tila !== passiivinenTila) {
+                        if (checkKoodiValidity(koodi, locale)) {
+                        	if (includePassive) {
                                 returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                            }
+                            } else {
+                                if (koodi.tila !== passiivinenTila) {
+                                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                                }
 
-                        }
+                            }
+						}
 
                     });
                     returnKoodisPromise.resolve(returnKoodis);
