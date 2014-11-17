@@ -138,6 +138,14 @@
             </td>
         </tr>
 
+        <!-- opetusajat -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetusajat">Opetusajat</th>
+            <td colspan="2">
+                <span data-ng-repeat='o in model.koulutus.opetusAikas.meta'>{{ o.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
         <!-- opetusmuodot -->
         <tr>
             <th tt="koulutus.review.perustiedot.opetusmuodot">Opetusmuodot</th>
