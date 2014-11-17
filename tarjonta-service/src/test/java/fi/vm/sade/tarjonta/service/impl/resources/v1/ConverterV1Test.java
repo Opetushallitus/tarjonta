@@ -1,9 +1,12 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
+import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliTarjoajatiedotV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
@@ -17,8 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
@@ -34,11 +36,14 @@ public class ConverterV1Test {
     @Mock
     private OrganisaatioService organisaatioService;
 
+    @Mock
+    private HakuDAO hakuDAO;
+
     @InjectMocks
     private ConverterV1 converter;
 
     @Test
-    public void thatValintakoeDTOsAreConverted() {
+    public void thatValintakoeDTOsAreConvertedToEntity() {
         HakukohdeV1RDTO hakukohdeDTO = getHakukohdeDTO();
 
         Hakukohde hakukohde = converter.toHakukohde(hakukohdeDTO);
@@ -52,7 +57,7 @@ public class ConverterV1Test {
     }
 
     @Test
-    public void thatValintakokeetAreConverted() {
+    public void thatValintakokeetAreConvertedToDTO() {
         when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
 
         Hakukohde hakukohde = getHakukohde();
@@ -107,7 +112,7 @@ public class ConverterV1Test {
     }
 
     @Test
-    public void thatHakukohdeWithKoulutusmoduuliTarjontatiedotAreConverted() {
+    public void thatHakukohdeWithKoulutusmoduuliTarjontatiedotAreConvertedToDTO() {
         Hakukohde hakukohde = getHakukohde();
         KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
         tarjoajatiedot.getTarjoajaOids().add("4.5.6");
@@ -124,7 +129,7 @@ public class ConverterV1Test {
     }
 
     @Test
-    public void thatHakukohdeWithoutKoulutusmoduuliTarjoajatiedotAreConverted() {
+    public void thatHakukohdeWithoutKoulutusmoduuliTarjoajatiedotAreConvertedToDTO() {
         when(organisaatioService.findByOid("4.5.6")).thenReturn(null);
 
         Hakukohde hakukohde = getHakukohde();
@@ -145,7 +150,7 @@ public class ConverterV1Test {
     }
 
     @Test
-    public void thatHakukohdekohtainenHakuaikaIsConverted() {
+    public void thatHakukohdekohtainenHakuaikaIsConvertedToDTO() {
         Date alkuPvm = new Date();
         Date loppuPvm = new Date();
 
@@ -158,5 +163,65 @@ public class ConverterV1Test {
         assertEquals(alkuPvm, hakukohdeV1RDTO.getHakuaikaAlkuPvm());
         assertEquals(loppuPvm, hakukohdeV1RDTO.getHakuaikaLoppuPvm());
         assertTrue(hakukohdeV1RDTO.isKaytetaanHakukohdekohtaistaHakuaikaa());
+
+    }
+
+    public void thatSisaltyvatHautAreConvertedToDTO() {
+        Haku haku = new Haku();
+        haku.setTila(TarjontaTila.JULKAISTU);
+        haku.setHakukausiVuosi(2014);
+
+        HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+
+        assertTrue(hakuDTO.getSisaltyvatHaut().isEmpty());
+
+        Haku sisaltyvaHaku = new Haku();
+        sisaltyvaHaku.setOid("1.2.3");
+        haku.getSisaltyvatHaut().add(sisaltyvaHaku);
+
+        hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+
+        assertTrue(hakuDTO.getSisaltyvatHaut().size() == 1);
+        assertEquals("1.2.3", hakuDTO.getSisaltyvatHaut().iterator().next());
+    }
+
+    @Test
+    public void thatParentHakuIsConvertedToDTO() {
+        Haku haku = new Haku();
+        haku.setTila(TarjontaTila.JULKAISTU);
+        haku.setHakukausiVuosi(2014);
+
+        HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+
+        assertNull(hakuDTO.getParentHakuOid());
+
+        Haku parentHaku = new Haku();
+        parentHaku.setOid("1.2.3");
+        haku.setParentHaku(parentHaku);
+
+        hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+
+        assertEquals("1.2.3", hakuDTO.getParentHakuOid());
+    }
+
+    @Test
+    public void thatParentHakuIsConvertedToEntity() throws OIDCreationException {
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
+        hakuDTO.setParentHakuOid("1.2.3");
+
+        Haku parentHaku = new Haku();
+        parentHaku.setOid("1.2.3");
+
+        when(hakuDAO.findByOid("1.2.3")).thenReturn(parentHaku);
+
+        Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
+
+        assertEquals(haku.getParentHaku(), parentHaku);
+
+        hakuDTO.setParentHakuOid(null);
+
+        haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
+
+        assertNull(haku.getParentHaku());
     }
 }

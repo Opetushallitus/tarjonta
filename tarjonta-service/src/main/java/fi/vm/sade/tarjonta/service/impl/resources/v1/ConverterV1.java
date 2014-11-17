@@ -53,35 +53,40 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * API V1 converters to/from model/domain.
- *
- * @author mlyly
- */
 @Service
 public class ConverterV1 {
 
     public static final String VALINTAPERUSTEKUVAUS_TYYPPI = "valintaperustekuvaus";
     public static final String SORA_TYYPPI = "SORA";
     private static final Logger LOG = LoggerFactory.getLogger(ConverterV1.class);
+
     @Autowired
     HakuDAO hakuDao;
+
     @Autowired
     KoulutusmoduuliDAO komoDao;
+
     @Autowired
     private OidService oidService;
+
     @Autowired
     KoulutusmoduuliToteutusDAO komotoDao;
+
     @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
+
     @Autowired
     HakukohdeDAO hakukohdeDao;
+
     @Autowired
     KuvausDAO kuvausDAO;
+
     @Autowired
     private OrganisaatioService organisaatioService;
+
     @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+
     @Autowired
     private ContextDataService contextDataService;
 
@@ -99,10 +104,6 @@ public class ConverterV1 {
         return result;
     }
 
-    /**
-     * @param s
-     * @return true if string s is empty or null
-     */
     public static boolean isEmpty(String s) {
         return (s == null || s.trim().isEmpty());
     }
@@ -116,53 +117,55 @@ public class ConverterV1 {
             return null;
         }
 
-        HakuV1RDTO t = new HakuV1RDTO();
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
 
-        t.setOid(haku.getOid());
-        t.setModified(haku.getLastUpdateDate());
-        t.setModifiedBy(haku.getLastUpdatedByOid());
-        t.setCreated(null);
-        t.setCreatedBy(null);
-        t.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
-        t.setHakukausiUri(haku.getHakukausiUri());
+        hakuDTO.setOid(haku.getOid());
+        hakuDTO.setModified(haku.getLastUpdateDate());
+        hakuDTO.setModifiedBy(haku.getLastUpdatedByOid());
+        hakuDTO.setCreated(null);
+        hakuDTO.setCreatedBy(null);
+        hakuDTO.setHakuaikas(convertHakuaikaListToV1RDTO(haku.getHakuaikas()));
+        hakuDTO.setHakukausiUri(haku.getHakukausiUri());
         if (haku.getKoulutuksenAlkamiskausiUri() != null) {
-            t.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
+            hakuDTO.setKoulutuksenAlkamiskausiUri(haku.getKoulutuksenAlkamiskausiUri());
         }
         if (haku.getKoulutuksenAlkamisVuosi() != null) {
-            t.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
+            hakuDTO.setKoulutuksenAlkamisVuosi(haku.getKoulutuksenAlkamisVuosi());
         }
 
-        t.setHakulomakeUri(haku.getHakulomakeUrl());
-        t.setHakutapaUri(haku.getHakutapaUri());
-        t.setHakutyyppiUri(haku.getHakutyyppiUri());
-        t.setHaunTunniste(haku.getHaunTunniste());
-        t.setKohdejoukkoUri(haku.getKohdejoukkoUri());
-        t.setTila(haku.getTila().name());
-        t.setHakukausiVuosi(haku.getHakukausiVuosi());
-        t.setMaxHakukohdes(haku.getMaxHakukohdes());
+        hakuDTO.setHakulomakeUri(haku.getHakulomakeUrl());
+        hakuDTO.setHakutapaUri(haku.getHakutapaUri());
+        hakuDTO.setHakutyyppiUri(haku.getHakutyyppiUri());
+        hakuDTO.setHaunTunniste(haku.getHaunTunniste());
+        hakuDTO.setKohdejoukkoUri(haku.getKohdejoukkoUri());
+        hakuDTO.setTila(haku.getTila().name());
+        hakuDTO.setHakukausiVuosi(haku.getHakukausiVuosi());
+        hakuDTO.setMaxHakukohdes(haku.getMaxHakukohdes());
 
         // Assumes translation key is Koodisto kieli uri (has kieli_ prefix)!
-        t.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
+        hakuDTO.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
 
         if (addHakukohdes) {
-            List<String> tmp = hakukohdeDao.findByHakuOid(t.getOid(), null, 0, 0, null, null);
-            t.setHakukohdeOids(tmp);
+            List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
+            hakuDTO.setHakukohdeOids(tmp);
         }
 
-        t.setOrganisaatioOids(haku.getOrganisationOids());
-        t.setTarjoajaOids(haku.getTarjoajaOids());
+        hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());
+        hakuDTO.setTarjoajaOids(haku.getTarjoajaOids());
 
-        t.setUsePriority(haku.isUsePriority());
-        t.setSijoittelu(haku.isSijoittelu());
-        t.setJarjestelmanHakulomake(haku.isJarjestelmanHakulomake());
+        hakuDTO.setUsePriority(haku.isUsePriority());
+        hakuDTO.setSijoittelu(haku.isSijoittelu());
+        hakuDTO.setJarjestelmanHakulomake(haku.isJarjestelmanHakulomake());
 
-        // Koodistos as (not) pre-resolved, who needs this?
-//        t.addKoodiMeta(resolveKoodiMeta(t.getHakukausiUri()));
-//        t.addKoodiMeta(resolveKoodiMeta(t.getHakutapaUri()));
-//        t.addKoodiMeta(resolveKoodiMeta(t.getHakutyyppiUri()));
-//        t.addKoodiMeta(resolveKoodiMeta(t.getKohdejoukkoUri()));
-//        t.addKoodiMeta(resolveKoodiMeta(t.getKoulutuksenAlkamiskausiUri()));
-        return t;
+        for (Haku sisaltyvaHaku : haku.getSisaltyvatHaut()) {
+            hakuDTO.getSisaltyvatHaut().add(sisaltyvaHaku.getOid());
+        }
+
+        if (haku.getParentHaku() != null) {
+            hakuDTO.setParentHakuOid(haku.getParentHaku().getOid());
+        }
+
+        return hakuDTO;
     }
 
     public Haku convertHakuV1DRDTOToHaku(HakuV1RDTO hakuV1RDTO, Haku haku) throws OIDCreationException {
@@ -247,6 +250,12 @@ public class ConverterV1 {
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
         haku.setSijoittelu(hakuV1RDTO.isSijoittelu());
         haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
+
+        if (hakuV1RDTO.getParentHakuOid() != null) {
+            haku.setParentHaku(hakuDao.findByOid(hakuV1RDTO.getParentHakuOid()));
+        } else {
+            haku.setParentHaku(null);
+        }
 
         return haku;
     }
@@ -600,8 +609,7 @@ public class ConverterV1 {
 
         if (hakukohde.getSoraKuvaus() != null) {
             hakukohdeRDTO.setSoraKuvaukset(convertMonikielinenTekstiToMap(hakukohde.getSoraKuvaus(), false));
-        }
-        else {
+        } else {
             String uri = tarjontaKoodistoHelper.getSORAKysymysryhmaUriForHakukohde(hakukohde.getHakukohdeNimi());
             if (uri != null) {
                 hakukohdeRDTO.setSoraKuvausKoodiUri(uri);
@@ -613,7 +621,7 @@ public class ConverterV1 {
 
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
-        
+
         if (hakukohde.getYhteystiedot() != null) {
             List<YhteystiedotRDTO> yhList = new ArrayList<YhteystiedotRDTO>();
             for (Yhteystiedot yh : hakukohde.getYhteystiedot()) {
@@ -621,7 +629,7 @@ public class ConverterV1 {
             }
             hakukohdeRDTO.setYhteystiedot(yhList);
         }
-        
+
         hakukohdeRDTO.setLiitteidenToimitusOsoite(CommonToDTOConverter.convertOsoiteToOsoiteDTO(hakukohde.getLiitteidenToimitusOsoite()));
         LOG.debug("HAKUKOHDE LISATIEDOT : {} ", hakukohdeRDTO.getLisatiedot() != null ? hakukohdeRDTO.getLisatiedot().size() : "IS EMPTY");
 
