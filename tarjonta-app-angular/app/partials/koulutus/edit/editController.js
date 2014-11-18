@@ -21,11 +21,13 @@ app.controller('BaseEditController', [
     'KoulutusConverterFactory', 'TarjontaService', 'PermissionService',
     'OrganisaatioService', 'Koodisto', 'KoodistoURI', 'LocalisationService',
     'dialogService', 'CacheService', '$modal', 'OrganisaatioService', 'AuthService',
+    'HakukohdeKoulutukses',
     function BaseEditController($scope, $log, Config,
         $routeParams, $route, $location,
         converter, TarjontaService, PermissionService,
         organisaatioService, Koodisto, KoodistoURI, LocalisationService,
-        dialogService, CacheService, $modal, OrganisaatioService, AuthService) {
+        dialogService, CacheService, $modal, OrganisaatioService, AuthService,
+        HakukohdeKoulutukses) {
         $log = $log.getInstance("BaseEditController");
 
         /*
@@ -426,7 +428,7 @@ app.controller('BaseEditController', [
         };
 
         $scope.commonLoadModelHandler = function(form, model, uiModel, tyyppi) {
-            if (angular.isUndefined(model) || model === null) {
+        	if (angular.isUndefined(model) || model === null) {
                 converter.throwError("Model object cannot be null or undefined");
             }
 
@@ -471,7 +473,22 @@ app.controller('BaseEditController', [
                         uiModel.isRemovable = false;
                     }
                 }
-            });
+                
+                if (uiModel.isMutable) {
+                    model.isNew = false;
+                    
+                    var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
+                    hakukohdePromise.then(function(hakukohteet) {
+                    	if (hakukohteet.result && hakukohteet.result.length > 0) {
+                    		$scope.setMinMax(true, model);
+                    	} else {
+                    		$scope.setMinMax(false, model);
+                    	}
+                    }, function() {
+                    	$scope.setMinMax(false, model);
+                    });
+				} // if (uiModel.isMutable)
+            }); // koulutus.canEdit.then
 
             uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
             //$scope.updateFormStatusInformation(model);
@@ -654,6 +671,49 @@ app.controller('BaseEditController', [
                 controller: 'OrganizationSelectionController'
             });
         };
+        
+        $scope.setMinMax = function(minMax, model) {
+			model.isMinmax = minMax;
+            if (model.isMinmax) {
+            	if (model.koulutuksenAlkamisPvms && model.koulutuksenAlkamisPvms.length > 0) {
+            		var alkamisPvm = new Date(model.koulutuksenAlkamisPvms[0]);
+    				var vuosi = alkamisPvm.getFullYear();
+    				var minY = new Date();
+    				var maxY = new Date();
+    				if (alkamisPvm.getMonth() < 7) {
+    					minY.setFullYear(vuosi, 0, 1);
+    					maxY.setFullYear(vuosi, 6, 31);
+					} else {
+    					minY.setFullYear(vuosi, 7, 1);
+    					maxY.setFullYear(vuosi, 11, 31);
+					}
+					$scope.min = minY;
+					$scope.max = maxY;
+					$scope.minYear = minY.getFullYear();
+					$scope.maxYear = $scope.minYear;
+				} else {
+    				var minY = new Date();
+    				var maxY = new Date();
+    				if (model.koulutuksenAlkamiskausi && model.koulutuksenAlkamiskausi.uri && /^\+?(0|[1-9]\d*)$/.test(model.koulutuksenAlkamisvuosi)) {
+    					var vuosi = model.koulutuksenAlkamisvuosi;
+        				if (model.koulutuksenAlkamiskausi.uri.indexOf("_k") > -1) {
+        					minY.setFullYear(vuosi, 0, 1);
+        					maxY.setFullYear(vuosi, 6, 31);
+    					} else if (model.koulutuksenAlkamiskausi.uri.indexOf("_s") > -1) {
+        					minY.setFullYear(vuosi, 7, 1);
+        					maxY.setFullYear(vuosi, 11, 31);
+    					}
+    					$scope.min = minY;
+    					$scope.max = maxY;
+    					$scope.minYear = minY.getFullYear();
+    					$scope.maxYear = $scope.minYear;
+					} else {
+        				model.isMinmax = false;
+					}
+				}
+			} // if (model.isMinmax) 
+        };
+
 
         return $scope;
     }

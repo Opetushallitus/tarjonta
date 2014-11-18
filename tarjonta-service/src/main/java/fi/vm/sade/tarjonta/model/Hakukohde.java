@@ -92,8 +92,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
     
-    @OneToOne(mappedBy = "hakukohde", cascade = CascadeType.ALL)
-    private Yhteystiedot yhteystiedot;
+    @OneToMany(mappedBy = "hakukohde", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Yhteystiedot> yhteystiedot = new HashSet<Yhteystiedot>();
     
     @Embedded
     private Osoite liitteidenToimitusOsoite;
@@ -430,12 +430,12 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.edellisenVuodenHakijat = edellisenVuodenHakijat;
     }
 
-    public Yhteystiedot getYhteystiedot() {
+    public Set<Yhteystiedot> getYhteystiedot() {
         return yhteystiedot;
     }
 
-    public void setYhteystiedot(Yhteystiedot yhteystiedot) {
-        this.yhteystiedot = yhteystiedot;
+    public void addYhteystiedot(Yhteystiedot yhteystiedot) {
+        this.yhteystiedot.add(yhteystiedot);
     }
 
     public Osoite getLiitteidenToimitusOsoite() {

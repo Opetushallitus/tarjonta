@@ -14,28 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
-
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
@@ -53,10 +32,24 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Match;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * REST API V1 implementation for Haku.
@@ -129,8 +122,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                         if (sValue.equals("NOT_POISTETTU")) {
                             match = Match.MUST_NOT;
                             value = TarjontaTila.POISTETTU;
-                        }
-                        else {
+                        } else {
                             value = TarjontaTila.valueOf(sValue);
                         }
                         break;
@@ -270,14 +262,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         updateRightsInformation(result, hakuDto);
 
-        // result.setResult(haku);
         try {
             boolean isNew = isEmpty(hakuDto.getOid());
 
             Haku hakuToUpdate = null;
 
             if (isNew) {
-                // Generate new OID for haku to be created
                 permissionChecker.checkCreateHakuWithOrgs(hakuDto.getTarjoajaOids());
 
                 hakuDto.setOid(oidService.get(TarjontaOidType.HAKU));
@@ -287,12 +277,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
                 final String oid = hakuDto.getOid();
 
-                // Check haku exists
                 hakuToUpdate = hakuDAO.findByOid(oid);
 
                 final TarjontaTila toTila = TarjontaTila.valueOf(hakuDto.getTila());
 
-                //tilan muutos/testaus tilapalvelun kautta
                 final Tila tila = new Tila(Tyyppi.HAKU, toTila, oid);
                 if (!publication.isValidStatusChange(tila)) {
                     result.addError(ErrorV1RDTO.createValidationError("haku", "haku.tilamuutos.not.allowed", hakuDto.getOid()));
@@ -305,13 +293,11 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                     result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
                     return result;
                 }
-                //check permissions
                 permissionChecker.checkCreateHakuWithOrgs(hakuToUpdate.getTarjoajaOids());
             }
 
             LOG.info("updateHaku() - validate");
 
-            // 1. Server side validate, returns false if validation fails
             if (!validateHaku(hakuDto, result)) {
                 return result;
             }
@@ -330,11 +316,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
             LOG.info("updateHaku() - make whopee!");
 
-            // Convert to DTO - reload to get hakuaika id's for example
             hakuToUpdate = hakuDAO.findByOid(hakuDto.getOid());
             result.setResult(converterV1.fromHakuToHakuRDTO(hakuToUpdate, true));
-
             result.setStatus(ResultV1RDTO.ResultStatus.OK);
+
         } catch (Throwable ex) {
             createSystemErrorFromException(ex, result);
         }
@@ -344,7 +329,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return result;
     }
 
-    // DELETE /haku/OID
     @Override
     public ResultV1RDTO<Boolean> deleteHaku(final String oid) {
         LOG.info("deleteHaku() oid={}", oid);
@@ -440,7 +424,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 hakuDAO.update(haku);
             } else {
                 //siirtymä ei mahdollinen
-                return ResultV1RDTO.create(ResultStatus.ERROR, (Tilamuutokset)null, ErrorV1RDTO.createValidationError("tila", "tila", "transition.not.valid"));
+                return ResultV1RDTO.create(ResultStatus.ERROR, (Tilamuutokset) null, ErrorV1RDTO.createValidationError("tila", "tila", "transition.not.valid"));
             }
             return new ResultV1RDTO<Tilamuutokset>(new Tilamuutokset());
         }
@@ -476,7 +460,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     /**
      * Simple validations for Haku.
      *
-     * @param haku Haku to validate
+     * @param haku   Haku to validate
      * @param result Validation erros added here.
      * @return if false Haku has errors.
      */
@@ -552,6 +536,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             haku.setUsePriority(true);
         }
 
+        if (isLisahaku(haku)) {
+            if(haku.getParentHakuOid() == null) {
+                result.addError(ErrorV1RDTO.createValidationError("parentHakuOid", "haku.validation.parentHakuOid.empty"));
+            }
+        }
+
         if (result.hasErrors()) {
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 
@@ -561,6 +551,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         return !result.hasErrors();
+    }
+
+    private boolean isLisahaku(HakuV1RDTO haku) {
+        return StringUtils.contains(haku.getHakutyyppiUri(), "hakutyyppi_03");
     }
 
     /**
@@ -642,7 +636,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     @Override
     public ResultV1RDTO<Boolean> isStateChangePossible(String oid,
-            TarjontaTila tila) {
+                                                       TarjontaTila tila) {
         Tila tilamuutos = new Tila(Tyyppi.HAKU, tila, oid);
         return new ResultV1RDTO<Boolean>(publication.isValidStatusChange(tilamuutos));
     }

@@ -54,6 +54,22 @@
                 </td>
             </tr>
 
+            <tr ng-if="model.hakux.result.parentHakuOid">
+                <th tt="haku.review.haunTiedot.kuuluuHakuun">Kuuluu hakuun</th>
+                <td colspan="2">
+                    <a target="_blank" href="/tarjonta-app/#/haku/{{ model.hakux.result.parentHakuOid }}">{{ model.hakux.result.parentHakuOid}}</a>
+                </td>
+            </tr>
+
+            <tr ng-if="model.hakux.result.sisaltyvatHaut.length > 0">
+                <th tt="haku.review.haunTiedot.sisaltyvatHaut">Sisältyvät haut</th>
+                <td colspan="2">
+                    <p ng-repeat="sisaltyvaHaku in model.hakux.result.sisaltyvatHaut">
+                        <a target="_blank" href="/tarjonta-app/#/haku/{{ sisaltyvaHaku }}">{{ sisaltyvaHaku }}</a>
+                    </p>
+                </td>
+            </tr>
+
             <tr>
                 <th tt="haku.review.haunTiedot.hakuaika">Hakuaika</th>
                 <td colspan="2">

@@ -57,7 +57,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private boolean _kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaksoisTutkinto;
     private List<HakukohdeLiiteDTO> _liitteet;
-    private YhteystiedotRDTO _yhteystiedot;
+    private List<YhteystiedotRDTO> _yhteystiedot;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
     private List<String> _hakukohdeKoulutusOids;
@@ -248,11 +248,11 @@ public class HakukohdeDTO extends BaseRDTO {
         this._hakukelpoisuusvaatimus = _hakukelpoisuusvaatimus;
     }
 
-    public YhteystiedotRDTO getYhteystiedot() {
+    public List<YhteystiedotRDTO> getYhteystiedot() {
         return _yhteystiedot;
     }
 
-    public void setYhteystiedot(YhteystiedotRDTO yhteystiedot) {
+    public void setYhteystiedot(List<YhteystiedotRDTO> yhteystiedot) {
         this._yhteystiedot = yhteystiedot;
     }
 

@@ -3,7 +3,7 @@ package fi.vm.sade.tarjonta.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,10 +15,13 @@ public class Yhteystiedot extends TarjontaBaseEntity {
     public static final String TABLE_NAME = "yhteystiedot";
     private static final long serialVersionUID = 2820464295959137992L;
 
-    @OneToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "hakukohde_id", nullable = false)
     @JsonIgnore
     private Hakukohde hakukohde;
+
+    @Column(name = "lang")
+    private String lang;
 
     @Column(name = "osoiterivi1")
     private String osoiterivi1;
@@ -38,6 +41,14 @@ public class Yhteystiedot extends TarjontaBaseEntity {
 
     public void setHakukohde(Hakukohde hakukohde) {
         this.hakukohde = hakukohde;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public String getOsoiterivi1() {

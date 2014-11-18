@@ -83,10 +83,7 @@ app.controller('HakukohdeRoutingController', [
       } else {
             var hakukohdeResource = new Hakukohde($route.current.locals.hakukohdex.result);
 
-            if($route.current.locals.isCopy === undefined) {
-                HakukohdeService.addValintakoe(hakukohdeResource, hakukohdeResource.opetusKielet[0]);
-                HakukohdeService.addLiiteIfEmpty(hakukohdeResource);
-            } else {
+            if($route.current.locals.isCopy !== undefined) {
                 SharedStateService.addToState('SelectedToteutusTyyppi', hakukohdeResource.toteutusTyyppi);
             }
 
