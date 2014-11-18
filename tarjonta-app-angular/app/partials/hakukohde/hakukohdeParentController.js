@@ -676,38 +676,40 @@ app.controller('HakukohdeParentController', [
         }
 
         $scope.handleConfigurableHakuaika = function() {
-            var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
-            if($scope.toisenAsteenKoulutus(toteutustyyppi)) {
-                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-                var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
-                $scope.model.hakukohde.configurableHakuaika = haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_03' || haku.hakutapaUri.split('#')[0] === 'hakutapa_02';
-                $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
-                $scope.model.hakuaikaMin = hakuaika.alkuPvm;
-                $scope.model.hakuaikaMax = hakuaika.loppuPvm;
-
-                var hakuaika = $scope.getSelectedHakuaika();
-
-                $scope.model.hakuaikaMin = hakuaika.alkuPvm;
-                $scope.model.hakuaikaMax = hakuaika.loppuPvm;
-
-            }
-            else if(toteutustyyppi === 'KORKEAKOULUTUS') {
-                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-
-                $scope.model.configurableHakuaika = !(haku.hakutapaUri.split('#')[0] === 'hakutapa_01' && haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_01');
-
-                var hakuaika = $scope.getSelectedHakuaika();
-
-                if($scope.model.hakukohde.hakuaikaId !== hakuaika.hakuaikaId) {
+            if($scope.model.hakukohde.hakuOid) {
+                var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
+                if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
+                    var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+                    var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                    $scope.model.hakukohde.configurableHakuaika = haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_03' || haku.hakutapaUri.split('#')[0] === 'hakutapa_02';
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
+                    $scope.model.hakuaikaMin = hakuaika.alkuPvm;
+                    $scope.model.hakuaikaMax = hakuaika.loppuPvm;
+
+                    var hakuaika = $scope.getSelectedHakuaika();
+
+                    $scope.model.hakuaikaMin = hakuaika.alkuPvm;
+                    $scope.model.hakuaikaMax = hakuaika.loppuPvm;
+
+                }
+                else if (toteutustyyppi === 'KORKEAKOULUTUS') {
+                    var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+
+                    $scope.model.configurableHakuaika = !(haku.hakutapaUri.split('#')[0] === 'hakutapa_01' && haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_01');
+
+                    var hakuaika = $scope.getSelectedHakuaika();
+
+                    if ($scope.model.hakukohde.hakuaikaId !== hakuaika.hakuaikaId) {
+                        $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
+                    }
+
+                    $scope.model.hakuaikaMin = hakuaika.alkuPvm;
+                    $scope.model.hakuaikaMax = hakuaika.loppuPvm;
                 }
 
-                $scope.model.hakuaikaMin = hakuaika.alkuPvm;
-                $scope.model.hakuaikaMax = hakuaika.loppuPvm;
-            }
-
-            if (!$scope.model.hakukohde.configurableHakuaika) {
-                $scope.clearHakuajat();
+                if (!$scope.model.hakukohde.configurableHakuaika) {
+                    $scope.clearHakuajat();
+                }
             }
         };
 

@@ -269,7 +269,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     valintakokeet: [],
                     lisatiedot: {},
                     valintaperusteKuvaukset: {},
-                    soraKuvaukset: {}
+                    soraKuvaukset: {},
+                    painotettavatOppiaineet: []
                 });
 
                 TarjontaService.getKoulutusPromise(selectedKoulutusOids[0]).then(function(res) {
