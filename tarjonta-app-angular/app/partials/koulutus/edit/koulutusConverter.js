@@ -539,7 +539,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
         },
         templates: {
-            edit: 'LUKIOKOULUTUS'
+            edit: 'LUKIOKOULUTUS',
+            review: 'GENERIC'
         },
         reviewFields: [
             "TAVOITTEET",
@@ -548,7 +549,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             "JATKOOPINTO_MAHDOLLISUUDET",
             "KANSAINVALISTYMINEN",
             "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA"
-        ]
+        ],
+        params: {
+            isLukio: true
+        }
     };
 
     factory.STRUCTURE = {

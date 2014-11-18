@@ -22,7 +22,8 @@
 
         <!-- koulutus -->
         <tr>
-            <th tt="koulutus.review.perustiedot.tutkinto">Tutkinto</th>
+            <th ng-if="!koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.tutkinto">Tutkinto</th>
+            <th ng-if="koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.koulutus">Koulutus</th>
             <td colspan="2">
                 {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
                 <i>{{model.koulutus.koulutuskoodi.arvo}}</i>
@@ -31,7 +32,8 @@
 
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
-            <th tt="koulutus.review.perustiedot.koulutusohjelma">Koulutusohjelma</th>
+            <th ng-if="!koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.koulutusohjelma">Koulutusohjelma</th>
+            <th ng-if="koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.lukiolinja">Lukiolinja</th>
             <td colspan="2">
                 {{model.koulutus.koulutusohjelma.meta[lang.koodi_uri].nimi}}
             </td>
@@ -202,6 +204,19 @@
     </tr>
 
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
+        <tr ng-if="koulutusStructure.params.isLukio" ng-repeat="(key, val) in model.koulutus.kielivalikoima">
+            <th>{{t('koulutus.review.kielivalikoima.' + key)}}</th>
+            <td colspan="2">
+                <span ng-repeat="meta in val.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>
+
+            </td>
+        </tr>
+        <tr ng-if="koulutusStructure.params.isLukio">
+            <th tt="koulutus.review.perustiedot.lukiodiplomit">Lukiodiplomit</th>
+            <td colspan="2">
+                <span ng-repeat="meta in model.koulutus.lukiodiplomit.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>
+            </td>
+        </tr>
         <tr ng-repeat="field in reviewFields">
             <th>{{t('koulutus.review.kuvailevatTiedot.' + field)}}</th>
             <td colspan="2" data-ng-bind-html="reviewTexts[field].tekstis[lang.koodi_uri]"></td>

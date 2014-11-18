@@ -70,6 +70,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     $scope.model.showError = false;
     $scope.model.validationmsgs = [];
     $scope.model.userLangUri = "kieli_" + AuthService.getLanguage();
+    var koulutusStructure = KoulutusConverterFactory.STRUCTURE[$scope.model.koulutus.toteutustyyppi];
+    $scope.koulutusStructure = koulutusStructure;
 
     var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
     hakukohdePromise.then(function(hakukohteet) {
