@@ -70,7 +70,8 @@ app.controller('HakukohdeParentController', [
                 toteutusTyyppi !== 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' &&
                 toteutusTyyppi !== 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' &&
                 toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS' &&
-                toteutusTyyppi !== 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
+                toteutusTyyppi !== 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA' &&
+                toteutusTyyppi !== 'AMMATILLINEN_PERUSTUTKINTO';
         };
 
         $scope.needsLiitteidenToimitustiedot = function(toteutusTyyppi) {
@@ -382,6 +383,7 @@ app.controller('HakukohdeParentController', [
         $scope.validateHakukohde = function (toteutusTyyppi) {
             $scope.model.aloituspaikatKuvauksetFailed = false;
             $scope.model.hakuaikaValidationFailed = false;
+            $scope.model.hakukelpoisuusValidationErrMsg = false;
 
             var errors = [];
 
@@ -392,9 +394,6 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakukelpoisuusValidationErrMsg = true;
                     errors.push(error);
                 }
-            }
-            else {
-                $scope.model.hakukelpoisuusValidationErrMsg = false;
             }
 
             if ($scope.model.hakukohde.hakuOid === undefined || $scope.model.hakukohde.hakuOid.length < 1) {
@@ -1216,12 +1215,10 @@ app.controller('HakukohdeParentController', [
                         $scope.model.liitteidenToimitusOsoite[kieliUri].osoiterivi1 = yhteystieto.osoite;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postinumero = yhteystieto.postinumeroUri;
                         $scope.model.liitteidenToimitusOsoite[kieliUri].postitoimipaikka = yhteystieto.postitoimipaikka;
+                        $scope.resetHakukohdeLiitteidenToimitusOsoite();
                         hakutoimistoFound = true;
-
                     }
-
                 });
-
             }
             return hakutoimistoFound;
         };
