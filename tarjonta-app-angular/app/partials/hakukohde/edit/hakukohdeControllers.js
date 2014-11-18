@@ -40,7 +40,7 @@ app.controller('HakukohdeEditController',
              TarjontaService,
              Kuvaus,
              CommonUtilService,
-             PermissionService) {
+             HAKUTAPA) {
 
     $log = $log.getInstance("HakukohdeEditController");
 
@@ -129,7 +129,9 @@ app.controller('HakukohdeEditController',
         var filteredHakus = [];
         angular.forEach(hakus,function(haku){
             if(haku.kohdejoukkoUri === haunKohdejoukko) {
-                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                if(haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
+                    filteredHakus.push(haku);
+                }else if(haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
                     filteredHakus.push(haku);
                 }
             }

@@ -18,13 +18,14 @@
 var app = angular.module('Haku', ['ngResource', 'config', 'Logging']);
 
 app.constant('HAKUTAPA', {
-    'YHTEISHAKU': 'hakutapa_01',
-    "ERILLISHAKU": 'hakutapa_02'
+    "YHTEISHAKU": "hakutapa_01",
+    "ERILLISHAKU": "hakutapa_02",
+    "JATKUVA_HAKU": "hakutapa_03"
 });
 
 app.constant('HAKUTYYPPI', {
-    "VARSINAINEN_HAKU": 'hakutyyppi_01',
-    "LISAHAKU": 'hakutyyppi_03'
+    "VARSINAINEN_HAKU": "hakutyyppi_01",
+    "LISAHAKU": "hakutyyppi_03"
 });
 
 app.factory('HakuService', function ($http, $q, Config, $log) {
