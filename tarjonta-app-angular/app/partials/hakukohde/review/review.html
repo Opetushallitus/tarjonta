@@ -65,7 +65,7 @@
                     </td>
                 </tr>
 
-                <tr ng-show="isAiku">
+                <tr ng-show="isAiku || toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.aloituspaikatLkm}}
