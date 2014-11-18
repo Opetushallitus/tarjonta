@@ -40,8 +40,8 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     
     public static final String TARJONTA = "TARJONTA";
 
-    public static final String VALINTAPERUSTE_KUVAUS = "VALINTAPERUSTEKUVAUSTENHALLINTA";
-
+    public static final String VALINTAPERUSTEKUVAUSTENHALLINTA = "VALINTAPERUSTEKUVAUSTENHALLINTA";
+    public static final String VALINTAPERUSTEKUVAUSTENHALLINTA_KK = "VALINTAPERUSTEKUVAUSTENHALLINTA_KK";
     public static final String HAKUJENHALLINTA = "HAKUJENHALLINTA";
 
     //OPH oid
@@ -65,7 +65,15 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
     public static class VPermissionService extends AbstractPermissionService {
 
         public VPermissionService() {
-            super (VALINTAPERUSTE_KUVAUS);
+            super (VALINTAPERUSTEKUVAUSTENHALLINTA);
+        }
+    }
+
+    @Component
+    public static class ValintaperustekuvaustenhallintaKKPermissionService extends AbstractPermissionService {
+
+        public ValintaperustekuvaustenhallintaKKPermissionService() {
+            super (VALINTAPERUSTEKUVAUSTENHALLINTA_KK);
         }
     }
 
@@ -82,6 +90,9 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
 
     @Autowired
     VPermissionService vWrapped;
+
+    @Autowired
+    ValintaperustekuvaustenhallintaKKPermissionService valintaperustekuvaustenhallintaKKWrapped;
 
     @Autowired
     HakujenHallintaPermissionService hakujenHallintaPermissionServiceWrapped;
@@ -132,22 +143,28 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
         return wrapped.checkAccess(context.ooid, wrapped.ROLE_CRUD);
     }
 
-
-    /**
-     *
-     * Checks if user can create valintaperuste
-     *
-     */
     public boolean userCanCreateValintaperuste() {
         return vWrapped.userCanCreateReadUpdateAndDelete();
+    }
+
+    public boolean userCanCreateValintaperusteKK() {
+        return valintaperustekuvaustenhallintaKKWrapped.userCanCreateReadUpdateAndDelete();
     }
 
     public boolean userCanUpdateValinteperuste() {
         return vWrapped.userCanReadAndUpdate();
     }
 
+    public boolean userCanUpdateValinteperusteKK() {
+        return valintaperustekuvaustenhallintaKKWrapped.userCanReadAndUpdate();
+    }
+
     public boolean userCanDeleteValintaperuste() {
         return vWrapped.userCanCreateReadUpdateAndDelete();
+    }
+
+    public boolean userCanDeleteValintaperusteKK() {
+        return valintaperustekuvaustenhallintaKKWrapped.userCanCreateReadUpdateAndDelete();
     }
 
     /**
