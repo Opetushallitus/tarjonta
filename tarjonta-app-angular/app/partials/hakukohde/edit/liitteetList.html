@@ -28,7 +28,7 @@
 	                <tr class="required">
 	                    <th tt="tarjonta.hakukohde.liite.modal.toimitettavaMennessa"></th>
 	                    <td>
-	                        <t-date-time required timestamp="true" type="long" ng-model="liite.toimitettavaMennessa" ng-change="status.dirtify()"></t-date-time>
+	                        <t-date-time required timestamp="true" type="long" scope-model="liite.toimitettavaMennessa" change="status.dirtify()"></t-date-time>
 	                    </td>
 	                    <td>
                             <p class="error" ng-show="model.showError && !liite.toimitettavaMennessa" tt="tarjonta.hakukohde.liite.errors.toimitusaika">Liitteen toimitusaika on pakollinen.</p>
