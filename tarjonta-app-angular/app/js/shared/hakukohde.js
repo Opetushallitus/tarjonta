@@ -211,7 +211,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
 
     function addPainotettavaOppiaine(hakukohde) {
         var po = {
-            oppiaineUri: "painotettavatoppiaineetlukiossa_a1et#1",
+            oppiaineUri: "",
             painokerroin: ""
         };
         hakukohde.painotettavatOppiaineet.push(po);

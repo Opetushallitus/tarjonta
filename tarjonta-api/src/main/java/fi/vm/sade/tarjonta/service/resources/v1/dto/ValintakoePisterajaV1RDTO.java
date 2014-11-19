@@ -1,11 +1,7 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.tarjonta.service.resources.serializer.BigDecimalDeserializer;
-import fi.vm.sade.tarjonta.service.resources.serializer.BigDecimalSerializer;
 
 import java.math.BigDecimal;
 
@@ -20,18 +16,12 @@ public class ValintakoePisterajaV1RDTO {
     private String pisterajatyyppi;
 
     @ApiModelProperty(value = "Pisteraja's alin pistemäärä")
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonSerialize(using = BigDecimalSerializer.class)
     private BigDecimal alinPistemaara;
 
     @ApiModelProperty(value = "Pisteraja's ylin pistemäärä")
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonSerialize(using = BigDecimalSerializer.class)
     private BigDecimal ylinPistemaara;
 
     @ApiModelProperty(value = "Pisteraja's alin hyväksytty pistemäärä")
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    @JsonSerialize(using = BigDecimalSerializer.class)
     private BigDecimal alinHyvaksyttyPistemaara;
 
     public String getPisterajatyyppi() {

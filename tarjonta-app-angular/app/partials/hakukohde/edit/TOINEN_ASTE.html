@@ -111,14 +111,18 @@
                         </td>
                     </tr>
 
-                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
+                    <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'" class="painotettavatOppiaineet">
                         <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet">Painotettavat oppiaineet</th>
                         <td>
+                            <div ng-show="model.hakukohde.painotettavatOppiaineet.length > 0">
+                                <span class="heading" tt="tarjonta.hakukohde.painotettavaOppiaine">Oppiaine</span><span class="heading" tt="tarjonta.hakukohde.painokerroin">Painokerroin</span>
+                            </div>
+
                             <div ng-repeat="painotettavaOppiaine in model.hakukohde.painotettavatOppiaineet">
                                 <select ng-model="painotettavaOppiaine.oppiaineUri">
                                     <option ng-selected="{{po.oppiaineUri == painotettavaOppiaine.oppiaineUri}}" ng-repeat="po in painotettavatOppiaineet | orderBy: 'lokalisoituNimi'" value="{{po.oppiaineUri}}">{{po.lokalisoituNimi}}</option>
                                 </select>
-                                <input class="input-mini" type="text"  ng-model="painotettavaOppiaine.painokerroin" />
+                                <input valid-decimal class="input-mini" type="text" ng-model="painotettavaOppiaine.painokerroin" />
                                 <button class="btn top" ng-click="deletePainotettavaOppiaine(painotettavaOppiaine)"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
                             </div>
                             <button class="btn" ng-click="addPainotettavaOppiaine()"><span tt="tarjonta.hakukohde.painotettavaOppiaine.uusi.painotettavaOppiaine"></span> <span class="icon-plus-sign"></span></button>

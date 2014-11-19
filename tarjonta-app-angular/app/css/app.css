@@ -860,3 +860,8 @@ table tr.aloituspaikatKuvaukset table {
 .valintaperustekuvaukset .search {
     float: right;
 }
+
+.painotettavatOppiaineet .heading {
+    width: 225px;
+    display: inline-block;
+}
