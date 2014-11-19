@@ -1210,9 +1210,21 @@ app.controller('HakukohdeParentController', [
             return pattern.test(url);
         }
 
+        function validEmail(email) {
+            console.log(email);
+            return /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(email);
+        };
+
+        $scope.liitteidenSahkoinenOsoiteEnabledChanged = function() {
+            if(!$scope.model.liitteidenSahkoinenOsoiteEnabled) {
+                $scope.model.hakukohde.sahkoinenToimitusOsoite = "";
+            }
+        };
+
         $scope.isValidHakukohdeSahkoinenOsoite = function() {
+            console.log("$scope.model.hakukohde.sahkoinenToimitusOsoite", $scope.model.hakukohde.sahkoinenToimitusOsoite);
             if($scope.model.liitteidenSahkoinenOsoiteEnabled) {
-                return validUrl($scope.model.hakukohde.sahkoinenToimitusOsoite);
+                return validUrl($scope.model.hakukohde.sahkoinenToimitusOsoite) || validEmail($scope.model.hakukohde.sahkoinenToimitusOsoite);
             } else {
                 return true;
             }

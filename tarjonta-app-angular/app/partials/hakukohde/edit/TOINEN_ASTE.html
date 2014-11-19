@@ -150,9 +150,9 @@
                     <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
                         <th></th>
                         <td>
-                            <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti">Voidaan toimittaa myös sähköisesti</span></label><br/>
+                            <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="liitteidenSahkoinenOsoiteEnabledChanged()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti">Voidaan toimittaa myös sähköisesti</span></label><br/>
                             <div class="inset">
-                                <input type="url" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
+                                <input type="text" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
                             </div>
                         </td>
                         <td>
