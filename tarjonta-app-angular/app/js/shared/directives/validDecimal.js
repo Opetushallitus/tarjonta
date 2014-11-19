@@ -1,6 +1,23 @@
 var app = angular.module('ValidDecimal', []);
 
 app.directive('validDecimal', function () {
+
+    var removeLastChar = function(str) {
+        return str.substring(0, str.length - 1)
+    };
+
+    var replaceCommaWithDot = function(str) {
+        return str.replace(/\,/g, '.');
+    };
+
+    var getLastChar = function(str) {
+        return str.charAt(str.length - 1)
+    };
+
+    var getDotCount = function(str) {
+        return (str.match(/\./g) || []).length;
+    };
+
     return {
         require: '?ngModel',
         link: function (scope, element, attrs, ngModelCtrl) {
@@ -14,15 +31,16 @@ app.directive('validDecimal', function () {
                 }
 
                 var newValue = val;
-                var lastChar = val.charAt(val.length - 1);
+                newValue = replaceCommaWithDot(newValue);
+
+                var lastChar = getLastChar(newValue);
                 if (isNaN(lastChar)) {
                     if ('.' === lastChar) {
-                        var dotCount = (val.match(/\./g) || []).length;
-                        if (dotCount > 1) {
-                            newValue = val.substring(0, val.length - 1);
+                        if (getDotCount(newValue) > 1) {
+                            newValue = removeLastChar(newValue);
                         }
                     } else {
-                        newValue = val.substring(0, val.length - 1);
+                        newValue = removeLastChar(newValue);
                     }
                 }
 
