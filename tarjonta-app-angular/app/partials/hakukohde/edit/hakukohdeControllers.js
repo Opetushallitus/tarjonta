@@ -115,22 +115,33 @@ app.controller('HakukohdeEditController',
 
     var filterHakusForValmentavaJaKuntouttavaOpetus = function(hakus) {
         return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_16#1');
-    }
+    };
 
     var filterHakusForVapaanSivistystyonKoulutus = function(hakus) {
         return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_18#1');
-    }
+    };
 
     var filterHakusForAmmatillinenPeruskoulutusErityisopetuksena = function(hakus) {
         return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_15#1');
-    }
+    };
+
+    var hakuajanLoppuPvmInFuture = function(hakuaika) {
+        return hakuaika.loppuPvm > new Date().getTime();
+    };
 
     var filterHakusByHaunKohdejoukko = function(hakus, haunKohdejoukko) {
         var filteredHakus = [];
         angular.forEach(hakus,function(haku){
             if(haku.kohdejoukkoUri === haunKohdejoukko) {
                 if(haku.hakutapaUri.indexOf(HAKUTAPA.JATKUVA_HAKU) !== -1) {
-                    filteredHakus.push(haku);
+                    var hakuaika = _.first(haku.hakuaikas);
+                    if(hakuaika.loppuPvm !== undefined) {
+                        if(hakuajanLoppuPvmInFuture(hakuaika)) {
+                            filteredHakus.push(haku);
+                        }
+                    } else {
+                        filteredHakus.push(haku);
+                    }
                 }else if(haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
                     filteredHakus.push(haku);
                 }
