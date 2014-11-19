@@ -465,39 +465,28 @@ app.controller('BaseEditController', [
                 uiModel.isMutable = false;
             }
 
-            PermissionService.koulutus.canEdit(model.oid, {
-                defaultTarjoaja: AuthService.getUserDefaultOid()
-            }).then(function (data) {
-                $log.debug("setting mutable to:", data);
-                uiModel.isMutable = data;
+            if ( model.oid ) {
+                PermissionService.koulutus.canEdit(model.oid, {
+                    defaultTarjoaja: AuthService.getUserDefaultOid()
+                }).then(function (data) {
+                    uiModel.isMutable = data;
 
-                if (model.toteutustyyppi === 'LUKIOKOULUTUS') {
-                    //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-                    if (angular.isDefined(uiModel.loadedKoulutuslaji) &&
-                        KoodistoURI.compareKoodi(
-                            uiModel.loadedKoulutuslaji.uri,
-                            Config.env['koodi-uri.koulutuslaji.nuortenKoulutus'], true)) {
+                    if (uiModel.isMutable) {
+                        model.isNew = false;
 
-                        uiModel.isMutable = false;
-                        uiModel.isRemovable = false;
-                    }
-                }
-
-                if (uiModel.isMutable) {
-                    model.isNew = false;
-
-                    var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
-                    hakukohdePromise.then(function (hakukohteet) {
-                        if (hakukohteet.result && hakukohteet.result.length > 0) {
-                            $scope.setMinMax(true, model);
-                        } else {
+                        var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
+                        hakukohdePromise.then(function (hakukohteet) {
+                            if (hakukohteet.result && hakukohteet.result.length > 0) {
+                                $scope.setMinMax(true, model);
+                            } else {
+                                $scope.setMinMax(false, model);
+                            }
+                        }, function () {
                             $scope.setMinMax(false, model);
-                        }
-                    }, function () {
-                        $scope.setMinMax(false, model);
-                    });
-                } // if (uiModel.isMutable)
-            }); // koulutus.canEdit.then
+                        });
+                    } // if (uiModel.isMutable)
+                }); // koulutus.canEdit.then
+            }
 
             uiModel.tabs.lisatiedot = false; //activate lisatiedot tab
             //$scope.updateFormStatusInformation(model);
