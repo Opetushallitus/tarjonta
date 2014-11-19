@@ -481,7 +481,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koulutuslaji: {koodisto: 'koodisto-uris.koulutuslaji'}
         }),
         templates: {
-            edit: 'VALMISTAVA_KOULUTUS',
+            edit: 'GENERIC',
             review: 'GENERIC'
         },
         reviewFields: DEFAULT_REVIEW_FIELDS

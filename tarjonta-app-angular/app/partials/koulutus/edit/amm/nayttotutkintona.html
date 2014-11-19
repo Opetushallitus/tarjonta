@@ -16,7 +16,7 @@
 
             <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
             <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
-            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify> 
+            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify>
 
             <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
             <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
@@ -25,7 +25,7 @@
 
         <display-controls model="controlModel" display="header" command="controlModelCommandApi"></display-controls>
 
-        <form name="koulutusForm">
+        <form name="koulutusForm" novalidate>
             <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
             <button ng-click="" class="hidden"></button>
             <tabset>
@@ -35,13 +35,13 @@
                 <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
                     <div ng-include="'partials/koulutus/edit/amm/editLisatiedot.html'"></div>
                 </tab>
-                
-                <tab heading="{{t('koulutus.edit.lisatiedot-valmistava-koulutus')}}" disabled="uiModel.tabs.lisatiedot" 
-                     ng-disabled="uiModel.tabs.lisatiedot && uiModel.cbShowValmistavaKoulutus" 
+
+                <tab heading="{{t('koulutus.edit.lisatiedot-valmistava-koulutus')}}" disabled="uiModel.tabs.lisatiedot"
+                     ng-disabled="uiModel.tabs.lisatiedot && uiModel.cbShowValmistavaKoulutus"
                      ng-show="uiModel.toggleTabs">
                     <div ng-if="uiModel.toggleTabs" ng-include="'partials/koulutus/edit/amm/editValmistavaKoulutusLisatiedot.html'"></div>
                 </tab>
-             
+
             </tabset>
         </form>
 
