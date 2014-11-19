@@ -15,7 +15,7 @@
         <controls-notify type="message" tt-expr="getKoulutustenNimetKey()" tt-params="[ getKoulutustenNimet() ]"></controls-notify>
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
-        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+        <controls-notify ng-repeat="e in model.validationmsgs track by $index" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
 
@@ -152,11 +152,11 @@
                         <td>
                             <label><input type="checkbox" ng-model="model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/> <span tt="tarjonta.hakukohde.liitteet.voidaanToimittaaSahkoisesti">Voidaan toimittaa myös sähköisesti</span></label><br/>
                             <div class="inset">
-                                <input type="text" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
+                                <input type="url" placeholder="http://" ng-required="model.hakukohde.liitteidenSahkoinenOsoite" ng-model="model.hakukohde.sahkoinenToimitusOsoite" ng-disabled="!model.liitteidenSahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
                             </div>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && !isValidHakukohdeSahkoinenOsoite()" tt="tarjonta.hakukohde.liitteet.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
+                            <p class="error" ng-show="model.showError && !isValidHakukohdeSahkoinenOsoite()" tt="tarjonta.hakukohde.liitteet.errors.sahkoinenOsoite">Tarkista liitteen sähköinen toimitusosoite (osoite voi olla URL- tai sähköpostiosoite).</p>
                         </td>
                     </tr>
 

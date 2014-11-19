@@ -1200,8 +1200,22 @@ app.controller('HakukohdeParentController', [
                 || (!_.isEmpty($scope.model.hakukohde.liitteidenToimitusOsoite.osoiterivi1) && !_.isEmpty($scope.model.hakukohde.liitteidenToimitusOsoite.postinumero));
         }
 
+        function validUrl(url) {
+            var pattern = new RegExp('^(https?:\\/\\/)?' +
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+                '((\\d{1,3}\\.){3}\\d{1,3}))' +
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+                '(\\?[;&a-z\\d%_.~+=-]*)?' +
+                '(\\#[-a-z\\d_]*)?$','i');
+            return pattern.test(url);
+        }
+
         $scope.isValidHakukohdeSahkoinenOsoite = function() {
-            return !$scope.model.liitteidenSahkoinenOsoiteEnabled || !_.isEmpty($scope.model.hakukohde.sahkoinenToimitusOsoite);
+            if($scope.model.liitteidenSahkoinenOsoiteEnabled) {
+                return validUrl($scope.model.hakukohde.sahkoinenToimitusOsoite);
+            } else {
+                return true;
+            }
         }
 
         var checkAndAddHakutoimisto = function (data) {
