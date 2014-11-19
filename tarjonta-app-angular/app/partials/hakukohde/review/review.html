@@ -78,23 +78,21 @@
                     </td>
                 </tr>
 
-                <tr ng-show="['AMMATILLINEN_PERUSTUTKINTO',
-                              'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
-                              ].indexOf(model.hakukohde.toteutusTyyppi) != -1">
+                <tr ng-show="model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO'">
                     <th tt="hakukohde.review.perustiedot.kaksoistutkinto"/>
                     <td colspan="2">
                         {{ model.kaksoisTutkinto}}
                     </td>
                 </tr>
 
-                <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
+                <tr ng-show="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
                     <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo"/>
                     <td colspan="2">
                         {{ model.hakukohde.alinHyvaksyttavaKeskiarvo != 0 ? model.hakukohde.alinHyvaksyttavaKeskiarvo : ""}}
                     </td>
                 </tr>
 
-                <tr ng-show="model.hakukohde.toteutusTyyppi == 'LUKIOKOULUTUS'">
+                <tr ng-show="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
                     <th tt="hakukohde.review.perustiedot.painotettavatOppiaineet"/>
                     <td colspan="2">
                        <span data-ng-repeat="painotettavaOppiaine in model.painotettavatOppiaineet">
