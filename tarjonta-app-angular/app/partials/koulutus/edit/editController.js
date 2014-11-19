@@ -925,6 +925,14 @@ app.controller('BaseEditController', [
                             return num;
                         });
 
+                        // Hack, lukiokoulutuksella ei saa näyttää aikuisten lukiokoulutus valintaa.
+                        // Tämä relaatio olisi parempi saada koodistoon, mutta nyt joudutaan tekemään näin
+                        if ( $scope.CONFIG.TYYPPI === "LUKIOKOULUTUS" ) {
+                            $scope.uiModel.koulutusohjelma = _.filter($scope.uiModel.koulutusohjelma, function(uri) {
+                                return uri.koodiArvo !== "0086";
+                            });
+                        }
+
                         $scope.uiModel.enableOsaamisala = $scope.uiModel.koulutusohjelma.length > 0;
 
                         if (!$scope.uiModel.enableOsaamisala) {
