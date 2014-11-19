@@ -120,6 +120,12 @@
                         {{ model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 }}, {{ model.hakukohde.liitteidenToimitusOsoite.postinumeroArvo }}, {{ model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka }}
                     </td>
                 </tr>
+                <tr ng-show="model.hakukohde.sahkoinenToimitusOsoite">
+                    <th tt="tarjonta.hakukohde.liitteet.sahkoinenToimitusOsoite">Liitteiden sähköinen toimitusosoite</th>
+                    <td colspan="2">
+                        <a href="{{ model.hakukohde.sahkoinenToimitusOsoite }}" target="_blank">{{ model.hakukohde.sahkoinenToimitusOsoite }}</a>
+                    </td>
+                </tr>
                 <tr>
                     <th tt="hakukohde.review.perustiedot.lisatiedot"/>
                     <td colspan="2">

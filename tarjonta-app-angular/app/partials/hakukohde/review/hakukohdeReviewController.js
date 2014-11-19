@@ -535,7 +535,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
         }
 
-        console.log('REVIEW HAKUKOHDE :', $scope.model.hakukohde);
         if ($scope.model.hakukohde.hakukohteenNimiUri &&
             $scope.model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
             $scope.showNimiUri = true;
@@ -543,6 +542,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
         if($scope.model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
             $scope.model.hakukohde.valintakoe =  $scope.model.hakukohde.valintakokeet[0];
+            if($scope.model.hakukohde.valintakoe === undefined) {
+                $scope.model.hakukohde.valintakoe = {};
+            }
             $scope.model.hakukohde.paasykoe = getPisterajat($scope.model.hakukohde.valintakoe, 'Paasykoe');
             $scope.model.hakukohde.lisapisteet = getPisterajat($scope.model.hakukohde.valintakoe, 'Lisapisteet');
             $scope.model.hakukohde.kokonaispisteet = getPisterajat($scope.model.hakukohde.valintakoe, 'Kokonaispisteet');
