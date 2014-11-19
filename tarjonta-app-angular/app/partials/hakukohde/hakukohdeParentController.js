@@ -170,14 +170,9 @@ app.controller('HakukohdeParentController', [
         $scope.model.hakukohde.yhteystiedot = [];
         $scope.model.hakukohde.muuYhteystieto = false;
         var deferredOsoite = $q.defer();
-        $scope.model.liitteenToimitusOsoitePromise = deferredOsoite.promise; //not used it seems
+        $scope.model.liitteenToimitusOsoitePromise = deferredOsoite.promise;
         $scope.model.liitteidenToimitusPvm = new Date();
-        $scope.userLangs = window.CONFIG.app.userLanguages; // liitteiden
-        // ja
-        // valintakokeiden
-        // kielien
-        // esijärjestystä
-        // varten
+        $scope.userLangs = window.CONFIG.app.userLanguages;
         $scope.model.defaultLang = 'kieli_fi';
         $scope.model.showHakuaikas = false;
         $scope.model.hakukohde.configurableHakuaika = false;
@@ -187,7 +182,6 @@ app.controller('HakukohdeParentController', [
         $scope.model.valintakoe = {};
         $scope.model.liitteidenMuuOsoiteEnabled = false;
         $scope.model.liitteidenSahkoinenOsoiteEnabled = $scope.model.hakukohde.sahkoinenToimitusOsoite !== undefined && $scope.model.hakukohde.sahkoinenToimitusOsoite.length > 0;
-        $scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm =  $scope.model.hakukohde.liitteidenToimitusPvm === $scope.model.hakukohde.hakuaikaLoppuPvm;
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
 
@@ -717,6 +711,19 @@ app.controller('HakukohdeParentController', [
             return haku.hakuaikas[0];
         };
 
+        var useHaunPaattymisaikaShouldBeChecked = function() {
+            var hakuaikaId = $scope.model.hakukohde.hakuaikaId;
+            if(hakuaikaId !== undefined) {
+                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+                var hakuaika = _.find(haku.hakuaikas, function(element) {
+                    return element.hakuaikaId === hakuaikaId;
+                });
+                $scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm = $scope.model.hakukohde.liitteidenToimitusPvm === hakuaika.loppuPvm;
+            } else {
+                $scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm = $scope.model.hakukohde.liitteidenToimitusPvm === $scope.model.hakukohde.hakuaikaLoppuPvm;
+            }
+        };
+
         $scope.retrieveHakus = function (filterHakuFunction) {
 
             var hakuPromise = HakuService.getAllHakus();
@@ -764,6 +771,10 @@ app.controller('HakukohdeParentController', [
                 }
 
                 $scope.handleConfigurableHakuaika();
+
+                if($scope.needsLiitteidenToimitustiedot($scope.model.hakukohde.toteutusTyyppi)) {
+                    useHaunPaattymisaikaShouldBeChecked();
+                }
             });
         };
 

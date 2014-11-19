@@ -106,30 +106,32 @@ app.controller('HakukohdeEditController',
     };
 
     var filterHakusForAmmatillinenAndLukio = function(hakus) {
-        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_11#1');
+        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_11#1');
     };
 
     var filterHakusForAmmatillinenValmistavaAndLisaopetus = function(hakus) {
-        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_17#1');
+        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_17#1');
     };
 
     var filterHakusForValmentavaJaKuntouttavaOpetus = function(hakus) {
-        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_16#1');
+        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_16#1');
     };
 
     var filterHakusForVapaanSivistystyonKoulutus = function(hakus) {
-        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_18#1');
+        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_18#1');
     };
 
     var filterHakusForAmmatillinenPeruskoulutusErityisopetuksena = function(hakus) {
-        return filterHakusByHaunKohdejoukko(hakus, 'haunkohdejoukko_15#1');
+        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_15#1');
     };
 
     var hakuajanLoppuPvmInFuture = function(hakuaika) {
         return hakuaika.loppuPvm > new Date().getTime();
     };
 
-    var filterHakusByHaunKohdejoukko = function(hakus, haunKohdejoukko) {
+    var filterHakusByKohdejoukkoAndOrgs = function(hakus, haunKohdejoukko) {
+        hakus = $scope.filterHakusWithOrgs(hakus);
+
         var filteredHakus = [];
         angular.forEach(hakus,function(haku){
             if(haku.kohdejoukkoUri === haunKohdejoukko) {
@@ -142,7 +144,7 @@ app.controller('HakukohdeEditController',
                     } else {
                         filteredHakus.push(haku);
                     }
-                }else if(haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                } else if(haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
                     filteredHakus.push(haku);
                 }
             }
