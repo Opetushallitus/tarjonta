@@ -606,7 +606,7 @@ app.controller('HakuEditController',
             };
 
             $scope.initParentHaku = function() {
-                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri)) {
+                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri, $scope.model.hakux.result.kohdejoukkoUri)) {
                     populateParentHakuCandidates($scope.model.hakux.result.kohdejoukkoUri);
                 }
             };
@@ -614,23 +614,20 @@ app.controller('HakuEditController',
             $scope.haunKohdejoukkoChanged = function(valittuKohdejoukko) {
                 $scope.model.hakux.result.parentHakuOid = undefined;
 
-                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri)) {
-                    if(valittuKohdejoukko) {
-                        populateParentHakuCandidates(valittuKohdejoukko.koodiUri);
-                    }
+                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri, valittuKohdejoukko)) {
+                    populateParentHakuCandidates(valittuKohdejoukko.koodiUri);
                 }
             };
 
             $scope.haunTyyppiChanged = function(valittuTyyppi) {
                 $scope.model.hakux.result.parentHakuOid = undefined;
-                if(valittuTyyppi && $scope.shouldSelectParentHaku(valittuTyyppi.koodiUri)) {
+                if(valittuTyyppi && $scope.shouldSelectParentHaku(valittuTyyppi.koodiUri, $scope.model.hakux.result.kohdejoukkoUri)) {
                     populateParentHakuCandidates($scope.model.hakux.result.kohdejoukkoUri);
                 }
             };
 
-            $scope.shouldSelectParentHaku = function(hakutyyppiUri) {
-                if(!hakutyyppiUri ||
-                   !$scope.model.hakux.result.kohdejoukkoUri) {
+            $scope.shouldSelectParentHaku = function(hakutyyppiUri, valittuKohdejoukko) {
+                if(!hakutyyppiUri || !valittuKohdejoukko) {
                     return false;
                 }
 
