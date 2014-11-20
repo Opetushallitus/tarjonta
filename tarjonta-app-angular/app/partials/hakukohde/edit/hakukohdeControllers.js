@@ -249,11 +249,6 @@ app.controller('HakukohdeEditController',
                                         uri: koulutusohjelmanKoodi.koodiUri + "#" + koulutusohjelmanKoodi.koodiVersio,
                                         label: koulutusohjelmanKoodi.koodiNimi
                                     };
-                                    // IE 10 fix, hakukohteen nimi-dropdown ei näkynyt oikein, ellei
-                                    // taulukkoon ole ensin alustettu tyhjä objekti (joka tässä sitten poistetaan)
-                                    if ($scope.model.hakukohteenNimet[0].isInitVal){
-                                        $scope.model.hakukohteenNimet.splice(0, 1);
-                                    }
                                     $scope.model.hakukohteenNimet.push(hakukohteenNimi);
                                 }
                             });
@@ -264,7 +259,7 @@ app.controller('HakukohdeEditController',
         }
 
         if($scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi)) {
-            $scope.model.hakukohteenNimet = [{isInitVal:true}];
+            $scope.model.hakukohteenNimet = [];
             angular.forEach($scope.model.hakukohde.hakukohdeKoulutusOids, function (koulutusOid) {
                 TarjontaService.getKoulutusPromise(koulutusOid).then(function(response) {
                     populateHakukohteenNimetByKoulutus(response.result);

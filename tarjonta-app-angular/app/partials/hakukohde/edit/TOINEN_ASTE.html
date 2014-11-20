@@ -34,11 +34,20 @@
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
                             <div ng-show="model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                                <select name="hakukohteenNimiUri" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakukohteenNimiUri" data-ng-options="hakukohteenNimi.uri as hakukohteenNimi.label for hakukohteenNimi in model.hakukohteenNimet | orderBy: 'label'"/>
+                                <select name="hakukohteenNimiUri" class="wide" ng-disabled="model.isDeEnabled"
+                                        required ng-model="model.hakukohde.hakukohteenNimiUri"
+                                        ng-options="hakukohteenNimi.uri as hakukohteenNimi.label for
+                                            hakukohteenNimi in model.hakukohteenNimet | orderBy: 'label'">
+                                    <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>
+                                </select>
                             </div>
                             <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                                <input name="hakukohteenNimiUri" ng-disabled="model.isPartiallyDeEnabled" type="text" data-ng-model="model.hakukohde.hakukohteenNimiUri" required />
+                                <input name="hakukohteenNimiUri" ng-disabled="model.isPartiallyDeEnabled" type="text"
+                                       ng-model="model.hakukohde.hakukohteenNimiUri" required />
                             </div>
+                        </td>
+                        <td>
+                            <p class="error" tt="hakukohde.edit.nimi.missing" ng-show="model.showError && editHakukohdeForm.hakukohteenNimiUri.$invalid">Hakukohteen nimi on annettava</p>
                         </td>
                     </tr>
 
@@ -46,7 +55,12 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged()" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus | orderBy: 'lokalisoituNimi'"/>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required
+                                    ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged()"
+                                    ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus
+                                                  | orderBy: 'lokalisoituNimi'">
+                                <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>
+                            </select>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
