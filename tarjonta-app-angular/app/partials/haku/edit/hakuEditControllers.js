@@ -582,7 +582,7 @@ app.controller('HakuEditController',
                     var filtered = _.filter(data, function(haku){
                         var validTyyppiAndTapa = (haku.hakutapaUri.indexOf(HAKUTAPA.YHTEISHAKU) !== -1 ||
                             haku.hakutapaUri.indexOf(HAKUTAPA.ERILLISHAKU) !== -1) &&
-                            haku.hakutyyppiUri.indexOf(HAKUTYYPPI.VARSINAINEN_HAKU) !== 1;
+                            haku.hakutyyppiUri.indexOf(HAKUTYYPPI.VARSINAINEN_HAKU) !== -1;
                         var validHakukausiVuosi = haku.hakukausiVuosi >= (new Date().getFullYear() - 1);
                         return validTyyppiAndTapa && validHakukausiVuosi;
                     });
