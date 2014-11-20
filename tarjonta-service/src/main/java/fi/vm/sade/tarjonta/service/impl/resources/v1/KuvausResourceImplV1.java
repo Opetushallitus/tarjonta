@@ -1,7 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import com.google.common.base.Preconditions;
-import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -10,17 +10,16 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausSearchV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
-
-import javax.ws.rs.PathParam;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import  fi.vm.sade.tarjonta.dao.KuvausDAO;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /*
 * @author: Tuomas Katva 16/12/13
@@ -44,25 +43,25 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         ResultV1RDTO<List<String>> resultV1RDTO = new ResultV1RDTO<List<String>>();
         try {
 
-        List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findAll();
-        if (valintaperusteSoraKuvauses != null && valintaperusteSoraKuvauses.size() > 0) {
+            List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findAll();
+            if (valintaperusteSoraKuvauses != null && valintaperusteSoraKuvauses.size() > 0) {
 
-            List<String> tunnisteet = new ArrayList<String>();
-            for (ValintaperusteSoraKuvaus soraKuvaus : valintaperusteSoraKuvauses) {
-                tunnisteet.add(soraKuvaus.getId().toString());
+                List<String> tunnisteet = new ArrayList<String>();
+                for (ValintaperusteSoraKuvaus soraKuvaus : valintaperusteSoraKuvauses) {
+                    tunnisteet.add(soraKuvaus.getId().toString());
+                }
+
+                resultV1RDTO.setResult(tunnisteet);
+                resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+
+            } else {
+                resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             }
-
-            resultV1RDTO.setResult(tunnisteet);
-            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-
-        } else {
-           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-        }
 
         } catch (Exception exp) {
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp,null,null));
+            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
 
         }
         return resultV1RDTO;
@@ -74,13 +73,13 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
 
-            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
-            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi,orgType);
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi, orgType);
             if (kuvaukses != null && kuvaukses.size() > 0) {
 
                 List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
                 for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
-                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,false));
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora, false));
                 }
 
                 kuvaukset.setResult(foundKuvaukses);
@@ -103,18 +102,18 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
     @Override
     @Transactional(readOnly = true)
-    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(String tyyppi,int vuosi, String orgType) {
+    public ResultV1RDTO<List<KuvausV1RDTO>> getKuvaustenTiedotVuodella(String tyyppi, int vuosi, String orgType) {
 
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
 
-            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
-            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiOrgTypeAndYear(vpsTyyppi,orgType,vuosi);
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiOrgTypeAndYear(vpsTyyppi, orgType, vuosi);
             if (kuvaukses != null && kuvaukses.size() > 0) {
 
                 List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
                 for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
-                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,true));
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora, true));
                 }
 
                 kuvaukset.setResult(foundKuvaukses);
@@ -139,7 +138,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<List<HashMap<String, String>>> getKuvausNimet(String tyyppi) {
-       ResultV1RDTO<List<HashMap<String,String>>>  resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
+        ResultV1RDTO<List<HashMap<String, String>>> resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
 
         try {
             ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
@@ -148,15 +147,15 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByTyyppi(vpsTyyppi);
             if (valintaperusteSoraKuvauses != null) {
 
-                List<HashMap<String,String>> nimetList = new ArrayList<HashMap<String, String>>();
+                List<HashMap<String, String>> nimetList = new ArrayList<HashMap<String, String>>();
 
-                    for (ValintaperusteSoraKuvaus valintaperusteSoraKuvaus : valintaperusteSoraKuvauses) {
-                        HashMap<String,String> nimet = new HashMap<String, String>();
-                        for (TekstiKaannos nimi: valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstiKaannos()) {
-                            nimet.put(nimi.getKieliKoodi(),nimi.getArvo());
-                        }
-                        nimetList.add(nimet);
+                for (ValintaperusteSoraKuvaus valintaperusteSoraKuvaus : valintaperusteSoraKuvauses) {
+                    HashMap<String, String> nimet = new HashMap<String, String>();
+                    for (TekstiKaannos nimi : valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstiKaannos()) {
+                        nimet.put(nimi.getKieliKoodi(), nimi.getArvo());
                     }
+                    nimetList.add(nimet);
+                }
                 resultV1RDTO.setResult(nimetList);
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             } else {
@@ -177,21 +176,21 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<List<HashMap<String, String>>> getKuvausNimetWithOrganizationType(String tyyppi, String orgType) {
-        ResultV1RDTO<List<HashMap<String,String>>>  resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
+        ResultV1RDTO<List<HashMap<String, String>>> resultV1RDTO = new ResultV1RDTO<List<HashMap<String, String>>>();
 
         try {
             ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
             Preconditions.checkNotNull(vpsTyyppi);
 
-            List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi,orgType);
+            List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi, orgType);
             if (valintaperusteSoraKuvauses != null) {
 
-                List<HashMap<String,String>> nimetList = new ArrayList<HashMap<String, String>>();
+                List<HashMap<String, String>> nimetList = new ArrayList<HashMap<String, String>>();
 
                 for (ValintaperusteSoraKuvaus valintaperusteSoraKuvaus : valintaperusteSoraKuvauses) {
-                    HashMap<String,String> nimet = new HashMap<String, String>();
-                    for (TekstiKaannos nimi: valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstiKaannos()) {
-                        nimet.put(nimi.getKieliKoodi(),nimi.getArvo());
+                    HashMap<String, String> nimet = new HashMap<String, String>();
+                    for (TekstiKaannos nimi : valintaperusteSoraKuvaus.getMonikielinenNimi().getTekstiKaannos()) {
+                        nimet.put(nimi.getKieliKoodi(), nimi.getArvo());
                     }
                     nimetList.add(nimet);
                 }
@@ -218,13 +217,13 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         ResultV1RDTO<List<KuvausV1RDTO>> kuvaukset = new ResultV1RDTO<List<KuvausV1RDTO>>();
         try {
 
-            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
-            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi,orgType);
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> kuvaukses = kuvausDAO.findByTyyppiAndOrganizationType(vpsTyyppi, orgType);
             if (kuvaukses != null && kuvaukses.size() > 0) {
 
                 List<KuvausV1RDTO> foundKuvaukses = new ArrayList<KuvausV1RDTO>();
                 for (ValintaperusteSoraKuvaus vpkSora : kuvaukses) {
-                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora,true));
+                    foundKuvaukses.add(converter.toKuvausRDTO(vpkSora, true));
                 }
 
                 kuvaukset.setResult(foundKuvaukses);
@@ -252,40 +251,40 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                                                                     String nimi) {
         ResultV1RDTO<KuvausV1RDTO> result = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-        //TODO: query from monikielinen teksti nimi (WHERE NIMI IN MONIKIELINEN TEKSTI)
-        List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByOppilaitosTyyppiTyyppiAndNimi(ConverterV1.getTyyppiFromString(tyyppi),oppilaitosTyyppi,nimi);
-        if (valintaperusteSoraKuvauses != null && valintaperusteSoraKuvauses.size() > 0) {
-           //TODO: move this logic in to the query
-           ValintaperusteSoraKuvaus foundKuvaus = null;
+            //TODO: query from monikielinen teksti nimi (WHERE NIMI IN MONIKIELINEN TEKSTI)
+            List<ValintaperusteSoraKuvaus> valintaperusteSoraKuvauses = kuvausDAO.findByOppilaitosTyyppiTyyppiAndNimi(ConverterV1.getTyyppiFromString(tyyppi), oppilaitosTyyppi, nimi);
+            if (valintaperusteSoraKuvauses != null && valintaperusteSoraKuvauses.size() > 0) {
+                //TODO: move this logic in to the query
+                ValintaperusteSoraKuvaus foundKuvaus = null;
 
-            for (ValintaperusteSoraKuvaus loopValintaSora:valintaperusteSoraKuvauses)   {
+                for (ValintaperusteSoraKuvaus loopValintaSora : valintaperusteSoraKuvauses) {
 
-                for (TekstiKaannos kuvausNimi : loopValintaSora.getMonikielinenNimi().getKaannoksetAsList()) {
+                    for (TekstiKaannos kuvausNimi : loopValintaSora.getMonikielinenNimi().getKaannoksetAsList()) {
 
-                    if (kuvausNimi.getArvo().trim().equalsIgnoreCase(nimi.trim())) {
-                        foundKuvaus = loopValintaSora;
+                        if (kuvausNimi.getArvo().trim().equalsIgnoreCase(nimi.trim())) {
+                            foundKuvaus = loopValintaSora;
+                        }
+
                     }
 
                 }
 
-            }
+                if (foundKuvaus != null) {
+                    result.setStatus(ResultV1RDTO.ResultStatus.OK);
+                    result.setResult(converter.toKuvausRDTO(foundKuvaus, true));
+                } else {
+                    result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+                }
 
-            if (foundKuvaus != null) {
-                result.setStatus(ResultV1RDTO.ResultStatus.OK);
-                result.setResult(converter.toKuvausRDTO(foundKuvaus,true));
+
             } else {
                 result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             }
 
-
-        } else {
-            result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
-        }
-
-        } catch (Exception exp ){
+        } catch (Exception exp) {
 
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            result.addError(ErrorV1RDTO.createSystemError(exp,null,null));
+            result.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
         return result;
     }
@@ -293,31 +292,32 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     @Override
     @Transactional(readOnly = true)
     public ResultV1RDTO<KuvausV1RDTO> findById(String tunniste) {
-      ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
+        ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
             Long id = new Long(tunniste);
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(id);
             if (valintaperusteSoraKuvaus != null && !valintaperusteSoraKuvaus.getTila().equals(ValintaperusteSoraKuvaus.Tila.POISTETTU)) {
 
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-                resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
+                resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus, true));
 
             } else {
-              resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
+                resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             }
         } catch (Exception exp) {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp,null,null));
+            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
-       return resultV1RDTO;
+        return resultV1RDTO;
     }
 
     @Override
-    @Transactional (readOnly = false)
+    @Transactional(readOnly = false)
     public ResultV1RDTO<KuvausV1RDTO> createNewKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-            permissionChecker.checkCreateValintaPeruste();
+            hasPermissionToCreate(kuvausRDTO);
+
             LOG.debug("USER CAN CREATE KUVAUS.... CREATING");
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
 
@@ -327,7 +327,7 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
                 valintaperusteSoraKuvaus.setViimPaivitysPvm(new Date());
                 valintaperusteSoraKuvaus.setTila(ValintaperusteSoraKuvaus.Tila.VALMIS);
                 valintaperusteSoraKuvaus = kuvausDAO.insert(valintaperusteSoraKuvaus);
-                KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus,true);
+                KuvausV1RDTO kuvaus = converter.toKuvausRDTO(valintaperusteSoraKuvaus, true);
 
                 resultV1RDTO.setResult(kuvaus);
                 resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
@@ -345,26 +345,40 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             LOG.debug("EXCEPTION OCCURRED CREATING NEW KUVAUS : ", exp.toString());
 
-           resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
-           resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
+            resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
-        return  resultV1RDTO;
+        return resultV1RDTO;
+    }
+
+    private void hasPermissionToCreate(KuvausV1RDTO kuvausRDTO) {
+        if (isForKorkeakoulu(kuvausRDTO.getOrganisaatioTyyppi())) {
+            permissionChecker.checkCreateValintaPerusteKK();
+        } else {
+            permissionChecker.checkCreateValintaPeruste();
+        }
+    }
+
+    private boolean isForKorkeakoulu(String organisaatioTyyppi) {
+        return StringUtils.contains(organisaatioTyyppi, "oppilaitostyyppi_41") ||
+                StringUtils.contains(organisaatioTyyppi, "oppilaitostyyppi_42") ||
+                StringUtils.contains(organisaatioTyyppi, "oppilaitostyyppi_43");
     }
 
     @Transactional
     private boolean checkForExistingKuvaus(ValintaperusteSoraKuvaus kuvaus) {
 
-        List<ValintaperusteSoraKuvaus> kuvaukset =  null;
+        List<ValintaperusteSoraKuvaus> kuvaukset = null;
 
         boolean retVal = false;
 
         try {
 
             kuvaukset = kuvausDAO.findByTyyppiOrgTypeYearKausi(kuvaus.getTyyppi(),
-                    kuvaus.getOrganisaatioTyyppi(),kuvaus.getKausi(),kuvaus.getVuosi());
+                    kuvaus.getOrganisaatioTyyppi(), kuvaus.getKausi(), kuvaus.getVuosi());
 
         } catch (Exception exp) {
-          retVal = false;
+            retVal = false;
         }
 
 
@@ -372,20 +386,20 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
             retVal = false;
         } else {
 
-            for(ValintaperusteSoraKuvaus loopKuvaus: kuvaukset) {
+            for (ValintaperusteSoraKuvaus loopKuvaus : kuvaukset) {
 
-                 for (TekstiKaannos tekstiKaannos : loopKuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
+                for (TekstiKaannos tekstiKaannos : loopKuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
 
-                     for(TekstiKaannos toinenTeksti : kuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
+                    for (TekstiKaannos toinenTeksti : kuvaus.getMonikielinenNimi().getKaannoksetAsList()) {
 
-                         if (toinenTeksti.getKieliKoodi().trim().equals(tekstiKaannos.getKieliKoodi().trim())
-                                 && toinenTeksti.getArvo().trim().equals(tekstiKaannos.getArvo().trim())){
-                             retVal = true;
-                         }
+                        if (toinenTeksti.getKieliKoodi().trim().equals(tekstiKaannos.getKieliKoodi().trim())
+                                && toinenTeksti.getArvo().trim().equals(tekstiKaannos.getArvo().trim())) {
+                            retVal = true;
+                        }
 
-                     }
+                    }
 
-                 }
+                }
 
             }
 
@@ -397,11 +411,12 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
     }
 
     @Override
-    @Transactional (readOnly = false)
+    @Transactional(readOnly = false)
     public ResultV1RDTO<KuvausV1RDTO> updateKuvaus(String tyyppi, KuvausV1RDTO kuvausRDTO) {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
         try {
-            permissionChecker.checkUpdateValintaperustekuvaus();
+            hasPermissionToUpdate(kuvausRDTO);
+
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = converter.toValintaperusteSoraKuvaus(kuvausRDTO);
 
             ValintaperusteSoraKuvaus oldVps = kuvausDAO.read(valintaperusteSoraKuvaus.getId());
@@ -420,17 +435,25 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
             LOG.debug("UPDATED KUVAUS : ", kuvausRDTO.getOid());
 
-            resultV1RDTO.setResult(converter.toKuvausRDTO(oldVps,true));
+            resultV1RDTO.setResult(converter.toKuvausRDTO(oldVps, true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
         } catch (Exception exp) {
 
-            LOG.debug("EXCEPTION UPDATING KUVAUS: "+ kuvausRDTO.getOid() + " : ", exp.toString());
+            LOG.debug("EXCEPTION UPDATING KUVAUS: " + kuvausRDTO.getOid() + " : ", exp.toString());
 
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
-        return  resultV1RDTO;
+        return resultV1RDTO;
+    }
+
+    private void hasPermissionToUpdate(KuvausV1RDTO kuvausRDTO) {
+        if(isForKorkeakoulu(kuvausRDTO.getOrganisaatioTyyppi())) {
+            permissionChecker.checkUpdateValintaperustekuvausKK();
+        } else {
+            permissionChecker.checkUpdateValintaperustekuvaus();
+        }
     }
 
     @Override
@@ -439,23 +462,31 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
         ResultV1RDTO<KuvausV1RDTO> resultV1RDTO = new ResultV1RDTO<KuvausV1RDTO>();
 
         try {
-
-            permissionChecker.checkRemoveValintaPeruste();
             ValintaperusteSoraKuvaus valintaperusteSoraKuvaus = kuvausDAO.read(Long.parseLong(tunniste));
+
+            hasPermissionToRemove(valintaperusteSoraKuvaus);
 
             valintaperusteSoraKuvaus.setTila(ValintaperusteSoraKuvaus.Tila.POISTETTU);
 
-            resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus,true));
+            resultV1RDTO.setResult(converter.toKuvausRDTO(valintaperusteSoraKuvaus, true));
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
 
-        } catch (Exception exp ){
+        } catch (Exception exp) {
             LOG.warn("EXCEPTION REMOVING KUVAUS : " + tunniste + " " + exp.toString());
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.ERROR);
             resultV1RDTO.addError(ErrorV1RDTO.createSystemError(exp, null, null));
         }
 
 
-        return  resultV1RDTO;
+        return resultV1RDTO;
+    }
+
+    private void hasPermissionToRemove(ValintaperusteSoraKuvaus valintaperusteSoraKuvaus) {
+        if(isForKorkeakoulu(valintaperusteSoraKuvaus.getOrganisaatioTyyppi())) {
+            permissionChecker.checkRemoveValintaPerusteKK();
+        } else {
+            permissionChecker.checkRemoveValintaPeruste();
+        }
     }
 
 
@@ -466,22 +497,22 @@ public class KuvausResourceImplV1 implements KuvausV1Resource {
 
         try {
 
-            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi  = ConverterV1.getTyyppiFromString(tyyppi);
-            List<ValintaperusteSoraKuvaus> resultList = kuvausDAO.findBySearchSpec(searchParam,vpsTyyppi);
+            ValintaperusteSoraKuvaus.Tyyppi vpsTyyppi = ConverterV1.getTyyppiFromString(tyyppi);
+            List<ValintaperusteSoraKuvaus> resultList = kuvausDAO.findBySearchSpec(searchParam, vpsTyyppi);
 
             if (resultList != null && resultList.size() > 0) {
-                List<KuvausV1RDTO>  kuvauksesList = new ArrayList<KuvausV1RDTO>();
-                for (ValintaperusteSoraKuvaus vpk:resultList) {
-                    kuvauksesList.add(converter.toKuvausRDTO(vpk,false));
+                List<KuvausV1RDTO> kuvauksesList = new ArrayList<KuvausV1RDTO>();
+                for (ValintaperusteSoraKuvaus vpk : resultList) {
+                    kuvauksesList.add(converter.toKuvausRDTO(vpk, false));
                 }
-               result.setResult(kuvauksesList);
-               result.setStatus(ResultV1RDTO.ResultStatus.OK);
+                result.setResult(kuvauksesList);
+                result.setStatus(ResultV1RDTO.ResultStatus.OK);
             } else {
                 result.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
             }
 
         } catch (Exception exp) {
-            LOG.warn("EXCEPTION RETRIEVING KUVAUKSES : {}", exp.toString() );
+            LOG.warn("EXCEPTION RETRIEVING KUVAUKSES : {}", exp.toString());
             result.addError(ErrorV1RDTO.createSystemError(exp, null, null));
             result.setStatus(ResultV1RDTO.ResultStatus.ERROR);
 

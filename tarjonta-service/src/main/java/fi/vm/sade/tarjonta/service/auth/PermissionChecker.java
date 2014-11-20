@@ -252,8 +252,11 @@ public class PermissionChecker {
     }
 
     public void checkCreateValintaPeruste() {
-
         checkPermission(permissionService.userCanCreateValintaperuste());
+    }
+
+    public void checkCreateValintaPerusteKK() {
+        checkPermission(permissionService.userCanCreateValintaperusteKK());
     }
 
     /**
@@ -270,6 +273,10 @@ public class PermissionChecker {
 
     public void checkRemoveValintaPeruste() {
         checkPermission(permissionService.userCanDeleteValintaperuste());
+    }
+
+    public void checkRemoveValintaPerusteKK() {
+        checkPermission(permissionService.userCanDeleteValintaperusteKK());
     }
 
     public void checkCreateKoulutus(String tarjoajaOid) {
@@ -363,6 +370,10 @@ public class PermissionChecker {
         checkPermission(permissionService.userCanUpdateValinteperuste());
     }
 
+    public void checkUpdateValintaperustekuvausKK() {
+        checkPermission(permissionService.userCanUpdateValinteperusteKK());
+    }
+
     /**
      *
      * @param orgOids
@@ -379,5 +390,4 @@ public class PermissionChecker {
     public boolean isOphCrud() {
         return permissionService.userIsOphCrud();
     }
-
 }

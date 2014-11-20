@@ -75,7 +75,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
         };
         return tarjontaKoodi;
     };
-
+    
     var checkKoodiValidity = function(koodi, locale) {
     	var koodiValid = true;
     	if (koodi && koodi.voimassaLoppuPvm) {
@@ -231,12 +231,13 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
             $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}, {cache: true}).query({koodiUri: koodiUriParam}, function(koodis) {
                 angular.forEach(koodis, function(koodi) {
+                    if (checkKoodiValidity(koodi, locale)) {
+                        returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+					}
 
-                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
                 });
                 returnYlapuoliKoodis.resolve(returnKoodis);
             });
-
 
             return  returnYlapuoliKoodis.promise;
 
@@ -253,12 +254,13 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
             $resource(ylapuoliKoodiUri, {koodiUri: '@koodiUri'}, {cache: true}).query({koodiUri: koodiUriParam}, function(koodis) {
                 angular.forEach(koodis, function(koodi) {
+                    if (checkKoodiValidity(koodi, locale)) {
+                        returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+					}
 
-                    returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
                 });
                 returnYlapuoliKoodis.resolve(returnKoodis);
             });
-
 
             return  returnYlapuoliKoodis.promise;
 
