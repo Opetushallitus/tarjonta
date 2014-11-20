@@ -178,14 +178,11 @@
                         </td>
                     </tr>
 
-                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)" class="required">
+                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
                         <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa">Liitteet toimitettava mennessä</th>
                         <td>
                             <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="updateKaytaHaunPaattymisenAikaa(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa">Käytä haun päättymisen aikaa</span></label><br/>
-                            <t-date-time required timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-model="model.hakukohde.liitteidenToimitusPvm" ng-change="status.dirtify()"></t-date-time>
-                        </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && !model.hakukohde.liitteidenToimitusPvm" tt="tarjonta.hakukohde.liitteet.errors.toimitusaika">Liitteen toimitusaika on pakollinen.</p>
+                            <t-date-time timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-model="model.hakukohde.liitteidenToimitusPvm" ng-change="status.dirtify()"></t-date-time>
                         </td>
                     </tr>
 

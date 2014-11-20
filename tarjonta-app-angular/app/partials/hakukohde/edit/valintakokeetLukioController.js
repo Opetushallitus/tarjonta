@@ -64,6 +64,10 @@ app.controller('ValintakokeetLukioController',
                 $scope.valintakoe = {};
             }
 
+            if($scope.valintakoe.valintakoeAjankohtas === undefined) {
+                $scope.valintakoe.valintakoeAjankohtas = [];
+            }
+
             if($scope.valintakoe.pisterajat === undefined) {
                 $scope.valintakoe.pisterajat= [];
             }

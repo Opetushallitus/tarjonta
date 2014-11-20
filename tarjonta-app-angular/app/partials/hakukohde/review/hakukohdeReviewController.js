@@ -563,17 +563,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     init();
 
-    /*
-     *
-     * -----------> Controller event/click handlers etc.
-     * <------------------
-     *
-     */
-
     $scope.getHakukohteenJaOrganisaationNimi = function(locale) {
-
-        console.log('ORGANISAATION NIMET : ', $scope.model.organisaatioNimet);
-
         var ret = "";
         var ja = LocalisationService.t("tarjonta.yleiset.ja");
         if($scope.showNimiUri) {

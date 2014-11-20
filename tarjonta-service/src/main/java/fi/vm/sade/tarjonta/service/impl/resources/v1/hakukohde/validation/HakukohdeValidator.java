@@ -254,7 +254,7 @@ public class HakukohdeValidator {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_DATE_BEFORE_END_DATE);
                 }
             }
-            if (ajankohta.getOsoite() == null) {
+            if (ajankohta.getOsoite() == null || StringUtils.isBlank(ajankohta.getOsoite().getOsoiterivi1())) {
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_OSOITE_MISSING);
             }
         }

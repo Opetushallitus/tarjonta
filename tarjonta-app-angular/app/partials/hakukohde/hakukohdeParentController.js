@@ -427,15 +427,6 @@ app.controller('HakukohdeParentController', [
                 $scope.model.nimiValidationFailed = false;
             }
 
-            if(toteutusTyyppi === 'LUKIOKOULUTUS') {
-                if(!validPainotettavatOppiaineet()) {
-                    $scope.model.painotettavatOppiaineetValidationFailed = true;
-                    errors.push({
-                        errorMessageKey: "tarjonta.hakukohde.edit.painotettavatOppiaineet.errors"
-                    });
-                }
-            }
-
             if (!$scope.status.validateValintakokeet()) {
                 errors.push({
                     errorMessageKey: "hakukohde.edit.valintakokeet.errors"
@@ -1159,17 +1150,6 @@ app.controller('HakukohdeParentController', [
             return false;
         };
 
-        var validPainotettavatOppiaineet = function() {
-            for (var i in $scope.model.hakukohde.painotettavatOppiaineet) {
-                var painokerroin = $scope.model.hakukohde.painotettavatOppiaineet[i].painokerroin;
-                var painokerroinBlank = !painokerroin.trim();
-                if (painokerroinBlank) {
-                    return false;
-                }
-            }
-            return true;
-        };
-
         $scope.getHakuWithOid = function (hakuOid) {
 
             var foundHaku;
@@ -1233,7 +1213,6 @@ app.controller('HakukohdeParentController', [
         };
 
         $scope.isValidHakukohdeSahkoinenOsoite = function() {
-            console.log("$scope.model.hakukohde.sahkoinenToimitusOsoite", $scope.model.hakukohde.sahkoinenToimitusOsoite);
             if($scope.model.liitteidenSahkoinenOsoiteEnabled) {
                 return validUrl($scope.model.hakukohde.sahkoinenToimitusOsoite) || validEmail($scope.model.hakukohde.sahkoinenToimitusOsoite);
             } else {

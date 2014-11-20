@@ -457,7 +457,6 @@ app.factory('KoodistoURI', function($log, Config) {
             $log.warn("EMPTY koodisto data value for key: " + envKey);
         }
 
-        $log.debug("getConfigWithDefault()", envKey, defaultValue, result);
         return result;
     };
 
