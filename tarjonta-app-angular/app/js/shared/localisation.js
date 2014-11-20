@@ -82,7 +82,7 @@ app.factory('Localisations', function($log, $resource, Config) {
  *   {{ tl("this.is.anotker.key", "sv", ["param", "param too"]) }}
  * </pre>
  */
-app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationService) {
+app.directive('tt', function($log, $interpolate, LocalisationService) {
 
         $log = $log.getInstance("<tt>");
 
@@ -91,48 +91,44 @@ app.directive('tt', ['$log', 'LocalisationService', function($log, LocalisationS
             replace: true,
             //template: '<div tt="this.is.key" locale="fi">Default saved for the given key</div>',
             scope: false,
-            compile: function(tElement, tAttrs, transclude) {
-                // $log.debug("tt compile", tElement, tAttrs, transclude);
+            compile: function() {
+                return function postLink(scope, tElement, tAttrs) {
+                    var key = tAttrs["tt"];
+                    var locale = angular.isDefined(tAttrs["locale"]) ? tAttrs["locale"] : LocalisationService.getLocale();
+                    var translation = "";
 
-                var key = tAttrs["tt"];
-                var locale = angular.isDefined(tAttrs["locale"]) ? tAttrs["locale"] : LocalisationService.getLocale();
-                var translation = "";
-
-                if (LocalisationService.hasTranslation(key, locale)) {
-                    // Existing translations, just return it
-                    translation = LocalisationService.tl(key, locale);
-                } else {
-                    // Missing / new translation
-                    // Grab the original / placeholder text in the template
-                    var originalText = "";
-
-                    var localName = tElement[0].localName;
-                    if (localName === "input") {
-                        originalText = tAttrs["value"];
+                    if (LocalisationService.hasTranslation(key, locale)) {
+                        // Existing translations, just return it
+                        translation = LocalisationService.tl(key, locale);
                     } else {
-                        originalText = tElement.html();
+                        // Missing / new translation
+                        // Grab the original / placeholder text in the template
+                        var originalText = "";
+
+                        var localName = tElement[0].localName;
+                        if (localName === "input") {
+                            originalText = tAttrs["value"];
+                        } else {
+                            originalText = tElement.html();
+                        }
+
+                        LocalisationService.createMissingTranslations(key, locale, originalText);
+
+                        translation = "*CREATED* " + originalText;
                     }
 
-                    LocalisationService.createMissingTranslations(key, locale, originalText);
+                    // $log.debug("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
 
-                    translation = "*CREATED* " + originalText;
-                }
-
-                // $log.debug("  key: '" + key + "', locale: '"+ locale + "' --> " + translation);
-
-                // Put translated text to DOM
-                if (localName === "input") {
-                    tElement.attr("value", translation);
-                } else {
-                    tElement.html(translation);
-                }
-
-                return function postLink(scope, iElement, iAttrs, controller) {
-                    // $timeout(scope.$destroy.bind(scope), 0);
+                    // Put translated text to DOM
+                    if (localName === "input") {
+                        tElement.attr("value", translation);
+                    } else {
+                        tElement.html(translation);
+                    }
                 };
             }
         };
-    }]);
+    });
 
 
 
@@ -159,8 +155,8 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
 
     // We should call "/localisation/authorize" once so that the session gets established to localisation service
     this.localisationAuthorizeCalled = false;
-    
-    
+
+
     this.callLocalisationAuthorizeIfNecessary = function() {
         var self = this;
         if (!this.localisationAuthorizeCalled) {
@@ -291,7 +287,7 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
     	if (!key==null) {
     		throw new Error("Illegal translation key: '"+key+"'");
     	}
-    	
+
         // Get translations by locale
         var v0 = this.localisationMapByLocaleAndKey[locale];
         // Get translation by key
@@ -434,7 +430,7 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
                 mapByLocale = tmp[localisation.locale];
             }
             mapByLocale[localisation.key] = localisation;
-            
+
             if (this.isEmpty(localisation.value)) {
                 $log.warn("EMPTY localisation: ", localisation);
             }
