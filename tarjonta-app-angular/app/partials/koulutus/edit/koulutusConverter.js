@@ -467,6 +467,17 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         reviewFields: DEFAULT_REVIEW_FIELDS
     });
 
+    var NAYTTOTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
+        koodistoDefaults: {
+            tutkintonimike: "tutkintonimikkeet_00000",
+            koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
+        },
+        templates: {
+            review: 'NAYTTOTUTKINTO',
+            edit: 'NAYTTOTUTKINTO'
+        }
+    });
+
     var GENERIC_VALMISTAVA_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
         KUVAUS_ORDER: [
             {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
@@ -772,23 +783,15 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATTITUTKINTO: angular.extend({}, GENERIC_STRUCTURE, {
-            koodistoDefaults: {
-                tutkintonimike: "tutkintonimikkeet_00000",
-                koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
-            },
+        AMMATTITUTKINTO: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
             koulutustyyppiKoodiUri: "koulutustyyppi_11"
         }),
 
-        ERIKOISAMMATTITUTKINTO: angular.extend({}, GENERIC_STRUCTURE, {
-            koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_a', // aikuiskoulutus
-                tutkintonimike: "tutkintonimikkeet_00000"
-            },
+        ERIKOISAMMATTITUTKINTO: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
             koulutustyyppiKoodiUri: "koulutustyyppi_12"
         }),
 
-        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: angular.extend({}, GENERIC_STRUCTURE, {
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
             koodistoDefaults: {
                 koulutuslaji: 'koulutuslaji_a', // aikuiskoulutus
                 tutkintonimike: "tutkintonimikkeet_00000",
