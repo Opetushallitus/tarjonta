@@ -32,8 +32,7 @@
 
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
-            <th ng-if="!koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.koulutusohjelma">Koulutusohjelma</th>
-            <th ng-if="koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.lukiolinja">Lukiolinja</th>
+            <th tt="{{koulutusStructure.params.reviewOhjelmaLabel || 'koulutus.review.perustiedot.linja'}}">Linja</th>
             <td colspan="2">
                 {{model.koulutus.koulutusohjelma.meta[lang.koodi_uri].nimi}}
             </td>

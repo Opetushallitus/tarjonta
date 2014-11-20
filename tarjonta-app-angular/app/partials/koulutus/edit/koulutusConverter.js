@@ -464,7 +464,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             edit: 'AMMATILLINEN_PERUSTUTKINTO',
             review: 'GENERIC'
         },
-        reviewFields: DEFAULT_REVIEW_FIELDS
+        reviewFields: DEFAULT_REVIEW_FIELDS,
+        params: {
+            reviewOhjelmaLabel: 'koulutus.review.perustiedot.osaamisala'
+        }
     });
 
     var NAYTTOTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
@@ -562,7 +565,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA"
         ],
         params: {
-            isLukio: true
+            isLukio: true,
+            reviewOhjelmaLabel: 'koulutus.review.perustiedot.lukiolinja'
         }
     };
 
