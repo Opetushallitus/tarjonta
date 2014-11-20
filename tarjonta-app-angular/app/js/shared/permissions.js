@@ -282,41 +282,36 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
             }
 
             function hasHakuPermission(hakuOid, permissionf) {
-//      console.log("has haku permission, f:", permissionf);
                 var defer = $q.defer();
 
                 //hae haku
                 HakuV1.get({oid: hakuOid}).$promise.then(function(haku) {
-//        console.log("haku:", haku.result);
+
                     var haku = haku.result;
                     var orgs = haku.tarjoajaOids ? haku.tarjoajaOids : [];
 
                     if (orgs.length == 0) {
-//          console.log("speciaalikeissi, ei organisaatioita, assuming oph", ophOid);
                         //organisaatiota ei kerrottu, pitää olla oph?
                         permissionf(ophOid).then(function(result) {
-//            console.log("resolving speciaali:", result);
                             defer.resolve(result);
                         });
                     } else {
-
                         // onko oikeus haun johonkin organisaatioon
                         var promises = [];
                         var hasAccess = {access: false};
 
                         function orAccess(result) {
-//            console.log("or access result:", result);
                             hasAccess.access = hasAccess.access || result;
                         }
 
                         for (var i = 0; i < orgs.length; i++) {
                             promises.push(permissionf(orgs[i]).then(orAccess));
                         }
+
                         $q.all(promises).then(function() {
                             defer.resolve(hasAccess.access);
                         });
                     }
-
                 });
 
                 return defer.promise;
@@ -437,25 +432,18 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                     canDelete: function(hakukohdeOid) {
                         var hakukohdeoidit = angular.isArray(hakukohdeOid) ? hakukohdeOid : [hakukohdeOid];
                         return _canDeleteHakukohdeMulti(hakukohdeoidit);
-                    },
+                    }
                 },
                 haku: {
                     canCreate: function() {
-                        //tarkista rooli
-//            console.log("can create haku");
                         return $q.when(true);
                     },
-                    /**
-                     * Onko käyttäjällä oikeus muokata hakua.
-                     */
                     canEdit: function(hakuOid) {
-//            console.log("canEdit", hakuOid);
                         return hasHakuPermission(hakuOid, canUpdateHaku());
                     },
                     canDelete: function(hakuOid) {
                         return hasHakuPermission(hakuOid, canCRUDHaku());
                     }
-
                 },
                 permissionResource: function() {
                     return $resource(Config.env.tarjontaRestUrlPrefix + "permission/authorize", {}, {

@@ -571,8 +571,11 @@ app.controller('HakuEditController',
             };
 
             var populateParentHakuCandidates = function(valittuKohdejoukkoUri) {
+                $scope.model.parentHakuCandidates = [];
+
                 var params = {};
                 params.KOHDEJOUKKO = valittuKohdejoukkoUri;
+                params.TILA = "NOT_POISTETTU";
 
                 HakuV1Service.search(params).then(function(data) {
 
@@ -584,11 +587,21 @@ app.controller('HakuEditController',
                         return validTyyppiAndTapa && validHakukausiVuosi;
                     });
 
-                    filtered.sort(function (a, b) {
-                        return a.nimi.localeCompare(b.nimi);
+                    var promises = [];
+                    _.each(filtered, function(haku) {
+                        promises.push(PermissionService.haku.canEdit(haku.oid));
                     });
 
-                    $scope.model.parentHakuCandidates = filtered;
+                    $q.all(promises).then(function(data) {
+                        _.each(data, function(hasAccess, index) {
+                           if(hasAccess === true) {
+                               $scope.model.parentHakuCandidates.push(filtered[index]);
+                           }
+                        });
+                        $scope.model.parentHakuCandidates.sort(function (a, b) {
+                            return a.nimi.localeCompare(b.nimi);
+                        });
+                    });
                 });
             };
 
