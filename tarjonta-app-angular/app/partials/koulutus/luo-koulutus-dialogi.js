@@ -83,9 +83,8 @@ app.controller('LuoKoulutusDialogiController',
 
         $scope.lkorganisaatio = $scope.lkorganisaatio || {currentNode: undefined};
         // Watchi valitulle organisaatiolle
-        $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
-            $log.debug("oprganisaatio valittu", organisaatio);
-            if (organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
+        $scope.$watch('lkorganisaatio.currentNode', function(organisaatio) {
+            if (organisaatio && organisaatio.oid) {
                 lisaaOrganisaatio(organisaatio);
                 if (userRootOrganization === null) {
                     userRootOrganization = organisaatio;
@@ -96,11 +95,11 @@ app.controller('LuoKoulutusDialogiController',
         $scope.$watch('model.koulutustyyppi', function(val) {
             // If korkeakoulutus
             if (val && val.koodiUri === "koulutustyyppi_3") {
-                $scope.showOtherOrganizationsCheckbox = true;
+                $scope.model.showOtherOrganizationsCheckbox = true;
             }
             else {
-                $scope.showOtherOrganizations = false;
-                $scope.showOtherOrganizationsCheckbox = false;
+                $scope.model.showOtherOrganizations = false;
+                $scope.model.showOtherOrganizationsCheckbox = false;
                 $scope.toggleOtherOrganizations(true);
             }
 
@@ -167,10 +166,19 @@ app.controller('LuoKoulutusDialogiController',
 
 
         var lisaaOrganisaatio = function(organisaatio) {
-            $scope.model.organisaatiot.push(organisaatio);
-            $log.debug("lisaaOrganisaatio:", organisaatio);
-            var oppilaitostyypit = OrganisaatioService.haeOppilaitostyypit(organisaatio.oid);
+            // Tarkista, jos organisaatio on jo valittu -> älä tee mitään
+            if (_.findWhere($scope.model.organisaatiot, {oid: organisaatio.oid})) {
+                return;
+            }
 
+            // Jos ei näytetä muita organisaatioita -> voi valita vain yhden organisaation,
+            // joten korvaa vanha valinta
+            if (!$scope.model.showOtherOrganizations) {
+                $scope.model.organisaatiot = [];
+            }
+
+            $scope.model.organisaatiot.push(organisaatio);
+            var oppilaitostyypit = OrganisaatioService.haeOppilaitostyypit(organisaatio.oid);
             oppilaitostyypit.then(function(data) {
                 paivitaKoulutustyypit(data);
             });
@@ -430,7 +438,7 @@ app.controller('LuoKoulutusDialogiController',
             if ( lkorganisaatiotInit === null && !skipInit && $scope.lkorganisaatiot ) {
                 lkorganisaatiotInit = angular.copy($scope.lkorganisaatiot);
             }
-            if ( !$scope.showOtherOrganizations && lkorganisaatiotInit ) {
+            if ( !$scope.model.showOtherOrganizations && lkorganisaatiotInit ) {
                 $scope.lkorganisaatiot = lkorganisaatiotInit;
             }
         };
