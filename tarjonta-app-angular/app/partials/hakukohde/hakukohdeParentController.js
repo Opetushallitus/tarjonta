@@ -162,7 +162,6 @@ app.controller('HakukohdeParentController', [
         $scope.model.organisaatioNimet = [];
         $scope.model.hakukohdeOppilaitosTyyppis = [];
         $scope.model.nimiValidationFailed = false;
-        $scope.model.painotettavatOppiaineetValidationFailed= false;
         $scope.model.hakukelpoisuusValidationErrMsg = false;
         $scope.model.tallennaValmiinaEnabled = true;
         $scope.model.tallennaLuonnoksenaEnabled = true;
@@ -374,10 +373,22 @@ app.controller('HakukohdeParentController', [
 
         };
 
+        var validPainotettavatOppiaineet = function() {
+            for (var i in $scope.model.hakukohde.painotettavatOppiaineet) {
+                var painokerroin = $scope.model.hakukohde.painotettavatOppiaineet[i].painokerroin;
+                var oppiaine = $scope.model.hakukohde.painotettavatOppiaineet[i].oppiaineUri;
+                if (painokerroin.trim().length === 0 || oppiaine.trim().length === 0) {
+                    return false;
+                }
+            }
+            return true;
+        };
+
         $scope.validateHakukohde = function (toteutusTyyppi) {
             $scope.model.aloituspaikatKuvauksetFailed = false;
             $scope.model.hakuaikaValidationFailed = false;
             $scope.model.hakukelpoisuusValidationErrMsg = false;
+            $scope.model.painotettavatOppiaineetValidationFailed = false;
 
             var errors = [];
 
@@ -425,6 +436,15 @@ app.controller('HakukohdeParentController', [
             }
             else {
                 $scope.model.nimiValidationFailed = false;
+            }
+
+            if(toteutusTyyppi === 'LUKIOKOULUTUS') {
+                if(!validPainotettavatOppiaineet()) {
+                    $scope.model.painotettavatOppiaineetValidationFailed = true;
+                    errors.push({
+                        errorMessageKey: "tarjonta.hakukohde.edit.painotettavatOppiaineet.errors"
+                    });
+                }
             }
 
             if (!$scope.status.validateValintakokeet()) {
