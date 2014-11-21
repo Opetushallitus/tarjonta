@@ -85,7 +85,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
 
     		try {
 	    		var loppuPvmParts = koodi.voimassaLoppuPvm.split("-");
-				endDate = new Date(loppuPvmParts[0], loppuPvmParts[1]-1, loppuPvmParts[2]);
+				endDate = new Date(loppuPvmParts[0], loppuPvmParts[1]-1, loppuPvmParts[2]-1);
 			} catch (e) {
 	            $log.warn("koodin "+ koodi.koodiUri +" voimassaLoppuPvm "+ JSON.stringify(koodi.voimassaLoppuPvm) +" ei voitu konvertoida");
 			}
