@@ -248,13 +248,15 @@
                     <mk-tabs model="model.liiteKielet" selection="model.selectedliiteKieli"></mk-tabs>
                     <table class="table" ng-show="model.selectedliiteKieli">
                         <tr>
-                            <th tt="hakukohde.review.liitteet.nimi"/>
+                            <th ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.liitteet.tyyppi"/>
+                            <th ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.liitteet.nimi"/>
                             <th tt="hakukohde.review.liitteet.kuvaus"/>
                             <th tt="hakukohde.review.liitteet.toim.mennessa"/>
                             <th tt="hakukohde.review.liitteet.toim.osoite"/>
                         </tr>
                         <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
-                            <td>{{ liite.liitteenNimi}}</td>
+                            <td ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">{{ liite.liitteenTyyppiLocalized }}</td>
+                            <td ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">{{ liite.liitteenNimi }}</td>
                             <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
                             <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
                             <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>

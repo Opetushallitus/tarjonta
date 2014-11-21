@@ -392,11 +392,15 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         };
     };
 
-    /*
-     *
-     * ---------> Load koulutukses to show hakukohde related koulutukses
-     *
-     */
+    var loadLiitetiedot = function() {
+        _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liite) {
+            if(liite.liitteenTyyppi !== undefined) {
+                Koodisto.getKoodi("liitetyypitamm", liite.liitteenTyyppi, $scope.model.userLang).then(function(koodi) {
+                    liite.liitteenTyyppiLocalized = koodi.koodiNimi;
+                });
+            }
+        });
+    };
 
     var loadKoulutukses = function() {
 
@@ -559,6 +563,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         loadHakukelpoisuusVaatimukses();
         loadPainotettavatOppiaineet();
         loadKoulutukses();
+        loadLiitetiedot();
     };
 
     init();
