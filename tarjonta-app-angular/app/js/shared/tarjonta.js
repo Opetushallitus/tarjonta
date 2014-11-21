@@ -183,12 +183,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
 
-                    // Jos ei ole vuotta, niin kyseessä on toiseen koulutukseen liitetty
-                    // valmistava koulutus, jota ei näytetä hakutuloksissa.
-                    if ( !r.vuosi ) {
-                        continue;
-                    }
-
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = r.oid;
                     } else {
