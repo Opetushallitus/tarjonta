@@ -62,6 +62,7 @@ app.controller('ValintakokeetLukioController',
 
             if($scope.valintakoe === undefined) {
                 $scope.valintakoe = {};
+                $scope.model.hakukohde.valintakokeet.push($scope.valintakoe);
             }
 
             if($scope.valintakoe.valintakoeAjankohtas === undefined) {
