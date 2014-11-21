@@ -234,10 +234,7 @@ public class IndexerDaoImpl implements IndexerDAO {
     @Override
     public List<Long> findUnindexedKoulutusIds() {
         final QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
-        final QKoulutusmoduuli komo = QKoulutusmoduuli.koulutusmoduuli;
-        final Predicate time = bb(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated)));
-        final Predicate where = bb(komo.lukiolinjaUri.isNotNull()).or(komo.koulutusohjelmaUri.isNotNull().or(komoto.nimi.isNotNull()).or(komo.nimi.isNotNull())).and(time).getValue();
-        return q(komoto).join(komoto.koulutusmoduuli, komo).where(where).limit(100).list(komoto.id);
+        return q(komoto).where(komoto.viimIndeksointiPvm.isNull().or(komoto.viimIndeksointiPvm.before(komoto.updated))).limit(100).list(komoto.id);
     }
 
     @Override
