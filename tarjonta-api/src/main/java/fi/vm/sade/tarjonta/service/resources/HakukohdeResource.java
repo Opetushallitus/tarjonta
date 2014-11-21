@@ -29,7 +29,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
  *
  * @author mlyly
  */
-@Path("/hakukohde")
+@Path("/hakukohdeDisabledAlaEnaaKayta")
 public interface HakukohdeResource {
 
     /**
