@@ -1,15 +1,17 @@
 <div data-ng-controller="HakukohdeParentController">
     <div data-ng-controller="HakukohdeReviewController">
-        <controls-model
+
+    <controls-model
             model="formControls"
             dto="model.hakukohde">
             <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
             <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete()"></controls-button>
-            <controls-button disabled="!isMutable" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
+            <controls-button ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" disabled="!isMutable" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
             <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
             <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenJaOrganisaationNimi()]"></controls-notify>
             <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
         </controls-model>
+
         <display-controls model="formControls" display="header"></display-controls>
         <h2>{{ getHakukohteenNimi()}}</h2>
         <table class="tarjontaForm">
