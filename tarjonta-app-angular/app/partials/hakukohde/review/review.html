@@ -253,6 +253,7 @@
                             <th tt="hakukohde.review.liitteet.kuvaus"/>
                             <th tt="hakukohde.review.liitteet.toim.mennessa"/>
                             <th tt="hakukohde.review.liitteet.toim.osoite"/>
+                            <th tt="hakukohde.review.liitteet.sahkoinenToimitusOsoite"/>
                         </tr>
                         <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
                             <td ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">{{ liite.liitteenTyyppiLocalized }}</td>
@@ -260,6 +261,7 @@
                             <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
                             <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
                             <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
+                            <td>{{ liite.sahkoinenToimitusOsoite }}</td>
                         </tr>
                     </table>
                 </td>

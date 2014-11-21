@@ -153,6 +153,7 @@ app.controller('HakukohdeParentController', [
 
         };
 
+        $scope.model.today = new Date();
         $scope.model.showSuccess = false;
         $scope.model.showError = false;
         $scope.model.validationmsgs = [];
@@ -179,7 +180,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
         $scope.model.valintakoe = {};
-        $scope.model.liitteidenMuuOsoiteEnabled = false;
+        $scope.model.liitteidenMuuOsoiteEnabled = true;
         $scope.model.liitteidenSahkoinenOsoiteEnabled = $scope.model.hakukohde.sahkoinenToimitusOsoite !== undefined && $scope.model.hakukohde.sahkoinenToimitusOsoite.length > 0;
         $scope.model.isDeEnabled = false;
         $scope.model.isPartiallyDeEnabled = false;
@@ -1242,6 +1243,7 @@ app.controller('HakukohdeParentController', [
 
         var checkAndAddHakutoimisto = function (data) {
             var hakutoimistoFound = false;
+
             if (data.metadata !== undefined && data.metadata.yhteystiedot !== undefined) {
 
                 angular.forEach(data.metadata.yhteystiedot, function (yhteystieto) {

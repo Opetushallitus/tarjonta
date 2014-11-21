@@ -28,7 +28,7 @@
 	                <tr class="required">
 	                    <th tt="tarjonta.hakukohde.liite.modal.toimitettavaMennessa"></th>
 	                    <td>
-	                        <t-date-time required timestamp="true" type="long" scope-model="liite.toimitettavaMennessa" change="status.dirtify()"></t-date-time>
+	                        <t-date-time required min="liite.isNew ? model.today : ''" timestamp="true" type="long" scope-model="liite.toimitettavaMennessa" change="status.dirtify()"></t-date-time>
 	                    </td>
 	                    <td>
                             <p class="error" ng-show="model.showError && !liite.toimitettavaMennessa" tt="tarjonta.hakukohde.liite.errors.toimitusaika">Liitteen toimitusaika on pakollinen.</p>
@@ -55,9 +55,7 @@
                      <tr>
                         <th></th>
                         <td>
-	                        <input type="checkbox" ng-model="liite.sahkoinenOsoiteEnabled" ng-change="status.dirtify()"/> <span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span><br/>
-
-
+	                        <label><input type="checkbox" ng-model="liite.sahkoinenOsoiteEnabled" ng-change="status.dirtify()"/><span tt="tarjonta.hakukohde.liite.modal.voidaanToimittaaSahkoisesti"></span></label>
 	                        <div class="inset">
 	                            <input type="text" ng-required="liite.sahkoinenOsoiteEnabled" ng-model="liite.sahkoinenToimitusOsoite" ng-disabled="!liite.sahkoinenOsoiteEnabled" ng-change="status.dirtify()"/>
 	                        </div>
