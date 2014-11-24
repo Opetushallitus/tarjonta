@@ -29,7 +29,7 @@
                 <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span>
             </div>
             <input ng-if="model.koulutusohjelmanNimiKannassa" required class="input-xxlarge" name="koulutusohjelma"
-                   ng-model="model.koulutusohjelmanNimiKannassa['kieli_' + koodistoLocale + '#1']" />
+                   ng-model="model.koulutusohjelmanNimiKannassa['kieli_' + koodistoLocale + '#1']" type="text" />
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
@@ -87,8 +87,9 @@
     <tr class="required">
         <th tt="koulutus.edit.opintojen-laajuus">Opintojen laajuus</th>
         <td>
-            <input name="opintojenLaajuusarvoKannassa" ng-model="model.opintojenLaajuusarvoKannassa" />
-            <select required name="opintojenLaajuusyksikko" ng-model="model.opintojenLaajuusyksikko.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuusyksikko.koodis | orderBy:'koodiNimi'">
+            <input name="opintojenLaajuusarvoKannassa" ng-model="model.opintojenLaajuusarvoKannassa" class="input-small" type="text" />
+            <select required name="opintojenLaajuusyksikko" ng-model="model.opintojenLaajuusyksikko.uri" class="input-medium"
+                    ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuusyksikko.koodis | orderBy:'koodiNimi'">
                 <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
                 <option value="" ng-disabled="model.opintojenLaajuusyksikko.uri"></option>
             </select>

@@ -195,7 +195,3 @@ ei näytä pointer-cursoria. Alla oleva korjaa asian. */
 a[ng-click] {
     cursor:pointer;
 }
-
-select[name="opintojenLaajuusyksikko"] {
-    vertical-align: baseline;
-}
