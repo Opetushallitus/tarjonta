@@ -190,11 +190,17 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		}
     	}
 		doAfterLangSelection();
-    }
+    };
 
     $scope.resetOsoite = function(lc, liite){
     	liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[lc])
-    }
+    };
+
+    $scope.liitteenSahkoinenOsoiteEnabledChanged = function(liite) {
+        if(!liite.sahkoinenOsoiteEnabled) {
+            liite.sahkoinenToimitusOsoite = undefined;
+        }
+    };
 
     $scope.getLiitteetByKieli = function(lc) {
     	var ret = [];
@@ -205,7 +211,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		}
     	}
     	return ret;
-    }
+    };
 
     $scope.deleteLiite = function(liite, confirm) {
     	if (confirm) {
