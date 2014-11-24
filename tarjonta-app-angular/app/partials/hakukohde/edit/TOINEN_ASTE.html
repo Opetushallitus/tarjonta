@@ -150,7 +150,7 @@
                         <th tt="tarjonta.hakukohde.liitteet.toimitusosoite">Liitteiden toimitusosoite</th>
                         <td>
                             <div><span tt="tarjonta.hakukohde.liitteidenToimitusosoite.ohje">Ilmoita tässä osoite, johon harkinnanvaraisen haun liitteet toimitetaan. Ilmoita tiedot muista mahdollisista liitteistä ja niiden toimitusosoitteista Liitteiden tiedot -välilehdellä.</span></div>
-                            <label><input type="radio" ng-disabled="toimitusosoiteIsEmpty()" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="resetHakukohdeLiitteidenToimitusOsoite()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta">Käytetään oletuksena järjestävän organisaation ensisijaista postiosoitetta</span></label>
+                            <label><input type="radio" ng-disabled="toimitusosoiteIsEmpty()" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="false" ng-click="replaceLiitteidenToimitusOsoiteWithDefault()" /><span class="{{model.hakukohde.liitteidenToimitusOsoite ? '' : 'disabled'}}" tt="tarjonta.hakukohde.liitteet.kaytetaanOrganisaationPostiosoitetta">Käytetään oletuksena järjestävän organisaation ensisijaista postiosoitetta</span></label>
                             <br/>
 
                             <label><input type="radio" ng-model="model.liitteidenMuuOsoiteEnabled" ng-value="true"/><span tt="tarjonta.hakukohde.liitteet.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span></label>
