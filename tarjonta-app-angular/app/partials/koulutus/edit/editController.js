@@ -120,9 +120,7 @@ app.controller('BaseEditController', [
         };
 
         $scope.goBack = function (event, form) {
-            var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
-
-            if (dirty) {
+            if ($scope.isDirty()) {
                 dialogService.showModifedDialog().result.then(function (result) {
                     if (result) {
                         $scope.navigateBack();
@@ -138,6 +136,33 @@ app.controller('BaseEditController', [
             $location.path("/");
         };
 
+        $scope.isDirty = function() {
+            var currentModel = KoulutusConverterFactory.saveModelConverter(
+                angular.copy($scope.model),
+                angular.copy($scope.uiModel),
+                $scope.CONFIG.TYYPPI
+            );
+
+            return $scope.modelInitialState && !_.isEqual(currentModel, $scope.modelInitialState);
+        };
+
+
+        /**
+         * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
+         * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
+         */
+        $scope.setDirtyListener = function() {
+            $('form[name="koulutusForm"]').on('focus click', '*', function(e) {
+                e.stopPropagation();
+                if (!$scope.modelInitialState) {
+                    $scope.modelInitialState = KoulutusConverterFactory.saveModelConverter(
+                        angular.copy($scope.model),
+                        angular.copy($scope.uiModel),
+                        $scope.CONFIG.TYYPPI
+                    );
+                }
+            });
+        };
 
         $scope.goToReview = function (event, boolInvalid, validationmsgs, form) {
             $log.debug("goToReview()");
@@ -152,9 +177,7 @@ app.controller('BaseEditController', [
                 return;
             }
 
-            var dirty = angular.isDefined(form.$dirty) ? form.$dirty : false;
-
-            if (dirty) {
+            if ($scope.isDirty()) {
                 dialogService.showModifedDialog().result.then(function (result) {
                     if (result) {
                         $scope.navigateReview();
@@ -741,6 +764,8 @@ app.controller('BaseEditController', [
             angular.extend(uiModel, $scope.uiModel);
             $scope.setUiModel(uiModel);
             $scope.setModel(model);
+
+            $scope.setDirtyListener();
 
             // Child edit controllerit voivat suorittaa tarvittaessa oman init-funktion
             if (initFunction) {
