@@ -354,28 +354,16 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
 
     $scope.findHakukohdeNimi = function(lang, hakukohde) {
 
-        var hakukohdeNimi;
-        var fallbackLang = "fi";
+        var locale = lang && lang.locale || "FI";
 
         //Try to get hakukohde nimi with tab language
-        for (var language in hakukohde.nimi) {
-            if (lang.locale.toUpperCase() === language.toUpperCase()) {
-                hakukohdeNimi = hakukohde.nimi[language];
-            }
+        var hakukohdeNimi = _.find(hakukohde.nimi, function(val, key) {
+            return key.toUpperCase() === locale.toUpperCase();
+        });
 
-        }
-        //If not found then try to find in Finnish
-        if (hakukohdeNimi === undefined) {
-            hakukohdeNimi = hakukohde.nimi[fallbackLang];
-
-            //If even that is not found, just get some name
-            if (hakukohdeNimi === undefined || hakukohdeNimi.trim().length < 1) {
-
-                for (var fooLang in hakukohde.nimi) {
-                    hakukohdeNimi = hakukohde.nimi[fooLang];
-                }
-
-            }
+        //If no name found according to lang => just get some name
+        if (!hakukohdeNimi) {
+            hakukohdeNimi = hakukohde.nimi[_.keys(hakukohde.nimi)[0]];
         }
 
         return hakukohdeNimi;
