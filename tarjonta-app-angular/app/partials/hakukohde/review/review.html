@@ -13,14 +13,17 @@
         </controls-model>
 
         <display-controls model="formControls" display="header"></display-controls>
-        <h2>{{ getHakukohteenNimi()}}</h2>
+
+        <h2>{{ getHakukohteenNimi() }}</h2>
+
         <table class="tarjontaForm">
             <tr><th></th><td></td><td></td></tr>
-            <!-- PERUSTIEDOT / TODO collapse -->
+
             <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
                 <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
             </tr>
+
             <tbody ng-show="!model.collapse.perusTiedot">
                 <tr>
                     <th tt="hakukohde.review.perustiedot.nimi"/>
@@ -29,10 +32,10 @@
                             <mk-text model="model.hakukohde.hakukohteenNimet" display="rows"/>
                         </div>
                         <div ng-show="showNimiUri && model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                            <div koodi uri="model.hakukohde.hakukohteenNimiUri">resolved</div>
+                            <div koodi uri="model.hakukohde.hakukohteenNimiUri"></div>
                         </div>
                         <div ng-show="model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'">
-                            {{model.hakukohde.hakukohteenNimi}}
+                            {{ model.hakukohde.hakukohteenNimiUri }}
                         </div>
                     </td>
                 </tr>

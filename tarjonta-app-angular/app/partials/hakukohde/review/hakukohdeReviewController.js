@@ -581,7 +581,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             }
             ret =  "<b>" + $scope.hakukohteenNimiUri + "</b>"
         } else if($scope.model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
-            ret = $scope.model.hakukohde.hakukohteenNimi;
+            ret = "<b>" + $scope.model.hakukohde.hakukohteenNimiUri + "</b>";
         } else {
             for (var i in $scope.model.hakukohde.hakukohteenNimet) {
                 if (i > 0) {
@@ -626,9 +626,18 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     $scope.getHakukohteenNimi = function() {
 
-        if ($scope.model == undefined || $scope.model.hakukohde == undefined || $scope.model.hakukohde.hakukohteenNimet == undefined) {
+        if($scope.model == undefined || $scope.model.hakukohde == undefined) {
             return null;
         }
+
+        if($scope.model.hakukohde.toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
+            return $scope.model.hakukohde.hakukohteenNimiUri;
+        }
+
+        if($scope.model.hakukohde.hakukohteenNimet == undefined) {
+            return null;
+        }
+
         var lc = $scope.model.hakukohde.hakukohteenNimet[kieliKoodistoUri + "_" + $scope.model.userLang.toLowerCase()];
         if (lc) {
             return lc;
@@ -637,8 +646,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         for (var i in $scope.model.hakukohde.hakukohteenNimet) {
             return $scope.model.hakukohde.hakukohteenNimet[i];
         }
-        return null;
 
+        return null;
     };
 
     $scope.doEdit = function(event, targetPart) {
