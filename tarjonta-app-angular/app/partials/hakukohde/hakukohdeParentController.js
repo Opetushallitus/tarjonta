@@ -378,7 +378,7 @@ app.controller('HakukohdeParentController', [
             for (var i in $scope.model.hakukohde.painotettavatOppiaineet) {
                 var painokerroin = $scope.model.hakukohde.painotettavatOppiaineet[i].painokerroin;
                 var oppiaine = $scope.model.hakukohde.painotettavatOppiaineet[i].oppiaineUri;
-                if (painokerroin.trim().length === 0 || oppiaine.trim().length === 0) {
+                if (!painokerroin|| !oppiaine) {
                     return false;
                 }
             }
