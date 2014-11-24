@@ -408,7 +408,7 @@ app.controller('HakukohdeParentController', [
                 errors.push(error);
             }
 
-            if($scope.toisenAsteenKoulutus(toteutusTyyppi)) {
+            if($scope.needsLiitteidenToimitustiedot(toteutusTyyppi)) {
                 if(!$scope.isValidHakukohdeToimitusOsoite()) {
                     var error = {};
                     error.errorMessageKey = 'hakukohde.edit.liitteet.toimitusosoite.errors';
@@ -723,7 +723,7 @@ app.controller('HakukohdeParentController', [
             return haku.hakuaikas[0];
         };
 
-        var useHaunPaattymisaikaShouldBeChecked = function() {
+        var handleUseHaunPaattymisaikaCheckbox = function() {
             var hakuaikaId = $scope.model.hakukohde.hakuaikaId;
             if(hakuaikaId !== undefined) {
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
@@ -785,7 +785,7 @@ app.controller('HakukohdeParentController', [
                 $scope.handleConfigurableHakuaika();
 
                 if($scope.needsLiitteidenToimitustiedot($scope.model.hakukohde.toteutusTyyppi)) {
-                    useHaunPaattymisaikaShouldBeChecked();
+                    handleUseHaunPaattymisaikaCheckbox();
                 }
             });
         };
