@@ -1218,6 +1218,14 @@ app.controller('HakukohdeParentController', [
             }
         };
 
+        $scope.kaksoistutkintoIsPossible = function() {
+            var foundPkVaatimus = _.find($scope.model.hakukohde.hakukelpoisuusvaatimusUris, function(vaatimusUri) {
+                return vaatimusUri.indexOf('hakukelpoisuusvaatimusta_1') !== -1;
+            });
+
+            return $scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' && foundPkVaatimus;
+        };
+
         $scope.replaceLiitteidenToimitusOsoiteWithDefault = function() {
             setToimitusOsoiteFromOrganisaatio();
         };
