@@ -5,7 +5,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import static com.mysema.query.types.Projections.array;
+import static fi.vm.sade.tarjonta.shared.KoulutusasteResolver.isToisenAsteenKoulutus;
+
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -13,11 +16,13 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.shared.KoulutusasteResolver;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.impl.schema.StscState;
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -461,7 +466,7 @@ public class HakukohdeValidator {
         Map<HakukohdeValidationMessages, Set<String>> map = Maps.<HakukohdeValidationMessages, Set<String>>newHashMap();
 
         for (KoulutusPerustieto kp : kv.getKoulutukset()) {
-            //names.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
+
             mapSelectedKomos.put(kp.getKomotoOid(), Sets.<String>newHashSet());
 
             if (kp.getTila() == null || kp.getTila().equals(fi.vm.sade.tarjonta.service.types.TarjontaTila.POISTETTU)) {
@@ -488,6 +493,10 @@ public class HakukohdeValidator {
                 } else if (!isEqualKoodistoKoodiUri(kp.getKoulutuksenAlkamiskausi(), o.getKoulutuksenAlkamiskausi())) {
                     //koulutus koodi must be same
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_KAUSI_URI);
+                } else if (isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
+                    createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
+                } else if (isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
+                    createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET);
                 }
             }
         }
@@ -511,6 +520,14 @@ public class HakukohdeValidator {
                     break;
                 case KOMOTO_TILA:
                     result.addError(ErrorV1RDTO.createValidationError("tila", "hakukohde.luonti.virhe.tila",
+                            e.getValue().toArray(new String[e.getValue().size()])));
+                    break;
+                case KOMOTO_ERI_TARJOAJAT:
+                    result.addError(ErrorV1RDTO.createValidationError("tarjoaja", "hakukohde.luonti.virhe.tarjoaja",
+                            e.getValue().toArray(new String[e.getValue().size()])));
+                    break;
+                case KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET:
+                    result.addError(ErrorV1RDTO.createValidationError("pohjakoulutusvaatimus", "hakukohde.luonti.virhe.pohjakoulutusvaatimus",
                             e.getValue().toArray(new String[e.getValue().size()])));
                     break;
             }
