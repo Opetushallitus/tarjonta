@@ -138,7 +138,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     	$scope.$watch("model", function(nv, ov){
             updateModels();
             $scope.errors.required = $scope.isRequired && $scope.isRequired() ? !$scope.model : undefined;
-            $scope.form.$setValidity('tDateTime', !$scope.errors.required);
+            $scope.form && $scope.form.$setValidity('tDateTime', !$scope.errors.required);
     	});
 
     	$scope.$watch("min", function(nv, ov){
