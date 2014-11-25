@@ -1669,6 +1669,7 @@ public class ConverterV1 {
         }
         ret.setTila(TarjontaTila.valueOf(ht.getTila()));
         ret.setKoulutusasteTyyppi(ht.getKoulutusasteTyyppi());
+        ret.setToteutustyyppiEnum(ht.getToteutustyyppi());
         ret.setKoulutuskoodi(ht.getKoulutusKoodi().getUri());
 
         ret.setKoulutuksenAlkamisPvmMin(ht.getKoulutuksenAlkamisPvmMin());
