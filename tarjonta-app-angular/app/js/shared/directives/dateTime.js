@@ -21,12 +21,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     	// model <-> ngModel muunnos olion ja aikaleiman välillä
     	if ($scope.type == "object") {
     		$scope.model = $scope.scopeModel;
-	    	$scope.$watch("ngModel", function(nv, ov){
+	    	$scope.$watch("scopeModel", function(nv, ov){
 	    	  $scope.model = nv;
 	    	});
     	} else if ($scope.type == "long") {
     		$scope.model = $scope.scopeModel==null ? null : new Date($scope.scopeModel);
-	    	$scope.$watch("ngModel", function(nv, ov){
+	    	$scope.$watch("scopeModel", function(nv, ov){
 	    	  $scope.model = $scope.scopeModel==null ? null : new Date($scope.scopeModel);
 	    	});
     	} else {
@@ -136,8 +136,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     	updateModels();
 
     	$scope.$watch("model", function(nv, ov){
-    		updateModels();
-    		$scope.errors.required = $scope.isRequired && $scope.isRequired() ? $scope.model!=null : undefined;
+            updateModels();
+            $scope.errors.required = $scope.isRequired && $scope.isRequired() ? !$scope.model : undefined;
+            $scope.form.$setValidity('tDateTime', !$scope.errors.required);
     	});
 
     	$scope.$watch("min", function(nv, ov){
