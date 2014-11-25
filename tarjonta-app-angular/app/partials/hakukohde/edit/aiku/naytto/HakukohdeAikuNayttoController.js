@@ -160,6 +160,8 @@ app
                         }
                     }
                 });
+                
+                $scope.model.hakuChanged();
             };
 
             $scope.model.hakuChanged = function() {
