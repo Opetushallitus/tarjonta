@@ -3,7 +3,7 @@
     <parent>
         <groupId>fi.vm.sade.tarjonta</groupId>
         <artifactId>tarjonta</artifactId>
-        <version>vaadin-angular-conversion-SNAPSHOT</version>
+        <version>10.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
