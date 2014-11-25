@@ -140,9 +140,13 @@
                             </div>
 
                             <div ng-repeat="painotettavaOppiaine in model.hakukohde.painotettavatOppiaineet">
-                                <select ng-model="painotettavaOppiaine.oppiaineUri">
-                                    <option ng-selected="{{po.oppiaineUri == painotettavaOppiaine.oppiaineUri}}" ng-repeat="po in painotettavatOppiaineet | orderBy: 'lokalisoituNimi'" value="{{po.oppiaineUri}}">{{po.lokalisoituNimi}}</option>
+
+                                <select ng-disabled="model.isDeEnabled"
+                                        required ng-model="painotettavaOppiaine.oppiaineUri"
+                                        ng-options="po.oppiaineUri as po.lokalisoituNimi for po in painotettavatOppiaineet | orderBy: 'lokalisoituNimi'">
+                                    <option value=""></option>
                                 </select>
+
                                 <input valid-decimal class="input-mini" type="text" ng-model="painotettavaOppiaine.painokerroin" />
                                 <button class="btn top" ng-click="deletePainotettavaOppiaine(painotettavaOppiaine)"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
                             </div>
