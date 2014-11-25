@@ -103,10 +103,10 @@
                     <mk-textfield model="hakuaika.nimet" required="true" name="haunNimet"></mk-textfield>
                 </td>
                 <td>
-                    <t-date-time type="long" name="alkuPvm" timestamp="true" ng-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>
+                    <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="hakuaika.alkuPvm" required max="hakuaika.loppuPvm" ></t-date-time>
                 </td>
                 <td>
-                    <t-date-time type="long" name="loppuPvm" timestamp="true" ng-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
+                    <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="hakuaika.loppuPvm" ng-required="!isJatkuvaHaku()" min="hakuaika.alkuPvm"></t-date-time>
                 </td>
                 <td class="controls">
                     <button class="btn" ng-click="doRemoveHakuaika(hakuaika, $index)"><!-- <span tt="tarjonta.toiminnot.poista">Poista</span> --> <span class="icon-remove"></span></button>
@@ -139,7 +139,7 @@
     </tr>
 
     <!-- Sijoittelu -->
-    
+
     <tr>
         <th data-tt='haku.edit.sijoittelu'>Sijoittelu</th>
         <td>
@@ -151,7 +151,7 @@
     </tr>
 
     <!-- Priorisointi -->
-    
+
     <tr>
         <th data-tt='haku.edit.priorisointi'>Priorisointi</th>
         <td>
@@ -162,9 +162,9 @@
         <td>
         </td>
     </tr>
-    
+
     <!-- Hakulomake -->
-    
+
     <tr class="required">
         <th data-tt='haku.edit.hakulomake'>Hakulomake</th>
         <td>
@@ -173,18 +173,18 @@
                 Käytetään järjestelmän hakulomaketta.
                 Hakutoiveiden enimmäismäärä hakulomakkeella:
             </span>
-            <input type="number" 
+            <input type="number"
                    ng-model="model.hakux.result.maxHakukohdes"
-                   name="maxHakukohdes" 
+                   name="maxHakukohdes"
                    ng-required="model.hakux.result.jarjestelmanHakulomake"
-                   ng-disabled='model.haku.hakulomake != "SYSTEM"' 
+                   ng-disabled='model.haku.hakulomake != "SYSTEM"'
                    min="0">
         </td>
         <td>
             <div show-errors form="hakuForm" field="maxHakukohdes" tt-prefix="haku.edit" field-check="model.showError"></div>
         </td>
     </tr>
-    
+
     <tr>
         <th></th>
         <td>
@@ -192,10 +192,10 @@
             <span data-tt='haku.edit.hakulomake.muu'>
                 Käytetään muuta hakulomaketta. Anna hakulomakkeen www-osoite:
             </span>
-            <input type="url" 
+            <input type="url"
                    ng-model="model.hakux.result.hakulomakeUri"
-                   placeholder="http://haku.lomake.uri.com" 
-                   name="hakulomakeUrl" 
+                   placeholder="http://haku.lomake.uri.com"
+                   name="hakulomakeUrl"
                    ng-disabled='model.haku.hakulomake != "OTHER"'
                    ng-required='model.haku.hakulomake == "OTHER"'>
         </td>
@@ -211,7 +211,7 @@
             hakupainikkeen asemesta. Linkki voi olla myös sivulle, jossa kerrotaan hakemisesta tarkemmin.</td>
     </tr>
 
-    
+
     <tr>
         <th></th>
         <td>
@@ -229,11 +229,11 @@
             Opintopolun hakutulos- tai muistilistalla ei tarjota painiketta tai linkkiä hakemiseen.
         </td>
     </tr>
-    
-    
-    
+
+
+
     <!-- TO BE REMOVED -->
-<!--    
+<!--
     <tr>
         <th></th>
         <td>
@@ -293,7 +293,7 @@
             </button>
         </td>
     </tr>
-    
+
     <tr>
         <th data-tt='haku.edit.organisaatiot.hakukohteet'>Hakuja liittävät organisaatiot</th>
         <td colspan="2">

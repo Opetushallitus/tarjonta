@@ -1,8 +1,8 @@
 <th tt='hakukausi.edit.{{name}}'>{{tUseDefaultTt}}</th>
 <td><t-date-time required="{{tIsRequired}}" type="long" timestamp="true" name="{{names}}"
-		ng-model="model.parameter[names]"></t-date-time> - <t-date-time
+		scope-model="model.parameter[names]"></t-date-time> - <t-date-time
 		required="{{tIsRequired}}" type="long" timestamp="true" name="{{namee}}"
-		ng-model="model.parameter[namee]"></t-date-time> <input ng-show="always" type="checkbox" ng-model="model.parameter[nameb]"
+		scope-model="model.parameter[namee]"></t-date-time> <input ng-show="always" type="checkbox" ng-model="model.parameter[nameb]"
 	ng-name="{{nameb}}"> <span ng-show="always" tt="model.parameter.aina.muuttuessa">Aina valintatietojen muuttuessa</span></td>
 <td>
 <div ng-show="saved">

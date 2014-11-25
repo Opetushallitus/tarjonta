@@ -8,8 +8,6 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 
     	var ctrl = $scope;
 
-        $scope.varName = typeof $scope.scopeModel === 'undefined' ? 'ngModel' : 'scopeModel';
-
     	$scope.errors = {};
 
     	$scope.prompts = {
@@ -22,14 +20,14 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 
     	// model <-> ngModel muunnos olion ja aikaleiman välillä
     	if ($scope.type == "object") {
-    		$scope.model = $scope[$scope.varName];
+    		$scope.model = $scope.scopeModel;
 	    	$scope.$watch("ngModel", function(nv, ov){
 	    	  $scope.model = nv;
 	    	});
     	} else if ($scope.type == "long") {
-    		$scope.model = $scope[$scope.varName]==null ? null : new Date($scope[$scope.varName]);
+    		$scope.model = $scope.scopeModel==null ? null : new Date($scope.scopeModel);
 	    	$scope.$watch("ngModel", function(nv, ov){
-	    	  $scope.model = $scope[$scope.varName]==null ? null : new Date($scope[$scope.varName]);
+	    	  $scope.model = $scope.scopeModel==null ? null : new Date($scope.scopeModel);
 	    	});
     	} else {
     		throw ("Unknown type "+$scope.type);
@@ -89,11 +87,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     		if ($scope.model==null) {
             	   $scope.date = "";
             	   $scope.time = "";
-            	   $scope[$scope.varName] = null;
+            	   $scope.scopeModel = null;
     		} else {
             	  $scope.date = dateToString($scope.model);
             	  $scope.time = timeToString($scope.model);
-            	  $scope[$scope.varName] = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
+            	  $scope.scopeModel = $scope.type == "object" ? $scope.model : (isNaN($scope.model.getTime())?undefined:$scope.model.getTime());
     		}
     	}
 
@@ -434,8 +432,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         	}
         },
         scope: {
-        	ngModel: "=", // arvo
-            scopeModel: "=", // arvo, ngModelin käyttäminen crashaa IE:n tietyissä näkymissä, silloin voi käyttää tätä
+            scopeModel: "=", // arvo
         	type: "@",  // ajan tietotyyppi
         				//   object: javascript Date
         				//   long: unix timestamp
