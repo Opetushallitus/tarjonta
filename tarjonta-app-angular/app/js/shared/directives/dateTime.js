@@ -431,6 +431,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         	if (scope.name && !angular.isUndefined(controller)) {
             	controller.$addControl({"$name": scope.name, "$error": scope.errors});
         	}
+            scope.form = controller;
         },
         scope: {
             scopeModel: "=", // arvo
