@@ -77,14 +77,14 @@
                         </td>
                     </tr>
 
-                    <tr data-ng-show="model.hakukohde.configurableHakuaika">
+                    <tr data-ng-show="model.configurableHakuaika">
                         <th tt="ta.hakukohde.hakuaika">Hakuaika</th>
                         <td>
                             {{model.hakuaikaMin | date:'dd.MM.yyyy HH:mm '}} - {{ model.hakuaikaMax | date:'dd.MM.yyyy HH:mm '}}
                         </td>
                     </tr>
 
-                    <tr class="required" data-ng-if="model.hakukohde.configurableHakuaika">
+                    <tr class="required" data-ng-if="model.configurableHakuaika">
                         <th tt="ta.hakukohde.hakuaika.valittavat">Valittava hakuaika</th>
                         <td>
                             <span class="datetimepicker-label" tt="ta.hakukohde.alkaa">Alkaa</span>

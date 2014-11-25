@@ -175,7 +175,7 @@ app.controller('HakukohdeParentController', [
         $scope.userLangs = window.CONFIG.app.userLanguages;
         $scope.model.defaultLang = 'kieli_fi';
         $scope.model.showHakuaikas = false;
-        $scope.model.hakukohde.configurableHakuaika = false;
+        $scope.model.configurableHakuaika = false;
         $scope.model.collapse.model = true;
         $scope.model.hakus = [];
         $scope.model.hakuaikas = [];
@@ -547,7 +547,7 @@ app.controller('HakukohdeParentController', [
                                     $scope.tryGetParentsApplicationOffice(data);
                                 }
                             }
-                            
+
                             //getHakukohteenYhteystiedot(data);
 
                             counter++;
@@ -687,7 +687,7 @@ app.controller('HakukohdeParentController', [
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
                     var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                     var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
-                    $scope.model.hakukohde.configurableHakuaika = haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_03' || haku.hakutapaUri.split('#')[0] === 'hakutapa_02';
+                    $scope.model.configurableHakuaika = haku.hakutyyppiUri.split('#')[0] === 'hakutyyppi_03' || haku.hakutapaUri.split('#')[0] === 'hakutapa_02';
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
                     $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
@@ -713,7 +713,7 @@ app.controller('HakukohdeParentController', [
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
                 }
 
-                if (!$scope.model.hakukohde.configurableHakuaika) {
+                if (!$scope.model.configurableHakuaika) {
                     $scope.clearHakuajat();
                 }
             }
@@ -950,7 +950,7 @@ app.controller('HakukohdeParentController', [
                         } else {
                             deferredOsoite.resolve($scope.model.liitteidenToimitusOsoite);
                         }
-                        
+
                     });
 
                 } else {
@@ -1318,7 +1318,7 @@ app.controller('HakukohdeParentController', [
                     if (yhteystieto.osoiteTyyppi !== undefined && yhteystieto.osoiteTyyppi === 'kaynti') {
                         var kieliUris = yhteystieto.kieli.split('#');
                         var kieliUri = kieliUris[0];
-                        
+
                         if (kieliUri === 'kieli_fi') {
                             var yhteystiedotFi = {
                                 'lang': 'fi',
