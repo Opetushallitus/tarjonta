@@ -195,3 +195,7 @@ ei näytä pointer-cursoria. Alla oleva korjaa asian. */
 a[ng-click] {
     cursor:pointer;
 }
+
+table.valintakokeet input {
+    margin:auto;
+}
