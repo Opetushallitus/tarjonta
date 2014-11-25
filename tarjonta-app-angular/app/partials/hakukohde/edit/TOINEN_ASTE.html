@@ -87,8 +87,15 @@
                     <tr class="required" data-ng-if="model.hakukohde.configurableHakuaika">
                         <th tt="ta.hakukohde.hakuaika.valittavat">Valittava hakuaika</th>
                         <td>
-                            <span class="datetimepicker-label" tt="ta.hakukohde.alkaa">Alkaa</span><t-date-time required timestamp="true" type="long" min="model.hakuaikaMin" max="model.hakuaikaMax" ng-model="model.hakukohde.hakuaikaAlkuPvm" ng-change="status.dirtify()"></t-date-time>
-                            <span class="datetimepicker-label" tt="ta.hakukohde.loppuu">Loppuu</span><t-date-time required timestamp="true" type="long" min="model.hakukohde.hakuaikaAlkuPvm" max="model.hakuaikaMax"  ng-model="model.hakukohde.hakuaikaLoppuPvm" ng-change="status.dirtify()"></t-date-time>
+                            <span class="datetimepicker-label" tt="ta.hakukohde.alkaa">Alkaa</span>
+                            <t-date-time required timestamp="true" type="long" min="model.hakuaikaMin"
+                                max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaAlkuPvm"
+                                change="status.dirtify()"></t-date-time>
+
+                            <span class="datetimepicker-label" tt="ta.hakukohde.loppuu">Loppuu</span>
+                            <t-date-time required timestamp="true" type="long" min="model.hakukohde.hakuaikaAlkuPvm"
+                                max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaLoppuPvm"
+                                change="status.dirtify()"></t-date-time>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && (!model.hakukohde.hakuaikaAlkuPvm || !model.hakukohde.hakuaikaLoppuPvm)" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
@@ -182,7 +189,8 @@
                         <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa">Liitteet toimitettava mennessä</th>
                         <td>
                             <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="updateKaytaHaunPaattymisenAikaa(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa">Käytä haun päättymisen aikaa</span></label><br/>
-                            <t-date-time timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-model="model.hakukohde.liitteidenToimitusPvm" ng-change="status.dirtify()"></t-date-time>
+                            <t-date-time timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm"
+                                scope-model="model.hakukohde.liitteidenToimitusPvm" change="status.dirtify()"></t-date-time>
                         </td>
                     </tr>
 

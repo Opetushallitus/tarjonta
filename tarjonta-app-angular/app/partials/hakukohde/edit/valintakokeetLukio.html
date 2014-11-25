@@ -60,11 +60,13 @@
                 </tr>
                 <tr>
                     <td class="vkAjankohta">
-                        <t-date-time timestamp="true" type="long" ng-model="ajankohta.alkaa" max="ajankohta.loppuu" ng-change="status.dirtify()"></t-date-time>
+                        <t-date-time timestamp="true" type="long" scope-model="ajankohta.alkaa"
+                            max="ajankohta.loppuu" change="status.dirtify()"></t-date-time>
                     </td>
                     <td class="vkSeparator">-</td>
                     <td class="vkAjankohta">
-                        <t-date-time timestamp="true" type="long" ng-model="ajankohta.loppuu" min="ajankohta.alkaa" ng-change="status.dirtify()"></t-date-time>
+                        <t-date-time timestamp="true" type="long" scope-model="ajankohta.loppuu"
+                            min="ajankohta.alkaa" change="status.dirtify()"></t-date-time>
                     </td>
                     <td class="vkLisatieto">
                         <input type="text" ng-model="ajankohta.lisatiedot" placeholder="{{t('tarjonta.hakukohde.valintakoe.modal.ajankohta.lisatieto')}}"  ng-change="status.dirtify()"/>
