@@ -371,6 +371,10 @@ app.controller('BaseEditController', [
                         form.$dirty = false;
                         form.$pristine = true;
 
+                        // Tyhjennä initial state, jotta sille asetettaisiin
+                        // uusi arvo kun käyttäjä tekee jotain formille
+                        $scope.modelInitialState = null;
+
                         $scope.model = model;
 
                         //$scope.updateFormStatusInformation($scope.model);
