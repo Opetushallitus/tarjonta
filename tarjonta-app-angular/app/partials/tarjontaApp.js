@@ -270,7 +270,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     lisatiedot: {},
                     valintaperusteKuvaukset: {},
                     soraKuvaukset: {},
-                    painotettavatOppiaineet: []
+                    painotettavatOppiaineet: [],
+                    isNew: true
                 });
 
                 TarjontaService.getKoulutusPromise(selectedKoulutusOids[0]).then(function(res) {

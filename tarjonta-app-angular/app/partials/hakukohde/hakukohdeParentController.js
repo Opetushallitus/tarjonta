@@ -1218,13 +1218,25 @@ app.controller('HakukohdeParentController', [
             }
         };
 
-        $scope.kaksoistutkintoIsPossible = function() {
-            var foundPkVaatimus = _.find($scope.model.hakukohde.hakukelpoisuusvaatimusUris, function(vaatimusUri) {
-                return vaatimusUri.indexOf('hakukelpoisuusvaatimusta_1') !== -1;
-            });
-
-            return $scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' && foundPkVaatimus;
+        $scope.handleKaksoistutkintoCheckbox = function() {
+            if($scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO') {
+                if($scope.model.hakukohde.isNew) {
+                    var koulutusOid = _.first($scope.model.hakukohde.hakukohdeKoulutusOids);
+                    TarjontaService.getKoulutusPromise(koulutusOid).then(function(response) {
+                        var pohjakoulutusvaatimus = response.result.pohjakoulutusvaatimus;
+                        $scope.model.kaksoistutkintoIsPossible = pohjakoulutusvaatimus.uri === 'pohjakoulutusvaatimustoinenaste_pk';
+                    });
+                } else {
+                    var pkVaatimus = _.find($scope.model.hakukohde.hakukelpoisuusvaatimusUris, function(vaatimusUri) {
+                        return vaatimusUri.indexOf('hakukelpoisuusvaatimusta_1') !== -1;
+                    });
+                    $scope.model.kaksoistutkintoIsPossible = pkVaatimus !== undefined;
+                }
+            } else {
+                $scope.model.kaksoistutkintoIsPossible = false;
+            }
         };
+        $scope.handleKaksoistutkintoCheckbox();
 
         $scope.replaceLiitteidenToimitusOsoiteWithDefault = function() {
             setToimitusOsoiteFromOrganisaatio();
