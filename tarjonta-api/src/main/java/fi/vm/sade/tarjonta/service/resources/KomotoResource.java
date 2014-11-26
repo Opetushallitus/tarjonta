@@ -48,7 +48,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author mlyly
  */
-@Path("/komotoDisabledAlaEnaaKayta")
+@Path("/komoto")
 public interface KomotoResource {
 
     /**
