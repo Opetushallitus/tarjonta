@@ -266,21 +266,6 @@ app.controller('HakukohdeEditController',
                 });
             });
         }
-
-        $scope.setDirtyListener();
-    };
-
-    /**
-     * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
-     * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
-     */
-    $scope.setDirtyListener = function() {
-        $('body').on('focus mouseenter', '.tab-content:first *', function(e) {
-            e.stopPropagation();
-            if (!$scope.modelInitialState) {
-                $scope.setInitialState(angular.copy($scope.model.hakukohde));
-            }
-        });
     };
 
     init();

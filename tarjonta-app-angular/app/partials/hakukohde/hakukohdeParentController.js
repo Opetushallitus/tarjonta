@@ -1204,6 +1204,22 @@ app.controller('HakukohdeParentController', [
             }
         };
 
+
+        /**
+         * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
+         * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
+         */
+        $scope.setDirtyListener = function() {
+            $('body').on('focus mouseenter', '#editHakukohde .tab-content:first *', function(e) {
+                e.stopPropagation();
+                if (!$scope.modelInitialState) {
+                    $scope.setInitialState(angular.copy($scope.model.hakukohde));
+                }
+            });
+        };
+
+        $scope.setDirtyListener();
+
         $scope.handleKaksoistutkintoCheckbox = function() {
             if($scope.model.hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO') {
                 if($scope.model.hakukohde.isNew) {
