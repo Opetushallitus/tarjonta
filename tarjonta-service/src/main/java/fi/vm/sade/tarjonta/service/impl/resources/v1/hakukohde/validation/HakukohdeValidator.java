@@ -82,13 +82,35 @@ public class HakukohdeValidator {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
 
-        if (hakukohdeRDTO.isLukioKoulutus() && hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() != 0) {
-            if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() < 4 || hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() > 10) {
-                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALIN_HYVAKSYTTY_KESKIARVO_RANGE);
+        if(hakukohdeRDTO.isLukioKoulutus()) {
+            if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() != 0) {
+                if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() < 4 || hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() > 10) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALIN_HYVAKSYTTY_KESKIARVO_RANGE);
+                }
+            }
+
+            for(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
+                if(painotettavaOppiaineV1RDTO.getPainokerroin() == null) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING);
+                } else if(painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
+                }
+
+                if(StringUtils.isBlank(painotettavaOppiaineV1RDTO.getOppiaineUri())) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING);
+                }
             }
         }
 
         return validationMessages;
+    }
+
+    private static boolean painokerroinTooLarge(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+        return painotettavaOppiaineV1RDTO.getPainokerroin().compareTo(new BigDecimal(20)) > 0;
+    }
+
+    private static boolean painokerroinTooSmall(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+        return painotettavaOppiaineV1RDTO.getPainokerroin().compareTo(new BigDecimal(1)) < 0;
     }
 
     public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {

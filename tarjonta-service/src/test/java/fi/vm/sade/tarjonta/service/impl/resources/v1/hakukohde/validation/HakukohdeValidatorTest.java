@@ -4,11 +4,8 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoePisterajaV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValitutKoulutuksetV1RDTO;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
@@ -256,7 +253,6 @@ public class HakukohdeValidatorTest {
 
     @Test
     public void thatPisterajatPrecisionIsValidated() {
-        System.out.println(new BigDecimal("0.0").equals(new BigDecimal("0.00")));
         ValintakoeV1RDTO valintakoe = getValintakoe();
 
         List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
@@ -461,5 +457,68 @@ public class HakukohdeValidatorTest {
 
     private ValintakoePisterajaV1RDTO getKokonaispisterajat(ValintakoeV1RDTO valintakoe) {
         return valintakoe.getPisterajat().get(2);
+    }
+
+    @Test
+    public void thatPainokerroinIsValidated() {
+        HakukohdeV1RDTO hakukohdeDTO = createhakukohde();
+
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(null, "oppiaineUri"));
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(0), "oppiaineUri"));
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(21), "oppiaineUri"));
+
+        List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertTrue(validationMessages.size() == 3);
+        assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING, validationMessages.get(0));
+        assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE, validationMessages.get(1));
+        assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE, validationMessages.get(2));
+
+        hakukohdeDTO.getPainotettavatOppiaineet().clear();
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), "oppiaineUri"));
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(20), "oppiaineUri"));
+
+        validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertTrue(validationMessages.isEmpty());
+    }
+
+    private HakukohdeV1RDTO createhakukohde() {
+        HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
+        hakukohdeDTO.setOid("3.2.1");
+        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setTila("JULKAISTU");
+        hakukohdeDTO.setHakuOid("1.2.3");
+        hakukohdeDTO.setHakukohteenNimiUri("nimi_uri");
+        hakukohdeDTO.setHakukohdeKoulutusOids(Arrays.asList(new String[]{"1.2.3.4.5"}));
+        return hakukohdeDTO;
+    }
+
+    @Test
+    public void thatOppiaineUriIsValidated() {
+        HakukohdeV1RDTO hakukohdeDTO = createhakukohde();
+
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), ""));
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), null));
+
+        List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertTrue(validationMessages.size() == 2);
+        assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING, validationMessages.get(0));
+        assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING, validationMessages.get(1));
+
+        hakukohdeDTO.getPainotettavatOppiaineet().clear();
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), "oppiaineUri"));
+
+        validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertTrue(validationMessages.isEmpty());
+    }
+
+    private PainotettavaOppiaineV1RDTO createPainokerroin(BigDecimal value, String oppiaineUri) {
+        PainotettavaOppiaineV1RDTO painotettavaOppiaineDTO = new PainotettavaOppiaineV1RDTO();
+        painotettavaOppiaineDTO.setPainokerroin(value);
+        painotettavaOppiaineDTO.setOppiaineUri(oppiaineUri);
+        return painotettavaOppiaineDTO;
     }
 }
