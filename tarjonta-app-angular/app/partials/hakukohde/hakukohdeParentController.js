@@ -1110,9 +1110,12 @@ app.controller('HakukohdeParentController', [
         };
 
         function isDirty() {
-
-            return $scope.status.dirty || ($scope.editHakukohdeForm && $scope.editHakukohdeForm.$dirty);
+            return $scope.modelInitialState && !_.isEqual(angular.copy($scope.model.hakukohde), $scope.modelInitialState);
         }
+
+        $scope.setInitialState = function(state){
+            $scope.modelInitialState = state;
+        };
 
         $scope.model.takaisin = function (confirm) {
             // console.log("LINK CONFIRM TAKAISIN", [confirm,
@@ -1410,6 +1413,8 @@ app.controller('HakukohdeParentController', [
                             $scope.model.continueToReviewEnabled = true;
                             $scope.status.dirty = false;
                             $scope.editHakukohdeForm.$dirty = false;
+
+                            $scope.modelInitialState = null;
                         }, function (error) {
                             $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
                             $scope.showCommonUnknownErrorMsg();
@@ -1442,6 +1447,8 @@ app.controller('HakukohdeParentController', [
                                 }
                                 $scope.showError(hakukohde.errors);
                             }
+
+                            $scope.modelInitialState = null;
                         }, function (error) {
                             $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
                             $scope.showCommonUnknownErrorMsg();
