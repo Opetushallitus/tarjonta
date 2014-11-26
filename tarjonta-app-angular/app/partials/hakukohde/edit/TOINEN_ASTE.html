@@ -189,15 +189,6 @@
                         </td>
                     </tr>
 
-                    <tr ng-if="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
-                        <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa">Liitteet toimitettava mennessä</th>
-                        <td>
-                            <label><input type="checkbox" ng-model="model.useHaunPaattymisaikaForLiitteidenToimitusPvm" ng-change="updateKaytaHaunPaattymisenAikaa(model.useHaunPaattymisaikaForLiitteidenToimitusPvm)"/> <span tt="tarjonta.hakukohde.liitteet.kaytaHaunPaattymisaikaa">Käytä haun päättymisen aikaa</span></label><br/>
-                            <t-date-time timestamp="true" type="long" ng-disabled="model.useHaunPaattymisaikaForLiitteidenToimitusPvm"
-                                scope-model="model.hakukohde.liitteidenToimitusPvm" change="status.dirtify()"></t-date-time>
-                        </td>
-                    </tr>
-
                     <tr ng-if="model.kaksoistutkintoIsPossible">
                         <th></th>
                         <td>

@@ -723,19 +723,6 @@ app.controller('HakukohdeParentController', [
             return haku.hakuaikas[0];
         };
 
-        var handleUseHaunPaattymisaikaCheckbox = function() {
-            var hakuaikaId = $scope.model.hakukohde.hakuaikaId;
-            if(hakuaikaId !== undefined) {
-                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-                var hakuaika = _.find(haku.hakuaikas, function(element) {
-                    return element.hakuaikaId === hakuaikaId;
-                });
-                $scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm = $scope.model.hakukohde.liitteidenToimitusPvm === hakuaika.loppuPvm;
-            } else {
-                $scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm = $scope.model.hakukohde.liitteidenToimitusPvm === $scope.model.hakukohde.hakuaikaLoppuPvm;
-            }
-        };
-
         $scope.retrieveHakus = function (filterHakuFunction) {
 
             var hakuPromise = HakuService.getAllHakus();
@@ -783,10 +770,6 @@ app.controller('HakukohdeParentController', [
                 }
 
                 $scope.handleConfigurableHakuaika();
-
-                if($scope.needsLiitteidenToimitustiedot($scope.model.hakukohde.toteutusTyyppi)) {
-                    handleUseHaunPaattymisaikaCheckbox();
-                }
             });
         };
 

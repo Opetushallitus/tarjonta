@@ -394,7 +394,6 @@ app.controller('HakukohdeEditController',
             }
 
             $scope.handleConfigurableHakuaika();
-            $scope.updateKaytaHaunPaattymisenAikaa($scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm);
         }
     };
 

@@ -112,12 +112,6 @@
                     </td>
                 </tr>
                 <tr ng-show="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
-                    <th tt="tarjonta.hakukohde.liitteet.toimitettavaMennessa"></th>
-                    <td colspan="2">
-                        {{ model.hakukohde.liitteidenToimitusPvm | date:'dd.MM.yyyy HH:mm '}}
-                    </td>
-                </tr>
-                <tr ng-show="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
                     <th tt="tarjonta.hakukohde.liitteet.toimitusosoite"></th>
                     <td colspan="2">
                         {{ model.hakukohde.liitteidenToimitusOsoite.osoiterivi1 }}, {{ model.hakukohde.liitteidenToimitusOsoite.postinumeroArvo }}, {{ model.hakukohde.liitteidenToimitusOsoite.postitoimipaikka }}
