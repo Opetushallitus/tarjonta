@@ -466,7 +466,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         },
         reviewFields: DEFAULT_REVIEW_FIELDS,
         params: {
-            reviewOhjelmaLabel: 'koulutus.review.perustiedot.osaamisala'
+            reviewOhjelmaLabel: 'koulutus.review.perustiedot.osaamisala',
+            onlyOneOpetuskieli: true
         }
     });
 
@@ -498,7 +499,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             edit: 'GENERIC',
             review: 'GENERIC'
         },
-        reviewFields: DEFAULT_REVIEW_FIELDS
+        reviewFields: DEFAULT_REVIEW_FIELDS,
+        params: {
+            onlyOneOpetuskieli: true
+        }
     });
 
     var GENERIC_LUKIOKOULUTUS_STRUCTURE = {
@@ -679,7 +683,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koodistoDefaults: {
                 koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_2"
+            koulutustyyppiKoodiUri: "koulutustyyppi_2",
+            params: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.params, {
+                onlyOneOpetuskieli: true
+            })
         }),
 
         /*******************************************/

@@ -701,6 +701,21 @@ app.controller('BaseEditController', [
             var koulutusStructure = KoulutusConverterFactory.STRUCTURE[$scope.CONFIG.TYYPPI];
             $scope.koulutusStructure = koulutusStructure;
 
+            if (koulutusStructure.params && koulutusStructure.params.onlyOneOpetuskieli) {
+                $scope.$watch('uiModel.opetuskielis.uris.length', function (count) {
+                    if (count <= 1) {
+                        return;
+                    }
+                    dialogService.showDialog({
+                        ok: LocalisationService.t("ok"),
+                        cancel: '',
+                        title: LocalisationService.t("koulutus.edit.opetuskieli.vainYksi.dialog.title"),
+                        description: LocalisationService.t("koulutus.edit.opetuskieli.vainYksi.dialog.kuvaus")
+                    });
+                    $scope.uiModel.opetuskielis.uris.splice(1,1);
+                });
+            }
+
             /*
              * HANDLE EDIT / CREATE NEW ROUTING
              */
