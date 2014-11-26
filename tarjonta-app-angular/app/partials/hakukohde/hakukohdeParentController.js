@@ -752,7 +752,6 @@ app.controller('HakukohdeParentController', [
                 }
 
                 var filteredHakus = filterHakuWithParams(filterHakuFunction(hakuDatas));
-                $log.info('HAKUS FILTERED WITH GIVEN FUNCTION : ', filteredHakus);
 
                 if (selectedHaku) {
                     var inFilteres = _.find(filteredHakus, function (m) {
@@ -770,6 +769,10 @@ app.controller('HakukohdeParentController', [
                 }
 
                 $scope.handleConfigurableHakuaika();
+
+                if($scope.needsLiitteidenToimitustiedot($scope.model.hakukohde.toteutusTyyppi)) {
+                    handleUseHaunPaattymisaikaCheckbox();
+                }
             });
         };
 
@@ -805,6 +808,54 @@ app.controller('HakukohdeParentController', [
 
             return doesMatch;
 
+        };
+
+        /**
+         * Suorita model.hakuChanged() jos haku-valinta muuttuu tai kun model.hakus
+         * on asetettu (tämä ei ole saatavilla heti, tästä syystä watchi)
+         */
+        $scope.$watch(function() {
+            return $scope.model.hakus.length && $scope.model.hakukohde.hakuOid;
+        }, function(oid) {
+            if (oid) {
+                $scope.model.hakuChanged();
+            }
+        });
+
+        $scope.resolveLocalizedValue = function(key) {
+            var userKieliUri = LocalisationService.getKieliUri();
+            return key[userKieliUri] || key["kieli_fi"] || key["kieli_sv"] || key["kieli_en"] || "[Ei nimeä]";
+        };
+
+        $scope.model.hakuChanged = function() {
+            if ($scope.model.hakukohde.hakuOid !== undefined) {
+
+                $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
+                var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
+
+                if (haku.hakuaikas.length > 1) {
+
+                    angular.forEach(haku.hakuaikas,function(hakuaika){
+                        var formattedStartDate = $scope.createFormattedDateString(hakuaika.alkuPvm);
+                        var formattedEndDate = $scope.createFormattedDateString(hakuaika.loppuPvm);
+
+                        hakuaika.formattedNimi = $scope.resolveLocalizedValue(hakuaika.nimet) + ", " + formattedStartDate + " - " + formattedEndDate;
+
+                        $scope.model.hakuaikas.push(hakuaika);
+                    });
+
+                    $scope.model.showHakuaikas = true;
+
+                } else {
+                    var hakuaika = _.first(haku.hakuaikas);
+                    $scope.model.hakuaikas.push(hakuaika);
+                    $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
+                    $scope.model.showHakuaikas = false;
+                }
+
+                $scope.handleConfigurableHakuaika();
+                $scope.updateKaytaHaunPaattymisenAikaa($scope.model.useHaunPaattymisaikaForLiitteidenToimitusPvm);
+            }
         };
 
         $scope.filterHakuWithKohdejoukko = function (hakus, kohdejoukkoUriNimi) {

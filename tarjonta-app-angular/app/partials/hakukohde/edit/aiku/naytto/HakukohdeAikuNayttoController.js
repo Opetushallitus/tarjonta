@@ -113,10 +113,10 @@ app
             };
 
             /**
-             * 
+             *
              * Controller initialization function which is called when controller
              * loads
-             * 
+             *
              */
             var init = function () {
 
@@ -147,6 +147,18 @@ app
 
             init();
 
+            /**
+             * checkSelectedHaku suoritetaan kun haku valinta muuttuu tai kun
+             * model.hakus on asetettu.
+             */
+            $scope.$watch(function() {
+                return $scope.model.hakus.length && $scope.model.hakukohde.hakuOid;
+            }, function(oid) {
+                if (oid) {
+                    $scope.model.checkSelectedHaku();
+                }
+            });
+
             $scope.model.checkSelectedHaku = function () {
 
                 var jatkuvaHakuKoodi = "hakutapa_03";
@@ -155,6 +167,7 @@ app
                     if (haku.oid === $scope.model.hakukohde.hakuOid) {
                         if ($scope.aContainsB(haku.hakutapaUri, jatkuvaHakuKoodi)) {
                             $scope.ui.showPlaces = false;
+                            $scope.model.hakukohde.aloituspaikatLkm = null;
                         } else {
                             $scope.ui.showPlaces = true;
                         }

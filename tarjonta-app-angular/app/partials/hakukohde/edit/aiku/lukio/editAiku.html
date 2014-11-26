@@ -37,15 +37,15 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo 
-                                 onchangecallback="fnTemp"  
-                                 koodistouri="'hakukohteet'"  
-                                 koodiuri="model.hakukohde.hakukohteenNimiUri"  
-                                 parentkoodiuri="'lukiolinjat_0086'" 
-                                 isdependent="true" 
-                                 locale="'fi'"  
-                                 version="true" 
-                                 isrequired="true" 
+                            <div koodistocombo
+                                 onchangecallback="fnTemp"
+                                 koodistouri="'hakukohteet'"
+                                 koodiuri="model.hakukohde.hakukohteenNimiUri"
+                                 parentkoodiuri="'lukiolinjat_0086'"
+                                 isdependent="true"
+                                 locale="'fi'"
+                                 version="true"
+                                 isrequired="true"
                                  excludeuris="temp"
                                  isalakoodi="temp"
                                  name="hakutapa"></div>
@@ -59,7 +59,7 @@
                                             <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
                                             <td>
                                                 <input name="ulkoinen tunniste" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
-                    
+
                                             </td>
                                         </tr>
                     -->
@@ -68,7 +68,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
