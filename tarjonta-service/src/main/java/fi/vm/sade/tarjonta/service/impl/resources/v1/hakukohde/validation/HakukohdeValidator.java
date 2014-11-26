@@ -229,7 +229,6 @@ public class HakukohdeValidator {
         for (Iterator<ValintakoeV1RDTO> i = valintakoeV1RDTOs.iterator(); i.hasNext(); ) {
             ValintakoeV1RDTO valintakoeV1RDTO = i.next();
 
-            // jos nimi on tyhjä eikä ajankohtia -> automaattisesti luotu ranka jonka voi hylätä
             if (isEmptyValintakoe(valintakoeV1RDTO)) {
                 i.remove();
                 continue;
@@ -245,8 +244,10 @@ public class HakukohdeValidator {
 
     private static boolean isEmptyValintakoe(ValintakoeV1RDTO valintakoeV1RDTO) {
         return Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi())
-                && (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()
-                && !valintakoeV1RDTO.hasPisterajat());
+                && Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoetyyppi())
+                && (valintakoeV1RDTO.getValintakokeenKuvaus() == null || Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakokeenKuvaus().getTeksti()))
+                && (valintakoeV1RDTO.getValintakoeAjankohtas() == null || valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty())
+                && !valintakoeV1RDTO.hasPisterajat();
     }
 
     private static void validateNames(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
