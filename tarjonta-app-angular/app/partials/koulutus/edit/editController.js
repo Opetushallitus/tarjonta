@@ -309,7 +309,18 @@ app.controller('BaseEditController', [
                 converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
                 );
 
-            $scope.commonLoadModelHandler(form, $scope.model, $scope.uiModel, tyyppi);
+            if ($scope.uiModel.isMutable) {
+                var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
+                hakukohdePromise.then(function(hakukohteet) {
+                	if (hakukohteet.result && hakukohteet.result.length > 0) {
+                		$scope.setMinMax(true, model);
+                	} else {
+                		$scope.setMinMax(false, model);
+                	}
+                }, function() {
+                	$scope.setMinMax(false, model);
+                });
+			}
         };
 
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
