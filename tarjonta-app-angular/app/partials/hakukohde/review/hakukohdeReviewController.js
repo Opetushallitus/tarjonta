@@ -1068,6 +1068,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function(
             $scope.model.spec.year = result.tulokset[0].tulokset[0].vuosi;
 
             var hakukohteenKoulutuskoodi = result.tulokset[0].tulokset[0].koulutuskoodi.split("#")[0].split("_")[1];
+            var hakukohteenPohjakoulutusvaatimus = result.tulokset[0].tulokset[0].pohjakoulutusvaatimus;
 
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
 
@@ -1097,7 +1098,7 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function(
                                     }).nimi,
                                     tarjoajaOid: tarjoaja,
                                     oid: childTulos.oid,
-                                    toteutustyyppi: childTulos.toteutustyyppiEnum
+                                    pohjakoulutusvaatimus: childTulos.pohjakoulutusvaatimus
                                 });
                             });
                         });
@@ -1110,7 +1111,8 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function(
 
                         if (foundKoulutusInHakukohde === undefined) {
                             if(toisenAsteenKoulutus) {
-                                if(koulutus.koulutuskoodi === hakukohteenKoulutuskoodi) {
+                                if(koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
+                                    koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
                                     prev.push(koulutus);
                                 }
                             } else {
