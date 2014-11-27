@@ -900,6 +900,9 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                 },
                 selectedKoulutukses: function() {
                     return $scope.getKomotoTarjoajatiedot();
+                },
+                toisenAsteenKoulutus: function() {
+                    return $scope.toisenAsteenKoulutus($scope.model.hakukohde.toteutusTyyppi);
                 }
             }
         });
@@ -974,8 +977,18 @@ app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance,
  *
  */
 
-app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalInstance, LocalisationService, Config, TarjontaService, OrganisaatioService,  organisaatioOids,
-        selectedLocale, selectedKoulutukses) {
+app.controller('HakukohdeLiitaKoulutusModalCtrl', function(
+    $scope,
+    $log,
+    $modalInstance,
+    LocalisationService,
+    Config,
+    TarjontaService,
+    OrganisaatioService,
+    organisaatioOids,
+    selectedLocale,
+    selectedKoulutukses,
+    toisenAsteenKoulutus) {
 
     $log = $log.getInstance("HakukohdeLiitaKoulutusModalCtrl");
     $log.debug("init...");
@@ -1052,6 +1065,8 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
             $scope.model.spec.season = result.tulokset[0].tulokset[0].kausiUri;
             $scope.model.spec.year = result.tulokset[0].tulokset[0].vuosi;
 
+            var hakukohteenKoulutuskoodi = result.tulokset[0].tulokset[0].koulutuskoodi.split("#")[0].split("_")[1];
+
             TarjontaService.haeKoulutukset($scope.model.spec).then(function(result) {
 
                 var tarjoajaOids = [];
@@ -1079,18 +1094,26 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                                         return org.oid === tarjoaja;
                                     }).nimi,
                                     tarjoajaOid: tarjoaja,
-                                    oid: childTulos.oid
+                                    oid: childTulos.oid,
+                                    toteutustyyppi: childTulos.toteutustyyppiEnum
                                 });
                             });
                         });
                     });
-                    $scope.model.hakutulos = hakutulos;
-                    $scope.model.hakutulos = $scope.model.hakutulos.reduce(function(prev, koulutus) {
-                        var found =_.find(selectedKoulutukses, function(selected){
+
+                    $scope.model.hakutulos = hakutulos.reduce(function(prev, koulutus) {
+                        var foundKoulutusInHakukohde =_.find(selectedKoulutukses, function(selected){
                             return selected.oid === koulutus.oid && selected.tarjoajaOid === koulutus.tarjoajaOid;
                         });
-                        if (found === undefined) {
-                            prev.push(koulutus);
+
+                        if (foundKoulutusInHakukohde === undefined) {
+                            if(toisenAsteenKoulutus) {
+                                if(koulutus.koulutuskoodi === hakukohteenKoulutuskoodi) {
+                                    prev.push(koulutus);
+                                }
+                            } else {
+                                prev.push(koulutus);
+                            }
                         }
                         return prev;
                     }, []);
