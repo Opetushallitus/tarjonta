@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
@@ -37,7 +38,9 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -193,6 +196,25 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(komo, "KOMO object cannot be null.");
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
         Preconditions.checkNotNull(komoto.getOid(), "KOMOTO OID cannot be null.");
+
+        /**
+         * ParentKomotojen käsittely. ParentKomotoista oli jo luovuttu samalla kun Vaadin-toteutuksesta
+         * luovuttiin. Ilmeni kuitenkin, että koulutusinformaation integraation nykyinen toteutus
+         * on riippuvainen parentKomotoista, eikä tätä riippuvuutta saa pienellä vaivalla poistettua.
+         * Siispä parentKomototo pitää vielä säilyttää koulutusinformaatiota varten.
+         */
+        switch (dto.getToteutustyyppi()) {
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+            case PERUSOPETUKSEN_LISAOPETUS:
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+            case AMMATILLINEN_PERUSTUTKINTO:
+            case LUKIOKOULUTUS:
+                handleParentKomoto(dto, komo, dto.getToteutustyyppi());
+                break;
+        }
 
         /*
          * KOMOTO common data conversion
@@ -653,6 +675,82 @@ public class KoulutusDTOConverterToEntity {
 
     private static String toListUri(ToteutustyyppiEnum e) {
         return EntityUtils.joinListToString(e.uri());
+    }
+
+    /*
+    * Handling the creation or update of the parent komoto
+    */
+    private void handleParentKomoto(KoulutusGenericV1RDTO koulutus, Koulutusmoduuli moduuli, ToteutustyyppiEnum toteutustyyppi) {
+        Preconditions.checkNotNull(toteutustyyppi, "Toteutustyyppi enum cannot be null!");
+
+        Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
+
+        if (parentKomo == null) {
+            return;
+        }
+
+        String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
+        if (pohjakoulutusUri != null){
+            pohjakoulutusUri += "#" + koulutus.getPohjakoulutusvaatimus().getVersio().toString();
+        }
+
+        List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(
+            parentKomo,
+            koulutus.getOrganisaatio().getOid(),
+            pohjakoulutusUri
+        );
+        KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
+
+        boolean createNew = parentKomoto == null;
+
+        if (createNew) {
+            parentKomoto = new KoulutusmoduuliToteutus();
+
+            parentKomoto.setTarjoaja(koulutus.getOrganisaatio().getOid());
+            parentKomoto.setTila(koulutus.getTila());
+            parentKomoto.setKoulutusmoduuli(parentKomo);
+            try {
+                parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
+            }
+            catch (OIDCreationException e) {
+                throw new RuntimeException(e);
+            }
+            parentKomoto.setPohjakoulutusvaatimusUri(pohjakoulutusUri);
+            parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
+
+            LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
+
+            if (parentKomoto.getPohjakoulutusvaatimusUri() != null && !parentKomoto.getPohjakoulutusvaatimusUri().contains("#")) {
+                LOG.error("*** FAILING FAST *** to see where the problem lies...OVT-7849");
+                throw new RuntimeException("parent komoto pohjakoulutusvaatimus = " + parentKomoto.getPohjakoulutusvaatimusUri());
+            }
+        }
+
+        KuvausV1RDTO<KomotoTeksti> dtoTekstit = koulutus.getKuvausKomoto();
+        if (dtoTekstit != null && dtoTekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA) != null) {
+            Map<KomotoTeksti, MonikielinenTeksti> tekstit = parentKomoto.getTekstit() != null ?
+                                                                parentKomoto.getTekstit() :
+                                                                new HashMap<KomotoTeksti, MonikielinenTeksti>();
+
+            NimiV1RDTO koulutusohjelmanValinta = dtoTekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
+            MonikielinenTeksti mkTeksti = new MonikielinenTeksti();
+            for (Map.Entry<String, String> entry : koulutusohjelmanValinta.getTekstis().entrySet()) {
+                mkTeksti.addTekstiKaannos(entry.getKey(), entry.getValue());
+            }
+            tekstit.put(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, mkTeksti);
+            parentKomoto.setTekstit(tekstit);
+        }
+
+        if (parentKomoto.getToteutustyyppi() == null) {
+            parentKomoto.setToteutustyyppi(toteutustyyppi);
+        }
+
+        if (createNew) {
+            this.koulutusmoduuliToteutusDAO.insert(parentKomoto);
+        }
+        else {
+            this.koulutusmoduuliToteutusDAO.update(parentKomoto);
+        }
     }
 
 }
