@@ -125,7 +125,7 @@
                     <tr ng-if="model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS'">
                         <th tt="hakukohde.review.perustiedot.alinHyvaksyttavaKeskiarvo">Alin hyväksytty keskiarvo</th>
                         <td>
-                            <input valid-decimal name="alinHyvaksyttavaKeskiarvo" ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text" data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
+                            <input valid-decimal ng-trim="false" name="alinHyvaksyttavaKeskiarvo" ng-disabled="model.isPartiallyDeEnabled" class="thin" type="text" data-ng-model="model.hakukohde.alinHyvaksyttavaKeskiarvo" />
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.alinHyvaksyttavaKeskiarvo.$invalid" tt="tarjonta.hakukohde.alinHyvaksyttavaKeskiarvo.validation.failed">Tarkista alin hyväksyttävä keskiarvo</p>
@@ -147,7 +147,7 @@
                                     <option value=""></option>
                                 </select>
 
-                                <input valid-decimal class="input-mini" type="text" ng-model="painotettavaOppiaine.painokerroin" />
+                                <input valid-decimal ng-trim="false" class="input-mini" type="text" ng-model="painotettavaOppiaine.painokerroin" />
                                 <button class="btn top" ng-click="deletePainotettavaOppiaine(painotettavaOppiaine)"><span tt="tarjonta.toiminnot.poista"></span> <span class="icon-remove"></span></button>
                             </div>
                             <button class="btn" ng-click="addPainotettavaOppiaine()"><span tt="tarjonta.hakukohde.painotettavaOppiaine.uusi.painotettavaOppiaine"></span> <span class="icon-plus-sign"></span></button>

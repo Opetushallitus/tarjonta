@@ -10,6 +10,10 @@ app.directive('validDecimal', function () {
         return str.replace(/\,/g, '.');
     };
 
+    var replaceWhitespaceWithEmptySpace = function(str) {
+        return str.replace(/\s+/g, '');
+    };
+
     var getLastChar = function(str) {
         return str.charAt(str.length - 1)
     };
@@ -32,6 +36,7 @@ app.directive('validDecimal', function () {
 
                 var newValue = val;
                 newValue = replaceCommaWithDot(newValue);
+                newValue = replaceWhitespaceWithEmptySpace(newValue);
 
                 var lastChar = getLastChar(newValue);
                 if (isNaN(lastChar)) {

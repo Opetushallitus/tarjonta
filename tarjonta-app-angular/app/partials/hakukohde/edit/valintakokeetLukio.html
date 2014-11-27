@@ -17,9 +17,9 @@
                             <span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span>
                         </label>
                     </td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeAlinPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.alinPistemaara" /></td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeYlinPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.ylinPistemaara" /></td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeAlinHyvaksyttyPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.alinHyvaksyttyPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeAlinPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.alinPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeYlinPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.ylinPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasPaasykoe" class="input-mini" name="paasykoeAlinHyvaksyttyPistemaara" type="text" data-ng-model="valintakoe.paasykoePisterajat.alinHyvaksyttyPistemaara" /></td>
                 </tr>
                 <tr>
                     <td>
@@ -28,9 +28,9 @@
                             <span tt="tarjonta.hakukohde.valintakoe.pisterajat.lisanaytot">Lisänäytöt</span>
                         </label>
                     </td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotAlinPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.alinPistemaara" /></td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotYlinPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.ylinPistemaara" /></td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotAlinHyvaksyttyPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.alinHyvaksyttyPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotAlinPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.alinPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotYlinPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.ylinPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasLisanaytot" class="input-mini" name="lisanaytotAlinHyvaksyttyPistemaara" type="text" data-ng-model="valintakoe.lisanaytotPisterajat.alinHyvaksyttyPistemaara" /></td>
                 </tr>
                 <tr>
                     <td>
@@ -38,7 +38,7 @@
                     </td>
                     <td></td>
                     <td><span tt="tarjonta.hakukohde.valintakoe.pisterajat.kokonaispisteet.max">max. 10</span></td>
-                    <td><input valid-decimal ng-disabled="!valintakoe.hasPaasykoe && !valintakoe.hasLisanaytot" class="input-mini" name="kokonaispisteetAlinHyvaksyttyPistemaara" type="text" ng-change="kokonaispisteetChanged()" data-ng-model="valintakoe.kokonaispisteetPisterajat.alinHyvaksyttyPistemaara" /></td>
+                    <td><input valid-decimal ng-trim="false" ng-disabled="!valintakoe.hasPaasykoe && !valintakoe.hasLisanaytot" class="input-mini" name="kokonaispisteetAlinHyvaksyttyPistemaara" type="text" ng-change="kokonaispisteetChanged()" data-ng-model="valintakoe.kokonaispisteetPisterajat.alinHyvaksyttyPistemaara" /></td>
                 </tr>
             </tbody>
         </table>
