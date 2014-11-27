@@ -769,10 +769,6 @@ app.controller('HakukohdeParentController', [
                 }
 
                 $scope.handleConfigurableHakuaika();
-
-                if($scope.needsLiitteidenToimitustiedot($scope.model.hakukohde.toteutusTyyppi)) {
-                    handleUseHaunPaattymisaikaCheckbox();
-                }
             });
         };
 

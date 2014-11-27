@@ -147,7 +147,8 @@
                         <mk-tabs model="model.valintakoeKielet" selection="model.selectedValintakoeKieli"></mk-tabs>
                         <table class="table" ng-show="model.selectedValintakoeKieli">
                             <tr>
-                                <th>{{t('hakukohde.review.valintakokeet.nimi')}}</th>
+                                <th ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.valintakokeet.tyyppi"/>
+                                <th ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.valintakokeet.nimi"/>
                                 <th>{{t('hakukohde.review.valintakokeet.kuvaus')}}</th>
                                 <th>{{t('hakukohde.review.valintakokeet.aika')}}</th>
                                 <th>{{t('hakukohde.review.valintakokeet.paikka')}}</th>
@@ -255,8 +256,7 @@
                             <th tt="hakukohde.review.liitteet.sahkoinenToimitusOsoite"/>
                         </tr>
                         <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
-                            <td ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">{{ liite.liitteenTyyppiLocalized }}</td>
-                            <td ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">{{ liite.liitteenNimi }}</td>
+                            <td>{{ liite.liitteenNimi }}</td>
                             <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
                             <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
                             <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>

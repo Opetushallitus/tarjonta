@@ -60,8 +60,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     $scope.model.valintakoeKielet = aggregateLangs($scope.model.hakukohde.valintakokeet);
     $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
-
-
     $scope.model.ryhmat = {};
 
     $scope.showLiitteidenToimitustiedot = function(toteutusTyyppi) {
@@ -396,7 +394,27 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         _.each($scope.model.hakukohde.hakukohteenLiitteet, function(liite) {
             if(liite.liitteenTyyppi !== undefined) {
                 Koodisto.getKoodi("liitetyypitamm", liite.liitteenTyyppi, $scope.model.userLang).then(function(koodi) {
-                    liite.liitteenTyyppiLocalized = koodi.koodiNimi;
+                    liite.liitteenNimi = koodi.koodiNimi;
+                });
+            }
+        });
+    };
+
+    $scope.getLocalizedValintakoe = function(kieliUri) {
+        var localizedValintakokeet = [];
+        angular.forEach($scope.model.hakukohde.valintakokeet, function(valintakoe) {
+            if (valintakoe.kieliUri === kieliUri) {
+                localizedValintakokeet.push(valintakoe);
+            }
+        });
+        return localizedValintakokeet;
+    };
+
+    var loadValintakoetiedot = function() {
+        _.each($scope.model.hakukohde.valintakokeet, function(valintakoe) {
+            if(valintakoe.valintakoetyyppi !== undefined) {
+                Koodisto.getKoodi("valintakokeentyyppi", valintakoe.valintakoetyyppi, $scope.model.userLang).then(function (koodi) {
+                    valintakoe.valintakoeNimi = koodi.koodiNimi;
                 });
             }
         });
@@ -564,6 +582,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         loadPainotettavatOppiaineet();
         loadKoulutukses();
         loadLiitetiedot();
+        loadValintakoetiedot();
     };
 
     init();
@@ -715,23 +734,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
             }
         });
-
-    }
-
-    $scope.getLocalizedValintakoe = function(kieliUri) {
-
-        var localizedValintakokeet = [];
-
-        angular.forEach($scope.model.hakukohde.valintakokeet, function(valintakoe) {
-
-            if (valintakoe.kieliUri === kieliUri) {
-                localizedValintakokeet.push(valintakoe);
-            }
-
-        });
-
-        return localizedValintakokeet;
-
     };
 
     $scope.getLocalizedLiitteet = function(kieliUri) {
