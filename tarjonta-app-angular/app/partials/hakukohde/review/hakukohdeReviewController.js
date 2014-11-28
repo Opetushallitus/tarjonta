@@ -3,7 +3,7 @@ var app = angular.module('app.kk.edit.hakukohde.review.ctrl', ['app.services', '
 
 app.controller('HakukohdeReviewController', function($scope, $q, $log, LocalisationService, OrganisaatioService, Koodisto, Hakukohde, AuthService,
         dialogService, HakuService, $modal, Config, $location, $timeout, $route, TarjontaService, HakukohdeKoulutukses, dialogService, SisaltyvyysUtil,
-        TreeHandlers, PermissionService) {
+        TreeHandlers, PermissionService, MyRolesModel) {
 
     $log = $log.getInstance("HakukohdeReviewController");
     $log.debug("init...");
@@ -782,7 +782,25 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             windowClass: 'liita-koulutus-modal',
             resolve: {
                 organisaatioOids: function() {
-                    return $scope.model.hakukohde.tarjoajaOids;
+                	if ($scope.isKK) {
+                    	var orgOids = AuthService.getOrganisations();
+                    	var tarjoajaOids = $scope.model.hakukohde.tarjoajaOids;
+                    	for (var i = 0; i < tarjoajaOids.length; i++) {
+                    		var contains = false; 
+                    		for (var j = 0; j < orgOids.length; j++) {
+    							if (orgOids[j] === tarjoajaOids[i]) {
+    								contains = true;
+    								break;
+    							}
+    						}
+                    		if (!contains) {
+        						orgOids.push(tarjoajaOids[i]);
+    						}
+    					}
+                        return orgOids;
+					} else {
+	                    return $scope.model.hakukohde.tarjoajaOids;
+					}
                 },
                 selectedLocale: function() {
                     return $scope.model.userLang;

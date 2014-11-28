@@ -52,6 +52,20 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuDAO {
 
     @Override
+    public List<Haku> findAll() {
+        // Eager fetch collections for significant total speedup
+        String q = ("SELECT DISTINCT h FROM Haku h " +
+                "LEFT JOIN FETCH h.nimi AS nimi " +
+                "LEFT JOIN FETCH nimi.tekstis " +
+                "LEFT JOIN FETCH h.hakuaikas as ha " +
+                "LEFT JOIN FETCH ha.nimi AS hanimi " +
+                "LEFT JOIN FETCH hanimi.tekstis " +
+                "LEFT JOIN FETCH h.sisaltyvatHaut "); 
+        Query query = getEntityManager().createQuery(q);
+        return query.getResultList();
+    }
+
+    @Override
     public List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi) {
         QHaku qHaku = QHaku.haku;
         return from(qHaku)

@@ -113,6 +113,10 @@ public class ConverterV1 {
     }
 
     public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes) {
+        return fromHakuToHakuRDTO(haku, addHakukohdes, null);
+    }
+    
+    public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes, List<String> hakukohteet) {
         if (haku == null) {
             return null;
         }
@@ -146,8 +150,12 @@ public class ConverterV1 {
         hakuDTO.setNimi(convertMonikielinenTekstiToMap(haku.getNimi(), true));
 
         if (addHakukohdes) {
-            List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
-            hakuDTO.setHakukohdeOids(tmp);
+            if (hakukohteet != null) {
+                hakuDTO.setHakukohdeOids(hakukohteet);
+            } else {
+                List<String> tmp = hakukohdeDao.findByHakuOid(hakuDTO.getOid(), null, 0, 0, null, null);
+                hakuDTO.setHakukohdeOids(tmp);
+            }
         }
 
         hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());

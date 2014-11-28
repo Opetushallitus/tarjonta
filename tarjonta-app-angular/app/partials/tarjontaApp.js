@@ -293,13 +293,15 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                 Hakukohde.get({oid: $route.current.params.id}).$promise.then(function(res) {
                     var tarjoajat = [];
 
-                    angular.forEach(res.result.koulutusmoduuliToteutusTarjoajatiedot, function(tiedot) {
-                        angular.forEach(tiedot.tarjoajaOids, function(oid) {
-                            if (tarjoajat.indexOf(oid) === -1) {
-                                tarjoajat.push(oid);
-                            }
+                    if (res.result) {
+                        angular.forEach(res.result.koulutusmoduuliToteutusTarjoajatiedot, function(tiedot) {
+                            angular.forEach(tiedot.tarjoajaOids, function(oid) {
+                                if (tarjoajat.indexOf(oid) === -1) {
+                                    tarjoajat.push(oid);
+                                }
+                            });
                         });
-                    });
+					}
 
                     if (tarjoajat.length) {
                         OrganisaatioService.getPopulatedOrganizations(tarjoajat).then(function(orgs) {

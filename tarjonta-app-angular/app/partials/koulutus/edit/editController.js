@@ -308,6 +308,19 @@ app.controller('BaseEditController', [
                 fnCustomCallbackAfterSave,
                 converter.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
                 );
+
+            if ($scope.uiModel.isMutable) {
+                var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
+                hakukohdePromise.then(function(hakukohteet) {
+                	if (hakukohteet.result && hakukohteet.result.length > 0) {
+                		$scope.setMinMax(true, model);
+                	} else {
+                		$scope.setMinMax(false, model);
+                	}
+                }, function() {
+                	$scope.setMinMax(false, model);
+                });
+			}
         };
 
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
@@ -683,9 +696,11 @@ app.controller('BaseEditController', [
     				if (alkamisPvm.getMonth() < 7) {
     					minY.setFullYear(vuosi, 0, 1);
     					maxY.setFullYear(vuosi, 6, 31);
+    					model.koulutuksenAlkamiskausi.uri = "kausi_k";
 					} else {
     					minY.setFullYear(vuosi, 7, 1);
     					maxY.setFullYear(vuosi, 11, 31);
+    					model.koulutuksenAlkamiskausi.uri = "kausi_s";
 					}
 					$scope.min = minY;
 					$scope.max = maxY;
@@ -702,6 +717,9 @@ app.controller('BaseEditController', [
     					} else if (model.koulutuksenAlkamiskausi.uri.indexOf("_s") > -1) {
         					minY.setFullYear(vuosi, 7, 1);
         					maxY.setFullYear(vuosi, 11, 31);
+    					} else {
+            				model.isMinmax = false;
+            				return;
     					}
     					$scope.min = minY;
     					$scope.max = maxY;

@@ -341,8 +341,30 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
+    public Map<String,List<String>> findAllHakuToHakukohde() {
+        // Haetaan kaikkien hakujen hakukohde oidit yhdellä kyselyllä.
+        // Tämä on tehty suorituskyvyn parantamiseksi haku/findAll Rest-kyselyyn.
+        log.debug("findAllHakuToHakukohde");
+        String q = "SELECT h.oid, hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE hk.tila not in :poistettu";
+        Query query = getEntityManager().createQuery(q);
+        query.setParameter("poistettu", poistettuTila);
+        Map<String,List<String>> map = new HashMap<String, List<String>>();
+        List<Object[]> result = query.getResultList();
+        for (Object[] tuple: result) {
+            String hakuOid = (String)tuple[0];
+            String kohdeOid = (String)tuple[1];
+            List<String> hakukohdes = map.get(hakuOid);
+            if (hakukohdes == null) {
+                hakukohdes = new ArrayList<String>();
+                map.put(hakuOid, hakukohdes);
+            }
+            hakukohdes.add(kohdeOid);
+        }
+        return map;
+    }
+    
+    @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
-        log.debug("findByHakuOid({}, ...)", hakuOid);
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
 
@@ -398,7 +420,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
      * @return
      */
     private List<Object[]> findScalars(BooleanExpression whereExpr, int count, int startIndex, Expression<?>... projectionExpr) {
-        log.debug("findScalars({}, {}, {}, {})", new Object[]{whereExpr, count, startIndex, projectionExpr});
+        log.debug("findScalars({}, {}, {}, {})", whereExpr, count, startIndex, projectionExpr);
 
         QHakukohde hakukohde = QHakukohde.hakukohde;
 

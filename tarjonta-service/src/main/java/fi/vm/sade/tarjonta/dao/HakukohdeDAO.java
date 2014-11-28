@@ -25,6 +25,7 @@ import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * DAO interface to retrieve Application Options (Hakukohde's).
@@ -103,6 +104,12 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
      * @return
      */
     List<String> findOidsByKoulutusId(long id);
+
+    /**
+     * Returns mapping from haku oids to hakukohde oids (not including ones with POISTETTU state)
+     * @return
+     */
+    Map<String, List<String>> findAllHakuToHakukohde();
 
     /**
      * @param hakuOid
