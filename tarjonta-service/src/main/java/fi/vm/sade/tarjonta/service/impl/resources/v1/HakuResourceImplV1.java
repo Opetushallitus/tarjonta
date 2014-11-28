@@ -198,16 +198,20 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus = hakuDAO.findAll();
-
         LOG.debug("FOUND  : {} hakus", hakus.size());
+        Map<String,List<String>> hakukohdeMap = null;
+        if (params.addHakukohdes) {
+            hakukohdeMap = hakukohdeDAO.findAllHakuToHakukohde();
+        }
         List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus != null && hakus.size() > 0) {
             for (Haku haku : hakus) {
-                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes);
+                List<String> hakukohteet = hakukohdeMap.get(haku.getOid());
+                if (hakukohteet == null) { hakukohteet = Collections.emptyList(); }
+                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes, hakukohteet);
                 hakuDtos.add(hakuV1RDTO);
             }
-
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
             resultV1RDTO.setResult(hakuDtos);
         } else {
