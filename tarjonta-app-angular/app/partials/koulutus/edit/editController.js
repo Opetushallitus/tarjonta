@@ -313,14 +313,16 @@ app.controller('BaseEditController', [
                 var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
                 hakukohdePromise.then(function(hakukohteet) {
                 	if (hakukohteet.result && hakukohteet.result.length > 0) {
-                		$scope.setMinMax(true, model);
+                		$scope.model.saved = true;
+                		$scope.setMinMax(true);
                 	} else {
-                		$scope.setMinMax(false, model);
+                		$scope.model.saved = false;
+                		$scope.setMinMax(false);
                 	}
                 }, function() {
-                	$scope.setMinMax(false, model);
                 });
 			}
+
         };
 
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
@@ -493,12 +495,12 @@ app.controller('BaseEditController', [
                     var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
                     hakukohdePromise.then(function(hakukohteet) {
                     	if (hakukohteet.result && hakukohteet.result.length > 0) {
-                    		$scope.setMinMax(true, model);
+                    		$scope.setMinMax(true);
                     	} else {
-                    		$scope.setMinMax(false, model);
+                    		$scope.setMinMax(false);
                     	}
                     }, function() {
-                    	$scope.setMinMax(false, model);
+                    	$scope.setMinMax(false);
                     });
 				} // if (uiModel.isMutable)
             }); // koulutus.canEdit.then
@@ -685,22 +687,22 @@ app.controller('BaseEditController', [
             });
         };
         
-        $scope.setMinMax = function(minMax, model) {
-			model.isMinmax = minMax;
-            if (model.isMinmax) {
-            	if (model.koulutuksenAlkamisPvms && model.koulutuksenAlkamisPvms.length > 0) {
-            		var alkamisPvm = new Date(model.koulutuksenAlkamisPvms[0]);
+        $scope.setMinMax = function(minMax) {
+        	$scope.model.isMinmax = minMax;
+            if ($scope.model.isMinmax) {
+            	if ($scope.model.koulutuksenAlkamisPvms && $scope.model.koulutuksenAlkamisPvms.length > 0) {
+            		var alkamisPvm = new Date($scope.model.koulutuksenAlkamisPvms[0]);
     				var vuosi = alkamisPvm.getFullYear();
     				var minY = new Date();
     				var maxY = new Date();
     				if (alkamisPvm.getMonth() < 7) {
     					minY.setFullYear(vuosi, 0, 1);
     					maxY.setFullYear(vuosi, 6, 31);
-    					model.koulutuksenAlkamiskausi.uri = "kausi_k";
+    					$scope.model.koulutuksenAlkamiskausi.uri = "kausi_k";
 					} else {
     					minY.setFullYear(vuosi, 7, 1);
     					maxY.setFullYear(vuosi, 11, 31);
-    					model.koulutuksenAlkamiskausi.uri = "kausi_s";
+    					$scope.model.koulutuksenAlkamiskausi.uri = "kausi_s";
 					}
 					$scope.min = minY;
 					$scope.max = maxY;
@@ -709,16 +711,16 @@ app.controller('BaseEditController', [
 				} else {
     				var minY = new Date();
     				var maxY = new Date();
-    				if (model.koulutuksenAlkamiskausi && model.koulutuksenAlkamiskausi.uri && /^\+?(0|[1-9]\d*)$/.test(model.koulutuksenAlkamisvuosi)) {
-    					var vuosi = model.koulutuksenAlkamisvuosi;
-        				if (model.koulutuksenAlkamiskausi.uri.indexOf("_k") > -1) {
+    				if ($scope.model.koulutuksenAlkamiskausi && $scope.model.koulutuksenAlkamiskausi.uri && /^\+?(0|[1-9]\d*)$/.test($scope.model.koulutuksenAlkamisvuosi)) {
+    					var vuosi = $scope.model.koulutuksenAlkamisvuosi;
+        				if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf("_k") > -1) {
         					minY.setFullYear(vuosi, 0, 1);
         					maxY.setFullYear(vuosi, 6, 31);
-    					} else if (model.koulutuksenAlkamiskausi.uri.indexOf("_s") > -1) {
+    					} else if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf("_s") > -1) {
         					minY.setFullYear(vuosi, 7, 1);
         					maxY.setFullYear(vuosi, 11, 31);
     					} else {
-            				model.isMinmax = false;
+    						$scope.model.isMinmax = false;
             				return;
     					}
     					$scope.min = minY;
@@ -726,10 +728,10 @@ app.controller('BaseEditController', [
     					$scope.minYear = minY.getFullYear();
     					$scope.maxYear = $scope.minYear;
 					} else {
-        				model.isMinmax = false;
+	            		$scope.model.isMinmax = false;
 					}
 				}
-			} // if (model.isMinmax) 
+			} // if ($scope.model.isMinmax) 
         };
 
 

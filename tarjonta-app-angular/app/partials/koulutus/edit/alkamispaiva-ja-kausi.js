@@ -32,25 +32,21 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
 
-            // asetetaan tarvittavat lukitukset tallennuksen yhteydessä
+            // asetetaan kausi- ja vuosikenttien rajoitukset BaseEditControllerin mukaan
             pScope.$watch("model.isMinmax", function(valNew, valOld) {
-            	lukittu = valNew ? valNew : valOld;
+            	lukittu = valNew !== undefined ? valNew : valOld;
             	$scope.ctrl.lukittu = lukittu;
-    	        pScope.model.isMinmax = lukittu;
-            	if (lukittu) {
+            	if ($scope.ctrl.lukittu) {
     	            $scope.minYear = pScope.minYear;
     	            $scope.maxYear = pScope.maxYear;
 				}
             }); 
 
-            // asetetaan tähän scopeen sama min/maxYear kuin BaseEditControllerissa (maxYearin muuttuessa)
-            pScope.$watch("maxYear", function(valNew, valOld) {
-            	if (lukittu) {
-    	            $scope.minYear = pScope.minYear;
-    	            $scope.maxYear = pScope.maxYear;
-				}
-            }); 
-
+            // asetetaan alkamispvm-rajoitukset tallennuksen yhteydessä
+            pScope.$watch("model.saved", function(valNew, valOld) {
+            	pScope.model.isMinmax = valNew !== undefined ? valNew : valOld;
+            });
+            
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
                 $scope.form[$scope.ctrl.kausivuosi] = valNew;
                 if (valNew && $scope.kausi) {
