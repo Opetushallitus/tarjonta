@@ -76,7 +76,7 @@
                         {{ model.hakukohde.aloituspaikatLkm}}
                     </td>
                 </tr>
-                <tr ng-show="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
+                <tr ng-show="needsValinnoissaKaytettavatAloituspaikat(model.hakukohde.toteutusTyyppi)">
                     <th tt="hakukohde.review.perustiedot.valintojenAloituspaikat"/>
                     <td colspan="2">
                         {{ model.hakukohde.valintojenAloituspaikatLkm }}
