@@ -46,11 +46,13 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         var tempMeta = apiModel.meta;
         apiModel.meta = {};
 
-        for (var i in languageUri) {
+        var i;
+
+        for (i in languageUri) {
             apiModel.meta[languageUri[i]] = tempMeta[languageUri[i]];
         }
 
-        for (var i in tempMeta) {//add all other
+        for (i in tempMeta) {//add all other
             if (angular.isUndefined(apiModel.meta[i])) {
                 apiModel.meta[i] = tempMeta[i];
             }
@@ -170,11 +172,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                         var arrSeparatedNames = henkilo.nimet.split(" ");
                         for (var p = 0; p < arrSeparatedNames.length - 1; p++) {
                             henkilo.etunimet += arrSeparatedNames[p];
-                            console.log("etunimi");
                         }
                         if (arrSeparatedNames.length > 1) {
                             henkilo.sukunimi = arrSeparatedNames[arrSeparatedNames.length - 1 ];
-                            console.log("sukunimi");
                         }
                     }
                 }
@@ -270,7 +270,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             factory.throwError('API model must be object, or empty object');
         }
         //fetch org name and OID from Organisation service
-        apiModel.organisaatio = {"oid": oid, "nimi": nimi}
+        apiModel.organisaatio = {"oid": oid, "nimi": nimi};
     };
 
     /**
@@ -349,11 +349,56 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         $log.debug("createAPIModel", apiModel);
     };
 
+    /**
+     * Osalla koulutuksista tutkinto-ohjelma kirjoitetaan vapaasti käsin,
+     * mutta kuitenkin pitää tallentaa myös koodiston arvo. Tästä syystä
+     * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), joten
+     * sen arvo asetetaan automaattisesti tällä funktiolla.
+     */
+    function koulutusohjelmanNimiKannassaInit($scope) {
+        if (!$scope.model.koulutusohjelmanNimiKannassa) {
+            $scope.model.koulutusohjelmanNimiKannassa = {};
+        }
+        $scope.$watch("uiModel.koulutusohjelmaModules", function(newVal) {
+            if (!newVal) {
+                return;
+            }
+
+            var keys = _.keys(newVal);
+
+            if ( keys.length === 1) {
+                var key = keys[0];
+                $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[key].oid;
+                $scope.model.koulutusohjelma = {
+                    uri: newVal[key].koodiUri,
+                    versio: newVal[key].koodiVersio
+                };
+            }
+            else if (keys.length > 1) {
+                $log.error("Found more than 1 matching koulutusohjelma");
+            }
+        });
+    }
+
     /*************************************************/
     /* INITIALIZATION PARAMETERS BY TOTEUTUSTYYPPI */
     /*************************************************/
 
-    var GENERIC_VALMISTAVA_STRUCTURE = {
+    var DEFAULT_REVIEW_FIELDS = [
+        "TAVOITTEET",
+        "KOULUTUKSEN_TAVOITTEET",
+        "KOULUTUKSEN_RAKENNE",
+        "JATKOOPINTO_MAHDOLLISUUDET",
+        "KOULUTUSOHJELMAN_VALINTA",
+        "SISALTO",
+        "KOHDERYHMA",
+        "SIJOITTUMINEN_TYOELAMAAN",
+        "KANSAINVALISTYMINEN",
+        "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA",
+        "AMMATTINIMIKKEET"
+    ];
+
+    var GENERIC_STRUCTURE = {
         page: 'nayttotutkinto',
         KUVAUS_ORDER: [
             {type: "TAVOITTEET", isKomo: true},
@@ -375,27 +420,157 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             tutkintonimike: {},
             koulutustyyppi: {module: 'TUTKINTO_OHJELMA'},
             koulutuslaji: {module: 'TUTKINTO'}
-        }, COMBO: {
-            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
-        }, MCOMBO: {
+        },
+        COMBO: {
+            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
+            suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'}
+        },
+        MCOMBO: {
             opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'}
-        }, STR: {
+            ammattinimikkeet: {koodisto: 'koodisto-uris.ammattinimikkeet'},
+            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+            opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'}
+        },
+        STR: {
             koulutuksenAlkamisvuosi: {"default": ''},
             toteutustyyppi: {"default": null}, //no default value!
             tila: {'default': 'LUONNOS'},
-            tunniste: {'default': ''},
+            tunniste: {"default": ''},
             tarkenne: {'default': ''}
-        }, DATES: {
+        },
+        DATES: {
             koulutuksenAlkamisPvms: {"default": new Date()}
-        }, BOOL: {
+        },
+        BOOL: {
             opintojenMaksullisuus: {"default": false}
-        }, IMAGES: {
-        }, DESC: {
-            kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
-                ])},
-            kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
-                ])}
+        },
+        IMAGES: {},
+        DESC: {
+            kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([])},
+            kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
+        }
+    };
+
+    var AMMATILLINEN_PERUSTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
+        KUVAUS_ORDER: [
+            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
+            {type: "SISALTO", isKomo: false, length: 2000},
+            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
+            {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+        ],
+        templates: {
+            edit: 'AMMATILLINEN_PERUSTUTKINTO',
+            review: 'GENERIC'
+        },
+        reviewFields: DEFAULT_REVIEW_FIELDS,
+        params: {
+            reviewOhjelmaLabel: 'koulutus.review.perustiedot.osaamisala',
+            onlyOneOpetuskieli: true
+        }
+    });
+
+    var NAYTTOTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
+        koodistoDefaults: {
+            tutkintonimike: "tutkintonimikkeet_00000",
+            koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
+        },
+        templates: {
+            review: 'NAYTTOTUTKINTO',
+            edit: 'NAYTTOTUTKINTO'
+        }
+    });
+
+    var GENERIC_VALMISTAVA_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
+        KUVAUS_ORDER: [
+            {type: "KOULUTUSOHJELMAN_VALINTA", isKomo: false, length: 2000},
+            {type: "SISALTO", isKomo: false, length: 2000},
+            {type: "KOHDERYHMA", isKomo: false, length: 2000},
+            {type: "SIJOITTUMINEN_TYOELAMAAN", isKomo: false, length: 2000},
+            {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+        ],
+        COMBO: angular.extend({}, GENERIC_STRUCTURE.COMBO, {
+            opintojenLaajuusyksikko: {koodisto: 'koodisto-uris.opintojenLaajuusyksikko'},
+            koulutuslaji: {koodisto: 'koodisto-uris.koulutuslaji'}
+        }),
+        templates: {
+            edit: 'GENERIC',
+            review: 'GENERIC'
+        },
+        reviewFields: DEFAULT_REVIEW_FIELDS,
+        params: {
+            onlyOneOpetuskieli: true
+        }
+    });
+
+    var GENERIC_LUKIOKOULUTUS_STRUCTURE = {
+        KUVAUS_ORDER: [
+            {type: "SISALTO", isKomo: false, length: 2000},
+            {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+            {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+        ],
+        MLANG: {},
+        RELATION: {
+            koulutuskoodi: {module: 'TUTKINTO'},
+            koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
+            koulutusala: {module: 'TUTKINTO'},
+            opintoala: {module: 'TUTKINTO'},
+            koulutuslaji: {module: 'TUTKINTO'},
+            pohjakoulutusvaatimus: {module: 'TUTKINTO'},
+            opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
+            opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
+            tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
+            koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
+        },
+        COMBO: {
+            suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
+            koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
+        },
+        MCOMBO: {
+            kielivalikoima: {
+                koodisto: 'koodisto-uris.kieli',
+                types: ['A1A2KIELI', 'B1KIELI', 'B2KIELI', 'B3KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
+            },
+            opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+            opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+            opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+            opetuskielis: {koodisto: 'koodisto-uris.kieli'},
+            lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
+        },
+        STR: {
+            koulutuksenAlkamisvuosi: {"default": ''},
+            toteutustyyppi: {"default": 'LUKIOKOULUTUS'},
+            tila: {'default': 'LUONNOS'},
+            tunniste: {"default": ''},
+            linkkiOpetussuunnitelmaan: {"default": ''},
+            suunniteltuKestoArvo: {nullable: true, "default": ''}
+        },
+        DATES: {
+            koulutuksenAlkamisPvms: {"default": new Date()}
+        },
+        BOOL: {},
+        IMAGES: {},
+        DESC: {
+            kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([])},
+            kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
+        },
+        templates: {
+            edit: 'LUKIOKOULUTUS',
+            review: 'GENERIC'
+        },
+        reviewFields: [
+            "TAVOITTEET",
+            "SISALTO",
+            "KOULUTUKSEN_RAKENNE",
+            "JATKOOPINTO_MAHDOLLISUUDET",
+            "KANSAINVALISTYMINEN",
+            "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA"
+        ],
+        params: {
+            isLukio: true,
+            reviewOhjelmaLabel: 'koulutus.review.perustiedot.lukiolinja'
         }
     };
 
@@ -404,6 +579,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*  KORKEAKOULUTUS INITIALIZATION PARAMETERS */
         /*********************************************/
         KORKEAKOULUTUS: {
+            koodistoDefaults: {},
+            koulutustyyppiKoodiUri: "koulutustyyppi_3",
             KUVAUS_ORDER: [
                 {type: "TAVOITTEET", isKomo: true, length: 2000},
                 {type: "LISATIETOA_OPETUSKIELISTA", isKomo: false, length: 2000},
@@ -485,70 +662,160 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     ])}
             }
         },
+
+        /*******************************************/
+        /* LUKIOKOULUTUS_AIKUISTEN INITIALIZATION PARAMETERS */
+        /*******************************************/
+        LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
+            koodistoDefaults: {
+                koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
+            },
+            koulutustyyppiKoodiUri: "koulutustyyppi_14",
+            STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
+                toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'}
+            })
+        }),
+
         /*******************************************/
         /* LUKIOKOULUTUS INITIALIZATION PARAMETERS */
         /*******************************************/
-        LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: {
-            KUVAUS_ORDER: [
-                {type: "TAVOITTEET", isKomo: true, length: 2000},
-                {type: "JATKOOPINTO_MAHDOLLISUUDET", isKomo: true, length: 2000},
-                {type: "KOULUTUKSEN_RAKENNE", isKomo: true, length: 2000},
-                {type: "SISALTO", isKomo: false, length: 2000},
-                {type: "KOHDERYHMA", isKomo: false, length: 2000},
-                {type: "OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
-                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
-                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
-            ],
-            MLANG: {},
-            RELATION: {
-                koulutuskoodi: {module: 'TUTKINTO'},
-                koulutusohjelma: {module: 'TUTKINTO_OHJELMA'},
-                koulutusala: {module: 'TUTKINTO'},
-                opintoala: {module: 'TUTKINTO'},
-                koulutuslaji: {module: 'TUTKINTO'},
-                pohjakoulutusvaatimus: {module: 'TUTKINTO'},
-                opintojenLaajuusyksikko: {module: 'TUTKINTO_OHJELMA'},
-                opintojenLaajuusarvo: {module: 'TUTKINTO_OHJELMA'},
-                tutkintonimike: {module: 'TUTKINTO_OHJELMA'},
-                koulutustyyppi: {module: 'TUTKINTO_OHJELMA'}
-            }, COMBO: {
-                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
-                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'},
-            }, MCOMBO: {
-                kielivalikoima: {
-                    koodisto: 'koodisto-uris.kieli',
-                    types: ['A1A2KIELI', 'B1KIELI', 'B2KIELI', 'B3KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
-                },
-                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
-                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
-                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
-                opetuskielis: {koodisto: 'koodisto-uris.kieli'},
-                lukiodiplomit: {koodisto: 'koodisto-uris.lukiodiplomit'}
-            }, STR: {
-                koulutuksenAlkamisvuosi: {"default": ''},
-                toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'},
-                tila: {'default': 'LUONNOS'},
-                tunniste: {"default": ''},
-                linkkiOpetussuunnitelmaan: {"default": ''},
-                suunniteltuKestoArvo: {nullable: true, "default": ''}
-            }, DATES: {
-                koulutuksenAlkamisPvms: {"default": new Date()}
-            }, BOOL: {
-            }, IMAGES: {
-            }, DESC: {
-                kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([
-                    ])},
-                kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([
-                    ])}
-            }
-        },
+        LUKIOKOULUTUS: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
+            koodistoDefaults: {
+                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
+            },
+            koulutustyyppiKoodiUri: "koulutustyyppi_2",
+            params: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.params, {
+                onlyOneOpetuskieli: true
+            })
+        }),
+
+        /*******************************************/
+        /* AMMATILLINEN_PERUSTUTKINTO INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLINEN_PERUSTUTKINTO: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
+            koodistoDefaults: {
+                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
+            },
+            koulutustyyppiKoodiUri: "koulutustyyppi_1",
+            RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
+        }),
+
+        /*******************************************/
+        /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_5",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            }),
+            initFunction: koulutusohjelmanNimiKannassaInit
+        }),
+
+        /*******************************************/
+        /* PERUSOPETUKSEN_LISAOPETUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        PERUSOPETUKSEN_LISAOPETUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            koodistoDefaults: {
+                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
+            },
+            koulutustyyppiKoodiUri: "koulutustyyppi_6",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
+        }),
+
+        /*******************************************/
+        /* AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_7",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
+        }),
+
+        /*******************************************/
+        /* MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_8",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
+        }),
+
+        /*******************************************/
+        /* MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_9",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
+        }),
+
+        /*******************************************/
+        /* VAPAAN_SIVISTYSTYON_KOULUTUS INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        VAPAAN_SIVISTYSTYON_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_10",
+            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            }),
+            MCOMBO: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.MCOMBO, {
+                aihees: {koodisto: 'koodisto-uris.aiheet'}
+            }),
+            initFunction: koulutusohjelmanNimiKannassaInit
+        }),
+
+        /*******************************************/
+        /* AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA INITIALIZATION PARAMETERS  */
+        /*******************************************/
+        AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
+            koodistoDefaults: {
+                koulutuslaji: 'koulutuslaji_n' // aikuiskoulutus
+            },
+            koulutustyyppiKoodiUri: "koulutustyyppi_4",
+            RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'}
+            })
+        }),
+
         /*******************************************/
         /* AMMATILLINEN INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
-        ERIKOISAMMATTITUTKINTO: GENERIC_VALMISTAVA_STRUCTURE,
-        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: GENERIC_VALMISTAVA_STRUCTURE,
-        AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA: {//not enum
+        AMMATTITUTKINTO: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_11"
+        }),
+
+        ERIKOISAMMATTITUTKINTO: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
+            koulutustyyppiKoodiUri: "koulutustyyppi_12"
+        }),
+
+        AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
+            koodistoDefaults: {
+                koulutuslaji: 'koulutuslaji_a', // aikuiskoulutus
+                tutkintonimike: "tutkintonimikkeet_00000",
+                pohjakoulutusvaatimus: 'pohjakoulutustoinenaste_1' // perusopetuksen oppimäärä
+            },
+            koulutustyyppiKoodiUri: "koulutustyyppi_13"
+        }),
+
+        /**
+         * Tämä ei itsesään ole koulutustyyppi, vaan sitä käytetään "lapsikoulutuksena"
+         * esim. näyttötutkinnoille.
+         */
+        AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA: {
             KUVAUS_ORDER: [
                 {type: "SISALTO", isKomo: false, length: 1500},
                 {type: "KOHDERYHMA", isKomo: false, length: 1500},
@@ -576,6 +843,21 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                     ])}
             }
         }
+    };
+
+    factory.getToteutustyyppiByKoulutustyyppiKoodiUri = function(koodiUri) {
+        for(var totetustyyppi in factory.STRUCTURE) {
+            var item = factory.STRUCTURE[totetustyyppi];
+            if (item && item.koulutustyyppiKoodiUri === koodiUri) {
+                return totetustyyppi;
+            }
+        }
+    };
+
+    factory.ENUMS = {
+        ENUM_KOMO_MODULE_TUTKINTO: 'TUTKINTO',
+        ENUM_KOMO_MODULE_TUTKINTO_OHJELMA: 'TUTKINTO_OHJELMA',
+        ENUM_OPTIONAL_TOTEUTUS: 'AMMATILLINEN_NAYTTOTUTKINTONA_VALMISTAVA'
     };
 
     factory.validateOutputData = function(m, toteutustyyppi) {
@@ -610,7 +892,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
             var koodis = uiModel[key].koodis;
             for (var i in koodis) {
-                if (koodis[i].koodiUri === apiModel[key].uri) {
+                if (apiModel[key] && koodis[i].koodiUri === apiModel[key].uri) {
                     apiModel[key] = {
                         uri: koodis[i].koodiUri,
                         versio: koodis[i].koodiVersio
@@ -675,7 +957,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             }
         });
 
-        $log.debug(JSON.stringify(apiModel));
         return apiModel;
     };
 

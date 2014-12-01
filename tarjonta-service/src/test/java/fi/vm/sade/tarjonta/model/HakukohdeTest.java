@@ -16,28 +16,51 @@
 package fi.vm.sade.tarjonta.model;
 
 import org.junit.Test;
+
+import javax.validation.constraints.AssertTrue;
+
 import static org.junit.Assert.*;
 
 /**
  *
  */
 public class HakukohdeTest {
-    
+
     @Test
     public void testRemoveValintakoe() {
-        
+
         Hakukohde h = new Hakukohde();
         Valintakoe v = new Valintakoe();
-        
+
         h.addValintakoe(v);
         assertEquals(1, h.getValintakoes().size());
-        
+
         Valintakoe v2 = h.getValintakoes().iterator().next();
         h.removeValintakoe(v2);
-        
+
         assertEquals(0, h.getValintakoes().size());
-        
+
     }
-    
+
+    @Test
+    public void thatReturnsEmptyRyhmaOids() {
+        Hakukohde h = new Hakukohde();
+
+        assertTrue(h.getOrganisaatioRyhmaOids().length == 0);
+
+        h.setOrganisaatioRyhmaOids(new String[]{""});
+
+        assertTrue(h.getOrganisaatioRyhmaOids().length == 0);
+    }
+
+    @Test
+    public void thatReturnsRyhmaOids() {
+        Hakukohde h = new Hakukohde();
+        h.setOrganisaatioRyhmaOids(new String[]{"0.1.2", "3.4.5"});
+
+        assertTrue(h.getOrganisaatioRyhmaOids().length == 2);
+        assertEquals("0.1.2", h.getOrganisaatioRyhmaOids()[0]);
+        assertEquals("3.4.5", h.getOrganisaatioRyhmaOids()[1]);
+    }
 }
 

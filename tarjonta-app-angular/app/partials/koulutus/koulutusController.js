@@ -28,7 +28,13 @@ app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.toteutustyyppi;
                 if (angular.isDefined(converter.STRUCTURE[type])) {
-                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
+                    if ( converter.STRUCTURE[type].templates && converter.STRUCTURE[type].templates[actionType] ) {
+                        $scope.resultPageUri = "partials/koulutus/" + actionType + "/"
+                           + converter.STRUCTURE[type].templates[actionType] + ".html";
+                    }
+                    else {
+                        $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
+                    }
                 } else {
                     $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }

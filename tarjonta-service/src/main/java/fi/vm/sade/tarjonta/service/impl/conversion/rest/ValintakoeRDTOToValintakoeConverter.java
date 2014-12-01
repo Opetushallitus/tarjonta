@@ -24,8 +24,8 @@ public class ValintakoeRDTOToValintakoeConverter implements Converter<Valintakoe
     public Valintakoe convert(ValintakoeRDTO valintakoeRDTO) {
         Valintakoe valintakoe = new Valintakoe();
 
-        valintakoe.setKuvaus(CommonRestConverters.convertMapToMonikielinenTeksti(valintakoeRDTO.getKuvaus()));
-        valintakoe.setLisanaytot(CommonRestConverters.convertMapToMonikielinenTeksti(valintakoeRDTO.getLisanaytot()));
+        valintakoe.setKuvaus(CommonRestConverters.toMonikielinenTeksti(valintakoeRDTO.getKuvaus()));
+        valintakoe.setLisanaytot(CommonRestConverters.toMonikielinenTeksti(valintakoeRDTO.getLisanaytot()));
         valintakoe.setTyyppiUri(valintakoeRDTO.getTyyppiUri());
         valintakoe.setPisterajat(convertPisterajaRDTOToPisteraja(valintakoe, valintakoeRDTO.getValintakoePisterajas()));
         valintakoe.setAjankohtas(convertAjankohtaRDTOToAjankohta(valintakoeRDTO.getValintakoeAjankohtas()));
@@ -43,7 +43,7 @@ public class ValintakoeRDTOToValintakoeConverter implements Converter<Valintakoe
 
             for (ValintakoeAjankohtaRDTO ajankohtaRDTO: valintakoeAjankohtaRDTOs) {
                ValintakoeAjankohta ajankohta = new ValintakoeAjankohta();
-               ajankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(ajankohtaRDTO.getOsoite()));
+               ajankohta.setAjankohdanOsoite(CommonRestConverters.toOsoite(ajankohtaRDTO.getOsoite()));
                ajankohta.setAlkamisaika(ajankohtaRDTO.getAlkaa());
                ajankohta.setPaattymisaika(ajankohtaRDTO.getLoppuu());
                ajankohta.setLisatietoja(ajankohtaRDTO.getLisatiedot());

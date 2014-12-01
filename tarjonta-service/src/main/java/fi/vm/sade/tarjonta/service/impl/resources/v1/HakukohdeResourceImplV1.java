@@ -55,10 +55,19 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -114,6 +123,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired(required = true)
     private ParameterServices parameterService;
+
+    @Autowired
+    private PlatformTransactionManager tm;
 
     public final static String KOULUTUSASTE_KEY = "koulutusaste";
 
@@ -494,14 +506,40 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
-            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
             case ERIKOISAMMATTITUTKINTO:
             case AMMATTITUTKINTO:
             case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
                 validationMessageses.addAll(HakukohdeValidator
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
-
+            case LUKIOKOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
+            case PERUSOPETUKSEN_LISAOPETUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
+            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
+            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+                validationMessageses.addAll(HakukohdeValidator
+                        .validateToisenAsteenHakukohde(hakukohdeV1RDTO));
+                break;
             default:
                 LOG.error("Toteutustyyppi:" + toteutustyyppi + " validation rules not implemented");
                 validationMessageses
@@ -644,7 +682,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             List<HakukohdeValidationMessages> validationMessagesList = validateHakukohde(hakukohdeRDTO);
             if (hakukohdeRDTO.getValintakokeet() != null && !hakukohdeRDTO.getValintakokeet().isEmpty()) {
-                HakukohdeValidator.validateValintakokees(hakukohdeRDTO.getValintakokeet());
+                validationMessagesList.addAll(HakukohdeValidator.validateValintakokees(hakukohdeRDTO.getValintakokeet()));
             }
 
             Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
@@ -1397,6 +1435,194 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         validKomotoSelection.getResult().setToteutustyyppis(toteutustyyppis);
 
         return validKomotoSelection;
+    }
+
+    public void updateValintakokeetToNewStructure() {
+        List<String> oids = hakukohdeDAO.findAllOids();
+
+        for (final String oid : oids) {
+
+            executeInTransaction(new Runnable() {
+
+                @Override
+                public void run() {
+                    permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
+                    Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+
+                    if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+
+                        final KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
+
+                        if (shouldUpdateValintakoeStructure(komoto)) {
+                            updateValintakokeet(hakukohde);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public void updateLiitteetToNewStructure() {
+
+        List<String> oids = hakukohdeDAO.findAllOids();
+
+        for (final String oid : oids) {
+
+            executeInTransaction(new Runnable() {
+
+                @Override
+                public void run() {
+                    permissionChecker.checkUpdateHakukohdeAndIgnoreParametersWhileChecking(oid);
+                    Hakukohde hakukohde = hakukohdeDAO.findHakukohdeByOid(oid);
+
+                    if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+
+                        final KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
+
+                        if (shouldUpdateLiiteStructure(komoto)) {
+                            updateLiitteet(hakukohde);
+                        }
+                    }
+
+                }
+            });
+        }
+    }
+
+    private void executeInTransaction(final Runnable runnable) {
+        TransactionTemplate tt = new TransactionTemplate(tm);
+        tt.execute(new TransactionCallback<Object>() {
+
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                runnable.run();
+                return null;
+            }
+        });
+    }
+
+    private boolean shouldUpdateValintakoeStructure(KoulutusmoduuliToteutus komoto) {
+        return !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUTUS) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
+    }
+
+    private boolean shouldUpdateLiiteStructure(KoulutusmoduuliToteutus komoto) {
+        return !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUTUS) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA) &&
+                !komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA);
+    }
+
+    private void updateLiitteet(Hakukohde hakukohde) {
+        List<HakukohdeLiite> liitteet = new ArrayList<HakukohdeLiite>();
+
+        for (HakukohdeLiite oldLiite : hakukohde.getLiites()) {
+            if (oldLiite.getKieli() == null) {
+                liitteet.addAll(createLiitteet(oldLiite));
+            }
+        }
+
+        if (liitteet.isEmpty()) {
+            return;
+        }
+
+        hakukohde.getLiites().clear();
+
+        for (HakukohdeLiite liite : liitteet) {
+            hakukohde.addLiite(liite);
+        }
+
+        hakukohdeDAO.update(hakukohde);
+        LOG.info("Updating hakukohde " + hakukohde.getOid() + " liitteet");
+    }
+
+    private List<HakukohdeLiite> createLiitteet(HakukohdeLiite oldLiite) {
+        List<HakukohdeLiite> liitteet = new ArrayList<HakukohdeLiite>();
+
+        for (TekstiKaannos tekstiKaannos : oldLiite.getKuvaus().getKaannoksetAsList()) {
+            HakukohdeLiite liite = new HakukohdeLiite();
+            liite.setLiitetyyppi(oldLiite.getLiitetyyppi());
+            liite.setKieli(StringUtils.substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
+            liite.setErapaiva(oldLiite.getErapaiva());
+            liite.setHakukohdeLiiteNimi(oldLiite.getHakukohdeLiiteNimi());
+            liite.setKuvaus(createKuvaus(tekstiKaannos));
+            liite.setLastUpdateDate(new Date());
+            liite.setLastUpdatedByOid(oldLiite.getLastUpdatedByOid());
+            liite.setSahkoinenToimitusosoite(oldLiite.getSahkoinenToimitusosoite());
+            liite.setToimitusosoite(oldLiite.getToimitusosoite());
+            liite.setVersion(oldLiite.getVersion());
+            liitteet.add(liite);
+        }
+        return liitteet;
+    }
+
+    private void updateValintakokeet(Hakukohde hakukohde) {
+        List<Valintakoe> valintakokeet = new ArrayList<Valintakoe>();
+
+        for (Valintakoe oldValintakoe : hakukohde.getValintakoes()) {
+            if (oldValintakoe.getKieli() == null) {
+                valintakokeet.addAll(createValintakokeet(oldValintakoe));
+            }
+        }
+
+        if (valintakokeet.isEmpty()) {
+            return;
+        }
+
+        hakukohde.getValintakoes().clear();
+
+        for (Valintakoe valintakoe : valintakokeet) {
+            hakukohde.addValintakoe(valintakoe);
+        }
+
+        hakukohdeDAO.update(hakukohde);
+        LOG.info("Updating hakukohde " + hakukohde.getOid() + " valintakokeet");
+    }
+
+    private List<Valintakoe> createValintakokeet(Valintakoe oldValintakoe) {
+        List<Valintakoe> valintakokeet = new ArrayList<Valintakoe>();
+
+        for (TekstiKaannos tekstiKaannos : oldValintakoe.getKuvaus().getKaannoksetAsList()) {
+            Valintakoe valintakoe = new Valintakoe();
+            valintakoe.setKuvaus(createKuvaus(tekstiKaannos));
+            valintakoe.setKieli(StringUtils.substringBefore(tekstiKaannos.getKieliKoodi(), "#"));
+            valintakoe.setTyyppiUri(oldValintakoe.getTyyppiUri());
+            valintakoe.setLastUpdateDate(new Date());
+            valintakoe.setLastUpdatedByOid(oldValintakoe.getLastUpdatedByOid());
+            valintakoe.setVersion(oldValintakoe.getVersion());
+
+            Set<ValintakoeAjankohta> ajankohdat = createNewAjankohdat(oldValintakoe);
+            for (ValintakoeAjankohta valintakoeAjankohta : ajankohdat) {
+                valintakoeAjankohta.setValintakoe(valintakoe);
+                valintakoe.addAjankohta(valintakoeAjankohta);
+            }
+
+            valintakokeet.add(valintakoe);
+        }
+        return valintakokeet;
+    }
+
+    private MonikielinenTeksti createKuvaus(TekstiKaannos tekstiKaannos) {
+        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
+        monikielinenTeksti.addTekstiKaannos(tekstiKaannos.getKieliKoodi(), tekstiKaannos.getArvo());
+        return monikielinenTeksti;
+    }
+
+    private Set<ValintakoeAjankohta> createNewAjankohdat(Valintakoe oldValintakoe) {
+        Set<ValintakoeAjankohta> ajankohdat = new HashSet<ValintakoeAjankohta>();
+
+        for (ValintakoeAjankohta oldAjankohta : oldValintakoe.getAjankohtas()) {
+            ValintakoeAjankohta ajankohta = new ValintakoeAjankohta();
+            ajankohta.setAjankohdanOsoite(oldAjankohta.getAjankohdanOsoite());
+            ajankohta.setAlkamisaika(oldAjankohta.getAlkamisaika());
+            ajankohta.setPaattymisaika(oldAjankohta.getPaattymisaika());
+            ajankohta.setLisatietoja(oldAjankohta.getLisatietoja());
+            ajankohdat.add(ajankohta);
+        }
+        return ajankohdat;
     }
 
     @Override

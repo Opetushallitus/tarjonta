@@ -20,10 +20,11 @@ pom.xml.versionsBackup
 npm-debug.log
 tarjonta-app-angular/.DS_Store
 tarjonta-app-angular/app/.DS_Store
-
+tarjonta-app-angular/config/protractor-credentials.js
 tarjonta-app-angular/nbproject
 
 /build
 /.gradle
 /tarjonta-service/nbactions.xml
 tarjonta-app-angular/config/protractor-credentials.js
+pom.xml.versionsBackup

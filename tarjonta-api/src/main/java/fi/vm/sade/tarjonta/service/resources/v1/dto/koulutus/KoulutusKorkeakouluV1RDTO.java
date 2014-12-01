@@ -40,12 +40,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Koulutuksen pohjakoulutusvaatimukset (sisältää koodisto koodi uri:a)", required = true)
     private KoodiUrisV1RDTO pohjakoulutusvaatimukset;
 
-    @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO aihees;
-
-    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO ammattinimikkeet;
-
     @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
     private Boolean opintojenMaksullisuus;
     @ApiModelProperty(value = "Koulutuksen hinta, on pakollinen jos koulutus on merkitty maksulliseksi")
@@ -115,24 +109,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
     }
 
     /**
-     * @return the ammattinimikkeet
-     */
-    public KoodiUrisV1RDTO getAmmattinimikkeet() {
-        if (ammattinimikkeet == null) {
-            ammattinimikkeet = new KoodiUrisV1RDTO();
-        }
-
-        return ammattinimikkeet;
-    }
-
-    /**
-     * @param ammattinimikkeet the ammattinimikkeet to set
-     */
-    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
-        this.ammattinimikkeet = ammattinimikkeet;
-    }
-
-    /**
      * @return the hinta
      */
     public Double getHinta() {
@@ -144,18 +120,6 @@ public class KoulutusKorkeakouluV1RDTO extends KoulutusV1RDTO {
      */
     public void setHinta(Double hinta) {
         this.hinta = hinta;
-    }
-
-    public KoodiUrisV1RDTO getAihees() {
-        if (aihees == null) {
-            aihees = new KoodiUrisV1RDTO();
-        }
-
-        return aihees;
-    }
-
-    public void setAihees(KoodiUrisV1RDTO aihees) {
-        this.aihees = aihees;
     }
 
     public String getParentKomoOid() {

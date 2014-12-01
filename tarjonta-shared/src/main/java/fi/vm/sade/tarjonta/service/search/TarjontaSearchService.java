@@ -382,6 +382,10 @@ public class TarjontaSearchService {
             q.addFilterQuery(String.format("%s:(%s)", Koulutus.TOTEUTUSTYYPPI_ENUM, Joiner.on(" ").join(tyypit)));
         }
 
+        // Älä palauta valmistavia koulutuksia. Nämä on aina "liitetty" johonkin toiseen koulutukseen, eikä niitä
+        // listata hakutuloksissa siitä syystä
+        q.addFilterQuery(String.format("!%s:(%s)", Koulutus.TOTEUTUSTYYPPI_ENUM, "*_VALMISTAVA"));
+
         //restrict by koulutus
         if (koulutusOids.size() > 0) {
             addFilterForKOulutus(koulutusOids, q);

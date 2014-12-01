@@ -42,9 +42,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
     @ApiModelProperty(value = "Valitaan opintojen maksullisuuden (false=koulutus ei vaadi maksua)")
     private Boolean opintojenMaksullisuus;
 
-    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
-    private KoodiUrisV1RDTO ammattinimikkeet;
-
     @ApiModelProperty(value = "Tarjoaja tai organisaation johon koulutus on liitetty", required = true)
     private OrganisaatioV1RDTO jarjestavaOrganisaatio;
 
@@ -84,24 +81,6 @@ public abstract class NayttotutkintoV1RDTO extends KoulutusV1RDTO {
      */
     public void setValmistavaKoulutus(ValmistavaV1RDTO valmistavaKoulutus) {
         this.valmistavaKoulutus = valmistavaKoulutus;
-    }
-
-    /**
-     * @return the ammattinimikkeet
-     */
-    public KoodiUrisV1RDTO getAmmattinimikkeet() {
-        if (ammattinimikkeet == null) {
-            ammattinimikkeet = new KoodiUrisV1RDTO();
-        }
-
-        return ammattinimikkeet;
-    }
-
-    /**
-     * @param ammattinimikkeet the ammattinimikkeet to set
-     */
-    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
-        this.ammattinimikkeet = ammattinimikkeet;
     }
 
     /**

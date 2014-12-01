@@ -2,8 +2,10 @@
 
     <controls-model
             model="formControls"
-            dto="model.valintaperustekuvaus"
-            title="model.valintaperustekuvaus.kuvauksenNimet">
+            tt-create="valintaperustekuvaus.create.header.title"
+            tt-edit="valintaperustekuvaus.edit.header.title"
+            title="model.valintaperustekuvaus.kuvauksenNimet"
+            dto="model.valintaperustekuvaus">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
@@ -15,60 +17,73 @@
         <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
 
     </controls-model>
-    
+
     <display-controls model="formControls" display="header"></display-controls>
 
-    <form name="valintaPerusteForm">
+    <hr/>
 
-        <table class="tarjontaForm">
+            <form name="valintaPerusteForm">
 
-                <th></th>
-                <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help">Valintaperuste edit HELP</td>
-            </tr>
+                <table class="tarjontaForm">
 
-            <!-- -->
-            <tr class="required">
+                        <th></th>
+                        <td colspan="2" class="help" tt="valintaperuste.edit.ohje.help">Valintaperuste edit HELP</td>
+                    </tr>
 
-                <th tt="kk.valintaperustekuvaus.nimi">Kuvauksen nimi</th>
-                <td>
-                    <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet" required></mk-textfield>
-                </td>
-                <td>
-                    <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
-                </td>
-            </tr>
-            <!-- väli -->
-            <tr class="padding"><td colspan="3"><br/></td></tr>
-            <tr class="required">
+                    <!-- -->
+                    <tr ng-if="!isToinenAste" class="required">
 
-                <th tt="kk.valintaperustekuvaus.kausivuosi">Koulutuksen alkamiskausi</th>
+                        <th tt="kk.valintaperustekuvaus.nimi">Kuvauksen nimi</th>
+                        <td>
+                            <mk-textfield model="model.valintaperustekuvaus.kuvauksenNimet" required></mk-textfield>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
+                        </td>
+                    </tr>
+                    <tr ng-if="isToinenAste">
 
-                <td>
-                    <span tt="kk.valintaperustekuvaus.kausi.title">Kausi</span>
-                    <koodistocombo name="kausicombo" koodistouri="'kausi'" isrequired="true" koodiuri="model.valintaperustekuvaus.kausi" locale="model.userLang"/>
-                    <span tt="kk.valintaperustekuvaus.vuosi.title">Vuosi</span>
-                    <select class="thin" name="vuosiselect" data-ng-model="model.valintaperustekuvaus.vuosi" required data-ng-options="year for year in model.years"></select>
-                </td>
+                        <th tt="kk.valintaperustekuvaus.nimi">Kuvauksen nimi</th>
+                        <td>
+                            <input class="input-xxlarge" ng-model="model.valintaperustekuvausryhma" readonly />
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="valintaperuste.edit.valintaPerusteForm.nimi">Nimen validointi epäonnistui</p>
+                        </td>
+                    </tr>
+
+   			        <!-- väli -->
+			        <tr class="padding"><td colspan="3"><br/></td></tr>
+                    <tr class="required">
+
+                        <th tt="kk.valintaperustekuvaus.kausivuosi">Koulutuksen alkamiskausi</th>
+
+                        <td>
+                            <span tt="kk.valintaperustekuvaus.kausi.title">Kausi</span>
+                            <koodistocombo name="kausicombo" koodistouri="'kausi'" isrequired="true" koodiuri="model.valintaperustekuvaus.kausi" locale="model.userLang"/>
+                            <span tt="kk.valintaperustekuvaus.vuosi.title">Vuosi</span>
+                            <select class="thin" name="vuosiselect" data-ng-model="model.valintaperustekuvaus.vuosi" required data-ng-options="year for year in model.years"></select>
+                        </td>
 
 
-                <td>
-                    <div>
-                        <p class="error" ng-show="model.showError && valintaPerusteForm.kausicombo.$invalid" tt="valintaperuste.edit.valintaPerusteForm.kausicombo">
-                            Viallinen kausi
-                        </p>
-                     <!-- <show-errors form="valintaPerusteForm" field="kausicombo" tt-prefix="valintaperuste.edit"></show-errors> -->
-                    </div>
+                        <td>
+                            <div>
+                                <p class="error" ng-show="model.showError && valintaPerusteForm.kausicombo.$invalid" tt="valintaperuste.edit.valintaPerusteForm.kausicombo">
+                                    Viallinen kausi
+                                </p>
+                             <!-- <show-errors form="valintaPerusteForm" field="kausicombo" tt-prefix="valintaperuste.edit"></show-errors> -->
+                            </div>
 
 
-                </td>
-            </tr>
+                        </td>
+                    </tr>
 
-            <!-- väli -->
-            <tr class="padding"><td colspan="3"><br/></td></tr>
-        </table>
+                    <!-- väli -->
+                    <tr class="padding"><td colspan="3"><br/></td></tr>
+                </table>
 
-        <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>
+                <mk-rich-textarea model="model.valintaperustekuvaus.kuvaukset" max="1500"></mk-rich-textarea>
 
-    </form>
+            </form>
     <display-controls model="formControls" display="footer"></display-controls>
 </div>

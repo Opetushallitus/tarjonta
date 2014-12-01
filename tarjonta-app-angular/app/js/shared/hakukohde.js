@@ -39,7 +39,7 @@ app.factory('Hakukohde', function($resource, Config) {
         checkStateChange: {
             url: Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid/stateChangeCheck',
             method: 'GET',
-            withCredentials: true,
+            withCredentials: true
         },
         get: {
             method: 'GET',
@@ -203,10 +203,18 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
 app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
 
     function addValintakoeIfEmpty(hakukohde) {
-        if (hakukohde.valintakokeet.length == 0) {
+        if (hakukohde.valintakokeet.length === 0) {
             var kieli = hakukohde.opetusKielet[0];
             $scope.addValintakoe(kieli);
         }
+    }
+
+    function addPainotettavaOppiaine(hakukohde) {
+        var po = {
+            oppiaineUri: "",
+            painokerroin: ""
+        };
+        hakukohde.painotettavatOppiaineet.push(po);
     }
 
     /**
@@ -288,7 +296,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         var loopIndex = liitteetArray.length
         while (loopIndex--) {
             var liite = liitteetArray[loopIndex];
-            if (liite.isNew === true && liite.liitteenNimi === "") {
+            if (liite.isNew === true && liite.liitteenNimi === "" && liite.liitteenTyyppi == undefined) {
                 liitteetArray.splice(loopIndex, 1);
             }
         }
@@ -300,6 +308,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         addLiiteIfEmpty: addLiiteIfEmpty,
         addLiite: addLiite,
         removeEmptyLiites: removeEmptyLiites,
+        addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
             return $http.get(Config.env.tarjontaRestUrlPrefix + "hakukohde/findHakukohdesByKuvausId/" + kuvausId);
         }

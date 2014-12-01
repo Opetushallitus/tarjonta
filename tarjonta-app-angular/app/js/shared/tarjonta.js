@@ -118,7 +118,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             hakuOid: args.hakuOid,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"],
             defaultTarjoaja: args.defaultTarjoaja
         };
 
@@ -160,8 +159,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             komoOid: args.komoOid,
             tila: args.state,
             alkamisKausi: args.season,
-            alkamisVuosi: args.year,
-            koulutustyyppi: ["koulutustyyppi_3", "koulutustyyppi_13", "koulutustyyppi_14", "koulutustyyppi_11", "koulutustyyppi_12"]
+            alkamisVuosi: args.year
         };
 
         if (args.defaultTarjoaja) {
@@ -173,6 +171,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return CacheService.lookupResource(searchCacheKey("koulutus", args), koulutusHaku, params, function(result) {
             result = result.result;  //unwrap v1
             for (var i in result.tulokset) {
+                var validKoulutukset = [];
                 var t = result.tulokset[i];
 
                 if (t.nimi === null || typeof t.nimi === 'undefined') {
@@ -183,6 +182,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
+
                     if (t.nimi === null || typeof t.nimi === 'undefined') {
                         r.nimi = r.oid;
                     } else {
@@ -191,7 +191,10 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
                     r.tilaNimi = LocalisationService.t("tarjonta.tila." + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
+
+                    validKoulutukset.push(r);
                 }
+                t.tulokset = validKoulutukset;
                 t.tulokset.sort(compareByName);
             }
             result.tulokset.sort(compareByName);

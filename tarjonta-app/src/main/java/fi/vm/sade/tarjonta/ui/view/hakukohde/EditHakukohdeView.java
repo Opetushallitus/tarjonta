@@ -484,7 +484,7 @@ public class EditHakukohdeView extends AbstractEditLayoutView<HakukohdeViewModel
 
         buildFormLayout(presenter, wrapperVl, presenter.getModel().getHakukohde(), perustiedot);
 
-        liitteet = new HakukohteenLiitteetTabImpl();
+        liitteet = new HakukohteenLiitteetTabImpl(presenter);
         valintakokeet = new HakukohdeValintakoeTabImpl(hakukohdeOid, presenter.getModel().getHakukohde().getKoulutusasteTyyppi());
         kuvaukset = new HakukohteenKuvauksetTabImpl(presenter);
         

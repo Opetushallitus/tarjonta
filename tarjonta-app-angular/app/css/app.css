@@ -559,7 +559,7 @@ input[type=checkbox], input[type=radio] {
 	box-shadow:none;
 }
 
-label input[type=checkbox] {
+label input[type=checkbox], label input[type=radio] {
     margin: 0 5px 0 0;
 }
 
@@ -859,4 +859,9 @@ table tr.aloituspaikatKuvaukset table {
 
 .valintaperustekuvaukset .search {
     float: right;
+}
+
+.painotettavatOppiaineet .heading {
+    width: 225px;
+    display: inline-block;
 }

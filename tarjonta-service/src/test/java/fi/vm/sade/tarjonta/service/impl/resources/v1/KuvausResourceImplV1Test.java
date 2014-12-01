@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
 import fi.vm.sade.tarjonta.dao.KuvausDAO;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
 import fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
@@ -30,11 +31,19 @@ public class KuvausResourceImplV1Test {
     @InjectMocks
     private KuvausResourceImplV1 kuvausResource;
 
+    private ValintaperusteSoraKuvaus getDummyValintaperustekuvaus() {
+        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+        MonikielinenTeksti nimi = new MonikielinenTeksti();
+        nimi.addTekstiKaannos("kieli_fi", "Lorem");
+        kuvaus.setMonikielinenNimi(nimi);
+        return kuvaus;
+    }
+
     @Test
     public void thatKKUserCanCreateKuvaus() {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkCreateValintaPeruste();
         doNothing().when(permissionChecker).checkCreateValintaPerusteKK();
-        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(new ValintaperusteSoraKuvaus());
+        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
@@ -53,8 +62,8 @@ public class KuvausResourceImplV1Test {
     public void thatKKUserCanUpdateKuvaus() {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkUpdateValintaperustekuvaus();
         doNothing().when(permissionChecker).checkUpdateValintaperustekuvausKK();
-        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(new ValintaperusteSoraKuvaus());
-        when(kuvausDAO.read(anyLong())).thenReturn(new ValintaperusteSoraKuvaus());
+        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
+        when(kuvausDAO.read(anyLong())).thenReturn(getDummyValintaperustekuvaus());
 
         KuvausV1RDTO kuvausDTO = getAmmattikorkeakoulukuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.updateKuvaus("valintaperustekuvaus", kuvausDTO);
@@ -167,7 +176,7 @@ public class KuvausResourceImplV1Test {
     public void thatToisenAsteenUserCanCreateKuvaus() {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkCreateValintaPerusteKK();
         doNothing().when(permissionChecker).checkCreateValintaPerusteKK();
-        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(new ValintaperusteSoraKuvaus());
+        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
 
         KuvausV1RDTO kuvausDTO = getLukiokuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
@@ -178,7 +187,7 @@ public class KuvausResourceImplV1Test {
     public void thatToisenAsteenUserCanUpdateKuvaus() {
         doThrow(new NotAuthorizedException("")).when(permissionChecker).checkUpdateValintaperustekuvausKK();
         doNothing().when(permissionChecker).checkUpdateValintaperustekuvaus();
-        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(new ValintaperusteSoraKuvaus());
+        when(converter.toValintaperusteSoraKuvaus(any(KuvausV1RDTO.class))).thenReturn(getDummyValintaperustekuvaus());
 
         KuvausV1RDTO kuvausDTO = getLukiokuvausDTO();
         ResultV1RDTO<KuvausV1RDTO> resultDTO = kuvausResource.createNewKuvaus("valintaperustekuvaus", kuvausDTO);
@@ -210,25 +219,25 @@ public class KuvausResourceImplV1Test {
     }
 
     private ValintaperusteSoraKuvaus getLukiokuvaus() {
-        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+        ValintaperusteSoraKuvaus kuvaus = getDummyValintaperustekuvaus();
         kuvaus.setOrganisaatioTyyppi("oppilaitostyyppi_15");
         return kuvaus;
     }
 
     private ValintaperusteSoraKuvaus getAmmattikorkeakoulukuvaus() {
-        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+        ValintaperusteSoraKuvaus kuvaus = getDummyValintaperustekuvaus();
         kuvaus.setOrganisaatioTyyppi("oppilaitostyyppi_41");
         return kuvaus;
     }
 
     private ValintaperusteSoraKuvaus getYliopistokuvaus() {
-        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+        ValintaperusteSoraKuvaus kuvaus = getDummyValintaperustekuvaus();
         kuvaus.setOrganisaatioTyyppi("oppilaitostyyppi_42");
         return kuvaus;
     }
 
     private ValintaperusteSoraKuvaus getSotilaskorkeakoulukuvaus() {
-        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+        ValintaperusteSoraKuvaus kuvaus = getDummyValintaperustekuvaus();
         kuvaus.setOrganisaatioTyyppi("oppilaitostyyppi_43");
         return kuvaus;
     }

@@ -1,5 +1,5 @@
 <div id="edit" ng-controller="BaseEditController">
-    <div id="editKoulutus" ng-controller="EditLukioController">
+    <div id="editKoulutus" ng-controller="EditGenericController">
         <controls-model
             model="controlModel"
             tt-create="koulutus.edit.header.title"
@@ -12,11 +12,11 @@
             <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event, koulutusForm.$invalid, uiModel.validationmsgs, koulutusForm)" disabled="uiModel.tabs.lisatiedot"></controls-button>
 
             <!-- TODO muokatessa vaihtoehtoinen teksti "olet muokkaamassa... " tjsp. -->
-            <controls-notify type="message" tt-expr="'koulutus.edit.header.LUKIOKOULUTUS'" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
+            <controls-notify type="message" tt-expr="'koulutus.edit.header.'+model.toteutustyyppi" tt-params="[ model.organisaatio.nimi ]"></controls-notify>
 
             <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="uiModel.showSuccess"></controls-notify>
             <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="uiModel.showError"></controls-notify>
-            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify> 
+            <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="uiModel.showErrorCheckField"></controls-notify>
 
             <controls-notify type="error-detail" tt-expr="'tarjonta.tallennus.virhe.invalid'" show="!angular.isUndefined(koulutusForm) && uiModel.showError && koulutusForm.$invalid"></controls-notify>
             <controls-notify type="error-detail" ng-repeat="e in uiModel.validationmsgs" tt-expr="e" show="uiModel.showError"></controls-notify>
@@ -25,15 +25,15 @@
 
         <display-controls model="controlModel" display="header" command="controlModelCommandApi"></display-controls>
 
-        <form name="koulutusForm">
+        <form name="koulutusForm" novalidate>
             <!-- angularin "ominaisuus" vaatii tämän piilonapin; ks. http://docs.angularjs.org/api/ng/directive/form -->
             <button ng-click="" class="hidden"></button>
             <tabset>
                 <tab heading="{{t('koulutus.edit.perustiedot')}}">
-                    <div ng-include="'partials/koulutus/edit/lukio/editPerustiedot.html'"></div>
+                    <div ng-include="'partials/koulutus/edit/ammatillinenPerustutkinto/editPerustiedot.html'"></div>
                 </tab>
                 <tab heading="{{t('koulutus.edit.lisatiedot')}}" disabled="uiModel.tabs.lisatiedot" ng-disabled="uiModel.tabs.lisatiedot">
-                    <div ng-include="'partials/koulutus/edit/lukio/editLisatiedot.html'"></div>
+                    <div ng-include="'partials/koulutus/edit/ammatillinenPerustutkinto/editLisatiedot.html'"></div>
                 </tab>
             </tabset>
         </form>

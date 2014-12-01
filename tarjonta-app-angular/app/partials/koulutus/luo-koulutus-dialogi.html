@@ -8,20 +8,29 @@
 
         <h4><span tt="luoKoulutsDialogi.koulutus">Koulutus</span></h4>
         <select ng-hide="piilotaKoulutustyyppi" ng-model="model.koulutustyyppi"
-                    ng-options="k.koodiNimi for k in sallitutKoulutustyypit">
-                        <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
+            ng-options="k.koodiNimi for k in sallitutKoulutustyypit|orderBy:'koodiNimi'">
+            <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
         </select>
+
+        <div ng-if="showPohjakoulutusvaatimus">
+            <h4>Valitse pohjakoulutusvaatimus</h4>
+            <select ng-model="model.pohjakoulutusvaatimus"
+                ng-options="obj.koodiUri as obj.koodiNimi for (key,obj) in pohjakoulutusvaatimusOptions|orderBy:'koodiNimi'">
+                <option value="" tt="luoKoulutusDialogi.valitse">-- valitse --</option>
+            </select>
+        </div>
+
         <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>
-        <label for="showOtherOrganizations" ng-show="showOtherOrganizationsCheckbox">
+        <label for="showOtherOrganizations" ng-show="model.showOtherOrganizationsCheckbox">
             <input id="showOtherOrganizations" ng-click="toggleOtherOrganizations()"
-                   type="checkbox" ng-model="showOtherOrganizations" />
+                   type="checkbox" ng-model="model.showOtherOrganizations" />
             <span>Näytä myös muut korkeakoulut</span>
         </label>
 
 		<table width="100%">
 			<tr>
 				<td width="50%">
-                    <input ng-if="showOtherOrganizations && showOtherOrganizationsCheckbox" type="text" ng-model="organizationFilter"
+                    <input ng-if="model.showOtherOrganizations && model.showOtherOrganizationsCheckbox" type="text" ng-model="organizationFilter"
                            placeholder="Hae korkeakouluja" ng-change="searchOrganizations(organizationFilter)" />
                     <div class="treeview"
 						data-angular-treeview="true" data-tree-id="lkorganisaatio"

@@ -150,6 +150,7 @@ public class KoulutusIndexEntityToSolrDocument implements
                 case LUKIOKOULUTUS:
                     addKoulutusohjelmaTiedot(komotoDoc, koulutus.getLukiolinja());
                     break;
+
                 case KORKEAKOULUTUS:
                     //vapaavalintainen nimi
 
@@ -174,6 +175,8 @@ public class KoulutusIndexEntityToSolrDocument implements
                         }
                     }
                     break;
+
+                case VAPAAN_SIVISTYSTYON_KOULUTUS:
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS:
                     addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());
 
@@ -194,6 +197,7 @@ public class KoulutusIndexEntityToSolrDocument implements
                     }
 
                     break;
+
                 default:
                     if (koulutus.getSubKoulutustyyppiEnum() == ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO) {
                         addKoulutusohjelmaTiedot(komotoDoc, koulutus.getKoulutusohjelmaKoodi());

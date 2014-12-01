@@ -9,16 +9,17 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     $scope.liitteetModel.selectedTab = {};
     $scope.liitteetModel.langs = [];
     $scope.liitteetModel.selectedLangs = [];
+    $scope.liitteetModel.liitetyypit = [];
 
     var initialTabSelected = false;
     var osoitteetReceived = false;
 
     function postProcessLiite(liite) {
-		
+
     	if (liite.sahkoinenOsoiteEnabled === undefined) {
     		liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite != null;
     	}
-    	
+
     	if (liite.muuOsoiteEnabled === undefined && osoitteetReceived) {
     		if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
     			var os1 = $scope.model.liitteidenToimitusOsoite[liite.kieliUri];
@@ -28,7 +29,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     			liite.muuOsoiteEnabled = true;
     		}
     	}
-    	
+
 		return liite;
     }
 
@@ -46,7 +47,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
             var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
 
-            if(!li.liitteenToimitusOsoite || Object.keys(li.liitteenToimitusOsoite).length === 0) {
+            if(!li.liitteenToimitusOsoite || Object.keys(li.liitteenToimitusOsoite).length === 0) {
                 li.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[li.kieliUri]);
                 postProcessLiite(li);
             }
@@ -64,7 +65,6 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     }
 
     Koodisto.getAllKoodisWithKoodiUri('kieli',LocalisationService.getLocale()).then(function(ret) {
-
     	if (!$scope.model.hakukohde.opetusKielet) {
     		$scope.model.hakukohde.opetusKielet = [];
     	}
@@ -128,15 +128,15 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
                 $scope.status.dirtify();
 			}
     	}
-    	
+
     	// - lisää lisätyt
     	for (var i in $scope.liitteetModel.selectedLangs) {
     		var lc = $scope.liitteetModel.selectedLangs[i];
-    		
+
     		if (containsOpetuskieli(lc)) {
     			continue;
     		}
-    		
+
     		for (var j in $scope.liitteetModel.langs) {
     			if ($scope.liitteetModel.langs[j].koodiUri == lc) {
     				$scope.liitteetModel.opetusKielet.push($scope.liitteetModel.langs[j]);
@@ -148,9 +148,9 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
         addEmptyLitteet();
     }
-    
+
     $scope.onLangSelection = function() {
-    	
+
     	var dellangs = [];
 
     	// käy läpi poistetut kielet
@@ -163,7 +163,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         		}
         	}
         }
-    	
+
     	// varmista kielien poisto
     	if (dellangs.length>0) {
     		for (var i in dellangs) {
@@ -190,23 +190,29 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		}
     	}
 		doAfterLangSelection();
-    }
-    
+    };
+
     $scope.resetOsoite = function(lc, liite){
     	liite.liitteenToimitusOsoite = angular.copy($scope.model.liitteidenToimitusOsoite[lc])
-    }
-    
+    };
+
+    $scope.liitteenSahkoinenOsoiteEnabledChanged = function(liite) {
+        if(!liite.sahkoinenOsoiteEnabled) {
+            liite.sahkoinenToimitusOsoite = undefined;
+        }
+    };
+
     $scope.getLiitteetByKieli = function(lc) {
-    	var ret = [];    	
+    	var ret = [];
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-    		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];    		
-    		if (li.kieliUri == lc) {
+    		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+    		if (li.kieliUri.split('#')[0] == lc) {
     			ret.push(postProcessLiite(li));
     		}
-    	}    	
+    	}
     	return ret;
-    }
-    
+    };
+
     $scope.deleteLiite = function(liite, confirm) {
     	if (confirm) {
     		var index = $scope.model.hakukohde.hakukohteenLiitteet.indexOf(liite);
@@ -231,7 +237,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
             $scope.status.dirtify();
         }
     }
-    
+
     $scope.isValidToimitusOsoite = function(liite) {
     	var r= !liite.muuOsoiteEnabled
     		|| notEmpty([liite.liitteenToimitusOsoite.osoiterivi1,
@@ -239,7 +245,7 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
         return r;
 
     }
-    
+
     $scope.isValidSahkoinenOsoite = function(liite) {
     	var r = !liite.sahkoinenOsoiteEnabled
     	|| notEmpty(liite.sahkoinenToimitusOsoite);
@@ -249,15 +255,14 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
 
     // kutsutaan parentista
     $scope.status.validateLiitteet = function() {
-
     	for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
     		var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
 
-    		if (!notEmpty([li.liitteenNimi, li.toimitettavaMennessa])
+    		if ((!notEmpty(li.liitteenNimi) && !notEmpty(li.liitteenTyyppi))
+                    || !notEmpty(li.toimitettavaMennessa)
     				|| !$scope.isValidSahkoinenOsoite(li)
     				|| !$scope.isValidToimitusOsoite(li)) {
 
-                console.log("not valid!");
     			return false;
     		}
     	}
@@ -276,6 +281,36 @@ app.controller('LiitteetListController',function($scope,$q, LocalisationService,
     		return v && (""+v).trim().length>0;
     	}
     }
+
+    var setLiitetyypit = function (toteutusTyyppi) {
+        var liitetyypit = [];
+
+        liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_1", $scope.model.userLang));
+        liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_2", $scope.model.userLang));
+        liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_4", $scope.model.userLang));
+
+        if(toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+            toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+            toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+            toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+            toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+            liitetyypit.push(Koodisto.getKoodi("liitetyypitamm", "liitetyypitamm_3", $scope.model.userLang));
+        }
+
+        angular.forEach(liitetyypit, function(koodiPromise) {
+            koodiPromise.then(function(koodi) {
+                var liitetyyppi = {
+                    nimi: koodi.koodiNimi,
+                    uri: koodi.koodiUri + "#" + koodi.koodiVersio
+                };
+                $scope.liitteetModel.liitetyypit.push(liitetyyppi);
+            });
+        });
+    };
+
+    setLiitetyypit($scope.model.hakukohde.toteutusTyyppi);
 
     $scope.$watch('liitteetModel.opetusKielet.length', function() {
         $scope.liitteetModel.opetusKielet.sort($scope.sortLanguageTabs);

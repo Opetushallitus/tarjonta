@@ -6,8 +6,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
     $log, TarjontaService, $routeParams,
     LocalisationService, dialogService, Koodisto,
     KoodistoURI, $modal, KoulutusConverterFactory,
-    HakukohdeKoulutukses, SharedStateService, AuthService,
-    OrganisaatioService) {
+    HakukohdeKoulutukses, SharedStateService, AuthService) {
 
     $log = $log.getInstance("BaseReviewController");
 
@@ -25,18 +24,6 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         var tila = TarjontaService.getTilat()[koulutusModel.tila];
         $scope.isMutable = tila.mutable && data;
         $scope.isRemovable = tila.removable && data;
-
-        if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
-            //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-            if (angular.isDefined(koulutusModel.koulutuslaji) &&
-                    KoodistoURI.compareKoodi(
-                            koulutusModel.koulutuslaji.uri,
-                            window.CONFIG.env['koodi-uri.koulutuslaji.nuortenKoulutus'],
-                            true)) {
-                $scope.isMutable = false;
-                $scope.isRemovable = false;
-            }
-        }
     });
 
     $scope.formControls = {};
@@ -55,9 +42,36 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         koulutus: koulutusModel, // preloaded in route resolve, see
         selectedKomoOid: [koulutusModel.komoOid]
     };
+
+    $scope.reviewFields = KoulutusConverterFactory.STRUCTURE[koulutusModel.toteutustyyppi].reviewFields;
+    var ammattinimikkeet = {};
+    if ( koulutusModel.ammattinimikkeet ) {
+        ammattinimikkeet.tekstis = {};
+        angular.forEach(koulutusModel.ammattinimikkeet.meta, function (ammattinimike) {
+            angular.forEach(ammattinimike.meta, function(meta, langCode) {
+                if (!ammattinimikkeet.tekstis[langCode]) {
+                    ammattinimikkeet.tekstis[langCode] = "";
+                }
+                ammattinimikkeet.tekstis[langCode] += ", " + meta.nimi;
+            });
+        });
+        // Strip the first comma
+        angular.forEach(ammattinimikkeet.tekstis, function(text, key) {
+            ammattinimikkeet.tekstis[key] = text.substring(1);
+        });
+    }
+    $scope.reviewTexts = angular.extend({}, koulutusModel.kuvausKomo, koulutusModel.kuvausKomoto, {
+        KOULUTUKSEN_TAVOITTEET: {
+            tekstis: koulutusModel.koulutuksenTavoitteet
+        },
+        AMMATTINIMIKKEET: ammattinimikkeet
+    });
+
     $scope.model.showError = false;
     $scope.model.validationmsgs = [];
     $scope.model.userLangUri = "kieli_" + AuthService.getLanguage();
+    var koulutusStructure = KoulutusConverterFactory.STRUCTURE[$scope.model.koulutus.toteutustyyppi];
+    $scope.koulutusStructure = koulutusStructure;
 
     var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.koulutus.oid);
     hakukohdePromise.then(function(hakukohteet) {
@@ -340,28 +354,16 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
 
     $scope.findHakukohdeNimi = function(lang, hakukohde) {
 
-        var hakukohdeNimi;
-        var fallbackLang = "fi";
+        var locale = lang && lang.locale || "FI";
 
         //Try to get hakukohde nimi with tab language
-        for (var language in hakukohde.nimi) {
-            if (lang.locale.toUpperCase() === language.toUpperCase()) {
-                hakukohdeNimi = hakukohde.nimi[language];
-            }
+        var hakukohdeNimi = _.find(hakukohde.nimi, function(val, key) {
+            return key.toUpperCase() === locale.toUpperCase();
+        });
 
-        }
-        //If not found then try to find in Finnish
-        if (hakukohdeNimi === undefined) {
-            hakukohdeNimi = hakukohde.nimi[fallbackLang];
-
-            //If even that is not found, just get some name
-            if (hakukohdeNimi === undefined || hakukohdeNimi.trim().length < 1) {
-
-                for (var fooLang in hakukohde.nimi) {
-                    hakukohdeNimi = hakukohde.nimi[fooLang];
-                }
-
-            }
+        //If no name found according to lang => just get some name
+        if (!hakukohdeNimi) {
+            hakukohdeNimi = hakukohde.nimi[_.keys(hakukohde.nimi)[0]];
         }
 
         return hakukohdeNimi;
@@ -391,6 +393,41 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         });
     } else {
         console.error("No koulutus found?");
+    }
+
+    /**
+     * Kaikille koulutustyypeille ei ole asetettu opintojen laajutta koodistossa,
+     * missä tapauksessa näytetään virkailijan tallentama paikallinen arvo (tarjonnan kannasta).
+     */
+    if ( ! $scope.model.koulutus.opintojenLaajuusarvo.meta
+        && $scope.model.koulutus.opintojenLaajuusarvoKannassa ) {
+
+        $scope.model.koulutus.opintojenLaajuusarvo.meta = {};
+
+        angular.forEach($scope.model.languages, function(lang) {
+            $scope.model.koulutus.opintojenLaajuusarvo.meta[lang.koodi_uri] = {
+                nimi: $scope.model.koulutus.opintojenLaajuusarvoKannassa
+            };
+        });
+    }
+
+    function removeVersion(uri)  {
+        if (uri.indexOf('#') != -1) {
+            uri = uri.substring(0, uri.indexOf('#'));
+        }
+        return uri;
+    }
+
+    // Ylikirjoita koodistosta tuleva koulutusohjelman nimi paikallisella arvolla (jos olemassa)
+    if ( $scope.model.koulutus.koulutusohjelmanNimiKannassa ) {
+        try {
+            angular.forEach($scope.model.koulutus.koulutusohjelmanNimiKannassa, function (value, key) {
+                $scope.model.koulutus.koulutusohjelma.meta[removeVersion(key)].nimi = value;
+            });
+        }
+        catch (err) {
+            console.error("Koulutusohjelman nimen ylikirjoitus fail", err);
+        }
     }
 
     $scope.treeClickHandler = function(obj, event) {
@@ -426,13 +463,14 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                 userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
             }
             result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
-        }
-        else if ([
-              "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA",
-              "AMMATTITUTKINTO",
-              "ERIKOISAMMATTITUTKINTO"
-            ].indexOf(koulutusModel.toteutustyyppi) !== -1 ) {
-
+        } else if (
+            $.inArray(koulutusModel.toteutustyyppi, [
+                'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA',
+                'AMMATTITUTKINTO',
+                'ERIKOISAMMATTITUTKINTO',
+                'AMMATILLINEN_PERUSTUTKINTO'
+            ])
+        ) {
             if (angular.isDefined($scope.model.koulutus.koulutusohjelma) && angular.isDefined($scope.model.koulutus.koulutusohjelma.meta) && angular.isDefined(userLangUri)) {
                 if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.meta[userLangUri])) {
                     // Just take first value for language

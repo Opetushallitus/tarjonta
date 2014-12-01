@@ -113,10 +113,10 @@ app
             };
 
             /**
-             * 
+             *
              * Controller initialization function which is called when controller
              * loads
-             * 
+             *
              */
             var init = function () {
 
@@ -147,55 +147,31 @@ app
 
             init();
 
-            $scope.model.checkSelectedHaku = function () {
+            /**
+             * checkSelectedHaku suoritetaan kun haku valinta muuttuu tai kun
+             * model.hakus on asetettu.
+             */
+            $scope.$watch(function() {
+                return $scope.model.hakus.length && $scope.model.hakukohde.hakuOid;
+            }, function(oid) {
+                if (oid) {
+                    $scope.model.checkSelectedHaku();
+                }
+            });
 
+            $scope.model.checkSelectedHaku = function () {
                 var jatkuvaHakuKoodi = "hakutapa_03";
                 angular.forEach($scope.model.hakus, function (haku) {
 
                     if (haku.oid === $scope.model.hakukohde.hakuOid) {
                         if ($scope.aContainsB(haku.hakutapaUri, jatkuvaHakuKoodi)) {
                             $scope.ui.showPlaces = false;
+                            $scope.model.hakukohde.aloituspaikatLkm = null;
                         } else {
                             $scope.ui.showPlaces = true;
                         }
                     }
                 });
-                
-                $scope.model.hakuChanged();
             };
 
-            $scope.model.hakuChanged = function() {
-
-                if ($scope.model.hakukohde.hakuOid !== undefined) {
-
-                    $scope.model.hakuaikas.splice(0,$scope.model.hakuaikas.length);
-                    var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
-
-                    if (haku.hakuaikas.length > 1) {
-
-                        angular.forEach(haku.hakuaikas,function(hakuaika){
-                            var formattedStartDate = $scope.createFormattedDateString(hakuaika.alkuPvm);
-                            var formattedEndDate = $scope.createFormattedDateString(hakuaika.loppuPvm);
-
-                            hakuaika.formattedNimi = resolveLocalizedValue(hakuaika.nimet) + ", " + formattedStartDate + " - " + formattedEndDate;
-
-                            $scope.model.hakuaikas.push(hakuaika);
-                        });
-
-                        $scope.model.showHakuaikas = true;
-
-                    } else {
-                        var hakuaika = _.first(haku.hakuaikas);
-                        $scope.model.hakuaikas.push(hakuaika);
-                        $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
-                        $scope.model.showHakuaikas = false;
-                    }
-                }
-            };
-            
-            var resolveLocalizedValue = function(key) {
-                var userKieliUri = LocalisationService.getKieliUri();
-                return key[userKieliUri] || key["kieli_fi"] || key["kieli_sv"] || key["kieli_en"] || "[Ei nimeä]";
-            };
-            
         });

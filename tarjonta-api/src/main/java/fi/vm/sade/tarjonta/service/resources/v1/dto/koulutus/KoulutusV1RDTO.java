@@ -42,13 +42,20 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 @ApiModel(value = "Koulutuksien yleiset tiedot sisältävä rajapintaolio")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "toteutustyyppi")
 @JsonSubTypes({
-    @Type(value = KoulutusKorkeakouluV1RDTO.class, name = "KORKEAKOULUTUS"),
-    @Type(value = KoulutusLukioV1RDTO.class, name = "LUKIOKOULUTUS"),
-    @Type(value = KoulutusLukioAikuistenOppimaaraV1RDTO.class, name = "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA"),
-    @Type(value = KoulutusAmmatillinenPerustutkintoV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO"),
-    @Type(value = ErikoisammattitutkintoV1RDTO.class, name = "ERIKOISAMMATTITUTKINTO"),
     @Type(value = AmmattitutkintoV1RDTO.class, name = "AMMATTITUTKINTO"),
-    @Type(value = KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA")
+    @Type(value = ErikoisammattitutkintoV1RDTO.class, name = "ERIKOISAMMATTITUTKINTO"),
+    @Type(value = KoulutusAmmatillinenPeruskoulutusErityisopetuksenaV1RDTO.class, name = "AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA"),
+    @Type(value = KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA"),
+    @Type(value = KoulutusAmmatillinenPerustutkintoV1RDTO.class, name = "AMMATILLINEN_PERUSTUTKINTO"),
+    @Type(value = KoulutusAmmatilliseenPeruskoulutukseenOhjaavaJaValmistavaV1RDTO.class, name = "AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS"),
+    @Type(value = KoulutusKorkeakouluV1RDTO.class, name = "KORKEAKOULUTUS"),
+    @Type(value = KoulutusLukioAikuistenOppimaaraV1RDTO.class, name = "LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA"),
+    @Type(value = KoulutusLukioV1RDTO.class, name = "LUKIOKOULUTUS"),
+    @Type(value = KoulutusMaahanmuuttajienAmmatilliseenPeruskoulutukseenValmistavaV1RDTO.class, name = "MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS"),
+    @Type(value = KoulutusMaahanmuuttajienJaVieraskielistenLukiokoulutukseenValmistavaV1RDTO.class, name = "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS"),
+    @Type(value = KoulutusPerusopetuksenLisaopetusV1RDTO.class, name = "PERUSOPETUKSEN_LISAOPETUS"),
+    @Type(value = KoulutusValmentavaJaKuntouttavaV1RDTO.class, name = "VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS"),
+    @Type(value = KoulutusVapaanSivistystyonV1RDTO.class, name = "VAPAAN_SIVISTYSTYON_KOULUTUS")
 })
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 
@@ -120,6 +127,12 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Opintojen tarjoajat", required = false)
     private HashSet<String> opetusTarjoajat = new HashSet<String>();
+
+    @ApiModelProperty(value = "Koulutuksen ammattinimikkeet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO ammattinimikkeet;
+
+    @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
+    private KoodiUrisV1RDTO aihees;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.toteutustyyppi = toteutustyyppi;
@@ -498,5 +511,36 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     public void setOpetusTarjoajat(HashSet<String> opetusTarjoajat) {
         opetusTarjoajat = (opetusTarjoajat != null) ? opetusTarjoajat : new HashSet<String>();
         this.opetusTarjoajat = opetusTarjoajat;
+    }
+
+
+    /**
+     * @return the ammattinimikkeet
+     */
+    public KoodiUrisV1RDTO getAmmattinimikkeet() {
+        if (ammattinimikkeet == null) {
+            ammattinimikkeet = new KoodiUrisV1RDTO();
+        }
+
+        return ammattinimikkeet;
+    }
+
+    /**
+     * @param ammattinimikkeet the ammattinimikkeet to set
+     */
+    public void setAmmattinimikkeet(KoodiUrisV1RDTO ammattinimikkeet) {
+        this.ammattinimikkeet = ammattinimikkeet;
+    }
+
+    public KoodiUrisV1RDTO getAihees() {
+        if (aihees == null) {
+            aihees = new KoodiUrisV1RDTO();
+        }
+
+        return aihees;
+    }
+
+    public void setAihees(KoodiUrisV1RDTO aihees) {
+        this.aihees = aihees;
     }
 }

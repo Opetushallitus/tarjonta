@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.Date;
 
 public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
@@ -21,6 +23,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private String koulutuslajiUri;
     private TarjontaTila tila;
     private KoulutusasteTyyppi koulutusasteTyyppi;
+    private ToteutustyyppiEnum toteutustyyppiEnum;
     private Map<String, String> pohjakoulutusvaatimus;
     private String koulutuskoodi;
     private Date koulutuksenAlkamisPvmMin = null;
@@ -160,6 +163,14 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
 
     public ArrayList<String> getTarjoajat() {
         return tarjoajat;
+    }
+
+    public void setToteutustyyppiEnum(ToteutustyyppiEnum toteutustyyppiEnum) {
+        this.toteutustyyppiEnum = toteutustyyppiEnum;
+    }
+
+    public ToteutustyyppiEnum getToteutustyyppiEnum() {
+        return toteutustyyppiEnum;
     }
 
 }

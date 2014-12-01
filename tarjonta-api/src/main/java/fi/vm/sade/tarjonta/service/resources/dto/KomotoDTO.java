@@ -55,7 +55,7 @@ public class KomotoDTO extends BaseRDTO {
     private String _parentKomotoOid;
     private String koulutusohjelmanNimi;  // vapaavalintainen nimi, er OVT-6619
 
-    //7.5.2014 REAL URIS: 
+    //7.5.2014 REAL URIS:
     private String koulutusAlaUri;
     private String eqfLuokitusUri;
     private String nqfLuokitusUri;
@@ -69,6 +69,11 @@ public class KomotoDTO extends BaseRDTO {
     private String opintoalaUri;
     private String kandidaatinKoulutusUri;
     private String tutkintonimikeUri;
+
+    // Uudet koodistot (Vaadin-Angular muutostyön jälkeen)
+    private List<String> _opetusmuotokk;
+    private List<String> _opetusaikakk;
+    private List<String> _opetuspaikkakk;
 
     public String getKoulutusohjelmanNimi() {
         return koulutusohjelmanNimi;
@@ -288,6 +293,30 @@ public class KomotoDTO extends BaseRDTO {
 
     public void setOpetusmuodotUris(List<String> opetusmuodotUris) {
         this._opetusmuodotUris = opetusmuodotUris;
+    }
+
+    public List<String> getOpetusmuotokk() {
+        return _opetusmuotokk;
+    }
+
+    public void setOpetusmuotokk(List<String> opetusmuotokk) {
+        this._opetusmuotokk = opetusmuotokk;
+    }
+
+    public List<String> getOpetusaikakk() {
+        return _opetusaikakk;
+    }
+
+    public void setOpetusaikakk(List<String> opetusaikakk) {
+        this._opetusaikakk = opetusaikakk;
+    }
+
+    public List<String> getOpetuspaikkakk() {
+        return _opetuspaikkakk;
+    }
+
+    public void setOpetuspaikkakk(List<String> opetuspaikkakk) {
+        this._opetuspaikkakk = opetuspaikkakk;
     }
 
     public List<String> getTeematUris() {

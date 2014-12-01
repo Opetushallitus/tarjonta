@@ -66,6 +66,17 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
     }
 
     @Override
+    public List<ValintaperusteSoraKuvaus> findByAvainTyyppiYearKausi(String avain, ValintaperusteSoraKuvaus.Tyyppi tyyppi, String kausi, int year) {
+
+        QValintaperusteSoraKuvaus qValintaperusteSoraKuvaus = QValintaperusteSoraKuvaus.valintaperusteSoraKuvaus;
+
+        return from(qValintaperusteSoraKuvaus).where(qValintaperusteSoraKuvaus.avain.eq(avain)
+                .and(qValintaperusteSoraKuvaus.tyyppi.eq(tyyppi))
+                .and(qValintaperusteSoraKuvaus.kausi.eq(kausi)).and(qValintaperusteSoraKuvaus.vuosi.eq(year)))
+                .list(qValintaperusteSoraKuvaus);
+    }
+
+    @Override
     public List<ValintaperusteSoraKuvaus> findByTyyppiOrgTypeAndYear(ValintaperusteSoraKuvaus.Tyyppi tyyppi, String orgType, int year) {
 
         QValintaperusteSoraKuvaus qValintaperusteSoraKuvaus = QValintaperusteSoraKuvaus.valintaperusteSoraKuvaus;

@@ -7,7 +7,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.julkaisunTakaraja'>Tarjonnan julkaisun takaraja</th>
             <td>
-            <t-date-time type="long" name="PH_TJT" timestamp="true" ng-model="model.parameter.PH_TJT.date"></t-date-time>
+            <t-date-time type="long" name="PH_TJT" timestamp="true" scope-model="model.parameter.PH_TJT.date"></t-date-time>
             </td>
             <td>
                 <div>
@@ -19,11 +19,11 @@
 	        <th></th>
 	        <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_TJT.help">Valmis tilassa olevat koulutukset ja hakukohteet julkaistaan Opintopolussa.</td>
 	    </tr>
-    
+
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKLPT'>Hakukohteen lisäämisen ja perumisen takaraja</th>
             <td>
-            <t-date-time type="long" name="PH_HKLPT" timestamp="true" ng-model="model.parameter.PH_HKLPT.date"></t-date-time>
+            <t-date-time type="long" name="PH_HKLPT" timestamp="true" scope-model="model.parameter.PH_HKLPT.date"></t-date-time>
             </td>
             <td>
                 <div>
@@ -39,7 +39,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKMT'>Hakukohteen muokkauksen takaraja</th>
             <td>
-            <t-date-time type="long" name="PH_HKMT" timestamp="true" ng-model="model.parameter.PH_HKMT.date"></t-date-time>
+            <t-date-time type="long" name="PH_HKMT" timestamp="true" scope-model="model.parameter.PH_HKMT.date"></t-date-time>
             </td>
             <td>
                 <div>
@@ -89,7 +89,7 @@
         <tr ng-repeat="hakuaika in model.hakux.result.hakuaikas">
             <th tt='haku.edit.aikataulu.PH_HKTA'>Hakukohteiden tallennus alkaa</th>
             <td>
-                <t-date-time type="long" name="PH_HKTA" timestamp="true" ng-model="model.parameter.PH_HKTA.date"></t-date-time>
+                <t-date-time type="long" name="PH_HKTA" timestamp="true" scope-model="model.parameter.PH_HKTA.date"></t-date-time>
             </td>
             <td>
                 <div>
@@ -101,7 +101,7 @@
         <tr>
             <th tt='haku.edit.aikataulu.PH_HKP'>Hakukierros päättyy</th>
             <td>
-                <t-date-time type="long" name="PH_HKP" timestamp="true" ng-model="model.parameter.PH_HKP.date"></t-date-time>
+                <t-date-time type="long" name="PH_HKP" timestamp="true" scope-model="model.parameter.PH_HKP.date"></t-date-time>
             </td>
             <td>
                 <div>
