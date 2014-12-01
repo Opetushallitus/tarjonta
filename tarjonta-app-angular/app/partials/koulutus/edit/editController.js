@@ -313,13 +313,12 @@ app.controller('BaseEditController', [
                 var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
                 hakukohdePromise.then(function(hakukohteet) {
                 	if (hakukohteet.result && hakukohteet.result.length > 0) {
-                		$scope.model.saved = true;
                 		$scope.setMinMax(true);
                 	} else {
-                		$scope.model.saved = false;
                 		$scope.setMinMax(false);
                 	}
                 }, function() {
+                	$scope.setMinMax(false);
                 });
 			}
 
@@ -687,9 +686,10 @@ app.controller('BaseEditController', [
             });
         };
         
-        $scope.setMinMax = function(minMax) {
-        	$scope.model.isMinmax = minMax;
-            if ($scope.model.isMinmax) {
+        $scope.setMinMax = function(restricted) {
+        	$scope.model.isMinmax = restricted;
+            if (restricted) { // true, jos koulutukseen liittyy vähintään yksi hakukohde
+            	// jos koulutukselle on määritelty vähintään yksi tarkka alkamisPvm
             	if ($scope.model.koulutuksenAlkamisPvms && $scope.model.koulutuksenAlkamisPvms.length > 0) {
             		var alkamisPvm = new Date($scope.model.koulutuksenAlkamisPvms[0]);
     				var vuosi = alkamisPvm.getFullYear();
@@ -704,6 +704,7 @@ app.controller('BaseEditController', [
     					maxY.setFullYear(vuosi, 11, 31);
     					$scope.model.koulutuksenAlkamiskausi.uri = "kausi_s";
 					}
+    				// asetetaan lomakkeen inputeille lasketut rajat
 					$scope.min = minY;
 					$scope.max = maxY;
 					$scope.minYear = minY.getFullYear();
@@ -711,6 +712,7 @@ app.controller('BaseEditController', [
 				} else {
     				var minY = new Date();
     				var maxY = new Date();
+    				// jos koulutukselle on määritelty alkamiskausi ja -vuosi
     				if ($scope.model.koulutuksenAlkamiskausi && $scope.model.koulutuksenAlkamiskausi.uri && /^\+?(0|[1-9]\d*)$/.test($scope.model.koulutuksenAlkamisvuosi)) {
     					var vuosi = $scope.model.koulutuksenAlkamisvuosi;
         				if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf("_k") > -1) {
@@ -723,6 +725,7 @@ app.controller('BaseEditController', [
     						$scope.model.isMinmax = false;
             				return;
     					}
+        				// asetetaan lomakkeen inputeille lasketut rajat
     					$scope.min = minY;
     					$scope.max = maxY;
     					$scope.minYear = minY.getFullYear();
@@ -731,7 +734,10 @@ app.controller('BaseEditController', [
 	            		$scope.model.isMinmax = false;
 					}
 				}
-			} // if ($scope.model.isMinmax) 
+			} // if ($scope.model.isMinmax)
+            
+            // laukaistaan watcher, joka asettaa kausi-&vuosirajoitteet oikeaan scopeen ja virkistää isMinmaxin (ks. alkamispaiva-ja-kausi.js)
+    		$scope.model.restricted = restricted;  
         };
 
 
