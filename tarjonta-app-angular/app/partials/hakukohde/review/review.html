@@ -54,11 +54,11 @@
                         )
                     </td>
                 </tr>
-                <tr ng-show="!isAiku">
+                <tr ng-show="!isAiku && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
                     <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimukset"/>
                     <td colspan="2">
                         <span data-ng-repeat="hakukelpoisuusvaatimus in model.hakukelpoisuusVaatimukses">
-                            {{ hakukelpoisuusvaatimus}}
+                            {{ hakukelpoisuusvaatimus }}
                         </span>
                     </td>
                 </tr>
@@ -129,7 +129,7 @@
                         <mk-text model="model.hakukohde.lisatiedot" display="tabs"/>
                     </td>
                 </tr>
-                <tr>
+                <tr ng-if="!isAiku && !toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
                     <th tt="hakukohde.review.perustiedot.hakukelpoisuusvaatimus.kuvaus"/>
                     <td colspan="2">
                         <mk-text model="model.hakukohde.hakukelpoisuusVaatimusKuvaukset" display="tabs"/>
@@ -307,7 +307,7 @@
                     </table>
                 </td>
             </tr>
-            <tr class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
+            <tr ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
                 <td>
                     <!--
@@ -315,7 +315,7 @@
                     -->
                 </td>
             </tr>
-            <tr ng-show="!model.collapse.ryhmat">
+            <tr ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" ng-show="!model.collapse.ryhmat">
                 <th></th>
                 <td colspan="2">
                     <table class="table">
