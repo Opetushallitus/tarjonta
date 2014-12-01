@@ -12,6 +12,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     $scope.isMutable = false;
     $scope.isPartiallyMutable = false;
     $scope.isRemovable = false;
+    $scope.isCopyable = false;
     $scope.showNimiUri = false;
     $scope.isAiku = false;
     $scope.isKK = false;
@@ -493,7 +494,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     };
 
-    var checkForHakuRemove = function() {
+    var setModificationFlags = function() {
 
         var possibleStates = TarjontaService.getTilat()[$scope.model.hakukohde.tila];
 
@@ -510,12 +511,12 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             $scope.isRemovable = false;
             $scope.isPartiallyMutable = true;
         } else {
-
             $scope.isMutable = false;
             $scope.isRemovable = false;
             $scope.isPartiallyMutable = false;
         }
 
+        $scope.isCopyable = canEditHakukohdeAtAll;
     };
 
     var getPisterajat = function(valintakoe, targetPisterajaTyyppi) {
@@ -545,7 +546,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
             }
             $scope.isRemovable = results[1] === true && results[2] === true;
-            checkForHakuRemove();
+            setModificationFlags();
 
             var tila = $scope.model.hakukohde.tila;
             if(['JULKAISTU','POISTETTU'].indexOf(tila) != -1) {
