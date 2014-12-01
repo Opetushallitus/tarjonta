@@ -41,16 +41,13 @@ app.factory('HakuService', function ($http, $q, Config, $log) {
                 addHakukohdes: false
             };
 
-            $http({method: 'GET', url: hakuUri, params: params}).success(function (data, status, headers, config) {
-                // this callback will be called asynchronously
-
-                hakuPromise.resolve(data.result);
-                // when the response is available
+            $http({method: 'GET', url: hakuUri, params: params}).success(function (data) {
+                var filtered = _.filter(data.result, function(haku){
+                    return haku.tila !== 'POISTETTU';
+                });
+                hakuPromise.resolve(filtered);
             }).error(function (data, status, headers, config) {
-
                 $log.debug('ERROR OCCURRED GETTING HAKUS: ', status);
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
             });
 
             return hakuPromise.promise;

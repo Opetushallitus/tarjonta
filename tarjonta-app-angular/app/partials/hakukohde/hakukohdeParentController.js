@@ -747,9 +747,8 @@ app.controller('HakukohdeParentController', [
 
         $scope.retrieveHakus = function (filterHakuFunction) {
 
-            var hakuPromise = HakuService.getAllHakus();
+            HakuService.getAllHakus().then(function(hakuDatas) {
 
-            hakuPromise.then(function (hakuDatas) {
                 $scope.model.hakus = [];
 
                 angular.forEach(hakuDatas, function (haku) {
