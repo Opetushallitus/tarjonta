@@ -42,6 +42,7 @@ import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.business.exception.TarjontaBusinessException;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.EntityConverterToRDTO;
+import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusCommonConverter;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEntity;
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
@@ -69,10 +70,7 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
@@ -345,6 +343,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         KoulutusValidator.validateKoulutusGeneric(dto, komo, result);
+
+        switch (dto.getToteutustyyppi()) {
+            case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+                if (existsDuplicateKoulutus(dto)) {
+                    result.addError(ErrorV1RDTO.createValidationError("", "koulutus.koulutusOnJoOlemassa"));
+                }
+                break;
+        }
 
         if (!result.hasErrors() && validateOrganisation(
                 dto.getOrganisaatio(), result,
@@ -1247,6 +1254,57 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         copy.setOrganisaatio(new OrganisaatioV1RDTO(orgOid, null, null));
 
         return copy;
+    }
+
+    public boolean existsDuplicateKoulutus(KoulutusGenericV1RDTO dto) {
+        List<String> koulutuslajis = new ArrayList<String>();
+        koulutuslajis.add(getKoodiUriFromKoodiV1RDTO(dto.getKoulutuslaji(), true));
+
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(
+            dto.getOrganisaatio().getOid(),
+            getKoodiUriFromKoodiV1RDTO(dto.getPohjakoulutusvaatimus(), true),
+            getKoodiUriFromKoodiV1RDTO(dto.getKoulutuskoodi(), true),
+            getKoodiUriFromKoodiV1RDTO(dto.getKoulutusohjelma(), true),
+            dto.getOpetuskielis().getUrisAsStringList(true),
+            koulutuslajis
+        );
+
+        if (komotos != null) {
+            for (KoulutusmoduuliToteutus tmpKomoto : komotos) {
+                if ( !isSameKoulutus(dto, tmpKomoto) && isSameKausiAndVuosi(dto, tmpKomoto)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isSameKoulutus(KoulutusGenericV1RDTO dto, KoulutusmoduuliToteutus komoto) {
+        return dto.getOid() != null && dto.getOid().equals(komoto.getOid());
+    }
+
+    public boolean isSameKausiAndVuosi(KoulutusGenericV1RDTO dto, KoulutusmoduuliToteutus komoto) {
+        KoulutusCommonConverter converter = new KoulutusCommonConverter();
+        KoulutusmoduuliToteutus newKomoto = new KoulutusmoduuliToteutus();
+        converter.handleDates(newKomoto, dto);
+
+        return newKomoto.getAlkamisVuosi().equals(komoto.getAlkamisVuosi())
+                   && newKomoto.getAlkamiskausiUri().equals(komoto.getAlkamiskausiUri());
+    }
+
+    public static String getKoodiUriFromKoodiV1RDTO(KoodiV1RDTO koodi, boolean addVersionToUri) {
+        if (koodi == null) {
+            return "";
+        }
+
+        String uri = koodi.getUri();
+
+        if (addVersionToUri) {
+            uri = uri.concat("#" + koodi.getVersio().toString());
+        }
+
+        return uri;
     }
 
 }
