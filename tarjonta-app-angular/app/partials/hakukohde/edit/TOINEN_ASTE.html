@@ -84,7 +84,7 @@
                         </td>
                     </tr>
 
-                    <tr class="required" data-ng-if="model.configurableHakuaika">
+                    <tr data-ng-if="model.configurableHakuaika">
                         <th tt="ta.hakukohde.hakuaika.valittavat">Valittava hakuaika</th>
                         <td>
                             <span class="datetimepicker-label" tt="ta.hakukohde.alkaa">Alkaa</span>
@@ -93,7 +93,7 @@
                                 change="status.dirtify()"></t-date-time>
 
                             <span class="datetimepicker-label" tt="ta.hakukohde.loppuu">Loppuu</span>
-                            <t-date-time required timestamp="true" type="long" min="model.hakukohde.hakuaikaAlkuPvm"
+                            <t-date-time required timestamp="true" type="long" min="model.hakukohde.hakuaikaAlkuPvm ? model.hakukohde.hakuaikaAlkuPvm : model.hakuaikaMin"
                                 max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaLoppuPvm"
                                 change="status.dirtify()"></t-date-time>
                         </td>
