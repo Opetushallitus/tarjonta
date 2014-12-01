@@ -89,6 +89,28 @@ app.controller('HakukohdeParentController', [
                 toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS';
         };
 
+        $scope.needsValinnoissaKaytettavatAloituspaikat = function(toteutusTyyppi) {
+            return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
+                toteutusTyyppi === 'LUKIOKOULUTUS' ||
+                toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+                toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
+        };
+
+        $scope.ilmoitettavatAloituspaikatMandatory = function(toteutusTyyppi) {
+            return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' ||
+                toteutusTyyppi === 'LUKIOKOULUTUS' ||
+                toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+                toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
+        };
+
         /**
          * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
          */
