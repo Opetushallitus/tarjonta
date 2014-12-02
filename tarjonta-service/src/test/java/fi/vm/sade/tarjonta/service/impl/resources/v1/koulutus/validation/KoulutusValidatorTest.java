@@ -60,7 +60,7 @@ public class KoulutusValidatorTest {
     @Test
     public void testValidationLukioNullObject() {
         ResultV1RDTO result = new ResultV1RDTO();
-        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusLukio(null, KOULUTUS_OHJELMA, result);
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(null, KOULUTUS_OHJELMA, result);
         org.junit.Assert.assertTrue("errors", v.hasErrors());
         org.junit.Assert.assertEquals("errors count", 1, v.getErrors().size());
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_INPUT_OBJECT_MISSING);
@@ -88,7 +88,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        checkMissingErrors(KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, result), 19);
+        checkMissingErrors(KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, result), 19);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        ResultV1RDTO<KoulutusV1RDTO> v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         checkMissingErrors(v, 18);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TILA_ENUM_MISSING);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING);
@@ -156,7 +156,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        v = KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         checkMissingErrors(v, 16);
         assertErrorExist(v.getErrors(), KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID);
 
@@ -188,7 +188,7 @@ public class KoulutusValidatorTest {
         dto.getOpetusPaikkas().setUris(uris);
         dto.getOpetuskielis().setUris(uris);
 
-        v = KoulutusValidator.validateKoulutusLukio(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
+        v = KoulutusValidator.validateKoulutusGeneric(dto, KOULUTUS_OHJELMA, new ResultV1RDTO());
         org.junit.Assert.assertFalse("not success?", v.hasErrors());
     }
 

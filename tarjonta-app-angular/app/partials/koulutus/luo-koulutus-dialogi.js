@@ -5,8 +5,8 @@
 var app = angular.module('app.koulutus.ctrl');
 
 app.controller('LuoKoulutusDialogiController',
-    function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
-             SharedStateService, AuthService, $log, $timeout, LocalisationService) {
+    function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService, $log,
+             KoulutusConverterFactory, $timeout, LocalisationService) {
 
         $log = $log.getInstance("LuoKoulutusDialogiController");
 
@@ -83,9 +83,8 @@ app.controller('LuoKoulutusDialogiController',
 
         $scope.lkorganisaatio = $scope.lkorganisaatio || {currentNode: undefined};
         // Watchi valitulle organisaatiolle
-        $scope.$watch('lkorganisaatio.currentNode', function(organisaatio, oldVal) {
-            $log.debug("oprganisaatio valittu", organisaatio);
-            if (organisaatio !== undefined && organisaatio.oid !== undefined && $scope.model.organisaatiot.indexOf(organisaatio) == -1) {
+        $scope.$watch('lkorganisaatio.currentNode', function(organisaatio) {
+            if (organisaatio && organisaatio.oid) {
                 lisaaOrganisaatio(organisaatio);
                 if (userRootOrganization === null) {
                     userRootOrganization = organisaatio;
@@ -96,12 +95,29 @@ app.controller('LuoKoulutusDialogiController',
         $scope.$watch('model.koulutustyyppi', function(val) {
             // If korkeakoulutus
             if (val && val.koodiUri === "koulutustyyppi_3") {
-                $scope.showOtherOrganizationsCheckbox = true;
+                $scope.model.showOtherOrganizationsCheckbox = true;
             }
             else {
-                $scope.showOtherOrganizations = false;
-                $scope.showOtherOrganizationsCheckbox = false;
+                $scope.model.showOtherOrganizations = false;
+                $scope.model.showOtherOrganizationsCheckbox = false;
                 $scope.toggleOtherOrganizations(true);
+            }
+
+            if (val) {
+                // Hae pohjakoulutusvaatimus koodistosta
+                Koodisto.getAlapuolisetKoodiUrit([val.koodiUri], "pohjakoulutusvaatimustoinenaste").then(function (res) {
+                    $scope.pohjakoulutusvaatimusOptions = res.map;
+
+                    var keys = _.keys(res.map);
+                    $scope.showPohjakoulutusvaatimus = keys.length > 1;
+
+                    if (keys.length === 1) {
+                        $scope.model.pohjakoulutusvaatimus = res.map[keys[0]].koodiUri;
+                    }
+                    else {
+                        $scope.model.pohjakoulutusvaatimus = null;
+                    }
+                });
             }
         });
 
@@ -150,10 +166,19 @@ app.controller('LuoKoulutusDialogiController',
 
 
         var lisaaOrganisaatio = function(organisaatio) {
-            $scope.model.organisaatiot.push(organisaatio);
-            $log.debug("lisaaOrganisaatio:", organisaatio);
-            var oppilaitostyypit = OrganisaatioService.haeOppilaitostyypit(organisaatio.oid);
+            // Tarkista, jos organisaatio on jo valittu -> älä tee mitään
+            if (_.findWhere($scope.model.organisaatiot, {oid: organisaatio.oid})) {
+                return;
+            }
 
+            // Jos ei näytetä muita organisaatioita -> voi valita vain yhden organisaation,
+            // joten korvaa vanha valinta
+            if (!$scope.model.showOtherOrganizations) {
+                $scope.model.organisaatiot = [];
+            }
+
+            $scope.model.organisaatiot.push(organisaatio);
+            var oppilaitostyypit = OrganisaatioService.haeOppilaitostyypit(organisaatio.oid);
             oppilaitostyypit.then(function(data) {
                 paivitaKoulutustyypit(data);
             });
@@ -226,25 +251,14 @@ app.controller('LuoKoulutusDialogiController',
 
             $scope.tutkintoDialogModel = {};
 
-            /*
-             koulutustyyppi_5	Valmentava ja kuntouttava opetus ja ohjaus
-             koulutustyyppi_12	Erikoisammattitutkinto
-             koulutustyyppi_10	Vapaan sivistystyön koulutus
-             koulutustyyppi_11	Ammattitutkinto
-             koulutustyyppi_2	Lukiokoulutus
-             koulutustyyppi_13	ammatillinen perustutkinto näyttötutkintona
-             koulutustyyppi_14	Lukiokoulutus, aikuisten oppimäärä
-             koulutustyyppi_7	Ammatilliseen peruskoulutukseen ohjaava ja valmistava koulutus
-             koulutustyyppi_4	Ammatillinen peruskoulutus erityisopetuksena
-             koulutustyyppi_1	Ammatillinen perustutkinto
-             koulutustyyppi_8	Maahanmuuttajien ammatilliseen peruskoulutukseen valmistava koulutus
-             koulutustyyppi_3	Korkeakoulutus
-             koulutustyyppi_9	Maahanmuuttajien ja vieraskielisten lukiokoulutukseen valmistava koulutus
-             koulutustyyppi_6	Perusopetuksen lisäopetus
-             */
+            var toteutustyyppi = KoulutusConverterFactory.getToteutustyyppiByKoulutustyyppiKoodiUri($scope.model.koulutustyyppi.koodiUri);
 
-            //XXX nyt vain kk kovakoodattuna!!
-            if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_3") {
+            if ( !toteutustyyppi ) {
+                eiToteutettu();
+                return;
+            }
+
+            if (toteutustyyppi === "KORKEAKOULUTUS") {
                 var olt = OrganisaatioService.haeOppilaitostyypit($scope.model.organisaatiot[0].oid);
                 olt.then(function(oppilaitostyypit) {
                     Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, "koulutusasteoph2002").then(
@@ -279,39 +293,52 @@ app.controller('LuoKoulutusDialogiController',
                             })
                 })
 
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_14") {
-                //LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA
-                $location.path('/koulutus/LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
-                $scope.luoKoulutusDialog.close();
-            } else if ($scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_13"
-                    || $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_12"
-                    || $scope.model.koulutustyyppi.koodiUri === "koulutustyyppi_11"
-                    ) {
-                //AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA
-                var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
-                var toteutustyyppi = null
-                switch ($scope.model.koulutustyyppi.koodiUri) {
-                    case "koulutustyyppi_13":
-                        toteutustyyppi = "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA"
-                        break;
-                    case "koulutustyyppi_12":
-                        toteutustyyppi = "ERIKOISAMMATTITUTKINTO"
-                        break;
-                    case "koulutustyyppi_11":
-                        toteutustyyppi = "AMMATTITUTKINTO"
-                        break;
+            }
+
+            else if (
+                    ["LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA",
+                    "LUKIOKOULUTUS",
+                    "AMMATILLINEN_PERUSTUTKINTO",
+                    "AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA",
+                    "AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS",
+                    "MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS",
+                    "PERUSOPETUKSEN_LISAOPETUS",
+                    "VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS",
+                    "VAPAAN_SIVISTYSTYON_KOULUTUS",
+                    "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS"]
+                    .indexOf(toteutustyyppi) !== -1
+                ) {
+                $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri
+                    + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+
+                if ( $scope.model.pohjakoulutusvaatimus ) {
+                    $location.search('pohjakoulutusvaatimus', $scope.model.pohjakoulutusvaatimus);
                 }
 
+                $scope.luoKoulutusDialog.close();
+            }
+
+            else if (
+                    ["AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA",
+                    "ERIKOISAMMATTITUTKINTO",
+                    "AMMATTITUTKINTO"]
+                    .indexOf(toteutustyyppi) !== -1
+                ) {
+
+                var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
                 promise.then(function(koodis) {
                     for (var i = 0; i < koodis.length; i++) {
                         if (CONFIG.env["koodisto-uris.koulutuslaji"] === koodis[i].koodiKoodisto) {
-                            $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                            $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri
+                                + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                             break;
                         }
                     }
                     $scope.luoKoulutusDialog.close();
                 });
-            } else {
+            }
+
+            else {
                 eiToteutettu();
             }
 
@@ -351,7 +378,11 @@ app.controller('LuoKoulutusDialogiController',
          * -organisaatio valittu && koulutus valittu && valinta on validi, olettaa että vain yhden organisaation voi valita.
          */
         $scope.jatkaDisabled = function() {
-            var jatkaEnabled = $scope.organisaatioValittu() && $scope.koulutustyyppiValidi();
+            var jatkaEnabled = $scope.organisaatioValittu()
+                               && $scope.koulutustyyppiValidi()
+                               // pohjakoulutus pitää olla valittuna osalle koulutuksista
+                               && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus);
+
             return !jatkaEnabled;
         };
 
@@ -407,7 +438,7 @@ app.controller('LuoKoulutusDialogiController',
             if ( lkorganisaatiotInit === null && !skipInit && $scope.lkorganisaatiot ) {
                 lkorganisaatiotInit = angular.copy($scope.lkorganisaatiot);
             }
-            if ( !$scope.showOtherOrganizations && lkorganisaatiotInit ) {
+            if ( !$scope.model.showOtherOrganizations && lkorganisaatiotInit ) {
                 $scope.lkorganisaatiot = lkorganisaatiotInit;
             }
         };

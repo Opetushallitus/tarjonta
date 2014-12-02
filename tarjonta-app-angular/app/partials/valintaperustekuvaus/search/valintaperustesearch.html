@@ -7,6 +7,8 @@
             <th tt="tarjonta.valintaperustekuvaus.vuosi">Vuosi</th>
             <th tt="tarjonta.valintaperustekuvaus.kausi">Kausi</th>
             <th tt="tarjonta.valintaperustekuvaus.oppilaitostyyppi">Oppilaitostyyppi</th>
+            <th tt="tarjonta.valintaperustekuvaus.ryhma">Valintaperusteryhmä</th>
+            <th tt="tarjonta.valintaperustekuvaus.soraryhma">SORA-ryhmä</th>
             <th>&nbsp;</th>
         </tr>
 
@@ -25,6 +27,12 @@
             <td>
                 <koodistocombo koodistouri="'oppilaitostyyppi'" filteruris="model.userOrgTypes" koodiuri="model.searchSpec.oppilaitosTyyppi" locale="'fi'"/>
             </td>
+            <td>
+                <koodistocombo koodistouri="'valintaperustekuvausryhma'" koodiuri="model.searchSpec.valintaperustekuvausryhma" locale="'fi'"/>
+            </td>
+            <td>
+                <koodistocombo koodistouri="'sorakuvaus'" koodiuri="model.searchSpec.sorakuvaus" locale="'fi'"/>
+            </td>
 
             <td class="controls">
                 <button class="btn" type="button" tt="tarjonta.valintaperustekuvaus.tyhjenna" value="Tyhjennä" ng-click="reset()">Tyhjennä</button>
@@ -36,13 +44,13 @@
     </table>
 
     <div id="searchResults">
-        
+
         <tabset>
             <tab heading="{{t('kk.valintaperusteet.tab.valintaperusteet')}}">
 	            <div class="controls">
 	                <button class="btn float-right" type="button" ng-click="createNew('valintaperustekuvaus')"><span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span></button>
 	            </div>
-	            
+
                 <results-tree-table
                     columns="['kausi', 'oppilaitostyyppi']"
                     column-titles="{kausi:'tarjonta.valintaperustekuvaus.list.vuosikausi', oppilaitostyyppi:'tarjonta.valintaperustekuvaus.list.oppilaitostyyppi'}"

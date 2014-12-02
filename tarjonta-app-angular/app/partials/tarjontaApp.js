@@ -10,7 +10,7 @@ angular.module('app.kk',
             'app.kk.search.valintaperustekuvaus.ctrl',
             'app.edit.ctrl',
             'app.edit.ctrl.kk',
-            'app.edit.ctrl.lukio',
+            'app.edit.ctrl.generic',
             'app.edit.ctrl.amm',
             'app.edit.ctrl.alkamispaiva',
             'app.edit.ctrl.tutkintonimike',
@@ -92,7 +92,8 @@ angular.module('app',
             'ExportToParent',
             'debounce',
             'Parameter',
-            'Logging'
+            'Logging',
+            'ValidDecimal'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -268,7 +269,9 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     valintakokeet: [],
                     lisatiedot: {},
                     valintaperusteKuvaukset: {},
-                    soraKuvaukset: {}
+                    soraKuvaukset: {},
+                    painotettavatOppiaineet: [],
+                    isNew: true
                 });
 
                 TarjontaService.getKoulutusPromise(selectedKoulutusOids[0]).then(function(res) {
@@ -281,13 +284,13 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     }
                     hakukohde.multipleOwners = multipleOwners;
                     hakukohde.opetusKielet = Object.keys(res.result.opetuskielis.uris);
+                    hakukohde.toteutusTyyppi = res.result.toteutustyyppi;
                     deferred.resolve(hakukohde);
                 });
 
                 return deferred.promise;
-            }
 
-            else {
+            } else {
                 var deferred = $q.defer();
 
                 Hakukohde.get({oid: $route.current.params.id}).$promise.then(function(res) {
@@ -692,4 +695,20 @@ angular.module('app').controller('AppRoutingCtrl', ['$scope', '$route', '$routeP
 //
 angular.module('app').config(function($logProvider) {
     $logProvider.debugEnabled(true);
+});
+
+/**
+ * Fix IE caching AJAX-requests to tarjonta-service.
+ */
+angular.module('app').factory('ieCacheInterceptor', function() {
+    return {
+        request: function(config) {
+            if (config.method === 'GET' && config.url.indexOf('/tarjonta-service/') !== -1) {
+                config.headers['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT';
+            }
+            return config;
+        }
+    };
+}).config(function($httpProvider) {
+    $httpProvider.interceptors.push('ieCacheInterceptor');
 });

@@ -278,6 +278,7 @@ public class KoulutusCommonConverter {
 
         final KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(fromKoodiUri);
 
+
         if (koodiType == null && nullable.isAllowed()) {
             //TODO: remove this code block when data is fixed
             toKoodiUriDTO(koodiDto, new KoodiUriAndVersioType(), new KoodiType(), param.getLocale());
@@ -423,11 +424,8 @@ public class KoulutusCommonConverter {
 
         //pre-check if the dates are within same date range of kausi + vuosi
         for (Date pvm : dates) {
-            if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))) {
-                return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_KAUSI_INVALID;
-            }
-
-            if (!baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
+            if (!baseKausi.equals(IndexDataUtils.parseKausiKoodi(pvm))
+                || !baseVuosi.equals(IndexDataUtils.parseYearInt(pvm))) {
                 return KoulutusValidationMessages.KOULUTUS_ALKAMISPVM_VUOSI_INVALID;
             }
 

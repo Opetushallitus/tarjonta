@@ -1,18 +1,18 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl')
 
-app.controller('ValintakokeetController',
+app.controller(
+    'ValintakokeetController',
     function($scope, $q, $filter, LocalisationService, OrganisaatioService,
-            Koodisto, Hakukohde, Valintakoe, dialogService, HakuService,
-            $modal, Config, $location, HakukohdeService) {
-
-        var initialTabSelected = false;
+             Koodisto, Hakukohde, Valintakoe, dialogService, HakuService,
+             $modal, Config, $location, HakukohdeService) {
 
         $scope.kokeetModel = {
             opetusKielet: [],
             langs: [],
             selectedLangs: [],
             selectedTab: {},
-            valintakoeLangs: []
+            valintakoeLangs: [],
+            valintakoetyypit: []
         };
 
         function newAjankohta() {
@@ -52,15 +52,15 @@ app.controller('ValintakokeetController',
 
                 //add valintakoe langs
                 if ($scope.model.hakukohde.valintakokeet
-                        && $scope.model.hakukohde.valintakokeet !== null
-                        && $scope.model.hakukohde.valintakokeet.length > 0) {
+                    && $scope.model.hakukohde.valintakokeet !== null
+                    && $scope.model.hakukohde.valintakokeet.length > 0) {
                     arrKieliUris = _.pluck($scope.model.hakukohde.valintakokeet, 'kieliUri');
                 }
 
                 //add koulutus languages
                 if ($scope.model.hakukohde.opetusKielet
-                        && $scope.model.hakukohde.opetusKielet !== null
-                        && $scope.model.hakukohde.opetusKielet.length > 0) {
+                    && $scope.model.hakukohde.opetusKielet !== null
+                    && $scope.model.hakukohde.opetusKielet.length > 0) {
                     arrKieliUris = arrKieliUris.concat($scope.model.hakukohde.opetusKielet);
                 }
 
@@ -112,6 +112,8 @@ app.controller('ValintakokeetController',
                 if (!tabLang) { //remove duplicate objects
                     $scope.kokeetModel.valintakoeLangs.push(koodi);
                 }
+
+                $scope.kokeetModel.selectedTab[kieliUri] = true;
             }
 
             if (!$scope.findValintakoeLangTabObj(kieliUri)) {
@@ -149,15 +151,15 @@ app.controller('ValintakokeetController',
             for (var i in $scope.model.hakukohde.valintakokeet) {
                 var li = $scope.model.hakukohde.valintakokeet[i];
                 var nimiEmpty = !notEmpty(li.valintakoeNimi);
+                var tyyppiEmpty = !notEmpty(li.valintakoetyyppi);
                 var kuvausEmpty = !notEmpty(li.valintakokeenKuvaus.teksti);
                 var ajankohtaEmpty = li.valintakoeAjankohtas.length == 0;
 
-                if (nimiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
+                if (nimiEmpty && tyyppiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
                     continue;
-                    // uusi tyhjä
                 }
 
-                if (nimiEmpty) {
+                if (nimiEmpty && tyyppiEmpty) {
                     return false;
                 }
                 if (kuvausEmpty) {
@@ -180,8 +182,8 @@ app.controller('ValintakokeetController',
 
         $scope.deleteAjankohta = function(valintakoe, ajankohta, confirm) {
             if (!ajankohta.alkaa && !ajankohta.loppuu
-                    && !ajankohta.osoite.osoiterivi1
-                    && !ajankohta.osoite.postinumero) {
+                && !ajankohta.osoite.osoiterivi1
+                && !ajankohta.osoite.postinumero) {
                 confirm = true;
             }
             if (confirm) {
@@ -196,25 +198,25 @@ app.controller('ValintakokeetController',
             } else {
 
                 dialogService
-                        .showDialog({
-                            title: LocalisationService
-                                    .t("tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta.title"),
-                            description: LocalisationService
-                                    .t(
-                                            "tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta",
-                                            [
-                                                valintakoe.valintakoeNimi,
-                                                $filter("date")(ajankohta.alkaa,
-                                                        "d.M.yyyy H:mm")
-                                                        || "?",
-                                                $filter("date")(ajankohta.loppuu,
-                                                        "d.M.yyyy H:mm")
-                                                        || "?"])
-                        }).result.then(function(ret) {
-                    if (ret) {
-                        $scope.deleteAjankohta(valintakoe, ajankohta, true);
-                    }
-                });
+                    .showDialog({
+                        title: LocalisationService
+                            .t("tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta.title"),
+                        description: LocalisationService
+                            .t(
+                            "tarjonta.poistovahvistus.hakukohde.valintakoe.ajankohta",
+                            [
+                                valintakoe.valintakoeNimi,
+                                    $filter("date")(ajankohta.alkaa,
+                                        "d.M.yyyy H:mm")
+                                    || "?",
+                                    $filter("date")(ajankohta.loppuu,
+                                        "d.M.yyyy H:mm")
+                                    || "?"])
+                    }).result.then(function(ret) {
+                        if (ret) {
+                            $scope.deleteAjankohta(valintakoe, ajankohta, true);
+                        }
+                    });
             }
         };
 
@@ -229,15 +231,15 @@ app.controller('ValintakokeetController',
             } else {
                 dialogService.showDialog({
                     title: LocalisationService
-                            .t("tarjonta.poistovahvistus.hakukohde.valintakoe.title"),
+                        .t("tarjonta.poistovahvistus.hakukohde.valintakoe.title"),
                     description: LocalisationService.t(
-                            "tarjonta.poistovahvistus.hakukohde.valintakoe",
-                            [valintakoe.valintakoeNimi])
+                        "tarjonta.poistovahvistus.hakukohde.valintakoe",
+                        [valintakoe.valintakoeNimi])
                 }).result.then(function(ret) {
-                    if (ret) {
-                        $scope.deleteValintakoe(valintakoe, true);
-                    }
-                });
+                        if (ret) {
+                            $scope.deleteValintakoe(valintakoe, true);
+                        }
+                    });
             }
         };
 
@@ -268,6 +270,22 @@ app.controller('ValintakokeetController',
             });
         };
 
+        function addEmptyValintakokeet() {
+            for (var opetuskieli in $scope.kokeetModel.valintakoeLangs) {
+                var kieliUri = $scope.kokeetModel.valintakoeLangs[opetuskieli].koodiUri;
+                var found = _.find($scope.model.hakukohde.valintakokeet, function (valintakoe) {
+                    return valintakoe.kieliUri === kieliUri;
+                });
+                if (!found) {
+                    HakukohdeService.addValintakoe($scope.model.hakukohde, kieliUri);
+                }
+            }
+        }
+
+        $scope.$on('addEmptyValintakokeet', function() {
+            addEmptyValintakokeet();
+        });
+
         $scope.onLangSelection = function(uris) {
             if (uris && uris.added !== null) {
                 $scope.addValintakoeTab(uris.added, $scope.kokeetModel.langs, false);
@@ -287,27 +305,32 @@ app.controller('ValintakokeetController',
             addEmptyValintakokeet();
         };
 
-        function addEmptyValintakokeet() {
-            for(var opetuskieli in $scope.kokeetModel.valintakoeLangs) {
-                var kieliUri = $scope.kokeetModel.valintakoeLangs[opetuskieli].koodiUri;
-                var found = _.find($scope.model.hakukohde.valintakokeet, function(valintakoe) {
-                    return valintakoe.kieliUri === kieliUri;
+        var setValintakoetyypit = function (toteutusTyyppi) {
+            var valintakoetyypit = [];
+
+            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_1", $scope.model.userLang));
+            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_2", $scope.model.userLang));
+            valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_5", $scope.model.userLang));
+
+            if(toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' ||
+                toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' ||
+                toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' ||
+                toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' ||
+                toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+                valintakoetyypit.push(Koodisto.getKoodi("valintakokeentyyppi", "valintakokeentyyppi_6", $scope.model.userLang));
+            }
+
+            angular.forEach(valintakoetyypit, function(koodiPromise) {
+                koodiPromise.then(function(koodi) {
+                    var valintakoetyyppi = {
+                        nimi: koodi.koodiNimi,
+                        uri: koodi.koodiUri + "#" + koodi.koodiVersio
+                    };
+                    $scope.kokeetModel.valintakoetyypit.push(valintakoetyyppi);
                 });
-                if(!found) {
-                    HakukohdeService.addValintakoe($scope.model.hakukohde, kieliUri);
-                }
-            }
-
-            if(!initialTabSelected) {
-                $scope.kokeetModel.valintakoeLangs.sort($scope.sortLanguageTabs);
-                for (var i in $scope.kokeetModel.valintakoeLangs) {
-                    $scope.kokeetModel.selectedTab[$scope.kokeetModel.valintakoeLangs[i].koodiUri] = !initialTabSelected;
-                    initialTabSelected = true;
-                }
-            }
-        }
-
-        $scope.$on('addEmptyValintakokeet', function() {
-            addEmptyValintakokeet();
-        });
+            });
+        };
+        setValintakoetyypit($scope.model.hakukohde.toteutusTyyppi);
     });

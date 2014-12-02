@@ -17,6 +17,9 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,5 +53,21 @@ public class KoodiUrisV1RDTO extends KoodiV1RDTO {
      */
     public void setUris(Map<String, Integer> uris) {
         this.uris = uris;
+    }
+
+    public List<String> getUrisAsStringList(boolean addVersionToUri) {
+        List<String> list = new ArrayList<String>();
+
+        for(Map.Entry<String, Integer> entry : uris.entrySet()) {
+            String uri = entry.getKey();
+
+            if (addVersionToUri) {
+                uri = uri.concat("#" + entry.getValue().toString());
+            }
+
+            list.add(uri);
+        }
+
+        return list;
     }
 }

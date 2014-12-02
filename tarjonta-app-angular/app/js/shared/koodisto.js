@@ -399,7 +399,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             var koodiUri = host + ":koodistoUri/koodi/:koodiUri";
             //console.log('Calling getKoodistoWithKoodiUri with : ' + koodistoUriParam + '/koodi/'+ koodiUriParam +' ' + locale);
 
-            $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri'}, {cache: true}).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam}, function(koodi) {
+            $resource(koodiUri, {koodistoUri: '@koodistoUri', koodiUri: '@koodiUri'}, {cache: true}).get({koodistoUri: koodistoUriParam, koodiUri: koodiUriParam.split('#')[0]}, function(koodi) {
                 returnKoodi.resolve(getKoodiViewModelFromKoodi(koodi, locale));
             });
             // console.log('Returning promise from getKoodistoWithKoodiUri');
@@ -459,7 +459,6 @@ app.factory('KoodistoURI', function($log, Config) {
             $log.warn("EMPTY koodisto data value for key: " + envKey);
         }
 
-        $log.debug("getConfigWithDefault()", envKey, defaultValue, result);
         return result;
     };
 

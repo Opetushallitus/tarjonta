@@ -41,9 +41,11 @@ public abstract class AbstractWebApplication extends AbstractSadeApplication {
 
     @Override
     public synchronized void init() {
+        /* Disabloid Vaadin nyt kun kaikki on siirretty Angular.js toteutukseen
         super.init();
         this.transactionStart(this, null);
         initApplication();
+        */
     }
 
     protected abstract void initApplication();

@@ -4,6 +4,10 @@ var app = angular.module('MultiSelect', ['pasvaz.bindonce', 'ngGrid', 'localisat
 
 app.directive('multiSelect', function($log, $modal, LocalisationService) {
 
+    // Referenssi lomakkeen scopessa olevaan controlleriin,
+    // jotta voidaan asettaa lomakkeen validointi $setValidity-metodilla
+    var $formController;
+
     function columnize(values, cols) {
         var ret = [];
         var row = [];
@@ -23,13 +27,12 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
     }
 
     function controller($scope) {
-
         $scope.errors = {
             required: false,
             pristine: true,
             dirty: false,
             $name: $scope.name
-        }
+        };
 
         $scope.titles = [];
         $scope.items = [];
@@ -47,6 +50,10 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.errors.dirty = true;
             $scope.errors.pristine = false;
             $scope.errors.required = $scope.isrequired && $scope.selection.length === 0;
+
+            if($formController !== undefined) {
+                $formController.$setValidity('required', !$scope.errors.required);
+            }
         }
 
         if ($scope.columns == undefined) {
@@ -292,25 +299,25 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 if (angular.isUndefined(a) || angular.isUndefined(b)) {
                     return 0;
                 }
-                
+
                 if (!a.value) {
                     return -1;
-                }              
+                }
                 if (!b.value) {
                     return 1;
-                }              
-                
+                }
+
                 if (a.orderWith < b.orderWith) {
                     return  -1;
                 }
                 if (a.orderWith > b.orderWith) {
                     return  1;
                 }
-                
+
                 if(angular.isDefined(a.value.localeCompare)) {
                     return a.value.localeCompare(b.value);
                 }
-                
+
                 return 0;
                 // return a.orderWith < b.orderWith ? -1 : a.orderWith > b.orderWith ? 1 : a.value.localeCompare(b.value);
             });
@@ -341,6 +348,8 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 scope.isrequired = (attrs.required !== undefined);
                 scope.errors.required = scope.isrequired;
                 controller.$addControl({"$name": scope.name, "$error": scope.errors});
+
+                $formController = controller;
             }
         },
         scope: {

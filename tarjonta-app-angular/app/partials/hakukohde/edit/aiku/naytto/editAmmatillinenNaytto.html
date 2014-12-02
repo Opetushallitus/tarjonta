@@ -5,7 +5,7 @@
             tt-create="hakukohde.create.header.title"
             tt-edit="hakukohde.edit.header.title"
             title="model.hakukohde.tekstis"
-            dto="model.hakukohde"> 
+            dto="model.hakukohde">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
         <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="saveAsLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
@@ -26,7 +26,7 @@
     </controls-model>
 
     <display-controls model="formControls" display="header" command="controlModelCommandApi"></display-controls>
-     
+
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
@@ -39,15 +39,15 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocomboaiku 
-                                 onchangecallback="fnTemp"  
-                                 koodistouri="'aikuhakukohteet'"  
-                                 koodiuri="model.hakukohde.hakukohteenNimiUri"  
-                                 parentkoodiuri="osaamisalat" 
-                                 isdependent="true" 
-                                 locale="'fi'"  
-                                 version="true" 
-                                 isrequired="true" 
+                            <div koodistocomboaiku
+                                 onchangecallback="fnTemp"
+                                 koodistouri="'aikuhakukohteet'"
+                                 koodiuri="model.hakukohde.hakukohteenNimiUri"
+                                 parentkoodiuri="osaamisalat"
+                                 isdependent="true"
+                                 locale="'fi'"
+                                 version="true"
+                                 isrequired="true"
                                  name="hakutapa"
                                  excludeuris="temp"
                                  isalakoodi="temp"
@@ -62,7 +62,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.checkSelectedHaku(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                            <select name="hakuselect" class="wide" required ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
@@ -85,7 +85,7 @@
                         <td>
                             <input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" />
                         </td>
-                        
+
                     </tr>
                 </table>
 

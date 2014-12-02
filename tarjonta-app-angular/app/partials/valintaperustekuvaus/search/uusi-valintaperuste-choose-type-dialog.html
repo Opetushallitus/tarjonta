@@ -1,0 +1,39 @@
+<div class="modal-header">
+    <h3 tt="tarjonta.valintaperustekuvaus.luo.uusi.dialog.title" ng-show="dialog.type == 'valintaperustekuvaus'" >Luo uusi valintaperustekuvaus</h3>
+    <h3 tt="tarjonta.sorakuvaus.luo.uusi.dialog.title" ng-show="dialog.type != 'valintaperustekuvaus'">Luo uusi SORA-kuvaus</h3>
+</div>
+<div class="modal-body">
+
+    <table>
+        <tr>
+            <td colspan="2">
+                <div tt="tarjonta.valintaperustekuvaus.luo.uusi.dialog.instruction">
+                    <b>Nullam</b> non commodo nulla, nec pulvinar arcu. Curabitur non accumsan magna, at accumsan urna. Integer felis augue, faucibus
+                    vitae dapibus vel, convallis vel arcu. Vivamus id dignissim leo, nec tristique sapien. Integer tortor risus, luctus eu odio eget,
+                    elementum molestie arcu. Quisque metus odio, cursus vitae purus quis, eleifend semper lorem. Fusce eget augue mi. Suspendisse
+                    euismod adipiscing eros, nec congue dui pellentesque sed. <i>Curabitur</i> a diam sed magna placerat eleifend. Curabitur varius vel
+                    nunc ut interdum.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td tt="tarjonta.valintaperustekuvaus.luo.uusi.dialog.oppilaitostyyppi.title">Oppilaitostyyppi</td>
+            <td><koodistocombo koodistouri="'oppilaitostyyppi'" filteruris="dialog.userOrgTypes" koodiuri="dialog.selectedType" locale="'fi'"/></td>
+        </tr>
+        <tr><td><strong>tai</strong></td></tr>
+        <tr ng-if="dialog.type == 'valintaperustekuvaus'">
+            <td tt="tarjonta.valintaperustekuvaus.ryhma">Valintaperusteryhmä</td>
+            <td><koodistocombo koodistouri="'valintaperustekuvausryhma'" koodiuri="dialog.valintaperustekuvausryhma" locale="'fi'"/></td>
+        </tr>
+        <tr ng-if="dialog.type != 'valintaperustekuvaus'">
+            <td tt="tarjonta.valintaperustekuvaus.soraryhma">SORA-ryhmä</td>
+            <td><koodistocombo koodistouri="'sorakuvaus'" koodiuri="dialog.valintaperustekuvausryhma" locale="'fi'"/></td>
+        </tr>
+    </table>
+
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn" data-ng-click="onCancel()" tt="tarjonta.valintaperustekuvaus.luo.uusi.dialog.cancel">Peruuta</button>
+    <button class="btn btn-primary" data-ng-click="onOk()" tt="tarjonta.valintaperustekuvaus.luo.uusi.dialog.ok">OK</button>
+</div>

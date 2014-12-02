@@ -242,4 +242,8 @@ public class Valintakoe extends TarjontaBaseEntity {
     public void setValintakoeNimi(String valintakoeNimi) {
         this.valintakoeNimi = valintakoeNimi;
     }
+
+    public boolean hasPisterajas() {
+        return !pisterajat.isEmpty();
+    }
 }

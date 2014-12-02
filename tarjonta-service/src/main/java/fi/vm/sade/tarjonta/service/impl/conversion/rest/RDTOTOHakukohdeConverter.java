@@ -89,7 +89,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
             }
         }
 
-        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
+        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.toOsoite(hakukohdeRDTO.getLiitteidenToimitusOsoite()));
 
 
         //TODO: add liite converter
@@ -143,7 +143,7 @@ public class RDTOTOHakukohdeConverter extends BaseRDTOConverter<HakukohdeV1RDTO,
             ValintakoeAjankohta valintakoeAjankohta = new ValintakoeAjankohta();
 
             valintakoeAjankohta.setLisatietoja(valintakoeAjankohtaRDTO.getLisatiedot());
-            valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(valintakoeAjankohtaRDTO.getOsoite()));
+            valintakoeAjankohta.setAjankohdanOsoite(CommonRestConverters.toOsoite(valintakoeAjankohtaRDTO.getOsoite()));
             valintakoeAjankohta.setAlkamisaika(valintakoeAjankohtaRDTO.getAlkaa());
             valintakoeAjankohta.setPaattymisaika(valintakoeAjankohtaRDTO.getLoppuu());
             valintakoeAjankohtas.add(valintakoeAjankohta);

@@ -22,7 +22,8 @@
 
         <!-- koulutus -->
         <tr>
-            <th tt="koulutus.review.perustiedot.koulutus">Koulutuksen perustiedot</th>
+            <th ng-if="!koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.tutkinto">Tutkinto</th>
+            <th ng-if="koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.koulutus">Koulutus</th>
             <td colspan="2">
                 {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
                 <i>{{model.koulutus.koulutuskoodi.arvo}}</i>
@@ -31,7 +32,7 @@
 
         <!-- tutkinto-ohjelman tunniste -->
         <tr>
-            <th tt="koulutus.review.perustiedot.lukiolinja">Lukiolinja</th>
+            <th tt="{{koulutusStructure.params.reviewOhjelmaLabel || 'koulutus.review.perustiedot.linja'}}">Linja</th>
             <td colspan="2">
                 {{model.koulutus.koulutusohjelma.meta[lang.koodi_uri].nimi}}
             </td>
@@ -58,6 +59,14 @@
             <th tt="koulutus.review.perustiedot.opintoala">Opintoala</th>
             <td colspan="2">
                 {{model.koulutus.opintoala.meta[lang.koodi_uri].nimi}}
+            </td>
+        </tr>
+
+        <!-- teemat ja aiheet -->
+        <tr ng-if="model.koulutus.aihees.meta">
+            <th tt="koulutus.review.perustiedot.teematJaAiheet">Teemat ja aiheet</th>
+            <td colspan="2">
+                <span data-ng-repeat='aihe in model.koulutus.aihees.meta'>{{ aihe.meta[lang.koodi_uri].nimi }}{{ $last ? '' : ', ' }}</span>
             </td>
         </tr>
 
@@ -93,7 +102,7 @@
                 {{model.koulutus.pohjakoulutusvaatimus.meta[lang.koodi_uri].nimi}}
             </td>
         </tr>
-        
+
         <tr>
             <th></th>
             <td colspan="2"><br/></td>
@@ -169,17 +178,17 @@
         <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
 
-    <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">  
+    <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">
         <tr>
             <th><b>{{t('koulutus.review.yhteyshenkilo.'+yh.henkiloTyyppi)}}</b></th>
             <td colspan="2">{{yh.titteli}} {{yh.sukunimi}}, {{yh.etunimet}}</td>
         </tr>
-        
+
         <tr>
             <th tt="koulutus.review.yhteyshenkilo.puhelin">Puhelin</th>
             <td colspan="2">{{yh.puhelin}}</td>
         </tr>
-    
+
         <tr>
             <th tt="koulutus.review.yhteyshenkilo.sahkoposti">Sähköposti</th>
             <td colspan="2">{{yh.sahkoposti}}</td>
@@ -194,24 +203,23 @@
     </tr>
 
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
-        <tr ng-repeat="(key, val) in model.koulutus.kielivalikoima">
+        <tr ng-if="koulutusStructure.params.isLukio" ng-repeat="(key, val) in model.koulutus.kielivalikoima">
             <th>{{t('koulutus.review.kielivalikoima.' + key)}}</th>
             <td colspan="2">
                 <span ng-repeat="meta in val.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>
-                
+
             </td>
         </tr>
-        <tr>
+        <tr ng-if="koulutusStructure.params.isLukio">
             <th tt="koulutus.review.perustiedot.lukiodiplomit">Lukiodiplomit</th>
             <td colspan="2">
                 <span ng-repeat="meta in model.koulutus.lukiodiplomit.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>
             </td>
         </tr>
-        <tr ng-repeat="lisatieto in lisatiedot">
-            <th>{{t('koulutus.review.kuvailevatTiedot.' + lisatieto.type)}}</th>
-            <td colspan="2" data-ng-bind-html="getKuvausApiModelLanguageUri(lisatieto.isKomo)[lisatieto.type].tekstis[lang.koodi_uri]"></td>
+        <tr ng-repeat="field in reviewFields">
+            <th>{{t('koulutus.review.kuvailevatTiedot.' + field)}}</th>
+            <td colspan="2" data-ng-bind-html="reviewTexts[field].tekstis[lang.koodi_uri]"></td>
         </tr>
-
     </tbody>
 
     <!-- HAKUKOHTEET -->

@@ -16,7 +16,6 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             };
 
             var pScope = $scope.$parent.$parent.$parent.$parent;
-            var lukittu = pScope.model ? pScope.model.isMinmax : false;
 
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
@@ -26,25 +25,21 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamiskausi" : "alkamiskausi",
                 alkamisvuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_alkamisvuosi" : "alkamisvuosi",
                 kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + "_kausivuosi" : "kausivuosi",
-                lukittu: lukittu
+                lukittu: pScope.model ? pScope.model.isMinmax : false
             };
             
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
 
-            // asetetaan kausi- ja vuosikenttien rajoitukset BaseEditControllerin mukaan
-            pScope.$watch("model.isMinmax", function(valNew, valOld) {
-            	lukittu = valNew !== undefined ? valNew : valOld;
-            	$scope.ctrl.lukittu = lukittu;
+            // asetetaan kausi- ja vuosikenttien rajoitukset, virkistetään parentin isMinmax
+            pScope.$watch("model.restricted", function(valNew, valOld) {
+            	$scope.ctrl.lukittu = valNew !== undefined ? valNew : valOld;
+            	pScope.model.isMinmax = $scope.ctrl.lukittu;
             	if ($scope.ctrl.lukittu) {
     	            $scope.minYear = pScope.minYear;
     	            $scope.maxYear = pScope.maxYear;
 				}
-            }); 
-
-            // asetetaan alkamispvm-rajoitukset tallennuksen yhteydessä
-            pScope.$watch("model.saved", function(valNew, valOld) {
-            	pScope.model.isMinmax = valNew !== undefined ? valNew : valOld;
+//        		$log.warn("$watch('model.restricted'): valNew="+ JSON.stringify(valNew) +", valOld="+  JSON.stringify(valOld));
             });
             
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
@@ -59,7 +54,7 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
             });
 
             $scope.clearKausiSelection = function() {
-            	if (!lukittu) {
+            	if (!$scope.ctrl.lukittu) {
                     $scope.kausiUri = "";
 				}
             };

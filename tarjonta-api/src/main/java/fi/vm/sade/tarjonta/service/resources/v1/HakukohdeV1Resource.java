@@ -272,6 +272,14 @@ public interface HakukohdeV1Resource {
     @ApiOperation(value = "Tutkii onko valituista koulutuksista mahdollista luoda uusi hakukohde", response = ResultV1RDTO.class)
     public ResultV1RDTO<ValitutKoulutuksetV1RDTO> isValidKoulutusSelection(@QueryParam("oid") List<String> oids);
 
+    @POST
+    @Path("/updateValintakokeetToNewStructure")
+    public void updateValintakokeetToNewStructure();
+
+    @POST
+    @Path("/updateLiitteetToNewStructure")
+    public void updateLiitteetToNewStructure();
+
     @GET
     @Path("/findHakukohdesByKuvausId/{id}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")

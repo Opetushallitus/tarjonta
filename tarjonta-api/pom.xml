@@ -19,7 +19,7 @@
     <parent>
         <artifactId>tarjonta</artifactId>
         <groupId>fi.vm.sade.tarjonta</groupId>
-        <version>9.8-SNAPSHOT</version>
+        <version>10.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tarjonta-api</artifactId>
@@ -110,7 +110,7 @@
 
     <build>
         <plugins>
-            
+
             <plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
@@ -158,7 +158,7 @@
 					</execution>
 				</executions>
 			</plugin>
-	
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

@@ -186,4 +186,12 @@ public class MonikielinenTeksti extends TarjontaBaseEntity {
         return tekstit;
     }
 
+    public Map<String, String> asMapWithoutVersions() {
+        Map<String, String> tekstit = Maps.newHashMap();
+        for (TekstiKaannos tk : tekstis.values()) {
+            tekstit.put(tk.getKieliKoodi().split("#")[0], tk.getArvo());
+        }
+        return tekstit;
+    }
+
 }

@@ -90,15 +90,6 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                         //do not show buttons, if koulutus status is removed
                         defer.resolve(false);
                         return;
-                    } else if (hakutulos.tulokset[0].tulokset[0].koulutusasteTyyppi === 'LUKIOKOULUTUS') {
-                        //TODO: poista tama kun nuorten lukiokoulutus on toteutettu!
-                        if (angular.isDefined(hakutulos.tulokset[0].tulokset[0].koulutuslajiUri) &&
-                                KoodistoURI.compareKoodi(
-                                        hakutulos.tulokset[0].tulokset[0].koulutuslajiUri,
-                                        window.CONFIG.env['koodi-uri.koulutuslaji.nuortenKoulutus'], true)) {
-                            defer.resolve(false);
-                            return;
-                        }
                     }
 
                     //$log.debug("hakutulos:", hakutulos);

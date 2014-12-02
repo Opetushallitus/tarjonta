@@ -32,7 +32,7 @@
 
                 <form name="editHakukohdeForm" novalidate>
                 <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
-                
+
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->
@@ -58,7 +58,7 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
@@ -78,8 +78,16 @@
                     <tr ng-show="model.configurableHakuaika">
                         <th tt="kk.hakukohde.hakuaika">Hakuaika</th>
                         <td>
-                            <span class="datetimepicker-label" tt="kk.hakukohde.alkaa">Alkaa</span><t-date-time timestamp="true" type="long" min="model.hakuaikaMin" max="model.hakukohde.hakuaikaLoppuPvm ? model.hakukohde.hakuaikaLoppuPvm : model.hakuaikaMax" ng-model="model.hakukohde.hakuaikaAlkuPvm" ng-change="status.dirtify()"></t-date-time>
-                            <span class="datetimepicker-label" tt="kk.hakukohde.loppuu">Loppuu</span><t-date-time timestamp="true" type="long" min="model.hakukohde.hakuaikaAlkuPvm ? model.hakukohde.hakuaikaAlkuPvm : model.hakuaikaMin" max="model.hakuaikaMax" ng-model="model.hakukohde.hakuaikaLoppuPvm" ng-change="status.dirtify()"></t-date-time>
+                            <span class="datetimepicker-label" tt="kk.hakukohde.alkaa">Alkaa</span>
+                            <t-date-time timestamp="true" type="long" min="model.hakuaikaMin"
+                                max="model.hakukohde.hakuaikaLoppuPvm ? model.hakukohde.hakuaikaLoppuPvm : model.hakuaikaMax"
+                                scope-model="model.hakukohde.hakuaikaAlkuPvm" change="status.dirtify()"></t-date-time>
+
+                            <span class="datetimepicker-label" tt="kk.hakukohde.loppuu">Loppuu</span>
+                            <t-date-time timestamp="true" type="long"
+                                min="model.hakukohde.hakuaikaAlkuPvm ? model.hakukohde.hakuaikaAlkuPvm : model.hakuaikaMin"
+                                max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaLoppuPvm"
+                                change="status.dirtify()"></t-date-time>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && model.hakuaikaValidationFailed" tt="hakukohde.edit.hakuaika.errors">Hakuaika on virheellinen</p>
@@ -159,10 +167,10 @@
                         <td>
                             <input type="radio" ng-model="model.hakukohde.muuYhteystieto" ng-value="false" ng-disabled="!model.hakukohde.yhteystiedot"/>
                             <span class="{{model.hakukohde.yhteystiedot ? '' : 'disabled'}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span><br/>
-                            
+
                             <input type="radio" ng-model="model.hakukohde.muuYhteystieto" ng-change="status.dirtify()" ng-value="true"/>
                             <span tt="kk.hakukohde.yhteystiedot.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span><br/>
-                            
+
                             <div class="inset">
                                 <osoite-field required model="model.hakukohde.yhteystiedot" ng-disabled="!model.hakukohde.muuYhteystieto" on-change="status.dirtify()"></osoite-field>
                             </div>

@@ -94,6 +94,7 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
         	$scope.codeList = v;
             var nc = {};
             for (var i in v) {
+                nc[v[i].koodiUri + "#" + v[i].koodiVersio] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
                 nc[v[i].koodiUri] = {versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
             }
             $scope.codes = nc;

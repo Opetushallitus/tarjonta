@@ -7,35 +7,35 @@
 		 tulee huolehtia että kaikki otsikkotekstit mahtuvat 250 pikselin sisään.
 	-->
 	<table class="tarjontaForm">
-	
+
 		<!-- Kullakin taulukkorivillä on kolme saraketta joista vasemmanpuoleisin on otsikko (th),
 			 keskimmäinen on sisältöä varten ja oikea muuhun käyttöön (esim. linkit ja validointiviestit).
-			 
+
 			 Keskimmäisen ja oikean sarakkeen voi tarvittaessa yhdistää (colspan) mutta taulukossa
 			 on oltava vähintään yksi rivi jolla kaikki sarakkeet ovat erikseen määriteltyinä.
-			 
+
 			 Rivien näyttämistä voidaan hienosäätää seuraavilla css-luokilla:
-			 
+
 			 required	Punainen pakollisuuspallero otsikon oikealle puolelle (ei vaikuta sisältöön)
 			 info		Tekstirivi (vaikuttaa lähinnä oikeanpuoleisen sarakkeen marginaaleihin)
 			 primary	Otsikon lihavointi
 
 		 -->
-		 
+
 		<!-- esimerkki (tutkintonimike, koulutuksen muokkausnäkymästä) -->
 		<tr class="required">
-		
+
 			<!-- lokalisoitu otsikko -->
 			<th tt="koulutus.edit.tutkintonimike"/>
-			
+
 			<!-- sisältö -->
 			<td>
 				<!-- select- ja input -tageille on määritelty tyylit ja seuraavat apu-css-luokat:
-				
+
 					 thin	Puolitettu leveys (100px; bootstrapin vakio on 200px)
 					 wide	Maksimileveys.
-				
-			
+
+
 				<select
 					required
 					name="tutkintoNimike"
@@ -51,16 +51,16 @@
 					tt="koulutus.edit.tutkintonimike.required"/>
 			</td>
 		</tr>
-		
+
 		<!-- ohjetekstirivi -->
 		<tr>
 			<th></th>
 			<td colspan="2" class="help" tt="koulutus.edit.opintojen-laajuus.help"/>
 		</tr>
-        
+
         <!-- tyhjä välirivi; väliviivalla tai ilman (hr) -->
         <tr class="padding"><td colspan="3"><hr/></td></tr>
-        
+
         <!-- väliotsikko -->
         <tr class="header"><th colspan="3">...</th></tr>
 
@@ -101,7 +101,7 @@ table.tarjontaForm > tbody > tr > td.help {
 	color:#606060;
 	font-style:italic;
 	padding-bottom:15px;
-	
+
 }
 
 table.tarjontaForm > tbody > tr.padding > td {
@@ -131,7 +131,7 @@ table.tarjontaForm > tbody > tr.required > th:after {
 	display:inline-block;
 	content: '*';
 	width:0.5em;
-	color:#ff0000;	
+	color:#ff0000;
 }
 /*
 table.tarjontaForm tr.required table th:after {
@@ -194,4 +194,8 @@ table.tarjontaForm tr.header th {
 ei näytä pointer-cursoria. Alla oleva korjaa asian. */
 a[ng-click] {
     cursor:pointer;
+}
+
+table.valintakokeet input {
+    margin:auto;
 }

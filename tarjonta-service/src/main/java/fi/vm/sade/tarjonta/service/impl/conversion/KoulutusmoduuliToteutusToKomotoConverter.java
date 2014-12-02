@@ -103,6 +103,11 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setEqfLuokitusUri(s.getEqfUri());
         t.setKoulutusohjelmaUri(s.getKoulutusohjelmaUri());
 
+        // Vaadin-Angular muutostyön jäleiset uudet koodistot
+        t.setOpetusmuotokk(convertKoodistoUrisToList(s.getOpetusmuotos()));
+        t.setOpetusaikakk(convertKoodistoUrisToList(s.getOpetusAikas()));
+        t.setOpetuspaikkakk(convertKoodistoUrisToList(s.getOpetusPaikkas()));
+
         convertTekstit(t.getTekstit(), s.getTekstit());
 
         // TODO t.setYhteyshenkilos(KoulutusmoduuliToKomoConverter.convert(s.getYhteyshenkilos()));

@@ -58,9 +58,6 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
     	$scope.$watch("model", function(nv, ov){
     		$scope.postinumeroArvo = null;
     		$scope.updatePostinumero();
-			if (!angular.equals(nv,ov)) {
-				$scope.onChange();
-			}
     	});
     	
 		/*$scope.$watch("model", function(nv, ov){

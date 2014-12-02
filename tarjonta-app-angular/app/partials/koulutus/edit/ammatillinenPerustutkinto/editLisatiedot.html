@@ -1,0 +1,41 @@
+<table class="tarjontaForm">
+    <!-- ammattinimikkeet -->
+    <tr class="info">
+        <th tt="koulutus.edit.ammattinimikkeet.title" />
+        <td>
+            <multi-select
+                selection="uiModel.ammattinimikkeet.uris"
+                promise="uiModel.ammattinimikkeet.promise" display="combobox"
+                tt-show-all-title="koulutus.edit.ammattinimikkeet.title"/>
+        </td>
+        <!-- kolmas solu pitää olla, muutoin muotoilu hajoaa! -->
+        <td></td>
+    </tr>
+</table>
+
+<mk-tabs
+    model="uiModel.lisatietoKielet"
+    selection="uiModel.selectedKieliUri"
+    mutable="true"
+    ></mk-tabs>
+
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
+    <multi-select
+        on-change="onValmistavaLisatietoLangSelection(uris)"
+        promise="uiModel.opetuskielis.promise"
+        order-with="userLanguages"
+        selection="uiModel.lisatietoKielet"
+        display="dualpane"></multi-select>
+</div>
+
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
+    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot"
+         ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus"
+         lisatieto-type="{{lisatieto.type}}">
+        <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
+        <h4>{{t('koulutus.edit.' + lisatieto.type + '.title')}}</h4>
+        <p>{{t('koulutus.edit.' + lisatieto.type + '.help')}}</p>
+        <rich-textarea max="{{lisatieto.length}}" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
+    </div>
+</div>
+

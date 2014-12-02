@@ -1,15 +1,13 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakuV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusmoduuliTarjoajatiedotV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ValintakoeV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.Test;
@@ -18,20 +16,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.*;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConverterV1Test {
 
     @Mock
-    private ContextDataService contextDataService;
+    TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Mock
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    private ContextDataService contextDataService;
 
     @Mock
     private OrganisaatioService organisaatioService;
@@ -41,6 +41,67 @@ public class ConverterV1Test {
 
     @InjectMocks
     private ConverterV1 converter;
+
+    @Test
+    public void thatPainotettavatOppiaineetAreConverted() {
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(mock(Haku.class));
+        hakukohde.setTila(TarjontaTila.JULKAISTU);
+
+        when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
+
+        addPainotettavatOppiaineet(hakukohde);
+
+        HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertTrue(hakukohdeDTO.getPainotettavatOppiaineet().size() == 1);
+
+        PainotettavaOppiaineV1RDTO painotettavaOppiaineDTO = hakukohdeDTO.getPainotettavatOppiaineet().get(0);
+
+        assertEquals("painotettavatoppiaineetlukiossa_ge#1", painotettavaOppiaineDTO.getOppiaineUri());
+        assertEquals(new BigDecimal("2.5"), painotettavaOppiaineDTO.getPainokerroin());
+        assertEquals("57982", painotettavaOppiaineDTO.getOid());
+        assertTrue(hakukohdeDTO.getPainotettavatOppiaineet().size() == 1);
+    }
+
+    private void addPainotettavatOppiaineet(Hakukohde hakukohde) {
+        Set<PainotettavaOppiaine> painotettavatOppiaineet = new HashSet<PainotettavaOppiaine>();
+
+        PainotettavaOppiaine oppiaine = new PainotettavaOppiaine();
+        oppiaine.setPainokerroin(new BigDecimal("2.5"));
+        oppiaine.setOppiaine("painotettavatoppiaineetlukiossa_ge#1");
+        oppiaine.setId(57982L);
+
+        painotettavatOppiaineet.add(oppiaine);
+
+        hakukohde.setPainotettavatOppiaineet(painotettavatOppiaineet);
+    }
+
+    @Test
+    public void thatLiitteetAreConverted() {
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setHaku(mock(Haku.class));
+        hakukohde.setTila(TarjontaTila.JULKAISTU);
+
+        when(tarjontaKoodistoHelper.getHakukelpoisuusvaatimusrymaUriForHakukohde(anyString())).thenReturn(null);
+        when(tarjontaKoodistoHelper.getKoodiByUri("kieli_fi")).thenReturn(mock(KoodiType.class));
+
+        addLiitteet(hakukohde);
+
+        HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        HakukohdeLiiteV1RDTO hakukohdeLiiteDTO = hakukohdeDTO.getHakukohteenLiitteet().get(0);
+
+        assertEquals("liitetyypitamm_3#1", hakukohdeLiiteDTO.getLiitteenTyyppi());
+        assertTrue(hakukohdeDTO.getHakukohteenLiitteet().size() == 1);
+    }
+
+    private void addLiitteet(Hakukohde hakukohde) {
+        HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
+        hakukohdeLiite.setKieli("kieli_fi");
+        hakukohdeLiite.setLiitetyyppi("liitetyypitamm_3#1");
+        hakukohde.addLiite(hakukohdeLiite);
+    }
 
     @Test
     public void thatValintakoeDTOsAreConvertedToEntity() {
@@ -97,6 +158,7 @@ public class ConverterV1Test {
         HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
         hakukohdeDTO.setTila("JULKAISTU");
         hakukohdeDTO.setValintakokeet(getValintakokeetDTOs());
+        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
         return hakukohdeDTO;
     }
 

@@ -63,7 +63,7 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         hakukohde.setHakuaikaAlkuPvm(hakukohdeDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeDTO.getHakuaikaLoppuPvm());
         hakukohde.setTila(TarjontaTila.valueOf(hakukohdeDTO.getTila()));
-        hakukohde.setLisatiedot(CommonRestConverters.convertMapToMonikielinenTeksti(hakukohdeDTO.getLisatiedot()));
+        hakukohde.setLisatiedot(CommonRestConverters.toMonikielinenTeksti(hakukohdeDTO.getLisatiedot()));
         hakukohde.setValintojenAloituspaikatLkm(hakukohdeDTO.getValintojenAloituspaikatLkm());
         hakukohde.setLiitteidenToimitusPvm(hakukohdeDTO.getLiitteidenToimitusPvm());
         hakukohde.setSahkoinenToimitusOsoite(hakukohdeDTO.getSahkoinenToimitusOsoite());
@@ -71,16 +71,16 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         hakukohde.setKaytetaanJarjestelmanValintapalvelua(hakukohdeDTO.isKaytetaanJarjestelmanValintaPalvelua());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeDTO.getSoraKuvausKoodiUri());
         hakukohde.setSoraKuvaus(hakukohdeDTO.getSoraKuvausKoodiUri()!=null ? null :
-               CommonRestConverters.convertMapToMonikielinenTeksti(hakukohdeDTO.getSorakuvaus()));
+               CommonRestConverters.toMonikielinenTeksti(hakukohdeDTO.getSorakuvaus()));
 
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeDTO.getValintaperustekuvausKoodiUri());
-        hakukohde.setValintaperusteKuvaus(hakukohdeDTO.getValintaperustekuvausKoodiUri() != null  ? null : CommonRestConverters.convertMapToMonikielinenTeksti(hakukohdeDTO.getValintaperustekuvaus()));
+        hakukohde.setValintaperusteKuvaus(hakukohdeDTO.getValintaperustekuvausKoodiUri() != null  ? null : CommonRestConverters.toMonikielinenTeksti(hakukohdeDTO.getValintaperustekuvaus()));
         hakukohde.setAlinHyvaksyttavaKeskiarvo(hakukohdeDTO.getAlinHyvaksyttavaKeskiarvo());
         hakukohde.setAlinValintaPistemaara(hakukohdeDTO.getAlinValintaPistemaara());
         hakukohde.setYlinValintaPistemaara(hakukohdeDTO.getYlinValintapistemaara());
         hakukohde.setAloituspaikatLkm(hakukohdeDTO.getAloituspaikatLkm());
 
-        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.convertOsoiteRDTOToOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
+        hakukohde.setLiitteidenToimitusOsoite(CommonRestConverters.toOsoite(hakukohdeDTO.getLiitteidenToimitusosoite()));
 
         hakukohde.setHakukelpoisuusVaatimukset(new HashSet<String>(hakukohdeDTO.getHakukelpoisuusvaatimusUris()));
 
