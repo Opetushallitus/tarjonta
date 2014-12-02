@@ -138,7 +138,6 @@ app.controller('ValintakokeetLukioController',
                 $scope.valintakoe.hasPaasykoe = true;
                 $scope.valintakoe.pisterajat.push({pisterajatyyppi: "Paasykoe"})
                 $scope.valintakoe.paasykoePisterajat = $scope.valintakoe.pisterajat[$scope.valintakoe.pisterajat.length - 1];
-                $scope.addAjankohta($scope.valintakoe);
             }
         };
 

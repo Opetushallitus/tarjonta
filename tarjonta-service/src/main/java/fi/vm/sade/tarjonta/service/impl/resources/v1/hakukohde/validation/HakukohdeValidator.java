@@ -265,15 +265,6 @@ public class HakukohdeValidator {
     }
 
     private static void validateAjankohdat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
-
-        if (valintakoeV1RDTO.hasPisterajat()) {
-            for (ValintakoePisterajaV1RDTO pisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
-                if (pisterajaV1RDTO.isPaasykoe() && valintakoeV1RDTO.getValintakoeAjankohtas().isEmpty()) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING);
-                }
-            }
-        }
-
         for (ValintakoeAjankohtaRDTO ajankohta : valintakoeV1RDTO.getValintakoeAjankohtas()) {
             if (ajankohta.getLoppuu() == null || ajankohta.getAlkaa() == null) {
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_OR_END_DATE_MISSING);
