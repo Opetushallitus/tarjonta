@@ -12,7 +12,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     $scope.isMutable = false;
     $scope.isPartiallyMutable = false;
     $scope.isRemovable = false;
-    $scope.isCopyable = false;
     $scope.showNimiUri = false;
     $scope.isAiku = false;
     $scope.isKK = false;
@@ -515,8 +514,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             $scope.isRemovable = false;
             $scope.isPartiallyMutable = false;
         }
-
-        $scope.isCopyable = canEditHakukohdeAtAll;
     };
 
     var getPisterajat = function(valintakoe, targetPisterajaTyyppi) {
