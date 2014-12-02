@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources.v1;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
+import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.model.OrganisaatioService;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
@@ -117,7 +118,7 @@ public class ConverterV1 {
     public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes) {
         return fromHakuToHakuRDTO(haku, addHakukohdes, null);
     }
-    
+
     public HakuV1RDTO fromHakuToHakuRDTO(Haku haku, boolean addHakukohdes, List<String> hakukohteet) {
         if (haku == null) {
             return null;
@@ -501,6 +502,8 @@ public class ConverterV1 {
 
         if (hakukohde.getHakukohdeMonikielinenNimi() != null) {
             hakukohdeRDTO.setHakukohteenNimet(convertMonikielinenTekstiToMap(hakukohde.getHakukohdeMonikielinenNimi(), false));
+        } else if (hakukohde.getHakukohdeNimi() != null) {
+            populateHakukohteenNimetFromHakukohdeNimi(hakukohde, hakukohdeRDTO);
         }
 
         if (hakukohde.getAloituspaikatKuvaus() != null) {
@@ -666,6 +669,39 @@ public class ConverterV1 {
         addPainotettavatOppiaineet(hakukohde, hakukohdeRDTO);
 
         return hakukohdeRDTO;
+    }
+
+    private void populateHakukohteenNimetFromHakukohdeNimi(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+            KoulutusmoduuliToteutus komoto = hakukohde.getKoulutusmoduuliToteutuses().iterator().next();
+
+            Map<String, String> hakukohteenNimet = new HashMap<String, String>();
+
+            if (ToteutustyyppiEnum.VAPAAN_SIVISTYSTYON_KOULUTUS.equals(komoto.getToteutustyyppi())) {
+                hakukohteenNimet.put("kieli_fi", hakukohde.getHakukohdeNimi());
+            } else {
+                KoodiType koodiType = tarjontaKoodistoHelper.getKoodiByUri(hakukohde.getHakukohdeNimi());
+                if (koodiType != null && koodiType.getMetadata() != null) {
+                    KoodiMetadataType fi = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.FI);
+                    KoodiMetadataType sv = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.SV);
+                    KoodiMetadataType en = KoodistoHelper.getKoodiMetadataForLanguage(koodiType, KieliType.EN);
+
+                    if (fi != null && fi.getNimi() != null) {
+                        hakukohteenNimet.put("kieli_fi", fi.getNimi());
+                    }
+
+                    if (sv != null && sv.getNimi() != null) {
+                        hakukohteenNimet.put("kieli_sv", sv.getNimi());
+                    }
+
+                    if (en != null && en.getNimi() != null) {
+                        hakukohteenNimet.put("kieli_en", en.getNimi());
+                    }
+                }
+            }
+
+            hakukohdeRDTO.setHakukohteenNimet(hakukohteenNimet);
+        }
     }
 
     private void setSoraAndValintaperustekuvaukset(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
