@@ -43,7 +43,7 @@ app.factory('HakuService', function ($http, $q, Config, $log) {
 
             $http({method: 'GET', url: hakuUri, params: params}).success(function (data) {
                 var filtered = _.filter(data.result, function(haku){
-                    return haku.tila !== 'POISTETTU';
+                    return haku.tila !== 'POISTETTU' && haku.tila !== 'PERUTTU';
                 });
                 hakuPromise.resolve(filtered);
             }).error(function (data, status, headers, config) {
