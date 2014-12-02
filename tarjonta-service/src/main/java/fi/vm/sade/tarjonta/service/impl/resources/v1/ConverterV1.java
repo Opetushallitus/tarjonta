@@ -848,8 +848,10 @@ public class ConverterV1 {
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
-        if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
-            hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
+        if (ToteutustyyppiEnum.KORKEAKOULUTUS.toString().equals(hakukohdeRDTO.getToteutusTyyppi())) {
+            if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
+                hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
+            }
         }
 
         hakukohde.setKaksoisTutkinto(hakukohdeRDTO.getKaksoisTutkinto());
