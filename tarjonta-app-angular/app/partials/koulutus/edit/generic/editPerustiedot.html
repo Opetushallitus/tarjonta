@@ -3,14 +3,16 @@
     <tr class="required">
         <th tt="koulutus.edit.koulutuskoodi">Koulutus</th>
         <td>
-            <select required class="span5" name="koulutuskoodi" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutuskoodi.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'">
+            <select required class="span5" name="koulutuskoodi" ng-if="model.oid === Undefined" class="thin"
+                    ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.tutkinto | orderBy:'koodiNimi'"
+                    ng-model="model.koulutuskoodi.uri">
                 <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
                 <option value="" ng-disabled="model.koulutuskoodi.uri"></option>
             </select>
             <span ng-if="model.oid !== Undefined">{{model.koulutuskoodi.nimi}} {{model.koulutuskoodi.arvo}}</span><!-- loaded -->
         </td>
         <td>
-            <p class="error" ng-show="uiModel.koulutuskoodi && (koulutusForm.koulutuskoodi.$error.required || koulutusForm.koulutuskoodi.$error.required)"
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutuskoodi.$error.required"
                tt="koulutus.edit.koulutuskoodi.required">Koulutus vaaditaan</p>
         </td>
     </tr>
@@ -87,7 +89,8 @@
     <tr class="required">
         <th tt="koulutus.edit.opintojen-laajuus">Opintojen laajuus</th>
         <td>
-            <input name="opintojenLaajuusarvoKannassa" ng-model="model.opintojenLaajuusarvoKannassa" class="input-small" type="text" />
+            <input name="opintojenLaajuusarvoKannassa" required ng-model="model.opintojenLaajuusarvoKannassa"
+                   class="input-small" type="text" />
             <select required name="opintojenLaajuusyksikko" ng-model="model.opintojenLaajuusyksikko.uri" class="input-medium"
                     ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.opintojenLaajuusyksikko.koodis | orderBy:'koodiNimi'">
                 <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
@@ -95,7 +98,10 @@
             </select>
         </td>
         <td>
-            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintojenLaajuusarvo.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
+            <p class="error" ng-show="uiModel.showValidationErrors
+                    && (koulutusForm.opintojenLaajuusarvoKannassa.$error.required
+                        || koulutusForm.opintojenLaajuusyksikko.$error.required)"
+                tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
         </td>
     </tr>
 
