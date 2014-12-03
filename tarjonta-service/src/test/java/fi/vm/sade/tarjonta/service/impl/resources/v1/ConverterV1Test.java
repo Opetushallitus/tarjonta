@@ -6,6 +6,7 @@ import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
+import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
@@ -285,5 +286,32 @@ public class ConverterV1Test {
         haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
 
         assertNull(haku.getParentHaku());
+    }
+
+    @Test
+    public void thatLiiteIsConvertedToEntity() {
+        HakukohdeLiiteV1RDTO hakukohdeLiiteDTO = new HakukohdeLiiteV1RDTO();
+        hakukohdeLiiteDTO.setLiitteenToimitusOsoite(new OsoiteRDTO());
+
+        HakukohdeLiite hakukohdeLiite = converter.toHakukohdeLiite(hakukohdeLiiteDTO);
+        assertTrue(hakukohdeLiite.isKaytetaanHakulomakkeella());
+
+        hakukohdeLiiteDTO.setKaytetaanHakulomakkeella(false);
+
+        hakukohdeLiite = converter.toHakukohdeLiite(hakukohdeLiiteDTO);
+        assertFalse(hakukohdeLiite.isKaytetaanHakulomakkeella());
+    }
+
+    @Test
+    public void thatLiiteIsConvertedToDTO() {
+        HakukohdeLiite hakukohdeLiite = new HakukohdeLiite();
+
+        HakukohdeLiiteV1RDTO hakukohdeLiiteDTO = converter.fromHakukohdeLiite(hakukohdeLiite);
+        assertTrue(hakukohdeLiiteDTO.isKaytetaanHakulomakkeella());
+
+        hakukohdeLiite.setKaytetaanHakulomakkeella(false);
+
+        hakukohdeLiiteDTO = converter.fromHakukohdeLiite(hakukohdeLiite);
+        assertFalse(hakukohdeLiiteDTO.isKaytetaanHakulomakkeella());
     }
 }

@@ -287,6 +287,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
             liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
             muuOsoiteEnabled: !addr,
             sahkoinenOsoiteEnabled: false,
+            kaytetaanHakulomakkeella: true,
             isNew: true
         };
     }

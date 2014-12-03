@@ -69,9 +69,13 @@
                             <p class="error" ng-show="model.showError && !isValidSahkoinenOsoite(liite)" tt="tarjonta.hakukohde.liite.errors.sahkoinenOsoite">Liitteen sähköinen toimitusosoite on pakollinen jos liite on toimitettavissa sähköisesti.</p>
 	                    </td>
 	                </tr>
-
-	            </table>
-
+                    <tr ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]">
+                        <th></th>
+                        <td>
+                            <label><input type="checkbox" ng-model="liite.kaytetaanHakulomakkeella" /><span data-tt="hakukohde.liite.kaytetaanHakulomakkeella">Käytetään myös hakulomakkeella</span></label>
+                        </td>
+                    </tr>
+                </table>
                 </form>
 
                 <p>

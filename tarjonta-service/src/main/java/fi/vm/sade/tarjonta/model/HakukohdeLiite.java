@@ -42,17 +42,8 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
     @Column(name="hakukohde_liite_nimi", nullable=false)
     private String hakukohdeLiiteNimi;
 
-    /**
-     * Koodisto URI.
-     */
     @Column(name = "liitetyyppi")
     private String liitetyyppi;
-
-    /* *
-     * Textual name for the koodisto URI, in Finnish.
-     */
-    //@Column(name = "liitteenTyyppiKoodistoNimi", nullable=false)
-    //private String liitteenTyyppiKoodistoNimi;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name = "kuvaus_teksti_id")
@@ -77,6 +68,9 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
 
     @Column(name="viimPaivittajaOid")
     private String lastUpdatedByOid;
+
+    @Column(name = "kaytetaan_hakulomakkeella", nullable = false)
+    private boolean kaytetaanHakulomakkeella = true;
 
     @Column(name="jarjestys")
     private Integer jarjestys;
@@ -192,5 +186,12 @@ public class HakukohdeLiite extends TarjontaBaseEntity {
         return jarjestys;
     }
 
+    public boolean isKaytetaanHakulomakkeella() {
+        return kaytetaanHakulomakkeella;
+    }
+
+    public void setKaytetaanHakulomakkeella(boolean kaytetaanHakulomakkeella) {
+        this.kaytetaanHakulomakkeella = kaytetaanHakulomakkeella;
+    }
 }
 
