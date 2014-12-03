@@ -10,16 +10,37 @@ app.directive('validDecimal', function () {
         return str.replace(/\,/g, '.');
     };
 
-    var replaceWhitespaceWithEmptySpace = function(str) {
-        return str.replace(/\s+/g, '');
-    };
-
-    var getLastChar = function(str) {
-        return str.charAt(str.length - 1)
-    };
-
     var getDotCount = function(str) {
         return (str.match(/\./g) || []).length;
+    };
+
+    var removeDuplicateDots = function(str) {
+        if(getDotCount(str) > 1) {
+            var result = "";
+            var indexOfFirstDot = str.indexOf('.');
+            for(var i = 0; i < str.length; i++) {
+                var char = str.charAt(i);
+                if(char !== '.' || indexOfFirstDot === i) {
+                    result = result + char;
+                }
+            }
+            return result;
+        } else {
+            return str;
+        }
+    };
+
+    var removeExtraCharacters = function(str) {
+        str = str.replace(/[^0-9.]/g, "");
+        str = removeDuplicateDots(str);
+        return str;
+    };
+
+    var removeDotFromStart = function(str) {
+        if(str.indexOf('.') === 0) {
+            str = str.substring(1);
+        }
+        return str;
     };
 
     return {
@@ -36,18 +57,8 @@ app.directive('validDecimal', function () {
 
                 var newValue = val;
                 newValue = replaceCommaWithDot(newValue);
-                newValue = replaceWhitespaceWithEmptySpace(newValue);
-
-                var lastChar = getLastChar(newValue);
-                if (isNaN(lastChar)) {
-                    if ('.' === lastChar) {
-                        if (getDotCount(newValue) > 1) {
-                            newValue = removeLastChar(newValue);
-                        }
-                    } else {
-                        newValue = removeLastChar(newValue);
-                    }
-                }
+                newValue = removeExtraCharacters(newValue);
+                newValue = removeDotFromStart(newValue);
 
                 if(newValue !== val) {
                     ngModelCtrl.$setViewValue(newValue);
