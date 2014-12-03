@@ -508,7 +508,7 @@ public class KoodistoURI {
         KOODISTO_OSAAMISALA_URI = uri;
     }
 
-    public static void validateKieliUri(String kieliUri) {
+    public void validateKieliUri(String kieliUri) {
         Preconditions.checkArgument(isValidKieliUri(kieliUri),
                 "An invalid URI error - URI '%s' do not match to pattern '%s'.",
                 kieliUri, String.format(PATTERN_KIELI_URI, KOODISTO_KIELI_URI));

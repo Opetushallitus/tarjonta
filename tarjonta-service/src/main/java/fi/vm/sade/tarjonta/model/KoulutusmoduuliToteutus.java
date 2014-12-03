@@ -366,6 +366,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
      * @return the teemaUris
      * @deprecated not used!!
      */
+    @Deprecated
     public Set<KoodistoUri> getTeemas() {
         return Collections.unmodifiableSet(teemas);
     }

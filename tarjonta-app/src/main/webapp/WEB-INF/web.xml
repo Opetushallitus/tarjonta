@@ -16,16 +16,9 @@
     </session-config>
 
     <context-param>
-        <description>Vaadin production mode</description>
-        <param-name>productionMode</param-name>
-        <param-value>false</param-value>
-    </context-param>
-
-    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:spring/application-context.xml</param-value>
     </context-param>
-
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -48,12 +41,6 @@
         <filter-class>fi.vm.sade.generic.common.UserToMDCFilter</filter-class>
     </filter>
 
-    <!-- add top javascript navigation stuff -->
-    <filter>
-        <filter-name>sitemesh</filter-name>
-        <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
-    </filter>
-
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
@@ -64,83 +51,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <filter-mapping>
-        <filter-name>sitemesh</filter-name>
-        <url-pattern>/tarjontaapp/*</url-pattern>
-        <url-pattern>/valintaapp/*</url-pattern>
-        <url-pattern>/adminaapp/*</url-pattern>
-    </filter-mapping>
-
     <servlet>
         <servlet-name>healthcheck</servlet-name>
-        <servlet-class>fi.vm.sade.tarjonta.ui.HealthCheck</servlet-class>
+        <servlet-class>fi.vm.sade.tarjonta.rest.bean.HealthCheck</servlet-class>
     </servlet>
 
-    <!-- Tarjonta standalone -->
-    <servlet>
-        <servlet-name>tarjontaapp</servlet-name>
-        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
-        <init-param>
-            <description>Vaadin application class to start</description>
-            <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.TarjontaApplication</param-value>
-        </init-param>
-        <init-param>
-            <description>Widget Set to Use</description>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
-        </init-param>
-        <!-- should help with jmeter testing -->
-        <!--
-            Vaadin uses a protection mechanism to prevent malicious cross-site request forgery (XSRF or CSRF),
-            also called one-click attacks or session riding, which is a security exploit for executing unauthorized
-            commands in a web server. This protection is normally enabled. However, it prevents some forms of testing
-            of Vaadin applications, such as with JMeter. In such cases, you can disable the protection by
-            setting the disable-xsrf-protection parameter to true.
-        -->
-        <init-param>
-            <param-name>disable-xsrf-protection</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </servlet>
-
-    <!-- Valinta standalone -->
-    <servlet>
-        <servlet-name>valintaapp</servlet-name>
-        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
-        <init-param>
-            <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.ValintaApplication</param-value>
-        </init-param>
-        <init-param>
-            <description>Widget Set to Use</description>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
-        </init-param>
-        <init-param>
-            <param-name>disable-xsrf-protection</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </servlet>
-
-    <!-- Valinta standalone -->
-    <servlet>
-        <servlet-name>adminapp</servlet-name>
-        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
-        <init-param>
-            <param-name>application</param-name>
-            <param-value>fi.vm.sade.tarjonta.ui.AdminApplication</param-value>
-        </init-param>
-        <init-param>
-            <description>Widget Set to Use</description>
-            <param-name>widgetset</param-name>
-            <param-value>fi.vm.sade.widgetset.OPH</param-value>
-        </init-param>
-        <init-param>
-            <param-name>disable-xsrf-protection</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </servlet>
+    <servlet-mapping>
+        <servlet-name>healthcheck</servlet-name>
+        <url-pattern>/healthcheck</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>configuration-rest-servlet</servlet-name>
@@ -151,38 +70,10 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>configuration-rest-servlet</servlet-name>
         <url-pattern>/ext/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>tarjontaapp</servlet-name>
-        <url-pattern>/tarjontaapp/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>valintaapp</servlet-name>
-        <url-pattern>/valintaapp/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>adminapp</servlet-name>
-        <url-pattern>/adminapp/*</url-pattern>
-    </servlet-mapping>
-
-    <!--
-    If you have multiple servlets, you should specify only one /VAADIN/* mapping.
-    It does not matter which servlet you map the pattern to, as long as it is a Vaadin servlet.
-    -->
-    <servlet-mapping>
-        <servlet-name>tarjontaapp</servlet-name>
-        <url-pattern>/VAADIN/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>healthcheck</servlet-name>
-        <url-pattern>/healthcheck</url-pattern>
     </servlet-mapping>
 
     <error-page>

@@ -12,10 +12,7 @@
 
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
-
         <powermock.version>1.4.12</powermock.version>
-        <webapp.port>8480</webapp.port>
-        <google.map.widget.version>0.9.13</google.map.widget.version>
     </properties>
 
 
@@ -87,29 +84,6 @@
             <artifactId>generic-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>dependencies-vaadin</artifactId>
-            <version>${generic.version}</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.gwt</groupId>
-                    <artifactId>gwt-user</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!--        <dependency>
-                    <groupId>fi.vm.sade.generic</groupId>
-                    <artifactId>generic-test-support</artifactId>
-                    <scope>test</scope>
-                </dependency>
-        -->
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
@@ -144,12 +118,6 @@
             <version>2.2</version>
         </dependency>
 
-        <!--        <dependency>
-                    <groupId>javax.portlet</groupId>
-                    <artifactId>portlet-api</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-        -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -199,46 +167,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- servlet dependencies start... -->
-        <!--
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>googlemapwidget</artifactId>
-            <version>${google.map.widget.version}</version>
-        </dependency>
-        -->
 
-        <!--
-                <dependency>
-                    <groupId>com.google.gwt.google-apis</groupId>
-                    <artifactId>gwt-maps</artifactId>
-                    <version>1.1.0</version>
-                    <classifier>gwt23</classifier>
-                </dependency>
-        -->
-
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-vaadin-widgetset</artifactId>
-            <version>${generic.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>animator</artifactId>
-            <version>1.6.6</version>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>googlemapwidget</artifactId>
-            <version>${google.map.widget.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        -->
-
-
-        <!-- ...servlet dependencies end -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -246,7 +175,6 @@
             <type>jar</type>
         </dependency>
 
-        <!-- remove slf4j after logging is working on luokka etc. -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -258,19 +186,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>webapp-portal-decorator</artifactId>
-            <version>${generic.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>fi.vm.sade.vaadin</groupId>
-            <artifactId>vaadin-theme-oph</artifactId>
-            <version>${vaadin.theme.version}</version>
-            <type>jar</type>
-        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>

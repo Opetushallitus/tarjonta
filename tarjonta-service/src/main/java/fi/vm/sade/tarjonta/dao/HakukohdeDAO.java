@@ -56,11 +56,13 @@ public interface HakukohdeDAO extends JpaDAO<Hakukohde, Long> {
     /**
      * @deprecated {@link #findHakukohdeByOid(String)}
      */
+    @Deprecated
     Hakukohde findHakukohdeWithDepenciesByOid(String oid);
 
     /**
      * @deprecated {@link #findHakukohdeByOid(String)}
      */
+    @Deprecated
     Hakukohde findHakukohdeWithKomotosByOid(String oid);
 
     void removeValintakoe(Valintakoe valintakoe);

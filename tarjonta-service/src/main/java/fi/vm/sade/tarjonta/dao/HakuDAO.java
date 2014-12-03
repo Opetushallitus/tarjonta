@@ -24,6 +24,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @param kieliKoodi
      * @return
      */
+    @Deprecated
     List<Haku> findBySearchString(String searchString, String kieliKoodi);
 
     /**
@@ -32,6 +33,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @param kieliKoodi
      * @return
      */
+    @Deprecated
     List<Haku> findHakukohdeHakus(Haku haku);
 
     /**
@@ -52,6 +54,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @param kieliKoodi
      * @return
      */
+    @Deprecated
     List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi);
 
     /**
@@ -60,6 +63,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @param kieliKoodi
      * @return
      */
+    @Deprecated
     List<Haku> findBySearchCriteria(ListHakuSearchParam param);
 
     List<String> findOIDByCriteria(int count, int startIndex,
