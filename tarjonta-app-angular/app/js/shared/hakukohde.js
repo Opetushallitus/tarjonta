@@ -261,7 +261,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
      * @param kieliUri
      */
     function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite){
-        var liite = newLiite(hakukohde.oid, kieliUri,liitteidenToimitusosoite);
+        var liite = newLiite(hakukohde, kieliUri,liitteidenToimitusosoite);
         hakukohde.hakukohteenLiitteet.push(liite);
         $rootScope.$broadcast('liiteAdded', liite);
     }
@@ -273,13 +273,13 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
      * @param kieliUri
      * @param liitteidenToimitusosoite
      */
-    function newLiite(hakukohdeOid, kieliUri, liitteidenToimitusosoite) {
+    function newLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
         var kuvaukset = {};
         kuvaukset[kieliUri] = "";
 
         var addr = liitteidenToimitusosoite;
         return {
-            hakukohdeOid:hakukohdeOid,
+            hakukohdeOid:hakukohde.oid,
             kieliUri: kieliUri,
             liitteenNimi: "",
             liitteenKuvaukset:kuvaukset,
@@ -287,7 +287,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
             liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
             muuOsoiteEnabled: !addr,
             sahkoinenOsoiteEnabled: false,
-            kaytetaanHakulomakkeella: true,
+            kaytetaanHakulomakkeella: hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS' ? false : true,
             isNew: true
         };
     }
