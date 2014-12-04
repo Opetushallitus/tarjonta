@@ -527,30 +527,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     var init = function() {
-        var hakukohdeOid = $scope.model.hakukohde.oid;
-
-        // permissiot
-        $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({
-                oid: hakukohdeOid,
-                state: 'POISTETTU'
-            }).$promise.then(function(r) {
-                return r.$resolved;
-            })]).then(function(results) {
-            $scope.isMutable = results[0] === true;
-            if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
-
-                $scope.isMutable = false;
-
-            }
-            $scope.isRemovable = results[1] === true && results[2] === true;
-            setModificationFlags();
-
-            var tila = $scope.model.hakukohde.tila;
-            if(['JULKAISTU','POISTETTU'].indexOf(tila) != -1) {
-                $scope.isRemovable = false;
-            }
-        });
-
         if ($scope.model.hakukohde.result) {
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
         }
@@ -571,6 +547,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         }
 
         initLanguages();
+        setModificationFlags();
         convertValintaPalveluValue();
         convertKaksoistutkintoValue();
         loadKielesSetFromHakukohde();
