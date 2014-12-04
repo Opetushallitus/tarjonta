@@ -18,11 +18,11 @@ package fi.vm.sade.tarjonta.service;
 import javax.xml.ws.WebFault;
 
 /**
- *
- * @deprecated use classes generated from WSDL
  * @author Jukka Raanamo
+ * @deprecated use classes generated from WSDL
  */
 @WebFault(faultBean = "fi.vm.sade.tarjonta.service.FaultBean")
+@Deprecated
 public class NoSuchOIDException extends RuntimeException {
 
     private static final long serialVersionUID = 7288971281859758877L;
@@ -31,7 +31,7 @@ public class NoSuchOIDException extends RuntimeException {
 
     public NoSuchOIDException() {
     }
-    
+
     public NoSuchOIDException(String message) {
         this(message, null);
     }

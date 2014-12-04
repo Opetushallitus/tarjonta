@@ -6,7 +6,7 @@
             dto="model.hakukohde">
             <controls-button icon="arrow-left" tt-key="koulutus.review.takaisin" action="goBack($event)"></controls-button>
             <controls-button disabled="!isRemovable" icon="remove" tt-key="koulutus.review.poista" action="doDelete()"></controls-button>
-            <controls-button ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" disabled="!isCopyable" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
+            <controls-button ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt-key="hakukohde.review.kopioi" action="doCopy()"></controls-button>
             <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
             <controls-notify type="message" tt-expr="'hakukohde.review.murupolku'" tt-params="[getHakukohteenJaOrganisaationNimi()]"></controls-notify>
             <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
@@ -245,25 +245,28 @@
             <tr ng-show="!model.collapse.liitteet">
                 <th></th>
                 <td colspan="2">
-                    <mk-tabs model="model.liiteKielet" selection="model.selectedliiteKieli"></mk-tabs>
-                    <table class="table" ng-show="model.selectedliiteKieli">
-                        <tr>
-                            <th ng-if="toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.liitteet.tyyppi"/>
-                            <th ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" tt="hakukohde.review.liitteet.nimi"/>
-                            <th tt="hakukohde.review.liitteet.kuvaus"/>
-                            <th tt="hakukohde.review.liitteet.toim.mennessa"/>
-                            <th tt="hakukohde.review.liitteet.toim.osoite"/>
-                            <th tt="tarjonta.hakukohde.liitteet.sahkoinenToimitusOsoite"/>
-                        </tr>
-                        <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
-                            <td>{{ liite.liitteenNimi }}</td>
-                            <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
-                            <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
-                            <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
-                            <td>{{ liite.sahkoinenToimitusOsoite }}</td>
-                        </tr>
-                    </table>
-                </td>
+            <mk-tabs model="model.liiteKielet" selection="model.selectedliiteKieli"></mk-tabs>
+            <table class="table" ng-show="model.selectedliiteKieli">
+                <tr>
+                    <th tt="hakukohde.review.liitteet.nimi"/>
+                    <th tt="hakukohde.review.liitteet.kuvaus"/>
+                    <th tt="hakukohde.review.liitteet.toim.mennessa"/>
+                    <th tt="hakukohde.review.liitteet.toim.osoite"/>
+                    <th tt="tarjonta.hakukohde.liitteet.sahkoinenToimitusOsoite"/>
+                    <th ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]" tt="hakukohde.review.liitteet.kaytetaanHakulomakkeella"/>
+                </tr>
+                <tr ng-show="!model.collapse.liitteet" data-ng-repeat="liite in getLocalizedLiitteet(model.selectedliiteKieli)">
+                    <td>{{ liite.liitteenNimi}}</td>
+                    <td data-ng-bind-html="getLiitteenKuvaus(liite, model.selectedliiteKieli)"/>
+                    <td>{{ liite.toimitettavaMennessa | date:'dd.MM.yyyy HH:mm ' }}</td>
+                    <td>{{ liite.liitteenToimitusOsoite.osoiterivi1}}, {{ liite.liitteenToimitusOsoite.postinumeroArvo}}, {{ liite.liitteenToimitusOsoite.postitoimipaikka}}</td>
+                    <td>{{ liite.sahkoinenToimitusOsoite }}</td>
+                    <td ng-if="CONFIGURATION.LIITE.showKaytetaanHakulomakkeella[model.hakukohde.toteutusTyyppi]">
+                        {{ liite.kaytetaanHakulomakkeella ? t('yes') : t('no') }}
+                    </td>
+                </tr>
+            </table>
+            </td>
             </tr>
             <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
@@ -307,7 +310,7 @@
                     </table>
                 </td>
             </tr>
-            <tr ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
+            <tr ng-if="CONFIGURATION.HAKUKOHDERYHMA.showHakukohderyhmat[model.hakukohde.toteutusTyyppi]" class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
                 <td>
                     <!--
@@ -315,7 +318,7 @@
                     -->
                 </td>
             </tr>
-            <tr ng-if="!toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)" ng-show="!model.collapse.ryhmat">
+            <tr ng-if="CONFIGURATION.HAKUKOHDERYHMA.showHakukohderyhmat[model.hakukohde.toteutusTyyppi]" ng-show="!model.collapse.ryhmat">
                 <th></th>
                 <td colspan="2">
                     <table class="table">

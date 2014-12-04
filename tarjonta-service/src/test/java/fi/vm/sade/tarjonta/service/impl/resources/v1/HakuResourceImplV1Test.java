@@ -120,7 +120,7 @@ public class HakuResourceImplV1Test {
         try {
             result = hakuResource.createHaku(dto);
             fail("Creating of NUL haku should have failed.");
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             // OK
         }
 

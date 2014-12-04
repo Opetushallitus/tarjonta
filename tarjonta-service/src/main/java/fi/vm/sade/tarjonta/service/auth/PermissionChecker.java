@@ -73,6 +73,7 @@ public class PermissionChecker {
      * @deprecated use {@link #checkHakuUpdateWithOrgs(String...)}
      * @param hakuOid
      */
+    @Deprecated
     public void checkHakuUpdate(final String hakuOid) {
         checkPermission(permissionService.userCanUpdateHaku(hakuOid));
     }
@@ -263,6 +264,7 @@ public class PermissionChecker {
      * @deprecated use {@link #checkRemoveHakuWithOrgs(String...)}
      * @param hakuOid
      */
+    @Deprecated
     public void checkRemoveHaku(String hakuOid) {
         checkPermission(permissionService.userCanDeleteHaku(hakuOid));
     }
@@ -342,6 +344,7 @@ public class PermissionChecker {
      * @deprecated used only in vaadin
      * @param tarjontatiedonTila
      */
+    @Deprecated
     public void checkTilaUpdate(PaivitaTilaTyyppi tarjontatiedonTila) {
         for (GeneerinenTilaTyyppi tyyppi : tarjontatiedonTila.getTilaOids()) {
             switch (tyyppi.getSisalto()) {

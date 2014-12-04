@@ -111,6 +111,19 @@ app.controller('HakukohdeParentController', [
                 toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
         };
 
+        $scope.CONFIGURATION = {
+            LIITE: {
+                showKaytetaanHakulomakkeella: {
+                    "KORKEAKOULUTUS": true
+                }
+            },
+            HAKUKOHDERYHMA: {
+                showHakukohderyhmat: {
+                    "KORKEAKOULUTUS": true
+                }
+            }
+        };
+
         /**
          * Tila asetetetaan jos vanhaa tilaa ei ole tai se on luonnos/peruttu/kopioitu
          */

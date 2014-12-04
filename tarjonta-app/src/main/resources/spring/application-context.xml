@@ -12,7 +12,6 @@
     <!-- Turn on AspectJ @Configurable support -->
     <context:spring-configured />
     <context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade.tarjonta.ui" />
     <context:component-scan base-package="fi.vm.sade.security" />
 
     <!-- Turn on @Autowired, @PostConstruct etc support -->
@@ -43,47 +42,6 @@
     </bean>
     <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
     
-    <!--
-      Localization
-    -->
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basename" value="classpath:i18n/messages"/>
-        <property name="defaultEncoding" value="UTF-8"/>
-        <property name="useCodeAsDefaultMessage" value="true" />
-    </bean>
-
-    <bean id="i18n" class="fi.vm.sade.generic.common.I18N"/>
-
-    <bean class="fi.vm.sade.koodisto.widget.WidgetFactory" />
-
-    <bean class="fi.vm.sade.tarjonta.ui.helper.UiBuilder" />
-
-    <bean id="hakukohdeToDTOConverter" class="fi.vm.sade.tarjonta.ui.helper.conversion.HakukohdeViewModelToDTOConverter"/>
-
-    <!-- Initialize session beans -->
-
-    <bean id="tarjontaLukioPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaLukioPresenter">
-        <property name="presenter" ref="tarjontaPresenter" />
-    </bean>
-    
-    <bean id="tarjontaKorkeakouluPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaKorkeakouluPresenter">
-        <property name="presenter" ref="tarjontaPresenter" />
-    </bean>
-
-    <bean id="tarjontaPresenter" class="fi.vm.sade.tarjonta.ui.presenter.TarjontaPresenter" scope="session">
-        <aop:scoped-proxy/>
-    </bean>
-
-    <bean id="searchPresenter" class="fi.vm.sade.tarjonta.ui.presenter.SearchPresenter" scope="session">
-        <aop:scoped-proxy/>
-    </bean>
-    
-    <bean id="eventbus" class="com.google.common.eventbus.EventBus" scope="session">
-    	<aop:scoped-proxy/>
-    </bean>
-
-
-
     <bean id="tarjontaPermissionService" class="fi.vm.sade.tarjonta.shared.auth.TarjontaPermissionServiceImpl" ></bean>
 
     <bean id="oidProvider" class="fi.vm.sade.security.OidProvider"/>

@@ -12,7 +12,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     $scope.isMutable = false;
     $scope.isPartiallyMutable = false;
     $scope.isRemovable = false;
-    $scope.isCopyable = false;
     $scope.showNimiUri = false;
     $scope.isAiku = false;
     $scope.isKK = false;
@@ -497,26 +496,21 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var setModificationFlags = function() {
 
         var possibleStates = TarjontaService.getTilat()[$scope.model.hakukohde.tila];
-
-        var canRemoveHakukohde = possibleStates.removable && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
         var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
         var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
 
-        if (canRemoveHakukohde && canEditHakukohdeAtAll) {
-            $scope.isRemovable = true;
+        $scope.isRemovable = possibleStates.removable && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+
+        if (canEditHakukohdeAtAll) {
             $scope.isMutable = true;
             $scope.isPartiallyMutable = true;
         } else if (canPartiallyEditHakukohde) {
             $scope.isMutable = false;
-            $scope.isRemovable = false;
             $scope.isPartiallyMutable = true;
         } else {
             $scope.isMutable = false;
-            $scope.isRemovable = false;
             $scope.isPartiallyMutable = false;
         }
-
-        $scope.isCopyable = canEditHakukohdeAtAll;
     };
 
     var getPisterajat = function(valintakoe, targetPisterajaTyyppi) {
@@ -530,30 +524,6 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     };
 
     var init = function() {
-        var hakukohdeOid = $scope.model.hakukohde.oid;
-
-        // permissiot
-        $q.all([PermissionService.hakukohde.canEdit(hakukohdeOid), PermissionService.hakukohde.canDelete(hakukohdeOid), Hakukohde.checkStateChange({
-                oid: hakukohdeOid,
-                state: 'POISTETTU'
-            }).$promise.then(function(r) {
-                return r.$resolved;
-            })]).then(function(results) {
-            $scope.isMutable = results[0] === true;
-            if ($scope.model.hakukohde.koulutusAsteTyyppi === 'LUKIOKOULUTUS') {
-
-                $scope.isMutable = false;
-
-            }
-            $scope.isRemovable = results[1] === true && results[2] === true;
-            setModificationFlags();
-
-            var tila = $scope.model.hakukohde.tila;
-            if(['JULKAISTU','POISTETTU'].indexOf(tila) != -1) {
-                $scope.isRemovable = false;
-            }
-        });
-
         if ($scope.model.hakukohde.result) {
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
         }
@@ -574,6 +544,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         }
 
         initLanguages();
+        setModificationFlags();
         convertValintaPalveluValue();
         convertKaksoistutkintoValue();
         loadKielesSetFromHakukohde();

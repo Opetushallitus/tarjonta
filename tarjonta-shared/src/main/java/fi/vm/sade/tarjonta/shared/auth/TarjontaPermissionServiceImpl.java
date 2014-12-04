@@ -323,6 +323,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @param hakuOid haku to delete
      * @return
      */
+    @Deprecated
     public boolean userCanDeleteHaku(String hakuOid) {
         // First check Tarojonta OPH user
         boolean userCanDeleteHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
@@ -350,6 +351,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @deprecated use {@link #userCanCreateHakuWithOrgs(String...)} instead
      * @return
      */
+    @Deprecated
     public boolean userCanCreateHaku() {
         // First check Tarojonta OPH user
         boolean userCanCreateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
@@ -377,6 +379,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @deprecated älä käytä tätä, vaan {@link #userCanUpdateHakuWithOrgs(String...)}
      * @return
      */
+    @Deprecated
     public boolean userCanUpdateHaku(String hakuOid) {
         // First check Tarojonta OPH user
         boolean userCanUpdateHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
@@ -459,6 +462,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @param hakuOid haku to publish
      * @return
      */
+    @Deprecated
     public boolean userCanPublishHaku(String hakuOid) {
         // First check Tarojonta OPH user
         boolean userCanPublishHalku = wrapped.checkAccess(rootOrgOid, wrapped.ROLE_CRUD);
@@ -481,6 +485,7 @@ public class TarjontaPermissionServiceImpl implements InitializingBean {
      * @deprecated use {@link #userCanUpdateHakuWithOrgs(String...)} instead.
      * @return
      */
+    @Deprecated
     public boolean userCanCancelHakuPublish(String hakuOid) {
         return wrapped.checkAccess(rootOrgOid, wrapped.ROLE_RU, wrapped.ROLE_CRUD);
     }

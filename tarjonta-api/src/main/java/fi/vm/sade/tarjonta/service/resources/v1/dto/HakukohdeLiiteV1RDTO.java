@@ -29,6 +29,8 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
     private String liitteenTyyppi;
     @ApiModelProperty(value = "Liite's order", required = false)
     private Integer jarjestys;
+    @ApiModelProperty(value = "Should this liite be used in hakulomake")
+    private boolean kaytetaanHakulomakkeella = true;
 
     private Map<String,String> liitteenKuvaukset;
 
@@ -116,5 +118,13 @@ public class HakukohdeLiiteV1RDTO extends BaseRDTO {
 
     public Integer getJarjestys() {
         return jarjestys;
+    }
+
+    public boolean isKaytetaanHakulomakkeella() {
+        return kaytetaanHakulomakkeella;
+    }
+
+    public void setKaytetaanHakulomakkeella(boolean kaytetaanHakulomakkeella) {
+        this.kaytetaanHakulomakkeella = kaytetaanHakulomakkeella;
     }
 }

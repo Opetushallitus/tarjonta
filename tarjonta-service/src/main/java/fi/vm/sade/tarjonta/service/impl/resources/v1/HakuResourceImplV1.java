@@ -14,7 +14,11 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.Haku;
@@ -34,6 +38,10 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
+import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -45,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
@@ -89,6 +98,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     ProcessResourceV1 processResource;
 
+    @Autowired
+    TarjontaSearchService tarjontaSearchService;
+
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
         LOG.debug("search({})", params);
@@ -96,7 +108,6 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
 
         for (String key : values.keySet()) {
-//            LOG.info("processing parameter:" + key);
 
             if (!key.toUpperCase().equals(key)) {
                 continue;  //our fields are upper cased, see HakuSearchCriteria.Field.
@@ -199,7 +210,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus = hakuDAO.findAll();
         LOG.debug("FOUND  : {} hakus", hakus.size());
-        Map<String,List<String>> hakukohdeMap = null;
+        Map<String, List<String>> hakukohdeMap = null;
         if (params.addHakukohdes) {
             hakukohdeMap = hakukohdeDAO.findAllHakuToHakukohde();
         }
@@ -208,10 +219,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         if (hakus != null && hakus.size() > 0) {
             for (Haku haku : hakus) {
                 List<String> hakukohteet = null;
-                if (params.addHakukohdes) { 
-                    hakukohteet = hakukohdeMap.get(haku.getOid()); 
-                    if (hakukohteet == null) { 
-                        hakukohteet = Collections.emptyList(); 
+                if (params.addHakukohdes) {
+                    hakukohteet = hakukohdeMap.get(haku.getOid());
+                    if (hakukohteet == null) {
+                        hakukohteet = Collections.emptyList();
                     }
                 }
                 HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes, hakukohteet);
@@ -546,7 +557,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         if (isLisahaku(haku)) {
-            if(haku.getParentHakuOid() == null) {
+            if (haku.getParentHakuOid() == null) {
                 result.addError(ErrorV1RDTO.createValidationError("parentHakuOid", "haku.validation.parentHakuOid.empty"));
             }
         }
@@ -665,5 +676,148 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         ProcessV1RDTO result = processResource.start(processV1RDTO);
         return new ResultV1RDTO<String>(result.getId());
+    }
+
+    @Override
+    public HakukohdeTulosV1RDTO getHakukohdeTulos(String oid,
+                                                  String searchTerms,
+                                                  int count,
+                                                  int startIndex,
+                                                  Date lastModifiedBefore,
+                                                  Date lastModifiedSince,
+                                                  String organisationOidsStr,
+                                                  String hakukohdeTilasStr,
+                                                  Integer alkamisVuosi,
+                                                  String alkamisKausi) {
+        final String kieliAvain = "fi";
+
+        final String kieliAvain_fi = "fi";
+        final String kieliAvain_sv = "sv";
+        final String kieliAvain_en = "en";
+
+        final String filtterointiTeksti = StringUtils.upperCase(StringUtils.trimToEmpty(searchTerms));
+
+        List<String> organisationOids = splitToList(organisationOidsStr, ",");
+        List<String> hakukohdeTilas = splitToList(hakukohdeTilasStr, ",");
+
+        LOG.debug("  oids = {}", organisationOids);
+        LOG.debug("  tilas = {}", hakukohdeTilas);
+
+        count = getCountDefaultValue(count);
+
+        HakukohteetKysely hakukohteetKysely = new HakukohteetKysely();
+        hakukohteetKysely.setHakuOid(oid);
+        hakukohteetKysely.getTarjoajaOids().addAll(organisationOids);
+        hakukohteetKysely.setKoulutuksenAlkamiskausi(alkamisKausi);
+        hakukohteetKysely.setKoulutuksenAlkamisvuosi(alkamisVuosi);
+
+        if (hakukohdeTilas.size() > 0) {
+            for (String tilaString : hakukohdeTilas) {
+                TarjontaTila tila = TarjontaTila.valueOf(tilaString);
+                if (tila != null) {
+                    hakukohteetKysely.addTila(tila);
+                } else {
+                    LOG.error("  INVALID TarjontaTila in 'hakukohdeTila' : {}", hakukohdeTilas);
+                }
+            }
+        }
+
+        HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
+
+        Collection<HakukohdePerustieto> tulokset = v.getHakukohteet();
+        // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
+        // mukaan!
+        if (!filtterointiTeksti.isEmpty()) {
+            tulokset = Collections2.filter(tulokset, new Predicate<HakukohdePerustieto>() {
+
+                private String haeTekstiAvaimella(Map<String, String> tekstit) {
+
+                    if (tekstit.containsKey(kieliAvain)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain));
+                    }
+
+                    if (tekstit.containsKey(kieliAvain_fi)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_fi));
+                    }
+
+                    if (tekstit.containsKey(kieliAvain_sv)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_sv));
+                    }
+
+                    if (tekstit.containsKey(kieliAvain_en)) {
+                        return StringUtils.upperCase(tekstit.get(kieliAvain_en));
+                    }
+
+                    return StringUtils.EMPTY;
+                }
+
+                public boolean apply(@Nullable HakukohdePerustieto hakukohde) {
+                    return haeTekstiAvaimella(hakukohde.getTarjoajaNimi())
+                            .contains(filtterointiTeksti)
+                            || haeTekstiAvaimella(hakukohde.getNimi()).contains(filtterointiTeksti);
+                }
+            });
+        }
+
+        Ordering<HakukohdePerustieto> ordering = Ordering.natural().nullsFirst().onResultOf(new Function<HakukohdePerustieto, Comparable>() {
+            public Comparable apply(HakukohdePerustieto input) {
+                String tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain);
+                if (tarjoajaNimi == null) {
+                    tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_fi);
+                    if (tarjoajaNimi == null) {
+                        tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_sv);
+                        if (tarjoajaNimi == null) {
+                            tarjoajaNimi = input.getTarjoajaNimi().get(kieliAvain_en);
+                        }
+                    }
+                }
+                return tarjoajaNimi;
+            }
+        });
+
+        List<HakukohdePerustieto> sortattuLista = ordering.immutableSortedCopy(tulokset);
+
+        int size = sortattuLista.size();
+        List<HakukohdeNimiV1RDTO> results = new ArrayList<HakukohdeNimiV1RDTO>();
+        int index = 0;
+
+        for (HakukohdePerustieto tulos : sortattuLista) {
+            if (index >= startIndex + count) {
+                break;
+            }
+            if (index >= startIndex) {
+                HakukohdePerustieto hakukohde = tulos;
+                HakukohdeNimiV1RDTO rdto = new HakukohdeNimiV1RDTO();
+                rdto.setTarjoajaOid(hakukohde.getTarjoajaOid());
+                rdto.setHakukohdeNimi(hakukohde.getNimi());
+                rdto.setTarjoajaNimi(hakukohde.getTarjoajaNimi());
+                rdto.setHakukohdeOid(hakukohde.getOid());
+                rdto.setHakukohdeTila(hakukohde.getTila() != null ? hakukohde.getTila().name() : null);
+                results.add(rdto);
+            }
+            ++index;
+        }
+        return new HakukohdeTulosV1RDTO(size, results);
+    }
+
+    private List<String> splitToList(String input, String separator) {
+        if (input == null || input.trim().isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        String[] params = input.split(separator);
+        return Arrays.asList(params);
+    }
+
+    private int getCountDefaultValue(int count) {
+        if (count < 0) {
+            count = Integer.MAX_VALUE;
+        }
+
+        if (count == 0) {
+            count = 100;
+        }
+
+        return count;
     }
 }

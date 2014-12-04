@@ -1,0 +1,1 @@
+ALTER TABLE hakukohdeliite ADD COLUMN kaytetaan_hakulomakkeella boolean DEFAULT true NOT NULL;

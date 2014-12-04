@@ -88,8 +88,8 @@ public class KomoRDTOConverterToEntity {
                 LOG.error("OIDService failed!", ex);
             }
         }
-        Preconditions.checkNotNull("Komo entity cannot be null.", komo);
-        Preconditions.checkNotNull("KoulutusasteTyyppi enum cannot be null.", dto.getKoulutusasteTyyppi());
+        Preconditions.checkNotNull(komo, "Komo entity cannot be null.");
+        Preconditions.checkNotNull(dto.getKoulutusasteTyyppi(), "KoulutusasteTyyppi enum cannot be null.");
 
         /*
          * KOMO data fields:
