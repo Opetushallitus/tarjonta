@@ -290,7 +290,7 @@
             </tr>
             <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
-                <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a></td>
+                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a></td>
             </tr>
             <tr ng-show="!model.collapse.koulutukset">
                 <th></th>

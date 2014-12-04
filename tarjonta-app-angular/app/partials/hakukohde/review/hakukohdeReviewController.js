@@ -867,25 +867,13 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             windowClass: 'liita-koulutus-modal',
             resolve: {
                 organisaatioOids: function() {
-                	if ($scope.isKK) {
-                    	var orgOids = AuthService.getOrganisations();
-                    	var tarjoajaOids = $scope.model.hakukohde.tarjoajaOids;
-                    	for (var i = 0; i < tarjoajaOids.length; i++) {
-                    		var contains = false; 
-                    		for (var j = 0; j < orgOids.length; j++) {
-    							if (orgOids[j] === tarjoajaOids[i]) {
-    								contains = true;
-    								break;
-    							}
-    						}
-                    		if (!contains) {
-        						orgOids.push(tarjoajaOids[i]);
-    						}
-    					}
-                        return orgOids;
-					} else {
-	                    return $scope.model.hakukohde.tarjoajaOids;
-					}
+                    return _.union(
+                        _.reject(AuthService.getOrganisations(), function(orgOid) {
+                            // Skippaa root organisaatio, koska muuten koulutuksia listautuu liikaa
+                            return orgOid === Config.env['root.organisaatio.oid'];
+                        }),
+                        $scope.model.hakukohde.tarjoajaOids
+                    );
                 },
                 selectedLocale: function() {
                     return $scope.model.userLang;
