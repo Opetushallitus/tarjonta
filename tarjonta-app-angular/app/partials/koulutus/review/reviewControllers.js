@@ -38,6 +38,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             hakukohteet: true,
             model: true
         },
+        tutkintoohjelma: {},
         languages: [],
         koulutus: koulutusModel, // preloaded in route resolve, see
         selectedKomoOid: [koulutusModel.komoOid]
@@ -391,6 +392,47 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, $scope.model.koodistoLocale);
             $scope.model.languages.push(lang);
         });
+        
+        if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') { // jos kyseessä korkeakoulun koulutus
+            var userLangUri = "kieli_" + AuthService.getLanguage();
+            var opetusKieliUri = undefined;
+            if (Object.keys($scope.model.koulutus.opetuskielis.uris).length == 1) {
+                opetusKieliUri = Object.keys($scope.model.koulutus.opetuskielis.uris)[0];
+			}
+            
+            // jos koulutuksella on tasan yksi opetuskieli, jolla löytyy koulutusohjelman nimi
+            if (opetusKieliUri && $scope.model.koulutus.koulutusohjelma.tekstis[opetusKieliUri]) {
+                $scope.model.opetusKieliUri = opetusKieliUri; // tallennetaan opetuskieli scopeen
+			}
+            
+            // sijoitetaan scopen tutkintoohjelmaolioon kieli_xy-attribuutit ja niiden arvoiksi ui:ssa näytettävät koulutusohjelman nimet
+            for (var i = 0; i < $scope.model.languages.length; i++) {
+            	var lang = $scope.model.languages[i];
+            	// jos mallista löytyy koulutusohjelman nimi loopin kohdalla olevalla kielellä (ensisijainen vaihtoehto) 
+            	if ($scope.model.koulutus.koulutusohjelma.tekstis[lang.koodi_uri]) {
+            		$scope.model.tutkintoohjelma[lang.koodi_uri] = $scope.model.koulutus.koulutusohjelma.tekstis[lang.koodi_uri];
+            		
+                // jos mallista löytyy nimi käyttäjän omalla kielellä (2. vaihtoehto) 
+				} else if ($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri]) {
+            		$scope.model.tutkintoohjelma[lang.koodi_uri] = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
+            		
+                // jos mallista löytyy nimi koulutuksen opetuskielellä (3. vaihtoehto) 
+				} else if (opetusKieliUri) {
+            		$scope.model.tutkintoohjelma[lang.koodi_uri] = $scope.model.koulutus.koulutusohjelma.tekstis[opetusKieliUri];
+
+                // muutoin haetaan ensimmäinen olemassa oleva nimi (viimeinen vaihtoehto) 
+				} else {
+					for (var j = 0; j < Object.keys($scope.model.koulutus.koulutusohjelma.tekstis).length; j++) {
+						var key = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[j];
+						if ($scope.model.koulutus.koulutusohjelma.tekstis[key]) {
+		            		$scope.model.tutkintoohjelma[lang.koodi_uri] = $scope.model.koulutus.koulutusohjelma.tekstis[key];
+		            		break;
+						}
+					}
+				}
+            } // for
+        } // if ('KORKEAKOULUTUS')
+
     } else {
         console.error("No koulutus found?");
     }
@@ -456,13 +498,18 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         $scope.model.userLangUri = userLangUri;
 
         var result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
-
+        
         if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
-            if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {
-                // Just take first value for language
-                userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
-            }
-            result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
+            if ($scope.model.opetusKieliUri) {
+				result = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.opetusKieliUri];
+			} else {
+//	            if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {
+	            if (!$scope.model.koulutus.koulutusohjelma.tekstis[userLangUri]) {
+	                // Just take first value for language
+	                userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
+	            }
+	            result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
+			}
         } else if (
             $.inArray(koulutusModel.toteutustyyppi, [
                 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA',
