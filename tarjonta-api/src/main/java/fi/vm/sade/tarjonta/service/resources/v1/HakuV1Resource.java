@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.*;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
+import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -126,4 +128,18 @@ public interface HakuV1Resource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Hakuun liittyvän tiedon kopiointi seuraavalle kaudelle.", notes = "Kopioi massana hakuun liittyvät hakukohteet ja koulutukset seuraavalle kaudelle.", response = Tilamuutokset.class)
     public ResultV1RDTO<String> copyHaku(@PathParam("oid") String fromOid, @QueryParam("step") String step);
+
+    @GET
+    @Path("{oid}/hakukohdeTulos")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public HakukohdeTulosV1RDTO getHakukohdeTulos(@PathParam("oid") String oid,
+                                                     @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
+                                                     @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+                                                     @QueryParam("lastModifiedSince") Date lastModifiedSince,
+                                                     @QueryParam("organisationOids") String organisationOidsStr,
+                                                     @QueryParam("hakukohdeTilas") String hakukohdeTilasStr,
+                                                     @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+                                                     @QueryParam("alkamisKausi") String alkamisKausi
+    );
+
 }
