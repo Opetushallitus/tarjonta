@@ -496,22 +496,19 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var setModificationFlags = function() {
 
         var possibleStates = TarjontaService.getTilat()[$scope.model.hakukohde.tila];
-
-        var canRemoveHakukohde = possibleStates.removable && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
         var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
         var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
 
-        if (canRemoveHakukohde && canEditHakukohdeAtAll) {
-            $scope.isRemovable = true;
+        $scope.isRemovable = possibleStates.removable && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+
+        if (canEditHakukohdeAtAll) {
             $scope.isMutable = true;
             $scope.isPartiallyMutable = true;
         } else if (canPartiallyEditHakukohde) {
             $scope.isMutable = false;
-            $scope.isRemovable = false;
             $scope.isPartiallyMutable = true;
         } else {
             $scope.isMutable = false;
-            $scope.isRemovable = false;
             $scope.isPartiallyMutable = false;
         }
     };
