@@ -10,10 +10,17 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 
     	$scope.errors = {};
 
+        $scope.$on('$destroy', function() {
+            if ($scope.form) {
+                $scope.name && $scope.form.$removeControl($scope.name);
+                $scope.form.$setValidity('tDateTime', true);
+            }
+        });
+
     	$scope.prompts = {
-    			date: LocalisationService.t("tarjonta.kalenteri.prompt.pvm"),
-    			time: LocalisationService.t("tarjonta.kalenteri.prompt.aika"),
-    	}
+            date: LocalisationService.t("tarjonta.kalenteri.prompt.pvm"),
+            time: LocalisationService.t("tarjonta.kalenteri.prompt.aika")
+    	};
 
     	var violation = null;
     	var omitUpdate = false;
@@ -135,11 +142,26 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 
     	updateModels();
 
-    	$scope.$watch("model", function(nv, ov){
+        function onModelChange(nv, ov) {
             updateModels();
-            $scope.errors.required = $scope.isRequired && $scope.isRequired() ? !$scope.model : undefined;
-            $scope.form && $scope.form.$setValidity('tDateTime', !$scope.errors.required);
-    	});
+            $scope.errors.required = $scope.isRequired && $scope.isRequired() ?!$scope.model : undefined;
+            if ($scope.isDisabled()) {
+                $scope.errors.required = false;
+            }
+
+            if($scope.form) {
+                $scope.form.$setValidity('tDateTime', !$scope.errors.required);
+
+                // Hack: joissain tilanteissa formin referenssi $error muuttujaan katoaa, jolloin
+                // validointi ei enää toimi oikein. Tämä korjaa asian.
+                if ($scope.name) {
+                    $scope.form[$scope.name].$error = $scope.errors;
+                }
+            }
+        }
+
+        $scope.$watch("model", onModelChange);
+        $scope.$watch('isDisabled()', onModelChange);
 
     	$scope.$watch("min", function(nv, ov){
     		if ($scope.model) {
@@ -426,7 +448,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         		return attrs.disabled || scope.ngDisabled();
         	}
         	scope.isRequired = function() {
-        		return (attrs.required &&  attrs.required !== 'false')|| scope.ngRequired();
+                if (scope.isDisabled()) {
+                    return false;
+                }
+        		return (attrs.required && attrs.required !== 'false')
+                    || attrs.ngRequired === 'enabled'
+                    || scope.ngRequired();
         	}
         	if (scope.name && !angular.isUndefined(controller)) {
             	controller.$addControl({"$name": scope.name, "$error": scope.errors});

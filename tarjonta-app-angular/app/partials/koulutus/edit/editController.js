@@ -339,7 +339,7 @@ app.controller('BaseEditController', [
                 KoulutusConverterFactory.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
                 );
 
-            if ($scope.uiModel.isMutable) {
+            if ($scope.uiModel.isMutable && $scope.model.oid) {
                 var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
                 hakukohdePromise.then(function(hakukohteet) {
                 	if (hakukohteet.result && hakukohteet.result.length > 0) {

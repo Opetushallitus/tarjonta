@@ -393,7 +393,7 @@ public class KoulutusDTOConverterToEntity {
             komoto.setKoulutuslajis(commonConverter.convertToUris(dto.getKoulutuslaji(), komoto.getKoulutuslajis(), FieldNames.KOULUTUSLAJI));
         }
 
-        if (dto.getTarkenne() != null && !dto.getTarkenne().isEmpty()) {
+        if (dto.getTarkenne() != null) {
             komoto.setNimi(commonConverter.convertToTextFi(dto.getTarkenne(), FieldNames.TARKENNE));
         }
 
