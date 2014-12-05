@@ -1,5 +1,6 @@
 package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
@@ -479,10 +480,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.painotettavatOppiaineet = painotettavatOppiaineet;
     }
 
-    public boolean isLukioKoulutus() {
-        return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
-    }
-
     public Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> getKoulutusmoduuliToteutusTarjoajatiedot() {
         return koulutusmoduuliToteutusTarjoajatiedot;
     }
@@ -497,5 +494,10 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setAloituspaikatKuvaukset(Map<String, String> aloituspaikatKuvaukset) {
         this.aloituspaikatKuvaukset = aloituspaikatKuvaukset;
+    }
+
+    @JsonIgnore
+    public boolean isLukioKoulutus() {
+        return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
     }
 }
