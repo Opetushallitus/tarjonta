@@ -21,7 +21,7 @@
 
             <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+                <td><button class="btn" ng-disabled="!isPartiallyMutable" ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>
 
             <tbody ng-show="!model.collapse.perusTiedot">
@@ -138,7 +138,7 @@
             </tbody>
             <tr class="collapse" ng-class="model.collapse.valintakokeet ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.valintakokeet.otsikko" ng-click="model.collapse.valintakokeet = !model.collapse.valintakokeet"></th>
-                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+                <td><button class="btn" ng-disabled="!isPartiallyMutable" ng-click="doEdit($event, 'VALINTAKOKEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>
             <tr ng-show="!model.collapse.valintakokeet">
                 <th></th>
@@ -240,7 +240,7 @@
             </tr>
             <tr class="collapse" ng-class="model.collapse.liitteet ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.liitteet.otsikko" ng-click="model.collapse.liitteet = !model.collapse.liitteet"></th>
-                <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+                <td><button class="btn" ng-disabled="!isPartiallyMutable" ng-click="doEdit($event, 'LIITTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>
             <tr ng-show="!model.collapse.liitteet">
                 <th></th>
@@ -270,7 +270,7 @@
             </tr>
             <tr class="collapse" ng-class="model.collapse.valintaperusteet ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.valintaperusteet.otsikko" ng-click="model.collapse.valintaperusteet = !model.collapse.valintaperusteet"></th>
-                <td><a class="btn" ng-disabled="!isMutable" href ng-click="doEdit($event, 'VALINTAPERUSTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+                <td><button class="btn" ng-disabled="!isMutable" ng-click="doEdit($event, 'VALINTAPERUSTEET')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>
             <tr ng-show="!model.collapse.valintaperusteet">
                 <th></th>
@@ -280,7 +280,7 @@
             </tr>
             <tr class="collapse" ng-class="model.collapse.sorakuvaukset ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.sorakuvaukset.otsikko" ng-click="model.collapse.sorakuvaukset = !model.collapse.sorakuvaukset"></th>
-                <td><a class="btn" href ng-disabled="!isMutable" ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+                <td><button class="btn" ng-disabled="!isMutable" ng-click="doEdit($event, 'SORA')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
             </tr>
             <tr ng-show="!model.collapse.sorakuvaukset">
                 <th></th>
@@ -290,7 +290,7 @@
             </tr>
             <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
                 <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
-                <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a></td>
+                <td><button class="btn" ng-disabled="!isMutable" ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></button></td>
             </tr>
             <tr ng-show="!model.collapse.koulutukset">
                 <th></th>
@@ -302,8 +302,8 @@
                             </td>
                             <td>
                                 <div class="align-right">
-                                    <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
-                                    <a class="btn" href ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                                    <button class="btn" ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></button>
+                                    <button class="btn" ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></button>
                                 </div>
                             </td>
                         </tr>
@@ -328,7 +328,7 @@
                             </td>
                             <td>
                                 <div class="align-right">
-                                    <a class="btn" href ng-disabled="!isMutable" ng-click="removeRyhma(oid)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                                    <button class="btn" ng-disabled="!isMutable" ng-click="removeRyhma(oid)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></button>
                                 </div>
                             </td>
                         </tr>
