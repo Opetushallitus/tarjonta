@@ -143,7 +143,7 @@
         <tr>
             <th tt="koulutus.review.perustiedot.opetusajat">Opetusajat</th>
             <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.opetusAikas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusAikas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
             </td>
         </tr>
 
@@ -151,7 +151,7 @@
         <tr>
             <th tt="koulutus.review.perustiedot.opetusmuodot">Opetusmuodot</th>
             <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.opetusmuodos.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusmuodos.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
             </td>
         </tr>
 
@@ -159,7 +159,7 @@
         <tr>
             <th tt="koulutus.review.perustiedot.opetuspaikat">Opetuspaikat</th>
             <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.opetusPaikkas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusPaikkas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
             </td>
         </tr>
 
