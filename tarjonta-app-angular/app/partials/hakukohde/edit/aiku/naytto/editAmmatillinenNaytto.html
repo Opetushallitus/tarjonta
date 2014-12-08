@@ -99,7 +99,7 @@
                                     </label><br />
 
                                     <label><input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="true" ng-disabled="!yhteystieto.organisaatioOsoiteOlemassa" ng-click="resetYhteystiedonOrganisaatioOsoite(yhteystieto)" />
-                                        <span class="{{yhteystieto ? '' : 'disabled'}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span>
+                                        <span class="{{yhteystieto.organisaatioOsoiteOlemassa ? '' : 'disabled'}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span>
                                     </label><br />
 
                                     <label>
