@@ -112,7 +112,7 @@
                     </td>
                 </tr>
 
-                <tr ng-show="CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[model.hakukohde.toteutusTyyppi]">
+                <tr ng-show="CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[model.hakukohde.toteutusTyyppi] && model.hakukohde.yhteystiedot.length > 0">
                     <th tt="hakukohde.review.perustiedot.yhteystiedot">Yhteystiedot</th>
                     <td colspan="2">
                         <div class="mkText">
