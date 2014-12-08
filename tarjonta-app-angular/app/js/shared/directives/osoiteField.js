@@ -27,18 +27,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
         	}
         	return null;
         };
-        
-        /*$scope.updatePostitoimipaikka = function() {
-        	for (var i in $scope.postinumerot) {
-        		var pn = $scope.postinumerot[i];
-        		if (pn.koodiNimi == $scope.model.postitoimipaikka) {
-        			$scope.model.postinumero = pn.koodiUri;
-        			$scope.postinumeroArvo = pn.koodiArvo;
-        			break;
-        		}
-        	}
-        }*/
-                
+
     	$scope.updatePostinumero = function() {
     		if ($scope.postinumeroArvo && $scope.postinumeroArvo.trim().length>0) {
             	for (var i in $scope.postinumerot) {
@@ -58,20 +47,13 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
     	$scope.$watch("model", function(nv, ov){
     		$scope.postinumeroArvo = null;
     		$scope.updatePostinumero();
-    	});
+    	}, true);
     	
-		/*$scope.$watch("model", function(nv, ov){
-		});*/
 
     	Koodisto.getAllKoodisWithKoodiUri('posti',LocalisationService.getLocale()).then(function(ret){
-            /*for (var i in ret) {
-            	ret[i].koodiVihje = ret[i].koodiArvo+" "+ret[i].koodiNimi;
-            }*/
-
             $scope.postinumerot = ret;
             $scope.updatePostinumero();
         });
-
     }
 
     return {

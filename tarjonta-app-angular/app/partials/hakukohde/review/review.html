@@ -73,7 +73,7 @@
                 <tr ng-show="isAiku || toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
-                        {{ model.hakukohde.aloituspaikatLkm}}
+                        {{ model.hakukohde.aloituspaikatLkm != 0 ? model.hakukohde.aloituspaikatLkm : ''}}
                     </td>
                 </tr>
                 <tr ng-show="needsValinnoissaKaytettavatAloituspaikat(model.hakukohde.toteutusTyyppi)">
@@ -111,6 +111,23 @@
                         {{ model.kaytetaanJarjestelmanValintaPalveluaArvo}}
                     </td>
                 </tr>
+
+                <tr ng-show="CONFIGURATION.YHTEYSTIEDOT.showYhteystiedot[model.hakukohde.toteutusTyyppi] && model.hakukohde.yhteystiedot.length > 0">
+                    <th tt="hakukohde.review.perustiedot.yhteystiedot">Yhteystiedot</th>
+                    <td colspan="2">
+                        <div class="mkText">
+                            <ul class="mkTextRows">
+                                <li ng-repeat="yhteystieto in model.hakukohde.yhteystiedot">
+                                    {{ yhteystieto.osoiterivi1 }},
+                                    {{ yhteystieto.postinumeroArvo }},
+                                    {{ yhteystieto.postitoimipaikka }}
+                                    <span class="lang">({{ yhteystieto.langArvo }})</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
                 <tr ng-show="needsLiitteidenToimitustiedot(model.hakukohde.toteutusTyyppi)">
                     <th tt="tarjonta.hakukohde.liitteet.toimitusosoite"></th>
                     <td colspan="2">

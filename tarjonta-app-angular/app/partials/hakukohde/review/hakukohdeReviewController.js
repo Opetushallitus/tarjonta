@@ -523,6 +523,15 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         return undefined;
     };
 
+    var loadYhteystiedot = function() {
+        _.each($scope.model.hakukohde.yhteystiedot, function(yhteystieto) {
+            Koodisto.getKoodi(kieliKoodistoUri, yhteystieto.lang, $scope.model.userLang).then(function(koodi) {
+                yhteystieto.langArvo = koodi.koodiNimi;
+            });
+
+        });
+    };
+
     var init = function() {
         if ($scope.model.hakukohde.result) {
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
@@ -555,6 +564,7 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         loadKoulutukses();
         loadLiitetiedot();
         loadValintakoetiedot();
+        loadYhteystiedot();
     };
 
     init();

@@ -6,7 +6,7 @@ import fi.vm.sade.tarjonta.model.Yhteystiedot;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.YhteystiedotRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.YhteystiedotV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
@@ -90,7 +90,7 @@ public class HakukohdeRDTOToHakukohdeConverter extends AbstractToDomainConverter
         // FIXME organisaatio ryhmät
         hakukohde.setOrganisaatioRyhmaOids(hakukohdeDTO.getOrganisaatioRyhmaOids());
         
-        for (YhteystiedotRDTO yh : hakukohdeDTO.getYhteystiedot()) {
+        for (YhteystiedotV1RDTO yh : hakukohdeDTO.getYhteystiedot()) {
             Yhteystiedot newYhs = new Yhteystiedot();
             newYhs.setLang(yh.getLang());
             newYhs.setOsoiterivi1(yh.getOsoiterivi1());

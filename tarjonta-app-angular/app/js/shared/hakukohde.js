@@ -301,7 +301,17 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
                 liitteetArray.splice(loopIndex, 1);
             }
         }
-    }
+    };
+
+    function removeNotUsedYhteystiedot(yhteystiedotArray) {
+        var loopIndex = yhteystiedotArray.length
+        while (loopIndex--) {
+            var yhteystieto = yhteystiedotArray[loopIndex];
+            if (!yhteystieto.kaytossa) {
+                yhteystiedotArray.splice(loopIndex, 1);
+            }
+        }
+    };
 
     return {
         addValintakoeIfEmpty: addValintakoeIfEmpty,
@@ -309,6 +319,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         addLiiteIfEmpty: addLiiteIfEmpty,
         addLiite: addLiite,
         removeEmptyLiites: removeEmptyLiites,
+        removeNotUsedYhteystiedot: removeNotUsedYhteystiedot,
         addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
             return $http.get(Config.env.tarjontaRestUrlPrefix + "hakukohde/findHakukohdesByKuvausId/" + kuvausId);

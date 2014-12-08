@@ -271,6 +271,7 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                     valintaperusteKuvaukset: {},
                     soraKuvaukset: {},
                     painotettavatOppiaineet: [],
+                    yhteystiedot: [],
                     isNew: true
                 });
 

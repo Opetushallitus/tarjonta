@@ -5,10 +5,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import static com.mysema.query.types.Projections.array;
-import static fi.vm.sade.tarjonta.shared.KoulutusasteResolver.isToisenAsteenKoulutus;
-
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -16,15 +12,15 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.shared.KoulutusasteResolver;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
-import org.apache.xmlbeans.impl.schema.StscState;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static fi.vm.sade.tarjonta.shared.KoulutusasteResolver.isToisenAsteenKoulutus;
 
 /*
  * @author: Tuomas Katva 15/11/13
@@ -56,6 +52,13 @@ public class HakukohdeValidator {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_TILA_WRONG);
         }
 
+        for (YhteystiedotV1RDTO yhteystietoDTO : hakukohdeRDTO.getYhteystiedot()) {
+            if (StringUtils.isBlank(yhteystietoDTO.getOsoiterivi1()) || StringUtils.isBlank(yhteystietoDTO.getPostinumero())) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_YHTEYSTIEDOT_DATA_MISSING);
+                break;
+            }
+        }
+
         return validationMessages;
     }
 
@@ -82,21 +85,21 @@ public class HakukohdeValidator {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
 
-        if(hakukohdeRDTO.isLukioKoulutus()) {
+        if (hakukohdeRDTO.isLukioKoulutus()) {
             if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() != 0) {
                 if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() < 4 || hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() > 10) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALIN_HYVAKSYTTY_KESKIARVO_RANGE);
                 }
             }
 
-            for(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
-                if(painotettavaOppiaineV1RDTO.getPainokerroin() == null) {
+            for (PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
+                if (painotettavaOppiaineV1RDTO.getPainokerroin() == null) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING);
-                } else if(painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
+                } else if (painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
                 }
 
-                if(StringUtils.isBlank(painotettavaOppiaineV1RDTO.getOppiaineUri())) {
+                if (StringUtils.isBlank(painotettavaOppiaineV1RDTO.getOppiaineUri())) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING);
                 }
             }

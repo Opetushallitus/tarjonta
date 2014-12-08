@@ -562,7 +562,7 @@ app.controller('HakuEditController',
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
                 $scope.filterKohdejoukkos();
-                $scope.initParentHaku();
+                populateParentHakuCandidates();
                 checkIsOphAdmin();
             };
 
@@ -570,12 +570,13 @@ app.controller('HakuEditController',
               return $scope.isNewHaku() || $scope.model.hakux.result.tila==='LUONNOS';
             };
 
-            var populateParentHakuCandidates = function(valittuKohdejoukkoUri) {
+            var populateParentHakuCandidates = function() {
                 $scope.model.parentHakuCandidates = [];
 
                 var params = {};
-                params.KOHDEJOUKKO = valittuKohdejoukkoUri;
+                params.KOHDEJOUKKO = $scope.model.hakux.result.kohdejoukkoUri;
                 params.TILA = "NOT_POISTETTU";
+                params.count = 1000;
 
                 HakuV1Service.search(params).then(function(data) {
 
@@ -583,7 +584,10 @@ app.controller('HakuEditController',
                         var validTyyppiAndTapa = (haku.hakutapaUri.indexOf(HAKUTAPA.YHTEISHAKU) !== -1 ||
                             haku.hakutapaUri.indexOf(HAKUTAPA.ERILLISHAKU) !== -1) &&
                             haku.hakutyyppiUri.indexOf(HAKUTYYPPI.VARSINAINEN_HAKU) !== -1;
-                        var validHakukausiVuosi = haku.hakukausiVuosi >= (new Date().getFullYear() - 1);
+
+                        var validHakukausiVuosi = haku.hakukausiVuosi === $scope.model.hakux.result.hakukausiVuosi &&
+                            haku.hakukausiUri === $scope.model.hakux.result.hakukausiUri;
+
                         return validTyyppiAndTapa && validHakukausiVuosi;
                     });
 
@@ -605,33 +609,47 @@ app.controller('HakuEditController',
                 });
             };
 
-            $scope.initParentHaku = function() {
-                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri, $scope.model.hakux.result.kohdejoukkoUri)) {
-                    populateParentHakuCandidates($scope.model.hakux.result.kohdejoukkoUri);
-                }
-            };
-
-            $scope.haunKohdejoukkoChanged = function(valittuKohdejoukko) {
+            var updateParentHakuFields = function() {
                 $scope.model.hakux.result.parentHakuOid = undefined;
 
-                if($scope.shouldSelectParentHaku($scope.model.hakux.result.hakutyyppiUri, valittuKohdejoukko)) {
-                    populateParentHakuCandidates(valittuKohdejoukko.koodiUri);
+                if($scope.shouldSelectParentHaku()) {
+                    populateParentHakuCandidates();
                 }
             };
 
-            $scope.haunTyyppiChanged = function(valittuTyyppi) {
-                $scope.model.hakux.result.parentHakuOid = undefined;
-                if(valittuTyyppi && $scope.shouldSelectParentHaku(valittuTyyppi.koodiUri, $scope.model.hakux.result.kohdejoukkoUri)) {
-                    populateParentHakuCandidates($scope.model.hakux.result.kohdejoukkoUri);
+            $scope.$watch('model.hakux.result.hakutyyppiUri', function(nv, old) {
+                if(nv !== old) {
+                    updateParentHakuFields();
                 }
-            };
+            });
 
-            $scope.shouldSelectParentHaku = function(hakutyyppiUri, valittuKohdejoukko) {
-                if(!hakutyyppiUri || !valittuKohdejoukko) {
+            $scope.$watch('model.hakux.result.kohdejoukkoUri', function(nv, old) {
+                if(nv !== old) {
+                    updateParentHakuFields();
+                }
+            });
+
+            $scope.$watch('model.hakux.result.hakukausiUri', function(nv, old) {
+                if(nv !== old) {
+                    updateParentHakuFields();
+                }
+            });
+
+            $scope.$watch('model.hakux.result.hakukausiVuosi', function(nv, old) {
+                if(nv !== old) {
+                    updateParentHakuFields();
+                }
+            });
+
+            $scope.shouldSelectParentHaku = function() {
+                if(!$scope.model.hakux.result.hakutyyppiUri ||
+                    !$scope.model.hakux.result.kohdejoukkoUri ||
+                    !$scope.model.hakux.result.hakukausiUri ||
+                    !$scope.model.hakux.result.hakukausiVuosi) {
                     return false;
                 }
 
-                return hakutyyppiUri.indexOf(HAKUTYYPPI.LISAHAKU) !== -1;
+                return $scope.model.hakux.result.hakutyyppiUri.indexOf(HAKUTYYPPI.LISAHAKU) !== -1;
             };
 
             $scope.init();
