@@ -1,6 +1,8 @@
-package fi.vm.sade.tarjonta.service.resources.dto;
+package fi.vm.sade.tarjonta.service.resources.v1.dto;
 
-public class YhteystiedotRDTO extends BaseRDTO {
+import fi.vm.sade.tarjonta.service.resources.dto.BaseRDTO;
+
+public class YhteystiedotV1RDTO extends BaseRDTO {
 
     private static final long serialVersionUID = 2716121730126623555L;
     

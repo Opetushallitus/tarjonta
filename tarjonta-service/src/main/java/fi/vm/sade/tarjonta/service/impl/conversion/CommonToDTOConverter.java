@@ -22,7 +22,7 @@ import fi.vm.sade.tarjonta.model.TekstiKaannos;
 import fi.vm.sade.tarjonta.model.Yhteystiedot;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.TekstiRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.YhteystiedotRDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.YhteystiedotV1RDTO;
 import fi.vm.sade.tarjonta.service.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.tarjonta.service.types.OsoiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.SisaisetHakuAjat;
@@ -123,16 +123,17 @@ public class CommonToDTOConverter {
     	return ret;
     }
     
-    public static YhteystiedotRDTO convertYhteystiedotToYhteystiedotRDTO(Yhteystiedot yhteystiedot) {
+    public static YhteystiedotV1RDTO convertYhteystiedotToYhteystiedotRDTO(Yhteystiedot yhteystiedot) {
         if (yhteystiedot != null) {
-            YhteystiedotRDTO yh = new YhteystiedotRDTO();
+            YhteystiedotV1RDTO yhteystiedotDTO = new YhteystiedotV1RDTO();
+
+            yhteystiedotDTO.setLang(yhteystiedot.getLang());
+            yhteystiedotDTO.setOsoiterivi1(yhteystiedot.getOsoiterivi1());
+            yhteystiedotDTO.setOsoiterivi2(yhteystiedot.getOsoiterivi2());
+            yhteystiedotDTO.setPostinumero(yhteystiedot.getPostinumero());
+            yhteystiedotDTO.setPostitoimipaikka(yhteystiedot.getPostitoimipaikka());
             
-            yh.setOsoiterivi1(yhteystiedot.getOsoiterivi1());
-            yh.setOsoiterivi2(yhteystiedot.getOsoiterivi2());
-            yh.setPostinumero(yhteystiedot.getPostinumero());
-            yh.setPostitoimipaikka(yhteystiedot.getPostitoimipaikka());
-            
-            return yh;
+            return yhteystiedotDTO;
         }
         else {
             return null;

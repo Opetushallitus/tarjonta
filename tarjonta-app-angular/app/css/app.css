@@ -865,3 +865,7 @@ table tr.aloituspaikatKuvaukset table {
     width: 225px;
     display: inline-block;
 }
+
+.hakukohdeYhteystiedot .tab-content {
+    padding: 1px;
+}

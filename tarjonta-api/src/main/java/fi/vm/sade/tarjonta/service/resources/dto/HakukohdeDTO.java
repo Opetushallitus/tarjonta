@@ -14,6 +14,8 @@
  */
 package fi.vm.sade.tarjonta.service.resources.dto;
 
+import fi.vm.sade.tarjonta.service.resources.v1.dto.YhteystiedotV1RDTO;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +59,7 @@ public class HakukohdeDTO extends BaseRDTO {
     private boolean _kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaksoisTutkinto;
     private List<HakukohdeLiiteDTO> _liitteet;
-    private List<YhteystiedotRDTO> _yhteystiedot;
+    private List<YhteystiedotV1RDTO> _yhteystiedot;
     private OsoiteRDTO _liitteidenToimitusosoite;
     private List<ValintakoeRDTO> _valintakoes;
     private List<String> _hakukohdeKoulutusOids;
@@ -248,11 +250,11 @@ public class HakukohdeDTO extends BaseRDTO {
         this._hakukelpoisuusvaatimus = _hakukelpoisuusvaatimus;
     }
 
-    public List<YhteystiedotRDTO> getYhteystiedot() {
+    public List<YhteystiedotV1RDTO> getYhteystiedot() {
         return _yhteystiedot;
     }
 
-    public void setYhteystiedot(List<YhteystiedotRDTO> yhteystiedot) {
+    public void setYhteystiedot(List<YhteystiedotV1RDTO> yhteystiedot) {
         this._yhteystiedot = yhteystiedot;
     }
 

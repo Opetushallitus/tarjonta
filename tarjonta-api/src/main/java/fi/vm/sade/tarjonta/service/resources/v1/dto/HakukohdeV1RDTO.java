@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
-import fi.vm.sade.tarjonta.service.resources.dto.YhteystiedotRDTO;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import java.util.*;
@@ -59,7 +58,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private boolean kaytetaanHaunPaattymisenAikaa;
     private boolean kaytetaanHakukohdekohtaistaHakuaikaa;
     private List<HakukohdeLiiteV1RDTO> hakukohteenLiitteet;
-    private List<YhteystiedotRDTO> yhteystiedot;
+    private List<YhteystiedotV1RDTO> yhteystiedot = new ArrayList<YhteystiedotV1RDTO>();
     private OsoiteRDTO liitteidenToimitusOsoite;
     private List<ValintakoeV1RDTO> valintakokeet;
     private Long valintaPerusteKuvausTunniste;
@@ -236,11 +235,11 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
         this.hakukohteenLiitteet = hakukohteenLiitteet;
     }
 
-    public List<YhteystiedotRDTO> getYhteystiedot() {
+    public List<YhteystiedotV1RDTO> getYhteystiedot() {
         return yhteystiedot;
     }
 
-    public void setYhteystiedot(List<YhteystiedotRDTO> yhteystiedot) {
+    public void setYhteystiedot(List<YhteystiedotV1RDTO> yhteystiedot) {
         this.yhteystiedot = yhteystiedot;
     }
 
