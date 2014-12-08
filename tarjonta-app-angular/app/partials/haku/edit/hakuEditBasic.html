@@ -73,7 +73,7 @@
         </td>
     </tr>
 
-    <tr class="required" ng-show="shouldSelectParentHaku(model.hakux.result.hakutyyppiUri, model.hakux.result.kohdejoukkoUri)">
+    <tr class="required" ng-show="shouldSelectParentHaku()">
         <th data-tt='haku.edit.kuuluuHakuun'>Kuuluu hakuun</th>
         <td>
             <select name="hakuselect" class="wide" ng-model="model.hakux.result.parentHakuOid" data-ng-options="haku.oid as haku.nimi for haku in model.parentHakuCandidates"/>
