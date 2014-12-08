@@ -305,21 +305,8 @@ app.controller('LuoKoulutusDialogiController',
                     "PERUSOPETUKSEN_LISAOPETUS",
                     "VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS",
                     "VAPAAN_SIVISTYSTYON_KOULUTUS",
-                    "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS"]
-                    .indexOf(toteutustyyppi) !== -1
-                ) {
-                $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri
-                    + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
-
-                if ( $scope.model.pohjakoulutusvaatimus ) {
-                    $location.search('pohjakoulutusvaatimus', $scope.model.pohjakoulutusvaatimus);
-                }
-
-                $scope.luoKoulutusDialog.close();
-            }
-
-            else if (
-                    ["AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA",
+                    "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS",
+                    "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA",
                     "ERIKOISAMMATTITUTKINTO",
                     "AMMATTITUTKINTO"]
                     .indexOf(toteutustyyppi) !== -1
@@ -333,6 +320,9 @@ app.controller('LuoKoulutusDialogiController',
                                 + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
                             break;
                         }
+                    }
+                    if ( $scope.model.pohjakoulutusvaatimus ) {
+                        $location.search('pohjakoulutusvaatimus', $scope.model.pohjakoulutusvaatimus);
                     }
                     $scope.luoKoulutusDialog.close();
                 });
