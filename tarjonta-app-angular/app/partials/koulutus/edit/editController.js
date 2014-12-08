@@ -948,10 +948,17 @@ app.controller('BaseEditController', [
             if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
                 $scope.uiModel.koulutusohjelmaModules = {};
                 $scope.uiModel.koulutusohjelma = [];
-                $scope.model.koulutusohjelma.uri = null;
+                if($scope.model.koulutusohjelma) {
+                    $scope.model.koulutusohjelma.uri = null;
+                }
                 $scope.model.koulutuksenTavoitteet = null; // tyhjennä varmuuden vuoksi, jotta ei näytetä väärän koulutuksen tekstejä
 
                 $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uriNew, ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
+
+                if(!$scope.uiModel.tutkintoModules) {
+                    return;
+                }
+
                 $scope.loadKomoKuvausTekstis($scope.uiModel.tutkintoModules[uriNew].oid);
                 var resource = TarjontaService.komo();
 
