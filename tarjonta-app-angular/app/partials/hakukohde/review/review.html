@@ -73,7 +73,7 @@
                 <tr ng-show="isAiku || toisenAsteenKoulutus(model.hakukohde.toteutusTyyppi)">
                     <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
                     <td colspan="2">
-                        {{ model.hakukohde.aloituspaikatLkm}}
+                        {{ model.hakukohde.aloituspaikatLkm != 0 ? model.hakukohde.aloituspaikatLkm : ''}}
                     </td>
                 </tr>
                 <tr ng-show="needsValinnoissaKaytettavatAloituspaikat(model.hakukohde.toteutusTyyppi)">

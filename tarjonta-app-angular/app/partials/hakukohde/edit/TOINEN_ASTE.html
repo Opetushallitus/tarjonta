@@ -105,7 +105,8 @@
                     <tr class="{{ ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi) ? 'required' : ''}}">
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <input name="aloituspaikatlkm"
+                            <input ng-if="ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi)"
+                                   name="aloituspaikatlkm"
                                    ng-disabled="model.isPartiallyDeEnabled"
                                    class="thin"
                                    type="number"
@@ -113,7 +114,17 @@
                                    min="1"
                                    max="999"
                                    data-ng-model="model.hakukohde.aloituspaikatLkm"
-                                   ng-required="ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi)" />
+                                   required />
+                            <input ng-if="!ilmoitettavatAloituspaikatMandatory(model.hakukohde.toteutusTyyppi)"
+                                   valid-decimal
+                                   name="aloituspaikatlkm"
+                                   ng-disabled="model.isPartiallyDeEnabled"
+                                   class="thin"
+                                   type="number"
+                                   ng-pattern="model.integerval"
+                                   min="0"
+                                   max="999"
+                                   data-ng-model="model.hakukohde.aloituspaikatLkm" />
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>

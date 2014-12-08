@@ -52,7 +52,7 @@ app.directive('validDecimal', function () {
 
             // Näytä tyhjänä, jos rajapinta palauttaa 0
             scope.$watch(attrs.ngModel, function(nv, ov) {
-                if (nv === 0 && (nv === ov || ov === '')) {
+                if (nv === 0 && (nv === ov || ov === '' || ov === null)) {
                     ngModelCtrl.$setViewValue('');
                     ngModelCtrl.$render();
                 }
