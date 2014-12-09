@@ -224,6 +224,7 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
                 } else if (dto instanceof KoulutusmoduuliAmmatillinenRelationV1RDTO) {
                     KoulutusmoduuliAmmatillinenRelationV1RDTO lk = (KoulutusmoduuliAmmatillinenRelationV1RDTO) dto;
                     lk.setTutkintonimike(singleKoodi(type.getKoodiUri(), FieldNames.TUTKINTONIMIKE, restParam));
+                    multipleKoodis(type, lk.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE, restParam);
                 }
             } else if (hasRelationToKoodisto(type, KoodistoURI.KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI)) {
                 if (dto instanceof KoulutusmoduuliKorkeakouluRelationV1RDTO) {

@@ -17,6 +17,8 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import java.util.HashMap;
+
 /**
  *
  * @author jani
@@ -27,6 +29,9 @@ public class KoulutusmoduuliAmmatillinenRelationV1RDTO extends KoulutusmoduuliSt
     //KOODISTO KOMO DATA OBJECTS:
     @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
     private KoodiV1RDTO tutkintonimike;
+
+    @ApiModelProperty(value = "OPH tutkintonimike-koodit", required = true)
+    private KoodiUrisV1RDTO tutkintonimikes;
 
     @ApiModelProperty(value = "Opintojen laajuuden arvot", required = true)
     private KoodiV1RDTO opintojenLaajuusarvo;
@@ -125,6 +130,25 @@ public class KoulutusmoduuliAmmatillinenRelationV1RDTO extends KoulutusmoduuliSt
      */
     public void setOsaamisala(KoodiV1RDTO osaamisala) {
         this.osaamisala = osaamisala;
+    }
+
+    /**
+     * @return the tutkintonimikes
+     */
+    public KoodiUrisV1RDTO getTutkintonimikes() {
+        if (tutkintonimikes == null) {
+            tutkintonimikes = new KoodiUrisV1RDTO();
+            tutkintonimikes.setUris(new HashMap<String, Integer>());
+        }
+
+        return tutkintonimikes;
+    }
+
+    /**
+     * @param tutkintonimikes the tutkintonimikes to set
+     */
+    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
     }
 
 }

@@ -884,6 +884,13 @@ app.controller('BaseEditController', [
                             apiModel[key] = restRelationData[key];
                         }
                     });
+
+                    angular.forEach(koulutusStructure.RELATIONS, function(value, key) {
+                        if(restRelationData[key] && restRelationData[key].meta) {
+                                uiModel[key].meta = restRelationData[key].meta;
+                            uiModel[key].uris = _.keys(apiModel[key].uris);
+                        }
+                    });
                 }
             );
         };
