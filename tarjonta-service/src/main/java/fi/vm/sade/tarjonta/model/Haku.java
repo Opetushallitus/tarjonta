@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -35,7 +37,7 @@ import static fi.vm.sade.generic.common.validation.ValidationConstants.WWW_PATTE
  * @author Team2
  */
 @Entity
-@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler", "parentHaku", "sisaltyvatHaut"})
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(name = "UK_haku_01", columnNames = {"oid"})
 })
