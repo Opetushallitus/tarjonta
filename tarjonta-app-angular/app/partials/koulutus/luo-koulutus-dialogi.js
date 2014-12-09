@@ -308,7 +308,8 @@ app.controller('LuoKoulutusDialogiController',
                     "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS",
                     "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA",
                     "ERIKOISAMMATTITUTKINTO",
-                    "AMMATTITUTKINTO"]
+                    "AMMATTITUTKINTO",
+                    "AIKUISTEN_PERUSOPETUS"]
                     .indexOf(toteutustyyppi) !== -1
                 ) {
 

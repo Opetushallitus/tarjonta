@@ -137,7 +137,7 @@ public class KoulutusValidator {
             validateKoodi(result, dto.getOpintojenLaajuusarvo(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSARVO_INVALID);
         }
 
-        if (dto instanceof Koulutus2AsteV1RDTO) {
+        if (dto instanceof Koulutus2AsteV1RDTO && !(dto instanceof KoulutusAikuistenPerusopetusV1RDTO)) {
             validateKoodi(result, ((Koulutus2AsteV1RDTO) dto).getTutkintonimike(), KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_MISSING, KoulutusValidationMessages.KOULUTUS_TUTKINTONIMIKE_INVALID);
         }
 
@@ -214,8 +214,15 @@ public class KoulutusValidator {
     }
 
     private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result) {
-        // TODO:  kun relaatiot on tehty koodistoon
-        validateKoodi(result, dto.getKoulutusohjelma(), KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID);
+        if ( !(dto instanceof KoulutusAikuistenPerusopetusV1RDTO) ) {
+            validateKoodi(
+                result,
+                dto.getKoulutusohjelma(),
+                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING,
+                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID
+            );
+        }
+
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);
         validateKoodi(result, dto.getOpintojenLaajuusyksikko(), KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_MISSING, KoulutusValidationMessages.KOULUTUS_OPINTOJENLAAJUUSYKSIKKO_INVALID);
@@ -308,7 +315,7 @@ public class KoulutusValidator {
         }
         /*
          else if(xxx){
-         //TODO: validate uri pattern / search koodi by koodi uri 
+         //TODO: validate uri pattern / search koodi by koodi uri
          result.addError(ErrorV1RDTO.createValidationError(invalid.getFieldName(), invalid.lower()));
          }
          */
@@ -328,7 +335,7 @@ public class KoulutusValidator {
         }
         /*
          else if(xxx){
-         //TODO: validate uri pattern / search koodi by koodi uri 
+         //TODO: validate uri pattern / search koodi by koodi uri
          result.addError(ErrorV1RDTO.createValidationError(invalid.getFieldName(), invalid.lower()));
          }
          */
@@ -514,7 +521,7 @@ public class KoulutusValidator {
         LOG.debug("related komotos size : {}", relatedKomotos.size());
 
         if (relatedKomotos.size() == 1) {
-            //Removed (safe delete) items must be excluded from the list!    
+            //Removed (safe delete) items must be excluded from the list!
             //if the last komoto, then we will need to check if the komo is allowed to be removed (safe delete)
 //            Set<String> komotoOids = Sets.<String>newHashSet();
 //            for (KoulutusmoduuliToteutus t : relatedKomotos) {

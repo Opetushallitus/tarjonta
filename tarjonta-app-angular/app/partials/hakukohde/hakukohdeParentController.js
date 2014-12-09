@@ -125,7 +125,10 @@ app.controller('HakukohdeParentController', [
             YHTEYSTIEDOT: {
                 showYhteystiedot: {
                     "KORKEAKOULUTUS": true,
-                    "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA": true
+                    "AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA": true,
+                    "AMMATILLINEN_PERUSKOULUTUS": true,
+                    "ERIKOISAMMATTITUTKINTO": true,
+                    "AMMATTITUTKINTO": true
                 }
             }
         };

@@ -26,9 +26,6 @@ import java.util.List;
  */
 public class KoulutusLukioV1RDTO extends Koulutus2AsteV1RDTO {
 
-    @ApiModelProperty(value = "Kielivalikoimat", required = true)
-    private KoodiValikoimaV1RDTO kielivalikoima;
-
     @ApiModelProperty(value = "Lukiodiplomit", required = true)
     private KoodiUrisV1RDTO lukiodiplomit;
 
@@ -38,20 +35,6 @@ public class KoulutusLukioV1RDTO extends Koulutus2AsteV1RDTO {
 
     protected KoulutusLukioV1RDTO(ToteutustyyppiEnum koulutustyyppiUri) {
         super(koulutustyyppiUri, ModuulityyppiEnum.LUKIOKOULUTUS);
-    }
-
-    /**
-     * @return the kielivalikoima
-     */
-    public KoodiValikoimaV1RDTO getKielivalikoima() {
-        return kielivalikoima;
-    }
-
-    /**
-     * @param kielivalikoima the kielivalikoima to set
-     */
-    public void setKielivalikoima(KoodiValikoimaV1RDTO kielivalikoima) {
-        this.kielivalikoima = kielivalikoima;
     }
 
     /**

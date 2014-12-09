@@ -24,15 +24,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.MassakopiointiDAO;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.Hakuaika;
-import fi.vm.sade.tarjonta.model.Hakukohde;
-import fi.vm.sade.tarjonta.model.HakukohdeLiite;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.Massakopiointi;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.model.Valintakoe;
-import fi.vm.sade.tarjonta.model.ValintakoeAjankohta;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.copy.EntityToJsonHelper;
@@ -47,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,7 +210,6 @@ public class MassCommitProcess {
                 }
 
 
-
                 for (Hakuaika hakuaika : haku.getHakuaikas()) {
                     hakuaikas.put(hakuaika.getId(), hakuaika);
                     hakuaika.setId(null);
@@ -243,10 +235,11 @@ public class MassCommitProcess {
                 getState().getParameters().put(MassCopyProcess.TO_HAKU_OID, targetHakuoid);
                 Date d = new Date();
 
-                //TODO jostain syystä haun nimi ei kopioitunut??
                 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-                for(TekstiKaannos k:  sourceHaku.getNimi().getKaannoksetAsList()){
-                    haku.getNimi().addTekstiKaannos(k.getKieliKoodi(), k.getArvo().concat(" (Kopioitu ").concat(sdf.format(d)).concat(")"));
+                for (TekstiKaannos k : sourceHaku.getNimi().getKaannoksetAsList()) {
+                    if(k.getArvo() != null) {
+                        haku.getNimi().addTekstiKaannos(k.getKieliKoodi(), k.getArvo().concat(" (Kopioitu ").concat(sdf.format(d)).concat(")"));
+                    }
                 }
                 hakuDAO.insert(haku);
             }
@@ -321,6 +314,10 @@ public class MassCommitProcess {
                 komoto.setUlkoinenTunniste(processId);
                 komoto.setViimIndeksointiPvm(indexFutureDate);
 
+                for (KoulutusOwner koulutusOwner : komoto.getOwners()) {
+                    koulutusOwner.setId(null);
+                }
+
                 Set<Date> koulutuksenAlkamisPvms = komoto.getKoulutuksenAlkamisPvms();
                 komoto.setAlkamisVuosi(komoto.getAlkamisVuosi() + 1);
 
@@ -335,8 +332,7 @@ public class MassCommitProcess {
                 massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.COPIED, processing);
                 batchOfIndexIds.add(insert.getId());
             } catch (Exception e) {
-                //TODO : ei toimi koska rollback
-                massakopiointi.updateTila(processId, oldKomoOid, Massakopiointi.KopioinninTila.ERROR, processing);
+                LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
             }
         }
         indexKomotoIds.addAll(batchOfIndexIds);
@@ -368,7 +364,7 @@ public class MassCommitProcess {
                 /*
                  * HAKUAIKA
                  */
-                if(hk.getHakuaika()!=null){
+                if (hk.getHakuaika() != null) {
                     final Hakuaika ha = hakuaikas.get(hk.getHakuaika().getId());
                     hk.setHakuaika(ha);
                 }
@@ -425,7 +421,6 @@ public class MassCommitProcess {
                 massakopiointi.updateTila(processId, oldHakukohdeOid, Massakopiointi.KopioinninTila.COPIED, processing);
             } catch (Exception e) {
                 LOG.error("Insert failed, batch rollback, oids : " + oldOids.toArray(), e);
-                //TODO : ei toimi koska rollback
             }
 
         }
