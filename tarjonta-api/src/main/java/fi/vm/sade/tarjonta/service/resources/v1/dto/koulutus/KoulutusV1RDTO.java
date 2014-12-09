@@ -55,7 +55,8 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
     @Type(value = KoulutusMaahanmuuttajienJaVieraskielistenLukiokoulutukseenValmistavaV1RDTO.class, name = "MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS"),
     @Type(value = KoulutusPerusopetuksenLisaopetusV1RDTO.class, name = "PERUSOPETUKSEN_LISAOPETUS"),
     @Type(value = KoulutusValmentavaJaKuntouttavaV1RDTO.class, name = "VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS"),
-    @Type(value = KoulutusVapaanSivistystyonV1RDTO.class, name = "VAPAAN_SIVISTYSTYON_KOULUTUS")
+    @Type(value = KoulutusVapaanSivistystyonV1RDTO.class, name = "VAPAAN_SIVISTYSTYON_KOULUTUS"),
+    @Type(value = KoulutusAikuistenPerusopetusV1RDTO.class, name = "AIKUISTEN_PERUSOPETUS")
 })
 public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RDTO {
 

@@ -18,7 +18,8 @@ public enum ToteutustyyppiEnum {
     MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_8"),
     KORKEAKOULUTUS("koulutustyyppi_3"),
     MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS("koulutustyyppi_9"),
-    PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6");
+    PERUSOPETUKSEN_LISAOPETUS("koulutustyyppi_6"),
+    AIKUISTEN_PERUSOPETUS("koulutustyyppi_17");
 
     final private String koulutustyyppiUri;
 

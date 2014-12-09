@@ -226,7 +226,7 @@ public class KoulutusDTOConverterToEntity {
          */
         komoto.setSuunniteltuKesto(commonConverter.convertToUri(dto.getSuunniteltuKestoTyyppi(), FieldNames.SUUNNITELTUKESTO, ALLOW_NULL_KOODI_URI), dto.getSuunniteltuKestoArvo());
 
-        if ( dto instanceof Koulutus2AsteV1RDTO ) {
+        if ( dto instanceof Koulutus2AsteV1RDTO && ((Koulutus2AsteV1RDTO) dto).getTutkintonimike() != null ) {
             komoto.setTutkintonimikeUri(commonConverter.convertToUri(((Koulutus2AsteV1RDTO) dto).getTutkintonimike(), FieldNames.TUTKINTONIMIKE));
         }
 

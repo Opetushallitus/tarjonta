@@ -823,6 +823,72 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 kuvaus: {'nullable': false, "default": factory.createBaseDescUiField([
                     ])}
             }
+        },
+
+        AIKUISTEN_PERUSOPETUS: {
+            KUVAUS_ORDER: [
+                {type: "SISALTO", isKomo: false, length: 2000},
+                {type: "KOHDERYHMA", isKomo: false, length: 2000},
+                {type: "OPPILAITOSKOHTAISET_OPPIAINEET_JA_KURSSIT", isKomo: false, length: 2000},
+                {type: "KANSAINVALISTYMINEN", isKomo: false, length: 2000},
+                {type: "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA", isKomo: false, length: 2000}
+            ],
+            MLANG: {},
+            RELATION: {
+                koulutuskoodi: {module: 'TUTKINTO'},
+                koulutusala: {module: 'TUTKINTO'},
+                opintoala: {module: 'TUTKINTO'},
+                koulutuslaji: {module: 'TUTKINTO'},
+                pohjakoulutusvaatimus: {module: 'TUTKINTO'},
+                opintojenLaajuusyksikko: {module: 'TUTKINTO'},
+                opintojenLaajuusarvo: {module: 'TUTKINTO'},
+                koulutustyyppi: {module: 'TUTKINTO'},
+                tutkintonimike: {module: 'TUTKINTO'}
+            },
+            COMBO: {
+                suunniteltuKestoTyyppi: {koodisto: 'koodisto-uris.suunniteltuKesto'},
+                koulutuksenAlkamiskausi: {nullable: true, koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'}
+            },
+            MCOMBO: {
+                kielivalikoima: {
+                    koodisto: 'koodisto-uris.kieli',
+                    types: ['A1A2KIELI', 'B1KIELI', 'VALINNAINEN_OMAN_AIDINKIELEN_OPETUS', 'MUUT_KIELET']
+                },
+                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+                opetuskielis: {koodisto: 'koodisto-uris.kieli'}
+            },
+            STR: {
+                tila: {'default': 'LUONNOS'}
+            },
+            DATES: {
+                koulutuksenAlkamisPvms: {"default": new Date()}
+            },
+            BOOL: {},
+            IMAGES: {},
+            DESC: {
+                kuvausKomo: {'nullable': false, "default": factory.createBaseDescUiField([])},
+                kuvausKomoto: {'nullable': false, "default": factory.createBaseDescUiField([])}
+            },
+            templates: {
+                edit: 'LUKIOKOULUTUS',
+                review: 'GENERIC'
+            },
+            reviewFields: [
+                "SISALTO",
+                "KOHDERYHMA",
+                "OPPILAITOSKOHTAISET_OPPIAINEET_JA_KURSSIT",
+                "KANSAINVALISTYMINEN",
+                "YHTEISTYO_MUIDEN_TOIMIJOIDEN_KANSSA"
+            ],
+            koulutustyyppiKoodiUri: "koulutustyyppi_17",
+            koodistoDefaults: {
+                tutkintonimike: "tutkintonimikkeet_00000"
+            },
+            params: {
+                isPerusopetus: true
+            }
         }
     };
 

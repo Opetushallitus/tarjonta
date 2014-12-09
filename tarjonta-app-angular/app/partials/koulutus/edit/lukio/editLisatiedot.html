@@ -22,7 +22,7 @@
             display="tokenfield" /></td>
         <td></td>
     </tr>
-     <tr class="info">
+     <tr class="info" ng-if="!koulutusStructure.params.isPerusopetus">
         <th tt="koulutus.edit.kielivalikoima.B2KIELI.title">B2-kieli</th>
         <td><multi-select
                     order-with="userLanguages"
@@ -32,7 +32,7 @@
                     display="tokenfield" /></td>
         <td></td>
     </tr>
-    <tr class="info">
+    <tr class="info" ng-if="!koulutusStructure.params.isPerusopetus">
         <th tt="koulutus.edit.kielivalikoima.B3KIELI.title">B3-kieli</th>
         <td><multi-select
             order-with="userLanguages"
@@ -62,9 +62,9 @@
             display="tokenfield" /></td>
         <td></td>
     </tr>
-    <tr><td colspan="2"><h4 tt="koulutus.edit.lukiodiplomit.title">Lukiodiplomit</h4></td><td></td></tr>
-    <tr><td colspan="2"><p tt="koulutus.edit.lukiodiplomit.help">Lukiodiplomien ohjeteksti puuttuu.</p></td><td></td></tr>
-    <tr class="info">
+    <tr ng-if="!koulutusStructure.params.isPerusopetus"><td colspan="2"><h4 tt="koulutus.edit.lukiodiplomit.title">Lukiodiplomit</h4></td><td></td></tr>
+    <tr ng-if="!koulutusStructure.params.isPerusopetus"><td colspan="2"><p tt="koulutus.edit.lukiodiplomit.help">Lukiodiplomien ohjeteksti puuttuu.</p></td><td></td></tr>
+    <tr ng-if="!koulutusStructure.params.isPerusopetus" class="info">
         <th></th>
         <td><multi-select model="uiModel.tmp"
                       selection="uiModel.lukiodiplomit.uris"
