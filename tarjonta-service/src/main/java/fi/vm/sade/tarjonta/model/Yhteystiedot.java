@@ -7,8 +7,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({"id","version"})
 @Table(name = Yhteystiedot.TABLE_NAME)
 public class Yhteystiedot extends TarjontaBaseEntity {
 
@@ -18,6 +21,7 @@ public class Yhteystiedot extends TarjontaBaseEntity {
     @ManyToOne
     @JoinColumn(name = "hakukohde_id", nullable = false)
     @JsonIgnore
+    @JsonBackReference
     private Hakukohde hakukohde;
 
     @Column(name = "lang")

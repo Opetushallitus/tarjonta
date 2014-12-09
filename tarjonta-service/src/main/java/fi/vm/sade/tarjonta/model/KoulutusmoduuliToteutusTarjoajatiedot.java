@@ -1,13 +1,14 @@
 package fi.vm.sade.tarjonta.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-
+@JsonIgnoreProperties({"id","version"})
 @Table(name = KoulutusmoduuliToteutusTarjoajatiedot.TABLE_NAME)
 public class KoulutusmoduuliToteutusTarjoajatiedot extends BaseEntity {
 

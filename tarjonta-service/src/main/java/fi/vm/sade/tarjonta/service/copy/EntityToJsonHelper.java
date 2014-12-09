@@ -39,43 +39,6 @@ public class EntityToJsonHelper {
                 .setVisibility(JsonMethod.IS_GETTER, JsonAutoDetect.Visibility.NONE); // and none of "is-setters"
     }
 
-//    private static final Gson GSON = JsonFieldFilter.createPreConfiguredGsonBuilder().create();
-//    private static final JsonFieldFilter GSON_HAKUKOHDE;
-//    private static final JsonFieldFilter GSON_KOMOTO;
-//    private static final String[] FILTER_FIELDS_KOULUTUSMODUULI_TOTEUTUS = new String[]{"koulutusmoduuli", "hakukohdes"};
-//    private static final String[] FILTER_FIELDS_HAKUKOHDE = new String[]{"koulutusmoduuliToteutuses", "haku"};
-//
-//    static {
-//        GSON_HAKUKOHDE = new JsonFieldFilter(Hakukohde.class, FILTER_FIELDS_HAKUKOHDE);
-//        GSON_KOMOTO = new JsonFieldFilter(KoulutusmoduuliToteutus.class, FILTER_FIELDS_KOULUTUSMODUULI_TOTEUTUS);
-//    }
-//
-//    public static String convertToJson(Object entity) {
-//        if (entity instanceof Hakukohde) {
-//            return convertToJson((Hakukohde) entity);
-//        } else if (entity instanceof KoulutusmoduuliToteutus) {
-//            return convertToJson((KoulutusmoduuliToteutus) entity);
-//        } else {
-//            //no filter specified
-//            return GSON.toJson(entity);
-//        }
-//    }
-//
-//    public static String convertToJson(Hakukohde entity) {
-//        return GSON_HAKUKOHDE.getJson(entity);
-//    }
-//
-//    public static String convertToJson(KoulutusmoduuliToteutus entity) {
-//        return GSON_KOMOTO.getJson(entity);
-//    }
-//
-//    public static Object convertToEntity(String jsonEntity, Class clazz) {
-//        return GSON.fromJson(jsonEntity, clazz);
-//    }
-//
-//    public static String convertToFullJson(Object obj) {
-//        return GSON.toJson(obj);
-//    }
     public static String convertToJson(Object entity) {
         Writer strWriter = new StringWriter();
         String json = null;

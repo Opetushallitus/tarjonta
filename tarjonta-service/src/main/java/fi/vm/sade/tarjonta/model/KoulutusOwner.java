@@ -16,11 +16,14 @@
 
 package fi.vm.sade.tarjonta.model;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
+@JsonIgnoreProperties({"id","version"})
 @Table(name = KoulutusOwner.TABLE_NAME)
 public class KoulutusOwner extends TarjontaBaseEntity {
 
