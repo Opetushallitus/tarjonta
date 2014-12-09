@@ -152,13 +152,13 @@
                                         <span tt="kk.hakukohde.yhteystiedot.kaytossa">Osoite käytössä</span>
                                     </label><br />
 
-                                    <label><input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="true" ng-disabled="!yhteystieto.organisaatioOsoiteOlemassa" ng-click="resetYhteystiedonOrganisaatioOsoite(yhteystieto)" />
-                                        <span class="{{yhteystieto ? '' : 'disabled'}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span>
+                                    <label><input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="true" ng-disabled="!yhteystieto.organisaatioOsoiteOlemassa || !yhteystieto.kaytossa" ng-click="resetYhteystiedonOrganisaatioOsoite(yhteystieto)" />
+                                        <span class="{{!yhteystieto.organisaatioOsoiteOlemassa || !yhteystieto.kaytossa ? 'disabled' : ''}}" tt="kk.hakukohde.yhteystiedot.kaytetaanOrganisaationOsoitetta">Käytetään organisaation osoitetta</span>
                                     </label><br />
 
                                     <label>
-                                        <input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="false"/>
-                                        <span tt="kk.hakukohde.yhteystiedot.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span><br/>
+                                        <input type="radio" ng-model="yhteystieto.kaytaOrganisaatioOsoitetta" ng-value="false" ng-disabled="!yhteystieto.kaytossa" />
+                                        <span class="{{!yhteystieto.kaytossa ? 'disabled' : ''}}" tt="kk.hakukohde.yhteystiedot.kaytetaanMuutaOsoitetta">Käytetään muuta osoitetta</span><br/>
                                     </label>
 
                                     <div class="inset">
