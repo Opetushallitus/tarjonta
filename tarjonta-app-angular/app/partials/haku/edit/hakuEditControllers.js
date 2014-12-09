@@ -575,6 +575,8 @@ app.controller('HakuEditController',
 
                 var params = {};
                 params.KOHDEJOUKKO = $scope.model.hakux.result.kohdejoukkoUri;
+                params.HAKUKAUSI = $scope.model.hakux.result.hakukausiUri;
+                params.HAKUVUOSI = $scope.model.hakux.result.hakukausiVuosi;
                 params.TILA = "NOT_POISTETTU";
                 params.count = 1000;
 
@@ -584,11 +586,7 @@ app.controller('HakuEditController',
                         var validTyyppiAndTapa = (haku.hakutapaUri.indexOf(HAKUTAPA.YHTEISHAKU) !== -1 ||
                             haku.hakutapaUri.indexOf(HAKUTAPA.ERILLISHAKU) !== -1) &&
                             haku.hakutyyppiUri.indexOf(HAKUTYYPPI.VARSINAINEN_HAKU) !== -1;
-
-                        var validHakukausiVuosi = haku.hakukausiVuosi === $scope.model.hakux.result.hakukausiVuosi &&
-                            haku.hakukausiUri === $scope.model.hakux.result.hakukausiUri;
-
-                        return validTyyppiAndTapa && validHakukausiVuosi;
+                        return validTyyppiAndTapa;
                     });
 
                     var promises = [];
