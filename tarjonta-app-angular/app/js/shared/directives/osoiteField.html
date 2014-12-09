@@ -14,7 +14,6 @@
        ng-model="postinumeroArvo"
        ng-disabled="isDisabled()"
        ng-required="isRequired()"
-	   typeahead-editable="false"
 	   typeahead-on-select="updatePostinumero()"
 	   typeahead="koodi.koodiArvo for koodi in postinumerot | filter:{koodiArvo:$viewValue} | limitTo:8 |  orderBy:'koodiArvo'"
        ng-change="onChange()"

@@ -75,6 +75,9 @@ public class KomotoDTO extends BaseRDTO {
     private List<String> _opetusaikakk;
     private List<String> _opetuspaikkakk;
 
+    private String koulutuksenAlkamiskausi;
+    private Integer koulutuksenAlkamisvuosi;
+
     public String getKoulutusohjelmanNimi() {
         return koulutusohjelmanNimi;
     }
@@ -602,6 +605,22 @@ public class KomotoDTO extends BaseRDTO {
      */
     public void setTutkintonimikeUri(String tutkintonimikeUri) {
         this.tutkintonimikeUri = tutkintonimikeUri;
+    }
+
+    public void setKoulutuksenAlkamiskausi(String alkamiskausi) {
+        this.koulutuksenAlkamiskausi = alkamiskausi;
+    }
+
+    public String getKoulutuksenAlkamiskausi() {
+        return koulutuksenAlkamiskausi;
+    }
+
+    public void setKoulutuksenAlkamisvuosi(Integer vuosi) {
+        this.koulutuksenAlkamisvuosi = vuosi;
+    }
+
+    public Integer getKoulutuksenAlkamisvuosi() {
+        return koulutuksenAlkamisvuosi;
     }
 
 }

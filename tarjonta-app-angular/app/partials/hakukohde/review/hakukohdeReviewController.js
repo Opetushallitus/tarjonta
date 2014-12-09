@@ -495,22 +495,34 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
 
     var setModificationFlags = function() {
 
-        var possibleStates = TarjontaService.getTilat()[$scope.model.hakukohde.tila];
-        var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
-        var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
+        $q.all([PermissionService.hakukohde.canEdit($scope.model.hakukohde.oid),
+            PermissionService.hakukohde.canDelete($scope.model.hakukohde.oid),
+            Hakukohde.checkStateChange({
+            oid: $scope.model.hakukohde.oid,
+            state: 'POISTETTU'
+        }).$promise.then(function(r) {
+                return r.$resolved;
+            })]).then(function(results) {
 
-        $scope.isRemovable = possibleStates.removable && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+            var hasPermissionToEdit = results[0] === true;
+            var hasPermissionToRemove = results[1] === true && results[2] === true;
 
-        if (canEditHakukohdeAtAll) {
-            $scope.isMutable = true;
-            $scope.isPartiallyMutable = true;
-        } else if (canPartiallyEditHakukohde) {
-            $scope.isMutable = false;
-            $scope.isPartiallyMutable = true;
-        } else {
-            $scope.isMutable = false;
-            $scope.isPartiallyMutable = false;
-        }
+            var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
+            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
+
+            $scope.isRemovable = hasPermissionToRemove && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+
+            if (canEditHakukohdeAtAll && hasPermissionToEdit) {
+                $scope.isMutable = true;
+                $scope.isPartiallyMutable = true;
+            } else if (canPartiallyEditHakukohde && hasPermissionToEdit) {
+                $scope.isMutable = false;
+                $scope.isPartiallyMutable = true;
+            } else {
+                $scope.isMutable = false;
+                $scope.isPartiallyMutable = false;
+            }
+        });
     };
 
     var getPisterajat = function(valintakoe, targetPisterajaTyyppi) {

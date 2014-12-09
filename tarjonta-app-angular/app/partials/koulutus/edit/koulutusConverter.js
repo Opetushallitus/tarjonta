@@ -473,8 +473,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
     var NAYTTOTUTKINTO_STRUCTURE = angular.extend({}, GENERIC_STRUCTURE, {
         koodistoDefaults: {
-            tutkintonimike: "tutkintonimikkeet_00000",
-            koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
+            tutkintonimike: "tutkintonimikkeet_00000"
         },
         templates: {
             review: 'NAYTTOTUTKINTO',
@@ -579,7 +578,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*  KORKEAKOULUTUS INITIALIZATION PARAMETERS */
         /*********************************************/
         KORKEAKOULUTUS: {
-            koodistoDefaults: {},
             koulutustyyppiKoodiUri: "koulutustyyppi_3",
             KUVAUS_ORDER: [
                 {type: "TAVOITTEET", isKomo: true, length: 2000},
@@ -667,9 +665,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* LUKIOKOULUTUS_AIKUISTEN INITIALIZATION PARAMETERS */
         /*******************************************/
         LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
-            koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_a' // aikuiskoulutus
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_14",
             STR: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.STR, {
                 toteutustyyppi: {"default": 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA'}
@@ -680,9 +675,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* LUKIOKOULUTUS INITIALIZATION PARAMETERS */
         /*******************************************/
         LUKIOKOULUTUS: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE, {
-            koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_2",
             params: angular.extend({}, GENERIC_LUKIOKOULUTUS_STRUCTURE.params, {
                 onlyOneOpetuskieli: true
@@ -693,9 +685,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* AMMATILLINEN_PERUSTUTKINTO INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATILLINEN_PERUSTUTKINTO: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
-            koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_1",
             RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
@@ -721,9 +710,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* PERUSOPETUKSEN_LISAOPETUS INITIALIZATION PARAMETERS  */
         /*******************************************/
         PERUSOPETUKSEN_LISAOPETUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n' // nuorten koulutus
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_6",
             RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
@@ -780,9 +766,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /* AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA INITIALIZATION PARAMETERS  */
         /*******************************************/
         AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE, {
-            koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_n' // aikuiskoulutus
-            },
             koulutustyyppiKoodiUri: "koulutustyyppi_4",
             RELATION: angular.extend({}, AMMATILLINEN_PERUSTUTKINTO_STRUCTURE.RELATION, {
                 opintojenLaajuusyksikko: {module: 'TUTKINTO'},
@@ -804,9 +787,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
 
         AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA: angular.extend({}, NAYTTOTUTKINTO_STRUCTURE, {
             koodistoDefaults: {
-                koulutuslaji: 'koulutuslaji_a', // aikuiskoulutus
-                tutkintonimike: "tutkintonimikkeet_00000",
-                pohjakoulutusvaatimus: 'pohjakoulutustoinenaste_1' // perusopetuksen oppimäärä
+                tutkintonimike: "tutkintonimikkeet_00000"
             },
             koulutustyyppiKoodiUri: "koulutustyyppi_13"
         }),
