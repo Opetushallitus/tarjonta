@@ -26,11 +26,28 @@ import java.util.List;
  */
 public abstract class Koulutus2AsteV1RDTO extends KoulutusGenericV1RDTO {
 
+    @ApiModelProperty(value = "Kielivalikoimat", required = true)
+    private KoodiValikoimaV1RDTO kielivalikoima;
+
     @ApiModelProperty(value = "Tutkintonimike", required = true)
     private KoodiV1RDTO tutkintonimike;
 
     protected Koulutus2AsteV1RDTO(ToteutustyyppiEnum toteutustyyppiEnum, ModuulityyppiEnum moduulityyppiEnum) {
         super(toteutustyyppiEnum, moduulityyppiEnum);
+    }
+
+    /**
+     * @return the kielivalikoima
+     */
+    public KoodiValikoimaV1RDTO getKielivalikoima() {
+        return kielivalikoima;
+    }
+
+    /**
+     * @param kielivalikoima the kielivalikoima to set
+     */
+    public void setKielivalikoima(KoodiValikoimaV1RDTO kielivalikoima) {
+        this.kielivalikoima = kielivalikoima;
     }
 
     /**
