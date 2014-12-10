@@ -89,7 +89,7 @@
                         <td>
                             <span class="datetimepicker-label" tt="ta.hakukohde.alkaa">Alkaa</span>
                             <t-date-time required timestamp="true" type="long" min="model.hakuaikaMin"
-                                max="model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaAlkuPvm"
+                                max="model.hakukohde.hakuaikaLoppuPvm ? model.hakukohde.hakuaikaLoppuPvm : model.hakuaikaMax" scope-model="model.hakukohde.hakuaikaAlkuPvm"
                                 change="status.dirtify()"></t-date-time>
 
                             <span class="datetimepicker-label" tt="ta.hakukohde.loppuu">Loppuu</span>
@@ -98,7 +98,9 @@
                                 change="status.dirtify()"></t-date-time>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && (!model.hakukohde.hakuaikaAlkuPvm || !model.hakukohde.hakuaikaLoppuPvm)" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
+                            <p class="error" ng-show="model.showError &&
+                            ((!model.hakukohde.hakuaikaAlkuPvm && model.hakukohde.hakuaikaLoppuPvm) ||
+                            (model.hakukohde.hakuaikaAlkuPvm && !model.hakukohde.hakuaikaLoppuPvm))" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
                         </td>
                     </tr>
 
