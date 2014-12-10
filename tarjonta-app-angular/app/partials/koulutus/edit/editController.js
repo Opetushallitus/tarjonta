@@ -771,7 +771,7 @@ app.controller('BaseEditController', [
                 KoulutusConverterFactory.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
             }
 
-            var koulutuskoodiUri = model.koulutuskoodi.uri || $routeParams.koulutuskoodi;
+            var koulutuskoodiUri = (model.koulutuskoodi || {}).uri || $routeParams.koulutuskoodi;
             koulutuskoodiUri && $scope.loadRelationKoodistoData(
                 model,
                 uiModel,
@@ -779,7 +779,7 @@ app.controller('BaseEditController', [
                 ENUMS.ENUM_KOMO_MODULE_TUTKINTO
             );
 
-            model.koulutusohjelma.uri && $scope.loadRelationKoodistoData(
+            (model.koulutusohjelma || {}).uri && $scope.loadRelationKoodistoData(
                 model,
                 uiModel,
                 model.koulutusohjelma.uri,
