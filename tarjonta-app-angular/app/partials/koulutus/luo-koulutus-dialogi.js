@@ -313,6 +313,14 @@ app.controller('LuoKoulutusDialogiController',
                     .indexOf(toteutustyyppi) !== -1
                 ) {
 
+                // TODO: voi poistaa kun aikuistenPerusopetus otetaan käyttöön
+                // tällä hetkellä voi käyttää vain rekisterinpitäjän oikeuksilla
+                if(toteutustyyppi === "AIKUISTEN_PERUSOPETUS"
+                    && !AuthService.isUserOph()) {
+                    eiToteutettu();
+                    return;
+                }
+
                 var promise = Koodisto.getAlapuolisetKoodit($scope.model.koulutustyyppi.koodiUri);
                 promise.then(function(koodis) {
                     for (var i = 0; i < koodis.length; i++) {
