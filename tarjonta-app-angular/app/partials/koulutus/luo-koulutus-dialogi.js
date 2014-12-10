@@ -281,7 +281,7 @@ app.controller('LuoKoulutusDialogiController',
                                     if (selectedItem.koodiUri != null) {
                                         $log.debug("org:", $scope.model.organisaatiot[0]);
                                         $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri
-                                            + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo + '/');
+                                            + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo);
                                         $location.search('opetusTarjoajat', _.map($scope.model.organisaatiot, function(org){
                                             return org.oid;
                                         }).join(','));
@@ -318,7 +318,7 @@ app.controller('LuoKoulutusDialogiController',
                     for (var i = 0; i < koodis.length; i++) {
                         if (CONFIG.env["koodisto-uris.koulutuslaji"] === koodis[i].koodiKoodisto) {
                             $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri
-                                + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/NONE/');
+                                + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
                             break;
                         }
                     }
