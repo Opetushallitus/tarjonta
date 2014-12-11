@@ -18,6 +18,7 @@ var server = flo(
             resourceURL: filepath,
             contents: fs.readFileSync(dirToWatch + '/' + filepath),
             update: function (_window, _resourceURL) {
+                angular.element('body').scope().$root.$digest();
                 console.log("Resource " + _resourceURL + " has just been updated with new content");
             }
         });
