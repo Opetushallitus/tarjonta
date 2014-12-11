@@ -237,6 +237,15 @@ app.controller('ValintaperusteSearchController', function($scope,$rootScope,$rou
         return AuthService.isUserOph();
     };
 
+    $scope.canCreateNew = function() {
+        var organisations = AuthService.getOrganisations([
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_CRUD',
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_KK_CRUD'
+        ]);
+
+        return organisations.length > 0;
+    };
+
     $scope.createNew = function(kuvausTyyppi) {
 
         if ($scope.model.userOrgTypes.length > 0 && $scope.model.userOrgTypes.length < 2) {
