@@ -94,7 +94,7 @@ div#ajax-loader .dialog {
     height:300px;
     background:#ffffff;
     border: 1px solid #cccccc;
-    border-radius:4px;    
+    border-radius:4px;
     z-index:10001;
 }
 
@@ -111,7 +111,7 @@ div#ajax-loader.fail div.fail {
 }
 
 div#ajax-loader.fail h1 {
-    margin:50px 0 0 0;    
+    margin:50px 0 0 0;
 }
 
 div#ajax-loader.fail p {
@@ -124,8 +124,8 @@ div#ajax-loader.fail a {
 }
 
 div#ajax-loader.fail hr {
-	margin: 30px 0 0 0;	
-} 
+	margin: 30px 0 0 0;
+}
 
 div#ajax-loader {
 	font-size:24px;
@@ -153,7 +153,7 @@ div#ajax-loader .timeout p {
 }
 
 div#ajax-loader.min .timeout {
-    display:none;	
+    display:none;
 }
 
 div#ajax-loader.max {
@@ -332,7 +332,7 @@ div.resultsTreeTable table th.column-aloituspaikat {
 }
 
 div#searchResults div.resultsTable div.tools {
-	float:right;	
+	float:right;
 }
 
 div#deleteDialog .subject {
@@ -421,7 +421,7 @@ a.btn span {
 /* tarjontaControlsLayout / ilmoitusviestit */
 
 .msgInfo, .msgError, .msgOk {
-	border-radius: 4px;	
+	border-radius: 4px;
 	padding: 40px 40px 40px 86px;
 	margin:18px 0 18px 0;
 	box-shadow: 0 2px 3px rgba(0,0,0,0.275);
@@ -449,7 +449,7 @@ div.tarjontaControlsLayout ul {
 }
 
 div.tarjontaControlsLayout p > p, div.tarjontaControlsLayout p > ul {
-    margin-top:0.33em;   
+    margin-top:0.33em;
 }
 
 /* aiheet ja teemat */
@@ -459,7 +459,7 @@ div#aiheetJaTeemat > ul.tree {
 }
 
 div#aiheetJaTeemat > ul.tree > li > a:hover {
-    text-decoration: none;	
+    text-decoration: none;
 }
 
 div#aiheetJaTeemat > ul.tree > li > a:before {
@@ -504,7 +504,7 @@ ul.listView {
 
 
 .modal-body .errors {
-    border-radius: 4px; 
+    border-radius: 4px;
     padding: 20px 20px 20px 66px;
     margin:18px 0 18px 0;
     box-shadow: 0 2px 3px rgba(0,0,0,0.275);
@@ -566,7 +566,7 @@ label input[type=checkbox], label input[type=radio] {
 /* koulutuksen alkamispvm */
 
 div#koulutuksenAlkamisPvm ul {
-	list-style:none;	
+	list-style:none;
     margin:15px 0 0 0;
 }
 
@@ -605,7 +605,7 @@ div#soraVapeChooserDialog table tr.selected td {
 div#soraVapeChooserDialog div.kuvausGridStyle {
 	border-radius:4px;
     border: 1px solid #cccccc;
-    
+
     width:100%;
     height:95px;
     margin-bottom:15px;
@@ -618,7 +618,7 @@ div#soraVapeChooserDialog .multiselect .dualpane ul, div#soraVapeChooserDialog .
 /* date-time */
 
 div.tarjontaDateTime {
-    display:inline-block;	
+    display:inline-block;
 }
 
 div.tarjontaDateTime input.date {
@@ -749,7 +749,7 @@ table td.controls button {
 
 input[type=checkbox] {
 	padding:2px;
-	height:auto;	
+	height:auto;
 }
 
 /* imagefield */
@@ -797,11 +797,11 @@ table.valintakoeTilaisuudet {
 }
 
 table.valintakoeTilaisuudet td.vkOsoite br {
-	display:none;    
+	display:none;
 }
 
 table.valintakoeTilaisuudet td.vkAjankohta {
-    width:220px;	
+    width:220px;
 }
 
 table.valintakoeTilaisuudet td.vkSeparator {
@@ -868,4 +868,12 @@ table tr.aloituspaikatKuvaukset table {
 
 .hakukohdeYhteystiedot .tab-content {
     padding: 1px;
+}
+
+.comma:before {
+    content:", ";
+}
+
+.comma:first-child:before {
+    content:none;
 }
