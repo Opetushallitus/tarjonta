@@ -300,9 +300,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
             if (liite.isNew &&
                 !liite.liitteenNimi &&
                 !liite.liitteenTyyppi &&
-                !liite.toimitettavaMennessa &&
-                !liite.liitteenToimitusOsoite.osoiterivi1 &&
-                !liite.liitteenToimitusOsoite.postinumero) {
+                !liite.toimitettavaMennessa) {
                 liitteetArray.splice(loopIndex, 1);
             }
         }
