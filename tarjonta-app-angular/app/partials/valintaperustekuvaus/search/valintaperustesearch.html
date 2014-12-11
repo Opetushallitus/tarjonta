@@ -48,7 +48,9 @@
         <tabset>
             <tab heading="{{t('kk.valintaperusteet.tab.valintaperusteet')}}">
 	            <div class="controls">
-	                <button class="btn float-right" type="button" ng-click="createNew('valintaperustekuvaus')"><span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span></button>
+	                <button class="btn float-right" type="button" ng-disabled="!canCreateNew()" ng-click="createNew('valintaperustekuvaus')">
+                        <span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span>
+                    </button>
 	            </div>
 
                 <results-tree-table
@@ -64,7 +66,9 @@
             </tab>
             <tab heading="{{t('kk.valintaperusteet.tab.sora')}}">
                 <div class="controls">
-                    <button class="btn float-right" type="button" ng-click="createNew('SORA')"><span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span></button>
+                    <button class="btn float-right" type="button" ng-click="createNew('SORA')" ng-disabled="!canCreateNew()">
+                        <span tt="tarjonta.valintaperustekuvaus.luouusi">Luo uusi kuvaus</span> <span class="icon-plus-sign"></span>
+                    </button>
                 </div>
 
                 <results-tree-table

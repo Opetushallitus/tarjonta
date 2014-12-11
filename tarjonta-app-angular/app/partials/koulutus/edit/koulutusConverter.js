@@ -789,7 +789,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             koodistoDefaults: {
                 tutkintonimike: "tutkintonimikkeet_00000"
             },
-            koulutustyyppiKoodiUri: "koulutustyyppi_13"
+            koulutustyyppiKoodiUri: "koulutustyyppi_13",
+            RELATIONS: {
+                tutkintonimikes: {}
+            }
         }),
 
         /**

@@ -139,30 +139,6 @@
             </td>
         </tr>
 
-        <!-- opetusajat -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.opetusajat">Opetusajat</th>
-            <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusAikas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
-            </td>
-        </tr>
-
-        <!-- opetusmuodot -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.opetusmuodot">Opetusmuodot</th>
-            <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusmuodos.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
-            </td>
-        </tr>
-
-        <!-- opetuspaikat -->
-        <tr>
-            <th tt="koulutus.review.perustiedot.opetuspaikat">Opetuspaikat</th>
-            <td colspan="2">
-                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusPaikkas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
-            </td>
-        </tr>
-
         <tr>
             <th></th>
             <td colspan="2"><br/></td>
@@ -203,7 +179,29 @@
     </tr>
 
     <tbody ng-show="!model.collapse.valmistavanPerustiedot">
+        <!-- opetusajat -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetusajat">Opetusajat</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusAikas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
 
+        <!-- opetusmuodot -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetusmuodot">Opetusmuodot</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusmuodos.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
+
+        <!-- opetuspaikat -->
+        <tr>
+            <th tt="koulutus.review.perustiedot.opetuspaikat">Opetuspaikat</th>
+            <td colspan="2">
+                <span data-ng-repeat='kieli in model.koulutus.valmistavaKoulutus.opetusPaikkas.meta'>{{ kieli.nimi}}{{ $last ? '' : ', ' }}</span>
+            </td>
+        </tr>
 
         <!-- suunniteltu kesto -->
         <tr>

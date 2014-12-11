@@ -133,15 +133,12 @@ app
                         $log = $log.getInstance("EditYhteyshenkiloECTSCtrl");
                         $log.debug("init");
 
-//              console.log("haetaan ects...");
                         OrganisaatioService.getECTS(orgOid).then(function(data) {
-                            console.log("ects-data:", data);
                             if (data !== undefined) {
                                 $scope.ects = {
-                                    nimet: data.metadata.hakutoimistoEctsNimi,
-                                    sahkoposti: data.metadata.hakutoimistoEctsEmail,
-                                    puhelin: data.metadata.hakutoimistoEctsPuhelin,
-                                    titteli: data.metadata.hakutoimistoEctsTehtavanimike
+                                    nimet: data.metadata.hakutoimistoEctsNimi ? data.metadata.hakutoimistoEctsNimi : {},
+                                    sahkoposti: data.metadata.hakutoimistoEctsEmail ? data.metadata.hakutoimistoEctsEmail : {},
+                                    puhelin: data.metadata.hakutoimistoEctsPuhelin ? data.metadata.hakutoimistoEctsPuhelin : {}
                                 };
                             }
                         });
@@ -160,10 +157,25 @@ app
                          * from the autocomplete field.
                          */
                         $scope.editECTSModel.selectEctsHenkilo = function(selectedUser) {
-                            console.log("selecting ectshenkilö");
-                            var to = $scope.uiModel.ectsCoordinator;
-                            angular.copy($scope.ects, to);
-                            to.henkiloTyyppi = 'ECTS_KOORDINAATTORI';
+                            if($scope.ects) {
+
+                                $scope.uiModel.opetuskielis.uris.every(function(kieliUri) {
+                                    var kieliUriWithVersion = kieliUri + "#1";
+
+                                    if($scope.ects.nimet[kieliUriWithVersion]) {
+
+                                        var info = {};
+                                        info.nimet = $scope.ects.nimet[kieliUriWithVersion];
+                                        info.sahkoposti = $scope.ects.sahkoposti[kieliUriWithVersion];
+                                        info.puhelin = $scope.ects.puhelin[kieliUriWithVersion];
+
+                                        angular.copy(info, $scope.uiModel.ectsCoordinator);
+                                        $scope.uiModel.ectsCoordinator.henkiloTyyppi = 'ECTS_KOORDINAATTORI';
+
+                                        return false;
+                                    }
+                                });
+                            }
                         };
 
                     }]);

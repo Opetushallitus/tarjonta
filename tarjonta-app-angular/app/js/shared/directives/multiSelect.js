@@ -92,6 +92,13 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             return dis;
         }
 
+        $scope.$on('$destroy', function() {
+            if ($formController && $scope.name) {
+                $formController.$removeControl($scope.name);
+                $formController[$scope.name] && delete($formController[$scope.name]);
+            }
+        });
+
         $scope.combo = {selection: ""};
 
         // autocomplete-valinta

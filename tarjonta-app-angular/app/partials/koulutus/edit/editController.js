@@ -740,14 +740,8 @@ app.controller('BaseEditController', [
                 model = $route.current.locals.koulutusModel.result;
                 uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                 $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
-
-                /*
-                 * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
-                 */
                 $scope.lisatiedot = koulutusStructure.KUVAUS_ORDER;
                 $scope.loadKomoKuvausTekstis(null, model.kuvausKomo);
-                $scope.loadRelationKoodistoData(model, uiModel, model.koulutuskoodi.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
-                $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
             }
             else if ($routeParams.org) {
                 /*
@@ -776,6 +770,21 @@ app.controller('BaseEditController', [
             else {
                 KoulutusConverterFactory.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
             }
+
+            var koulutuskoodiUri = (model.koulutuskoodi || {}).uri || $routeParams.koulutuskoodi;
+            koulutuskoodiUri && $scope.loadRelationKoodistoData(
+                model,
+                uiModel,
+                koulutuskoodiUri,
+                ENUMS.ENUM_KOMO_MODULE_TUTKINTO
+            );
+
+            (model.koulutusohjelma || {}).uri && $scope.loadRelationKoodistoData(
+                model,
+                uiModel,
+                model.koulutusohjelma.uri,
+                ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
+            );
 
             /*
              * SHOW ALL KOODISTO KOODIS
@@ -882,6 +891,13 @@ app.controller('BaseEditController', [
                             && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module )) {
 
                             apiModel[key] = restRelationData[key];
+                        }
+                    });
+
+                    angular.forEach(koulutusStructure.RELATIONS, function(value, key) {
+                        if(restRelationData[key] && restRelationData[key].meta) {
+                            uiModel[key].meta = restRelationData[key].meta;
+                            uiModel[key].uris = apiModel[key] ? _.keys(apiModel[key].uris) : [];
                         }
                     });
                 }

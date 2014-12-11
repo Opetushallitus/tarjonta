@@ -93,7 +93,8 @@ angular.module('app',
             'debounce',
             'Parameter',
             'Logging',
-            'ValidDecimal'
+            'ValidDecimal',
+            'taiPlaceholder'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
@@ -440,6 +441,23 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
             return defer.promise;
         }
 
+        var newKoulutus = {
+            action: "koulutus.edit",
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusModel: function($log, $route) {
+                    return {
+                        result: {
+                            toteutustyyppi: $route.current.params.toteutustyyppi,
+                            koulutustyyppi: $route.current.params.koulutustyyppi,
+                            isNew: true,
+                            isMinmax: true
+                        }
+                    };
+                }
+            }
+        };
+
         $routeProvider
                 .when("/etusivu", {
                     action: "home.default",
@@ -478,40 +496,8 @@ angular.module('app').config(['$routeProvider', function($routeProvider) {
                         koulutusModel: resolveKoulutus
                     }
                 })
-                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi', {
-                    action: "koulutus.edit",
-                    controller: 'KoulutusRoutingController',
-                    resolve: {
-                        koulutusModel: function($log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);
-                            return {
-                                'result': {
-                                    toteutustyyppi: $route.current.params.toteutustyyppi,
-                                    koulutustyyppi: $route.current.params.koulutustyyppi,
-                                    isNew: true,
-                                    isMinmax: true
-                                }
-                            };
-                        }
-                    }
-                })
-                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi', {
-                    action: "koulutus.edit",
-                    controller: 'KoulutusRoutingController',
-                    resolve: {
-                        koulutusModel: function($log, $route) {
-                            $log.info("/koulutus/ID/edit", $route);
-                            return {
-                                'result': {
-                                    toteutustyyppi: $route.current.params.toteutustyyppi,
-                                    koulutustyyppi: $route.current.params.koulutustyyppi,
-                                    isNew: true,
-                                    isMinmax: true
-                                }
-                            };
-                        }
-                    }
-                })
+                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi?', newKoulutus)
+                .when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi?', newKoulutus)
                 .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW', {
                     action: "valintaPerusteKuvaus.edit",
                     controller: 'ValintaperusteEditController'

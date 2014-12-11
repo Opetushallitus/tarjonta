@@ -14,17 +14,20 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Maps;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oid.service.ExceptionMessage;
 import fi.vm.sade.organisaatio.api.model.types.MonikielinenTekstiTyyppi;
 import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.YhteyshenkiloTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.junit.After;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -51,6 +54,8 @@ import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.time.DateUtils;
 import static org.easymock.EasyMock.*;
 import org.junit.Assert;
@@ -194,7 +199,17 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         expectMetaUri(KOULUTUSASTE);
         expectMetaUri(KOULUTUSALA);
         expectMetaUri(OPINTOALA);
+
         expectMetaUri(TUTKINTONIMIKE);
+        // Tutkinonimike kutsutaan useaan kertaan
+        KoodiType koodiType = createKoodiType(TUTKINTONIMIKE, "x");
+        expect(tarjontaKoodistoHelperMock.getKoodi(TUTKINTONIMIKE + "_uri", 1))
+            .andReturn(koodiType).times(2);
+        expect(tarjontaKoodistoHelperMock.getKoodiNimi(koodiType, new Locale(LOCALE_FI)))
+            .andReturn(TUTKINTONIMIKE).times(1);
+        expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI))
+            .andReturn(createKoodiType(URI_KIELI_FI, "fi")).times(1);
+
         expectMetaUri(KOULUTUSLAJI);
         expectMetaUri(EQF);
         expectMetaUri(NQF);
@@ -315,6 +330,7 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         dto.setOpintojenLaajuusyksikko(toKoodiUri(LAAJUUSYKSIKKO));
         dto.setKoulutuslaji(toKoodiUri(KOULUTUSLAJI));
         dto.setTutkintonimike(toKoodiUri(TUTKINTONIMIKE));
+        dto.setTutkintonimikes(getTutkintonimikes());
         dto.setJarjestavaOrganisaatio(new OrganisaatioV1RDTO(ORGANISATION_JARJESTAJA_OID, null, null));
         dto.setKoulutustyyppi(toKoodiUri(KOULUTUSTYYPPI));
         return dto;
@@ -356,6 +372,14 @@ public class KoulutusResourceImplV1NayttoTest extends KoulutusBase {
         verify(organisaatioServiceMock);
         verify(tarjontaKoodistoHelperMock);
         verify(publicationDataService);
+    }
+
+    private KoodiUrisV1RDTO getTutkintonimikes() {
+        KoodiUrisV1RDTO tutkintonimikes = new KoodiUrisV1RDTO();
+        Map<String, Integer> map = Maps.<String, Integer>newHashMap();
+        map.put(toKoodiUri(TUTKINTONIMIKE).getUri(), 1);
+        tutkintonimikes.setUris(map);
+        return tutkintonimikes;
     }
 
 }
