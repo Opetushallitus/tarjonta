@@ -71,7 +71,10 @@
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.review.perustiedot.tutkintonimike">Tutkintonimike</th>
-            <td colspan="2">
+            <td ng-if="model.koulutus.tutkintonimikes" colspan="2">
+                <span class="comma" ng-repeat="metas in model.koulutus.tutkintonimikes.meta">{{metas.meta[lang.koodi_uri].nimi}}</span>
+            </td>
+            <td ng-if="!model.koulutus.tutkintonimikes" colspan="2">
                 {{model.koulutus.tutkintonimike.meta[lang.koodi_uri].nimi}}
             </td>
         </tr>

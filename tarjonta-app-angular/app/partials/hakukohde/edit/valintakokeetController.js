@@ -162,9 +162,11 @@ app.controller(
                 if (nimiEmpty && tyyppiEmpty) {
                     return false;
                 }
+
                 if (kuvausEmpty) {
                     return false;
                 }
+
                 for (var j in li.valintakoeAjankohtas) {
                     if (!$scope.isValidAjankohta(li.valintakoeAjankohtas[j])) {
                         return false;
