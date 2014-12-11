@@ -3,6 +3,8 @@ module.exports = function(config) {
     config.set({
         basePath: '../app',
         files: [
+            'lib/jquery-1.10.2.min.js',
+            'jquery-1.10.2.min.map',
             'lib/underscore/underscore.js',
             'lib/angular/angular.js',
             'lib/angular/angular-resource.js',
@@ -15,13 +17,11 @@ module.exports = function(config) {
             'js/shared/directives/org-puu.js',
             'partials/tarjontaApp.js',
             'partials/hakukohde/hakukohdeRoutingController.js',
-
             'partials/hakukohde/edit/hakukohdeControllers.js',
             'partials/**/*.js',
+            'partials/ie9.js',
             '../test/unit/**/*.js',
             '../test/lib/jasmine.async.node.js',
-            'lib/jquery-1.10.2.min.js',
-            'jquery-1.10.2.min.map',
             'lib/ngGrid/ng-grid-2.0.7.min.js',
             'lib/ui-bootstrap-0.9.0.js',
             'lib/ui-bootstrap-tpls-0.9.0.js',
