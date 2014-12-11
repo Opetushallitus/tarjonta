@@ -297,7 +297,12 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         var loopIndex = liitteetArray.length
         while (loopIndex--) {
             var liite = liitteetArray[loopIndex];
-            if (liite.isNew === true && liite.liitteenNimi === "" && liite.liitteenTyyppi == undefined) {
+            if (liite.isNew &&
+                !liite.liitteenNimi &&
+                !liite.liitteenTyyppi &&
+                !liite.toimitettavaMennessa &&
+                !liite.liitteenToimitusOsoite.osoiterivi1 &&
+                !liite.liitteenToimitusOsoite.postinumero) {
                 liitteetArray.splice(loopIndex, 1);
             }
         }
