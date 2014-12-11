@@ -93,7 +93,8 @@ angular.module('app',
             'debounce',
             'Parameter',
             'Logging',
-            'ValidDecimal'
+            'ValidDecimal',
+            'taiPlaceholder'
         ]);
 
 angular.module('app').value("globalConfig", window.CONFIG);
