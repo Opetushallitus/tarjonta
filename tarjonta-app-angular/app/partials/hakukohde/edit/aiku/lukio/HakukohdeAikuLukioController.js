@@ -46,6 +46,12 @@ app
                     errors.push(err);
                 }
 
+                if (!$scope.status.validateValintakokeet()) {
+                    errors.push({
+                        errorMessageKey: "hakukohde.edit.valintakokeet.errors"
+                    });
+                }
+
                 $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected(errors);
 
                 if (errors.length < 1) {
