@@ -204,6 +204,7 @@ public class KoulutusDTOConverterToEntity {
          * Siispä parentKomototo pitää vielä säilyttää koulutusinformaatiota varten.
          */
         switch (dto.getToteutustyyppi()) {
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
             case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
             case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
