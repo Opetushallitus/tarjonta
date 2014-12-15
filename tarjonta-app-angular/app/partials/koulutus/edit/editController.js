@@ -393,7 +393,6 @@ app.controller('BaseEditController', [
                         //$scope.updateFormStatusInformation($scope.model);
                         $scope.controlFormMessages(form, $scope.uiModel, "SAVED");
                         $scope.uiModel.tabs.lisatiedot = false;
-                        $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[tyyppi].KUVAUS_ORDER;
                         // OVT-7421 / etusivun hakutuloskakun tyhjentäminen jotta muutokset näkyvät varmasti hakutuloslissa
                         // - parempi ratkaisu olisi toki tallentaa muutokset kakutettuihin hakutuloksiin, jos sellaisia on
                         CacheService.evict(new RegExp("/koulutus/.*"));
@@ -455,7 +454,6 @@ app.controller('BaseEditController', [
 
             uiModel.isMutable = false;
             uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
-            $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[tyyppi].KUVAUS_ORDER;
 
             KoulutusConverterFactory.createUiModels(uiModel, tyyppi);
             uiModel.isMutable = true;
@@ -491,7 +489,6 @@ app.controller('BaseEditController', [
 
             uiModel.isMutable = false;
             uiModel.selectedKieliUri = undefined; // pitää olla undefined koska mktabs (ks. api)
-            $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[tyyppi].KUVAUS_ORDER;
 
             KoulutusConverterFactory.createUiModels(uiModel, tyyppi);
             $scope.controlFormMessages(form, uiModel, "SHOW");
@@ -740,7 +737,6 @@ app.controller('BaseEditController', [
                 model = $route.current.locals.koulutusModel.result;
                 uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                 $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
-                $scope.lisatiedot = koulutusStructure.KUVAUS_ORDER;
                 $scope.loadKomoKuvausTekstis(null, model.kuvausKomo);
             }
             else if ($routeParams.org) {
@@ -770,6 +766,8 @@ app.controller('BaseEditController', [
             else {
                 KoulutusConverterFactory.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
             }
+
+            $scope.lisatiedot = koulutusStructure.KUVAUS_ORDER;
 
             var koulutuskoodiUri = (model.koulutuskoodi || {}).uri || $routeParams.koulutuskoodi;
             koulutuskoodiUri && $scope.loadRelationKoodistoData(

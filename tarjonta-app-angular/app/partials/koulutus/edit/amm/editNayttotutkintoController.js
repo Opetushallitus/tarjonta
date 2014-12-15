@@ -3,8 +3,6 @@ app.controller('EditNayttotutkintoController',
     function EditLukioController($routeParams, $scope, $log, TarjontaService, LocalisationService,
                                  KoulutusConverterFactory, $modal,  dialogService) {
 
-    $log = $log.getInstance("EditNayttotutkintoController");
-
     var ENUMS = KoulutusConverterFactory.ENUMS;
 
     /*
@@ -48,7 +46,7 @@ app.controller('EditNayttotutkintoController',
             tila,
             $scope.koulutusForm,
             $scope.CONFIG.TYYPPI,
-            $scope.customCallbackAfterSave
+            $scope.callbackAfterSave
         );
     };
 
