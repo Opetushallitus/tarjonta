@@ -24,29 +24,24 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.*;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Conversions to entity objects.
@@ -127,8 +122,6 @@ public class KoulutusDTOConverterToEntity {
         korkeakouluKomotoDataUpdate(komoto, dto, userOid);
         addOrRemoveImages(dto, komoto, userOid);
 
-        updateOwners(komoto, dto);
-
         return komoto;
     }
 
@@ -141,12 +134,12 @@ public class KoulutusDTOConverterToEntity {
      * fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus,
      * fi.vm.sade.tarjonta.publication.model.RestParam)
      */
-    private void updateOwners(KoulutusmoduuliToteutus komoto, KoulutusKorkeakouluV1RDTO dto) {
-        if (komoto == null || dto == null) {
-            return;
-        }
+    private void updateOwners(KoulutusmoduuliToteutus komoto, KoulutusV1RDTO dto) {
+        Preconditions.checkNotNull(komoto, "komoto cannot be null");
+        Preconditions.checkNotNull(dto, "dto cannot be null");
+        Preconditions.checkNotNull(dto.getOrganisaatio().getOid(), "Organisation OID cannot be null.");
 
-        LOG.info("updateOwners()... tarj={}, järj={}", dto.getOpetusTarjoajat(), dto.getOpetusJarjestajat());
+        komoto.setTarjoaja(dto.getOrganisaatio().getOid());
 
         komoto.getOwners().clear();
         for (String oid : dto.getOpetusJarjestajat()) {
@@ -156,12 +149,15 @@ public class KoulutusDTOConverterToEntity {
             komoto.getOwners().add(owner);
         }
 
+        dto.getOpetusTarjoajat().add(dto.getOrganisaatio().getOid());
+
         for (String oid : dto.getOpetusTarjoajat()) {
             KoulutusOwner owner = new KoulutusOwner();
             owner.setOwnerOid(oid);
             owner.setOwnerType(KoulutusOwner.TARJOAJA);
             komoto.getOwners().add(owner);
         }
+
         LOG.info("updateOwners()... done.");
     }
 
@@ -629,11 +625,7 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(dto, "KoulutusV1RDTO object cannot be null.");
         Preconditions.checkNotNull(komoto, "KoulutusmoduuliToteutus object cannot be null.");
 
-        final String organisationOId = dto.getOrganisaatio().getOid();
-        Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");
-
         base(komoto, dto);
-        komoto.setTarjoaja(organisationOId);
         commonConverter.handleDates(komoto, dto); //set dates
         komoto.setToteutustyyppi(dto.getToteutustyyppi());
 
@@ -642,6 +634,8 @@ public class KoulutusDTOConverterToEntity {
         komoto.setYhteyshenkilos(yhteyshenkilos);
         komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
         komoto.setLastUpdatedByOid(userOid);
+
+        updateOwners(komoto, dto);
     }
 
     private void addOrRemoveImages(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {

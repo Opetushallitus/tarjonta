@@ -578,8 +578,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                     continue;
                 }
 
-                ArrayList<String> orgPath = new ArrayList<String>(Arrays.asList(tmpOrg.getParentOidPath().split("\\|")));
+                ArrayList<String> orgPath = new ArrayList<String>();
                 orgPath.add(owner.getOwnerOid());
+                if (tmpOrg.getParentOidPath() != null) {
+                    orgPath.addAll(Arrays.asList(tmpOrg.getParentOidPath().split("\\|")));
+                }
 
                 for (String orgOidCandidate : orgPath) {
                     if (orgOidCandidate.equals(hakukohdeOwner)) {
