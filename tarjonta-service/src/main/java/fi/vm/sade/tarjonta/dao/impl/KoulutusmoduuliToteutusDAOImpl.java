@@ -20,29 +20,22 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
-
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
-import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.Query;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
+import java.util.*;
+
+import static fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils.and;
 
 /**
  */
@@ -395,5 +388,15 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
         findByOid.setTila(TarjontaTila.POISTETTU);
         findByOid.setLastUpdatedByOid(userOid);
+    }
+
+    @Override
+    public void setViimIndeksointiPvmToNull(Long id) {
+        final BooleanExpression qKomoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.id.eq(id);
+
+        JPAUpdateClause updateClause = new JPAUpdateClause(getEntityManager(), QKoulutusmoduuliToteutus.koulutusmoduuliToteutus);
+        updateClause.where(qKomoto)
+                .setNull(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.viimIndeksointiPvm);
+        updateClause.execute();
     }
 }

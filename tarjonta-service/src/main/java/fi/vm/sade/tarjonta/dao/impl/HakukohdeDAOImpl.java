@@ -341,18 +341,18 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     }
 
     @Override
-    public Map<String,List<String>> findAllHakuToHakukohde() {
+    public Map<String, List<String>> findAllHakuToHakukohde() {
         // Haetaan kaikkien hakujen hakukohde oidit yhdellä kyselyllä.
         // Tämä on tehty suorituskyvyn parantamiseksi haku/findAll Rest-kyselyyn.
         log.debug("findAllHakuToHakukohde");
         String q = "SELECT h.oid, hk.oid FROM Haku h JOIN h.hakukohdes hk WHERE hk.tila not in :poistettu";
         Query query = getEntityManager().createQuery(q);
         query.setParameter("poistettu", poistettuTila);
-        Map<String,List<String>> map = new HashMap<String, List<String>>();
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
         List<Object[]> result = query.getResultList();
-        for (Object[] tuple: result) {
-            String hakuOid = (String)tuple[0];
-            String kohdeOid = (String)tuple[1];
+        for (Object[] tuple : result) {
+            String hakuOid = (String) tuple[0];
+            String kohdeOid = (String) tuple[1];
             List<String> hakukohdes = map.get(hakuOid);
             if (hakukohdes == null) {
                 hakukohdes = new ArrayList<String>();
@@ -362,7 +362,7 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
         }
         return map;
     }
-    
+
     @Override
     public List<String> findByHakuOid(String hakuOid, String searchTerms, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince) {
 
@@ -505,5 +505,15 @@ public class HakukohdeDAOImpl extends AbstractJpaDAOImpl<Hakukohde, Long> implem
     public List<String> findAllOids() {
         final QHakukohde hakukohde = QHakukohde.hakukohde;
         return from(hakukohde).list(hakukohde.oid);
+    }
+
+    @Override
+    public void setViimIndeksointiPvmToNull(Long id) {
+        final BooleanExpression qHakukohde = QHakukohde.hakukohde.id.eq(id);
+
+        JPAUpdateClause updateClause = new JPAUpdateClause(getEntityManager(), QHakukohde.hakukohde);
+        updateClause.where(qHakukohde)
+                .setNull(QHakukohde.hakukohde.viimIndeksointiPvm);
+        updateClause.execute();
     }
 }

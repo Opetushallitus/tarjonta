@@ -5,14 +5,14 @@
 
     <groupId>fi.vm.sade.tarjonta</groupId>
     <artifactId>tarjonta</artifactId>
-    <version>10.0-SNAPSHOT</version>
+    <version>10.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tarjonta :: Parent</name>
 
     <parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
-        <version>9.0-SNAPSHOT</version>
+        <version>13.0-SNAPSHOT</version>
     </parent>
 
     <properties>
