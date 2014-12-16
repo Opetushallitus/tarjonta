@@ -673,9 +673,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             String hakuOid = hakukohdeRDTO.getHakuOid();
 
             List<HakukohdeValidationMessages> validationMessagesList = validateHakukohde(hakukohdeRDTO);
-            if (hakukohdeRDTO.getValintakokeet() != null && !hakukohdeRDTO.getValintakokeet().isEmpty()) {
-                validationMessagesList.addAll(HakukohdeValidator.validateValintakokees(hakukohdeRDTO.getValintakokeet()));
-            }
 
             Set<KoulutusmoduuliToteutus> komotot = Sets.newHashSet(koulutusmoduuliToteutusDAO.findKoulutusModuuliToteutusesByOids(hakukohdeRDTO.getHakukohdeKoulutusOids()));
 

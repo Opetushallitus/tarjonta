@@ -59,6 +59,10 @@ public class HakukohdeValidator {
             }
         }
 
+        if (hakukohdeRDTO.getValintakokeet() != null && hakukohdeRDTO.getValintakokeet().size() > 0) {
+            validationMessages.addAll(validateValintakokees(hakukohdeRDTO.getValintakokeet()));
+        }
+
         return validationMessages;
     }
 
@@ -81,7 +85,7 @@ public class HakukohdeValidator {
 
         validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
 
-        if (hakukohdeRDTO.getHakukohteenNimiUri() == null || hakukohdeRDTO.getHakukohteenNimiUri().trim().length() < 1) {
+        if (Strings.isNullOrEmpty(hakukohdeRDTO.getHakukohteenNimiUri())) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
         }
 
@@ -123,10 +127,6 @@ public class HakukohdeValidator {
 
         if (hakukohdeRDTO.getHakukohteenNimet() == null || hakukohdeRDTO.getHakukohteenNimet().size() < 1) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
-        }
-
-        if (hakukohdeRDTO.getValintakokeet() != null && hakukohdeRDTO.getValintakokeet().size() > 0) {
-            validationMessages.addAll(validateValintakokees(hakukohdeRDTO.getValintakokeet()));
         }
 
         if (hakukohdeRDTO.getHakukohteenLiitteet() != null && hakukohdeRDTO.getHakukohteenLiitteet().size() > 0) {
