@@ -277,6 +277,14 @@ public class KoulutusDTOConverterToEntity {
                 commonConverter.convertToKielivalikoima(lukioV1RDTO.getKielivalikoima(), komoto);
             }
         }
+        else if (dto.getKoulutusohjelma() != null) {
+            if (commonConverter.isOsaamisala(dto.getKoulutusohjelma())) {
+                komoto.setOsaamisalaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.OSAAMISALA));
+            }
+            else {
+                komoto.setKoulutusohjelmaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
+            }
+        }
 
         if (dto.getLinkkiOpetussuunnitelmaan() != null) {
             komoto.getLinkkis().clear();
