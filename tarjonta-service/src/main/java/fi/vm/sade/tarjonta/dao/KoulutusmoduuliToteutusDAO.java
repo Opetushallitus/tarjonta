@@ -26,21 +26,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- */
 public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteutus, Long> {
 
-    public KoulutusmoduuliToteutus findByOid(String oid);
+    KoulutusmoduuliToteutus findByOid(String oid);
 
-    public KoulutusmoduuliToteutus findKomotoByOid(String oid);
+    KoulutusmoduuliToteutus findKomotoByOid(String oid);
 
-    public List<KoulutusmoduuliToteutus> findByCriteria(
+    List<KoulutusmoduuliToteutus> findByCriteria(
             List<String> tarjoajaOids, String nimi, int koulutusAlkuVuosi, List<Integer> koulutusAlkuKuukaudet);
 
-    public KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid);
+    KoulutusmoduuliToteutus findKomotoWithYhteyshenkilosByOid(String oid);
 
-    public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids);
+    List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids);
 
     /**
      * Return all koulutumoduulitoteutuses in oid list with Hakukohde depencies
@@ -48,13 +45,13 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @param komotoOids
      * @return List<KoulutusmoduuliToteutus>
      */
-    public List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids);
+    List<KoulutusmoduuliToteutus> findKoulutusModuulisWithHakukohdesByOids(List<String> komotoOids);
 
-    public List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus,
-            String koulutusluokitus, String koulutusohjelma,
-            List<String> opetuskielis, List<String> koulutuslajis);
+    List<KoulutusmoduuliToteutus> findKoulutusModuuliWithPohjakoulutusAndTarjoaja(String tarjoaja, String pohjakoulutus,
+                                                                                  String koulutusluokitus, String koulutusohjelma,
+                                                                                  List<String> opetuskielis, List<String> koulutuslajis);
 
-    public List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
+    List<KoulutusmoduuliToteutus> findKomotosByKomoTarjoajaPohjakoulutus(
             Koulutusmoduuli parentKomo, String tarjoaja, String pohjakoulutusvaatimusUri);
 
     /**
@@ -67,7 +64,7 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @param lastModifiedAfter
      * @return
      */
-    public List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
+    List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedAfter);
 
     /**
      * Find list of komoto oids by hakukohdeid
@@ -75,7 +72,7 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @param id
      * @return
      */
-    public List<String> findOidsByHakukohdeId(long id);
+    List<String> findOidsByHakukohdeId(long id);
 
     /**
      * Finds KOMOTO OIDs by KOMO oid.
@@ -85,7 +82,7 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @param startIndex
      * @return
      */
-    public List<String> findOidsByKomoOid(String oid, int count, int startIndex);
+    List<String> findOidsByKomoOid(String oid, int count, int startIndex);
 
     /**
      * Find an image by KOMOTO OID and language URI.
@@ -94,9 +91,9 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @param kieliUri
      * @return
      */
-    public BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
+    BinaryData findKuvaByKomotoOidAndKieliUri(final String komotoOid, final String kieliUri);
 
-    public Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid);
+    Map<String, BinaryData> findAllImagesByKomotoOid(final String komotoOid);
 
     /**
      * Find komoto ids by hakukohdeids
@@ -116,7 +113,7 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      */
     List<String> searchKomotoOIDsByHakukohdesId(final Collection<Long> hakukohdeIds, final TarjontaTila... requiredStatus);
 
-    public List<Long> findIdsByoids(Collection<String> oids);
+    List<Long> findIdsByoids(Collection<String> oids);
 
     /**
      * Vaihtaa koulutusmoduulin toteutuksen tilan suoraa
@@ -125,6 +122,7 @@ public interface KoulutusmoduuliToteutusDAO extends JpaDAO<KoulutusmoduuliToteut
      * @param komotoOid
      * @param userOid
      */
-    public void safeDelete(final String komotoOid, final String userOid);
+    void safeDelete(final String komotoOid, final String userOid);
 
+    void setViimIndeksointiPvmToNull(Long id);
 }
