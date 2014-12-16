@@ -399,4 +399,46 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 .setNull(QKoulutusmoduuliToteutus.koulutusmoduuliToteutus.viimIndeksointiPvm);
         updateClause.execute();
     }
+
+    public List<KoulutusmoduuliToteutus> findKomotosSharingCommonFields(KoulutusmoduuliToteutus komoto) {
+
+        String pohjakoulutusvaatimusWhere = komoto.getPohjakoulutusvaatimusUri() == null ?
+            "komoto.pohjakoulutusvaatimusUri IS NULL" :
+            "komoto.pohjakoulutusvaatimusUri = :pkv";
+
+        String rawQuery = "SELECT komoto FROM "
+                + "KoulutusmoduuliToteutus komoto, IN (komoto.opetuskielis) o, IN(komoto.koulutuslajis) k "
+                + "WHERE " + pohjakoulutusvaatimusWhere + " "
+                + "AND komoto.tarjoaja = :tarjoaja "
+                + "AND komoto.koulutusUri = :koulutusUri "
+                + "AND komoto.toteutustyyppi = :toteutustyyppi "
+                + "AND o.koodiUri IN (:opetuskielis) "
+                + "AND k.koodiUri IN (:koulutuslajis) "
+                + "AND komoto.oid <> :komotoOid "
+                + "AND komoto.tila NOT IN ('POISTETTU)')";
+
+        List<String> opetuskielis = new ArrayList<String>();
+        for(KoodistoUri uri : komoto.getOpetuskielis()) {
+            opetuskielis.add(uri.getKoodiUri());
+        }
+        List<String> koulutuslajis = new ArrayList<String>();
+        for(KoodistoUri uri : komoto.getKoulutuslajis()) {
+            koulutuslajis.add(uri.getKoodiUri());
+        }
+
+        Query query = getEntityManager().createQuery(rawQuery);
+
+        if (komoto.getPohjakoulutusvaatimusUri() != null) {
+            query.setParameter("pkv", komoto.getPohjakoulutusvaatimusUri());
+        }
+
+        query.setParameter("tarjoaja", komoto.getTarjoaja())
+            .setParameter("koulutusUri", komoto.getKoulutusUri())
+            .setParameter("toteutustyyppi", komoto.getToteutustyyppi())
+            .setParameter("opetuskielis", opetuskielis)
+            .setParameter("koulutuslajis", koulutuslajis)
+            .setParameter("komotoOid", komoto.getOid());
+
+            return query.getResultList();
+    }
 }
