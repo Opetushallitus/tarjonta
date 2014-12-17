@@ -878,6 +878,6 @@ table tr.aloituspaikatKuvaukset table {
     content:none;
 }
 
-input[type=text]::-ms-clear {
+::-ms-clear {
     display: none;
 }
