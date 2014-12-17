@@ -104,11 +104,7 @@ app.controller('BaseEditController', [
 
 
         $scope.canSaveAsLuonnos = function () {
-            if ($scope.getModel().tila !== 'LUONNOS' || $scope.getModel().tila === 'POISTETTU') {
-                return false;
-            }
-
-            return $scope.uiModel.isMutable;
+            return _.contains(['LUONNOS', 'KOPIOITU'], $scope.getModel().tila) && $scope.uiModel.isMutable;
         };
 
         $scope.canSaveAsValmis = function () {
