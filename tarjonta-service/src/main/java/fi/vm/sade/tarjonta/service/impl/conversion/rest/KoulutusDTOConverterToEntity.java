@@ -785,6 +785,8 @@ public class KoulutusDTOConverterToEntity {
                     valinta,
                     copyMkTeksti(tekstit.get(valinta))
                 );
+                // Ohita viimpaivityspvm:n päivitys related koulutuksille
+                relatedKomoto.setSkipPreUpdate(true);
             }
         }
     }
