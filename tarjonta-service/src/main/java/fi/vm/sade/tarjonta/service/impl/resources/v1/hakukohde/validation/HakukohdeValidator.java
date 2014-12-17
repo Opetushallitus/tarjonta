@@ -27,7 +27,7 @@ import static fi.vm.sade.tarjonta.shared.KoulutusasteResolver.isToisenAsteenKoul
  */
 public class HakukohdeValidator {
 
-    private static final int PISTERAJA_MAX_PRECISION = 2;
+    private static final int MAX_PRECISION = 2;
 
     private static List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
@@ -101,6 +101,8 @@ public class HakukohdeValidator {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING);
                 } else if (painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
+                } else if(painokerroinHasInvalidPrecision(painotettavaOppiaineV1RDTO)) {
+                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
                 }
 
                 if (StringUtils.isBlank(painotettavaOppiaineV1RDTO.getOppiaineUri())) {
@@ -110,6 +112,10 @@ public class HakukohdeValidator {
         }
 
         return validationMessages;
+    }
+
+    private static boolean painokerroinHasInvalidPrecision(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+        return painotettavaOppiaineV1RDTO.getPainokerroin().scale() > MAX_PRECISION;
     }
 
     private static boolean painokerroinTooLarge(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
@@ -346,14 +352,16 @@ public class HakukohdeValidator {
             BigDecimal ylinPistemaara = valintakoePisterajaV1RDTO.getYlinPistemaara();
 
             if (valintakoePisterajaV1RDTO.isKokonaispisteet()) {
-                if (alinHyvaksyttyPistemaara == null || alinHyvaksyttyPistemaara.scale() > PISTERAJA_MAX_PRECISION) {
+                if (alinHyvaksyttyPistemaara == null || alinHyvaksyttyPistemaara.scale() > MAX_PRECISION) {
                     return false;
                 }
             } else {
                 if (alinPistemaara == null || ylinPistemaara == null) {
                     return false;
                 }
-                if (alinPistemaara.scale() > PISTERAJA_MAX_PRECISION || ylinPistemaara.scale() > PISTERAJA_MAX_PRECISION) {
+                if (alinPistemaara.scale() > MAX_PRECISION ||
+                        ylinPistemaara.scale() > MAX_PRECISION ||
+                        alinHyvaksyttyPistemaara != null && alinHyvaksyttyPistemaara.scale() > MAX_PRECISION) {
                     return false;
                 }
             }

@@ -259,6 +259,20 @@ public class HakukohdeValidatorTest {
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
 
         getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("4.555"));
+        getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("9.55"));
+        getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(null);
+        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
+
+        getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("4.55"));
+        getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("9.555"));
+        getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(null);
+        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
+
+        getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("4.55"));
+        getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("9.55"));
+        getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("4.555"));
         messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
     }
@@ -466,13 +480,15 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(null, "oppiaineUri"));
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(0), "oppiaineUri"));
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(21), "oppiaineUri"));
+        hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal("5.555"), "oppiaineUri"));
 
         List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
 
-        assertTrue(validationMessages.size() == 3);
+        assertTrue(validationMessages.size() == 4);
         assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING, validationMessages.get(0));
         assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE, validationMessages.get(1));
         assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE, validationMessages.get(2));
+        assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE, validationMessages.get(3));
 
         hakukohdeDTO.getPainotettavatOppiaineet().clear();
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), "oppiaineUri"));
