@@ -36,6 +36,9 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
 
     private static final long serialVersionUID = -8023508784857174305L;
 
+    @Transient
+    private boolean skipPreUpdate = false;
+
     @Column(name = OID_COLUMN_NAME, nullable = false, insertable = true, updatable = false, unique = true)
     private String oid;
 
@@ -133,7 +136,9 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
 
     @PreUpdate
     protected void beforeUpdate() {
-        updated = new Date();
+        if (!this.skipPreUpdate) {
+            updated = new Date();
+        }
     }
 
     @PrePersist
@@ -472,6 +477,10 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
      */
     public void setOsaamisalaUri(String osaamisalaUri) {
         this.osaamisalaUri = osaamisalaUri;
+    }
+
+    public void setSkipPreUpdate(boolean skip) {
+        this.skipPreUpdate = skip;
     }
 
 }

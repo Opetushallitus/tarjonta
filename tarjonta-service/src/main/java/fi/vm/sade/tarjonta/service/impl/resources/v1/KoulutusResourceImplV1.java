@@ -47,33 +47,17 @@ import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusDTOConverterToEn
 import fi.vm.sade.tarjonta.service.impl.conversion.rest.KoulutusKuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidationMessages;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
-import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.KoulutusV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.LinkingV1Resource;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ErrorV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KomoLink;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.OrganisaatioV1RDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.Map.Entry;
-import javax.annotation.Nullable;
-import javax.ws.rs.core.Response;
+import fi.vm.sade.tarjonta.shared.types.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -85,6 +69,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Nullable;
+import javax.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
 
 /**
  *
@@ -1187,7 +1184,27 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                 //currently no need to change organisation oid in komo
                 //Koulutusmoduuli koulutusmoduuli = komoto.getKoulutusmoduuli();
                 //koulutusmoduuli.setOmistajaOrganisaatioOid(orgOid);
+                String prevTarjoaja = komoto.getTarjoaja();
                 komoto.setTarjoaja(orgOid);
+
+                // Pidä owner-taulu synkassa
+                boolean tarjoajaFound = false;
+                for (KoulutusOwner owner : komoto.getOwners()) {
+                    if (owner.getOwnerType().equals(KoulutusOwner.TARJOAJA)
+                        && owner.getOwnerOid().equals(prevTarjoaja)) {
+                        owner.setOwnerOid(orgOid);
+                        tarjoajaFound = true;
+                    }
+                }
+                // Tämän ei pitäisi tapahtua, mutta jos owner taulusta olisi puuttunut
+                // oikeat datat, niin tämä varmistaa, että owner taulussa on oikea tarjoaja
+                if(!tarjoajaFound) {
+                    KoulutusOwner owner = new KoulutusOwner();
+                    owner.setOwnerOid(orgOid);
+                    owner.setOwnerType(KoulutusOwner.TARJOAJA);
+                    komoto.getOwners().add(owner);
+                }
+
                 koulutusmoduuliToteutusDAO.update(komoto);
 
                 result.getResult().getTo().add(new KoulutusCopyStatusV1RDTO(komoto.getOid(), orgOid));

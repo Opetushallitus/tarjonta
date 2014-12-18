@@ -24,29 +24,24 @@ import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
-import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.valmistava.ValmistavaV1RDTO;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.shared.KoodistoURI;
-import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
+import fi.vm.sade.tarjonta.shared.types.*;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Conversions to entity objects.
@@ -127,8 +122,6 @@ public class KoulutusDTOConverterToEntity {
         korkeakouluKomotoDataUpdate(komoto, dto, userOid);
         addOrRemoveImages(dto, komoto, userOid);
 
-        updateOwners(komoto, dto);
-
         return komoto;
     }
 
@@ -141,12 +134,12 @@ public class KoulutusDTOConverterToEntity {
      * fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus,
      * fi.vm.sade.tarjonta.publication.model.RestParam)
      */
-    private void updateOwners(KoulutusmoduuliToteutus komoto, KoulutusKorkeakouluV1RDTO dto) {
-        if (komoto == null || dto == null) {
-            return;
-        }
+    private void updateOwners(KoulutusmoduuliToteutus komoto, KoulutusV1RDTO dto) {
+        Preconditions.checkNotNull(komoto, "komoto cannot be null");
+        Preconditions.checkNotNull(dto, "dto cannot be null");
+        Preconditions.checkNotNull(dto.getOrganisaatio().getOid(), "Organisation OID cannot be null.");
 
-        LOG.info("updateOwners()... tarj={}, järj={}", dto.getOpetusTarjoajat(), dto.getOpetusJarjestajat());
+        komoto.setTarjoaja(dto.getOrganisaatio().getOid());
 
         komoto.getOwners().clear();
         for (String oid : dto.getOpetusJarjestajat()) {
@@ -156,12 +149,15 @@ public class KoulutusDTOConverterToEntity {
             komoto.getOwners().add(owner);
         }
 
+        dto.getOpetusTarjoajat().add(dto.getOrganisaatio().getOid());
+
         for (String oid : dto.getOpetusTarjoajat()) {
             KoulutusOwner owner = new KoulutusOwner();
             owner.setOwnerOid(oid);
             owner.setOwnerType(KoulutusOwner.TARJOAJA);
             komoto.getOwners().add(owner);
         }
+
         LOG.info("updateOwners()... done.");
     }
 
@@ -196,25 +192,6 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(komo, "KOMO object cannot be null.");
         Preconditions.checkNotNull(komoto, "KOMOTO object cannot be null.");
         Preconditions.checkNotNull(komoto.getOid(), "KOMOTO OID cannot be null.");
-
-        /**
-         * ParentKomotojen käsittely. ParentKomotoista oli jo luovuttu samalla kun Vaadin-toteutuksesta
-         * luovuttiin. Ilmeni kuitenkin, että koulutusinformaation integraation nykyinen toteutus
-         * on riippuvainen parentKomotoista, eikä tätä riippuvuutta saa pienellä vaivalla poistettua.
-         * Siispä parentKomototo pitää vielä säilyttää koulutusinformaatiota varten.
-         */
-        switch (dto.getToteutustyyppi()) {
-            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
-            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
-            case PERUSOPETUKSEN_LISAOPETUS:
-            case VAPAAN_SIVISTYSTYON_KOULUTUS:
-            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
-            case AMMATILLINEN_PERUSTUTKINTO:
-            case LUKIOKOULUTUS:
-                handleParentKomoto(dto, komo, dto.getToteutustyyppi());
-                break;
-        }
 
         /*
          * KOMOTO common data conversion
@@ -276,6 +253,14 @@ public class KoulutusDTOConverterToEntity {
                 commonConverter.convertToKielivalikoima(lukioV1RDTO.getKielivalikoima(), komoto);
             }
         }
+        else if (dto.getKoulutusohjelma() != null) {
+            if (commonConverter.isOsaamisala(dto.getKoulutusohjelma())) {
+                komoto.setOsaamisalaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.OSAAMISALA));
+            }
+            else {
+                komoto.setKoulutusohjelmaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.KOULUTUSOHJELMA));
+            }
+        }
 
         if (dto.getLinkkiOpetussuunnitelmaan() != null) {
             komoto.getLinkkis().clear();
@@ -313,6 +298,30 @@ public class KoulutusDTOConverterToEntity {
 
                 komoto.setNimi(new MonikielinenTeksti(monikielinenTekstiVarags));
             }
+        }
+
+        /**
+         * ParentKomotojen käsittely. ParentKomotoista oli jo luovuttu samalla kun Vaadin-toteutuksesta
+         * luovuttiin. Ilmeni kuitenkin, että koulutusinformaation integraation nykyinen toteutus
+         * on riippuvainen parentKomotoista, eikä tätä riippuvuutta saa pienellä vaivalla poistettua.
+         * Siispä parentKomototo pitää vielä säilyttää koulutusinformaatiota varten.
+         */
+        switch (dto.getToteutustyyppi()) {
+            case AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+            case MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+            case MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+            case PERUSOPETUKSEN_LISAOPETUS:
+            case VAPAAN_SIVISTYSTYON_KOULUTUS:
+            case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
+            case LUKIOKOULUTUS:
+                handleParentKomoto(komoto, komo);
+                break;
+
+            case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+                handleParentKomoto(komoto, komo);
+                handleCommonFields(komoto);
+                break;
         }
 
         return komoto;
@@ -433,6 +442,10 @@ public class KoulutusDTOConverterToEntity {
             }
 
             komoto.setValmistavaKoulutus(valmistavaKomoto);
+        }
+
+        if (komoto.getToteutustyyppi().equals(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA)) {
+            handleCommonFields(komoto);
         }
 
         return komoto;
@@ -620,11 +633,7 @@ public class KoulutusDTOConverterToEntity {
         Preconditions.checkNotNull(dto, "KoulutusV1RDTO object cannot be null.");
         Preconditions.checkNotNull(komoto, "KoulutusmoduuliToteutus object cannot be null.");
 
-        final String organisationOId = dto.getOrganisaatio().getOid();
-        Preconditions.checkNotNull(organisationOId, "Organisation OID cannot be null.");
-
         base(komoto, dto);
-        komoto.setTarjoaja(organisationOId);
         commonConverter.handleDates(komoto, dto); //set dates
         komoto.setToteutustyyppi(dto.getToteutustyyppi());
 
@@ -633,6 +642,8 @@ public class KoulutusDTOConverterToEntity {
         komoto.setYhteyshenkilos(yhteyshenkilos);
         komotoKuvausConverters.convertTekstiDTOToMonikielinenTeksti(dto.getKuvausKomoto(), komoto.getTekstit());
         komoto.setLastUpdatedByOid(userOid);
+
+        updateOwners(komoto, dto);
     }
 
     private void addOrRemoveImages(final KoulutusKorkeakouluV1RDTO dto, KoulutusmoduuliToteutus komoto, final String userOid) {
@@ -686,10 +697,12 @@ public class KoulutusDTOConverterToEntity {
     }
 
     /*
-    * Handling the creation or update of the parent komoto
+    * Handling the creation or update of the parent komoto (KI still needs parent komoto)
     */
-    private void handleParentKomoto(KoulutusGenericV1RDTO koulutus, Koulutusmoduuli moduuli, ToteutustyyppiEnum toteutustyyppi) {
-        Preconditions.checkNotNull(toteutustyyppi, "Toteutustyyppi enum cannot be null!");
+    private void handleParentKomoto(KoulutusmoduuliToteutus komoto, Koulutusmoduuli moduuli) {
+        Preconditions.checkNotNull(komoto, "Komoto cannot be null!");
+
+        ToteutustyyppiEnum toteutustyyppi = komoto.getToteutustyyppi();
 
         Koulutusmoduuli parentKomo = this.koulutusmoduuliDAO.findParentKomo(moduuli);
 
@@ -697,15 +710,10 @@ public class KoulutusDTOConverterToEntity {
             return;
         }
 
-        String pohjakoulutusUri = koulutus.getPohjakoulutusvaatimus() != null ? koulutus.getPohjakoulutusvaatimus().getUri() : null;
-        if (pohjakoulutusUri != null){
-            pohjakoulutusUri += "#" + koulutus.getPohjakoulutusvaatimus().getVersio().toString();
-        }
-
         List<KoulutusmoduuliToteutus> parentKomotos = this.koulutusmoduuliToteutusDAO.findKomotosByKomoTarjoajaPohjakoulutus(
             parentKomo,
-            koulutus.getOrganisaatio().getOid(),
-            pohjakoulutusUri
+            komoto.getTarjoaja(),
+            komoto.getPohjakoulutusvaatimusUri()
         );
         KoulutusmoduuliToteutus parentKomoto = (parentKomotos != null && !parentKomotos.isEmpty()) ? parentKomotos.get(0) : null;
 
@@ -713,9 +721,8 @@ public class KoulutusDTOConverterToEntity {
 
         if (createNew) {
             parentKomoto = new KoulutusmoduuliToteutus();
-
-            parentKomoto.setTarjoaja(koulutus.getOrganisaatio().getOid());
-            parentKomoto.setTila(koulutus.getTila());
+            parentKomoto.setTarjoaja(komoto.getTarjoaja());
+            parentKomoto.setTila(komoto.getTila());
             parentKomoto.setKoulutusmoduuli(parentKomo);
             try {
                 parentKomoto.setOid(oidService.get(TarjontaOidType.KOMOTO));
@@ -723,30 +730,25 @@ public class KoulutusDTOConverterToEntity {
             catch (OIDCreationException e) {
                 throw new RuntimeException(e);
             }
-            parentKomoto.setPohjakoulutusvaatimusUri(pohjakoulutusUri);
+            parentKomoto.setPohjakoulutusvaatimusUri(komoto.getPohjakoulutusvaatimusUri());
             parentKomo.addKoulutusmoduuliToteutus(parentKomoto);
-
             LOG.warn("**** handleParentKomoto - create new parent komoto: pkv = {}", parentKomoto.getPohjakoulutusvaatimusUri());
-
-            if (parentKomoto.getPohjakoulutusvaatimusUri() != null && !parentKomoto.getPohjakoulutusvaatimusUri().contains("#")) {
-                LOG.error("*** FAILING FAST *** to see where the problem lies...OVT-7849");
-                throw new RuntimeException("parent komoto pohjakoulutusvaatimus = " + parentKomoto.getPohjakoulutusvaatimusUri());
-            }
         }
 
-        KuvausV1RDTO<KomotoTeksti> dtoTekstit = koulutus.getKuvausKomoto();
-        if (dtoTekstit != null && dtoTekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA) != null) {
-            Map<KomotoTeksti, MonikielinenTeksti> tekstit = parentKomoto.getTekstit() != null ?
-                                                                parentKomoto.getTekstit() :
-                                                                new HashMap<KomotoTeksti, MonikielinenTeksti>();
-
-            NimiV1RDTO koulutusohjelmanValinta = dtoTekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA);
-            MonikielinenTeksti mkTeksti = new MonikielinenTeksti();
-            for (Map.Entry<String, String> entry : koulutusohjelmanValinta.getTekstis().entrySet()) {
-                mkTeksti.addTekstiKaannos(entry.getKey(), entry.getValue());
-            }
-            tekstit.put(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA, mkTeksti);
-            parentKomoto.setTekstit(tekstit);
+        /**
+         * Amm pt. tutkinnot -> koulutusohjelman valinta on yhteinen
+         */
+        switch (toteutustyyppi) {
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+            case AMMATILLINEN_PERUSTUTKINTO:
+                Map<KomotoTeksti, MonikielinenTeksti> tekstit = komoto.getTekstit();
+                if (tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA) != null) {
+                    parentKomoto.getTekstit().put(
+                        KomotoTeksti.KOULUTUSOHJELMAN_VALINTA,
+                        copyMkTeksti(tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA))
+                    );
+                }
+                break;
         }
 
         if (parentKomoto.getToteutustyyppi() == null) {
@@ -759,6 +761,43 @@ public class KoulutusDTOConverterToEntity {
         else {
             this.koulutusmoduuliToteutusDAO.update(parentKomoto);
         }
+    }
+
+    /*
+    * Koulutusten yhteisten kenttien käsittely. Esim. koulutusohjelman valinta -teksti on yhteinen
+    * ammatillisilla perustutkinnoilla. Katso esim. OVT-7578
+    */
+    private void handleCommonFields(KoulutusmoduuliToteutus komoto) {
+        Map<KomotoTeksti, MonikielinenTeksti> tekstit = komoto.getTekstit();
+        KomotoTeksti valinta = null;
+
+        if (tekstit.get(KomotoTeksti.KOULUTUSOHJELMAN_VALINTA) != null) {
+            valinta = KomotoTeksti.KOULUTUSOHJELMAN_VALINTA;
+        }
+        else if (tekstit.get(KomotoTeksti.OSAAMISALAN_VALINTA) != null) {
+            valinta = KomotoTeksti.OSAAMISALAN_VALINTA;
+        }
+
+        if (valinta != null) {
+            List<KoulutusmoduuliToteutus> relatedKomotos = this.koulutusmoduuliToteutusDAO.findKomotosSharingCommonFields(komoto);
+            for (KoulutusmoduuliToteutus relatedKomoto : relatedKomotos) {
+                relatedKomoto.getTekstit().put(
+                    valinta,
+                    copyMkTeksti(tekstit.get(valinta))
+                );
+                // Ohita viimpaivityspvm:n päivitys related koulutuksille
+                relatedKomoto.setSkipPreUpdate(true);
+            }
+        }
+    }
+
+    private MonikielinenTeksti copyMkTeksti(MonikielinenTeksti original) {
+        MonikielinenTeksti copy = new MonikielinenTeksti();
+        for(TekstiKaannos origKaannos : original.getKaannoksetAsList()) {
+            TekstiKaannos copyKaannos = new TekstiKaannos(copy, origKaannos.getKieliKoodi(), origKaannos.getArvo());
+            copy.addTekstiKaannos(copyKaannos);
+        }
+        return copy;
     }
 
 }

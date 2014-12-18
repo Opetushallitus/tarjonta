@@ -877,3 +877,7 @@ table tr.aloituspaikatKuvaukset table {
 .comma:first-child:before {
     content:none;
 }
+
+::-ms-clear {
+    display: none;
+}
