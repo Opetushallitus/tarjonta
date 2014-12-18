@@ -38,8 +38,8 @@ app.controller('HakuEditController',
                 OrganisaatioService,
                 AuthService,
                 dialogService,
-                KoodistoURI, 
-                PermissionService, 
+                KoodistoURI,
+                PermissionService,
                 HakuV1Service,
                 HAKUTAPA,
                 HAKUTYYPPI) {
@@ -112,10 +112,10 @@ app.controller('HakuEditController',
 
             $scope.goBack = function(event, hakuForm) {
                 $log.info("goBack()", hakuForm);
-                
+
                 var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
                 $log.info("goBack(), dirty?", dirty);
-                
+
                 if (dirty) {
                     dialogService.showModifedDialog().result.then(function(result) {
                         if (result) {
@@ -126,7 +126,7 @@ app.controller('HakuEditController',
                     $scope.navigateBack();
                 }
             };
-            
+
             $scope.navigateBack = function() {
                 // TODO old query parameters?
                 $location.path("/haku");
@@ -149,7 +149,7 @@ app.controller('HakuEditController',
                 $log.info("doSaveHakuAndParameters() [haku, tila, reload, form]", haku, tila, reload, form);
 
                 clearErrors();
-                
+
                 if (form.$invalid) {
                     $log.info("form not valid, not saving!");
                     reportFormValidationErrors(form);
@@ -175,7 +175,7 @@ app.controller('HakuEditController',
                     if (result.status == "OK") {
                         $scope.model.showError = false;
                         $scope.model.showSuccess = true;
-                        
+
                         // Reset form to "pristine" ($dirty = false)
                         form.$dirty = false;
                         form.$pristine = true;
@@ -200,7 +200,7 @@ app.controller('HakuEditController',
                 });
             };
 
-            $scope.goToReview = function(event, hakuForm) {                
+            $scope.goToReview = function(event, hakuForm) {
                 var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
                 $log.debug("goToReview(), dirty?", dirty);
 
@@ -216,7 +216,7 @@ app.controller('HakuEditController',
             };
 
             $scope.navigateToReview = function(event) {
-                $location.path("/haku/" + $scope.model.hakux.result.oid);                
+                $location.path("/haku/" + $scope.model.hakux.result.oid);
             };
 
 
@@ -381,7 +381,7 @@ app.controller('HakuEditController',
 
 
             /**
-             * Loop throuh list of selected / preselected tarjoaja organisations, 
+             * Loop throuh list of selected / preselected tarjoaja organisations,
              * fetch them and put them to the scope for display purposes.
              *
              * @returns {undefined}
@@ -435,32 +435,32 @@ app.controller('HakuEditController',
             /**
              * Kutsutaan haen edit lomakkeelta kun haun priorisoinnin tilaan halutaan vaikuttaa "ulkopuolelta"
              * eli muuttamalla haun lomakkeen valintaa.
-             * 
+             *
              * @returns {undefined}
              */
             $scope.checkPriorisointi = function () {
                 $log.debug("checkPriorisointi()");
-                
+
                 if ($scope.model.hakux.result.jarjestelmanHakulomake && $scope.model.hakux.result.sijoittelu) {
                     $scope.model.hakux.result.usePriority = true;
                 }
-                
+
                 if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
                     $scope.model.hakux.result.usePriority = false;
-                }                
+                }
             };
-            
-            
+
+
             /**
              * This method is called when halulomake selection changes.
-             * 
+             *
              * Accepted states are: SYSTEM, OTHER, NONE
-             * 
+             *
              * @returns {undefined}
              */
             $scope.updatedHakulomakeSelection = function() {
                 $log.info("updatedHakulomakeSelection() - ", $scope.model.haku.hakulomake);
-                 
+
                 switch ($scope.model.haku.hakulomake) {
                     case "SYSTEM":
                         $log.info("  handle system.");
@@ -483,14 +483,14 @@ app.controller('HakuEditController',
                         throw new Exception("INVALID HAKULOMAKE TYPE");
                         break;
                 }
-                
+
                 // Update priorisointi information too
                 $scope.checkPriorisointi();
             };
 
             /**
              * Use this method to sync UI state to model state
-             * 
+             *
              * @returns {undefined}
              */
             $scope.updatedHakulomakeSelectionFromModelToUI = function() {
@@ -512,7 +512,7 @@ app.controller('HakuEditController',
              * Ie. "foo_1#2" becomes "foo_1".
              */
             $scope.stripVersionFromKoodistoUri = function(uri) {
-                uri = uri || "";                
+                uri = uri || "";
                 var result = uri.replace(/#.*/, "");
                 // $log.info("stripVersionFromKoodistoUri()", uri, result);
                 return result;
@@ -530,7 +530,7 @@ app.controller('HakuEditController',
                     hakux: $route.current.locals.hakux,
                     haku: {
                         // Possible UI state for Haku
-                        hakulomake : 
+                        hakulomake :
                                 "SYSTEM" // Possible values SYSTEM, OTHER, NONE
                     },
                     parameter: {},
@@ -543,8 +543,8 @@ app.controller('HakuEditController',
                 $scope.model.parentHakuCandidates = [];
 
                 // Update UI state for radio buttons on load
-                $scope.updatedHakulomakeSelectionFromModelToUI();                
-                
+                $scope.updatedHakulomakeSelectionFromModelToUI();
+
                 if(!$scope.isNewHaku()){
                   // lataa nykyiset parametrit model.parameter objektiin
                   ParameterService.haeParametritUUSI($route.current.params.id).then(function(parameters){
@@ -562,8 +562,11 @@ app.controller('HakuEditController',
                 $scope.updateSelectedOrganisationsList();
                 $scope.updateSelectedTarjoajaOrganisationsList();
                 $scope.filterKohdejoukkos();
-                populateParentHakuCandidates();
                 checkIsOphAdmin();
+
+                if($scope.shouldSelectParentHaku()) {
+                    populateParentHakuCandidates();
+                }
             };
 
             $scope.isLuonnosOrNew = function(){
