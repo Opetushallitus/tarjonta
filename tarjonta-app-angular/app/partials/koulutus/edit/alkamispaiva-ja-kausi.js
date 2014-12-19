@@ -28,20 +28,32 @@ app.directive('alkamispaivaJaKausi', ['$log', '$modal', 'LocalisationService', f
                 lukittu: pScope.model ? pScope.model.isMinmax : false
             };
             
+            // vuosikentän oletusrajat: piilottaa 
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
+            
+            /* Jos alkamispäivämääräkenttään ja kalenteriin halutaan samat oletusrajat kuin edellä asetetaan vuosikentälle,
+             * korvaa edelliset rivit alla kommentoiduilla. Huom: tällöin yli vuoden vanhojen koulutusten muokkauksia ei voi tallentaa. */
+            /*
+            var min = new Date;
+            min.setFullYear(min.getFullYear() - 1, 0, 1, 0, 0, 0, 0);
+            var max = new Date();
+            max.setFullYear(max.getFullYear() + 11, 11, 31, 23, 59, 59, 0);
+            $scope.minYear = min.getFullYear();
+            $scope.maxYear = max.getFullYear();
+        	pScope.setDefault(min, max);
+        	*/
 
-            // asetetaan kausi- ja vuosikenttien rajoitukset, virkistetään parentin isMinmax
-            pScope.$watch("model.restricted", function(valNew, valOld) {
-            	$scope.ctrl.lukittu = valNew !== undefined ? valNew : valOld;
-            	pScope.model.isMinmax = $scope.ctrl.lukittu;
+            // disabloidaan kausi- ja vuosikentät BaseEditControllerin restrictedin mukaan, korvataan vuosikentän minYear ja maxYear
+            $scope.$on('restricted', function(event, restricted) {
+            	$scope.ctrl.lukittu = restricted;
             	if ($scope.ctrl.lukittu) {
     	            $scope.minYear = pScope.minYear;
     	            $scope.maxYear = pScope.maxYear;
 				}
-//        		$log.warn("$watch('model.restricted'): valNew="+ JSON.stringify(valNew) +", valOld="+  JSON.stringify(valOld));
+            	pScope.model.isMinmax = true;
             });
-            
+
             $scope.$watch("ctrl.kausi", function(valNew, valOld) {
                 $scope.form[$scope.ctrl.kausivuosi] = valNew;
                 if (valNew && $scope.kausi) {
@@ -192,6 +204,7 @@ app.directive('alkamispaivat', ['$log', function($log) {
                 var i = $scope.searchIndex(arrDates, id);
                 if (i !== -1) {
                     arrDates.splice(i, 1);
+                    $scope.$broadcast('dateRemoved');
                 }
             };
 

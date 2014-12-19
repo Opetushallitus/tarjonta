@@ -132,6 +132,7 @@
         </td>
         <td>
              <p class="error" ng-show="uiModel.showValidationErrors && !koulutusForm.kausivuosi && koulutusForm.alkamisPvm.$error.required" tt="koulutus.edit.alkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
+             <p class="error" ng-show="!koulutusForm.kausivuosi && koulutusForm.alkamisPvm.$error.outofminmax" tt="koulutus.edit.alkamisPvm.outofbounds">Opintojen alkamispäivä sallitun kauden ulkopuolella</p>
              <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.kausivuosi && (koulutusForm.alkamiskausi.$error.required || koulutusForm.alkamisvuosi.$error.required || koulutusForm.alkamisvuosi.$error.number || koulutusForm.alkamisvuosi.$error.min || koulutusForm.alkamisvuosi.$error.max)" tt="koulutus.edit.alkamis-kausi-ja-vuosi.required">Opintojen alkamiskausi ja alkamisvuosi vaaditaan</p>
         </td>
         </tr>

@@ -17,7 +17,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             }
         });
 
-    	$scope.prompts = {
+        $scope.$on('dateRemoved', function(event) {
+        	$scope.onModelChanged();
+        });
+
+        $scope.prompts = {
             date: LocalisationService.t("tarjonta.kalenteri.prompt.pvm"),
             time: LocalisationService.t("tarjonta.kalenteri.prompt.aika")
     	};
@@ -247,6 +251,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
     		}
 
     		//console.log("DD="+dd+" DM="+dm+" DY="+dy+" TH="+th+" TM="+tm);
+    		var outOfBounds = false;
 
     		if (isnull) {
     			$scope.model = null;
@@ -265,14 +270,30 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         			return;
         		}
 
+        		if (minTime() && nd.getTime() < minTime()) {
+                	outOfBounds = true;
+        		}
+
+        		if (maxTime() && nd.getTime() > maxTime()) {
+                	outOfBounds = true;
+        		}
+
         		if (!isNaN(nd.getTime())) {
     				omitUpdate = true;
-    				var cd = applyConstraints(nd);
-    				violation = cd.getTime() == nd.getTime() ? null : nd;
-        			$scope.model = cd;
+//    				var cd = applyConstraints(nd); // nd; // 
+//    				violation = cd.getTime() == nd.getTime() ? null : nd;
+        			$scope.model = nd;  // cd;
         		}
     		}
 
+    		if (outOfBounds) {
+                $scope.form.alkamisPvm.$error.outofminmax = true;
+                $scope.form.$setValidity("outofminmax", false);
+			} else {
+                $scope.form.alkamisPvm.$error.outofminmax = false;
+                $scope.form.$setValidity("outofminmax", true);
+			}
+    		
     		if ($scope.ngChange) {
     			$scope.ngChange();
     		}
@@ -295,7 +316,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 					}
 
 					$scope.calendar=[];
-					$scope.model = ctrl.model instanceof Date ? new Date(ctrl.model.getTime()) : applyConstraints(new Date());
+					$scope.model = ctrl.model instanceof Date ? applyConstraints(new Date(ctrl.model.getTime())) : applyConstraints(new Date());
 
 					$scope.select = {m:$scope.model.getMonth(), y:$scope.model.getFullYear()};
 
@@ -303,6 +324,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
 						ctrl.model = $scope.model;
                         ctrl.model = applyConstraints(ctrl.model);
                         updateModels();
+                        $scope.onModelChanged();
 						modalInstance.dismiss();
 					}
 
