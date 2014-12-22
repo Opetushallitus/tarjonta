@@ -583,18 +583,19 @@ app.controller('HakuEditController',
                 params.TILA = "NOT_POISTETTU";
                 params.count = 1000;
 
-                HakuV1Service.search(params).then(function(data) {
+                HakuV1Service.search(params).then(function(hakus) {
 
-                    var filtered = _.filter(data, function(haku){
-                        var validTyyppiAndTapa = (haku.hakutapaUri.indexOf(HAKUTAPA.YHTEISHAKU) !== -1 ||
-                            haku.hakutapaUri.indexOf(HAKUTAPA.ERILLISHAKU) !== -1) &&
-                            haku.hakutyyppiUri.indexOf(HAKUTYYPPI.VARSINAINEN_HAKU) !== -1;
-                        return validTyyppiAndTapa;
+                    // Palauta vain ne haut, joissa hakutapa on yhteishaku tai erillishaku
+                    // ja hakutyyppi on varsinainen haku
+                    var filtered = _.filter(hakus, function(haku){
+                        return [HAKUTAPA.YHTEISHAKU, HAKUTAPA.ERILLISHAKU]
+                                .indexOf(oph.getKoodistoUriWithoutVersion(haku.hakutapaUri)) !== -1
+                                && oph.getKoodistoUriWithoutVersion(haku.hakutyyppiUri) === HAKUTYYPPI.VARSINAINEN_HAKU;
                     });
 
                     var promises = [];
                     _.each(filtered, function(haku) {
-                        promises.push(PermissionService.haku.canEdit(haku.oid));
+                        promises.push(PermissionService.haku.canEdit(haku));
                     });
 
                     $q.all(promises).then(function(data) {

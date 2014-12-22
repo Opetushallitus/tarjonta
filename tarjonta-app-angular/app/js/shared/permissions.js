@@ -261,7 +261,6 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
 
             function canUpdateHaku() {
                 return function(org) {
-//        console.log("canUpdateHaku:", org);
                     return AuthService.updateOrg(org, "APP_HAKUJENHALLINTA");
                 };
             }
@@ -272,21 +271,28 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                 };
             }
 
-            function hasHakuPermission(hakuOid, permissionf) {
+            function hasHakuPermission(hakuOrHakuOid, permissionf) {
                 var defer = $q.defer();
 
-                //hae haku
-                HakuV1.get({oid: hakuOid}).$promise.then(function(haku) {
+                if (typeof hakuOrHakuOid === "string") {
+                    HakuV1.get({oid: hakuOrHakuOid}).$promise.then(function(response) {
+                        checkPermission(response.result);
+                    });
+                }
+                else {
+                    checkPermission(hakuOrHakuOid);
+                }
 
-                    var haku = haku.result;
-                    var orgs = haku.tarjoajaOids ? haku.tarjoajaOids : [];
+                function checkPermission(haku) {
+                    var orgs = haku.tarjoajaOids || [];
 
                     if (orgs.length == 0) {
                         //organisaatiota ei kerrottu, pitää olla oph?
                         permissionf(ophOid).then(function(result) {
                             defer.resolve(result);
                         });
-                    } else {
+                    }
+                    else {
                         // onko oikeus haun johonkin organisaatioon
                         var promises = [];
                         var hasAccess = {access: false};
@@ -303,7 +309,7 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                             defer.resolve(hasAccess.access);
                         });
                     }
-                });
+                }
 
                 return defer.promise;
             }
@@ -429,11 +435,11 @@ angular.module('TarjontaPermissions', ['ngResource', 'config', 'Tarjonta', 'Logg
                     canCreate: function() {
                         return $q.when(true);
                     },
-                    canEdit: function(hakuOid) {
-                        return hasHakuPermission(hakuOid, canUpdateHaku());
+                    canEdit: function(hakuOrHakuOid) {
+                        return hasHakuPermission(hakuOrHakuOid, canUpdateHaku());
                     },
-                    canDelete: function(hakuOid) {
-                        return hasHakuPermission(hakuOid, canCRUDHaku());
+                    canDelete: function(hakuOrHakuOid) {
+                        return hasHakuPermission(hakuOrHakuOid, canCRUDHaku());
                     }
                 },
                 permissionResource: function() {

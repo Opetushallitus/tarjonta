@@ -134,9 +134,6 @@ app.controller('HakuListController',
                 $scope.hakuGetLink = function(row) {
                     return "#/haku/" + row.oid;
                 };
-                $scope.hakuGetOptions = function(row) {
-                    return undefined;
-                };
 
                 /**
                  * Deletes single selected haku.
@@ -280,7 +277,7 @@ app.controller('HakuListController',
                     var ret = [];
 
                     //hae permissiot ja testaa tilasiirtymät
-                    $q.all([PermissionService.haku.canEdit(haku.oid), PermissionService.haku.canDelete(haku.oid), Haku.checkStateChange({oid: haku.oid, state: 'JULKAISTU'}).$promise, Haku.checkStateChange({oid: haku.oid, state: 'PERUTTU'}).$promise]).then(function(results) {
+                    $q.all([PermissionService.haku.canEdit(haku), PermissionService.haku.canDelete(haku), Haku.checkStateChange({oid: haku.oid, state: 'JULKAISTU'}).$promise, Haku.checkStateChange({oid: haku.oid, state: 'PERUTTU'}).$promise]).then(function(results) {
                         if (true === results[0]) {
                             //edit
                             ret.push({title: LocalisationService.t("haku.menu.muokkaa"), action:

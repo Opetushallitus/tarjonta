@@ -71,10 +71,7 @@ app.factory('HakuService', function ($http, $q, Config, $log) {
     };
 });
 
-app.factory('HakuV1', function ($resource, $log, Config) {
-    $log = $log.getInstance("HakuV1");
-
-    $log.info("HakuV1()");
+app.factory('HakuV1', function ($resource, Config) {
 
     var serviceUrl = Config.env.tarjontaRestUrlPrefix + "haku/:oid";
 
@@ -103,6 +100,7 @@ app.factory('HakuV1', function ($resource, $log, Config) {
             isArray: false
         },
         search: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/find',
             method: 'GET',
             withCredentials: true,
             isArray: false,
@@ -228,9 +226,14 @@ app.factory('HakuV1Service', function ($log, $q, HakuV1, LocalisationService, Au
          * Hae hakuja määritellyillä hakuehdoilla
          */
         search: function (parameters) {
-            //$log.debug("Searching with: ", parameters);
-            return HakuV1.search(parameters).$promise.then(function (data) {
-                return mget(data.result);
+            parameters = _.extend({
+                addHakukohdes: false
+            }, parameters);
+            return HakuV1.search(parameters).$promise.then(function(response) {
+                _.each(response.result, function(haku) {
+                    haku.nimi = resolveLocalizedValue(haku.nimi);
+                });
+                return response.result;
             });
         },
 
