@@ -42,5 +42,12 @@
             "SwitchDiscriminantOpening":0,
             "WhileStatementConditionalOpening":0
         }
+    },
+    "plugins": [
+        "esformatter-quotes"
+    ],
+    "quotes": {
+        "type": "single",
+        "avoidEscape": false
     }
 }
