@@ -1,0 +1,46 @@
+{
+    "preset":"default",
+    "indent":{
+        "value":"    "
+    },
+    "lineBreak":{
+        "before":{
+            "IfStatement":">=1",
+            "ElseStatement":1,
+            "ElseIfStatement":1,
+            "LineComment":-1,
+            "VariableDeclarationWithoutInit":0
+        },
+        "after":{
+            "AssignmentOperator":-1
+        }
+    },
+    "whiteSpace":{
+        "before":{
+            "ArgumentListArrayExpression":0,
+            "ArgumentListFunctionExpression":0,
+            "ArgumentListObjectExpression":0,
+            "ArrayExpressionClosing":0,
+            "ExpressionClosingParentheses":0,
+            "ForInStatementExpressionClosing":0,
+            "ForStatementExpressionClosing":0,
+            "IfStatementConditionalClosing":0,
+            "MemberExpressionClosing":0,
+            "SwitchDiscriminantClosing":0,
+            "WhileStatementConditionalClosing":0
+        },
+        "after":{
+            "ArgumentListArrayExpression":0,
+            "ArgumentListFunctionExpression":0,
+            "ArgumentListObjectExpression":0,
+            "ArrayExpressionOpening":0,
+            "ExpressionOpeningParentheses":0,
+            "ForInStatementExpressionOpening":0,
+            "ForStatementExpressionOpening":0,
+            "IfStatementConditionalOpening":0,
+            "MemberExpressionOpening":0,
+            "SwitchDiscriminantOpening":0,
+            "WhileStatementConditionalOpening":0
+        }
+    }
+}
