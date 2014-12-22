@@ -604,9 +604,6 @@ app.controller('HakuEditController',
                                $scope.model.parentHakuCandidates.push(filtered[index]);
                            }
                         });
-                        $scope.model.parentHakuCandidates.sort(function (a, b) {
-                            return a.nimi.localeCompare(b.nimi);
-                        });
                     });
                 });
             };
