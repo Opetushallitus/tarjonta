@@ -12,301 +12,258 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-
 // Apinoitu valintaperusteet / auth.js
-
-
 /**
  * Authentication module.
  * NOTE: data (pre)loaded at server startup in index.hrml to Config.env["cas.userinfo"]
  */
-
-var app = angular.module("auth", ['ngResource', 'config', 'Logging']);
-
-var USER = "USER_";
-var READ = "_READ";
-var UPDATE = "_READ_UPDATE";
-var CRUD = "_CRUD";
-var OPH_ORG = "xxx";
-
+var app = angular.module('auth', [
+    'ngResource',
+    'config',
+    'Logging'
+]);
+var USER = 'USER_';
+var READ = '_READ';
+var UPDATE = '_READ_UPDATE';
+var CRUD = '_CRUD';
+var OPH_ORG = 'xxx';
 app.factory('MyRolesModel', function($http, $log, Config) {
-
-    $log = $log.getInstance("MyRolesModel");
-
-    $log.info("MyRolesModel()");
-
-    OPH_ORG = Config.env["root.organisaatio.oid"];
-
-    var factory = (function() {
-
+    $log = $log.getInstance('MyRolesModel');
+    $log.info('MyRolesModel()');
+    OPH_ORG = Config.env['root.organisaatio.oid'];
+    var factory = function() {
         var instance = {};
         // instance.organisaatiot=[];
-
         // Roles + organisation oid array stored in this map
-        instance.rolesToOrgsMap={};
-
+        instance.rolesToOrgsMap = {};
         var defaultUserInfo = {
-            lang:"fi",
-            groups:[]
+            lang: 'fi',
+            groups: []
         };
-
-        instance.userinfo = Config.env.cas!==undefined ? Config.env.cas.userinfo || defaultUserInfo:defaultUserInfo;
+        instance.userinfo = Config.env.cas !== undefined ? Config.env.cas.userinfo || defaultUserInfo : defaultUserInfo;
         instance.myroles = instance.userinfo.groups;
-
         /**
-         * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
-         */
-        var processRoleList=function(roolit) {
+             * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
+             */
+        var processRoleList = function(roolit) {
             // $log.info("processRoleList()", roolit);
-
             // Regexp to match/split roles and organisations
             // "APP_XXX_1.2.3.4" -> ["APP_XXX_1.2.3.4" "APP_XXX", "1.2.3.4"]
-
-        	if(roolit!==undefined) {
-        		for(var i=0;i<roolit.length;i++) {
-
+            if (roolit !== undefined) {
+                for (var i = 0; i < roolit.length; i++) {
                     // Matchaa roolit + organisaatiot
                     var r = /^(.*)_([\d|.]+)$/g;
                     var m = r.exec(roolit[i]);
                     if (m && m.length == 3) {
                         var role = m[1];
                         var org = m[2];
-
                         if (angular.isDefined(instance.rolesToOrgsMap[role])) {
-                            // role already exists
-                        } else {
+                        }
+                        else {
                             // Create place for the role
                             instance.rolesToOrgsMap[role] = [];
                         }
-
                         // Add organisatio to roles map if not there already
                         if (instance.rolesToOrgsMap[role].indexOf(org) == -1) {
                             instance.rolesToOrgsMap[role].push(org);
                         }
-                    } else {
-                        $log.info("SKIPPING: '" + roolit[i] + "'");
                     }
-        		}
-
-                $log.info("AuthService: ROLES TO ORGANISATIONS MAP: ", instance.rolesToOrgsMap);
-        	}
+                    else {
+                        $log.info('SKIPPING: \'' + roolit[i] + '\'');
+                    }
+                }
+                $log.info('AuthService: ROLES TO ORGANISATIONS MAP: ', instance.rolesToOrgsMap);
+            }
         };
-
-//        $log.debug("myroles:", instance.myroles);
-
-      	processRoleList(instance.myroles);
-
+        //        $log.debug("myroles:", instance.myroles);
+        processRoleList(instance.myroles);
         return instance;
-    })();
-
+    }();
     return factory;
 });
-
 app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Config, SharedStateService) {
-
-    $log = $log.getInstance("AuthService");
-
+    $log = $log.getInstance('AuthService');
     var ORGANISAATIO_URL_BASE;
-
-	if(undefined!==Config.env){
-		ORGANISAATIO_URL_BASE=Config.env["organisaatio.api.rest.url"];
-	}
-
-	//$log.debug("prefix:", ORGANISAATIO_URL_BASE);
-
+    if (undefined !== Config.env) {
+        ORGANISAATIO_URL_BASE = Config.env['organisaatio.api.rest.url'];
+    }
+    //$log.debug("prefix:", ORGANISAATIO_URL_BASE);
     // CRUD ||UPDATE || READ
     var readAccess = function(service, org) {
         //$log.info("readAccess()", service, org);
-    	return MyRolesModel.myroles.indexOf(service + READ + "_" + org) > -1 ||
-               MyRolesModel.myroles.indexOf(service + UPDATE + "_" + org) > -1 ||
-               MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
+        return MyRolesModel.myroles.indexOf(service + READ + '_' + org) > -1 || MyRolesModel.myroles.indexOf(service + UPDATE + '_' + org) > -1 || MyRolesModel.myroles.indexOf(service + CRUD + '_' + org) > -1;
     };
-
     // CRUD ||UPDATE
     var updateAccess = function(service, org) {
-//      $log.debug("checking updateaccess on", service, org);
-      if(org) {
-        $log.info("updateAccess()", service, org, MyRolesModel);
-        var updateKey= service + UPDATE + "_" + org;
-        var crudKey= service + CRUD + "_" + org;
-//        console.log("looking for:", updateKey, crudKey)
-        return MyRolesModel.myroles.indexOf(updateKey) > -1 ||
-                MyRolesModel.myroles.indexOf(crudKey) > -1;
-      } else {
-        return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 ||
-        MyRolesModel.myroles.indexOf(service + CRUD) > -1;
-      }
+        //      $log.debug("checking updateaccess on", service, org);
+        if (org) {
+            $log.info('updateAccess()', service, org, MyRolesModel);
+            var updateKey = service + UPDATE + '_' + org;
+            var crudKey = service + CRUD + '_' + org;
+            //        console.log("looking for:", updateKey, crudKey)
+            return MyRolesModel.myroles.indexOf(updateKey) > -1 || MyRolesModel.myroles.indexOf(crudKey) > -1;
+        }
+        else {
+            return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 || MyRolesModel.myroles.indexOf(service + CRUD) > -1;
+        }
     };
-
     // CRUD
     var crudAccess = function(service, org) {
-//        $log.info("crudAccess()", service, org);
-        return MyRolesModel.myroles.indexOf(service + CRUD + "_" + org) > -1;
+        //        $log.info("crudAccess()", service, org);
+        return MyRolesModel.myroles.indexOf(service + CRUD + '_' + org) > -1;
     };
-
     //async call, returns promise!
     var accessCheck = function(service, orgOid, accessFunction) {
-//        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
-
-        if(orgOid===undefined || (orgOid.length && orgOid.length==0)) {
-        	throw "missing org oid!";
+        //        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
+        if (orgOid === undefined || orgOid.length && orgOid.length == 0) {
+            throw 'missing org oid!';
         }
-
-
         var deferred = $q.defer();
-//        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
-      	var url = ORGANISAATIO_URL_BASE + "organisaatio/" + orgOid + "/parentoids";
-//       	$log.debug("getting url:", url);
-
-//      	console.log("helloi!", orgOid, Config.env['root.organisaatio.oid']);
-      	if(orgOid === Config.env['root.organisaatio.oid']) {
-//      	  console.log("oph speciaali");
-      	  deferred.resolve(accessFunction(service, orgOid));
-      	} else {
-      	  $http.get(url,{cache:true}).then(function(result) {
-      	    // $log.debug("got:", result);
-
-      	    var ooids = result.data.split("/");
-
-      	    for(var i=0;i<ooids.length;i++) {
-              if (accessFunction(service, ooids[i])) {
-                  deferred.resolve(true);
-                  return;
-              }
-      	  }
-      	  deferred.resolve(false);
-          }, function(){ //failure funktio
-          //           	$log.debug("could not get url:", url);
-              deferred.resolve(false);
-          });
-      	}
+        //        $log.debug("accessCheck().check()", service, orgOid, accessFunction);
+        var url = ORGANISAATIO_URL_BASE + 'organisaatio/' + orgOid + '/parentoids';
+        //       	$log.debug("getting url:", url);
+        //      	console.log("helloi!", orgOid, Config.env['root.organisaatio.oid']);
+        if (orgOid === Config.env['root.organisaatio.oid']) {
+            //      	  console.log("oph speciaali");
+            deferred.resolve(accessFunction(service, orgOid));
+        }
+        else {
+            $http.get(url, {
+                cache: true
+            }).then(function(result) {
+                // $log.debug("got:", result);
+                var ooids = result.data.split('/');
+                for (var i = 0; i < ooids.length; i++) {
+                    if (accessFunction(service, ooids[i])) {
+                        deferred.resolve(true);
+                        return;
+                    }
+                }
+                deferred.resolve(false);
+            }, function() {
+                    //failure funktio
+                    //           	$log.debug("could not get url:", url);
+                    deferred.resolve(false);
+                });
+        }
         return deferred.promise;
     };
-
     return {
         getUsername: function() {
-        	return Config.env.cas.userinfo.uid;
+            return Config.env.cas.userinfo.uid;
         },
         isLoggedIn: function() {
-        	return Config.env.cas.userinfo.uid!==undefined;
+            return Config.env.cas.userinfo.uid !== undefined;
         },
         /**
-         * onko käyttäjällä lukuoikeus, palauttaa promisen
-         * @param service
-         * @param orgOid
-         * @returns
-         */
+             * onko käyttäjällä lukuoikeus, palauttaa promisen
+             * @param service
+             * @param orgOid
+             * @returns
+             */
         readOrg: function(orgOid, service) {
-            return accessCheck(service||'APP_TARJONTA', orgOid, readAccess);
+            return accessCheck(service || 'APP_TARJONTA', orgOid, readAccess);
         },
         /**
-         * onko käyttäjällä päivitysoikeus, palauttaa promisen
-         * @param service
-         * @param orgOid
-         * @returns
-         */
+             * onko käyttäjällä päivitysoikeus, palauttaa promisen
+             * @param service
+             * @param orgOid
+             * @returns
+             */
         updateOrg: function(orgOid, service) {
-            return accessCheck(service||'APP_TARJONTA', orgOid, updateAccess);
+            return accessCheck(service || 'APP_TARJONTA', orgOid, updateAccess);
         },
         /**
-         * onko käyttäjällä crud oikeus, palauttaa promisen
-         * @param orgOid
-         * @param service
-         * @returns
-         */
+             * onko käyttäjällä crud oikeus, palauttaa promisen
+             * @param orgOid
+             * @param service
+             * @returns
+             */
         crudOrg: function(orgOid, service) {
-//        	$log.debug("crudorg", orgOid, service);
-            return accessCheck(service||'APP_TARJONTA', orgOid, crudAccess);
+            //        	$log.debug("crudorg", orgOid, service);
+            return accessCheck(service || 'APP_TARJONTA', orgOid, crudAccess);
         },
         /**
-         * Palauttaa käyttäjän kielen, tai oletuksena suomi jos ei määritelty.
-         */
-        getLanguage: function(){
-        	return MyRolesModel.userinfo.lang || "FI";
+             * Palauttaa käyttäjän kielen, tai oletuksena suomi jos ei määritelty.
+             */
+        getLanguage: function() {
+            return MyRolesModel.userinfo.lang || 'FI';
         },
         /**
-         * Palauttaa käyttäjän oidin
-         */
-        getUserOid: function(){
-        	return MyRolesModel.userinfo.oid;
+             * Palauttaa käyttäjän oidin
+             */
+        getUserOid: function() {
+            return MyRolesModel.userinfo.oid;
         },
-
         /**
-         * Palauttaa oletus käyttäjän tarjonnalle
-         */
+             * Palauttaa oletus käyttäjän tarjonnalle
+             */
         getUserDefaultOid: function() {
-            var orgs = this.getOrganisations(["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE", "APP_TARJONTA_READ"]);
-
+            var orgs = this.getOrganisations([
+                'APP_TARJONTA_CRUD',
+                'APP_TARJONTA_UPDATE',
+                'APP_TARJONTA_READ'
+            ]);
             var selectedOrg = SharedStateService.getFromState('SelectedOrgOid');
-
             if (selectedOrg) {
                 if (angular.isArray(selectedOrg)) {
                     selectedOrg = selectedOrg[0];
                 }
                 return selectedOrg;
             }
-
             //käyttäjän oletusorganisaatio
             if (orgs && orgs.length > 0) {
                 return orgs[0];
             }
-         },
-
-        /**
-         * Palauttaa käyttäjän etunimen
-         */
-        getFirstName: function(){
-        	return MyRolesModel.userinfo.firstName;
         },
-
         /**
-         * Palauttaa käyttäjän etunimen
-         */
-        getLastName: function(){
-        	return MyRolesModel.userinfo.lastName;
+             * Palauttaa käyttäjän etunimen
+             */
+        getFirstName: function() {
+            return MyRolesModel.userinfo.firstName;
         },
-
-        isUserOph : function() {
+        /**
+             * Palauttaa käyttäjän etunimen
+             */
+        getLastName: function() {
+            return MyRolesModel.userinfo.lastName;
+        },
+        isUserOph: function() {
             var ophUser = false;
             ophUser = this.isUserInAnyOfRolesInOneOfOrganisations(undefined, [Config.env['root.organisaatio.oid']]);
-
-//            angular.forEach(MyRolesModel.organisaatiot,function(orgOid){
-//
-//                if (orgOid === Config.env['root.organisaatio.oid']) {
-//                    ophUser = true;
-//                }
-//            });
-
-            $log.debug("isUserOph()", ophUser);
+            //            angular.forEach(MyRolesModel.organisaatiot,function(orgOid){
+            //
+            //                if (orgOid === Config.env['root.organisaatio.oid']) {
+            //                    ophUser = true;
+            //                }
+            //            });
+            $log.debug('isUserOph()', ophUser);
             return ophUser;
         },
-
         /**
-         * Returns true IFF organisations of user has in given "roles" contains any of given "organisationOids".
-         *
-         * @param {type} roles
-         * @param {type} organisationOids
-         * @returns {Boolean}
-         */
-        isUserInAnyOfRolesInOneOfOrganisations : function (roles, organisationOids) {
+             * Returns true IFF organisations of user has in given "roles" contains any of given "organisationOids".
+             *
+             * @param {type} roles
+             * @param {type} organisationOids
+             * @returns {Boolean}
+             */
+        isUserInAnyOfRolesInOneOfOrganisations: function(roles, organisationOids) {
             var result = false;
-
             // Default roles if not defined are
-            roles = roles ? roles : ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"];
-
+            roles = roles ? roles : [
+                'APP_TARJONTA_CRUD',
+                'APP_TARJONTA_UPDATE'
+            ];
             // Force parameter to be array
             if (!(roles instanceof Array)) {
                 roles = [roles];
             }
-
             // Default org == OPH
             organisationOids = organisationOids ? organisationOids : [Config.env['root.organisaatio.oid']];
-
             // Force parameter to be array
             if (!(organisationOids instanceof Array)) {
                 organisationOids = [organisationOids];
             }
-
             // Loop over orgs user has in given roles
             var organisations = this.getOrganisations(roles);
             angular.forEach(organisations, function(roleOrg) {
@@ -317,35 +274,32 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                     }
                 });
             });
-
-            $log.debug("isUserInAnyOfRolesInOneOfOrganisations()", roles, organisationOids, result);
-
+            $log.debug('isUserInAnyOfRolesInOneOfOrganisations()', roles, organisationOids, result);
             return result;
         },
-
         /**
-         * @param {type} roles array of strings, default: tarjonta_crud and tarjonta_update
-         * @returns {Boolean} "true" joss käyttäjällä on OPH organisaatio missään annetussa roolissa
-         */
-        isUserOphInAnyOfRoles : function(roles) {
+             * @param {type} roles array of strings, default: tarjonta_crud and tarjonta_update
+             * @returns {Boolean} "true" joss käyttäjällä on OPH organisaatio missään annetussa roolissa
+             */
+        isUserOphInAnyOfRoles: function(roles) {
             return this.isUserInAnyOfRolesInOneOfOrganisations(roles, [Config.env['root.organisaatio.oid']]);
         },
-
         /**
-         * Palauttaa käyttäjän organisaatiot joihin muokkaus/luontioikeudet.
-         *
-         * Parametrina lista rooleista joiden organisaatioista ollaan kiinostuneita.
-         * OLETUKSENA (jos ei annata mitään) käytetään ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"].
-         */
-        getOrganisations: function(roles){
+             * Palauttaa käyttäjän organisaatiot joihin muokkaus/luontioikeudet.
+             *
+             * Parametrina lista rooleista joiden organisaatioista ollaan kiinostuneita.
+             * OLETUKSENA (jos ei annata mitään) käytetään ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"].
+             */
+        getOrganisations: function(roles) {
             // Default roles if not defined are
-            roles = roles ? roles : ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"];
-
+            roles = roles ? roles : [
+                'APP_TARJONTA_CRUD',
+                'APP_TARJONTA_UPDATE'
+            ];
             // Force parameter to be array
             if (!(roles instanceof Array)) {
                 roles = [roles];
             }
-
             var result = [];
             angular.forEach(roles, function(role) {
                 var orgs = MyRolesModel.rolesToOrgsMap[role];
@@ -355,11 +309,8 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
                     }
                 });
             });
-
-            $log.debug("getOrganisations()", roles, result);
-
+            $log.debug('getOrganisations()', roles, result);
             return result;
         }
-
     };
 });

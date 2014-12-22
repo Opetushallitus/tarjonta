@@ -12,77 +12,52 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-
 var app = angular.module('DateTimePicker', ['ngResource']);
-
-app.directive('dateTimePicker',function(){
-
-
-
+app.directive('dateTimePicker', function() {
     return {
-        restrict:'E',
-        replace:true,
-        scope : {
-            selecteddatetime : "="
+        restrict: 'E',
+        replace: true,
+        scope: {
+            selecteddatetime: '='
         },
-        controller : function($scope){
-
-
+        controller: function($scope) {
             var getTimeAsString = function(timeAsMilliSeconds) {
                 var momentDate = moment(timeAsMilliSeconds);
-                var formattedDateStr = momentDate.format("DD.M.YYYY HH:mm");
+                var formattedDateStr = momentDate.format('DD.M.YYYY HH:mm');
                 return formattedDateStr;
             };
-
-            $scope.$watch('selecteddatetime',function(newVal,oldVal){
-
-                 $scope.valueToShow = getTimeAsString(newVal);
-
+            $scope.$watch('selecteddatetime', function(newVal, oldVal) {
+                $scope.valueToShow = getTimeAsString(newVal);
             });
         },
-        template:
-            '<div>' +
-                '<input type="text" ng-model="valueToShow" readonly data-date-format="yyyy-mm-dd hh:ii" name="recipientDateTime" data-date-time required>'+
-                '</div>',
-        link : function(scope, element, attrs, ngModel) {
+        template: '<div>' + '<input type="text" ng-model="valueToShow" readonly data-date-format="yyyy-mm-dd hh:ii" name="recipientDateTime" data-date-time required>' + '</div>',
+        link: function(scope, element, attrs, ngModel) {
             var input = element.find('input');
             //If given time as initial value try parse it as string and show it as initial value
-            var initialDateObj = undefined;
+            var initialDateObj;
             if (scope.selecteddatetime !== undefined) {
                 var momentDateObj = moment(scope.selecteddatetime);
-                initialDateObj = momentDateObj.format("DD.M.YYYY HH:mm");
+                initialDateObj = momentDateObj.format('DD.M.YYYY HH:mm');
             }
-
-            if (initialDateObj === undefined){
+            if (initialDateObj === undefined) {
                 var initialMomentDate = moment();
                 scope.selecteddatetime = initialMomentDate.valueOf();
-                initialDateObj = initialMomentDate.format("DD.M.YYYY HH:mm");
+                initialDateObj = initialMomentDate.format('DD.M.YYYY HH:mm');
             }
-
             scope.valueToShow = initialDateObj;
-
-
             input.datetimepicker({
-                format: "dd.m.yyyy hh:ii",
+                format: 'dd.m.yyyy hh:ii',
                 showMeridian: false,
-                language : 'fi',
+                language: 'fi',
                 autoclose: true,
                 todayBtn: true,
                 todayHighlight: true,
-                initialDate : scope.valueToShow
-
+                initialDate: scope.valueToShow
             });
-
-            element.bind('blur keyup change', function(){
-
-
-
-                var selectedDateTimeObject = moment(input.val(),"DD.M.YYYY HH:mm");
-
+            element.bind('blur keyup change', function() {
+                var selectedDateTimeObject = moment(input.val(), 'DD.M.YYYY HH:mm');
                 scope.selecteddatetime = selectedDateTimeObject.valueOf();
             });
         }
-
-
-    }
+    };
 });

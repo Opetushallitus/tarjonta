@@ -13,45 +13,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 var app = angular.module('app.koulutus.kuvausRemove.ctrl', []);
-
-app.controller('PoistaValintaperustekuvausCtrl', function ($scope, Kuvaus, selectedKuvaus, LocalisationService,
-                   $modalInstance, HakukohdeService, $location) {
-
+app.controller('PoistaValintaperustekuvausCtrl', function($scope, Kuvaus, selectedKuvaus, LocalisationService, $modalInstance, HakukohdeService, $location) {
     $scope.model = {
         errors: [],
         text: {
-            info: LocalisationService.t("kuvaus.poista.help", [selectedKuvaus.kuvauksenNimi, selectedKuvaus.kausiNimi, selectedKuvaus.vuosi])
+            info: LocalisationService.t('kuvaus.poista.help', [
+                selectedKuvaus.kuvauksenNimi,
+                selectedKuvaus.kausiNimi,
+                selectedKuvaus.vuosi
+            ])
         },
         btnDisableRemove: false
     };
-
     $scope.cancel = function() {
         $modalInstance.dismiss();
     };
-
     $scope.goToHakukohde = function(oid) {
         $modalInstance.dismiss();
-        $location.path("/hakukohde/" + oid);
+        $location.path('/hakukohde/' + oid);
     };
-
     $scope.remove = function() {
         if ($scope.model.btnDisableRemove) {
             return;
         }
-
         $scope.model.errors = [];
-
         // Hae kuvaukseen liitetyt hakukohteet
         HakukohdeService.findHakukohdesByKuvausId(selectedKuvaus.kuvauksenTunniste).then(function(result) {
             if (result.data.result.length === 0) {
-
                 var removedKuvausPromise = Kuvaus.removeKuvausWithId(selectedKuvaus.kuvauksenTunniste);
-                removedKuvausPromise.then(function(removedKuvaus){
-                    if (removedKuvaus.status === "OK")  {
+                removedKuvausPromise.then(function(removedKuvaus) {
+                    if (removedKuvaus.status === 'OK') {
                         $modalInstance.close(removedKuvaus);
                     }
                     else {
-                        $scope.model.errors.push(LocalisationService.t("tarjonta.tekninenvirhe.title"));
+                        $scope.model.errors.push(LocalisationService.t('tarjonta.tekninenvirhe.title'));
                     }
                 });
             }
@@ -59,16 +54,15 @@ app.controller('PoistaValintaperustekuvausCtrl', function ($scope, Kuvaus, selec
                 $scope.liitetytHakukohteet = result.data.result;
                 angular.forEach($scope.liitetytHakukohteet, function(hakukohde) {
                     hakukohde.nimi = _.reduce(hakukohde.hakukohteenNimet, function(memo, text) {
-                        if($.trim(text) != "") {
-                            memo += text + " / ";
+                        if ($.trim(text) != '') {
+                            memo += text + ' / ';
                         }
                         return memo;
-                    }, "");
+                    }, '');
                     hakukohde.nimi = hakukohde.nimi.substring(0, hakukohde.nimi.length - 3);
                 });
             }
         });
     };
-
     return $scope;
 });

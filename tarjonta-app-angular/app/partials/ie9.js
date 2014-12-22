@@ -9,4 +9,4 @@
             optionCount = newOptionCount;
         }
     }, 200);
-})();
+}());

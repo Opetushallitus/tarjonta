@@ -13,69 +13,77 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 var app = angular.module('app.koulutus.remove.ctrl', []);
-
-app.controller('PoistaKoulutusCtrl', ['$scope', 'Config', '$location', '$route', 'Koodisto', 'LocalisationService', 'TarjontaService', '$q', '$modalInstance', 'targetKomoto', 'organisaatioOid', 'PermissionService', '$log',
-    function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService, $log) {
-
-        $log = $log.getInstance("PoistaKoulutusCtrl");
-
+app.controller('PoistaKoulutusCtrl', [
+    '$scope',
+    'Config',
+    '$location',
+    '$route',
+    'Koodisto',
+    'LocalisationService',
+    'TarjontaService',
+    '$q',
+    '$modalInstance',
+    'targetKomoto',
+    'organisaatioOid',
+    'PermissionService',
+    '$log', function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService, $log) {
+        $log = $log.getInstance('PoistaKoulutusCtrl');
         /*
-         * Select koulutus data objects.
-         */
+             * Select koulutus data objects.
+             */
         $scope.handleNimi = function(nimi) {
             if (!angular.isUndefined(nimi) && nimi !== null && nimi.length > 0) {
                 return nimi;
-            } else {
+            }
+            else {
                 //no localised name
                 return targetKomoto.koulutuskoodi;
             }
         };
-
         $scope.model = {
             errors: [],
             komoto: targetKomoto,
             text: {
-                info: LocalisationService.t("koulutus.poista.help", [$scope.handleNimi(targetKomoto.nimi)])
+                info: LocalisationService.t('koulutus.poista.help', [$scope.handleNimi(targetKomoto.nimi)])
             },
             btnDisableRemove: false
         };
-
-
         $scope.cancel = function() {
             $modalInstance.dismiss();
         };
-
         $scope.remove = function() {
             if ($scope.model.btnDisableRemove) {
                 return;
             }
-
             $scope.model.errors = [];
             PermissionService.permissionResource().authorize({}, function(authResponse) {
-                $log.debug("Authorization check : " + authResponse.result);
-
+                $log.debug('Authorization check : ' + authResponse.result);
                 if (authResponse.status !== 'OK') {
                     //not authenticated
                     return;
                 }
-
-                TarjontaService.koulutus().remove({oid: $scope.model.komoto.oid}, function(response) {
-                    if (response.status === 'OK') {
-                        $modalInstance.close(response);
-                    } else {
-                        if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
-                            /*
-                            for (var i = 0; i < response.errors.length; i++) {
-                                $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
-                            }
-                            */
-                            $scope.model.errors.push({msg: LocalisationService.t("koulutus.poista.error.yleisvirhe", [$scope.handleNimi(targetKomoto.nimi)])});
-                            $scope.model.btnDisableRemove = true;
+                TarjontaService.koulutus().remove({
+                    oid: $scope.model.komoto.oid
+                }, function(response) {
+                        if (response.status === 'OK') {
+                            $modalInstance.close(response);
                         }
-                    }
-                });
+                        else {
+                            if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
+                                /*
+                                              for (var i = 0; i < response.errors.length; i++) {
+                                                  $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
+                                              }
+                                              */
+                                $scope.model.errors.push({
+                                    msg: LocalisationService.t('koulutus.poista.error.yleisvirhe', [$scope.handleNimi(targetKomoto.nimi)])
+                                });
+                                $scope.model.btnDisableRemove = true;
+                            }
+                        }
+                    });
             });
         };
-
         return $scope;
-    }]);
+    }
+]);
