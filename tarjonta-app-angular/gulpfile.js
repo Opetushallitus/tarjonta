@@ -5,7 +5,7 @@ var gulp   = require('gulp');
 gulp.task('lint', function() {
     return gulp.src([
             './app/*.js',
-            './app/js/**/*.js',
+            './app/js/shared/**/*.js',
             './app/partials/**/*.js',
         ])
         .pipe(jshint())
