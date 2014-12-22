@@ -91,7 +91,7 @@ public interface HakuV1Resource {
     @Path("/find")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa kaikki haut hakuparametrien mukaisesti", notes = "Palauttaa kaikki haut hakuparametrien mukaisesti", response = HakuV1RDTO.class)
-    public ResultV1RDTO<List<HakuV1RDTO>> find(@QueryParam("") HakuSearchParamsV1RDTO params);
+    public ResultV1RDTO<List<HakuV1RDTO>> find(@QueryParam("") HakuSearchParamsV1RDTO params, @Context UriInfo uriInfo);
 
     @DELETE
     @Path("/{oid}")
