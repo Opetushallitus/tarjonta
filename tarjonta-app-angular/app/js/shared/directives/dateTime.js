@@ -29,9 +29,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             });
         }
         else if ($scope.type == 'long') {
-            $scope.model = $scope.scopeModel === null ? null : new Date($scope.scopeModel);
+            $scope.model = $scope.scopeModel ? new Date($scope.scopeModel) : null;
             $scope.$watch('scopeModel', function(nv, ov) {
-                $scope.model = $scope.scopeModel === null ? null : new Date($scope.scopeModel);
+                $scope.model = $scope.scopeModel ? new Date($scope.scopeModel) : null;
             });
         }
         else {
@@ -78,7 +78,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 omitUpdate = false;
                 return;
             }
-            if ($scope.model === null) {
+            if (!$scope.model) {
                 $scope.date = '';
                 $scope.time = '';
                 $scope.scopeModel = null;
@@ -112,7 +112,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             return d;
         }
         function roundToDay(d) {
-            if (d === false) {
+            if (!d) {
                 return false;
             }
             var t = new Date(d);
@@ -247,13 +247,15 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                     $scope.model = nd; // cd;
                 }
             }
-            if (outOfBounds) {
-                $scope.form.alkamisPvm.$error.outofminmax = true;
-                $scope.form.$setValidity('outofminmax', false);
-            }
-            else {
-                $scope.form.alkamisPvm.$error.outofminmax = false;
-                $scope.form.$setValidity('outofminmax', true);
+            if ($scope.form && $scope.form.alkamisPvm) {
+                if (outOfBounds) {
+                    $scope.form.alkamisPvm.$error.outofminmax = true;
+                    $scope.form.$setValidity('outofminmax', false);
+                }
+                else {
+                    $scope.form.alkamisPvm.$error.outofminmax = false;
+                    $scope.form.$setValidity('outofminmax', true);
+                }
             }
             if ($scope.ngChange) {
                 $scope.ngChange();

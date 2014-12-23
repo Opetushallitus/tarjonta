@@ -423,10 +423,12 @@ angular.module('app.search.controllers', [
             terms: $scope.spec.terms,
             state: $scope.spec.state == '*' ? null : $scope.spec.state,
             year: $scope.spec.year == '*' ? null : $scope.spec.year,
-            season: $scope.spec.season == '*' ? null : $scope.spec.season + '#1',
+            season: $scope.spec.season == '*' ? null : $scope.spec.season,
             defaultTarjoaja: $scope.selectedOrgOid
         };
-        //console.log("search", spec);
+        if (spec.season) {
+            spec.season += '#1';
+        }
         updateLocation();
         // valinnat
         TarjontaService.haeKoulutukset(spec).then(function(data) {

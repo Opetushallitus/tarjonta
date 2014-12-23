@@ -262,11 +262,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             };
             var promises = [];
             var uri = host + 'relaatio/sisaltyy-alakoodit/';
+            var that = this;
             _.each(koodiUriList, function(koodiUri) {
-                if (koodiUri.indexOf('#') != -1) {
-                    koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
-                }
-                var vu = this.versionUtil();
+                koodiUri = oph.removeKoodiVersion(koodiUri);
+                var vu = that.versionUtil();
                 var promise = $resource(uri + koodiUri, {}, {
                     get: {
                         method: 'GET',
@@ -274,8 +273,8 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     },
                     cache: true
                 }).get().$promise.then(function(koodis) {
-                        vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
-                    });
+                    vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
+                });
                 promises.push(promise);
             });
             $q.all(promises).then(function() {

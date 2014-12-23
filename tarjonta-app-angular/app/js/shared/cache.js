@@ -37,10 +37,10 @@ angular.module('TarjontaCache', [
                 key: '' + key
             };
         }
-        if (key.pattern !== undefined && !(key.pattern instanceof RegExp)) {
+        if (key.pattern && !(key.pattern instanceof RegExp)) {
             key.pattern = new RegExp(key.pattern);
         }
-        if (key.expires !== undefined && !(key.expires instanceof Date)) {
+        if (key.expires && !(key.expires instanceof Date)) {
             var d = new Date();
             d.setTime(d.getTime() + key.expires);
             key.expires = d;
@@ -53,8 +53,7 @@ angular.module('TarjontaCache', [
     cacheService.insert = function(key, value) {
         key = prepare(key);
         for (var rk in cacheData) {
-            if (key.pattern !== undefined && key.pattern.test(rk)) {
-                $log.debug('Evicted from cache during insert', rk);
+            if (key.pattern && key.pattern.test(rk)) {
                 cacheData[rk] = undefined;
             }
         }
@@ -62,7 +61,6 @@ angular.module('TarjontaCache', [
             value: value,
             expires: key.expires
         };
-        $log.debug('Cache insert ', key);
     };
     /**
 	 * Hakee tavaraa cachesta.
@@ -71,16 +69,13 @@ angular.module('TarjontaCache', [
         key = prepare(key);
         var rv = cacheData[key.key];
         if (rv === undefined) {
-            //$log.debug("Cache miss",key);
             return null;
         }
         if (rv.expires !== undefined && rv.expires.getTime() < new Date().getTime()) {
             // expired
-            $log.debug('Expired hit', key);
             cacheData[key.key] = null;
             return null;
         }
-        //$log.debug("Cache hit", key);
         return rv.value;
     };
     /**
@@ -91,9 +86,8 @@ angular.module('TarjontaCache', [
         key = prepare(key);
         var now = new Date().getTime();
         for (var rk in cacheData) {
-            if (key.key == rk || key.pattern !== undefined && key.pattern.test(rk) ||
-                key.expires !== null && key.expires.getTime() < now) {
-                $log.debug('Evicted from cache', rk);
+            if (key.key == rk || key.pattern && key.pattern.test(rk) ||
+                key.expires && key.expires.getTime() < now) {
                 cacheData[rk] = undefined;
             }
         }
@@ -110,13 +104,12 @@ angular.module('TarjontaCache', [
         var ret = $q.defer();
         key = prepare(key);
         var res = cacheService.find(key);
-        if (res !== undefined) {
+        if (res) {
             ret.resolve(res);
         }
         else {
             // palautetaan käynnissä oleva requesti jos sellainen on
             if (cacheRequests[key.key]) {
-                $log.debug('Cache request hit', key);
                 return cacheRequests[key.key];
             }
             else {

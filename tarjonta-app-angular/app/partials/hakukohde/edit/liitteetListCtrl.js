@@ -13,7 +13,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     var osoitteetReceived = false;
     function postProcessLiite(liite) {
         if (liite.sahkoinenOsoiteEnabled === undefined) {
-            liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite !== null;
+            liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite;
         }
         if (liite.muuOsoiteEnabled === undefined && osoitteetReceived) {
             if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
