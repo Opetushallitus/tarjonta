@@ -31,7 +31,6 @@ angular.module('app.kk', [
  *******************************************************/
 angular.module('app', [
     'app.directives',
-    'app.filters',
     'app.services',
     'app.search.controllers',
     'app.test.controllers',
