@@ -340,7 +340,8 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
                     // Save created translation key to local cache
                     self.putCachedLocalisation(key, l, data);
                 }, function(data, status, headers, config) {
-                        $log.warn('  FAILED to created new translation to server side! ', data, status, headers, config);
+                        $log.warn('  FAILED to created new translation to server side! ', data, status, headers,
+                            config);
                         self.disableSystemErrorDialog();
                     });
                 // Create temporary placeholder for next requests

@@ -1,5 +1,6 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
-app.controller('ValitseValintaPerusteKuvausDialog', function($scope, $q, $log, $modalInstance, LocalisationService, Kuvaus, Koodisto, oppilaitosTyypit, tyyppi, koulutusVuosi, AuthService) {
+app.controller('ValitseValintaPerusteKuvausDialog', function($scope, $q, $log, $modalInstance, LocalisationService,
+                    Kuvaus, Koodisto, oppilaitosTyypit, tyyppi, koulutusVuosi, AuthService) {
     $log = $log.getInstance('ValitseValintaPerusteKuvausDialog');
     var koodistoKieliUri = 'kieli';
     var defaultKieliUri = 'kieli_fi';
@@ -13,15 +14,21 @@ app.controller('ValitseValintaPerusteKuvausDialog', function($scope, $q, $log, $
     $scope.dialog.copySelection = 'link';
     $scope.showKieliSelectionCheckboxDisabled = true;
     $scope.showKieliSelection = false;
-    $scope.dialog.titles = {};
-    $scope.dialog.titles.toimintoTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.title');
-    $scope.dialog.titles.tableValintaRyhma = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.valintaryhma.title');
-    $scope.dialog.titles.tableKuvauskielet = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.table.kuvauskielet.title');
-    $scope.dialog.titles.tuoMyosMuutkieletTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.muutkielet.title');
-    $scope.dialog.titles.okBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.ok');
-    $scope.dialog.titles.cancelBtn = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.btn.cancel');
-    $scope.dialog.titles.kopioiHelp = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.help');
-    $scope.dialog.titles.linkkausHelp = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.help');
+
+    function getTranslation(key) {
+        return LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.' + key);
+    }
+
+    $scope.dialog.titles = {
+        toimintoTitle: getTranslation('toiminto.title'),
+        tableValintaRyhma: getTranslation('table.valintaryhma.title'),
+        tableKuvauskielet: getTranslation('table.kuvauskielet.title'),
+        tuoMyosMuutkieletTitle: getTranslation('toiminto.muutkielet.title'),
+        okBtn: getTranslation('btn.ok'),
+        cancelBtn: getTranslation('btn.cancel'),
+        kopioiHelp: getTranslation('toiminto.kopioi.help'),
+        linkkausHelp: getTranslation('toiminto.linkkaus.help')
+    };
     var getYear = function() {
         if (koulutusVuosi) {
             return koulutusVuosi;
@@ -58,18 +65,18 @@ app.controller('ValitseValintaPerusteKuvausDialog', function($scope, $q, $log, $
     };
     var getTitle = function() {
         if (tyyppi === 'valintaperustekuvaus') {
-            $scope.dialog.titles.title = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.title');
-            $scope.dialog.titles.kopioTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.title');
-            $scope.dialog.titles.kopioiHelp = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.help');
-            $scope.dialog.titles.linkkausTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.title');
-            $scope.dialog.titles.linkkausHelp = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.help');
+            $scope.dialog.titles.title = getTranslation('title');
+            $scope.dialog.titles.kopioTitle = getTranslation('toiminto.kopioi.title');
+            $scope.dialog.titles.kopioiHelp = getTranslation('toiminto.kopioi.help');
+            $scope.dialog.titles.linkkausTitle = getTranslation('toiminto.linkkaus.title');
+            $scope.dialog.titles.linkkausHelp = getTranslation('toiminto.linkkaus.help');
         }
         else {
-            $scope.dialog.titles.title = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.sora.title');
-            $scope.dialog.titles.kopioTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.sora.title');
-            $scope.dialog.titles.kopioiHelp = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.kopioi.sora.help');
-            $scope.dialog.titles.linkkausTitle = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.sora.title');
-            $scope.dialog.titles.linkkausHelp = LocalisationService.t('tarjonta.valintaperustekuvaus.valinta.dialog.toiminto.linkkaus.sora.help');
+            $scope.dialog.titles.title = getTranslation('sora.title');
+            $scope.dialog.titles.kopioTitle = getTranslation('toiminto.kopioi.sora.title');
+            $scope.dialog.titles.kopioiHelp = getTranslation('toiminto.kopioi.sora.help');
+            $scope.dialog.titles.linkkausTitle = getTranslation('toiminto.linkkaus.sora.title');
+            $scope.dialog.titles.linkkausHelp = getTranslation('toiminto.linkkaus.sora.help');
         }
     };
     var checkObjectPropertiesLength = function(object) {
@@ -83,7 +90,11 @@ app.controller('ValitseValintaPerusteKuvausDialog', function($scope, $q, $log, $
         //TODO: refactor this to more smaller functions and separate concerns
         $log.info('VALINTAPERUSTEET OPPILAITOSTYYPIT : ', oppilaitosTyypit);
         angular.forEach(oppilaitosTyypit, function(oppilaitosTyyppi) {
-            var valintaPerustePromise = Kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi(oppilaitosTyyppi, tyyppi, getYear());
+            var valintaPerustePromise = Kuvaus.findWithVuosiOppilaitostyyppiTyyppiVuosi(
+                oppilaitosTyyppi,
+                tyyppi,
+                getYear()
+            );
             valintaPerustePromise.then(function(valintaperusteet) {
                 $log.info('VALINTAPERUSTEET : ', valintaperusteet);
                 var userLang = AuthService.getLanguage();

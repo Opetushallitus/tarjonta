@@ -3,7 +3,8 @@ var app = angular.module('Tarjonta', [
     'config',
     'Logging'
 ]);
-app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto, CacheService, $q, $log) {
+app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
+                                        CacheService, $q, $log) {
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
@@ -39,7 +40,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     }
     function searchCacheKey(prefix, args) {
         return {
-            key: prefix + '/?' + 'oid=' + args.oid + '&' + 'terms=' + escape(args.terms) + '&' + 'state=' + escape(args.state) + '&' + 'season=' + escape(args.season) + '&' + 'komoOid=' + escape(args.komoOid) + '&' + 'kooulutusOid=' + escape(args.koulutusOid) + '&' + 'hakukohdeOid=' + escape(args.hakukohdeOid) + '&' + 'hakuOid=' + escape(args.hakuOid) + '&' + 'year=' + escape(args.year),
+            key: prefix + '/?' + 'oid=' + args.oid + '&' + 'terms=' + escape(args.terms) + '&' +
+                'state=' + escape(args.state) + '&' + 'season=' + escape(args.season) + '&' +
+                'komoOid=' + escape(args.komoOid) + '&' + 'kooulutusOid=' + escape(args.koulutusOid) +
+                '&' + 'hakukohdeOid=' + escape(args.hakukohdeOid) + '&' + 'hakuOid=' + escape(args.hakuOid) +
+                '&' + 'year=' + escape(args.year),
             expires: 60000,
             pattern: prefix + '/.*'
         };
@@ -168,7 +173,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                         r.nimi = r.oid;
                     }
                     else {
-                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi !== 'LUKIOKOULUTUS' && r.pohjakoulutusvaatimus !== undefined ? ', ' + localize(r.pohjakoulutusvaatimus) : '');
+                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi !== 'LUKIOKOULUTUS' &&
+                            r.pohjakoulutusvaatimus !== undefined ? ', ' + localize(r.pohjakoulutusvaatimus) : '');
                     }
                     r.tilaNimi = LocalisationService.t('tarjonta.tila.' + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
@@ -191,14 +197,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
     /**
        * Asettaa koulutuksen tai hakukohteen julkaisun tilan.
-       * @param type "koulutus" | "hakukohde"
-       * @param oid kohteen oid
-       * @param publish tosi, jos julkaistaan, epätosi jos perutaan julkaisu
+       * @param {string} type "koulutus" | "hakukohde"
+       * @param {string} oid kohteen oid
+       * @param {boolean} publish tosi, jos julkaistaan, epätosi jos perutaan julkaisu
        * @return promise, jonka arvo on kohteen tila on (muutoksen jälkeen) sama kuin publish-parametrilla annettu
        */
     dataFactory.togglePublished = function(type, oid, publish) {
         var ret = $q.defer();
-        var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + '/' + oid + '/tila?state=' + (publish ? 'JULKAISTU' : 'PERUTTU'), {}, {
+        var tila = $resource(Config.env.tarjontaRestUrlPrefix + type + '/' + oid + '/tila?state=' + (publish ?
+            'JULKAISTU' :
+            'PERUTTU'), {}, {
             update: {
                 method: 'POST',
                 withCredentials: true
@@ -224,25 +232,20 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     }
     dataFactory.getKoulutuksenHakukohteet = function(oid) {
         var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + oid + '/hakukohteet').get({}, function(res) {
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/' + oid + '/hakukohteet')
+                        .get({}, function(res) {
             ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
     };
     dataFactory.getHakukohteenKoulutukset = function(oid) {
         var ret = $q.defer();
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + oid + '/koulutukset').get({}, function(res) {
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + oid + '/koulutukset')
+                        .get({}, function(res) {
             ret.resolve(cleanAndLocalizeArray(res.result));
         });
         return ret.promise;
     };
-    /**
-       * POST: Insert new KOMOTO + KOMO. API object must be valid.
-       *
-       * @param json data in JSON format.
-       * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
-       * @returns {undefined}
-       */
     dataFactory.koulutus = function(oid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/', {}, {
             update: {
@@ -342,7 +345,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
     dataFactory.getKoulutuskoodiRelations = function(arg, func) {
         $log.debug('getKoulutuskoodiRelations()');
-        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/koodisto/:uri/:koulutustyyppi?meta=false&lang=:languageCode', {
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix +
+            'koulutus/koodisto/:uri/:koulutustyyppi?meta=false&lang=:languageCode', {
             koulutustyyppi: '@koulutustyyppi',
             uri: '@uri',
             defaults: '@defaults',
@@ -389,7 +393,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         if (angular.isUndefined(image) || image === null) {
             return;
         }
-        if (!angular.isUndefined(image.file) && !angular.isUndefined(image.file.type) && !angular.isUndefined(image.dataURL)) {
+        if (!angular.isUndefined(image.file) && !angular.isUndefined(image.file.type) &&
+                !angular.isUndefined(image.dataURL)) {
             var apiImg = {
                 kieliUri: kieliuri
             };
@@ -551,13 +556,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             }
         });
     };
-    /**
-       * POST: Insert new KOMO. API object must be valid.
-       *
-       * @param json data in JSON format.
-       * @param func callback function, returns {oid : <komoto-oid>, version: <number> }
-       * @returns {undefined}
-       */
     dataFactory.komo = function() {
         return $resource(Config.env.tarjontaRestUrlPrefix + 'komo/:oid', {}, {
             update: {

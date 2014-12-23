@@ -13,7 +13,9 @@ app.controller('EditYhteyshenkiloCtrl', [
     '$route', function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams, $log, $route) {
         $scope.init = function(extModel) {
             $scope.editYhModel = {};
-            var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ? $route.current.locals.koulutusModel.result.organisaatio.oid : $routeParams.org;
+            var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ?
+                $route.current.locals.koulutusModel.result.organisaatio.oid :
+                $routeParams.org;
             if (!orgOid) {
                 $log.error('organisaatio Oid is unknown!!');
             }
@@ -92,7 +94,9 @@ app.controller('EditYhteyshenkiloECTSCtrl', [
     '$log',
     '$route', function($scope, $compile, OrganisaatioService, converter, $routeParams, $log, $route) {
         $scope.editECTSModel = {};
-        var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ? $route.current.locals.koulutusModel.result.organisaatio.oid : $routeParams.org;
+        var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ?
+            $route.current.locals.koulutusModel.result.organisaatio.oid :
+            $routeParams.org;
         $log = $log.getInstance('EditYhteyshenkiloECTSCtrl');
         $log.debug('init');
         OrganisaatioService.getECTS(orgOid).then(function(data) {

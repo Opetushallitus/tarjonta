@@ -26,7 +26,8 @@ app.controller('PoistaKoulutusCtrl', [
     'targetKomoto',
     'organisaatioOid',
     'PermissionService',
-    '$log', function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService, $log) {
+    '$log', function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService,
+                      TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService, $log) {
         $log = $log.getInstance('PoistaKoulutusCtrl');
         /*
              * Select koulutus data objects.
@@ -70,13 +71,9 @@ app.controller('PoistaKoulutusCtrl', [
                         }
                         else {
                             if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
-                                /*
-                                              for (var i = 0; i < response.errors.length; i++) {
-                                                  $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
-                                              }
-                                              */
                                 $scope.model.errors.push({
-                                    msg: LocalisationService.t('koulutus.poista.error.yleisvirhe', [$scope.handleNimi(targetKomoto.nimi)])
+                                    msg: LocalisationService.t('koulutus.poista.error.yleisvirhe',
+                                        [$scope.handleNimi(targetKomoto.nimi)])
                                 });
                                 $scope.model.btnDisableRemove = true;
                             }

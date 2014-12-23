@@ -14,7 +14,8 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         return true;
     }
     function controller($scope) {
-        if ($scope.model instanceof Array || typeof $scope.model != 'object' || $scope.model == null || $scope.model == undefined) {
+        if ($scope.model instanceof Array || typeof $scope.model != 'object' || $scope.model == null
+            || $scope.model == undefined) {
             $log.debug('MODEL FAIL', $scope.model);
             throw new Error('mkRichTextarea.model must be a non-array object');
         }
@@ -69,9 +70,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
                 }
                 return langOfUri(a).localeCompare(langOfUri(b));
             });
-            $scope.selectedLangs = langs; /*$log.debug("MODEL = ",$scope.model);
-        	$log.debug("TABS = ",$scope.selectedTab);
-        	$log.debug("LANGS = ",$scope.selectedLangs);*/
+            $scope.selectedLangs = langs;
         }
         updateLangs();
         // kielikoodit koodistosta
@@ -79,7 +78,7 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         $scope.langsPromise.then(function(v) {
             var nc = {};
             for (var i in v) {
-                nc[v[i].koodiUri] = v[i].koodiNimi; //{versio: v[i].koodiVersio, nimi: v[i].koodiNimi, uri: v[i].koodiUri};
+                nc[v[i].koodiUri] = v[i].koodiNimi;
             }
             $scope.langs = nc;
         });

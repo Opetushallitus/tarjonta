@@ -27,7 +27,8 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         },
         findWithVuosiOppilaitostyyppiTyyppiVuosi: function(oppilaitosTyyppi, tyyppi, vuosi) {
             var promise = $q.defer();
-            var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/' + oppilaitosTyyppi + '/' + vuosi + '/' + 'kuvaustenTiedot';
+            var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/' +
+                oppilaitosTyyppi + '/' + vuosi + '/' + 'kuvaustenTiedot';
             $http.get(queryUri).success(function(data) {
                 promise.resolve(data);
             }).error(function(data) {
@@ -98,7 +99,8 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findKuvausWithTyyppiNimiOppilaitos: function(tyyppi, nimi, oppilaitosTyyppi) {
             var promise = $q.defer();
             if (tyyppi !== undefined && nimi !== undefined && oppilaitosTyyppi !== undefined) {
-                var kuvausQueriUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + oppilaitosTyyppi + nimi;
+                var kuvausQueriUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi +
+                    oppilaitosTyyppi + nimi;
                 $http.get(kuvausQueriUri).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
@@ -113,7 +115,8 @@ app.factory('Kuvaus', function($http, Config, $q, $log, PermissionService) {
         findKuvausBasicInformation: function(tyyppi, oppilaitosTyyppi) {
             var promise = $q.defer();
             if (tyyppi !== undefined && oppilaitosTyyppi !== undefined) {
-                var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/' + oppilaitosTyyppi + '/kuvaustenTiedot';
+                var queryUri = Config.env.tarjontaRestUrlPrefix + kuvausUriPrefix + tyyppi + '/' +
+                    oppilaitosTyyppi + '/kuvaustenTiedot';
                 $http.get(queryUri).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {

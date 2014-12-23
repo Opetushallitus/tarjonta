@@ -30,7 +30,8 @@ app.directive('dateTimePicker', function() {
                 $scope.valueToShow = getTimeAsString(newVal);
             });
         },
-        template: '<div>' + '<input type="text" ng-model="valueToShow" readonly data-date-format="yyyy-mm-dd hh:ii" name="recipientDateTime" data-date-time required>' + '</div>',
+        template: '<div>' + '<input type="text" ng-model="valueToShow" readonly data-date-format="yyyy-mm-dd hh:ii"' +
+                        ' name="recipientDateTime" data-date-time required>' + '</div>',
         link: function(scope, element, attrs, ngModel) {
             var input = element.find('input');
             //If given time as initial value try parse it as string and show it as initial value

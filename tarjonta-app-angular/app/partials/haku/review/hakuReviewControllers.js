@@ -30,7 +30,9 @@ app.controller('HakuReviewController', [
     '$q',
     'PermissionService',
     'OrganisaatioService',
-    '$modal', function HakuReviewController($scope, $route, $log, $routeParams, ParameterService, $location, HakuV1Service, TarjontaService, dialogService, LocalisationService, $q, PermissionService, OrganisaatioService, $modal) {
+    '$modal', function HakuReviewController($scope, $route, $log, $routeParams, ParameterService, $location,
+                HakuV1Service, TarjontaService, dialogService, LocalisationService, $q, PermissionService,
+                OrganisaatioService, $modal) {
         $log = $log.getInstance('HakuReviewController');
         $scope.isMutable = false;
         $scope.isRemovable = false;
@@ -141,17 +143,17 @@ app.controller('HakuReviewController', [
             }).then(function(result) {
                 $log.info('GOT HAKUKOHTEET: ', result.tulokset);
                 // Datan rakenne :
-                //            { "oid": "1.2.246.562.10.82388989657", "version": 0, "nimi": "Aalto-korkeakoulusäätiö", 
-                //              "tulokset": [ { 
-                //                "oid": "1.2.246.562.20.924214830310", 
-                //                "nimi": "ertert hkk", 
-                //                "kausi": { "fi": "Syksy", "sv": "Höst", "en": "Autumn" }, 
-                //                "vuosi": 2014, 
-                //                "tila": "LUONNOS", 
-                //                "hakutapa": "Yhteishaku", 
-                //                "aloituspaikat": 56, 
-                //                "tilaNimi": "Luonnos" 
-                //              } ] 
+                //            { "oid": "1.2.246.562.10.82388989657", "version": 0, "nimi": "Aalto-korkeakoulusäätiö",
+                //              "tulokset": [ {
+                //                "oid": "1.2.246.562.20.924214830310",
+                //                "nimi": "ertert hkk",
+                //                "kausi": { "fi": "Syksy", "sv": "Höst", "en": "Autumn" },
+                //                "vuosi": 2014,
+                //                "tila": "LUONNOS",
+                //                "hakutapa": "Yhteishaku",
+                //                "aloituspaikat": 56,
+                //                "tilaNimi": "Luonnos"
+                //              } ]
                 //            }
                 // Result list collected here
                 var tmp = [];

@@ -10,7 +10,10 @@ var app = angular.module('app.kk.edit.hakukohde.review.ctrl', [
     'MonikielinenTextArea',
     'MonikielinenText'
 ]);
-app.controller('HakukohdeReviewController', function($scope, $q, $log, LocalisationService, OrganisaatioService, Koodisto, Hakukohde, AuthService, dialogService, HakuService, $modal, Config, $location, $timeout, $route, TarjontaService, HakukohdeKoulutukses, dialogService, SisaltyvyysUtil, TreeHandlers, PermissionService, MyRolesModel) {
+app.controller('HakukohdeReviewController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
+             Koodisto, Hakukohde, AuthService, dialogService, HakuService, $modal, Config, $location, $timeout,
+             $route, TarjontaService, HakukohdeKoulutukses, dialogService, SisaltyvyysUtil, TreeHandlers,
+             PermissionService, MyRolesModel) {
     $log = $log.getInstance('HakukohdeReviewController');
     $log.debug('init...');
     // by default disable
@@ -55,7 +58,13 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     $scope.model.liiteKielet = aggregateLangs($scope.model.hakukohde.hakukohteenLiitteet);
     $scope.model.ryhmat = {};
     $scope.showLiitteidenToimitustiedot = function(toteutusTyyppi) {
-        return toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' || toteutusTyyppi === 'LUKIOKOULUTUS' || toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' || toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' || toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA';
+        return _.contains([
+            'AMMATILLINEN_PERUSTUTKINTO',
+            'LUKIOKOULUTUS',
+            'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+            'VAPAAN_SIVISTYSTYON_KOULUTUS',
+            'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
+        ], toteutusTyyppi);
     };
     if ($scope.model.hakukohde.organisaatioRyhmaOids) {
         for (var i = 0; i < $scope.model.hakukohde.organisaatioRyhmaOids.length; i++) {
@@ -79,10 +88,12 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
        */
     var convertValintaPalveluValue = function() {
         if ($scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua) {
-            $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.kylla');
+            $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo
+                = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.kylla');
         }
         else {
-            $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
+            $scope.model.kaytetaanJarjestelmanValintaPalveluaArvo
+                = LocalisationService.t('hakukohde.review.perustiedot.jarjestelmanvalinta.palvelu.ei');
         }
     };
     var convertKaksoistutkintoValue = function() {
@@ -241,8 +252,12 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         var nimi = getNimi();
         var hakuaika = getHakuaika();
         var hakuaikaNimi = getHakuaikaNimi(hakuaika);
-        var alkuPvm = $scope.model.hakukohde.hakuaikaAlkuPvm ? $scope.model.hakukohde.hakuaikaAlkuPvm : hakuaika.alkuPvm;
-        var loppuPvm = $scope.model.hakukohde.hakuaikaLoppuPvm ? $scope.model.hakukohde.hakuaikaLoppuPvm : hakuaika.loppuPvm;
+        var alkuPvm = $scope.model.hakukohde.hakuaikaAlkuPvm ?
+            $scope.model.hakukohde.hakuaikaAlkuPvm :
+            hakuaika.alkuPvm;
+        var loppuPvm = $scope.model.hakukohde.hakuaikaLoppuPvm ?
+            $scope.model.hakukohde.hakuaikaLoppuPvm :
+            hakuaika.loppuPvm;
         return {
             nimi: nimi,
             hakuaikaNimi: hakuaikaNimi,
@@ -321,7 +336,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
     var loadValintakoetiedot = function() {
         _.each($scope.model.hakukohde.valintakokeet, function(valintakoe) {
             if (valintakoe.valintakoetyyppi !== undefined) {
-                Koodisto.getKoodi('valintakokeentyyppi', valintakoe.valintakoetyyppi, $scope.model.userLang).then(function(koodi) {
+                Koodisto.getKoodi('valintakokeentyyppi', valintakoe.valintakoetyyppi, $scope.model.userLang)
+                .then(function(koodi) {
                     valintakoe.valintakoeNimi = koodi.koodiNimi;
                 });
             }
@@ -341,7 +357,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                         tarjoajaOidsSet.add(tulos.oid);
                         if (tulos.tulokset !== undefined) {
                             angular.forEach(tulos.tulokset, function(lopullinenTulos) {
-                                if (lopullinenTulos.koulutuslajiUri && lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
+                                if (lopullinenTulos.koulutuslajiUri &&
+                                    lopullinenTulos.koulutuslajiUri.indexOf(aikuKoulutuslajiUri) > -1) {
                                     $scope.isAiku = true;
                                 }
                                 $scope.isKK = lopullinenTulos.koulutusasteTyyppi == 'KORKEAKOULUTUS';
@@ -350,7 +367,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                                     oid: lopullinenTulos.oid
                                 };
                                 // KJOH-778 monta tarjoajaa
-                                OrganisaatioService.getPopulatedOrganizations($scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[lopullinenTulos.oid].tarjoajaOids).then(function(orgs) {
+                                var tarjoajatiedot = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot;
+                                OrganisaatioService.getPopulatedOrganizations(
+                                    tarjoajatiedot[lopullinenTulos.oid].tarjoajaOids
+                                ).then(function(orgs) {
                                     var koulutusRef = koulutus;
                                     angular.forEach(orgs, function(org) {
                                         var copy = angular.copy(koulutusRef);
@@ -391,8 +411,12 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             var hasPermissionToEdit = results[0] === true;
             var hasPermissionToRemove = results[1] === true && results[2] === true;
             var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
-            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited($scope.model.hakukohde.hakuOid);
-            $scope.isRemovable = hasPermissionToRemove && TarjontaService.parameterCanRemoveHakukohdeFromHaku($scope.model.hakukohde.hakuOid);
+            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited(
+                $scope.model.hakukohde.hakuOid
+            );
+            $scope.isRemovable = hasPermissionToRemove && TarjontaService.parameterCanRemoveHakukohdeFromHaku(
+                $scope.model.hakukohde.hakuOid
+            );
             if (canEditHakukohdeAtAll && hasPermissionToEdit) {
                 $scope.isMutable = true;
                 $scope.isPartiallyMutable = true;
@@ -427,7 +451,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         if ($scope.model.hakukohde.result) {
             $scope.model.hakukohde = new Hakukohde($scope.model.hakukohde.result);
         }
-        if ($scope.model.hakukohde.hakukohteenNimiUri && $scope.model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
+        if ($scope.model.hakukohde.hakukohteenNimiUri &&
+            $scope.model.hakukohde.toteutusTyyppi !== 'VAPAAN_SIVISTYSTYON_KOULUTUS') {
             $scope.showNimiUri = true;
         }
         if ($scope.model.hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
@@ -437,7 +462,10 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             }
             $scope.model.hakukohde.paasykoe = getPisterajat($scope.model.hakukohde.valintakoe, 'Paasykoe');
             $scope.model.hakukohde.lisapisteet = getPisterajat($scope.model.hakukohde.valintakoe, 'Lisapisteet');
-            $scope.model.hakukohde.kokonaispisteet = getPisterajat($scope.model.hakukohde.valintakoe, 'Kokonaispisteet');
+            $scope.model.hakukohde.kokonaispisteet = getPisterajat(
+                $scope.model.hakukohde.valintakoe,
+                'Kokonaispisteet'
+            );
         }
         initLanguages();
         setModificationFlags();
@@ -723,8 +751,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
         modalInstance.result.then(function(liitettavatKoulutukset) {
             angular.forEach(liitettavatKoulutukset, function(liitettavaKoulutus) {
                 $scope.model.hakukohde.hakukohdeKoulutusOids.push(liitettavaKoulutus.oid);
-                var tarjoajatiedot = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[liitettavaKoulutus.oid];
-                if (tarjoajatiedot === undefined) {
+                var tarjoajat = $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[liitettavaKoulutus.oid];
+                if (tarjoajat === undefined) {
                     var oids = [];
                     oids.push(liitettavaKoulutus.tarjoajaOid);
                     $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot[liitettavaKoulutus.oid] = {
@@ -732,11 +760,11 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                     };
                 }
                 else {
-                    tarjoajatiedot.tarjoajaOids.push(liitettavaKoulutus.tarjoajaOid);
+                    tarjoajat.tarjoajaOids.push(liitettavaKoulutus.tarjoajaOid);
                 }
             });
-            var liitaPromise = HakukohdeKoulutukses.addKoulutuksesToHakukohde($scope.model.hakukohde.oid, liitettavatKoulutukset);
-            liitaPromise.then(function(data) {
+            HakukohdeKoulutukses.addKoulutuksesToHakukohde($scope.model.hakukohde.oid, liitettavatKoulutukset)
+            .then(function(data) {
                 if (data) {
                     $log.debug('RETURN DATA : ', data);
                     loadKoulutukses();
@@ -754,7 +782,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
  * <-----------------
  *
  */
-app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance, LocalisationService, hakukohtees, selectedLocale) {
+app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance, LocalisationService, hakukohtees,
+                                                   selectedLocale) {
     $log = $log.getInstance('ShowKoulutusHakukohtees');
     $log.debug('init...');
     $scope.model = {};
@@ -776,7 +805,9 @@ app.controller('ShowKoulutusHakukohtees', function($scope, $log, $modalInstance,
  *
  *
  */
-app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalInstance, LocalisationService, Config, TarjontaService, OrganisaatioService, organisaatioOids, selectedLocale, selectedKoulutukses, toisenAsteenKoulutus) {
+app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalInstance, LocalisationService,
+           Config, TarjontaService, OrganisaatioService, organisaatioOids, selectedLocale, selectedKoulutukses,
+           toisenAsteenKoulutus) {
     $log = $log.getInstance('HakukohdeLiitaKoulutusModalCtrl');
     $log.debug('init...');
     /*
@@ -883,7 +914,8 @@ app.controller('HakukohdeLiitaKoulutusModalCtrl', function($scope, $log, $modalI
                         });
                         if (foundKoulutusInHakukohde === undefined) {
                             if (toisenAsteenKoulutus) {
-                                if (koulutus.koulutuskoodi === hakukohteenKoulutuskoodi && koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
+                                if (koulutus.koulutuskoodi === hakukohteenKoulutuskoodi &&
+                                    koulutus.pohjakoulutusvaatimus.fi === hakukohteenPohjakoulutusvaatimus.fi) {
                                     prev.push(koulutus);
                                 }
                             }

@@ -2,7 +2,7 @@
 /*
  * Apudirektiivi scope-muuttujien julkaisemiseksi parent-konteksteissa; mahdollistaa esim. direktivissä
  * luotuun formiin käsiksipääsemisen direktiiviä kutsuvasta kontrollerista.
- * 
+ *
  * Käytännössä linkittää tämän direktiivin 'model'-parametrin osoittaman olion yläscopeen 'name' -parametrin osoittamalla nimellä.
  * Em. yläscope etsitään  käymällä scope-hierarkiaa läpi kunnes löytyy scope, jonka 'condition' -parametrin
  * palauttama funktio palauttaa toden ajettaessa sitä em. scope parametrinä. Jos sopiva scopea ei löydy, muuttujaa ei linkitetä.

@@ -29,7 +29,9 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl', [
     'TarjontaOsoiteField',
     'ExportToParent'
 ]);
-app.controller('HakukohdeEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService, Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout, TarjontaService, Kuvaus, CommonUtilService, HAKUTAPA) {
+app.controller('HakukohdeEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
+               Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout,
+               TarjontaService, Kuvaus, CommonUtilService, HAKUTAPA) {
     $log = $log.getInstance('HakukohdeEditController');
     // Get organisation groups, see "tarjontaApp.js" routing resolve for hakukohde/id/edit
     var organisationGroups = $route.current.locals.organisationGroups || [];
@@ -70,7 +72,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             if (kohdeJoukkoUriNoVersion == window.CONFIG.app['haku.kohdejoukko.kk.uri']) {
                 if (haku.koulutuksenAlkamiskausiUri && haku.koulutuksenAlkamisVuosi) {
                     //OVT-6800 --> Rajataan koulutuksen alkamiskaudella ja vuodella
-                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                    if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
+                        && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
                         filteredHakus.push(haku);
                     }
                 }
@@ -115,7 +118,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                         filteredHakus.push(haku);
                     }
                 }
-                else if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
+                else if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
+                    && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
                     filteredHakus.push(haku);
                 }
             }
@@ -132,7 +136,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
     };
     var loadKoodistoNimi = function() {
         if ($scope.model.hakukohde.hakukohteenNimiUri) {
-            Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, AuthService.getLanguage()).then(function(data) {
+            Koodisto.searchKoodi($scope.model.hakukohde.hakukohteenNimiUri, AuthService.getLanguage())
+            .then(function(data) {
                 $scope.model.koodistonimi = data;
             });
         }
@@ -141,7 +146,10 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         if (toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO' || toteutusTyyppi === 'LUKIOKOULUTUS') {
             return filterHakusForAmmatillinenAndLukio;
         }
-        else if (toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS') {
+        else if (toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS'
+            || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS') {
             return filterHakusForAmmatillinenValmistavaAndLisaopetus;
         }
         else if (toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS') {
@@ -191,10 +199,12 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         }
         var populateHakukohteenNimetByKoulutus = function(koulutus) {
             var pohjakoulutusvaatimus = koulutus.pohjakoulutusvaatimus;
-            Koodisto.getAlapuolisetKoodit(koulutus.koulutusohjelma.uri, AuthService.getLanguage()).then(function(koulutusohjelmanKoodit) {
+            Koodisto.getAlapuolisetKoodit(koulutus.koulutusohjelma.uri, AuthService.getLanguage())
+            .then(function(koulutusohjelmanKoodit) {
                 angular.forEach(koulutusohjelmanKoodit, function(koulutusohjelmanKoodi) {
                     if (koulutusohjelmanKoodi.koodiKoodisto === 'hakukohteet') {
-                        Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage()).then(function(hakukohteenYlapuolisetKoodit) {
+                        Koodisto.getYlapuolisetKoodit(koulutusohjelmanKoodi.koodiUri, AuthService.getLanguage())
+                        .then(function(hakukohteenYlapuolisetKoodit) {
                             angular.forEach(hakukohteenYlapuolisetKoodit, function(hakukohteenYlapuolinenKoodi) {
                                 if (hakukohteenYlapuolinenKoodi.koodiUri === pohjakoulutusvaatimus.uri) {
                                     var hakukohteenNimi = {
@@ -283,7 +293,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                 angular.forEach(haku.hakuaikas, function(hakuaika) {
                     var formattedStartDate = $scope.createFormattedDateString(hakuaika.alkuPvm);
                     var formattedEndDate = $scope.createFormattedDateString(hakuaika.loppuPvm);
-                    hakuaika.formattedNimi = resolveLocalizedValue(hakuaika.nimet) + ', ' + formattedStartDate + ' - ' + formattedEndDate;
+                    hakuaika.formattedNimi = resolveLocalizedValue(hakuaika.nimet) + ', '
+                                                + formattedStartDate + ' - ' + formattedEndDate;
                     $scope.model.hakuaikas.push(hakuaika);
                 });
                 $scope.model.showHakuaikas = true;

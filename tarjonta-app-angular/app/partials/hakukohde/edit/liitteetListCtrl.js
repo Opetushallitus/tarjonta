@@ -1,5 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
-app.controller('LiitteetListController', function($scope, $q, LocalisationService, OrganisaatioService, Koodisto, Hakukohde, Liite, dialogService, HakuService, $modal, Config, $location, TarjontaService, HakukohdeService) {
+app.controller('LiitteetListController', function($scope, $q, LocalisationService, OrganisaatioService, Koodisto,
+                Hakukohde, Liite, dialogService, HakuService, $modal, Config, $location, TarjontaService,
+                HakukohdeService) {
     $scope.model = $scope.model || {};
     $scope.liitteetModel = {};
     $scope.liitteetModel.opetusKielet = [];
@@ -68,7 +70,11 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                 }
             }
             if (!found) {
-                HakukohdeService.addLiite($scope.model.hakukohde, kieliUri, $scope.model.liitteidenToimitusOsoite[kieliUri]);
+                HakukohdeService.addLiite(
+                    $scope.model.hakukohde,
+                    kieliUri,
+                    $scope.model.liitteidenToimitusOsoite[kieliUri]
+                );
             }
         }
     }
@@ -88,7 +94,8 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         $scope.liitteetModel.opetusKielet = [];
         for (var i in $scope.liitteetModel.langs) {
             var koodiUri = $scope.liitteetModel.langs[i].koodiUri;
-            if ($scope.model.hakukohde.opetusKielet.indexOf(koodiUri) !== -1 || $scope.liitteetModel.selectedLangs.indexOf(koodiUri) !== -1) {
+            if ($scope.model.hakukohde.opetusKielet.indexOf(koodiUri) !== -1
+                || $scope.liitteetModel.selectedLangs.indexOf(koodiUri) !== -1) {
                 $scope.liitteetModel.opetusKielet.push($scope.liitteetModel.langs[i]);
                 $scope.liitteetModel.selectedTab[koodiUri] = !initialTabSelected;
                 initialTabSelected = true;
@@ -218,7 +225,11 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     $scope.status.validateLiitteet = function() {
         for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
             var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
-            if (!notEmpty(li.liitteenNimi) && !notEmpty(li.liitteenTyyppi) || !notEmpty(li.toimitettavaMennessa) || !$scope.isValidSahkoinenOsoite(li) || !$scope.isValidToimitusOsoite(li)) {
+            if (!notEmpty(li.liitteenNimi)
+                && !notEmpty(li.liitteenTyyppi)
+                || !notEmpty(li.toimitettavaMennessa)
+                || !$scope.isValidSahkoinenOsoite(li)
+                || !$scope.isValidToimitusOsoite(li)) {
                 return false;
             }
         }
@@ -242,7 +253,13 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         liitetyypit.push(Koodisto.getKoodi('liitetyypitamm', 'liitetyypitamm_1', $scope.model.userLang));
         liitetyypit.push(Koodisto.getKoodi('liitetyypitamm', 'liitetyypitamm_2', $scope.model.userLang));
         liitetyypit.push(Koodisto.getKoodi('liitetyypitamm', 'liitetyypitamm_4', $scope.model.userLang));
-        if (toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' || toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' || toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' || toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+        if (toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS'
+            || toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS'
+            || toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'
+            || toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
             liitetyypit.push(Koodisto.getKoodi('liitetyypitamm', 'liitetyypitamm_3', $scope.model.userLang));
         }
         angular.forEach(liitetyypit, function(koodiPromise) {

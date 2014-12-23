@@ -32,10 +32,10 @@ angular.module('Yhteyshenkilo', [
             }
         });
         /**
-                   * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
-                   *
-                   * @returns {undefined}
-                   */
+        * Call this to disable system error dialog - note: only callable from ERROR handler of resource call!
+        *
+        * @returns {undefined}
+        */
         function disableSystemErrorDialog() {
             var loadingService = $injector.get('loadingService');
             if (loadingService) {
@@ -48,9 +48,9 @@ angular.module('Yhteyshenkilo', [
         }
         return {
             /**
-	    * Etsii henkilöitä
-	    * @returns promise
-	    */
+            * Etsii henkilöitä
+            * @returns promise
+            */
             etsi: function(hakuehdot) {
                 var ret = $q.defer();
                 henkHaku.get(hakuehdot, function(result) {
@@ -63,9 +63,9 @@ angular.module('Yhteyshenkilo', [
                 return ret.promise;
             },
             /**
-	    * Hakee henkilon tiedot(yhteystiedot)
-	    * @returns promise
-	    */
+            * Hakee henkilon tiedot(yhteystiedot)
+            * @returns promise
+            */
             haeHenkilo: function(oid) {
                 var hakuehdot = {
                     oid: oid
@@ -83,9 +83,9 @@ angular.module('Yhteyshenkilo', [
                 return ret.promise;
             },
             /**
-	    * Hakee organisaatiohenkilon tiedot(tehtavanimike)
-	    * @returns promise
-	    */
+            * Hakee organisaatiohenkilon tiedot(tehtavanimike)
+            * @returns promise
+            */
             haeOrganisaatiohenkilo: function(oid) {
                 var hakuehdot = {
                     oid: oid

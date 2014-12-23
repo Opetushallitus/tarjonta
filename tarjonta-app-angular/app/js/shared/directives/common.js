@@ -26,18 +26,21 @@ app.directive('kuvaus', function() {
             lang: '=',
             tt: '='
         },
-        template: '<div>jhhjhkkk<br/><div tt="tt"></div>' + '<div class="help" tt="{{tt}}"></div>' + '<textarea ui-tinymce></textarea>' + '</div>',
+        template: '<div>jhhjhkkk<br/><div tt="tt"></div>' + '<div class="help" tt="{{tt}}"></div>' +
+                    '<textarea ui-tinymce></textarea>' + '</div>',
         link: function(scope, element, attrs, ngModel) {
             console.log('foo'); // scope.getKuvausApiModelLanguageUri($parse(atts.ngModel), lang);
         }
     };
-}) /**
- *
- * tulostaa koodin nimen
- *
- * <koodi uri="jokukoodi_22" lang="fi">
- *
- */ .directive('koodi', function(Koodisto) {
+})
+/**
+*
+* tulostaa koodin nimen
+*
+* <koodi uri="jokukoodi_22" lang="fi">
+*
+*/
+.directive('koodi', function(Koodisto) {
     return {
         restrict: 'EA',
         link: function(scope, element, attrs) {
@@ -49,7 +52,8 @@ app.directive('kuvaus', function() {
             });
         }
     };
-}) /**
+})
+/**
  * tulostaa päivämäärän: <t-show-date value="haku.alkoitusPvm" timestamp/>
  * <t-show-date value="haku.alkoitusPvm" timestamp/> <div t-show-date
  * value="haku.alkoitusPvm" timestamp>replaced</div> <div t-show-date
@@ -57,7 +61,8 @@ app.directive('kuvaus', function() {
  *
  * mikäli arvo ei ole määritelty asettaa watchin ja hoitaa tulostuksen heti kun
  * mahdollista, eli ts dataa ei tarvitse ladata routessa valmiiksi
- */ .directive('tShowDate', function($filter) {
+ */
+.directive('tShowDate', function($filter) {
     return {
         restrict: 'EA',
         link: function(scope, element, attrs) {

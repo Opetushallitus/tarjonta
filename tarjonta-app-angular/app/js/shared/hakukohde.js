@@ -134,7 +134,8 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
     return {
         removeKoulutuksesFromHakukohde: function(hakukohdeOid, koulutusOids) {
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid + '/koulutukset';
+                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' +
+                    hakukohdeOid + '/koulutukset';
                 $http.post(hakukohdeKoulutusUri, koulutusOids, {
                     withCredentials: true,
                     headers: {
@@ -150,7 +151,8 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         addKoulutuksesToHakukohde: function(hakukohdeOid, koulutusOids) {
             var promise = $q.defer();
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid + '/koulutukset/lisaa';
+                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid +
+                    '/koulutukset/lisaa';
                 $http.post(hakukohdeKoulutusUri, koulutusOids, {
                     withCredentials: true,
                     headers: {
@@ -167,7 +169,8 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         getKoulutusHakukohdes: function(koulutusOid) {
             var promise = $q.defer();
             if (koulutusOid !== undefined) {
-                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix + 'koulutus/' + koulutusOid + '/hakukohteet';
+                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix + 'koulutus/' + koulutusOid +
+                    '/hakukohteet';
                 $http.get(getKoulutusHakukohdesUri).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
@@ -182,7 +185,8 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         getHakukohdeKoulutukses: function(hakukohdeOid) {
             if (hakukohdeOid !== undefined) {
                 var promise = $q.defer();
-                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid + '/koulutukset';
+                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid +
+                    '/koulutukset';
                 $http.get(getHakukohdeKoulutuksesUri).success(function(data) {
                     promise.resolve(data);
                 }).error(function(data) {
@@ -227,10 +231,8 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         hakukohde.painotettavatOppiaineet.push(po);
     }
     /**
-       * Lisää hakukohteeseen valintakokeen-
-       * @param hakukohde
-       * @param kieliUri
-       */
+    * Lisää hakukohteeseen valintakokeen
+    */
     function addValintakoe(hakukohde, kieliUri) {
         var vk = {
             hakukohdeOid: hakukohde.oid,
@@ -247,9 +249,8 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         return vk;
     }
     /**
-       * Lisää hakukohteeseen liitteen jos siinä ei ole vielä yhtään.
-       * @param hakukohde
-       */
+    * Lisää hakukohteeseen liitteen jos siinä ei ole vielä yhtään.
+    */
     function addLiiteIfEmpty(hakukohde) {
         if (!hakukohde.hakukohteenLiitteet) {
             hakukohde.hakukohteenLiitteet = [];
@@ -260,21 +261,16 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         }
     }
     /**
-       * Lisää hakukohteeseen liitteen (opetuskieli[0]).
-       * @param hakukohde
-       * @param kieliUri
-       */
+    * Lisää hakukohteeseen liitteen (opetuskieli[0]).
+    */
     function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
         var liite = newLiite(hakukohde, kieliUri, liitteidenToimitusosoite);
         hakukohde.hakukohteenLiitteet.push(liite);
         $rootScope.$broadcast('liiteAdded', liite);
     }
     /**
-       * Luo liitte objektin
-       * @param hakukohdeOid
-       * @param kieliUri
-       * @param liitteidenToimitusosoite
-       */
+    * Luo liite objektin
+    */
     function newLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
         var kuvaukset = {};
         kuvaukset[kieliUri] = '';

@@ -80,11 +80,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         });
     };
     /**
-       * Convert person data to UI format.
-       *
-       * @param {type} person
-       * @returns {person}
-       */
+    * Convert person data to UI format.
+    *
+    * @param {type} person
+    * @returns {person}
+    */
     factory.converPersonObjectForUi = function(person) {
         if (factory.isNull(person)) {
             factory.throwError('Contact percon cannot be null');
@@ -93,11 +93,8 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         return person; //dummy
     };
     /**
-       * Convert koodisto component data model to API meta model.
-       *
-       * @param {type} json object map
-       * @param {type} koodisto component object
-       */
+    * Convert koodisto component data model to API meta model.
+    */
     factory.convertKoodistoComboToMetaDTO = function(metaMap, kbObj) {
         if (factory.isNull(kbObj)) {
             return {}; //return an empty object;
@@ -108,10 +105,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         return factory.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio);
     };
     /**
-       * Convert koodisto component data model to API koodi model.
-       *
-       * @param {type} koodisto component object
-       */
+    * Convert koodisto component data model to API koodi model.
+    *
+    * @param {type} kbObj component object
+    */
     factory.convertKoodistoComboToKoodiDTO = function(kbObj) {
         if (factory.isNull(kbObj)) {
             return {}; //return an empty object;
@@ -132,11 +129,6 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             'koodi': factory.apiModelUri(kbObj.koodiUri, kbObj.koodiVersio)
         };
     };
-    /**
-       * @param string value
-       * @param {'data' : [koodisto koodis], 'uri : 'koodisto_uri'} uiModel
-       * @returns {@exp;factory@call;convertKoodistoComboToKoodiDTO}
-       */
     factory.convertKoodistoComboToKoodiUiDTO = function(arvo, uiModel) {
         //uiModel.data; all option data items from a koodisto in 'Tarjonta KoodiType' objects.
         //convert only the selected koodi URI.
@@ -274,13 +266,14 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         };
     };
     /**
-       * Create full data model for tarjonta rest service.
-       *
-       * @param {type} apiModel
-       * @returns {undefined}
-       */
+    * Create full data model for tarjonta rest service.
+    *
+    * @param {type} apiModel
+    * @returns {undefined}
+    */
     factory.createAPIModel = function(apiModel, languages, toteutustyyppi) {
-        if (angular.isUndefined(languages) || !angular.isArray(languages) || languages.length === 0 || angular.isUndefined(toteutustyyppi) || toteutustyyppi === null) {
+        if (angular.isUndefined(languages) || !angular.isArray(languages) || languages.length === 0 ||
+            angular.isUndefined(toteutustyyppi) || toteutustyyppi === null) {
             factory.throwError('No default language uris, array must have at least one language uri.');
         }
         angular.forEach(factory.STRUCTURE[toteutustyyppi].MLANG, function(value, key) {
@@ -347,11 +340,11 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         $log.debug('createAPIModel', apiModel);
     };
     /**
-       * Osalla koulutuksista tutkinto-ohjelma kirjoitetaan vapaasti käsin,
-       * mutta kuitenkin pitää tallentaa myös koodiston arvo. Tästä syystä
-       * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), joten
-       * sen arvo asetetaan automaattisesti tällä funktiolla.
-       */
+    * Osalla koulutuksista tutkinto-ohjelma kirjoitetaan vapaasti käsin,
+    * mutta kuitenkin pitää tallentaa myös koodiston arvo. Tästä syystä
+    * ei näytetä koodisto-dropdownia (kuten muilla koulutuksilla), joten
+    * sen arvo asetetaan automaattisesti tällä funktiolla.
+    */
     function koulutusohjelmanNimiKannassaInit($scope) {
         if (!$scope.model.koulutusohjelmanNimiKannassa) {
             $scope.model.koulutusohjelmanNimiKannassa = {};
@@ -1034,36 +1027,39 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
         /*******************************************/
         /* AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
-        AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koulutustyyppiKoodiUri: 'koulutustyyppi_7',
-            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
-                pohjakoulutusvaatimus: {
-                    module: 'TUTKINTO'
-                }
-            })
-        }),
+        AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS:
+            angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_7',
+                RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                    pohjakoulutusvaatimus: {
+                        module: 'TUTKINTO'
+                    }
+                })
+            }),
         /*******************************************/
         /* MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
-        MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koulutustyyppiKoodiUri: 'koulutustyyppi_8',
-            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
-                pohjakoulutusvaatimus: {
-                    module: 'TUTKINTO'
-                }
-            })
-        }),
+        MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+            angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_8',
+                RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                    pohjakoulutusvaatimus: {
+                        module: 'TUTKINTO'
+                    }
+                })
+            }),
         /*******************************************/
         /* MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/
-        MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
-            koulutustyyppiKoodiUri: 'koulutustyyppi_9',
-            RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
-                pohjakoulutusvaatimus: {
-                    module: 'TUTKINTO'
-                }
-            })
-        }),
+        MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS:
+            angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE, {
+                koulutustyyppiKoodiUri: 'koulutustyyppi_9',
+                RELATION: angular.extend({}, GENERIC_VALMISTAVA_STRUCTURE.RELATION, {
+                    pohjakoulutusvaatimus: {
+                        module: 'TUTKINTO'
+                    }
+                })
+            }),
         /*******************************************/
         /* VAPAAN_SIVISTYSTYON_KOULUTUS INITIALIZATION PARAMETERS  */
         /*******************************************/

@@ -78,7 +78,9 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                     if ($scope.version !== undefined && $scope.version) {
                         addVersionToKoodis(koodisParam);
                     }
-                    $scope.koodis = filterKoodis($scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri, koodisParam);
+                    $scope.koodis = filterKoodis($scope.filterwithkoodistouri ?
+                        $scope.filterwithkoodistouri :
+                        $scope.koodistouri, koodisParam);
                     console.log(' $scope.koodis', $scope.koodis);
                 }
                 else {
@@ -112,7 +114,7 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                     }
                 }
             };
-            if ($scope.isrequired !== undefined && $scope.isrequired === 'true' || $scope.isrequired) {
+            if ($scope.isrequired) {
                 $scope.valuerequired = true;
             }
             else {
@@ -347,7 +349,9 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                 return koodi.koodiArvo === perustutkintoHakukohdeKoodi.koodiArvo;
             });
         }
-        var hakukohdeArvo = filteredHakukohdeKoodis && filteredHakukohdeKoodis.length > 0 ? filteredHakukohdeKoodis[0].koodiArvo : null;
+        var hakukohdeArvo = filteredHakukohdeKoodis && filteredHakukohdeKoodis.length > 0 ?
+            filteredHakukohdeKoodis[0].koodiArvo :
+            null;
         if (hasIdenticalKoodiArvos(hakukohdeArvo, filteredHakukohdeKoodis)) {
             //all hakukohde uris should be indetical, remove duplicates by adding only the first one to array.
             resultUris.push(filteredHakukohdeKoodis[0]);
@@ -394,7 +398,9 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                 }
             };
             var processAlapuolisetKoodit = function(koodisParam) {
-                return filterKoodis($scope.mapFilterDublicates, $scope.filterwithkoodistouri ? $scope.filterwithkoodistouri : $scope.koodistouri, koodisParam);
+                return filterKoodis($scope.mapFilterDublicates, $scope.filterwithkoodistouri ?
+                    $scope.filterwithkoodistouri :
+                    $scope.koodistouri, koodisParam);
             };
             var addKoodiToKoodiUri = function(koodiversio) {
                 if ($scope.koodiuri) {
@@ -457,9 +463,11 @@ app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
                             $q.all(koodiPromises).then(function(data) {
                                 var filteredOsaamisalaKoodis = [];
                                 angular.forEach(data, function(koodis) {
-                                    filteredOsaamisalaKoodis = filteredOsaamisalaKoodis.concat(processAlapuolisetKoodit(koodis));
+                                    filteredOsaamisalaKoodis =
+                                        filteredOsaamisalaKoodis.concat(processAlapuolisetKoodit(koodis));
                                 });
-                                var arr = aikuFilter(filteredOsaamisalaKoodis, filterHakukohdePerustutkinto(koulutusRelationResult, $scope.koodistouri));
+                                var arr = aikuFilter(filteredOsaamisalaKoodis,
+                                    filterHakukohdePerustutkinto(koulutusRelationResult, $scope.koodistouri));
                                 addVersionToKoodis(arr);
                                 $scope.koodis = arr;
                             });

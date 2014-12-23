@@ -12,7 +12,8 @@ app.controller('HakuEditSelectOrganisationsController', [
     '$log',
     'organisaatioOids',
     // injected from  hakuEditControllers.js
-    'treeId', function($modalInstance, $q, $scope, OrganisaatioService, AuthService, PermissionService, $location, $log, organisaatioOids, treeId) {
+    'treeId', function($modalInstance, $q, $scope, OrganisaatioService, AuthService,
+                       PermissionService, $location, $log, organisaatioOids, treeId) {
         $log = $log.getInstance('HakuEditSelectOrganisationsController');
         $log.info('HakuEditSelectOrganisationsController()...');
         $log.info('SCOPE: ', $scope);

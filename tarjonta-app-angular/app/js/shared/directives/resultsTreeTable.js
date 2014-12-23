@@ -55,7 +55,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //console.log("DELEGATE getLink", $scope.getLink);
             try {
                 return $scope.getLink() && $scope.getLink()(row);
-            } catch ( err ) {
+            }
+            catch (err) {
                 console.log(err);
                 return null;
             }
@@ -64,7 +65,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //console.log("DELEGATE getIdentifier", $scope.getIdentifier);
             try {
                 return $scope.getIdentifier() && $scope.getIdentifier()(row);
-            } catch ( err ) {
+            }
+            catch (err) {
                 console.log(err);
                 return null;
             }
@@ -73,7 +75,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //console.log("DELEGATE getChildren", $scope.getChildren);
             try {
                 return $scope.getChildren() && $scope.getChildren()(row);
-            } catch ( err ) {
+            }
+            catch (err) {
                 console.log(err);
                 return null;
             }
@@ -83,7 +86,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             var ret = $scope.getContent() && $scope.getContent()(row, col);
             try {
                 return ret == null || ret == undefined ? '' : ret;
-            } catch ( err ) {
+            }
+            catch (err) {
                 console.log(err);
                 return null;
             }
@@ -92,7 +96,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //console.log("DELEGATE getOptions", $scope.getOptions);
             try {
                 return $scope.getOptions() && $scope.getOptions()(row, actions);
-            } catch ( err ) {
+            }
+            catch (err) {
                 console.log(err);
                 return null;
             }
@@ -101,7 +106,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //console.log("DELEGATE getCssClass", $scope.getCssClass);
             try {
                 return $scope.getCssClass() && $scope.getCssClass()(row, col);
-            } catch ( err ) {
+            }
+            catch (err) {
                 console.log(err);
                 return null;
             }
@@ -351,7 +357,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             }
             // foldaus
             if (getChildren(row)) {
-                html = html + '<a class="fold" href>' + '<img src="img/triangle_down.png" class="folded"/>' + '<img src="img/triangle_right.png" class="unfolded"/>' + '</a> ';
+                html = html + '<a class="fold" href>' + '<img src="img/triangle_down.png" class="folded"/>' +
+                    '<img src="img/triangle_right.png" class="unfolded"/>' + '</a> ';
             }
             else {
                 html = html + '<span class="leaf">&nbsp;</span>';
@@ -478,7 +485,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //  - jokaiselle rivi-oliolle luodaan näyttämisen yhteydessä funktiot $update() ja $delete(),
             //    joilla rivi voidaan päivittää tai poistaa (näitä voidaan kutsua mistä tahansa mutta
             //    tällöin tulee aina ottaa huomioon että riviä ei ole välttämättä ehditty vielä näyttää
-            //    jolloin em. funktioitakaan ei ole). 
+            //    jolloin em. funktioitakaan ei ole).
             columns: '=',
             // (array) lista sarakkeiden nimistä jotka näytetään (poislukien otsikko), siinä
             //   järjestyksessä kun ne näytetään; HUOM! muutokset sarakkeisiin tulevat voimaan modelin
@@ -492,7 +499,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //  - jos null|undefined|false, näytetään otsikkorivinä (eli ilman linkkiä)
             getIdentifier: '&',
             // function(row): hakee rivin tunnisteen valintaa varten
-            //  - jos null|undefined, valinta(checkbox) valitsee kaikki alarivit 
+            //  - jos null|undefined, valinta(checkbox) valitsee kaikki alarivit
             getChildren: '&',
             // function(row): hakee riville alarivit (array)
             getContent: '&',

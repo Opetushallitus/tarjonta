@@ -13,14 +13,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 'use strict';
-console.log('process-load');
 angular.module('Process', [
     'ngResource',
     'config',
     'Logging'
-]) /**
+])
+/**
  * Process resource
- */ .factory('ProcessV1', function($resource, $log, Config) {
+ */
+.factory('ProcessV1', function($resource, $log, Config) {
     $log = $log.getInstance('ProcessV1');
     $log.info('ProcessV1()');
     var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'process/:id';
@@ -42,9 +43,11 @@ angular.module('Process', [
             }
         }
     });
-}) /**
+})
+/**
  * Process Service
- */ .factory('ProcessV1Service', function($log, $q, ProcessV1, LocalisationService, AuthService) {
+ */
+.factory('ProcessV1Service', function($log, $q, ProcessV1, LocalisationService, AuthService) {
     $log = $log.getInstance('ProcessV1Service');
     var defaultPollingTime = 10000;
     var polls = {};
@@ -75,4 +78,3 @@ angular.module('Process', [
         }
     };
 });
-console.log('process-load-ok');

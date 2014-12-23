@@ -84,7 +84,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             else {
                 $scope.date = dateToString($scope.model);
                 $scope.time = timeToString($scope.model);
-                $scope.scopeModel = $scope.type == 'object' ? $scope.model : isNaN($scope.model.getTime()) ? undefined : $scope.model.getTime();
+                $scope.scopeModel = $scope.type == 'object' ? $scope.model : isNaN($scope.model.getTime()) ?
+                    undefined :
+                    $scope.model.getTime();
             }
         }
         function trimSplit(v, s) {
@@ -171,11 +173,12 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         };
         $scope.onModelChanged = function() {
             var nd = $scope.model;
-            var dd = 0,
-                dm = 0,
-                dy = thisyear,
-                th = 0,
-                tm = 0;
+            var dd = 0;
+            var dm = 0;
+            var dy = thisyear;
+            var th = 0;
+            var tm = 0;
+
             if ($scope.model) {
                 dd = $scope.model.getDate();
                 dm = $scope.model.getMonth();
@@ -236,7 +239,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 }
                 if (!isNaN(nd.getTime())) {
                     omitUpdate = true;
-                    //    				var cd = applyConstraints(nd); // nd; // 
+                    //    				var cd = applyConstraints(nd); // nd; //
                     //    				violation = cd.getTime() == nd.getTime() ? null : nd;
                     $scope.model = nd; // cd;
                 }
@@ -273,7 +276,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                         });
                     }
                     $scope.calendar = [];
-                    $scope.model = ctrl.model instanceof Date ? applyConstraints(new Date(ctrl.model.getTime())) : applyConstraints(new Date());
+                    $scope.model = ctrl.model instanceof Date ?
+                        applyConstraints(new Date(ctrl.model.getTime())) :
+                        applyConstraints(new Date());
                     $scope.select = {
                         m: $scope.model.getMonth(),
                         y: $scope.model.getFullYear()
@@ -322,7 +327,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                                     other: d.getMonth() != $scope.model.getMonth(),
                                     vkl: j >= 5,
                                     disabled: violatesConstraints(d),
-                                    selected: d.getDate() == $scope.model.getDate() && d.getMonth() == $scope.model.getMonth() && d.getFullYear() == $scope.model.getFullYear()
+                                    selected: d.getDate() == $scope.model.getDate() &&
+                                        d.getMonth() == $scope.model.getMonth() &&
+                                        d.getFullYear() == $scope.model.getFullYear()
                                 });
                                 d.setDate(d.getDate() + 1);
                             }
@@ -408,7 +415,8 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 if (scope.isDisabled()) {
                     return false;
                 }
-                return attrs.required && attrs.required !== 'false' || attrs.ngRequired === 'enabled' || scope.ngRequired();
+                return attrs.required && attrs.required !== 'false' ||
+                    attrs.ngRequired === 'enabled' || scope.ngRequired();
             };
             if (scope.name && !angular.isUndefined(controller)) {
                 controller.$addControl({

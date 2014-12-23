@@ -20,7 +20,7 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
         };
         /*
              * Find next node parents and store the items to a map.
-             * 
+             *
              * @param {string} komoOid
              * @returns promise
              */
@@ -67,11 +67,11 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
             });
         };
         /*
-             * Find next node childs and store the items to a map.
-             * 
-             * @param {string} komoOid
-             * @returns promise
-             */
+         * Find next node childs and store the items to a map.
+         *
+         * @param {string} komoOid
+         * @returns promise
+         */
         factoryScope.searchChildsByKomoOid = function(komoOid) {
             var deferred = $q.defer();
             var resource = TarjontaService.resourceLink.get({
@@ -127,8 +127,8 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             $scope.reviewMode = false;
         }
         /*
-             * Create and clear tree data objects.
-             */
+         * Create and clear tree data objects.
+         */
         $scope.createTreeData = function() {
             $scope.requests = 0;
             $scope.tree = {
@@ -146,8 +146,8 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             };
         };
         /*
-             * Create data objects for a tree by recursive loop.
-             */
+         * Create data objects for a tree by recursive loop.
+         */
         $scope.getCreateChildren = function(map, oid, tree, options, recursive) {
             $scope.tree.visibleOids[oid] = {};
             TarjontaService.haeKoulutukset({
@@ -205,13 +205,13 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             promise.then(function(map) {
                 angular.forEach(map, function(val, parentKey) {
                     if (_.has($scope.tree.map, parentKey)) {
-                        //data found by key oid, only add/override missing data 
+                        //data found by key oid, only add/override missing data
                         angular.forEach(map[parentKey].childs, function(val, key) {
                             $scope.tree.map[parentKey].childs[key] = val;
                         });
                     }
                     else {
-                        //no data data -> full  data copy, 
+                        //no data data -> full  data copy,
                         $scope.tree.map[parentKey] = map[parentKey];
                     }
                 });
@@ -219,8 +219,8 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             });
         };
         /*
-             * TODO : change 'treeid' to more dynamic.
-             */
+         * TODO : change 'treeid' to more dynamic.
+         */
         $scope.$watch('treeid.currentNode', function(newObj, oldObj) {
             if ($scope.treeid && angular.isObject($scope.treeid.currentNode)) {
                 var oid = $scope.treeid.currentNode.oid;
@@ -239,9 +239,9 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
             }
         }, false);
         /*
-             * HANDLE SELECT DATA CHANGES
-             * - the search process starts and ends here.
-             */
+         * HANDLE SELECT DATA CHANGES
+         * - the search process starts and ends here.
+         */
         $scope.$watch('oids', function(newValue, oldValue) {
             if (newValue.length > 0 && (newValue !== oldValue || angular.isUndefined($scope.tree))) {
                 $scope.createTreeData();
@@ -267,7 +267,7 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
         controller: controller,
         scope: {
             lang: '@',
-            //lang code like 'fi'     
+            //lang code like 'fi'
             reviewMode: '@',
             // delfaut : false, allow edit
             oids: '=',

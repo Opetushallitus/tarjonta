@@ -40,7 +40,7 @@ app.factory('MyRolesModel', function($http, $log, Config) {
             lang: 'fi',
             groups: []
         };
-        instance.userinfo = Config.env.cas !== undefined ? Config.env.cas.userinfo || defaultUserInfo : defaultUserInfo;
+        instance.userinfo = Config.env.cas && Config.env.cas.userinfo || defaultUserInfo;
         instance.myroles = instance.userinfo.groups;
         /**
              * prosessoi roolilistan läpi ja poimii tietoja, esim organisaatiot
@@ -91,7 +91,9 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
     // CRUD ||UPDATE || READ
     var readAccess = function(service, org) {
         //$log.info("readAccess()", service, org);
-        return MyRolesModel.myroles.indexOf(service + READ + '_' + org) > -1 || MyRolesModel.myroles.indexOf(service + UPDATE + '_' + org) > -1 || MyRolesModel.myroles.indexOf(service + CRUD + '_' + org) > -1;
+        return MyRolesModel.myroles.indexOf(service + READ + '_' + org) > -1 ||
+            MyRolesModel.myroles.indexOf(service + UPDATE + '_' + org) > -1 ||
+            MyRolesModel.myroles.indexOf(service + CRUD + '_' + org) > -1;
     };
     // CRUD ||UPDATE
     var updateAccess = function(service, org) {
@@ -104,7 +106,8 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             return MyRolesModel.myroles.indexOf(updateKey) > -1 || MyRolesModel.myroles.indexOf(crudKey) > -1;
         }
         else {
-            return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 || MyRolesModel.myroles.indexOf(service + CRUD) > -1;
+            return MyRolesModel.myroles.indexOf(service + UPDATE) > -1 ||
+                MyRolesModel.myroles.indexOf(service + CRUD) > -1;
         }
     };
     // CRUD
@@ -156,48 +159,39 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             return Config.env.cas.userinfo.uid !== undefined;
         },
         /**
-             * onko käyttäjällä lukuoikeus, palauttaa promisen
-             * @param service
-             * @param orgOid
-             * @returns
-             */
+         * onko käyttäjällä lukuoikeus, palauttaa promisen
+         */
         readOrg: function(orgOid, service) {
             return accessCheck(service || 'APP_TARJONTA', orgOid, readAccess);
         },
         /**
-             * onko käyttäjällä päivitysoikeus, palauttaa promisen
-             * @param service
-             * @param orgOid
-             * @returns
-             */
+         * onko käyttäjällä päivitysoikeus, palauttaa promisen
+         */
         updateOrg: function(orgOid, service) {
             return accessCheck(service || 'APP_TARJONTA', orgOid, updateAccess);
         },
         /**
-             * onko käyttäjällä crud oikeus, palauttaa promisen
-             * @param orgOid
-             * @param service
-             * @returns
-             */
+         * onko käyttäjällä crud oikeus, palauttaa promisen
+         */
         crudOrg: function(orgOid, service) {
             //        	$log.debug("crudorg", orgOid, service);
             return accessCheck(service || 'APP_TARJONTA', orgOid, crudAccess);
         },
         /**
-             * Palauttaa käyttäjän kielen, tai oletuksena suomi jos ei määritelty.
-             */
+         * Palauttaa käyttäjän kielen, tai oletuksena suomi jos ei määritelty.
+         */
         getLanguage: function() {
             return MyRolesModel.userinfo.lang || 'FI';
         },
         /**
-             * Palauttaa käyttäjän oidin
-             */
+         * Palauttaa käyttäjän oidin
+         */
         getUserOid: function() {
             return MyRolesModel.userinfo.oid;
         },
         /**
-             * Palauttaa oletus käyttäjän tarjonnalle
-             */
+         * Palauttaa oletus käyttäjän tarjonnalle
+         */
         getUserDefaultOid: function() {
             var orgs = this.getOrganisations([
                 'APP_TARJONTA_CRUD',
@@ -217,36 +211,23 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             }
         },
         /**
-             * Palauttaa käyttäjän etunimen
-             */
+         * Palauttaa käyttäjän etunimen
+         */
         getFirstName: function() {
             return MyRolesModel.userinfo.firstName;
         },
         /**
-             * Palauttaa käyttäjän etunimen
-             */
+         * Palauttaa käyttäjän etunimen
+         */
         getLastName: function() {
             return MyRolesModel.userinfo.lastName;
         },
         isUserOph: function() {
-            var ophUser = false;
-            ophUser = this.isUserInAnyOfRolesInOneOfOrganisations(undefined, [Config.env['root.organisaatio.oid']]);
-            //            angular.forEach(MyRolesModel.organisaatiot,function(orgOid){
-            //
-            //                if (orgOid === Config.env['root.organisaatio.oid']) {
-            //                    ophUser = true;
-            //                }
-            //            });
-            $log.debug('isUserOph()', ophUser);
-            return ophUser;
+            return this.isUserInAnyOfRolesInOneOfOrganisations(undefined, [Config.env['root.organisaatio.oid']]);
         },
         /**
-             * Returns true IFF organisations of user has in given "roles" contains any of given "organisationOids".
-             *
-             * @param {type} roles
-             * @param {type} organisationOids
-             * @returns {Boolean}
-             */
+         * Returns true IFF organisations of user has in given "roles" contains any of given "organisationOids".
+         */
         isUserInAnyOfRolesInOneOfOrganisations: function(roles, organisationOids) {
             var result = false;
             // Default roles if not defined are
@@ -278,18 +259,17 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
             return result;
         },
         /**
-             * @param {type} roles array of strings, default: tarjonta_crud and tarjonta_update
-             * @returns {Boolean} "true" joss käyttäjällä on OPH organisaatio missään annetussa roolissa
-             */
+         * Return "true" joss käyttäjällä on OPH organisaatio missään annetussa roolissa
+         */
         isUserOphInAnyOfRoles: function(roles) {
             return this.isUserInAnyOfRolesInOneOfOrganisations(roles, [Config.env['root.organisaatio.oid']]);
         },
         /**
-             * Palauttaa käyttäjän organisaatiot joihin muokkaus/luontioikeudet.
-             *
-             * Parametrina lista rooleista joiden organisaatioista ollaan kiinostuneita.
-             * OLETUKSENA (jos ei annata mitään) käytetään ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"].
-             */
+         * Palauttaa käyttäjän organisaatiot joihin muokkaus/luontioikeudet.
+         *
+         * Parametrina lista rooleista joiden organisaatioista ollaan kiinostuneita.
+         * OLETUKSENA (jos ei annata mitään) käytetään ["APP_TARJONTA_CRUD", "APP_TARJONTA_UPDATE"].
+         */
         getOrganisations: function(roles) {
             // Default roles if not defined are
             roles = roles ? roles : [

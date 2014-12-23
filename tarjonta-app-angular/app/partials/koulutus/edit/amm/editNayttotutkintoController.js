@@ -1,5 +1,6 @@
 var app = angular.module('app.edit.ctrl.amm', []);
-app.controller('EditNayttotutkintoController', function EditLukioController($routeParams, $scope, $log, TarjontaService, LocalisationService, KoulutusConverterFactory, $modal, dialogService) {
+app.controller('EditNayttotutkintoController', function($routeParams, $scope, $log,
+                        TarjontaService, LocalisationService, KoulutusConverterFactory, $modal, dialogService) {
     var ENUMS = KoulutusConverterFactory.ENUMS;
     /*
        * WATCHES
@@ -29,9 +30,14 @@ app.controller('EditNayttotutkintoController', function EditLukioController($rou
         var apiModel = angular.copy($scope.model);
         apiModel.toteutustyyppi = $scope.CONFIG.TYYPPI;
         if (apiModel.valmistavaKoulutus) {
-            apiModel.valmistavaKoulutus = KoulutusConverterFactory.saveModelConverter(apiModel.valmistavaKoulutus, $scope.vkUiModel, ENUMS.ENUM_OPTIONAL_TOTEUTUS);
+            apiModel.valmistavaKoulutus = KoulutusConverterFactory.saveModelConverter(
+                apiModel.valmistavaKoulutus,
+                $scope.vkUiModel,
+                ENUMS.ENUM_OPTIONAL_TOTEUTUS
+            );
         }
-        $scope.saveApimodelByStatus(apiModel, tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.callbackAfterSave);
+        $scope.saveApimodelByStatus(apiModel, tila, $scope.koulutusForm, $scope.CONFIG.TYYPPI,
+            $scope.callbackAfterSave);
     };
     $scope.onMaksullisuusChanged = function(model) {
         if (!model.hinta) {
@@ -83,7 +89,8 @@ app.controller('EditNayttotutkintoController', function EditLukioController($rou
         }
     });
     $scope.$watch('model.valmistavaKoulutus.opintojenMaksullisuus', function(valNew, valOld) {
-        if (!valNew && valOld && angular.isDefined($scope.model.valmistavaKoulutus) && $scope.model.valmistavaKoulutus != null) {
+        if (!valNew && valOld && angular.isDefined($scope.model.valmistavaKoulutus) &&
+            $scope.model.valmistavaKoulutus != null) {
             //clear price data field
             $scope.model.valmistavaKoulutus.hinta = '';
         }
@@ -97,7 +104,8 @@ app.controller('EditNayttotutkintoController', function EditLukioController($rou
         uiModel.toggleTabs = true;
     };
     $scope.$watch('uiModel.cbShowValmistavaKoulutus', function(valNew, valOld) {
-        if (valNew && ($scope.model.valmistavaKoulutus === null || !angular.isDefined($scope.model.valmistavaKoulutus))) {
+        if (valNew && ($scope.model.valmistavaKoulutus === null ||
+            !angular.isDefined($scope.model.valmistavaKoulutus))) {
             $scope.initValmistavaKoulutus($scope.model, $scope.uiModel, $scope.vkUiModel);
         }
         else if (valNew !== valOld && angular.isDefined($scope.model.valmistavaKoulutus)) {
@@ -128,7 +136,8 @@ app.controller('EditNayttotutkintoController', function EditLukioController($rou
             dialogService.showDialog({
                 ok: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto.poista'),
                 title: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto.title'),
-                description: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto', [$scope.langs[uris.removed]])
+                description: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto',
+                    [$scope.langs[uris.removed]])
             }).result.then(function(ret) {
                 if (ret) {
                     $scope.deleteKuvausByStructureType($scope.CONFIG.TYYPPI, uris.removed);
@@ -182,7 +191,8 @@ app.controller('EditNayttotutkintoController', function EditLukioController($rou
                        *  Look more info from koulutusController.js.
                        */
                 if (model.valmistavaKoulutus) {
-                    $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel, ENUMS.ENUM_OPTIONAL_TOTEUTUS);
+                    $scope.commonLoadModelHandler($scope.koulutusForm, model.valmistavaKoulutus, vkUiModel,
+                        ENUMS.ENUM_OPTIONAL_TOTEUTUS);
                     $scope.commonKoodistoLoadHandler(vkUiModel, ENUMS.ENUM_OPTIONAL_TOTEUTUS);
                     vkUiModel.showValidationErrors = true;
                 }

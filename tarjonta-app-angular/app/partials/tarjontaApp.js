@@ -101,8 +101,9 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
     var loggedErrors = [];
     $log.info('*** errorLogService ***', serviceUrl);
     function get_browser() {
-        var N = navigator.appName,
-            ua = navigator.userAgent, tem;
+        var N = navigator.appName;
+        var ua = navigator.userAgent;
+        var tem;
         var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
         if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) {
             M[2] = tem[1];
@@ -118,8 +119,9 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
         return M[0];
     }
     function get_browser_version() {
-        var N = navigator.appName,
-            ua = navigator.userAgent, tem;
+        var N = navigator.appName;
+        var ua = navigator.userAgent;
+        var tem;
         var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
         if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) {
             M[2] = tem[1];
@@ -182,7 +184,8 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
                     }, errorsLoggingTimeout);
                 }
             });
-        } catch ( loggingError ) {
+        }
+        catch (loggingError) {
             // For Developers - log the log-failure.
             $log.warn('Error logging to server side failed');
             $log.log(loggingError);
@@ -217,7 +220,8 @@ angular.module('app').config([
             };
             return TarjontaService.haeKoulutukset(spec);
         };
-        var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService, TarjontaService) {
+        var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService,
+                                        TarjontaService) {
             if ('new' === $route.current.params.id) {
                 var selectedTarjoajaOids;
                 var selectedKoulutusOids;
@@ -254,7 +258,8 @@ angular.module('app').config([
                     var multipleOwners = false;
                     try {
                         multipleOwners = res.result.opetusTarjoajat.length > 1;
-                    } catch ( e ) {}
+                    }
+                    catch (e) {}
                     hakukohde.multipleOwners = multipleOwners;
                     hakukohde.opetusKielet = Object.keys(res.result.opetuskielis.uris);
                     hakukohde.toteutusTyyppi = res.result.toteutustyyppi;
@@ -308,7 +313,7 @@ angular.module('app').config([
                             });
                             return defer.promise;
                         }
-                        angular.forEach(data.result.koulutusmoduuliToteutusTarjoajatiedot, function(tarjoajat, komotoId) {
+                        angular.forEach(data.result.koulutusmoduuliToteutusTarjoajatiedot, function(tarjoajat) {
                             angular.forEach(tarjoajat.tarjoajaOids, function(tarjoaja) {
                                 promises.push(checkCanEdit(tarjoaja));
                             });
@@ -331,7 +336,8 @@ angular.module('app').config([
             else {
                 selectedTarjoajaOids = [SharedStateService.getFromState('SelectedOrgOid')];
             }
-            if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 && selectedTarjoajaOids[0] !== undefined) {
+            if (selectedTarjoajaOids !== undefined && selectedTarjoajaOids.length > 0 &&
+                selectedTarjoajaOids[0] !== undefined) {
                 $log.debug('CHECKING FOR CREATE : ', selectedTarjoajaOids);
                 var canCreateVar = PermissionService.canCreate(selectedTarjoajaOids[0]);
                 $log.debug('CREATE VAR : ', canCreateVar);
@@ -342,14 +348,11 @@ angular.module('app').config([
             }
         };
         /**
-             * Resolve org groups, for "hakukohde" usage.
-             *
-             * Returns promise which will
-             * be resolved with "[{key: "oid", value: "name fi"}, ...]"
-             *
-             * @param $log
-             * @param OrganisaatioService
-             */
+         * Resolve org groups, for "hakukohde" usage.
+         *
+         * Returns promise which will
+         * be resolved with "[{key: "oid", value: "name fi"}, ...]"
+         */
         var resolveOrganisationGroups = function($log, OrganisaatioService) {
             $log.info('resolveOrganisationGroups()');
             // Return the promise
@@ -373,7 +376,8 @@ angular.module('app').config([
             TarjontaService.getKoulutus({
                 oid: $route.current.params.id
             }).$promise.then(function(res) {
-                OrganisaatioService.getPopulatedOrganizations(res.result.opetusTarjoajat, res.result.organisaatio.oid).then(function(orgs) {
+                OrganisaatioService.getPopulatedOrganizations(res.result.opetusTarjoajat, res.result.organisaatio.oid)
+                .then(function(orgs) {
                     res.result.organisaatiot = orgs;
                     var nimet = '';
                     angular.forEach(orgs, function(org) {
@@ -428,7 +432,9 @@ angular.module('app').config([
             resolve: {
                 koulutusModel: resolveKoulutus
             }
-        }).when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi?', newKoulutus).when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi?', newKoulutus).when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW', {
+        }).when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi?', newKoulutus)
+        .when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi?', newKoulutus)
+        .when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/NEW', {
             action: 'valintaPerusteKuvaus.edit',
             controller: 'ValintaperusteEditController'
         }).when('/valintaPerusteKuvaus/edit/:oppilaitosTyyppi/:kuvausTyyppi/:kuvausId', {

@@ -15,13 +15,13 @@
 var app = angular.module('app.haku.edit.ctrl', []);
 /**
  * Haku edit controllers.
- *
  * Note: current haku is preloaded in "tarjontaApp.js" route definitions. Extracted in "init()"-method.
- *
- * @param {type} param1
- * @param {type} param2
  */
-app.controller('HakuEditController', function HakuEditController($q, $route, $scope, $location, $log, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService, AuthService, dialogService, KoodistoURI, PermissionService, HakuV1Service, HAKUTAPA, HAKUTYYPPI) {
+app.controller('HakuEditController', function HakuEditController($q, $route, $scope, $location,
+     $log, $modal, LocalisationService, HakuV1, ParameterService, Config, OrganisaatioService,
+     AuthService, dialogService, KoodistoURI, PermissionService, HakuV1Service, HAKUTAPA,
+     HAKUTYYPPI) {
+
     $log = $log.getInstance('HakuEditController');
     $log.debug('initializing (scope, route)', $scope, $route);
     // Reset model to empty
@@ -239,10 +239,9 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                         var oppilaitosTyyppiUriWithoutVersion = oppilaitosTyyppi.split('#')[0];
                         if (_.contains(kkOppilaitosTyypit, oppilaitosTyyppiUriWithoutVersion)) {
                             AuthService.crudOrg(org).then(function(isCrud) {
-                                if (isCrud) {
-                                    if (!_.contains($scope.model.kohdejoukkoFilterUris, 'haunkohdejoukko_12')) {
-                                        $scope.model.kohdejoukkoFilterUris.push('haunkohdejoukko_12');
-                                    }
+                                if (isCrud && !_.contains($scope.model.kohdejoukkoFilterUris,
+                                        'haunkohdejoukko_12')) {
+                                    $scope.model.kohdejoukkoFilterUris.push('haunkohdejoukko_12');
                                 }
                             });
                         }
@@ -360,7 +359,8 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                */
     $scope.checkPriorisointi = function() {
         $log.debug('checkPriorisointi()');
-        if ($scope.model.hakux.result.jarjestelmanHakulomake && $scope.model.hakux.result.sijoittelu) {
+        if ($scope.model.hakux.result.jarjestelmanHakulomake
+            && $scope.model.hakux.result.sijoittelu) {
             $scope.model.hakux.result.usePriority = true;
         }
         if (!$scope.model.hakux.result.jarjestelmanHakulomake) {
@@ -462,8 +462,6 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         if ($scope.isNewHaku()) {
             $scope.model.hakux.result.organisaatioOids = AuthService.getOrganisations();
             $scope.model.hakux.result.tarjoajaOids = AuthService.getOrganisations();
-            $log.info('NEW HAKU: hakukohde organisationOids: ', $scope.model.hakux.result.organisaatioOids);
-            $log.info('NEW HAKU: tarjoaja organisationOids: ', $scope.model.hakux.result.organisaatioOids);
         }
         $scope.updateSelectedOrganisationsList();
         $scope.updateSelectedTarjoajaOrganisationsList();
@@ -491,7 +489,8 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                 return [
                         HAKUTAPA.YHTEISHAKU,
                         HAKUTAPA.ERILLISHAKU
-                    ].indexOf(oph.getKoodistoUriWithoutVersion(haku.hakutapaUri)) !== -1 && oph.getKoodistoUriWithoutVersion(haku.hakutyyppiUri) === HAKUTYYPPI.VARSINAINEN_HAKU;
+                    ].indexOf(oph.removeKoodiVersion(haku.hakutapaUri)) !== -1 &&
+                    oph.removeKoodiVersion(haku.hakutyyppiUri) === HAKUTYYPPI.VARSINAINEN_HAKU;
             });
             var promises = [];
             _.each(filtered, function(haku) {
@@ -533,7 +532,10 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         }
     });
     $scope.shouldSelectParentHaku = function() {
-        if (!$scope.model.hakux.result.hakutyyppiUri || !$scope.model.hakux.result.kohdejoukkoUri || !$scope.model.hakux.result.hakukausiUri || !$scope.model.hakux.result.hakukausiVuosi) {
+        if (!$scope.model.hakux.result.hakutyyppiUri
+            || !$scope.model.hakux.result.kohdejoukkoUri
+            || !$scope.model.hakux.result.hakukausiUri
+            || !$scope.model.hakux.result.hakukausiVuosi) {
             return false;
         }
         return $scope.model.hakux.result.hakutyyppiUri.indexOf(HAKUTYYPPI.LISAHAKU) !== -1;

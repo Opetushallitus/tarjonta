@@ -8,44 +8,44 @@ angular.module('Organisaatio', [
         var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae');
         var orgLuku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid');
         /**
-                 * Hakee organisaatiopalvelusta ryhmät ja filtteroi niistä vain "hakukohde" käyttöön tarkoitetut ryhmät.
-                 * Eli jos "ryhmatyypit"-array sisältää "hakukohde" stringing.
-                 *
-                 * Esimerkkidataa:
-                 * https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/perse/ryhmat
-                 *
-                 * @returns {$q@call;defer.promise}
-                 */
+         * Hakee organisaatiopalvelusta ryhmät ja filtteroi niistä vain "hakukohde" käyttöön tarkoitetut ryhmät.
+         * Eli jos "ryhmatyypit"-array sisältää "hakukohde" stringing.
+         *
+         * Esimerkkidataa:
+         * https://itest-virkailija.oph.ware.fi/organisaatio-service/rest/organisaatio/perse/ryhmat
+         *
+         * @returns {$q@call;defer.promise}
+         */
         function getRyhmat() {
             $log.info('getRyhmat()');
             var ret = $q.defer();
             var orgRyhmat = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid/ryhmat', {
                 oid: '@oid'
             }, {
-                    get: {
-                        method: 'GET',
-                        withCredentials: true,
-                        isArray: true
-                    }
-                });
+                get: {
+                    method: 'GET',
+                    withCredentials: true,
+                    isArray: true
+                }
+            });
             orgRyhmat.get({
                 oid: 'perse',
                 noCache: new Date().getTime()
             }, function(result) {
-                    $log.debug('  got result', result);
-                    // Filter correct type
-                    var tmp = [];
-                    angular.forEach(result, function(group) {
-                        if (group.ryhmatyypit && group.ryhmatyypit.indexOf('hakukohde') >= 0) {
-                            tmp.push(group);
-                        }
-                    });
-                    $log.debug('getRyhmat() - resolved to: ', tmp);
-                    ret.resolve(tmp);
-                }, function(err) {
-                    $log.error('  got error', err);
-                    ret.reject(err);
+                $log.debug('  got result', result);
+                // Filter correct type
+                var tmp = [];
+                angular.forEach(result, function(group) {
+                    if (group.ryhmatyypit && group.ryhmatyypit.indexOf('hakukohde') >= 0) {
+                        tmp.push(group);
+                    }
                 });
+                $log.debug('getRyhmat() - resolved to: ', tmp);
+                ret.resolve(tmp);
+            }, function(err) {
+                $log.error('  got error', err);
+                ret.reject(err);
+            });
             return ret.promise;
         }
         function localize(organisaatio) {
@@ -79,21 +79,23 @@ angular.module('Organisaatio', [
             return ret.promise;
         }
         /*
-                 * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se !=
-                 * undefined ja ei jo ole siinä
-                 */
+         * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se !=
+         * undefined ja ei jo ole siinä
+         */
         function addTyyppi(organisaatio, oppilaitostyypit) {
-            if (organisaatio.oppilaitostyyppi !== undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
+            if (organisaatio.oppilaitostyyppi !== undefined &&
+                oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
                 oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
             }
         }
         /**
-                 * Koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan
-                 * olevan oppilaitoksia)
-                 */
+         * Koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan
+         * olevan oppilaitoksia)
+         */
         function getTyypitFromChildren(organisaatio, deferred) {
             var oppilaitostyypit = [];
-            if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1 && organisaatio.children !== undefined) {
+            if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1 &&
+                organisaatio.children !== undefined) {
                 for (var i = 0; i < organisaatio.children.length; i++) {
                     addTyyppi(organisaatio.children[i], oppilaitostyypit);
                 }
@@ -102,11 +104,11 @@ angular.module('Organisaatio', [
             return deferred.promise;
         }
         /*
-                 * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan
-                 * allaolevista oppilaitoksista, oppilaitoksen tyypit tulee
-                 * oppilaitokselta, toimipisteen tyyppi typee ylemmän tason
-                 * oppilaitokselta. TODO lisää testi
-                 */
+         * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan
+         * allaolevista oppilaitoksista, oppilaitoksen tyypit tulee
+         * oppilaitokselta, toimipisteen tyyppi typee ylemmän tason
+         * oppilaitokselta. TODO lisää testi
+         */
         function haeOppilaitostyypit(organisaatioOid) {
             var deferred = $q.defer();
             // hae org (ja sen alapuoliset)
@@ -134,28 +136,27 @@ angular.module('Organisaatio', [
         return {
             haeOppilaitostyypit: haeOppilaitostyypit,
             /**
-                     * query (hakuehdot)
-                     *
-                     * @param hakuehdot,
-                     *                muodossa: (java OrganisaatioSearchCriteria
-                     *                -luokka) { "searchStr" : "", "organisaatiotyyppi" :
-                     *                "", "oppilaitostyyppi" : "", "lakkautetut" :
-                     *                false, "suunnitellut" : false }
-                     *
-                     *
-                     * @returns promise
-                     */
+             * query (hakuehdot)
+             *
+             * @param hakuehdot,
+             *                muodossa: (java OrganisaatioSearchCriteria
+             *                -luokka) { "searchStr" : "", "organisaatiotyyppi" :
+             *                "", "oppilaitostyyppi" : "", "lakkautetut" :
+             *                false, "suunnitellut" : false }
+             *
+             * @returns promise
+             */
             etsi: etsi,
             /**
-                     * Suomentaa organisaation
-                     */
+             * Suomentaa organisaation
+             */
             localize: localize,
             /**
-                     * Hakee organisaatiolle voimassaolevan localen mukaisen nimen.
-                     *
-                     * @param oid
-                     * @returns promise
-                     */
+             * Hakee organisaatiolle voimassaolevan localen mukaisen nimen.
+             *
+             * @param {string} oid
+             * @returns promise
+             */
             nimi: function(oid) {
                 return orgLuku.get({
                     oid: oid
@@ -165,10 +166,8 @@ angular.module('Organisaatio', [
                 });
             },
             /**
-                     * palauttaa promisen organisaatiodataan jossa on lokalisoitu nimi.
-                     * @param oid
-                     * @returns
-                     */
+             * palauttaa promisen organisaatiodataan jossa on lokalisoitu nimi.
+             */
             byOid: function(oid) {
                 return orgLuku.get({
                     oid: oid
@@ -177,10 +176,8 @@ angular.module('Organisaatio', [
                 });
             },
             /**
-                     * Palauttaa ECTS yhteyshenkilön organisaatiolle (promise)
-                     * @param oid
-                     * @returns
-                     */
+             * Palauttaa ECTS yhteyshenkilön organisaatiolle (promise)
+             */
             getECTS: function(oid) {
                 return orgLuku.get({
                     oid: oid
@@ -189,8 +186,8 @@ angular.module('Organisaatio', [
                 });
             },
             /**
-                     * Palauttaa organisaatioryhmat promisen. (organisaatioita)
-                     */
+             * Palauttaa organisaatioryhmat promisen. (organisaatioita)
+             */
             getRyhmat: getRyhmat,
             oidToOrgMap: {},
             getPopulatedOrganizations: function(organizationOids, firstOrganizationOidInList) {

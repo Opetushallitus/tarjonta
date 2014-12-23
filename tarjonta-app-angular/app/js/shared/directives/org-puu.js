@@ -114,7 +114,9 @@
                 var nodeChildren = attrs.nodeChildren || 'children';
                 var drawChildren = function(children) {
                     var orgToString = function(eid, oid, label, cssclass, selected) {
-                        return '<li id="' + treeId + '-o-' + eid + '" ><i ng-click="toggleOrg(\'' + oid + '\')" class=\'' + cssclass + '\'/></i><span' + (selected ? ' class="selected"' : '') + ' ng-click="selectOrg(\'' + oid + '\')">' + label + '</span></li>';
+                        return '<li id="' + treeId + '-o-' + eid + '" ><i ng-click="toggleOrg(\'' + oid +
+                            '\')" class=\'' + cssclass + '\'/></i><span' + (selected ? ' class="selected"' : '') +
+                            ' ng-click="selectOrg(\'' + oid + '\')">' + label + '</span></li>';
                     };
                     var template = '';
                     if (children && children.length) {
@@ -127,13 +129,16 @@
                             if (hasChildren) {
                                 if (open) {
                                     //auki
-                                    template = template + orgToString(eid, org.oid, org[nodeLabel], 'expanded', org.selected);
+                                    template = template
+                                        + orgToString(eid, org.oid, org[nodeLabel], 'expanded', org.selected);
                                     //lapset
-                                    template = template + '<div id="' + treeId + '-c-' + eid + '" class="treeview"><ul>' + drawChildren(org[nodeChildren]) + '</ul></div>';
+                                    template = template + '<div id="' + treeId + '-c-' + eid +
+                                        '" class="treeview"><ul>' + drawChildren(org[nodeChildren]) + '</ul></div>';
                                 }
                                 else {
                                     //kiinni
-                                    template = template + orgToString(eid, org.oid, org[nodeLabel], 'collapsed', org.selected);
+                                    template = template +
+                                        orgToString(eid, org.oid, org[nodeLabel], 'collapsed', org.selected);
                                 }
                             }
                             else {

@@ -85,13 +85,14 @@ angular.module('TarjontaCache', [
     };
     /**
 	 * Poistaa tavaraa cachesta.
-	 * @param key Cache-avain.
+	 * @param {type} key Cache-avain.
 	 */
     cacheService.evict = function(key) {
         key = prepare(key);
         var now = new Date().getTime();
         for (var rk in cacheData) {
-            if (key.key == rk || key.pattern != undefined && key.pattern.test(rk) || key.expires != null && key.expires.getTime() < now) {
+            if (key.key == rk || key.pattern != undefined && key.pattern.test(rk) ||
+                key.expires != null && key.expires.getTime() < now) {
                 $log.debug('Evicted from cache', rk);
                 cacheData[rk] = undefined;
             }
@@ -100,8 +101,9 @@ angular.module('TarjontaCache', [
     /**
 	 * Hakee tavaraa cachesta avaimen mukaan tai delegoi getterille.
 	 *
-	 * @param key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
-	 * @param getter Funktio, jolle hakeminen delegoidaan jos arvoa ei löytynyt. Parametriksi annetaan promise jonka funktio resolvaa.
+	 * @param {type} key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
+	 * @param {type} getter Funktio, jolle hakeminen delegoidaan jos arvoa ei löytynyt.
+     * Parametriksi annetaan promise jonka funktio resolvaa.
 	 * @returns promise
 	 */
     cacheService.lookup = function(key, getter) {
@@ -122,15 +124,9 @@ angular.module('TarjontaCache', [
             }
             var query = $q.defer();
             query.promise.then(function(res) {
-                //$log.debug("Cache RESOLVED "+key.key,res);
-                //disabled caching... cacheService.insert(key, res);
                 cacheRequests[key.key] = undefined;
                 ret.resolve(res);
-            } /*, function(res){
-				// virhe -> tallennetaan null 10 sekunniksi jatkuvat toistamisen estämiseksi
-				cacheService.insert({key: key.key, expires: 10000}, null);
-				ret.resolve(null);
-			}*/ );
+            });
             getter(query);
         }
         return ret.promise;
@@ -138,10 +134,10 @@ angular.module('TarjontaCache', [
     /**
 	 * Rest-apumetodi cachesta hakemiseen.
 	 *
-	 * @param key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
-	 * @param resource Rest-resurssi;  $resource(...)
-	 * @param args Rest-kutsun parametrit.
-	 * @param filter Valinnainen funktio jolla lopputulos käsitellään ennen palauttamista ja tallentamista cacheen..
+	 * @param {type} key Avain (ks. avaimen kuvaus tämän tiedoston alussa).
+	 * @param {type} resource Rest-resurssi;  $resource(...)
+	 * @param {type} args Rest-kutsun parametrit.
+	 * @param {type} filter Valinnainen funktio jolla lopputulos käsitellään ennen palauttamista ja tallentamista cacheen..
 	 * @return promise
 	 */
     cacheService.lookupResource = function(key, resource, args, filter) {

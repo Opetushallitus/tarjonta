@@ -43,7 +43,10 @@ app.controller('BaseEditController', [
     '$modal',
     'OrganisaatioService',
     'AuthService',
-    'HakukohdeKoulutukses', function BaseEditController($scope, $log, Config, $routeParams, $route, $location, KoulutusConverterFactory, TarjontaService, PermissionService, organisaatioService, Koodisto, KoodistoURI, LocalisationService, dialogService, CacheService, $modal, OrganisaatioService, AuthService, HakukohdeKoulutukses) {
+    'HakukohdeKoulutukses', function BaseEditController($scope, $log, Config, $routeParams, $route, $location,
+            KoulutusConverterFactory, TarjontaService, PermissionService, organisaatioService, Koodisto, KoodistoURI,
+            LocalisationService, dialogService, CacheService, $modal, OrganisaatioService, AuthService,
+            HakukohdeKoulutukses) {
         $log = $log.getInstance('BaseEditController');
         var ENUMS = KoulutusConverterFactory.ENUMS;
         /*
@@ -135,7 +138,9 @@ app.controller('BaseEditController', [
             $location.path('/');
         };
         $scope.isDirty = function() {
-            var currentModel = KoulutusConverterFactory.saveModelConverter(angular.copy($scope.model), angular.copy($scope.uiModel), $scope.CONFIG.TYYPPI);
+            var currentModel = KoulutusConverterFactory.saveModelConverter(
+                angular.copy($scope.model), angular.copy($scope.uiModel), $scope.CONFIG.TYYPPI
+            );
             return $scope.modelInitialState && !_.isEqual(currentModel, $scope.modelInitialState);
         };
         /**
@@ -146,7 +151,9 @@ app.controller('BaseEditController', [
             $('form[name="koulutusForm"]').on('focus click', '*', function(e) {
                 e.stopPropagation();
                 if (!$scope.modelInitialState) {
-                    $scope.modelInitialState = KoulutusConverterFactory.saveModelConverter(angular.copy($scope.model), angular.copy($scope.uiModel), $scope.CONFIG.TYYPPI);
+                    $scope.modelInitialState = KoulutusConverterFactory.saveModelConverter(
+                        angular.copy($scope.model), angular.copy($scope.uiModel), $scope.CONFIG.TYYPPI
+                    );
                 }
             });
         };
@@ -206,14 +213,6 @@ app.controller('BaseEditController', [
             }
             return $scope.langs[koodi];
         };
-        /**
-             * Control page messages.
-             *
-             * @param {type} uiModel
-             * @param {type} action
-             * @param {type} errorDetailType
-             * @returns {undefined}
-             */
         $scope.controlFormMessages = function(koulutusForm, uiModel, action, errorDetailType, apiErrors) {
             if ($scope.controlModelCommandApi.active) {
                 $scope.controlModelCommandApi.clear();
@@ -296,7 +295,12 @@ app.controller('BaseEditController', [
                 //julkaistua tallennettaessa tila ei muutu
                 apiModel.tila = tila;
             }
-            $scope.saveByStatusAndApiObject(form, tyyppi, fnCustomCallbackAfterSave, KoulutusConverterFactory.saveModelConverter(apiModel, $scope.uiModel, tyyppi));
+            $scope.saveByStatusAndApiObject(
+                form,
+                tyyppi,
+                fnCustomCallbackAfterSave,
+                KoulutusConverterFactory.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
+            );
             if ($scope.uiModel.isMutable && $scope.model.oid) {
                 var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
                 hakukohdePromise.then(function(hakukohteet) {
@@ -356,7 +360,8 @@ app.controller('BaseEditController', [
         $scope.commonKoodistoLoadHandler = function(uiModel, tyyppi) {
             angular.forEach(KoulutusConverterFactory.STRUCTURE[tyyppi].COMBO, function(value, key) {
                 if (angular.isUndefined(value.skipUiModel)) {
-                    var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.koodistoLocale);
+                    var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto],
+                        $scope.koodistoLocale);
                     uiModel[key].promise = koodisPromise;
                     koodisPromise.then(function(result) {
                         uiModel[key].koodis = result;
@@ -367,7 +372,8 @@ app.controller('BaseEditController', [
                 if (angular.isUndefined(Config.env[value.koodisto])) {
                     throw new Error('No koodisto URI for key : ' + key + ', property : \'' + value.koodisto + '\'');
                 }
-                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto], $scope.koodistoLocale);
+                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri(Config.env[value.koodisto],
+                    $scope.koodistoLocale);
                 uiModel[key].promise = koodisPromise;
                 koodisPromise.then(function(result) {
                     //store all koodisto koodi objects for save
@@ -403,8 +409,11 @@ app.controller('BaseEditController', [
                 model.opetusTarjoajat = $routeParams.opetusTarjoajat.split(',');
                 $scope.initOpetustarjoajat(model);
             }
-            if (angular.isDefined($routeParams.org) || angular.isDefined(model.organisaatio) && angular.isDefined(model.organisaatio.oid)) {
-                var promiseOrg = OrganisaatioService.nimi(angular.isDefined($routeParams.org) ? $routeParams.org : model.organisaatio.oid);
+            if (angular.isDefined($routeParams.org) || angular.isDefined(model.organisaatio) &&
+                angular.isDefined(model.organisaatio.oid)) {
+                var promiseOrg = OrganisaatioService.nimi(angular.isDefined($routeParams.org) ?
+                    $routeParams.org :
+                    model.organisaatio.oid);
                 promiseOrg.then(function(vastaus) {
                     KoulutusConverterFactory.updateOrganisationApiModel(model, $routeParams.org, vastaus);
                 });
@@ -550,7 +559,8 @@ app.controller('BaseEditController', [
                 dialogService.showDialog({
                     ok: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto.poista'),
                     title: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto.title'),
-                    description: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto', [$scope.langs[uris.removed]])
+                    description: LocalisationService.t('tarjonta.poistovahvistus.koulutus.lisatieto',
+                        [$scope.langs[uris.removed]])
                 }).result.then(function(ret) {
                     if (ret) {
                         $scope.deleteKuvausByStructureType(tyyppi, uris.removed);
@@ -570,7 +580,9 @@ app.controller('BaseEditController', [
             }
         };
         $scope.isTutkintoOhjelmaKoodisto = function(tarjontaKoodistoObj) {
-            return window.CONFIG.env['koodisto-uris.koulutusohjelma'] === tarjontaKoodistoObj.koodiKoodisto || window.CONFIG.env['koodisto-uris.lukiolinja'] === tarjontaKoodistoObj.koodiKoodisto || window.CONFIG.env['koodisto-uris.osaamisala'] === tarjontaKoodistoObj.koodiKoodisto;
+            return window.CONFIG.env['koodisto-uris.koulutusohjelma'] === tarjontaKoodistoObj.koodiKoodisto ||
+                window.CONFIG.env['koodisto-uris.lukiolinja'] === tarjontaKoodistoObj.koodiKoodisto ||
+                window.CONFIG.env['koodisto-uris.osaamisala'] === tarjontaKoodistoObj.koodiKoodisto;
         };
         $scope.deleteKuvausByStructureType = function(tyyppi, kieliUri) {
             angular.forEach(KoulutusConverterFactory.STRUCTURE[tyyppi].KUVAUS_ORDER, function(value, key) {
@@ -654,7 +666,8 @@ app.controller('BaseEditController', [
                          * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                          */
                 var resource = TarjontaService.komo();
-                var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit([$scope.CONFIG.KOULUTUSTYYPPI], 'koulutus', $scope.koodistoLocale);
+                var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit([$scope.CONFIG.KOULUTUSTYYPPI], 'koulutus',
+                    $scope.koodistoLocale);
                 tutkintoPromise.then(function(koodistoResult) {
                     resource.searchModules({
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
@@ -672,20 +685,30 @@ app.controller('BaseEditController', [
             }
             $scope.lisatiedot = koulutusStructure.KUVAUS_ORDER;
             var koulutuskoodiUri = (model.koulutuskoodi || {}).uri || $routeParams.koulutuskoodi;
-            koulutuskoodiUri && $scope.loadRelationKoodistoData(model, uiModel, koulutuskoodiUri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
-            (model.koulutusohjelma || {}).uri && $scope.loadRelationKoodistoData(model, uiModel, model.koulutusohjelma.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+            koulutuskoodiUri && $scope.loadRelationKoodistoData(
+                model,
+                uiModel,
+                koulutuskoodiUri,
+                ENUMS.ENUM_KOMO_MODULE_TUTKINTO
+            );
+            (model.koulutusohjelma || {}).uri && $scope.loadRelationKoodistoData(
+                model,
+                uiModel,
+                model.koulutusohjelma.uri,
+                ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
+            );
             /*
-                   * SHOW ALL KOODISTO KOODIS
-                   */
+            * SHOW ALL KOODISTO KOODIS
+            */
             $scope.commonKoodistoLoadHandler(uiModel, $scope.CONFIG.TYYPPI);
             /*
-                   * CUSTOM LOGIC
-                   */
+            * CUSTOM LOGIC
+            */
             // lisätietokielivalinnat
             $scope.getLisatietoKielet(model, uiModel, true);
             /*
-                   * INIT SCOPES FOR RENDERER IN koulutusController.js
-                   */
+            * INIT SCOPES FOR RENDERER IN koulutusController.js
+            */
             model.toteutustyyppi = $scope.CONFIG.TYYPPI;
             angular.extend(uiModel, $scope.uiModel);
             $scope.setUiModel(uiModel);
@@ -752,35 +775,40 @@ app.controller('BaseEditController', [
                 }, '').substring(1),
                 languageCode: $scope.koodistoLocale
             }, function(data) {
-                    var restRelationData = data.result;
-                    angular.forEach(koulutusStructure.RELATION, function(value, key) {
-                        var isTutkintoOrTutkintoOhjelma = [
-                            ENUMS.ENUM_KOMO_MODULE_TUTKINTO,
-                            ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
-                        ].indexOf(tutkintoTyyppi) !== -1;
-                        if (isTutkintoOrTutkintoOhjelma && restRelationData[key] && restRelationData[key].uri !== '' && (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
-                            apiModel[key] = restRelationData[key];
-                        }
-                    });
-                    angular.forEach(koulutusStructure.RELATIONS, function(value, key) {
-                        if (restRelationData[key] && restRelationData[key].meta) {
-                            uiModel[key].meta = restRelationData[key].meta;
-                            uiModel[key].uris = apiModel[key] ? _.keys(apiModel[key].uris) : [];
-                        }
-                    });
+                var restRelationData = data.result;
+                angular.forEach(koulutusStructure.RELATION, function(value, key) {
+                    var isTutkintoOrTutkintoOhjelma = [
+                        ENUMS.ENUM_KOMO_MODULE_TUTKINTO,
+                        ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
+                    ].indexOf(tutkintoTyyppi) !== -1;
+                    if (isTutkintoOrTutkintoOhjelma && restRelationData[key] && restRelationData[key].uri !== '' &&
+                        (angular.isUndefined(value.module) || tutkintoTyyppi === value.module)) {
+                        apiModel[key] = restRelationData[key];
+                    }
                 });
+                angular.forEach(koulutusStructure.RELATIONS, function(value, key) {
+                    if (restRelationData[key] && restRelationData[key].meta) {
+                        uiModel[key].meta = restRelationData[key].meta;
+                        uiModel[key].uris = apiModel[key] ? _.keys(apiModel[key].uris) : [];
+                    }
+                });
+            });
         };
         $scope.callbackAfterSave = function(saveResponse) {
             var resultModel = saveResponse.result;
-            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutuskoodi.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
-            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutuskoodi.uri,
+                ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
+            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri,
+                ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
             $scope.getLisatietoKielet($scope.model, $scope.uiModel, true);
         };
         $scope.saveLuonnos = function() {
-            $scope.saveByStatus('LUONNOS', $scope.childScope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.callbackAfterSave);
+            $scope.saveByStatus('LUONNOS', $scope.childScope.koulutusForm, $scope.CONFIG.TYYPPI,
+                $scope.callbackAfterSave);
         };
         $scope.saveValmis = function() {
-            $scope.saveByStatus('VALMIS', $scope.childScope.koulutusForm, $scope.CONFIG.TYYPPI, $scope.callbackAfterSave);
+            $scope.saveByStatus('VALMIS', $scope.childScope.koulutusForm, $scope.CONFIG.TYYPPI,
+                $scope.callbackAfterSave);
         };
         /*
              * WATCHES
@@ -791,7 +819,8 @@ app.controller('BaseEditController', [
                 // tyhjennä varmuuden vuoksi, jotta ei näytetä väärän koulutuksen tekstejä
                 if (angular.isDefined($scope.uiModel.koulutusohjelmaModules[uri])) {
                     $scope.model.komoOid = $scope.uiModel.koulutusohjelmaModules[uri].oid;
-                    $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri, ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+                    $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri,
+                        ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
                     /**
                                * Osalla koulutuksista on omia KOMO-tekstejä lapsi KOMOISSA, jotka pitää hakea
                                * erikseen tässä. Tällä hetkellä ainoa teksti on koulutuksenTavoitteet.
@@ -835,13 +864,15 @@ app.controller('BaseEditController', [
                         moduuli: ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
                     }, function(komos) {
                             $scope.uiModel.koulutusohjelmaModules = filterByKomos(koodistoResult, komos, 'ohjelmaUri');
-                            $scope.uiModel.koulutusohjelma = _.map($scope.uiModel.koulutusohjelmaModules, function(num) {
+                            $scope.uiModel.koulutusohjelma = _.map(
+                                $scope.uiModel.koulutusohjelmaModules, function(num) {
                                 return num;
                             });
                             // Hack, lukiokoulutuksella ei saa näyttää aikuisten lukiokoulutus valintaa.
                             // Tämä relaatio olisi parempi saada koodistoon, mutta nyt joudutaan tekemään näin
                             if ($scope.CONFIG.TYYPPI === 'LUKIOKOULUTUS') {
-                                $scope.uiModel.koulutusohjelma = _.filter($scope.uiModel.koulutusohjelma, function(uri) {
+                                $scope.uiModel.koulutusohjelma = _.filter(
+                                    $scope.uiModel.koulutusohjelma, function(uri) {
                                     return uri.koodiArvo !== '0086';
                                 });
                             }
@@ -919,7 +950,8 @@ app.controller('BaseEditController', [
                 }
                 else {
                     // jos koulutukselle on määritelty alkamiskausi ja -vuosi
-                    if ($scope.model.koulutuksenAlkamiskausi && $scope.model.koulutuksenAlkamiskausi.uri && /^\+?(0|[1-9]\d*)$/.test($scope.model.koulutuksenAlkamisvuosi)) {
+                    if ($scope.model.koulutuksenAlkamiskausi && $scope.model.koulutuksenAlkamiskausi.uri &&
+                        /^\+?(0|[1-9]\d*)$/.test($scope.model.koulutuksenAlkamisvuosi)) {
                         var vuosi = $scope.model.koulutuksenAlkamisvuosi;
                         // asetetaan alkamispäivämääräkentälle ja kalenterille rajat
                         if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf('_k') > -1) {

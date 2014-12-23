@@ -13,7 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 var app = angular.module('app.koulutus.kuvausRemove.ctrl', []);
-app.controller('PoistaValintaperustekuvausCtrl', function($scope, Kuvaus, selectedKuvaus, LocalisationService, $modalInstance, HakukohdeService, $location) {
+app.controller('PoistaValintaperustekuvausCtrl', function($scope, Kuvaus, selectedKuvaus, LocalisationService,
+                                                          $modalInstance, HakukohdeService, $location) {
     $scope.model = {
         errors: [],
         text: {

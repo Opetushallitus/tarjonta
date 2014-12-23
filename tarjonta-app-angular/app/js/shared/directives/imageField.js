@@ -88,10 +88,10 @@ app.directive('imageFieldHtml5', function($log) {
 });
 /**
  * Flash-pohjainen IE9-versio
- * 
+ *
  *  - https://github.com/Jahdrien/FileReader
  *  - http://code.google.com/p/swfobject/
- * 
+ *
  */
 app.directive('imageFieldIe9', function($log) {
     $log = $log.getInstance('<imageField>');

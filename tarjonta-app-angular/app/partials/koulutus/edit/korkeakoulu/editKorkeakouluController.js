@@ -27,7 +27,9 @@ app.controller('EditKorkeakouluController', [
     '$modal',
     'PermissionService',
     'dialogService',
-    'CommonUtilService', function EditKorkeakouluController($route, $timeout, $scope, $location, $log, TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter, koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
+    'CommonUtilService', function EditKorkeakouluController($route, $timeout, $scope, $location, $log,
+            TarjontaService, cfg, $routeParams, organisaatioService, LocalisationService, $window, converter,
+            koodisto, $modal, PermissionService, dialogService, CommonUtilService) {
         $log = $log.getInstance('EditKorkeakouluController');
         $scope.tutkintoDialogModel = {};
         /**
@@ -108,7 +110,8 @@ app.controller('EditKorkeakouluController', [
         });
         $scope.isKandiUri = function() {
             var kandiObj = $scope.model.kandidaatinKoulutuskoodi;
-            return angular.isDefined(kandiObj) && kandiObj !== null && angular.isDefined(kandiObj.uri) && kandiObj.uri.length > 0;
+            return angular.isDefined(kandiObj) && kandiObj !== null && angular.isDefined(kandiObj.uri) &&
+                kandiObj.uri.length > 0;
         };
         $scope.init({
             childScope: $scope

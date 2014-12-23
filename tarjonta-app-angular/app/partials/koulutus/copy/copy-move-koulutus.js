@@ -12,7 +12,8 @@ app.controller('CopyMoveKoulutusController', [
     'OrganisaatioService',
     'AuthService',
     'PermissionService',
-    '$location', function($modalInstance, targetKoulutus, targetOrganisaatio, TarjontaService, LocalisationService, $q, $scope, OrganisaatioService, AuthService, PermissionService, $location) {
+    '$location', function($modalInstance, targetKoulutus, targetOrganisaatio, TarjontaService, LocalisationService,
+                          $q, $scope, OrganisaatioService, AuthService, PermissionService, $location) {
         // Tähän populoidaan formin valinnat:
         $scope.model = {
             text: {
@@ -54,18 +55,21 @@ app.controller('CopyMoveKoulutusController', [
                    * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
                    */
             var addTyyppi = function(organisaatio) {
-                if (organisaatio.oppilaitostyyppi !== undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
+                if (organisaatio.oppilaitostyyppi !== undefined &&
+                    oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
                     oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
                 }
             };
-            if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1 && organisaatio.children !== undefined) {
+            if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1 &&
+                organisaatio.children !== undefined) {
                 //	koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan olevan oppilaitoksia)
                 for (var i = 0; i < organisaatio.children.length; i++) {
                     addTyyppi(organisaatio.children[i]);
                 }
                 deferred.resolve(oppilaitostyypit);
             }
-            else if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1 && organisaatio.oppilaitostyyppi !== undefined) {
+            else if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1 &&
+                organisaatio.oppilaitostyyppi !== undefined) {
                 //oppilaitos, kerää tyyppi
                 addTyyppi(organisaatio);
                 deferred.resolve(oppilaitostyypit);
@@ -136,8 +140,8 @@ app.controller('CopyMoveKoulutusController', [
             $scope.model.organisaatiot.push(organisaatio);
         };
         /**
-             * Peruuta nappulaa klikattu, sulje dialogi
-             */
+         * Peruuta nappulaa klikattu, sulje dialogi
+         */
         $scope.peruuta = function() {
             $modalInstance.dismiss();
         };
@@ -158,7 +162,6 @@ app.controller('CopyMoveKoulutusController', [
                     mode: $scope.model.mode,
                     organisationOids: orgOids
                 };
-                //                if ($scope.model.targetKoulutus.length === 1) {
                 TarjontaService.koulutus($scope.model.targetKoulutus[0].oid).copyAndMove(apiModel, function(response) {
                     if (response.status === 'OK') {
                         $modalInstance.close(response);
@@ -174,47 +177,24 @@ app.controller('CopyMoveKoulutusController', [
                             });
                             for (var i = 0; i < response.errors.length; i++) {
                                 $scope.model.errors.push({
-                                    msg: LocalisationService.t('koulutus.copy.error.' + response.errors[i].errorMessageKey, [])
+                                    msg: LocalisationService.t('koulutus.copy.error.'
+                                        + response.errors[i].errorMessageKey, [])
                                 });
                             }
                         }
                     }
-                }); //                } else {
-                //                  //MULTI COPY
-                ////                    var komotoOids = [];
-                ////                    for (var i = 0; i < $scope.model.targetKoulutus.length; i++) {
-                ////                        komotoOids.push($scope.model.targetKoulutus[i].oid);
-                ////                    }
-                //
-                //                    apiModel.komotoOids = $scope.model.targetKoulutus;
-                //
-                //                    TarjontaService.koulutus().copyAndMoveMultiple(apiModel, function(response) {
-                //                        if (response.status === 'OK') {
-                //                            $modalInstance.close(response);
-                //                        } else {
-                //                            if (!angular.isUndefined(response.errors) && response.errors.length > 0) {
-                //
-                //                                for (var i = 0; i < response.errors.length; i++) {
-                //                                    $scope.model.errors.push({msg: LocalisationService.t(response.errors[i].errorMessageKey)});
-                //                                }
-                //
-                //                                $scope.model.errors.push({msg: LocalisationService.t("koulutus.copy.error.yleisvirhe", [])});
-                //                                $scope.model.btnDisableRemove = true;
-                //                            }
-                //                        }
-                //                    });
-                //                }
+                });
             });
         };
         /**
-             * Organisaatio valittu
-             */
+         * Organisaatio valittu
+         */
         $scope.organisaatioValittu = function() {
             return $scope.model.organisaatiot.length > 0;
         };
         /**
-             * Poista valittu organisaatio ruksista
-             */
+         * Poista valittu organisaatio ruksista
+         */
         $scope.poistaValittu = function(organisaatio) {
             var valitut = [];
             for (var i = 0; i < $scope.model.organisaatiot.length; i++) {

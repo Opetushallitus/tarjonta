@@ -1,11 +1,11 @@
 /**
  * Enhance logging output to contain datestamp + possible location information.
- * 
+ *
  * Example log line: (time - debug - "class" :: log message)
  * <pre>
- * 085204 - D - BaseReviewController :: parents: [] 
+ * 085204 - D - BaseReviewController :: parents: []
  * </pre>
- * 
+ *
  * If this module is loded the "$log" is enchanced with "getInstance(CLASS_NAME)" method
  * and the all log entries logged with that logger has that "ClASS_NAME" displayed.
  * Helps to locate logged lines in the code.
@@ -38,8 +38,8 @@ app.config([
                 }($delegate);
                 var prepareLogFn = function(logFn, logLevel, logClass) {
                     var enhanced = function() {
-                        var args = [].slice.call(arguments),
-                            now = new Date();
+                        var args = [].slice.call(arguments);
+                        var now = new Date();
                         // Prepend timestamp, level, class + actual result
                         args[0] = formatDate(now) + ' - ' + logLevel + ' - ' + logClass + ' :: ' + args[0];
                         // Call the original with the output prepended with formatted timestamp

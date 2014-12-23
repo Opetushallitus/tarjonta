@@ -14,8 +14,8 @@ app.controller('HakuCopyController', [
     'AuthService',
     '$log',
     'HakuV1Service',
-    'ProcessV1Service', function($injector, $q, $scope, Koodisto, $modal, OrganisaatioService, AuthService, $log, HakuV1Service, ProcessV1Service) {
-        console.log('hakux:', $scope.model.hakux);
+    'ProcessV1Service', function($injector, $q, $scope, Koodisto, $modal, OrganisaatioService,
+                                 AuthService, $log, HakuV1Service, ProcessV1Service) {
         var loadingService = $injector.get('loadingService');
         var oid = $scope.model.hakux.result.oid;
         // mistä kopioidaan
@@ -50,10 +50,16 @@ app.controller('HakuCopyController', [
                         $scope.view = res.parameters.process_step;
                     }
                     if ($scope.view === 'COMMIT') {
-                        $scope.progress = Math.round((Number($scope.commitKoulutusCount) + Number($scope.commitHakukohdeCount)) * 100 / (Number($scope.commitKoulutusMax) + Number($scope.commitHakukohdeMax)));
+                        $scope.progress = Math.round((Number($scope.commitKoulutusCount)
+                            + Number($scope.commitHakukohdeCount)) * 100
+                            / (Number($scope.commitKoulutusMax)
+                            + Number($scope.commitHakukohdeMax)));
                     }
                     else if ($scope.view === 'PREPARE') {
-                        $scope.progress = Math.round((Number($scope.prepareKoulutusCount) + Number($scope.prepareHakukohdeCount)) * 100 / (Number($scope.prepareKoulutusMax) + Number($scope.prepareHakukohdeMax)));
+                        $scope.progress = Math.round((Number($scope.prepareKoulutusCount)
+                            + Number($scope.prepareHakukohdeCount)) * 100
+                            / (Number($scope.prepareKoulutusMax)
+                            + Number($scope.prepareHakukohdeMax)));
                     }
                     else if ($scope.view === 'DONE') {
                         $scope.progress = 100;

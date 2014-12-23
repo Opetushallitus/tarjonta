@@ -8,7 +8,8 @@ var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl', [
     'auth',
     'config'
 ]);
-app.controller('ValintaperusteSearchController', function($scope, $rootScope, $route, $q, LocalisationService, Koodisto, Kuvaus, AuthService, $location, dialogService, OrganisaatioService, CommonUtilService, $modal, $log) {
+app.controller('ValintaperusteSearchController', function($scope, $rootScope, $route, $q, LocalisationService,
+      Koodisto, Kuvaus, AuthService, $location, dialogService, OrganisaatioService, CommonUtilService, $modal, $log) {
     var oppilaitosKoodistoUri = 'oppilaitostyyppi';
     var kausiKoodistoUri = 'kausi';
     $scope.selection = {
@@ -72,7 +73,9 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     };
     var showCreateNewDialog = function(vpkTyyppiParam) {
         var modalInstance;
-        var template = $scope.canEditValintaperustekuvaus2Aste() ? 'uusi-valintaperuste-choose-type-dialog.html' : 'uusi-valintaperuste-dialog.html';
+        var template = $scope.canEditValintaperustekuvaus2Aste() ?
+            'uusi-valintaperuste-choose-type-dialog.html' :
+            'uusi-valintaperuste-dialog.html';
         modalInstance = $modal.open({
             templateUrl: 'partials/valintaperustekuvaus/search/' + template,
             controller: 'LuoUusiValintaPerusteDialog',
@@ -92,10 +95,12 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
         modalInstance.result.then(function(result) {
             var kuvausEditUri;
             if (result.valintaperustekuvausryhma) {
-                kuvausEditUri = '/valintaPerusteKuvaus/edit/' + result.valintaperustekuvausryhma + '/' + vpkTyyppiParam + '/NEW';
+                kuvausEditUri = '/valintaPerusteKuvaus/edit/' + result.valintaperustekuvausryhma +
+                    '/' + vpkTyyppiParam + '/NEW';
             }
             else if (result.selectedOrgType) {
-                kuvausEditUri = '/valintaPerusteKuvaus/edit/' + result.selectedOrgType + '/' + vpkTyyppiParam + '/NEW';
+                kuvausEditUri = '/valintaPerusteKuvaus/edit/' + result.selectedOrgType +
+                    '/' + vpkTyyppiParam + '/NEW';
             }
             $location.path(kuvausEditUri);
         });
@@ -185,7 +190,8 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
         console.log('KUVAUS : ', kuvaus);
         if (kuvaus.organisaatioTyyppi !== undefined) {
             console.log('KUVAUS: ', kuvaus);
-            var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + kuvaus.organisaatioTyyppi + '/' + kuvaus.kuvauksenTyyppi + '/' + kuvaus.kuvauksenTunniste;
+            var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + kuvaus.organisaatioTyyppi + '/' +
+                kuvaus.kuvauksenTyyppi + '/' + kuvaus.kuvauksenTunniste;
             console.log('KUVAUS EDIT URI : ', kuvausEditUri);
             $location.path(kuvausEditUri);
         }
@@ -202,7 +208,8 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     };
     $scope.createNew = function(kuvausTyyppi) {
         if ($scope.model.userOrgTypes.length > 0 && $scope.model.userOrgTypes.length < 2) {
-            var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + $scope.model.userOrgTypes[0] + '/' + kuvausTyyppi + '/NEW';
+            var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + $scope.model.userOrgTypes[0] + '/'
+                + kuvausTyyppi + '/NEW';
             $location.path(kuvausEditUri);
         }
         else {
@@ -224,7 +231,8 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
         });
     };
     $scope.copyKuvaus = function(kuvaus) {
-        var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + $scope.model.userOrgTypes[0] + '/' + kuvaus.kuvauksenTyyppi + '/' + kuvaus.kuvauksenTunniste + '/COPY';
+        var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + $scope.model.userOrgTypes[0] + '/' +
+            kuvaus.kuvauksenTyyppi + '/' + kuvaus.kuvauksenTunniste + '/COPY';
         $location.path(kuvausEditUri);
     };
     $scope.search = function() {
@@ -288,7 +296,8 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
         ];
     };
 });
-app.controller('LuoUusiValintaPerusteDialog', function($scope, $modalInstance, LocalisationService, Koodisto, filterUris, selectedUri, Tyyppi) {
+app.controller('LuoUusiValintaPerusteDialog', function($scope, $modalInstance, LocalisationService, Koodisto,
+                                                        filterUris, selectedUri, Tyyppi) {
     $scope.dialog = {
         type: Tyyppi
     };

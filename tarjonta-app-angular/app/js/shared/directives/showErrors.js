@@ -104,7 +104,8 @@ app.directive('showErrors', function($log, LocalisationService) {
                 // 1. Is form dirty?
                 // 2. Has the customcheck failed?
                 // 3. Or is the form field check enabled AND field modified AND in error?
-                result = form.$dirty && ($scope.customCheck || $scope.fieldCheck && form[field].$dirty && form[field].$invalid);
+                result = form.$dirty && ($scope.customCheck || $scope.fieldCheck && form[field].$dirty &&
+                    form[field].$invalid);
                 // Enable logging if you have problems with error checking results...
                 if ($scope.debug && result) {
                     $log.info('Field: ' + field + ' has errors! $scope.fieldCheck=', $scope.fieldCheck);

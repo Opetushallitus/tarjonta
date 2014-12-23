@@ -12,7 +12,8 @@ app.controller('JarjestajaCtrl', [
     'AuthService',
     'PermissionService',
     '$location',
-    '$log', function($modalInstance, targetOrganisaatio, TarjontaService, LocalisationService, $q, $scope, OrganisaatioService, AuthService, PermissionService, $location, $log) {
+    '$log', function($modalInstance, targetOrganisaatio, TarjontaService, LocalisationService, $q, $scope,
+                     OrganisaatioService, AuthService, PermissionService, $location, $log) {
         $log = $log.getInstance('JarjestajaCtrl');
         // Tähän populoidaan formin valinnat:
         $scope.model = {
@@ -76,8 +77,9 @@ app.controller('JarjestajaCtrl', [
                 typeUris.push('oppilaitostyyppi_42');
                 // 42 Yliopistot
                 typeUris.push('oppilaitostyyppi_XX');
-                // XX Ei tiedossa (oppilaitostyyppi)                
-                $log.error('CONFIG window.CONFIG.app[nayttotutkinto.jarjestaja.oppilaitostyypit] - MISSING, setting to', typeUris);
+                // XX Ei tiedossa (oppilaitostyyppi)
+                $log.error('CONFIG window.CONFIG.app[nayttotutkinto.jarjestaja.oppilaitostyypit]' +
+                            ' - MISSING, setting to', typeUris);
             }
             //filtteroi vain oppilaitokset tietyillä oppilaitostyypeilla
             for (var i = 0; i < vastaus.organisaatiot.length; i++) {

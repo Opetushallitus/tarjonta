@@ -63,9 +63,6 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
             if (user && $scope.codes == null) {
                 return;
             }
-            /*if (user) {
-                  	console.log("UPDATE BY USER", kieli); 
-              	}*/
             for (var k in $scope.active) {
                 $scope.active[k] = false;
             }

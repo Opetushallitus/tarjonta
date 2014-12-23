@@ -1,6 +1,5 @@
 /**
  * Päivämäärän ja ajan formatointi selaimen localen mukaan.
- * 
  */
 angular.module('DateFormat', []).filter('ldate', function() {
     return function(input) {

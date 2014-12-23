@@ -1,7 +1,8 @@
 'use strict';
 /* Controllers */
 var app = angular.module('app.koulutus.ctrl');
-app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService) {
+app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
+                    SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService) {
     $log = $log.getInstance('LuoKoulutusDialogiController');
     // Tähän populoidaan formin valinnat:
     $log.debug('resetting form selections');
@@ -14,11 +15,14 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     // koulutustyyppi -> [oppilaitostyypit]
     //luo tarvittavat tietorakenteet valintojen validointia varten:
     SharedStateService.state.luoKoulutusaDialogi = SharedStateService.state.luoKoulutusaDialogi || {};
-    SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit = SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit || {};
-    SharedStateService.state.luoKoulutusaDialogi.koulutustyypit = SharedStateService.state.luoKoulutusaDialogi.koulutustyypit || {};
+    SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit =
+        SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit || {};
+    SharedStateService.state.luoKoulutusaDialogi.koulutustyypit =
+        SharedStateService.state.luoKoulutusaDialogi.koulutustyypit || {};
     // hätäkorjaus KJOH-670
     SharedStateService.state.puut.lkorganisaatio = {};
-    if (SharedStateService.state.puut && SharedStateService.state.puut.lkorganisaatio && SharedStateService.state.puut.lkorganisaatio.scope !== $scope) {
+    if (SharedStateService.state.puut && SharedStateService.state.puut.lkorganisaatio &&
+        SharedStateService.state.puut.lkorganisaatio.scope !== $scope) {
         SharedStateService.state.puut.lkorganisaatio.scope = $scope;
     }
     var promises = [];
@@ -26,7 +30,9 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         var deferred = $q.defer();
         promises.push(deferred.promise);
     }
-    SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit = SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit || Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi', 'fi').then(function(koodit) {
+    SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit =
+        SharedStateService.state.luoKoulutusaDialogi.koulutustyyppikoodit ||
+        Koodisto.getAllKoodisWithKoodiUri('koulutustyyppi', 'fi').then(function(koodit) {
         var subpromises = [];
         for (var i = 0; i < koodit.length; i++) {
             $log.debug('koulutustyyppikoodi:', koodit[i]);
@@ -40,16 +46,19 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                             var oppilaitostyyppi = ylapuoliset[j];
                             var kturi = koulutustyyppi.koodiUri + '#' + oppilaitostyyppi.koodiVersio;
                             var oturi = oppilaitostyyppi.koodiUri + '#' + oppilaitostyyppi.koodiVersio;
-                            SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit[kturi] = SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit[kturi] || [];
+                            SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit[kturi] =
+                                SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit[kturi] || [];
                             SharedStateService.state.luoKoulutusaDialogi.oppilaitostyypit[kturi].push(oppilaitostyyppi);
-                            SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi] = SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi] || [];
+                            SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi] =
+                                SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi] || [];
                             SharedStateService.state.luoKoulutusaDialogi.koulutustyypit[oturi].push(koulutustyyppi);
                             $log.debug(oppilaitostyyppi.koodiUri, '<->', koulutustyyppi.koodiUri);
                         }
                     }
                 };
             };
-            var promise = Koodisto.getYlapuolisetKoodit(koulutustyyppi.koodiUri, AuthService.getLanguage()).then(ylapuoliset(koulutustyyppi));
+            var promise = Koodisto.getYlapuolisetKoodit(koulutustyyppi.koodiUri, AuthService.getLanguage())
+                .then(ylapuoliset(koulutustyyppi));
             subpromises.push(promise);
         }
         $q.all(subpromises).then(function() {
@@ -209,7 +218,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             $scope.model.organisaatiot.unshift(firstOwnOrg);
         }
         $scope.tutkintoDialogModel = {};
-        var toteutustyyppi = KoulutusConverterFactory.getToteutustyyppiByKoulutustyyppiKoodiUri($scope.model.koulutustyyppi.koodiUri);
+        var toteutustyyppi = KoulutusConverterFactory.getToteutustyyppiByKoulutustyyppiKoodiUri(
+            $scope.model.koulutustyyppi.koodiUri);
         if (!toteutustyyppi) {
             eiToteutettu();
             return;
@@ -217,7 +227,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         if (toteutustyyppi === 'KORKEAKOULUTUS') {
             var olt = OrganisaatioService.haeOppilaitostyypit($scope.model.organisaatiot[0].oid);
             olt.then(function(oppilaitostyypit) {
-                Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002').then(function(koulutusasteKoodit) {
+                Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002')
+                    .then(function(koulutusasteKoodit) {
                     //valitun organisaation organisaatiotyyppiin liittyvät koulutusastekoodit on nyt resolvattu?
                     $log.debug('koulutusastekoodit:', koulutusasteKoodit.uris);
                     var modalInstance = $modal.open({
@@ -233,7 +244,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                         $scope.luoKoulutusDialog.close();
                         if (selectedItem.koodiUri != null) {
                             $log.debug('org:', $scope.model.organisaatiot[0]);
-                            $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo);
+                            $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri +
+                                '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo);
                             $location.search('opetusTarjoajat', _.map($scope.model.organisaatiot, function(org) {
                                 return org.oid;
                             }).join(','));
@@ -271,7 +283,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             promise.then(function(koodis) {
                 for (var i = 0; i < koodis.length; i++) {
                     if (CONFIG.env['koodisto-uris.koulutuslaji'] === koodis[i].koodiKoodisto) {
-                        $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri + '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
+                        $location.path('/koulutus/' + toteutustyyppi + '/' + $scope.model.koulutustyyppi.koodiUri +
+                            '/' + koodis[i].koodiUri + '/edit/' + $scope.model.organisaatiot[0].oid);
                         break;
                     }
                 }

@@ -82,7 +82,7 @@ app.directive('mkText', function(Koodisto, LocalisationService, $log, $modal) {
         controller: controller,
         scope: {
             display: '@',
-            // näyttötapa: tabs | rows 
+            // näyttötapa: tabs | rows
             model: '=',
             // map jossa kieliuri -> teksti
             ttEmpty: '@' // teksti, joka näytetään jos model on tyhjä

@@ -7,7 +7,7 @@ angular.module('TarjontaPermissions', [
     'Tarjonta',
     'Logging',
     'Koodisto'
-]).factory('PermissionService', function($resource, $log, $q, Config, AuthService, TarjontaService, HakuV1, KoodistoURI) {
+]).factory('PermissionService', function($resource, $log, $q, Config, AuthService, TarjontaService, HakuV1) {
     $log = $log.getInstance('PermissionService');
     var ophOid = Config.env['root.organisaatio.oid'];
     var resolveData = function(promise) {
@@ -271,8 +271,8 @@ angular.module('TarjontaPermissions', [
     }
     return {
         /**
-                     * funktiot jotka ottavat organisaatio oidin ovat yhteisiä molemmille (hk + k)!:
-                     */
+         * funktiot jotka ottavat organisaatio oidin ovat yhteisiä molemmille (hk + k)!:
+         */
         canDelete: function(orgOid) {
             _canDelete(orgOid);
         },
@@ -286,10 +286,9 @@ angular.module('TarjontaPermissions', [
         },
         koulutus: {
             /**
-                           * Saako käyttäjä luoda koulutuksen
-                           * @param orgOid organisaation oidi tai lista oideja
-                           * @returns
-                           */
+            * Saako käyttäjä luoda koulutuksen
+            * @param {type} orgOid organisaation oidi tai lista oideja
+            */
             canCreate: function(orgOid) {
                 return _canCreate(orgOid);
             },
@@ -314,10 +313,10 @@ angular.module('TarjontaPermissions', [
                 return true;
             },
             /**
-                           * Saako käyttäjä muokata koulutusta
-                           * @param koulutusOid koulutuksen oid
-                           * @returns
-                           */
+            * Saako käyttäjä muokata koulutusta
+            * @param {type} koulutusOid koulutuksen oid
+            * @param {type} searchParams
+            */
             canEdit: function(koulutusOid, searchParams) {
                 var koulutusoidit = angular.isArray(koulutusOid) ? koulutusOid : [koulutusOid];
                 if (koulutusoidit.length == 0) {
@@ -337,10 +336,8 @@ angular.module('TarjontaPermissions', [
                 return _canEditKoulutusMulti(koulutusoidit);
             },
             /**
-                           * Saako käyttäjä poistaa koulutuksen
-                           * @param koulutusOid
-                           * @returns
-                           */
+            * Saako käyttäjä poistaa koulutuksen
+            */
             canDelete: function(koulutusOid) {
                 var koulutusoidit = angular.isArray(koulutusOid) ? koulutusOid : [koulutusOid];
                 return _canDeleteKoulutusMulti(koulutusoidit);
@@ -348,10 +345,8 @@ angular.module('TarjontaPermissions', [
         },
         hakukohde: {
             /**
-                           * Saako käyttäjä luoda hakukohteen
-                           * @param orgOid organisaatio oid tai array oideja
-                           * @returns
-                           */
+            * Saako käyttäjä luoda hakukohteen
+            */
             canCreate: function(orgOid) {
                 return _canCreate(orgOid);
             },
@@ -361,10 +356,8 @@ angular.module('TarjontaPermissions', [
                 return $q.when(true);
             },
             /**
-                           * Saako käyttäjä muokata hakukohdetta
-                           * @param hakukohdeOid
-                           * @returns
-                           */
+            * Saako käyttäjä muokata hakukohdetta
+            */
             canEdit: function(hakukohdeOid) {
                 $log.debug('can edit hakukohde', hakukohdeOid);
                 var hakukohdeoidit = angular.isArray(hakukohdeOid) ? hakukohdeOid : [hakukohdeOid];
@@ -376,10 +369,8 @@ angular.module('TarjontaPermissions', [
                 return _canEditHakukohdeMulti(hakukohdeoidit);
             },
             /**
-                           * Saako käyttäjä poistaa hakukohteen
-                           * @param hakukohdeOid
-                           * @returns
-                           */
+            * Saako käyttäjä poistaa hakukohteen
+            */
             canDelete: function(hakukohdeOid) {
                 var hakukohdeoidit = angular.isArray(hakukohdeOid) ? hakukohdeOid : [hakukohdeOid];
                 return _canDeleteHakukohdeMulti(hakukohdeoidit);
@@ -408,15 +399,15 @@ angular.module('TarjontaPermissions', [
             });
         },
         /**
-                     * Palauttaa json olion, johon kerätty erilaisia oikeuksia.
-                     * <pre>
-                     * TODO esimerkki tuloksesta tähän!
-                     * </pre>
-                     *
-                     * @param {type} type esim. "haku", "hakukohde"
-                     * @param {type} target oid
-                     * @returns {$q@call;defer.promise}
-                     */
+         * Palauttaa json olion, johon kerätty erilaisia oikeuksia.
+         * <pre>
+         * TODO esimerkki tuloksesta tähän!
+         * </pre>
+         *
+         * @param {type} type esim. "haku", "hakukohde"
+         * @param {type} target oid
+         * @returns {$q@call;defer.promise}
+         */
         getPermissions: function(type, target) {
             var permissionsUrl = Config.env.tarjontaRestUrlPrefix + 'permission/permissions/:type/:target';
             var permissions = $resource(permissionsUrl, {}, {

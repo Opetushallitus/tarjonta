@@ -115,7 +115,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
     'SisaltyvyysUtil',
     'TreeHandlers',
     'AuthService',
-    '$log', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService, $log) {
+    '$log', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
+                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService, $log) {
         /*
              * Select koulutus data objects.
              */
@@ -174,7 +175,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
             koulutuskoodiMap: {} //key : koulutuskoodi uri : tutkintotyypit
         };
         $scope.koodistoLocale = LocalisationService.getLocale();
-        var koodisPromise = koodisto.getAllKoodisWithKoodiUri(config.app['koodisto-uris.tutkintotyyppi'], $scope.koodistoLocale);
+        var koodisPromise =
+            koodisto.getAllKoodisWithKoodiUri(config.app['koodisto-uris.tutkintotyyppi'], $scope.koodistoLocale);
         koodisPromise.then(function(koodis) {
             for (var i = 0; i < koodis.length; i++) {
                 for (var c = 0; c < $scope.other.tutkintotyypit.length; c++) {
@@ -250,7 +252,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
                         if (result.tulokset[i].tulokset[c].koulutuskoodi) {
                             var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split('#')[0];
-                            if ($scope.model.tutkinto.uri.length === 0 || $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
+                            if ($scope.model.tutkinto.uri.length === 0 ||
+                                $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
                                 $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
                                 arr.push({
                                     koulutuskoodi: koulutuskoodiUri,
@@ -266,7 +269,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                     }
                 }
                 angular.forEach(arr, function(value) {
-                    var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], value.koulutuskoodi, $scope.koodistoLocale);
+                    var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], value.koulutuskoodi,
+                        $scope.koodistoLocale);
                     koodisPromise.then(function(koodi) {
                         value.koulutuskoodi = koodi.koodiArvo;
                     });
@@ -294,7 +298,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
             });
             TarjontaService.saveResourceLink(targetKomo.oid, oids, function(response) {
                 var su = new SisaltyvyysUtil();
-                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData, $modalInstance);
+                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData,
+                    $modalInstance);
             });
         };
         /*

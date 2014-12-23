@@ -2,7 +2,10 @@
  * Created by tuomas on 17.6.2014.
  */
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
-app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService, Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout, TarjontaService, Kuvaus, CommonUtilService, PermissionService, SharedStateService) {
+app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, LocalisationService,
+        OrganisaatioService, Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config,
+        $location, $timeout, TarjontaService, Kuvaus, CommonUtilService, PermissionService,
+        SharedStateService) {
     // koulutusohjelmasta tai koulutuskoodista populoidaan tämä
     $scope.osaamisalat = [];
     $log = $log.getInstance('HakukohdeAikuNayttoEditController');
@@ -78,8 +81,10 @@ app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, L
     };
     // TODO: Add naytto specific haku filtering logic
     var filterHakus = function(hakus) {
-        var filteredHakus = $scope.filterHakusWithOrgs($scope.filterHakuWithKohdejoukko($scope.filterPoistettuHaku(hakus), 'haku.kohdejoukko.aiku.uri'));
-        return filteredHakus;
+        return $scope.filterHakusWithOrgs($scope.filterHakuWithKohdejoukko(
+            $scope.filterPoistettuHaku(hakus),
+            'haku.kohdejoukko.aiku.uri'
+        ));
     };
     /**
                *

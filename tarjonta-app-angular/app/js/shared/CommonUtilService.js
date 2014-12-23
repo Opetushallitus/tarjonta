@@ -35,18 +35,21 @@ app.service('CommonUtilService', function($resource, $log, $q, Config, Organisaa
              * Lisää organisaation oppilaitostyyppin (koodin uri) arrayhin jos se != undefined ja ei jo ole siinä
              */
         var addTyyppi = function(organisaatio) {
-            if (organisaatio.oppilaitostyyppi !== undefined && oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
+            if (organisaatio.oppilaitostyyppi !== undefined &&
+                oppilaitostyypit.indexOf(organisaatio.oppilaitostyyppi) == -1) {
                 oppilaitostyypit.push(organisaatio.oppilaitostyyppi);
             }
         };
-        if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1 && organisaatio.children !== undefined) {
+        if (organisaatio.organisaatiotyypit.indexOf('KOULUTUSTOIMIJA') != -1 &&
+            organisaatio.children !== undefined) {
             //	koulutustoimija, kerää oppilaitostyypit lapsilta (jotka oletetaan olevan oppilaitoksia)
             for (var i = 0; i < organisaatio.children.length; i++) {
                 addTyyppi(organisaatio.children[i]);
             }
             deferred.resolve(oppilaitostyypit);
         }
-        else if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1 && organisaatio.oppilaitostyyppi !== undefined) {
+        else if (organisaatio.organisaatiotyypit.indexOf('OPPILAITOS') != -1 &&
+                    organisaatio.oppilaitostyyppi !== undefined) {
             //oppilaitos, kerää tyyppi
             addTyyppi(organisaatio);
             deferred.resolve(oppilaitostyypit);

@@ -46,7 +46,6 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
     /*
        This JS-object is view representation of koodisto koodi.
        Example koodisto Koodi:
-       
        {
        koodiArvo :"",
        koodiUri  : "",
@@ -56,7 +55,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
        koodiOrganisaatioOid :"",
        -> Koodinimi is localized with given locale
        koodiNimi : ""
-       }  
+       }
        */
     var getKoodiViewModelFromKoodi = function(koodi, locale) {
         var tarjontaKoodi = {
@@ -79,8 +78,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             try {
                 var loppuPvmParts = koodi.voimassaLoppuPvm.split('-');
                 endDate = new Date(loppuPvmParts[0], loppuPvmParts[1] - 1, loppuPvmParts[2] - 1);
-            } catch ( e ) {
-                $log.warn('koodin ' + koodi.koodiUri + ' voimassaLoppuPvm ' + JSON.stringify(koodi.voimassaLoppuPvm) + ' ei voitu konvertoida');
+            }
+            catch (e) {
+                $log.warn('koodin ' + koodi.koodiUri + ' voimassaLoppuPvm ' +
+                    JSON.stringify(koodi.voimassaLoppuPvm) + ' ei voitu konvertoida');
             }
             if (endDate && endDate < currentDate) {
                 koodiValid = false;
@@ -91,14 +92,14 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
     };
     return {
         /*
-             * Utility for checking active Koodisto codes.
-             * 
-             * Use the functions: 
-             * - filterKoodis([]);
-             * - filterKoodisByKoodistoUri([], 'koodisto_uri');
-             */
+         * Utility for checking active Koodisto codes.
+         *
+         * Use the functions:
+         * - filterKoodis([]);
+         * - filterKoodisByKoodistoUri([], 'koodisto_uri');
+         */
         versionUtil: function() {
-            //DISABLE OR ENABLE STATUS OF LUONNOS 
+            //DISABLE OR ENABLE STATUS OF LUONNOS
             var ALLOW_LUONNOS = true;
             var END_SUFFIX = 'T23:59:59';
             return {
@@ -106,7 +107,8 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     return start <= d && d <= end || start <= d && end === null;
                 },
                 _isKoodiActive: function(dateNow, koodi) {
-                    return koodi.voimassaAlkuPvm !== null && this._inRange(dateNow, new Date(koodi.voimassaAlkuPvm), koodi.voimassaLoppuPvm === null ? null : new Date(koodi.voimassaLoppuPvm + END_SUFFIX));
+                    return koodi.voimassaAlkuPvm !== null && this._inRange(dateNow, new Date(koodi.voimassaAlkuPvm),
+                            koodi.voimassaLoppuPvm === null ? null : new Date(koodi.voimassaLoppuPvm + END_SUFFIX));
                 },
                 _isKoodiApproved: function(koodi, showLuonnos) {
                     return showLuonnos && koodi.tila === 'LUONNOS' || koodi.tila === 'HYVAKSYTTY';
@@ -114,7 +116,8 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                 _filtterKoodiToMap: function(dateNow, mapFiltteredKoodis, koodi, showLuonnos) {
                     if (this._isKoodiActive(dateNow, koodi)) {
                         //is correct status with optional luonnos
-                        if (angular.isDefined(mapFiltteredKoodis[koodi.koodiUri]) && this._isKoodiApproved(koodi, showLuonnos)) {
+                        if (angular.isDefined(mapFiltteredKoodis[koodi.koodiUri]) &&
+                            this._isKoodiApproved(koodi, showLuonnos)) {
                             if (koodi.versio > mapFiltteredKoodis[koodi.koodiUri].versio) {
                                 //override by latest version
                                 mapFiltteredKoodis[koodi.koodiUri] = koodi;
@@ -148,13 +151,13 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     }
                 },
                 /*
-                         * Poistaa passivoidut ja vanhentuneet koodit, jos 
-                         * samaa koodia on useampia palauttaa funktio 
-                         * vain uusimmat version.
-                         * 
-                         * @param {[KoodistoKoodiObj, KoodistoKoodiObj...]} koodis
-                         * @returns {keyUri : {KoodistoKoodiObj}}
-                         */
+                 * Poistaa passivoidut ja vanhentuneet koodit, jos
+                 * samaa koodia on useampia palauttaa funktio
+                 * vain uusimmat version.
+                 *
+                 * @param {[KoodistoKoodiObj, KoodistoKoodiObj...]} koodis
+                 * @returns {keyUri : {KoodistoKoodiObj}}
+                 */
                 filterKoodis: function(koodis) {
                     var map = {};
                     //key = uri, value= koodisto koodi object
@@ -164,14 +167,14 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     return map;
                 },
                 /*
-                         * Poistaa passivoidut ja vanhentuneet koodit, jos 
-                         * samaa koodia on useampia palauttaa funktio 
-                         * vain uusimmat version. Fitterinä koodiston uri.
-                         * 
-                         * @param {[KoodistoKoodiObj, KoodistoKoodiObj...]} koodis
-                         * @param "koodisto_uri" koodistoUri
-                         * @returns {keyUri : {KoodistoKoodiObj}}
-                         */
+                 * Poistaa passivoidut ja vanhentuneet koodit, jos
+                 * samaa koodia on useampia palauttaa funktio
+                 * vain uusimmat version. Fitterinä koodiston uri.
+                 *
+                 * @param {[KoodistoKoodiObj, KoodistoKoodiObj...]} koodis
+                 * @param "koodisto_uri" koodistoUri
+                 * @returns {keyUri : {KoodistoKoodiObj}}
+                 */
                 filterKoodisByKoodistoUri: function(koodis, koodistoUri) {
                     if (koodistoUri === null || angular.isUndefined(koodistoUri) || koodistoUri.length === 0) {
                         new Error('Tarjonta application error - null koodisto uri filtter!');
@@ -186,10 +189,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             };
         },
         /*
-             @param {array} array of koodis received from Koodisto.
-             @param {string} locale in which koodi name should be shown
-             @returns {array} array of koodi view model objects
-             */
+         @param {array} array of koodis received from Koodisto.
+         @param {string} locale in which koodi name should be shown
+         @returns {array} array of koodi view model objects
+         */
         convertKoodistoKoodiToViewModelKoodi: function(koodisParam, locale) {
             var koodis = [];
             angular.forEach(koodisParam, function(koodi) {
@@ -198,10 +201,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             return koodis;
         },
         /*
-             @param {string} koodistouri from which koodis should be retrieved
-             @param {string} locale in which koodi name should be shown
-             @returns {promise} return promise which contains array of koodi view models
-             */
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {promise} return promise which contains array of koodi view models
+         */
         getYlapuolisetKoodit: function(koodiUriParam, locale) {
             $log.info('getYlapuolisetKoodit called with : ' + koodiUriParam + ' locale : ' + locale);
             var returnYlapuoliKoodis = $q.defer();
@@ -245,12 +248,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             return returnYlapuoliKoodis.promise;
         },
         /**
-             * koodiUriList palauttaa alapuoliset koodiurit jotka ovat tiettyä tyyppiä (tai kaikki jos ei määritelty)
-             * returns object {
-             *      uris : [], 
-             *      map : {uri-key : koodi-value}
-             * }
-             */
+         * koodiUriList palauttaa alapuoliset koodiurit jotka ovat tiettyä tyyppiä (tai kaikki jos ei määritelty)
+         * returns object {
+         *      uris : [],
+         *      map : {uri-key : koodi-value}
+         * }
+         */
         getAlapuolisetKoodiUrit: function(koodiUriList, tyyppi, locale) {
             var deferred = $q.defer();
             var result = {
@@ -282,12 +285,12 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             return deferred.promise;
         },
         /**
-             * koodiUriList palauttaa alapuoliset koodiurit jotka ovat tiettyä tyyppiä (tai kaikki jos ei määritelty)
-             * returns object {
-             *      uris : [], 
-             *      map : {uri-key : koodi-value}
-             * }
-             */
+         * koodiUriList palauttaa alapuoliset koodiurit jotka ovat tiettyä tyyppiä (tai kaikki jos ei määritelty)
+         * returns object {
+         *      uris : [],
+         *      map : {uri-key : koodi-value}
+         * }
+         */
         getYlapuolisetKoodiUrit: function(koodiUriList, tyyppi, locale) {
             //        $log.info('getYlapuolisetKoodiUrit called with : ' , koodiUriList, tyyppi);
             var deferred = $q.defer();
@@ -320,10 +323,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             return deferred.promise;
         },
         /*
-             @param {string} koodistouri from which koodis should be retrieved
-             @param {string} locale in which koodi name should be shown
-             @returns {promise} return promise which contains array of koodi view models
-             */
+         @param {string} koodistouri from which koodis should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {promise} return promise which contains array of koodi view models
+         */
         getAllKoodisWithKoodiUri: function(koodistoUriParam, locale, includePassiivises) {
             $log.info('getAllKoodisWithKoodiUri called with ' + koodistoUriParam + ' ' + locale);
             return CacheService.lookup('koodisto/' + koodistoUriParam + '/' + locale, function(returnKoodisPromise) {
@@ -358,11 +361,11 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             });
         },
         /*
-             @param {string} koodisto URI from which koodis should be retrieved
-             @param {string} koodi URI from which koodi should be retrieved
-             @param {string} locale in which koodi name should be shown
-             @returns {array} array of koodisto view model objects
-             */
+         @param {string} koodisto URI from which koodis should be retrieved
+         @param {string} koodi URI from which koodi should be retrieved
+         @param {string} locale in which koodi name should be shown
+         @returns {array} array of koodisto view model objects
+         */
         getKoodi: function(koodistoUriParam, koodiUriParam, locale) {
             koodiUriParam = removeVersion(koodiUriParam);
             var returnKoodi = $q.defer();
@@ -435,10 +438,10 @@ app.factory('KoodistoURI', function($log, Config) {
         return !angular.isDefined(v) || !v;
     }
     /**
-       * Compares two koodis. Return true if they are consireder to be equal.
-       * 
-       * @see TarjontaKoodistoHelperTest#testKoodistoUri_compare_versions() test to see how this works. 
-       */
+    * Compares two koodis. Return true if they are consireder to be equal.
+    *
+    * @see TarjontaKoodistoHelperTest#testKoodistoUri_compare_versions() test to see how this works.
+    */
     var compareKoodi = function(sourceKoodi, targetKoodi, ignoreVersions) {
         if (isEmpty(sourceKoodi) && isEmpty(targetKoodi)) {
             return true;
@@ -459,24 +462,24 @@ app.factory('KoodistoURI', function($log, Config) {
         return source === target;
     };
     /**
-       * @param koodi
-       * @return true if koodi is not null and has version information (contains "#" character).
-       */
+    * @param {type} koodi
+    * @return true if koodi is not null and has version information (contains "#" character).
+    */
     var koodiHasVersion = function(koodi) {
         return !isEmpty(koodi) != null && koodi.indexOf('#') > 0;
     };
     /**
-       * Split koodi to "koodi" and version strings
-       * 
-       * <pre>
-       * null -- "", ""
-       * kieli_fi -- "kieli_fi", ""
-       * kieli_fi#123 -- "kieli_fi", "123"
-       * </pre>
-       * 
-       * @param koodi
-       * @return 
-       */
+    * Split koodi to "koodi" and version strings
+    *
+    * <pre>
+    * null -- "", ""
+    * kieli_fi -- "kieli_fi", ""
+    * kieli_fi#123 -- "kieli_fi", "123"
+    * </pre>
+    *
+    * @param {type} koodi
+    * @return
+    */
     var splitKoodiToKoodiAndVersion = function(koodi) {
         var result = [];
         if (koodi == null) {
@@ -514,18 +517,18 @@ app.factory('KoodistoURI', function($log, Config) {
         KOODISTO_KOULUTUSLAJI_URI: getConfigWithDefault('koodisto-uris.koulutuslaji', ''),
         KOODISTO_LIITTEEN_TYYPPI_URI: getConfigWithDefault('koodisto-uris.liitteentyyppi', ''),
         /*
-             * Organization navi URIs
-             */
+         * Organization navi URIs
+         */
         KOODISTO_OPPILAITOSTYYPPI_URI: getConfigWithDefault('koodisto-uris.oppilaitostyyppi', ''),
         /*
-             * Top search area URIs
-             */
+         * Top search area URIs
+         */
         KOODISTO_ALKAMISKAUSI_URI: getConfigWithDefault('koodisto-uris.alkamiskausi', ''),
         KOODISTO_HAKUTYYPPI_URI: getConfigWithDefault('koodisto-uris.hakutyyppi', ''),
         KOODISTO_HAUN_KOHDEJOUKKO_URI: getConfigWithDefault('koodisto-uris.haunKohdejoukko', ''),
         /*
-             * KOMO URIs
-             */
+         * KOMO URIs
+         */
         KOODISTO_TUTKINTO_URI: getConfigWithDefault('koodisto-uris.koulutus', ''),
         KOODISTO_TUTKINTO_NIMI_URI: getConfigWithDefault('koodisto-uris.tutkinto', ''),
         KOODISTO_KOULUTUSOHJELMA_URI: getConfigWithDefault('koodisto-uris.koulutusohjelma', ''),
@@ -538,58 +541,66 @@ app.factory('KoodistoURI', function($log, Config) {
         KOODISTO_POHJAKOULUTUSVAATIMUKSET_URI: getConfigWithDefault('koodisto-uris.pohjakoulutusvaatimus', ''),
         KOODISTO_EQF_LUOKITUS_URI: getConfigWithDefault('koodisto-uris.eqf-luokitus', ''),
         /*
-             * KOMOTO URIs
-             */
+         * KOMOTO URIs
+         */
         KOODISTO_AMMATTINIMIKKEET_URI: getConfigWithDefault('koodisto-uris.ammattinimikkeet', ''),
         KOODISTO_OPETUSMUOTO_URI: getConfigWithDefault('koodisto-uris.opetusmuoto', ''),
         KOODISTO_POSTINUMERO_URI: getConfigWithDefault('koodisto-uris.postinumero', ''),
         /*
-             * Valintaperustekuvaus URIs
-             */
+         * Valintaperustekuvaus URIs
+         */
         KOODISTO_VALINTAPERUSTEKUVAUSRYHMA_URI: getConfigWithDefault('koodisto-uris.valintaperustekuvausryhma', ''),
         KOODISTO_SORA_KUVAUSRYHMA_URI: getConfigWithDefault('koodisto-uris.sorakuvausryhma', ''),
         /*
-             * Lukiotutkinto URIs
-             */
+         * Lukiotutkinto URIs
+         */
         KOODISTO_LUKIOLINJA_URI: getConfigWithDefault('koodisto-uris.lukiolinja', ''),
         KOODI_KOULUTUSLAJI_NUORTEN_KOULUTUS_URI: getConfigWithDefault('koodi-uri.koulutuslaji.nuortenKoulutus', ''),
         LUKIO_KOODI_POHJAKOULUTUSVAATIMUS_URI: getConfigWithDefault('koodi-uri.lukio.pohjakoulutusvaatimus', ''),
         KOODISTO_LUKIODIPLOMIT_URI: getConfigWithDefault('koodisto-uris.lukiodiplomit', ''),
         /**
-             * Oppiaineet
-             */
+         * Oppiaineet
+         */
         KOODISTO_OPPIAINEET_URI: getConfigWithDefault('koodisto-uris.oppiaineet', ''),
         /**
-             * Hakukohde / valintakoe
-             */
+         * Hakukohde / valintakoe
+         */
         KOODISTO_VALINTAKOE_TYYPPI_URI: getConfigWithDefault('koodisto-uris.valintakokeentyyppi', ''),
         /*
-             * For tutkinto dialog
-             */
+         * For tutkinto dialog
+         */
         /*
-             * For korkeakoulu
-             */
+         * For korkeakoulu
+         */
         KOODISTO_TEEMAT_URI: getConfigWithDefault('koodisto-uris.teemat', ''),
         KOODISTO_HAKUKELPOISUUSVAATIMUS_URI: getConfigWithDefault('koodisto-uris.hakukelpoisuusvaatimus', ''),
-        KOODISTO_POHJAKOULUTUSVAATIMUKSET_KORKEAKOULU_URI: getConfigWithDefault('koodisto-uris.pohjakoulutusvaatimus_kk', ''),
+        KOODISTO_POHJAKOULUTUSVAATIMUKSET_KORKEAKOULU_URI:
+            getConfigWithDefault('koodisto-uris.pohjakoulutusvaatimus_kk', ''),
         KOODISTO_TUTKINTONIMIKE_KORKEAKOULU_URI: getConfigWithDefault('koodisto-uris.tutkintonimike_kk', ''),
         /*
-             * For tutkinto dialog
-             */
+         * For tutkinto dialog
+         */
         KOODISTO_TARJONTA_KOULUTUSTYYPPI: getConfigWithDefault('koodisto-uris.tarjontakoulutustyyppi', ''),
         KOODI_LISAHAKU_URI: getConfigWithDefault('koodisto-uris.lisahaku', 'hakutyyppi_03#1'),
         // hmmm. typo? "kodisto"
-        KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI: getConfigWithDefault('kodisto-uris.yksilollistettyPerusopetus', 'pohjakoulutusvaatimustoinenaste_er'),
+        KOODI_YKSILOLLISTETTY_PERUSOPETUS_URI:
+            getConfigWithDefault('kodisto-uris.yksilollistettyPerusopetus', 'pohjakoulutusvaatimustoinenaste_er'),
         KOODI_YHTEISHAKU_URI: getConfigWithDefault('koodisto-uris.yhteishaku', 'hakutapa_01#1'),
         KOODI_ERILLISHAKU_URI: getConfigWithDefault('koodisto-uris.erillishaku', 'hakutapa_02#1'),
         KOODI_HAASTATTELU_URI: getConfigWithDefault('koodisto-uris.valintakoeHaastattelu', 'valintakokeentyyppi_6#1'),
         KOODI_TODISTUKSET_URI: getConfigWithDefault('koodisto-uris.liiteTodistukset', 'liitetyypitamm_3#1'),
-        KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI: getConfigWithDefault('koodisto-uris.kohdejoukkoErityisopetus', 'haunkohdejoukko_15#1'),
-        KOODI_KOHDEJOUKKO_VALMENTAVA_URI: getConfigWithDefault('koodisto-uris.valmentavaKuntouttava', 'haunkohdejoukko_16#1'),
-        KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI: getConfigWithDefault('koodisto-uris.ammatillinenLukio', 'haunkohdejoukko_11#1'),
-        KOODI_POHJAKOULUTUS_PERUSKOULU_URI: getConfigWithDefault('koodisto-uris.pohjakoulutusPeruskoulu', 'pohjakoulutusvaatimustoinenaste_pk#1'),
-        KOODI_KOHDEJOUKKO_VALMISTAVA_URI: getConfigWithDefault('koodisto-uris.valmistavaOpetus', 'haunkohdejoukko_17#1'),
-        KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI: getConfigWithDefault('koodisto-uris.vapaaSivistys', 'haunkohdejoukko_18#1'),
+        KOODI_KOHDEJOUKKO_ERITYISOPETUS_URI:
+            getConfigWithDefault('koodisto-uris.kohdejoukkoErityisopetus', 'haunkohdejoukko_15#1'),
+        KOODI_KOHDEJOUKKO_VALMENTAVA_URI:
+            getConfigWithDefault('koodisto-uris.valmentavaKuntouttava', 'haunkohdejoukko_16#1'),
+        KOODI_KOHDEJOUKKO_AMMATILLINEN_LUKIO_URI:
+            getConfigWithDefault('koodisto-uris.ammatillinenLukio', 'haunkohdejoukko_11#1'),
+        KOODI_POHJAKOULUTUS_PERUSKOULU_URI:
+            getConfigWithDefault('koodisto-uris.pohjakoulutusPeruskoulu', 'pohjakoulutusvaatimustoinenaste_pk#1'),
+        KOODI_KOHDEJOUKKO_VALMISTAVA_URI:
+            getConfigWithDefault('koodisto-uris.valmistavaOpetus', 'haunkohdejoukko_17#1'),
+        KOODI_KOHDEJOUKKO_VAPAASIVISTYS_URI:
+            getConfigWithDefault('koodisto-uris.vapaaSivistys', 'haunkohdejoukko_18#1'),
         //
         // Functionality
         //

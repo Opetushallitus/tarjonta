@@ -26,7 +26,8 @@ app.controller('PoistaSisaltyvyysCtrl', [
     'organisaatioOid',
     'SisaltyvyysUtil',
     'TreeHandlers',
-    '$log', function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q, $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, $log) {
+    '$log', function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
+                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, $log) {
         /*
              * Select koulutus data objects.
              */
@@ -157,7 +158,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
         $scope.removeItem = TreeHandlers.removeItem;
         /**
              * Search komos.
-             * 
+             *
              * @returns {undefined}
              */
         $scope.searchKomos = function() {
@@ -200,7 +201,8 @@ app.controller('PoistaSisaltyvyysCtrl', [
                                 tarjoaja: result.tulokset[i].nimi,
                                 oid: result.tulokset[i].tulokset[c].komoOid
                             };
-                            var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], koulutuskoodiUri, $scope.koodistoLocale);
+                            var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'],
+                                koulutuskoodiUri, $scope.koodistoLocale);
                             koodisPromise.then(function(koodi) {
                                 item.koulutuskoodi = koodi.koodiArvo;
                             });
@@ -234,7 +236,8 @@ app.controller('PoistaSisaltyvyysCtrl', [
             removeMany.$promise.then(function(response) {
                 var su = new SisaltyvyysUtil();
                 //look more info from a file liita-sisaltyvyys-ctrl.js
-                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData, $modalInstance);
+                $scope.model.errors = su.handleResult(targetKomo, response, $scope.model.selectedRowData,
+                    $modalInstance);
             });
         };
         /*

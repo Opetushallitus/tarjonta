@@ -25,7 +25,8 @@ app.controller('KoulutusRoutingController', [
     'OrganisaatioService',
     'Koodisto',
     'LocalisationService',
-    'KoulutusConverterFactory', function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService, converter) {
+    'KoulutusConverterFactory', function KoulutusRoutingController($scope, $log, $routeParams, $route, $location,
+       converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService, converter) {
         $log = $log.getInstance('KoulutusRoutingController');
         /*
              * Page routing data
@@ -36,7 +37,8 @@ app.controller('KoulutusRoutingController', [
                 var type = $route.current.locals.koulutusModel.result.toteutustyyppi;
                 if (angular.isDefined(converter.STRUCTURE[type])) {
                     if (converter.STRUCTURE[type].templates && converter.STRUCTURE[type].templates[actionType]) {
-                        $scope.resultPageUri = 'partials/koulutus/' + actionType + '/' + converter.STRUCTURE[type].templates[actionType] + '.html';
+                        $scope.resultPageUri = 'partials/koulutus/' + actionType + '/' +
+                            converter.STRUCTURE[type].templates[actionType] + '.html';
                     }
                     else {
                         $scope.resultPageUri = 'partials/koulutus/' + actionType + '/' + type + '.html';

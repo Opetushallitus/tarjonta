@@ -28,7 +28,9 @@ app.controller('HakuListController', [
     'PermissionService',
     'loadingService',
     'OrganisaatioService',
-    'AuthService', function HakuListController($q, $scope, $location, $log, $window, $modal, LocalisationService, Haku, dialogService, HakuV1Service, Koodisto, PermissionService, loadingService, OrganisaatioService, AuthService) {
+    'AuthService', function HakuListController($q, $scope, $location, $log, $window, $modal,
+                   LocalisationService, Haku, dialogService, HakuV1Service, Koodisto,
+                   PermissionService, loadingService, OrganisaatioService, AuthService) {
         //
         // OVT-8275 ? Tama on myos tehty tuolla tarjontaApp init:ssä...
         //
@@ -103,7 +105,10 @@ app.controller('HakuListController', [
                 case 'hakukausi':
                     return kausiVuosiToString(row.hakukausiUri, row.hakukausiVuosi);
                 case 'alkamiskausi':
-                    return kausiVuosiToString(row.koulutuksenAlkamiskausiUri, row.koulutuksenAlkamisVuosi);
+                    return kausiVuosiToString(
+                        row.koulutuksenAlkamiskausiUri,
+                        row.koulutuksenAlkamisVuosi
+                    );
                 case 'tila':
                     return LocalisationService.t('tarjonta.tila.' + row.tila);
                 default:
@@ -197,7 +202,11 @@ app.controller('HakuListController', [
                                * Kerro käyttäjälle että operaatio suoritettu
                                */
                 function after(ackTitle, ackDescription) {
-                    dialogService.showSimpleDialog(ackTitle, ackDescription, LocalisationService.t('ok')).result.then(function(ok) {});
+                    dialogService.showSimpleDialog(
+                        ackTitle,
+                        ackDescription,
+                        LocalisationService.t('ok')
+                    ).result.then(function(ok) {});
                 }
                 function change(haku, doAfter) {
                     Haku.changeState({
@@ -217,7 +226,12 @@ app.controller('HakuListController', [
                         }
                     }, function(reason) {});
                 }
-                return dialogService.showSimpleDialog(title, description, LocalisationService.t('ok'), LocalisationService.t('cancel')).result.then(function(ok) {
+                return dialogService.showSimpleDialog(
+                    title,
+                    description,
+                    LocalisationService.t('ok'),
+                    LocalisationService.t('cancel')
+                ).result.then(function(ok) {
                     if (ok) {
                         $log.info(' -> verified.');
                         return change(haku, doAfter);
@@ -320,12 +334,13 @@ app.controller('HakuListController', [
                 params.TILA = 'NOT_POISTETTU';
             }
             /**
-                           * Allow user only to select values included in the typeahead response. If value is not
-                           * in the response (user wrote manually something else) => clear the input to indicate that
-                           * the filter value is invalid.
-                           */
+            * Allow user only to select values included in the typeahead response. If value is not
+            * in the response (user wrote manually something else) => clear the input to indicate that
+            * the filter value is invalid.
+            */
             var $organisationFilter = angular.element('#organisationFilter');
-            if (selectedOrganisation === null || $organisationFilter.val() !== selectedOrganisation.nimi) {
+            if (selectedOrganisation === null
+                || $organisationFilter.val() !== selectedOrganisation.nimi) {
                 delete params.TARJOAJAOID;
                 $organisationFilter.val('');
                 selectedOrganisation = null;
@@ -349,16 +364,21 @@ app.controller('HakuListController', [
         };
         $scope.searchOrganisations = function(qterm) {
             /**
-                           * Recursively process the organizations results, so that all the children are also
-                           * included in the final result set.
-                           */
-            function processOrganizations(alreadyAddedOrganizations, newOrganizations, hierarchyLevel) {
+            * Recursively process the organizations results, so that all the children are also
+            * included in the final result set.
+            */
+            function processOrganizations(alreadyAddedOrganizations, newOrganizations,
+                                          hierarchyLevel) {
                 hierarchyLevel = hierarchyLevel || 0;
                 angular.forEach(newOrganizations, function(org) {
                     org.nimi = new Array(hierarchyLevel + 1).join('- ') + org.nimi;
                     alreadyAddedOrganizations.push(org);
                     if (angular.isArray(org.children)) {
-                        alreadyAddedOrganizations = processOrganizations(alreadyAddedOrganizations, org.children, hierarchyLevel + 1);
+                        alreadyAddedOrganizations = processOrganizations(
+                            alreadyAddedOrganizations,
+                            org.children,
+                            hierarchyLevel + 1
+                        );
                     }
                 });
                 return alreadyAddedOrganizations;

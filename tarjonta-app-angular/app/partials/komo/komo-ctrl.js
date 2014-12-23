@@ -7,7 +7,8 @@ angular.module('app.komo.ctrl', [
     'Koodisto',
     'TarjontaCache',
     'TarjontaDateTime'
-]).controller('KomoController', function($scope, $q, Koodisto, TarjontaService, PermissionService, LocalisationService, dialogService) {
+]).controller('KomoController', function($scope, $q, Koodisto, TarjontaService, PermissionService,
+                                         LocalisationService, dialogService) {
     'use strict';
     $scope.controlModel = {
         formStatus: {
@@ -312,7 +313,9 @@ angular.module('app.komo.ctrl', [
                             koulutuskoodiUri: res.result[i].koulutuskoodiUri,
                             ohjelmaUri: res.result[i].ohjelmaUri,
                             koulutusmoduuliTyyppi: res.result[i].koulutusmoduuliTyyppi,
-                            moduuli: res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO' ? 'Tutkinto' : 'Tutkinto-ohjelma',
+                            moduuli: res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO' ?
+                                'Tutkinto' :
+                                'Tutkinto-ohjelma',
                             koulutus: res.result[i].koulutuskoodiUri,
                             ohjelma: res.result[i].ohjelmaUri
                         });
@@ -339,7 +342,8 @@ angular.module('app.komo.ctrl', [
         };
     };
     $scope.initUri = function(fieldName) {
-        if (!angular.isDefined($scope.ctrl.result[fieldName]) || !angular.isDefined($scope.ctrl.result[fieldName].uri)) {
+        if (!angular.isDefined($scope.ctrl.result[fieldName]) ||
+            !angular.isDefined($scope.ctrl.result[fieldName].uri)) {
             $scope.ctrl.result[fieldName] = {
                 uri: '',
                 versio: -1
@@ -538,7 +542,8 @@ angular.module('app.komo.ctrl', [
             var o = $scope.ctrl.textFields[i];
             if (o.type === 'URI') {
                 var f = copy[o.name];
-                if (angular.isDefined(f) && angular.isDefined(f.versio) && (f.versio > 0 && f.versio === '-1' || f.versio === -1)) {
+                if (angular.isDefined(f) && angular.isDefined(f.versio) &&
+                    (f.versio > 0 && f.versio === '-1' || f.versio === -1)) {
                     copy[o.name] = null;
                 }
             }
@@ -556,7 +561,13 @@ angular.module('app.komo.ctrl', [
         for (var i = 0; i < komos.length; i++) {
             prosmises.push($scope.searchKoodi(komos[i], 'koulutus', 'koulutus', komos[i].koulutuskoodiUri, 'FI'));
             if (angular.isDefined(komos[i].ohjelmaUri) && komos[i].ohjelmaUri !== null) {
-                prosmises.push($scope.searchKoodi(komos[i], 'ohjelma', komos[i].ohjelmaUri.split('_')[0], komos[i].ohjelmaUri, 'FI'));
+                prosmises.push($scope.searchKoodi(
+                    komos[i],
+                    'ohjelma',
+                    komos[i].ohjelmaUri.split('_')[0],
+                    komos[i].ohjelmaUri,
+                    'FI'
+                ));
             }
         }
         $q.all(prosmises).then(function(values) {
@@ -585,15 +596,11 @@ angular.module('app.komo.ctrl', [
                 meta: false,
                 defaults: 'tutkintonimike:tutkintonimikkeet_00000,eqf:eqf_4,tutkinto:tutkinto_xx'
             }, function(data) {
-                    deffered.resolve({
-                        koulutus: koulutuUri,
-                        res: data
-                    });
+                deffered.resolve({
+                    koulutus: koulutuUri,
+                    res: data
                 });
-            //                    var ohjelma = Koodisto.getAlapuolisetKoodiUrit([koodis.uris[count]], null, $scope.koodistoLocale);
-            //                    ohjelma.then(function(ohjelmaRes) {
-            //                        deffered.resolve({koulutus: koulutuUri, res: ohjelmaRes});
-            //                    });
+            });
             return deffered.promise;
         }
         koulutus.then(function(koulutusRes) {
@@ -626,18 +633,18 @@ angular.module('app.komo.ctrl', [
                     koulutustyyppi: $scope.ctrl.koulutustyyppiUri
                 }, function(res) {
                         /*
-                                       * mapLoaded:
-                                       *
-                                       * koulutus_123456 : {
-                                       * oid : 12345,
-                                       * mapOhjelmas : {
-                                       *      ohjelmauri_a = {oid : 12345},
-                                       *      ohjelmauri_b = {oid : 12345}
-                                       *      ...
-                                       *  }
-                                       * }
-                                       * ...
-                                       */
+                        * mapLoaded:
+                        *
+                        * koulutus_123456 : {
+                        * oid : 12345,
+                        * mapOhjelmas : {
+                        *      ohjelmauri_a = {oid : 12345},
+                        *      ohjelmauri_b = {oid : 12345}
+                        *      ...
+                        *  }
+                        * }
+                        * ...
+                        */
                         var mapLoaded = {};
                         for (var i = 0; i < res.result.length; i++) {
                             if (angular.isUndefined(mapLoaded[res.result[i].koulutuskoodiUri])) {
@@ -645,19 +652,23 @@ angular.module('app.komo.ctrl', [
                                     mapOhjelmas: {}
                                 };
                             }
-                            if (angular.isUndefined(res.result[i].ohjelma) && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
+                            if (angular.isUndefined(res.result[i].ohjelma) &&
+                                res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
                                 if (angular.isDefined(res.result[i].koulutusohjelmaUri)) {
-                                    mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].koulutusohjelmaUri] = {
+                                    mapLoaded[res.result[i].koulutuskoodiUri]
+                                    .mapOhjelmas[res.result[i].koulutusohjelmaUri] = {
                                         oid: res.result[i].oid
                                     };
                                 }
                                 if (angular.isDefined(res.result[i].osaamisalaUri)) {
-                                    mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].osaamisalaUri] = {
+                                    mapLoaded[res.result[i].koulutuskoodiUri]
+                                    .mapOhjelmas[res.result[i].osaamisalaUri] = {
                                         oid: res.result[i].oid
                                     };
                                 }
                                 if (angular.isDefined(res.result[i].lukiolinjaUri)) {
-                                    mapLoaded[res.result[i].koulutuskoodiUri].mapOhjelmas[res.result[i].lukiolinjaUri] = {
+                                    mapLoaded[res.result[i].koulutuskoodiUri]
+                                    .mapOhjelmas[res.result[i].lukiolinjaUri] = {
                                         oid: res.result[i].oid
                                     };
                                 }
@@ -673,7 +684,13 @@ angular.module('app.komo.ctrl', [
                             var tutkintoApiModel = {
                                 oid: angular.isDefined(mapLoaded[koulutusUri]) ? mapLoaded[koulutusUri].oid : null
                             };
-                            var tutkintoModel = $scope.createModel(tutkintoApiModel, 'TUTKINTO', koulutusUri, {}, relatios);
+                            var tutkintoModel = $scope.createModel(
+                                tutkintoApiModel,
+                                'TUTKINTO',
+                                koulutusUri,
+                                {},
+                                relatios
+                            );
                             mapKomos[koulutusUri] = {
                                 tutkinto: tutkintoModel,
                                 ohjelmas: []
@@ -705,9 +722,18 @@ angular.module('app.komo.ctrl', [
                         //CONVERT TO API MODEL
                         angular.forEach(mergeDublicate, function(value, key) {
                             var ohjelmaApiModel = {
-                                oid: angular.isDefined(mapLoaded[koulutusUri]) && angular.isDefined(mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma]) ? mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma].oid : null
+                                oid: angular.isDefined(mapLoaded[koulutusUri]) &&
+                                angular.isDefined(mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma]) ?
+                                    mapLoaded[koulutusUri].mapOhjelmas[mergeDublicate[key].ohjelma].oid :
+                                    null
                             };
-                            var ohjelmaModel = $scope.createModel(ohjelmaApiModel, 'TUTKINTO_OHJELMA', koulutusUri, mergeDublicate[key], relatios);
+                            var ohjelmaModel = $scope.createModel(
+                                ohjelmaApiModel,
+                                'TUTKINTO_OHJELMA',
+                                koulutusUri,
+                                mergeDublicate[key],
+                                relatios
+                            );
                             mapKomos[koulutusUri].ohjelmas.push(ohjelmaModel);
                             uiModel.push(ohjelmaModel);
                         });
@@ -877,7 +903,8 @@ angular.module('app.komo.ctrl', [
         angular.forEach(STRUCTURE.URI, function(value, key) {
             if (angular.isDefined(STRUCTURE.URI[key])) {
                 if (STRUCTURE.URI[key].module === 'BOTH' || STRUCTURE.URI[key].module === moduleTypeEnum) {
-                    if (angular.isDefined(STRUCTURE.URI[key].uri) && STRUCTURE.URI[key].uri !== null && STRUCTURE.URI[key].uri.length > 0) {
+                    if (angular.isDefined(STRUCTURE.URI[key].uri) && STRUCTURE.URI[key].uri !== null &&
+                        STRUCTURE.URI[key].uri.length > 0) {
                         apiModel[key] = {
                             arvo: STRUCTURE.URI[key].arvo,
                             uri: STRUCTURE.URI[key].uri,
@@ -939,18 +966,27 @@ angular.module('app.komo.ctrl', [
                             var o = $scope.import.uiModel[i];
                             koulutus.push({
                                 index: i,
-                                osaamisalaUri: angular.isDefined(o.osaamisala) && angular.isDefined(o.osaamisala.uri) ? o.osaamisala.uri : null,
-                                koulutusohjelmaUri: angular.isDefined(o.koulutusohjelma) && angular.isDefined(o.koulutusohjelma.uri) ? o.koulutusohjelma.uri : null,
-                                lukiolinjaUri: angular.isDefined(o.lukiolinja) && angular.isDefined(o.lukiolinja.uri) ? o.lukiolinja.uri : null
+                                osaamisalaUri: angular.isDefined(o.osaamisala) && angular.isDefined(o.osaamisala.uri) ?
+                                    o.osaamisala.uri :
+                                    null,
+                                koulutusohjelmaUri: angular.isDefined(o.koulutusohjelma) &&
+                                    angular.isDefined(o.koulutusohjelma.uri) ?
+                                        o.koulutusohjelma.uri :
+                                        null,
+                                lukiolinjaUri: angular.isDefined(o.lukiolinja) && angular.isDefined(o.lukiolinja.uri) ?
+                                    o.lukiolinja.uri :
+                                    null
                             });
                         }
                     }
                     for (var i = 0; i < res.result.length; i++) {
                         for (var c = 0; c < koulutus.length; c++) {
-                            if (res.result[i].koulutuskoodiUri === keyKoulutusUri && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO') {
+                            if (res.result[i].koulutuskoodiUri === keyKoulutusUri &&
+                                res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO') {
                                 $scope.import.uiModel[koulutus[c].index].status = res.status;
                             }
-                            else if (res.result[i].koulutuskoodiUri === keyKoulutusUri && res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
+                            else if (res.result[i].koulutuskoodiUri === keyKoulutusUri &&
+                                res.result[i].koulutusmoduuliTyyppi === 'TUTKINTO_OHJELMA') {
                                 if (res.result[i].osaamisalaUri === koulutus[c].osaamisalaUri) {
                                     $scope.import.uiModel[koulutus[c].index].status = res.status;
                                     console.log('SUCCESS: osaamisala', koulutus[c]);
@@ -1000,13 +1036,15 @@ angular.module('app.komo.ctrl', [
                 $scope.model.isProcessing = false;
             });
         }
-        else if ($scope.model.showPreview && $scope.model.selectedSheetName && angular.isDefined($scope.model.sheets[$scope.model.selectedSheetName])) {
+        else if ($scope.model.showPreview && $scope.model.selectedSheetName &&
+            angular.isDefined($scope.model.sheets[$scope.model.selectedSheetName])) {
             $scope.selectSheet();
             $scope.model.isProcessing = false;
         }
     };
     $scope.selectSheet = function() {
-        if ($scope.model.sheets && $scope.model.selectedSheetName && $scope.model.sheets[$scope.model.selectedSheetName]) {
+        if ($scope.model.sheets && $scope.model.selectedSheetName &&
+            $scope.model.sheets[$scope.model.selectedSheetName]) {
             $scope.model.selectedSheet = $scope.model.sheets[$scope.model.selectedSheetName];
         }
     };
@@ -1187,7 +1225,8 @@ angular.module('app.komo.ctrl', [
                                 koulutusObj[koulutusUri].tekstis[col.enum].tekstis[langObj.code] = row[langObj.index];
                             }
                             else {
-                                console.log('column \'' + col.enum + '\' not found, lang =', langObj.code, 'row =', row);
+                                console.log('column \'' + col.enum + '\' not found, lang =',
+                                    langObj.code, 'row =', row);
                             }
                         }
                     }
@@ -1230,7 +1269,8 @@ angular.module('app.komo.ctrl', [
                     var arrTypes = val.koulutustyyppis.split(',');
                     for (var typeIndex = 0; typeIndex < arrTypes.length; typeIndex++) {
                         if (arrTypes[typeIndex]) {
-                            promises.push(searchKomoOid(koulutusCode.trim(), arrTypes[typeIndex].trim(), val.moduulityyppi.trim()));
+                            promises.push(searchKomoOid(koulutusCode.trim(), arrTypes[typeIndex].trim(),
+                                val.moduulityyppi.trim()));
                         }
                     }
                     $q.all(promises).then(function(arrKomos) {
@@ -1361,7 +1401,8 @@ angular.module('app.komo.ctrl', [
                                 ohjelmaObj[ohjelmaUri].tekstis[col.enum].tekstis[langObj.code] = row[langObj.index];
                             }
                             else {
-                                console.log('column \'' + col.enum + '\' not found, lang =', langObj.code, 'row =', row);
+                                console.log('column \'' + col.enum + '\' not found, lang =', langObj.code,
+                                    'row =', row);
                             }
                         }
                     }
@@ -1386,7 +1427,8 @@ angular.module('app.komo.ctrl', [
                 if (koulutustyyppiUri.indexOf('koulutustyyppi') !== -1) {
                     tyyppi = true;
                 }
-                if (ohjelmaUri.indexOf('osaamisala') !== -1 || ohjelmaUri.indexOf('lukiolinja') !== -1 || ohjelmaUri.indexOf('koulutusohjelma') !== -1) {
+                if (ohjelmaUri.indexOf('osaamisala') !== -1 || ohjelmaUri.indexOf('lukiolinja') !== -1 ||
+                    ohjelmaUri.indexOf('koulutusohjelma') !== -1) {
                     ohjelma = true;
                 }
                 if (module && tyyppi && ohjelma) {
@@ -1409,7 +1451,8 @@ angular.module('app.komo.ctrl', [
                         });
                 }
                 else {
-                    console.log('Invalid excel row data : ' + ohjelmaUri + ',' + koulutustyyppiUri + ',' + moduulityyppiEnum);
+                    console.log('Invalid excel row data : ' + ohjelmaUri + ',' + koulutustyyppiUri
+                        + ',' + moduulityyppiEnum);
                     deferred.resolve([]);
                 }
                 return deferred.promise;
@@ -1421,7 +1464,8 @@ angular.module('app.komo.ctrl', [
                     var arrTypes = val.koulutustyyppis.split(',');
                     for (var typeIndex = 0; typeIndex < arrTypes.length; typeIndex++) {
                         if (arrTypes[typeIndex]) {
-                            promises.push(searchKomoOid(koulutusCode.trim(), arrTypes[typeIndex].trim(), val.moduulityyppi.trim()));
+                            promises.push(searchKomoOid(koulutusCode.trim(), arrTypes[typeIndex].trim(),
+                                val.moduulityyppi.trim()));
                         }
                     }
                     $q.all(promises).then(function(arrKomos) {

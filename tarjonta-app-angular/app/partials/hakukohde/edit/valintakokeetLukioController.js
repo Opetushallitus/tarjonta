@@ -1,5 +1,6 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('ValintakokeetLukioController', function($scope, $filter, LocalisationService, dialogService) {
+    var langPrefix = 'tarjonta.poistovahvistus.hakukohde.valintakoe.pisterajat.';
     var getPisterajat = function(valintakoe, targetPisterajaTyyppi) {
         for (var i in valintakoe.pisterajat) {
             var pisterajatyyppi = valintakoe.pisterajat[i].pisterajatyyppi;
@@ -97,15 +98,15 @@ app.controller('ValintakokeetLukioController', function($scope, $filter, Localis
                     pisterajatyyppi: 'Kokonaispisteet',
                     alinHyvaksyttyPistemaara: value
                 });
-                $scope.valintakoe.kokonaispisteetPisterajat = $scope.valintakoe.pisterajat[$scope.valintakoe.pisterajat.length - 1];
+                $scope.valintakoe.kokonaispisteetPisterajat = _.last($scope.valintakoe.pisterajat);
             }
         }
     };
     $scope.paasykoeStateChanged = function() {
         if (!$scope.valintakoe.hasPaasykoe) {
             dialogService.showDialog({
-                title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.valintakoe.pisterajat.paasykoe.title'),
-                description: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.valintakoe.pisterajat.paasykoe')
+                title: LocalisationService.t(langPrefix + 'paasykoe.title'),
+                description: LocalisationService.t(langPrefix + 'paasykoe')
             }).result.then(function(ret) {
                 if (ret) {
                     removePaasykoe();
@@ -123,14 +124,14 @@ app.controller('ValintakokeetLukioController', function($scope, $filter, Localis
             $scope.valintakoe.pisterajat.push({
                 pisterajatyyppi: 'Paasykoe'
             });
-            $scope.valintakoe.paasykoePisterajat = $scope.valintakoe.pisterajat[$scope.valintakoe.pisterajat.length - 1];
+            $scope.valintakoe.paasykoePisterajat = _.last($scope.valintakoe.pisterajat);
         }
     };
     $scope.lisanaytotStateChanged = function() {
         if (!$scope.valintakoe.hasLisanaytot) {
             dialogService.showDialog({
-                title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.valintakoe.pisterajat.lisanaytot.title'),
-                description: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.valintakoe.pisterajat.lisanaytot')
+                title: LocalisationService.t(langPrefix + 'lisanaytot.title'),
+                description: LocalisationService.t(langPrefix + 'lisanaytot')
             }).result.then(function(ret) {
                 if (ret) {
                     removeLisanaytot();
@@ -148,7 +149,7 @@ app.controller('ValintakokeetLukioController', function($scope, $filter, Localis
             $scope.valintakoe.pisterajat.push({
                 pisterajatyyppi: 'Lisapisteet'
             });
-            $scope.valintakoe.lisanaytotPisterajat = $scope.valintakoe.pisterajat[$scope.valintakoe.pisterajat.length - 1];
+            $scope.valintakoe.lisanaytotPisterajat = _.last($scope.valintakoe.pisterajat);
         }
     };
     $scope.addAjankohta = function(valintakoe) {

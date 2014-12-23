@@ -17,35 +17,30 @@
 var app = angular.module('debounce', ['Logging']);
 app.factory('debounce', [
     '$timeout',
-    '$log', function($timeout, $log) {
-        $log = $log.getInstance('debounce');
-        $log.info('debounce initializing...');
+    '$log', function($timeout) {
         var laters = {};
         /**
-             * Delay execution for given function.
-             *
-             * Usage: debounce("autosave", function() { doAutosave(my, args, here) }, 5000);
-             *
-             *
-             * @param string key if the debounce exisis with given key, then it will be removed and re-created
-             * @param function fn function to be delayed
-             * @param int timeout milliseconds
-             * @param boolean enableDirtyCheck true by default, enables dirty check in digest cycle
-             * @returns {undefined}
-             */
+         * Delay execution for given function.
+         *
+         * Usage: debounce("autosave", function() { doAutosave(my, args, here) }, 5000);
+         *
+         *
+         * @param {string} key if the debounce exisis with given key, then it will be removed and re-created
+         * @param {function} fn function to be delayed
+         * @param {int} timeout milliseconds
+         * @param {boolean} enableDirtyCheck true by default, enables dirty check in digest cycle
+         * @returns {undefined}
+         */
         var debounce = function(key, fn, timeout, enableDirtyCheck) {
             timeout = angular.isUndefined(timeout) ? 1000 : timeout;
             enableDirtyCheck = angular.isUndefined(enableDirtyCheck) ? true : enableDirtyCheck;
-            $log.info('debounce(): ', key, fn, timeout, enableDirtyCheck);
             var later = function() {
-                $log.debug('later()', key);
                 // call the FN? How to get parameters without creating lambada out of the caller?
                 fn();
                 // Remove this from to be called array
                 delete laters[key];
             };
             if (laters[key] !== undefined) {
-                $log.info('  cancelling existing entry: ', key, laters[key]);
                 // Cancel and remove
                 $timeout.cancel(laters[key]);
                 delete laters[key];
@@ -53,7 +48,6 @@ app.factory('debounce', [
             // Add timeout function call to executed later
             laters[key] = $timeout(later, timeout, enableDirtyCheck);
         };
-        $log.info('debounce initializing... done.');
         return debounce;
     }
 ]);

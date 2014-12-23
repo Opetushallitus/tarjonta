@@ -1,5 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
-app.controller('ValintakokeetController', function($scope, $q, $filter, LocalisationService, OrganisaatioService, Koodisto, Hakukohde, Valintakoe, dialogService, HakuService, $modal, Config, $location, HakukohdeService) {
+app.controller('ValintakokeetController', function($scope, $q, $filter, LocalisationService, OrganisaatioService,
+                   Koodisto, Hakukohde, Valintakoe, dialogService, HakuService, $modal, Config, $location,
+                   HakukohdeService) {
     $scope.kokeetModel = {
         opetusKielet: [],
         langs: [],
@@ -41,11 +43,15 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
             $scope.kokeetModel.langs = koodis;
             var arrKieliUris = [];
             //add valintakoe langs
-            if ($scope.model.hakukohde.valintakokeet && $scope.model.hakukohde.valintakokeet !== null && $scope.model.hakukohde.valintakokeet.length > 0) {
+            if ($scope.model.hakukohde.valintakokeet
+                && $scope.model.hakukohde.valintakokeet !== null
+                && $scope.model.hakukohde.valintakokeet.length > 0) {
                 arrKieliUris = _.pluck($scope.model.hakukohde.valintakokeet, 'kieliUri');
             }
             //add koulutus languages
-            if ($scope.model.hakukohde.opetusKielet && $scope.model.hakukohde.opetusKielet !== null && $scope.model.hakukohde.opetusKielet.length > 0) {
+            if ($scope.model.hakukohde.opetusKielet
+                && $scope.model.hakukohde.opetusKielet !== null
+                && $scope.model.hakukohde.opetusKielet.length > 0) {
                 arrKieliUris = arrKieliUris.concat($scope.model.hakukohde.opetusKielet);
             }
             //remove all dublicate lang uris
@@ -188,7 +194,10 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
         else {
             dialogService.showDialog({
                 title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.valintakoe.title'),
-                description: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.valintakoe', [valintakoe.valintakoeNimi])
+                description: LocalisationService.t(
+                    'tarjonta.poistovahvistus.hakukohde.valintakoe',
+                    [valintakoe.valintakoeNimi]
+                )
             }).result.then(function(ret) {
                 if (ret) {
                     $scope.deleteValintakoe(valintakoe, true);
@@ -245,7 +254,10 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
                 return vk.kieliUri === uris.removed;
             });
             if (valintakoe) {
-                $scope.model.hakukohde.valintakokeet.splice($scope.model.hakukohde.valintakokeet.indexOf(valintakoe), 1);
+                $scope.model.hakukohde.valintakokeet.splice(
+                    $scope.model.hakukohde.valintakokeet.indexOf(valintakoe),
+                    1
+                );
             }
         }
         addEmptyValintakokeet();
@@ -255,8 +267,18 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
         valintakoetyypit.push(Koodisto.getKoodi('valintakokeentyyppi', 'valintakokeentyyppi_1', $scope.model.userLang));
         valintakoetyypit.push(Koodisto.getKoodi('valintakokeentyyppi', 'valintakokeentyyppi_2', $scope.model.userLang));
         valintakoetyypit.push(Koodisto.getKoodi('valintakokeentyyppi', 'valintakokeentyyppi_5', $scope.model.userLang));
-        if (toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS' || toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS' || toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS' || toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS' || toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
-            valintakoetyypit.push(Koodisto.getKoodi('valintakokeentyyppi', 'valintakokeentyyppi_6', $scope.model.userLang));
+        if (toteutusTyyppi === 'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS'
+            || toteutusTyyppi === 'PERUSOPETUKSEN_LISAOPETUS'
+            || toteutusTyyppi === 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS'
+            || toteutusTyyppi === 'VAPAAN_SIVISTYSTYON_KOULUTUS'
+            || toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
+            valintakoetyypit.push(Koodisto.getKoodi(
+                'valintakokeentyyppi',
+                'valintakokeentyyppi_6',
+                $scope.model.userLang
+            ));
         }
         angular.forEach(valintakoetyypit, function(koodiPromise) {
             koodiPromise.then(function(koodi) {

@@ -2,7 +2,8 @@
  * Created by alexGofore on 29.9.2014.
  */
 var app = angular.module('app.koulutus.ctrl');
-app.controller('OrganizationSelectionController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService, SharedStateService, AuthService, $log, $timeout) {
+app.controller('OrganizationSelectionController', function($location, $q, $scope, Koodisto, $modal,
+                                   OrganisaatioService, SharedStateService, AuthService, $log, $timeout) {
     $scope.lkorganisaatio = {
         currentNode: null
     };

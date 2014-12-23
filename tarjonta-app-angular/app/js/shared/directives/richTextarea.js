@@ -8,7 +8,8 @@ var app = angular.module('RichTextArea', [
 ]);
 app.directive('richTextarea', function(LocalisationService, $log, $sce) {
     function RichTextareaController($scope) {
-        var validElements = '@[align|style|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,img[src],sup,sub';
+        var validElements = '@[align|style|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,' +
+            'table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,img[src],sup,sub';
         $scope.commands = {};
         $scope.directive = {
             model: $scope.model ? $scope.model : null
@@ -70,7 +71,8 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
             menu: {
                 format: {
                     title: 'Format',
-                    items: 'bold italic underline strikethrough | _aligns _headings | subscript superscript | removeformat'
+                    items: 'bold italic underline strikethrough | _aligns _headings | subscript superscript' +
+                            ' | removeformat'
                 },
                 table: {
                     title: 'Table',

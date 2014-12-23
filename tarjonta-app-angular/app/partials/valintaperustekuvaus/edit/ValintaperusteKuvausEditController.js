@@ -9,7 +9,8 @@ var app = angular.module('app.kk.edit.valintaperustekuvaus.ctrl', [
     'config',
     'MonikielinenTextArea'
 ]);
-app.controller('ValintaperusteEditController', function($scope, $rootScope, $route, $q, LocalisationService, OrganisaatioService, Koodisto, Kuvaus, AuthService, $modal, Config, $location, $timeout, YhteyshenkiloService) {
+app.controller('ValintaperusteEditController', function($scope, $rootScope, $route, $q, LocalisationService,
+    OrganisaatioService, Koodisto, Kuvaus, AuthService, $modal, Config, $location, $timeout, YhteyshenkiloService) {
     /*
 
           --------------> Variable initializations
@@ -26,7 +27,9 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
        * 2.-asteen koulutukset eivät käytä organisaatioTyyppiä, vaan sen sijaan
        * avain-kenttää, joka on linkitetty koodistoon.
        */
-    $scope.isToinenAste = $scope.model.valintaperustekuvaus.organisaatioTyyppi && ($scope.model.valintaperustekuvaus.organisaatioTyyppi.indexOf('valintaperustekuvausryhma_') !== -1 || $scope.model.valintaperustekuvaus.organisaatioTyyppi.indexOf('sorakuvaus_') !== -1);
+    $scope.isToinenAste = $scope.model.valintaperustekuvaus.organisaatioTyyppi &&
+        ($scope.model.valintaperustekuvaus.organisaatioTyyppi.indexOf('valintaperustekuvausryhma_') !== -1 ||
+            $scope.model.valintaperustekuvaus.organisaatioTyyppi.indexOf('sorakuvaus_') !== -1);
     if ($scope.isToinenAste) {
         $scope.model.valintaperustekuvaus.avain = $scope.model.valintaperustekuvaus.organisaatioTyyppi;
         $scope.model.valintaperustekuvaus.organisaatioTyyppi = null;
@@ -103,7 +106,8 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
     };
     var isNamesValid = function() {
         for (var i in $scope.model.valintaperustekuvaus.kuvauksenNimet) {
-            if ($scope.model.valintaperustekuvaus.kuvauksenNimet[i] && $scope.model.valintaperustekuvaus.kuvauksenNimet[i].trim().length > 1) {
+            if ($scope.model.valintaperustekuvaus.kuvauksenNimet[i] &&
+                $scope.model.valintaperustekuvaus.kuvauksenNimet[i].trim().length > 1) {
                 return true;
             }
         }
@@ -111,7 +115,8 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
     };
     var isKuvauksesValid = function() {
         for (var langKey in $scope.model.valintaperustekuvaus.kuvaukset) {
-            if ($scope.model.valintaperustekuvaus.kuvaukset[langKey] && $scope.model.valintaperustekuvaus.kuvaukset[langKey].trim().length > 1) {
+            if ($scope.model.valintaperustekuvaus.kuvaukset[langKey] &&
+                $scope.model.valintaperustekuvaus.kuvaukset[langKey].trim().length > 1) {
                 return true;
             }
         }
@@ -119,7 +124,8 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
     };
     var showError = function(errorArray) {
         angular.forEach(errorArray, function(error) {
-            if (error.errorTechnicalInformation && error.errorTechnicalInformation.indexOf('KUVAUS_ON_OLEMASSA_JO') !== -1) {
+            if (error.errorTechnicalInformation &&
+                    error.errorTechnicalInformation.indexOf('KUVAUS_ON_OLEMASSA_JO') !== -1) {
                 $scope.model.validationmsgs.push('valintaperustekuvaus.validation.kuvaus_on_olemassa_jo');
                 // TODO: poista alert ja käytä virhedialogia (controls-notify). Virhedialogissa on tällä hetkellä bugi,
                 // mistä syystä tilapäinen ratkaisu on alert. - 2014-09-15
@@ -146,7 +152,9 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
     var initialializeForm = function() {
         $scope.model.userLang = AuthService.getLanguage();
         if ($scope.isToinenAste) {
-            var koodisto = $scope.model.valintaperustekuvaus.avain.indexOf('sorakuvaus_') !== -1 ? 'sorakuvaus' : 'valintaperustekuvausryhma';
+            var koodisto = $scope.model.valintaperustekuvaus.avain.indexOf('sorakuvaus_') !== -1 ?
+                'sorakuvaus' :
+                'valintaperustekuvausryhma';
             Koodisto.getKoodi(koodisto, $scope.model.valintaperustekuvaus.avain).then(function(koodi) {
                 $scope.model.valintaperustekuvausryhma = koodi.koodiNimi;
                 $scope.model.valintaperustekuvaus.kuvauksenNimet = {
@@ -182,7 +190,8 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
         if (validateForm()) {
             removeEmptyKuvaukses();
             if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
-                resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi, $scope.model.valintaperustekuvaus);
+                resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,
+                    $scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data) {
                     if (data.status === 'OK') {
                         $scope.model.valintaperustekuvaus = data.result;
@@ -197,7 +206,8 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
                     });
             }
             else {
-                resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi, $scope.model.valintaperustekuvaus);
+                resultPromise = Kuvaus.updateKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,
+                    $scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data) {
                     if (data.status === 'OK') {
                         $scope.model.valintaperustekuvaus.modified = data.result.modified;

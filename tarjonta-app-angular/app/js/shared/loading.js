@@ -75,7 +75,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             }, service.timeoutLong);
         },
         /**
-         * Kutsutaan error-callbackissa; estää teknisen virheen dialogin näytön. 
+         * Kutsutaan error-callbackissa; estää teknisen virheen dialogin näytön.
          */
         onErrorHandled: function() {
             if (service.errorHandlingRequested) {

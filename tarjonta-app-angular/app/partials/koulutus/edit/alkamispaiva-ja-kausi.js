@@ -10,33 +10,45 @@ app.directive('alkamispaivaJaKausi', [
         $log = $log.getInstance('alkamispaivaJaKausi');
         function controller($scope, $q, $element, $compile) {
             $scope.isKausiVuosiRadioButtonActive = function() {
-                return $scope.pvms.length === 0 && (!angular.isUndefined($scope.vuosi) && angular.isNumber($scope.vuosi)) && (!angular.isUndefined($scope.kausiUri) && $scope.kausiUri.length > 0);
+                return $scope.pvms.length === 0 && (!angular.isUndefined($scope.vuosi) &&
+                    angular.isNumber($scope.vuosi)) && (!angular.isUndefined($scope.kausiUri) &&
+                    $scope.kausiUri.length > 0);
             };
             var pScope = $scope.$parent.$parent.$parent.$parent;
             $scope.ctrl = {
                 kausi: $scope.isKausiVuosiRadioButtonActive(),
                 multi: $scope.pvms.length > 1,
                 koodis: [],
-                kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + '_kausiVaiPvm' : 'kausiVaiPvm',
-                alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + '_alkamiskausi' : 'alkamiskausi',
-                alkamisvuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + '_alkamisvuosi' : 'alkamisvuosi',
-                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + '_kausivuosi' : 'kausivuosi',
-                lukittu: pScope.model ? pScope.model.isMinmax : false
+                kausiVaiPvm: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ?
+                    $scope.fieldNamePrefix + '_kausiVaiPvm' :
+                    'kausiVaiPvm',
+                alkamiskausi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ?
+                    $scope.fieldNamePrefix + '_alkamiskausi' :
+                    'alkamiskausi',
+                alkamisvuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ?
+                    $scope.fieldNamePrefix + '_alkamisvuosi' :
+                    'alkamisvuosi',
+                kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ?
+                    $scope.fieldNamePrefix + '_kausivuosi' :
+                    'kausivuosi',
+                lukittu: pScope.model ?
+                    pScope.model.isMinmax :
+                    false
             };
-            // vuosikentän oletusrajat: piilottaa 
+            // vuosikentän oletusrajat: piilottaa
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
             /* Jos alkamispäivämääräkenttään ja kalenteriin halutaan samat oletusrajat kuin edellä asetetaan vuosikentälle,
                    * korvaa edelliset rivit alla kommentoiduilla. Huom: tällöin yli vuoden vanhojen koulutusten muokkauksia ei voi tallentaa. */
             /*
-                  var min = new Date;
-                  min.setFullYear(min.getFullYear() - 1, 0, 1, 0, 0, 0, 0);
-                  var max = new Date();
-                  max.setFullYear(max.getFullYear() + 11, 11, 31, 23, 59, 59, 0);
-                  $scope.minYear = min.getFullYear();
-                  $scope.maxYear = max.getFullYear();
-              	pScope.setDefault(min, max);
-              	*/
+              var min = new Date;
+              min.setFullYear(min.getFullYear() - 1, 0, 1, 0, 0, 0, 0);
+              var max = new Date();
+              max.setFullYear(max.getFullYear() + 11, 11, 31, 23, 59, 59, 0);
+              $scope.minYear = min.getFullYear();
+              $scope.maxYear = max.getFullYear();
+            pScope.setDefault(min, max);
+            */
             // disabloidaan kausi- ja vuosikentät BaseEditControllerin restrictedin mukaan, korvataan vuosikentän minYear ja maxYear
             $scope.$on('restricted', function(event, restricted) {
                 $scope.ctrl.lukittu = restricted;
@@ -145,7 +157,9 @@ app.directive('alkamispaivat', [
                 addedDates: [],
                 index: 0,
                 ignoreDateListChanges: false,
-                alkamisPvmFieldName: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ? $scope.fieldNamePrefix + '_alkamisPvm' : 'alkamisPvm'
+                alkamisPvmFieldName: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ?
+                    $scope.fieldNamePrefix + '_alkamisPvm' :
+                    'alkamisPvm'
             };
             $scope.clickAddDate = function() {
                 $scope.ctrl.addedDates.push({
@@ -239,7 +253,8 @@ app.directive('alkamispaivat', [
                     $scope.dates.splice(0, $scope.dates.length);
                     //clear data
                     for (var i = 0; i < $scope.ctrl.addedDates.length; i++) {
-                        if (!angular.isUndefined($scope.ctrl.addedDates[i].date) && $scope.ctrl.addedDates[i].date !== null) {
+                        if (!angular.isUndefined($scope.ctrl.addedDates[i].date) &&
+                            $scope.ctrl.addedDates[i].date !== null) {
                             //date to long
                             $scope.dates.push($scope.ctrl.addedDates[i].date.getTime());
                         }

@@ -9,7 +9,8 @@ app.controller('SelectTutkintoOhjelmaController', [
     '$q',
     'Config',
     'TarjontaService',
-    'LocalisationService', function($scope, targetFilters, $modalInstance, Koodisto, $q, config, TarjontaService, LocalisationService) {
+    'LocalisationService', function($scope, targetFilters, $modalInstance, Koodisto, $q, config, TarjontaService,
+                                    LocalisationService) {
         var KOULUTUSTYYPPI = 'koulutustyyppi_3';
         //filtterisivun malli
         $scope.stoModel = {
@@ -52,7 +53,14 @@ app.controller('SelectTutkintoOhjelmaController', [
                         $scope.stoModel.itemSelected = false;
                         if (response.status === 'OK') {
                             var relation = response.result;
-                            if (!$scope.isRelationAvailable(relation.eqf) || !$scope.isRelationAvailable(relation.koulutusala) || !$scope.isRelationAvailable(relation.koulutusaste) || !$scope.isRelationAvailable(relation.koulutuskoodi) || !$scope.isRelationAvailable(relation.opintoala) || !$scope.isRelationAvailable(relation.opintojenLaajuusyksikko) || !$scope.isRelationAvailables(relation.opintojenLaajuusarvos) || !$scope.isRelationAvailables(relation.tutkintonimikes)) {
+                            if (!$scope.isRelationAvailable(relation.eqf) ||
+                                !$scope.isRelationAvailable(relation.koulutusala) ||
+                                !$scope.isRelationAvailable(relation.koulutusaste) ||
+                                !$scope.isRelationAvailable(relation.koulutuskoodi) ||
+                                !$scope.isRelationAvailable(relation.opintoala) ||
+                                !$scope.isRelationAvailable(relation.opintojenLaajuusyksikko) ||
+                                !$scope.isRelationAvailables(relation.opintojenLaajuusarvos) ||
+                                !$scope.isRelationAvailables(relation.tutkintonimikes)) {
                                 $scope.stoModel.errors.push({
                                     msg: LocalisationService.t('koulutuskoodi.puuttuu-koodisto-relaatio')
                                 });
@@ -74,7 +82,7 @@ app.controller('SelectTutkintoOhjelmaController', [
         $scope.clearErrors = function() {
             $scope.stoModel.errors = [];
         };
-        //Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin) 
+        //Korkeakoulututukintojen haku koodistosta (kaytetaan relaatioita koulutusastekoodeihin)
         //Kutsutaan haun yhteydessa jos kk tutkintoja ei viela haettu
         $scope.getKkTutkinnot = function() {
             //Muodostetaan nippu promiseja, jolloin voidaan toimia sitten kun kaikki promiset taytetty
@@ -134,7 +142,8 @@ app.controller('SelectTutkintoOhjelmaController', [
             //            console.log("Performing string search");
             $scope.stoModel.hakutulokset = tutkinnot.filter(function(element) {
                 $scope.stoModel.searched = true;
-                return element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1 || element.koodiArvo.indexOf($scope.stoModel.hakulause) > -1;
+                return element.koodiNimi.toLowerCase().indexOf($scope.stoModel.hakulause.toLowerCase()) > -1 ||
+                    element.koodiArvo.indexOf($scope.stoModel.hakulause) > -1;
             });
         };
         //Hakukriteerien tyhjennys
@@ -167,7 +176,6 @@ app.controller('SelectTutkintoOhjelmaController', [
                 }
             });
             modalInstance.result.then(function(selectedItem) {
-                //                        console.log('Ok, dialog closed: ' + selectedItem.koodiNimi);
                 if (selectedItem.koodiUri != null) {
                     $scope.model.selected = selectedItem;
                 }
@@ -175,8 +183,8 @@ app.controller('SelectTutkintoOhjelmaController', [
                     $scope.model.selected = null;
                 }
             }, function() {
-                    $scope.model.selected = null; //                        console.log('Cancel, dialog closed');
-                });
+                $scope.model.selected = null;
+            });
         };
     }
 ]);
