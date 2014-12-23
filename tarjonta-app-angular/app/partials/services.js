@@ -1,7 +1,7 @@
-'use strict';
 /* Services */
 var app = angular.module('app.services', ['ngResource']);
 app.factory('DataService', function() {
+    'use strict';
     var data = [];
     function set(name, value) {
         for (var i = 0; i < data.length; i++) {

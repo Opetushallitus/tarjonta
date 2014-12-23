@@ -1,9 +1,9 @@
-'use strict';
 var app = angular.module('ImageDirective', ['Logging']);
 /**
  * Wrapperi, joka valitsee käytettävän imagefield-toteutuksen (html5 tai ie9/flash)
  */
 app.directive('imageField', function($log) {
+    'use strict';
     function controller($scope, $q, $element, $compile) {
         $scope.isInternetExplorer9 = function() {
             return navigator.appVersion.indexOf('MSIE 9') > -1 ? true : false;
@@ -25,6 +25,7 @@ app.directive('imageField', function($log) {
  * Html5 File API -versio
  */
 app.directive('imageFieldHtml5', function($log) {
+    'use strict';
     $log = $log.getInstance('<imageField>');
     function controller($scope, $q, $element, $compile) {
         $scope.disabled = function() {
@@ -50,7 +51,7 @@ app.directive('imageFieldHtml5', function($log) {
         };
         $scope.onUpload = function() {
             var fs = $scope.element[0].files;
-            if (!fs || fs.length == 0) {
+            if (!fs || fs.length === 0) {
                 return;
             }
             var reader = new FileReader();
@@ -94,6 +95,7 @@ app.directive('imageFieldHtml5', function($log) {
  *
  */
 app.directive('imageFieldIe9', function($log) {
+    'use strict';
     $log = $log.getInstance('<imageField>');
     function controller($scope, $q, $element, $compile) {
         $scope.flashAvailable = typeof swfobject !== 'undefined' && swfobject.getFlashPlayerVersion().major !== 0;
@@ -130,7 +132,7 @@ app.directive('imageFieldIe9', function($log) {
         };
         $scope.onUpload = function(event) {
             var fs = event.target.files;
-            if (fs.length == 0) {
+            if (fs.length === 0) {
                 return;
             }
             var reader = new FileReader();

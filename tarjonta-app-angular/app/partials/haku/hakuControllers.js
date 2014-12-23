@@ -1,4 +1,3 @@
-'use strict';
 var app = angular.module('app.haku.ctrl', [
     'app.haku.list.ctrl',
     'app.haku.review.ctrl',
@@ -16,6 +15,8 @@ app.controller('HakuRoutingController', [
     'HakuV1',
     'KoodistoURI', function HakukohdeRoutingController($scope, $log, $routeParams, $route,
                    dialogService, LocalisationService, HakuV1Service, HakuV1, KoodistoURI) {
+        'use strict';
+
         $log = $log.getInstance('HakuRoutingController');
         $log.info('HakuRoutingController()', $routeParams);
         $log.info('$route: ', $route);

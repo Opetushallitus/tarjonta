@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers  for selecting organisations */
 var app = angular.module('app.haku.edit.organisations.ctrl', []);
 app.controller('HakuEditSelectOrganisationsController', [
@@ -14,6 +13,8 @@ app.controller('HakuEditSelectOrganisationsController', [
     // injected from  hakuEditControllers.js
     'treeId', function($modalInstance, $q, $scope, OrganisaatioService, AuthService,
                        PermissionService, $location, $log, organisaatioOids, treeId) {
+        'use strict';
+
         $log = $log.getInstance('HakuEditSelectOrganisationsController');
         $log.info('HakuEditSelectOrganisationsController()...');
         $log.info('SCOPE: ', $scope);

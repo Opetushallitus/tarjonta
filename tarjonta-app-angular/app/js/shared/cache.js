@@ -37,10 +37,10 @@ angular.module('TarjontaCache', [
                 key: '' + key
             };
         }
-        if (key.pattern != undefined && !(key.pattern instanceof RegExp)) {
+        if (key.pattern !== undefined && !(key.pattern instanceof RegExp)) {
             key.pattern = new RegExp(key.pattern);
         }
-        if (key.expires != undefined && !(key.expires instanceof Date)) {
+        if (key.expires !== undefined && !(key.expires instanceof Date)) {
             var d = new Date();
             d.setTime(d.getTime() + key.expires);
             key.expires = d;
@@ -53,7 +53,7 @@ angular.module('TarjontaCache', [
     cacheService.insert = function(key, value) {
         key = prepare(key);
         for (var rk in cacheData) {
-            if (key.pattern != undefined && key.pattern.test(rk)) {
+            if (key.pattern !== undefined && key.pattern.test(rk)) {
                 $log.debug('Evicted from cache during insert', rk);
                 cacheData[rk] = undefined;
             }
@@ -70,11 +70,11 @@ angular.module('TarjontaCache', [
     cacheService.find = function(key) {
         key = prepare(key);
         var rv = cacheData[key.key];
-        if (rv == undefined) {
+        if (rv === undefined) {
             //$log.debug("Cache miss",key);
             return null;
         }
-        if (rv.expires != undefined && rv.expires.getTime() < new Date().getTime()) {
+        if (rv.expires !== undefined && rv.expires.getTime() < new Date().getTime()) {
             // expired
             $log.debug('Expired hit', key);
             cacheData[key.key] = null;
@@ -91,8 +91,8 @@ angular.module('TarjontaCache', [
         key = prepare(key);
         var now = new Date().getTime();
         for (var rk in cacheData) {
-            if (key.key == rk || key.pattern != undefined && key.pattern.test(rk) ||
-                key.expires != null && key.expires.getTime() < now) {
+            if (key.key == rk || key.pattern !== undefined && key.pattern.test(rk) ||
+                key.expires !== null && key.expires.getTime() < now) {
                 $log.debug('Evicted from cache', rk);
                 cacheData[rk] = undefined;
             }
@@ -110,7 +110,7 @@ angular.module('TarjontaCache', [
         var ret = $q.defer();
         key = prepare(key);
         var res = cacheService.find(key);
-        if (res != undefined) {
+        if (res !== undefined) {
             ret.resolve(res);
         }
         else {

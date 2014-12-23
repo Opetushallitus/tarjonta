@@ -1,9 +1,9 @@
-'use strict';
 var app = angular.module('TarjontaOsoiteField', [
     'localisation',
     'Koodisto'
 ]);
 app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
+    'use strict';
     function controller($scope) {
         $scope.tt = {
             osoite: LocalisationService.t('osoitefield.osoiterivi'),
@@ -89,6 +89,7 @@ app.directive('osoiteField', function($log, LocalisationService, Koodisto) {
     };
 });
 app.filter('osoite', function() {
+    'use strict';
     // HUOM! ei hae postitoimipaikkaa koodistosta!
     return function(osoite) {
         if (!osoite) {

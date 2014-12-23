@@ -9,7 +9,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
     function localize(txt) {
-        if (txt == undefined || txt == null) {
+        if (txt === undefined || txt === null) {
             return txt;
         }
         var userLocale = LocalisationService.getLocale();
@@ -102,7 +102,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     };
     dataFactory.acceptsTransition = function(from, to) {
         var s = window.CONFIG.env['tarjonta.tila'][from];
-        return s != null && s.transitions.indexOf('to') >= 0;
+        return s !== null && s.transitions.indexOf('to') >= 0;
     };
     dataFactory.haeHakukohteet = function(args) {
         var params = {
@@ -509,9 +509,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         oidRetrievePromise.then(function(parentOids) {
             var promises = [];
             var koulutukset = [];
-            for (var i = 0; i < parentOids.result.length; i++) {
+            _.each(parentOids.result, function(parentOid) {
                 var promise = dataFactory.haeKoulutukset({
-                    komoOid: parentOids.result[i]
+                    komoOid: parentOid
                 }).then(function(result) {
                     if (result.tulokset && result.tulokset.length > 0) {
                         if (koulutukset.indexOf(result.tulokset[0]) == -1) {
@@ -520,7 +520,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     }
                 });
                 promises.push(promise);
-            }
+            });
             $q.all(promises).then(function() {
                 deferred.resolve(koulutukset);
             });
@@ -609,7 +609,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         if (!angular.isDefined(uri)) {
             throw '\'tarjontaOhjausparametritRestUrlPrefix\' is not defined! Cannot proceed.';
         }
-        var uri = uri + '/api/v1/rest/parametri/ALL';
+        uri = uri + '/api/v1/rest/parametri/ALL';
         $resource(uri, {}, {
             get: {
                 cache: false,

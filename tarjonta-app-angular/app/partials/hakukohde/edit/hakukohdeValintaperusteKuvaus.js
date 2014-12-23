@@ -81,7 +81,7 @@ app.controller('ValitseValintaPerusteKuvausDialog', function($scope, $q, $log, $
     };
     var checkObjectPropertiesLength = function(object) {
         var elementCount = 0;
-        for (e in object) {
+        for (var e in object) {
             elementCount++;
         }
         return elementCount;

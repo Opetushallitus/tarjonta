@@ -11,7 +11,7 @@ function tarjontaInit() {
     function initFunction(id, xhr, status) {
         init_counter--;
         console.log('Got ready signal from: ' + id + ' -> ' + status + ' -> IC=' + init_counter /*, xhr*/ );
-        if (!fail && init_counter == 0) {
+        if (!fail && init_counter === 0) {
             angular.element(document).ready(function() {
                 angular.module('myApp', ['app']);
                 angular.bootstrap(document, ['myApp']);

@@ -1,4 +1,3 @@
-'use strict';
 /* Layout-komponentti/direktiivistö formien toimintonappeja, ilmoitustekstejä ja muita yleisiä asioita varten.
  *
  * 1. Direktiivit kommunikoivat scopessa määritellyn olion välityksellä joka controllerin on alustettava tyhjäksi
@@ -57,7 +56,7 @@ var app = angular.module('ControlsLayout', [
     'Logging'
 ]);
 app.directive('displayControls', function($log, LocalisationService, $filter, YhteyshenkiloService) {
-    $log = $log.getInstance('<displayControls>');
+    'use strict';
     return {
         restrict: 'E',
         templateUrl: 'js/shared/directives/controlsLayout.html',
@@ -87,32 +86,33 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 return LocalisationService.t(k, a);
             };
             function showMessage(msgs, msg) {
-                if (msg == undefined) {
+                var ms;
+                if (msg === undefined) {
                     for (var i in msgs) {
-                        var ms = msgs[i].show();
+                        ms = msgs[i].show();
                         //$log.debug(msgs[i].tt+" -> MS=",ms);
-                        if (ms == undefined || ms == null || ms == true) {
+                        if (ms === undefined || ms === null || ms === true) {
                             return true;
                         }
                     }
                     return false;
                 }
                 else {
-                    var ms = msg.show();
-                    return ms == undefined || ms == null || ms == true;
+                    ms = msg.show();
+                    return ms === undefined || ms === null || ms === true;
                 }
             }
             $scope.showErrorDetail = function(msg) {
                 return showMessage($scope.model.notifs.errorDetail, msg);
             };
             $scope.showError = function(msg) {
-                if (msg == undefined) {
+                if (msg === undefined) {
                     return showMessage($scope.model.notifs.error) || showMessage($scope.model.notifs.errorDetail);
                 }
                 return showMessage($scope.model.notifs.error, msg);
             };
             $scope.showSuccess = function(msg) {
-                return showMessage($scope.model.notifs.success, msg) && (msg != null || !$scope.showError());
+                return showMessage($scope.model.notifs.success, msg) && (msg !== null || !$scope.showError());
             };
             $scope.showMessage = function(msg) {
                 return showMessage($scope.model.notifs.message, msg);
@@ -123,7 +123,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                 if (!user && !timestamp) {
                     return;
                 }
-                if (!user || user.length == 0) {
+                if (!user || user.length === 0) {
                     user = LocalisationService.t('tarjonta.metadata.unknown');
                 }
                 var msg = LocalisationService.t(key, [
@@ -193,6 +193,8 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
             };
             function titleText() {
                 var title = $scope.model.title();
+                var k;
+                var i;
                 if (typeof title == 'object') {
                     if (title[LocalisationService.getLocale()]) {
                         // käyttäjän localen mukaan
@@ -200,15 +202,15 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     }
                     else {
                         // vakiolocalejen mukaan
-                        for (var i in window.CONFIG.app.userLanguages) {
-                            var k = window.CONFIG.app.userLanguages[i];
+                        for (i in window.CONFIG.app.userLanguages) {
+                            k = window.CONFIG.app.userLanguages[i];
                             if (title[k]) {
                                 return title[k];
                             }
                         }
                         // 1. vaihtoehto
-                        for (var i in title) {
-                            var k = title[i];
+                        for (i in title) {
+                            k = title[i];
                             return title[window.CONFIG.app.userLanguages[i]];
                         }
                     }
@@ -222,13 +224,14 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     return '';
                 }
                 var tkey = $scope.isNew() ? $scope.model.ttCreate : $scope.model.ttEdit;
-                return tkey == null ? ttext : LocalisationService.t(tkey, [ttext]);
+                return tkey === null ? ttext : LocalisationService.t(tkey, [ttext]);
             };
             return $scope;
         }
     };
 });
 app.directive('controlsModel', function($log) {
+    'use strict';
     $log = $log.getInstance('<controlsModel>');
     return {
         restrict: 'E',
@@ -267,6 +270,7 @@ app.directive('controlsModel', function($log) {
     };
 });
 app.directive('controlsButton', function($log) {
+    'use strict';
     $log = $log.getInstance('<controlsButton>');
     return {
         restrict: 'E',
@@ -295,6 +299,7 @@ app.directive('controlsButton', function($log) {
     };
 });
 app.directive('controlsNotify', function($log) {
+    'use strict';
     $log = $log.getInstance('<controlsNotify>');
     return {
         restrict: 'E',

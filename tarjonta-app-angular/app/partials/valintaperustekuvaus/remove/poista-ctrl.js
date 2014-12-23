@@ -55,7 +55,7 @@ app.controller('PoistaValintaperustekuvausCtrl', function($scope, Kuvaus, select
                 $scope.liitetytHakukohteet = result.data.result;
                 angular.forEach($scope.liitetytHakukohteet, function(hakukohde) {
                     hakukohde.nimi = _.reduce(hakukohde.hakukohteenNimet, function(memo, text) {
-                        if ($.trim(text) != '') {
+                        if ($.trim(text) !== '') {
                             memo += text + ' / ';
                         }
                         return memo;

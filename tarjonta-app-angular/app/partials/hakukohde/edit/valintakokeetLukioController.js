@@ -89,11 +89,11 @@ app.controller('ValintakokeetLukioController', function($scope, $filter, Localis
     });
     $scope.kokonaispisteetChanged = function() {
         var value = $scope.valintakoe.kokonaispisteetPisterajat.alinHyvaksyttyPistemaara;
-        if (value.length == 0) {
+        if (value.length === 0) {
             removeKokonaispisteet();
         }
         else {
-            if (getPisterajat($scope.valintakoe, 'Kokonaispisteet') == undefined) {
+            if (getPisterajat($scope.valintakoe, 'Kokonaispisteet') === undefined) {
                 $scope.valintakoe.pisterajat.push({
                     pisterajatyyppi: 'Kokonaispisteet',
                     alinHyvaksyttyPistemaara: value

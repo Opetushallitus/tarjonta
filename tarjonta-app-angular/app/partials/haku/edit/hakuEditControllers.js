@@ -189,7 +189,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             numKeys++;
             result = result && !value;
         });
-        if (numKeys == 0) {
+        if (numKeys === 0) {
             result = true;
         }
         return result;
@@ -396,7 +396,6 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             default:
                 $log.info('  handle WTF?.');
                 throw new Exception('INVALID HAKULOMAKE TYPE');
-                break;
         }
         // Update priorisointi information too
         $scope.checkPriorisointi();

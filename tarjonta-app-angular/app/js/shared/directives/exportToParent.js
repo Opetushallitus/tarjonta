@@ -1,4 +1,3 @@
-'use strict';
 /*
  * Apudirektiivi scope-muuttujien julkaisemiseksi parent-konteksteissa; mahdollistaa esim. direktivissä
  * luotuun formiin käsiksipääsemisen direktiiviä kutsuvasta kontrollerista.
@@ -10,6 +9,7 @@
  */
 var app = angular.module('ExportToParent', []);
 app.directive('exportToParent', function($log, $modal) {
+    'use strict';
     function controller($scope) {
         var match = $scope.condition();
         if (!match) {
@@ -18,7 +18,7 @@ app.directive('exportToParent', function($log, $modal) {
             };
         }
         $scope.linkedScope = null;
-        for (var s = $scope.$parent.$parent; s != null; s = s.$parent) {
+        for (var s = $scope.$parent.$parent; s !== null; s = s.$parent) {
             if (match(s)) {
                 $scope.linkedScope = s;
                 break;

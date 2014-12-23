@@ -12,7 +12,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-'use strict';
 var app = angular.module('Haku', [
     'ngResource',
     'config',
@@ -28,6 +27,7 @@ app.constant('HAKUTYYPPI', {
     'LISAHAKU': 'hakutyyppi_03'
 });
 app.factory('HakuService', function($http, $q, Config, $log) {
+    'use strict';
     $log = $log.getInstance('HakuService');
     return {
         getAllHakus: function(params) {
@@ -66,6 +66,7 @@ app.factory('HakuService', function($http, $q, Config, $log) {
     };
 });
 app.factory('HakuV1', function($resource, Config) {
+    'use strict';
     var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'haku/:oid';
     return $resource(serviceUrl, {
         oid: '@oid',
@@ -73,72 +74,72 @@ app.factory('HakuV1', function($resource, Config) {
         processId: '@processId',
         onlyHaku: '@onlyHaku'
     }, {
-            save: {
-                method: 'POST',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            get: {
-                method: 'GET',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            findAll: {
-                method: 'GET',
-                withCredentials: true,
-                params: {
-                    oid: 'findAll'
-                },
-                isArray: false,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            mget: {
-                url: Config.env.tarjontaRestUrlPrefix + 'haku/multi',
-                method: 'GET',
-                withCredentials: true,
-                isArray: false
-            },
-            search: {
-                url: Config.env.tarjontaRestUrlPrefix + 'haku/find',
-                method: 'GET',
-                withCredentials: true,
-                isArray: false,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            remove: {
-                method: 'DELETE',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            checkStateChange: {
-                url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
-                method: 'GET',
-                withCredentials: true
-            },
-            changeState: {
-                url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
-                method: 'PUT',
-                withCredentials: true
-            },
-            copy: {
-                url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/copy',
-                method: 'PUT'
-            },
-            paste: {
-                url: Config.env.tarjontaRestUrlPrefix + 'haku/paste/:oid/:processId',
-                method: 'PUT'
+        save: {
+            method: 'POST',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
             }
-        });
+        },
+        get: {
+            method: 'GET',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        },
+        findAll: {
+            method: 'GET',
+            withCredentials: true,
+            params: {
+                oid: 'findAll'
+            },
+            isArray: false,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        },
+        mget: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/multi',
+            method: 'GET',
+            withCredentials: true,
+            isArray: false
+        },
+        search: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/find',
+            method: 'GET',
+            withCredentials: true,
+            isArray: false,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        },
+        remove: {
+            method: 'DELETE',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        },
+        checkStateChange: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/stateChangeCheck',
+            method: 'GET',
+            withCredentials: true
+        },
+        changeState: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/state?state=:state',
+            method: 'PUT',
+            withCredentials: true
+        },
+        copy: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/:oid/copy',
+            method: 'PUT'
+        },
+        paste: {
+            url: Config.env.tarjontaRestUrlPrefix + 'haku/paste/:oid/:processId',
+            method: 'PUT'
+        }
+    });
 });
 /**
  * Haku Service
@@ -214,18 +215,18 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
     };
     return {
         /**
-             * Tarkista että tilasiirtymä on sallittu
-             * oidstate esim: {oid: '123.456.789', state: 'JULKAISTU'}
-             * jossa oid on haun oid, state tila johon ollaan siirtymässä.
-             *
-             * Palauttaa promisen.
-             */
+         * Tarkista että tilasiirtymä on sallittu
+         * oidstate esim: {oid: '123.456.789', state: 'JULKAISTU'}
+         * jossa oid on haun oid, state tila johon ollaan siirtymässä.
+         *
+         * Palauttaa promisen.
+         */
         checkStateChange: function(oidstate) {
             return HakuV1.checkStateChange(oidstate).$promise;
         },
         /**
-             * Hae hakuja määritellyillä hakuehdoilla
-             */
+         * Hae hakuja määritellyillä hakuehdoilla
+         */
         search: function(parameters) {
             parameters = _.extend({
                 addHakukohdes: false
@@ -240,12 +241,12 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
         resolveLocalizedValue: resolveLocalizedValue,
         createNewEmptyHaku: createNewEmptyHaku,
         /**
-             * Poista annettu haku (jos oikeuksia)
-             */
+         * Poista annettu haku (jos oikeuksia)
+         */
         'delete': doDelete,
         /**
-             * Kopioi haku (ks myös liitä)
-             */
+         * Kopioi haku (ks myös liitä)
+         */
         copy: function(oid) {
             console.log('hakuoid:', oid);
             return HakuV1.copy({
@@ -253,8 +254,8 @@ app.factory('HakuV1Service', function($log, $q, HakuV1, LocalisationService, Aut
             }).$promise;
         },
         /**
-             * Liitä haku
-             */
+         * Liitä haku
+         */
         paste: function(targetOid, processId) {
             return HakuV1.paste({
                 oid: targetOid,

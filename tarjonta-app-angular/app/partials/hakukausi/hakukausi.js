@@ -1,8 +1,7 @@
-'use strict';
 // routing
 angular.module('app').config([
     '$routeProvider', function($routeProvider) {
-        console.log('adding hakukausi routes');
+        'use strict';
         $routeProvider.when('/hakukausi', {
             templateUrl: 'partials/hakukausi/hakukausi-select.html'
         });
@@ -40,6 +39,7 @@ angular.module('app').config([
 //form & model directive patching (https://github.com/angular/angular.js/issues/1404)
 .config(function($provide) {
     $provide.decorator('ngModelDirective', function($delegate) {
+        'use strict';
         var ngModel = $delegate[0];
         var controller = ngModel.controller;
         ngModel.controller = [
@@ -85,8 +85,7 @@ angular.module('app').config([
     '$location',
     '$routeParams',
     '$route', function HakukausiController(Koodisto, $scope, Parameter, $location, $routeParams, $route) {
-        console.log('RP:', $routeParams);
-        console.log('scope:', $scope);
+        'use strict';
         var getKausiVuosiIdentifier = function() {
             return $scope.kausivuosi.kausi + $scope.kausivuosi.vuosi;
         };
@@ -103,7 +102,7 @@ angular.module('app').config([
             },
             dto: $route.current.locals.dto
         };
-        if ($route.current.locals.dto == undefined) {
+        if ($route.current.locals.dto === undefined) {
             $scope.model.dto = {};
         }
         //vuosi & kausi provided
@@ -188,6 +187,7 @@ angular.module('app').config([
 * Päivämäärän editointi rivi
 */
 .directive('tParamEditDate', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,
@@ -202,6 +202,7 @@ angular.module('app').config([
  * Päivämäärävälin editointi rivi
  */
 .directive('tParamEditDateRange', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,
@@ -217,6 +218,7 @@ angular.module('app').config([
  * Väliotsikko rivi
 */
 .directive('tSubTitle', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,
@@ -228,6 +230,7 @@ angular.module('app').config([
  * Helppi rivi
  */
 .directive('tHelp', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,
@@ -239,6 +242,7 @@ angular.module('app').config([
  * Lokalisoinnin oletusarvo
  */
 .directive('tUseDefaultTt', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,
@@ -252,6 +256,7 @@ angular.module('app').config([
  * Required
 */
 .directive('tIsRequired', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,
@@ -264,6 +269,7 @@ angular.module('app').config([
  * Aina valintojen muuttuessa
  */
 .directive('tAlways', function() {
+    'use strict';
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -276,6 +282,7 @@ angular.module('app').config([
  * Help key
  */
 .directive('tHelp', function() {
+    'use strict';
     return {
         restrict: 'A',
         scope: true,

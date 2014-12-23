@@ -13,7 +13,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     var osoitteetReceived = false;
     function postProcessLiite(liite) {
         if (liite.sahkoinenOsoiteEnabled === undefined) {
-            liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite != null;
+            liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite !== null;
         }
         if (liite.muuOsoiteEnabled === undefined && osoitteetReceived) {
             if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
@@ -79,20 +79,21 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         }
     }
     function updateLanguages() {
-        for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+        var i;
+        for (i in $scope.model.hakukohde.hakukohteenLiitteet) {
             var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
             if ($scope.liitteetModel.selectedLangs.indexOf(li.kieliUri) === -1) {
                 $scope.liitteetModel.selectedLangs.push(li.kieliUri);
             }
         }
-        for (var i in $scope.model.hakukohde.opetusKielet) {
+        for (i in $scope.model.hakukohde.opetusKielet) {
             var kieliUri = $scope.model.hakukohde.opetusKielet[i];
             if ($scope.liitteetModel.selectedLangs.indexOf(kieliUri) === -1) {
                 $scope.liitteetModel.selectedLangs.push(kieliUri);
             }
         }
         $scope.liitteetModel.opetusKielet = [];
-        for (var i in $scope.liitteetModel.langs) {
+        for (i in $scope.liitteetModel.langs) {
             var koodiUri = $scope.liitteetModel.langs[i].koodiUri;
             if ($scope.model.hakukohde.opetusKielet.indexOf(koodiUri) !== -1
                 || $scope.liitteetModel.selectedLangs.indexOf(koodiUri) !== -1) {
@@ -105,7 +106,8 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     function doAfterLangSelection() {
         // päivitä tabit ("opetuskielet")
         // - poista poistuneet
-        for (var i in $scope.liitteetModel.opetusKielet) {
+        var i;
+        for (i in $scope.liitteetModel.opetusKielet) {
             var k = $scope.liitteetModel.opetusKielet[i];
             var si = $scope.liitteetModel.selectedLangs.indexOf(k.koodiUri);
             if (si === -1) {
@@ -114,7 +116,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
             }
         }
         // - lisää lisätyt
-        for (var i in $scope.liitteetModel.selectedLangs) {
+        for (i in $scope.liitteetModel.selectedLangs) {
             var lc = $scope.liitteetModel.selectedLangs[i];
             if (containsOpetuskieli(lc)) {
                 continue;
@@ -142,30 +144,27 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
             }
         }
         // varmista kielien poisto
-        if (dellangs.length > 0) {
-            for (var i in dellangs) {
-                var lang = dellangs[i];
-                dialogService.showDialog({
-                    title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet.title'),
-                    description: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet', [lang])
-                }).result.then(function(ret) {
-                    if (ret) {
-                        // poista kaikki valitunkieliset liitteet
-                        for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-                            var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
-                            if (li.kieliUri == lang) {
-                                $scope.deleteLiite(li, true); //$scope.model.hakukohde.hakukohteenLiitteet.splice(i, 1);
-                            }
+        _.each(dellangs, function(lang) {
+            dialogService.showDialog({
+                title: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet.title'),
+                description: LocalisationService.t('tarjonta.poistovahvistus.hakukohde.liitteet', [lang])
+            }).result.then(function(ret) {
+                if (ret) {
+                    // poista kaikki valitunkieliset liitteet
+                    for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
+                        var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
+                        if (li.kieliUri == lang) {
+                            $scope.deleteLiite(li, true); //$scope.model.hakukohde.hakukohteenLiitteet.splice(i, 1);
                         }
                     }
-                    else {
-                        // ei poistoa -> palauta selectediin
-                        $scope.liitteetModel.selectedLangs.push(lang);
-                    }
-                    doAfterLangSelection();
-                });
-            }
-        }
+                }
+                else {
+                    // ei poistoa -> palauta selectediin
+                    $scope.liitteetModel.selectedLangs.push(lang);
+                }
+                doAfterLangSelection();
+            });
+        });
         doAfterLangSelection();
     };
     $scope.resetOsoite = function(lc, liite) {

@@ -262,8 +262,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             };
             var promises = [];
             var uri = host + 'relaatio/sisaltyy-alakoodit/';
-            for (var i = 0; i < koodiUriList.length; i++) {
-                var koodiUri = koodiUriList[i];
+            _.each(koodiUriList, function(koodiUri) {
                 if (koodiUri.indexOf('#') != -1) {
                     koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
                 }
@@ -275,10 +274,10 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     },
                     cache: true
                 }).get().$promise.then(function(koodis) {
-                    vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
-                });
+                        vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
+                    });
                 promises.push(promise);
-            }
+            });
             $q.all(promises).then(function() {
                 deferred.resolve(result);
             });
@@ -301,8 +300,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             var promises = [];
             var vu = this.versionUtil();
             var uri = host + 'relaatio/sisaltyy-ylakoodit/';
-            for (var i = 0; i < koodiUriList.length; i++) {
-                var koodiUri = koodiUriList[i];
+            _.each(koodiUriList, function(koodiUri) {
                 if (koodiUri.indexOf('#') != -1) {
                     koodiUri = koodiUri.substring(0, koodiUri.indexOf('#'));
                 }
@@ -316,7 +314,7 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     vu.convertToResultMap(result, vu.filterKoodisByKoodistoUri(koodis, tyyppi), locale);
                 });
                 promises.push(promise);
-            }
+            });
             $q.all(promises).then(function() {
                 deferred.resolve(result);
             });
@@ -344,20 +342,20 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
                     }).query({
                     koodistoUri: koodistoUriParam
                 }, function(koodis) {
-                        angular.forEach(koodis, function(koodi) {
-                            if (checkKoodiValidity(koodi, locale)) {
-                                if (includePassive) {
+                    angular.forEach(koodis, function(koodi) {
+                        if (checkKoodiValidity(koodi, locale)) {
+                            if (includePassive) {
+                                returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
+                            }
+                            else {
+                                if (koodi.tila !== passiivinenTila) {
                                     returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
                                 }
-                                else {
-                                    if (koodi.tila !== passiivinenTila) {
-                                        returnKoodis.push(getKoodiViewModelFromKoodi(koodi, locale));
-                                    }
-                                }
                             }
-                        });
-                        returnKoodisPromise.resolve(returnKoodis);
+                        }
                     });
+                    returnKoodisPromise.resolve(returnKoodis);
+                });
             });
         },
         /*
@@ -429,7 +427,7 @@ app.factory('KoodistoURI', function($log, Config) {
     $log = $log.getInstance('KoodistoURI');
     var getConfigWithDefault = function(envKey, defaultValue) {
         var result = angular.isDefined(Config.env[envKey]) ? Config.env[envKey] : defaultValue;
-        if (!angular.isDefined(result) || result == '') {
+        if (!angular.isDefined(result) || result === '') {
             $log.warn('EMPTY koodisto data value for key: ' + envKey);
         }
         return result;
@@ -466,7 +464,7 @@ app.factory('KoodistoURI', function($log, Config) {
     * @return true if koodi is not null and has version information (contains "#" character).
     */
     var koodiHasVersion = function(koodi) {
-        return !isEmpty(koodi) != null && koodi.indexOf('#') > 0;
+        return koodi && koodi.indexOf('#') !== -1;
     };
     /**
     * Split koodi to "koodi" and version strings
@@ -482,7 +480,7 @@ app.factory('KoodistoURI', function($log, Config) {
     */
     var splitKoodiToKoodiAndVersion = function(koodi) {
         var result = [];
-        if (koodi == null) {
+        if (koodi === null) {
             result.push('');
             result.push('');
             return result;

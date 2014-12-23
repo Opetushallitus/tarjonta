@@ -1,4 +1,3 @@
-'use strict';
 var app = angular.module('app.edit.ctrl.alkamispaiva', [
     'localisation',
     'TarjontaDateTime'
@@ -7,7 +6,7 @@ app.directive('alkamispaivaJaKausi', [
     '$log',
     '$modal',
     'LocalisationService', function($log, $modal, LocalisationService) {
-        $log = $log.getInstance('alkamispaivaJaKausi');
+        'use strict';
         function controller($scope, $q, $element, $compile) {
             $scope.isKausiVuosiRadioButtonActive = function() {
                 return $scope.pvms.length === 0 && (!angular.isUndefined($scope.vuosi) &&
@@ -169,7 +168,7 @@ app.directive('alkamispaivat', [
             };
             $scope.onDateAdded = function() {
                 for (var i in $scope.ctrl.addedDates) {
-                    if ($scope.ctrl.addedDates[i].date == null) {
+                    if ($scope.ctrl.addedDates[i].date === null) {
                         return;
                     }
                 }
@@ -227,12 +226,13 @@ app.directive('alkamispaivat', [
                    * Update date model data and filter all invalid date selections.
                    */
             $scope.$watch('ctrl.addedDates', function(valNew, valOld) {
+                var i;
                 if (valNew !== valOld) {
                     $scope.ctrl.ignoreDateListChanges = true;
                     var map = {};
                     var tmp = angular.copy($scope.ctrl.addedDates);
                     //cleanup date list and leave only unique dates
-                    for (var i = 0; i < tmp.length; i++) {
+                    for (i = 0; i < tmp.length; i++) {
                         var key = null;
                         if (!angular.isUndefined(tmp[i].date) && tmp[i].date !== null) {
                             key = tmp[i].date.getTime();
@@ -252,7 +252,7 @@ app.directive('alkamispaivat', [
                     }
                     $scope.dates.splice(0, $scope.dates.length);
                     //clear data
-                    for (var i = 0; i < $scope.ctrl.addedDates.length; i++) {
+                    for (i = 0; i < $scope.ctrl.addedDates.length; i++) {
                         if (!angular.isUndefined($scope.ctrl.addedDates[i].date) &&
                             $scope.ctrl.addedDates[i].date !== null) {
                             //date to long
@@ -276,7 +276,7 @@ app.directive('alkamispaivat', [
                     $scope.clickAddDate();
                 }
                 else {
-                    if ($scope.multi && $scope.dates.length == 1 && $scope.dates[0] != null) {
+                    if ($scope.multi && $scope.dates.length === 1 && $scope.dates[0] !== null) {
                         $scope.clickAddDate(); //add 1 date row
                     }
                     $scope.fnClearKausi();

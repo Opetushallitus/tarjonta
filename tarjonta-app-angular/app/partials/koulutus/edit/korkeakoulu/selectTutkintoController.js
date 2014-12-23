@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers */
 var app = angular.module('app.edit.ctrl.kk');
 app.controller('SelectTutkintoOhjelmaController', [
@@ -11,6 +10,7 @@ app.controller('SelectTutkintoOhjelmaController', [
     'TarjontaService',
     'LocalisationService', function($scope, targetFilters, $modalInstance, Koodisto, $q, config, TarjontaService,
                                     LocalisationService) {
+        'use strict';
         var KOULUTUSTYYPPI = 'koulutustyyppi_3';
         //filtterisivun malli
         $scope.stoModel = {
@@ -176,7 +176,7 @@ app.controller('SelectTutkintoOhjelmaController', [
                 }
             });
             modalInstance.result.then(function(selectedItem) {
-                if (selectedItem.koodiUri != null) {
+                if (selectedItem.koodiUri !== null) {
                     $scope.model.selected = selectedItem;
                 }
                 else {

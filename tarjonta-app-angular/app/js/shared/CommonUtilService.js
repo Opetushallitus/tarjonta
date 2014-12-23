@@ -21,7 +21,8 @@ app.service('CommonUtilService', function($resource, $log, $q, Config, Organisaa
         else {
             return true;
         }
-    }, this.haeOrganisaationTiedot = function(organisaatioOid) {
+    };
+    this.haeOrganisaationTiedot = function(organisaatioOid) {
         var deferred = $q.defer();
         OrganisaatioService.byOid(organisaatioOid).then(function(vastaus) {
             deferred.resolve(vastaus);

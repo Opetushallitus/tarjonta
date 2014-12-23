@@ -1,10 +1,10 @@
-'use strict';
 var app = angular.module('MultiSelect', [
     'pasvaz.bindonce',
     'ngGrid',
     'localisation'
 ]);
 app.directive('multiSelect', function($log, $modal, LocalisationService) {
+    'use strict';
     // Referenssi lomakkeen scopessa olevaan controlleriin,
     // jotta voidaan asettaa lomakkeen validointi $setValidity-metodilla
     var $formController;
@@ -54,16 +54,16 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
                 $formController.$setValidity('required', !$scope.errors.required);
             }
         }
-        if ($scope.columns == undefined) {
+        if ($scope.columns === undefined) {
             $scope.columns = 1;
         }
-        if ($scope.display == undefined) {
+        if ($scope.display === undefined) {
             $scope.display = 'checklist';
         }
-        if ($scope.key == undefined) {
+        if ($scope.key === undefined) {
             $scope.key = 'koodiUri';
         }
-        if ($scope.value == undefined) {
+        if ($scope.value === undefined) {
             $scope.value = 'koodiNimi';
         }
         if (!$scope.ttShowAll) {
@@ -85,8 +85,9 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
         $scope.$on('$destroy', function() {
             if ($formController && $scope.name) {
                 $formController.$removeControl($scope.name);
-                $formController[$scope.name] &&
-                delete $formController[$scope.name];
+                if ($formController[$scope.name]) {
+                    delete $formController[$scope.name];
+                }
             }
         });
         $scope.combo = {
@@ -240,14 +241,15 @@ app.directive('multiSelect', function($log, $modal, LocalisationService) {
             $scope.titles = [];
             $scope.items = [];
             $scope.rows = [];
+            var k;
             // jos model on muotoa key -> value, muunnetaan se muotoon {key: .., value: ..}
-            for (var k in model) {
+            for (k in model) {
                 if (!(model[k] instanceof Object)) {
                     model = toObjectArray(model);
                     break;
                 }
             }
-            for (var k in model) {
+            for (k in model) {
                 var e = model[k];
                 var w = 0;
                 if (cw) {

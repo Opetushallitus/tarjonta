@@ -118,7 +118,7 @@ app.factory('AuthService', function($q, $http, $timeout, $log, MyRolesModel, Con
     //async call, returns promise!
     var accessCheck = function(service, orgOid, accessFunction) {
         //        $log.info("accessCheck(), service,org,fn:", service, orgOid, accessFunction);
-        if (orgOid === undefined || orgOid.length && orgOid.length == 0) {
+        if (orgOid === undefined || orgOid.length && orgOid.length === 0) {
             throw 'missing org oid!';
         }
         var deferred = $q.defer();

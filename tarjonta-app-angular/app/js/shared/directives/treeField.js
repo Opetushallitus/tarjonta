@@ -1,6 +1,6 @@
-'use strict';
 var app = angular.module('TreeFieldDirective', []);
 app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaService) {
+    'use strict';
     return function() {
         var factoryScope = {};
         /*
@@ -90,7 +90,6 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
                     deferred.resolve();
                 });
             });
-            return deferred.promise;
         };
         factoryScope.isPreSelected = function(komoOid) {
             return factoryScope.tree.oid === komoOid;
@@ -113,6 +112,7 @@ app.factory('TreeFieldSearch', function($resource, $log, $q, Config, TarjontaSer
     };
 });
 app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
+    'use strict';
     function controller($scope, $q, $element, $compile) {
         /*
              * set default attribute values

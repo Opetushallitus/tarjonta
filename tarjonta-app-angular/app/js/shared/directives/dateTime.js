@@ -1,12 +1,14 @@
-'use strict';
 var app = angular.module('TarjontaDateTime', ['localisation']);
 app.directive('tDateTime', function($log, $modal, LocalisationService, dialogService) {
+    'use strict';
     function controller($scope) {
         var ctrl = $scope;
         $scope.errors = {};
         $scope.$on('$destroy', function() {
             if ($scope.form) {
-                $scope.name && $scope.form.$removeControl($scope.name);
+                if ($scope.name) {
+                    $scope.form.$removeControl($scope.name);
+                }
                 $scope.form.$setValidity('tDateTime', true);
             }
         });
@@ -27,16 +29,16 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             });
         }
         else if ($scope.type == 'long') {
-            $scope.model = $scope.scopeModel == null ? null : new Date($scope.scopeModel);
+            $scope.model = $scope.scopeModel === null ? null : new Date($scope.scopeModel);
             $scope.$watch('scopeModel', function(nv, ov) {
-                $scope.model = $scope.scopeModel == null ? null : new Date($scope.scopeModel);
+                $scope.model = $scope.scopeModel === null ? null : new Date($scope.scopeModel);
             });
         }
         else {
             throw 'Unknown type ' + $scope.type;
         }
         function asTimestamp(s) {
-            if (s == undefined || s == null) {
+            if (s === undefined || s === null) {
                 return false;
             }
             return s instanceof Date ? s.getTime() : s;
@@ -57,7 +59,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             return d.getHours() + ':' + zpad(d.getMinutes());
         }
         function dateTimeToString(d) {
-            if (d == null || d == undefined) {
+            if (d === null || d === undefined) {
                 return null;
             }
             if (!(d instanceof Date)) {
@@ -76,7 +78,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 omitUpdate = false;
                 return;
             }
-            if ($scope.model == null) {
+            if ($scope.model === null) {
                 $scope.date = '';
                 $scope.time = '';
                 $scope.scopeModel = null;
@@ -92,7 +94,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
         function trimSplit(v, s) {
             var ret = v.split(s);
             for (var i in ret) {
-                if (ret[i].trim().length == 0) {
+                if (ret[i].trim().length === 0) {
                     ret.splice(i, 1);
                 }
             }
@@ -110,7 +112,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             return d;
         }
         function roundToDay(d) {
-            if (d == false) {
+            if (d === false) {
                 return false;
             }
             var t = new Date(d);
@@ -188,8 +190,9 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
             }
             //console.log("WAS dd="+dd+", dm="+dm+", dy="+dy+", th="+th+", tm="+tm);
             var isnull = true;
+            var ds;
             if ($scope.date) {
-                var ds = trimSplit($scope.date, '.');
+                ds = trimSplit($scope.date, '.');
                 if (ds.length > 0) {
                     isnull = false;
                 }
@@ -202,7 +205,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 }
             }
             if ($scope.timestamp && $scope.time) {
-                var ds = trimSplit($scope.time, ':');
+                ds = trimSplit($scope.time, ':');
                 if (ds.length > 0) {
                     isnull = false;
                 }
@@ -219,7 +222,7 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 $scope.model = null;
             }
             else {
-                var nd = new Date();
+                nd = new Date();
                 // HUOM! asetettava järjestyksessä vuosi-kuukausi-päivä
                 nd.setFullYear(dy);
                 nd.setMonth(dm);

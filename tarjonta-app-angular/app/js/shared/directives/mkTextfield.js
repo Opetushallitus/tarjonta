@@ -1,4 +1,3 @@
-'use strict';
 var app = angular.module('MonikielinenTextField', [
     'Koodisto',
     'localisation',
@@ -6,6 +5,7 @@ var app = angular.module('MonikielinenTextField', [
     'Logging'
 ]);
 app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $modal) {
+    'use strict';
     $log = $log.getInstance('<mkTextfield>');
     var userLangs = window.CONFIG.app.userLanguages;
     function controller($scope) {
@@ -24,7 +24,8 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         };
         $scope.updateModel = function() {
             $scope.model = {};
-            for (var i in $scope.data) {
+            var i;
+            for (i in $scope.data) {
                 if ($scope.data[i] && $scope.data[i].value && $scope.data[i].value.length > 0) {
                     $scope.model[$scope.data[i].uri] = $scope.data[i].value;
                 }
@@ -41,9 +42,9 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
                     $scope.errors.required = true;
                     return;
                 }
-                for (var i in $scope.model) {
+                for (i in $scope.model) {
                     // $log.info("updateModel() - i = " + i);
-                    if ($scope.model[i] && $scope.model[i] != null && $scope.model[i].trim().length > 0) {
+                    if ($scope.model[i] && $scope.model[i] !== null && $scope.model[i].trim().length > 0) {
                         $scope.errors.required = false;
                     }
                     else {
@@ -113,7 +114,7 @@ app.directive('mkTextfield', function(Koodisto, LocalisationService, $log, $moda
         if ($scope.showUserLanguages === true) {
             for (var i in userLangs) {
                 var lang = userLangs[i];
-                if ($scope.model[lang] == undefined || $scope.model[lang] == null) {
+                if ($scope.model[lang] === undefined || $scope.model[lang] === null) {
                     $scope.model[lang] = '';
                     $scope.data.push({
                         uri: lang,

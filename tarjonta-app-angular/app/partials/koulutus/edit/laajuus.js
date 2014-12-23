@@ -1,8 +1,8 @@
-'use strict';
 var app = angular.module('app.edit.ctrl.laajuus', ['localisation']);
 app.directive('laajuus', [
     '$log', function($log) {
         function controller($scope, $q, $element, $compile) {
+            'use strict';
             if (angular.isUndefined($scope.arvoUiModel)) {
                 new Error('Tarjonta application error - model cannot be null or undefined!');
             }

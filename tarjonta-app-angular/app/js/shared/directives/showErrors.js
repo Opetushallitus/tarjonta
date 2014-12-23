@@ -12,7 +12,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-'use strict';
 var app = angular.module('ShowErrors', [
     'localisation',
     'Logging'
@@ -45,6 +44,7 @@ var app = angular.module('ShowErrors', [
  * @author mlyly
  */
 app.directive('showErrors', function($log, LocalisationService) {
+    'use strict';
     $log = $log.getInstance('<showErrors>');
     return {
         restrict: 'EA',

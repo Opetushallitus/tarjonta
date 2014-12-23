@@ -62,7 +62,7 @@ angular.module('Organisaatio', [
             angular.forEach(organisaatioarray, localize);
             organisaatioarray.sort(function(a, b) {
                 ret = a.sortNimi.localeCompare(b.sortNimi);
-                return ret == 0 ? a.nimi.localeCompare(b.nimi) : ret;
+                return ret === 0 ? a.nimi.localeCompare(b.nimi) : ret;
             });
             return organisaatioarray;
         }

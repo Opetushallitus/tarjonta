@@ -24,14 +24,11 @@ app.controller('KoulutusRoutingController', [
     'PermissionService',
     'OrganisaatioService',
     'Koodisto',
-    'LocalisationService',
-    'KoulutusConverterFactory', function KoulutusRoutingController($scope, $log, $routeParams, $route, $location,
-       converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService, converter) {
-        $log = $log.getInstance('KoulutusRoutingController');
+    'LocalisationService', function KoulutusRoutingController($scope, $log, $routeParams, $route, $location,
+       converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         /*
-             * Page routing data
-             */
-        $scope.resultPageUri;
+         * Page routing data
+         */
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.toteutustyyppi;

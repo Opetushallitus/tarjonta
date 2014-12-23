@@ -684,19 +684,26 @@ app.controller('BaseEditController', [
                 KoulutusConverterFactory.throwError('unsupported $routeParams.type : ' + $routeParams.type + '.');
             }
             $scope.lisatiedot = koulutusStructure.KUVAUS_ORDER;
+
             var koulutuskoodiUri = (model.koulutuskoodi || {}).uri || $routeParams.koulutuskoodi;
-            koulutuskoodiUri && $scope.loadRelationKoodistoData(
-                model,
-                uiModel,
-                koulutuskoodiUri,
-                ENUMS.ENUM_KOMO_MODULE_TUTKINTO
-            );
-            (model.koulutusohjelma || {}).uri && $scope.loadRelationKoodistoData(
-                model,
-                uiModel,
-                model.koulutusohjelma.uri,
-                ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
-            );
+            if (koulutuskoodiUri) {
+                $scope.loadRelationKoodistoData(
+                    model,
+                    uiModel,
+                    koulutuskoodiUri,
+                    ENUMS.ENUM_KOMO_MODULE_TUTKINTO
+                );
+            }
+
+            var koulutusohjelmaUri = (model.koulutusohjelma || {}).uri;
+            if (koulutusohjelmaUri) {
+                $scope.loadRelationKoodistoData(
+                    model,
+                    uiModel,
+                    model.koulutusohjelma.uri,
+                    ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
+                );
+            }
             /*
             * SHOW ALL KOODISTO KOODIS
             */
@@ -839,7 +846,7 @@ app.controller('BaseEditController', [
             }
         });
         $scope.$watch('model.koulutuskoodi.uri', function(uriNew, uriOld) {
-            if (angular.isDefined(uriNew) && uriNew != null && uriOld != uriNew) {
+            if (angular.isDefined(uriNew) && uriNew !== null && uriOld != uriNew) {
                 $scope.uiModel.koulutusohjelmaModules = {};
                 $scope.uiModel.koulutusohjelma = [];
                 if ($scope.model.koulutusohjelma) {
@@ -924,6 +931,7 @@ app.controller('BaseEditController', [
         $scope.setMinMax = function(restricted) {
             $scope.model.isMinmax = true;
             $scope.restricted = restricted;
+            var vuosi;
             if (restricted) {
                 // true, jos koulutukseen liittyy vähintään yksi hakukohde
                 // jos koulutukselle on määritelty vähintään yksi tarkka alkamisPvm
@@ -931,7 +939,7 @@ app.controller('BaseEditController', [
                     var alkamisPvm = new Date($scope.model.koulutuksenAlkamisPvms[0]);
                     // jos alkamisPvm on nykyisten min- ja max-rajojen sisällä
                     if (!$scope.outOfMinMax(alkamisPvm)) {
-                        var vuosi = alkamisPvm.getFullYear();
+                        vuosi = alkamisPvm.getFullYear();
                         // asetetaan alkamispäivämääräkentälle ja kalenterille rajat
                         if (alkamisPvm.getMonth() < 7) {
                             $scope.min = new Date(vuosi, 0, 1, 0, 0, 0, 0);
@@ -952,7 +960,7 @@ app.controller('BaseEditController', [
                     // jos koulutukselle on määritelty alkamiskausi ja -vuosi
                     if ($scope.model.koulutuksenAlkamiskausi && $scope.model.koulutuksenAlkamiskausi.uri &&
                         /^\+?(0|[1-9]\d*)$/.test($scope.model.koulutuksenAlkamisvuosi)) {
-                        var vuosi = $scope.model.koulutuksenAlkamisvuosi;
+                        vuosi = $scope.model.koulutuksenAlkamisvuosi;
                         // asetetaan alkamispäivämääräkentälle ja kalenterille rajat
                         if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf('_k') > -1) {
                             $scope.min = new Date(vuosi, 0, 1, 0, 0, 0, 0);

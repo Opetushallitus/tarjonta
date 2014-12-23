@@ -1,4 +1,3 @@
-'use strict';
 var app = angular.module('MonikielinenTextArea', [
     'Koodisto',
     'localisation',
@@ -6,6 +5,7 @@ var app = angular.module('MonikielinenTextArea', [
     'Logging'
 ]);
 app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $modal) {
+    'use strict';
     $log = $log.getInstance('<mkRichTextarea>');
     function isEmpty(obj) {
         for (var i in obj) {
@@ -14,8 +14,8 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         return true;
     }
     function controller($scope) {
-        if ($scope.model instanceof Array || typeof $scope.model != 'object' || $scope.model == null
-            || $scope.model == undefined) {
+        if ($scope.model instanceof Array || typeof $scope.model != 'object' || $scope.model === null
+            || $scope.model === undefined) {
             $log.debug('MODEL FAIL', $scope.model);
             throw new Error('mkRichTextarea.model must be a non-array object');
         }
@@ -39,16 +39,17 @@ app.directive('mkRichTextarea', function(Koodisto, LocalisationService, $log, $m
         }
         function updateLangs() {
             var langs = [];
+            var i;
             if (isEmpty($scope.model)) {
                 //$log.debug("EMPTY -> INIT");
-                for (var i in window.CONFIG.app.userLanguages) {
+                for (i in window.CONFIG.app.userLanguages) {
                     var lang = window.CONFIG.app.userLanguages[i];
                     langs.push(lang);
                     $scope.model[lang] = '';
                 }
             }
             else {
-                for (var i in $scope.model) {
+                for (i in $scope.model) {
                     //$log.debug("INIT "+i+" -> ", $scope.model[i]);
                     if ($scope.model[i] !== undefined) {
                         // undefinedit pois

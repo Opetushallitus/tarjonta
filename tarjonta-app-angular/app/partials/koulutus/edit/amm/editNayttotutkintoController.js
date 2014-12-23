@@ -3,8 +3,8 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
                         TarjontaService, LocalisationService, KoulutusConverterFactory, $modal, dialogService) {
     var ENUMS = KoulutusConverterFactory.ENUMS;
     /*
-       * WATCHES
-       */
+    * WATCHES
+    */
     $scope.$watch('model.koulutusohjelma.uri', function(uri, oUri) {
         if (angular.isDefined(uri) && uri !== null && oUri !== uri) {
             if (angular.isDefined($scope.uiModel.koulutusohjelmaModules[uri])) {
@@ -12,10 +12,10 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
                 TarjontaService.komo().tekstis({
                     oid: komoOid
                 }, function(res) {
-                        if (res.result.TAVOITTEET) {
-                            $scope.uiModel.koulutusohjelmanTavoitteet = $scope.getLang(res.result.TAVOITTEET.tekstis);
-                        }
-                    });
+                    if (res.result.TAVOITTEET) {
+                        $scope.uiModel.koulutusohjelmanTavoitteet = $scope.getLang(res.result.TAVOITTEET.tekstis);
+                    }
+                });
             }
         }
     });
@@ -53,7 +53,7 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
         if (!kieliUri) {
             return {};
         }
-        if (!$scope.uiModel.toggleTabs || $scope.model.valmistavaKoulutus == null) {
+        if (!$scope.uiModel.toggleTabs || $scope.model.valmistavaKoulutus === null) {
             return {};
         }
         var kuvaus = $scope.model.valmistavaKoulutus.kuvaus;
@@ -90,7 +90,7 @@ app.controller('EditNayttotutkintoController', function($routeParams, $scope, $l
     });
     $scope.$watch('model.valmistavaKoulutus.opintojenMaksullisuus', function(valNew, valOld) {
         if (!valNew && valOld && angular.isDefined($scope.model.valmistavaKoulutus) &&
-            $scope.model.valmistavaKoulutus != null) {
+            $scope.model.valmistavaKoulutus !== null) {
             //clear price data field
             $scope.model.valmistavaKoulutus.hinta = '';
         }

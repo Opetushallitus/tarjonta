@@ -12,7 +12,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-'use strict';
 /* Controllers */
 var app = angular.module('app.kk.edit.hakukohde.ctrl', [
     'app.services',
@@ -32,6 +31,7 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl', [
 app.controller('HakukohdeEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
                Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout,
                TarjontaService, Kuvaus, CommonUtilService, HAKUTAPA) {
+    'use strict';
     $log = $log.getInstance('HakukohdeEditController');
     // Get organisation groups, see "tarjontaApp.js" routing resolve for hakukohde/id/edit
     var organisationGroups = $route.current.locals.organisationGroups || [];

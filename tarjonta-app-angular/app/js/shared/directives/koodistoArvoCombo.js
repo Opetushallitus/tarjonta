@@ -1,9 +1,9 @@
-'use strict';
 var app = angular.module('KoodistoArvoCombo', [
     'ngResource',
     'Logging'
 ]);
 app.directive('koodistoarvocombo', function(Koodisto, $log) {
+    'use strict';
     $log = $log.getInstance('<koodistoarvocombo>');
     var filterKoodis = function(koodistoFilterUri, koodisParam) {
         var filteredkoodis = [];
@@ -57,22 +57,22 @@ app.directive('koodistoarvocombo', function(Koodisto, $log) {
                         $scope.isalakoodi = true;
                     }
                     if ($scope.isalakoodi) {
-                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             $scope.koodis = koodisParam;
                         });
                     }
                     else {
-                        var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             $scope.koodis = koodisParam;
                         });
                     }
                 }
             }
             else {
-                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri, $scope.locale);
-                koodisPromise.then(function(koodisParam) {
+                Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri, $scope.locale)
+                .then(function(koodisParam) {
                     $scope.koodis = koodisParam;
                 });
             }
@@ -85,8 +85,8 @@ app.directive('koodistoarvocombo', function(Koodisto, $log) {
                         $scope.isalakoodi = true;
                     }
                     if ($scope.isalakoodi) {
-                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             if ($scope.filterwithkoodistouri !== undefined) {
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri, koodisParam);
                             }
@@ -96,8 +96,8 @@ app.directive('koodistoarvocombo', function(Koodisto, $log) {
                         });
                     }
                     else {
-                        var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             if ($scope.filterwithkoodistouri !== undefined) {
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri, koodisParam);
                             }

@@ -1,4 +1,3 @@
-'use strict';
 var app = angular.module('RichTextArea', [
     'Koodisto',
     'localisation',
@@ -7,6 +6,7 @@ var app = angular.module('RichTextArea', [
     'ngSanitize'
 ]);
 app.directive('richTextarea', function(LocalisationService, $log, $sce) {
+    'use strict';
     function RichTextareaController($scope) {
         var validElements = '@[align|style|lang],p,h1,h2,h3,h4,h5,h6,a[href|target],strong,b,em,i,div,span,br,' +
             'table,tbody,thead,tr,td[colspan|rowspan|width|valign],ul,ol,li,img[src],sup,sub';
@@ -28,7 +28,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
             $(from, node).each(function(i, em) {
                 var e = $(em);
                 // tyhjä -> poista
-                if (e.text().trim() == '') {
+                if (e.text().trim() === '') {
                     e.remove();
                     return;
                 }
@@ -192,7 +192,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
                 // tyhjät kappaleet rivinvaihdoiksi <p></p> -> <br/>
                 $('p', node).each(function(i, em) {
                     var e = $(em);
-                    if (e.text().trim() == '') {
+                    if (e.text().trim() === '') {
                         e.replaceWith('<br/>');
                     }
                 });
@@ -233,7 +233,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
             //content_css:"/css/bootstrap.css,/css/virkailija.css,/css/app.css"
         };
         $scope.model = $scope.model ? $scope.model : '';
-        $scope.showMax = $scope.max != undefined && $scope.max != null && $scope.max > 0;
+        $scope.showMax = $scope.max !== undefined && $scope.max !== null && $scope.max > 0;
         $scope.edit = $scope.mode() === false;
         $scope.isEdit = function() {
             return $scope.edit && $scope.mode() !== true;
@@ -242,7 +242,7 @@ app.directive('richTextarea', function(LocalisationService, $log, $sce) {
             return $sce.trustAsHtml($scope.model);
         };
         $scope.isEmpty = function() {
-            return !$scope.model || $scope.model.trim().length == 0;
+            return !$scope.model || $scope.model.trim().length === 0;
         };
         $scope.charCount = function() {
             return $($scope.element).text().length;

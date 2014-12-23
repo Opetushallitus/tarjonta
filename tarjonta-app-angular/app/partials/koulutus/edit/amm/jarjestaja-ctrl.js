@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers */
 var app = angular.module('app.edit.ctrl.amm');
 app.controller('JarjestajaCtrl', [
@@ -14,6 +13,7 @@ app.controller('JarjestajaCtrl', [
     '$location',
     '$log', function($modalInstance, targetOrganisaatio, TarjontaService, LocalisationService, $q, $scope,
                      OrganisaatioService, AuthService, PermissionService, $location, $log) {
+        'use strict';
         $log = $log.getInstance('JarjestajaCtrl');
         // Tähän populoidaan formin valinnat:
         $scope.model = {
@@ -115,8 +115,8 @@ app.controller('JarjestajaCtrl', [
             $scope.model.organisaatiot.push(organisaatio);
         };
         /**
-             * Peruuta nappulaa klikattu, sulje dialogi
-             */
+         * Peruuta nappulaa klikattu, sulje dialogi
+         */
         $scope.peruuta = function() {
             $modalInstance.dismiss();
         };
@@ -129,14 +129,14 @@ app.controller('JarjestajaCtrl', [
             });
         };
         /**
-             * Organisaatio valittu
-             */
+         * Organisaatio valittu
+         */
         $scope.organisaatioValittu = function() {
             return $scope.model.organisaatiot.length > 0;
         };
         /**
-             * Poista valittu organisaatio ruksista
-             */
+         * Poista valittu organisaatio ruksista
+         */
         $scope.poistaValittu = function(organisaatio) {
             var valitut = [];
             for (var i = 0; i < $scope.model.organisaatiot.length; i++) {

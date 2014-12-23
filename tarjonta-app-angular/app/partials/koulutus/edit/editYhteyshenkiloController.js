@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers */
 var app = angular.module('app.edit.ctrl');
 // Yhteyshenkilö
@@ -12,8 +11,9 @@ app.controller('EditYhteyshenkiloCtrl', [
     '$log',
     '$route', function($scope, $compile, YhteyshenkiloService, converter, debounce, $routeParams, $log, $route) {
         $scope.init = function(extModel) {
+            'use strict';
             $scope.editYhModel = {};
-            var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ?
+            var orgOid = $route.current.locals.koulutusModel.result.organisaatio !== undefined ?
                 $route.current.locals.koulutusModel.result.organisaatio.oid :
                 $routeParams.org;
             if (!orgOid) {
@@ -49,8 +49,8 @@ app.controller('EditYhteyshenkiloCtrl', [
                 $scope.setValues(to, selectedUser);
             };
             /**
-                                   * kopioi data modeliin
-                                   */
+            * kopioi data modeliin
+            */
             $scope.setValues = function(to, selectedUser) {
                 var henkiloOid = selectedUser.oidHenkilo;
                 YhteyshenkiloService.haeHenkilo(henkiloOid).then(function(data) {
@@ -93,8 +93,9 @@ app.controller('EditYhteyshenkiloECTSCtrl', [
     '$routeParams',
     '$log',
     '$route', function($scope, $compile, OrganisaatioService, converter, $routeParams, $log, $route) {
+        'use strict';
         $scope.editECTSModel = {};
-        var orgOid = $route.current.locals.koulutusModel.result.organisaatio != undefined ?
+        var orgOid = $route.current.locals.koulutusModel.result.organisaatio !== undefined ?
             $route.current.locals.koulutusModel.result.organisaatio.oid :
             $routeParams.org;
         $log = $log.getInstance('EditYhteyshenkiloECTSCtrl');
@@ -109,17 +110,17 @@ app.controller('EditYhteyshenkiloECTSCtrl', [
             }
         });
         /*
-                             * Clearing of the ects coordinator data.
-                             */
+         * Clearing of the ects coordinator data.
+         */
         $scope.editECTSModel.clearEctsYh = function() {
             $scope.uiModel.ectsCoordinator = {
                 henkiloTyyppi: 'ECTS_KOORDINAATTORI'
             };
         };
         /*
-                             * Sets the ects coordinator to be the one that the user selected
-                             * from the autocomplete field.
-                             */
+         * Sets the ects coordinator to be the one that the user selected
+         * from the autocomplete field.
+         */
         $scope.editECTSModel.selectEctsHenkilo = function(selectedUser) {
             if ($scope.ects) {
                 $scope.uiModel.opetuskielis.uris.every(function(kieliUri) {

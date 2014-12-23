@@ -80,7 +80,7 @@ angular.module('TarjontaPermissions', [
             }
             //$log.debug("hakutulos:", hakutulos);
             resolveData(defer.promise);
-            if (hakutulos.tulokset != undefined && hakutulos.tulokset.length == 1) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
                 AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result) {
                     //					$log.debug("resolving ", result);
                     defer.resolve(result);
@@ -106,7 +106,7 @@ angular.module('TarjontaPermissions', [
         //tarkista permissio tarjoajaoidilla
         result = result.then(function(hakutulos) {
             //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset != undefined && hakutulos.tulokset.length == 1) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
                 AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
@@ -147,7 +147,7 @@ angular.module('TarjontaPermissions', [
         //tarkista permissio tarjoajaoidilla
         result = result.then(function(hakutulos) {
             //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset != undefined && hakutulos.tulokset.length == 1) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
                 AuthService.updateOrg(hakutulos.tulokset[0].oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
@@ -188,7 +188,7 @@ angular.module('TarjontaPermissions', [
         //tarkista permissio tarjoajaoidilla
         result = result.then(function(hakutulos) {
             //			$log.debug("hakutulos:", hakutulos);
-            if (hakutulos.tulokset != undefined && hakutulos.tulokset.length == 1) {
+            if (hakutulos.tulokset !== undefined && hakutulos.tulokset.length == 1) {
                 AuthService.crudOrg(hakutulos.tulokset[0].oid).then(function(result) {
                     defer.resolve(result);
                 }, function() {
@@ -244,7 +244,7 @@ angular.module('TarjontaPermissions', [
         }
         function checkPermission(haku) {
             var orgs = haku.tarjoajaOids || [];
-            if (orgs.length == 0) {
+            if (orgs.length === 0) {
                 //organisaatiota ei kerrottu, pitää olla oph?
                 permissionf(ophOid).then(function(result) {
                     defer.resolve(result);
@@ -256,12 +256,11 @@ angular.module('TarjontaPermissions', [
                 var hasAccess = {
                     access: false
                 };
-                function orAccess(result) {
-                    hasAccess.access = hasAccess.access || result;
-                }
-                for (var i = 0; i < orgs.length; i++) {
-                    promises.push(permissionf(orgs[i]).then(orAccess));
-                }
+                _.each(orgs, function(org) {
+                    promises.push(permissionf(org).then(function(result) {
+                        hasAccess.access = hasAccess.access || result;
+                    }));
+                });
                 $q.all(promises).then(function() {
                     defer.resolve(hasAccess.access);
                 });
@@ -319,7 +318,7 @@ angular.module('TarjontaPermissions', [
             */
             canEdit: function(koulutusOid, searchParams) {
                 var koulutusoidit = angular.isArray(koulutusOid) ? koulutusOid : [koulutusOid];
-                if (koulutusoidit.length == 0) {
+                if (koulutusoidit.length === 0) {
                     return {
                         data: false
                     };
@@ -328,7 +327,7 @@ angular.module('TarjontaPermissions', [
             },
             canTransition: function(koulutusOid, from, to) {
                 var koulutusoidit = angular.isArray(koulutusOid) ? koulutusOid : [koulutusOid];
-                if (koulutusoidit.length == 0) {
+                if (koulutusoidit.length === 0) {
                     return {
                         data: false
                     };

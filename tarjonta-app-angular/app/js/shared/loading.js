@@ -19,7 +19,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             return service.requestCount > 0;
         },
         isError: function() {
-            return service.errors != 0;
+            return service.errors !== 0;
         },
         beforeOperation: function() {
             //console.log("LOADING beforeOperation", service);
@@ -53,7 +53,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
         },
         clearTimeout: function() {
             //console.log("LOADING clearTimeout", service);
-            if (service.requestCount == 0 && service.timeout != null) {
+            if (service.requestCount === 0 && service.timeout !== null) {
                 window.clearTimeout(service.timeout);
                 service.timeout = null;
                 service.timeoutMinor = false;
@@ -62,7 +62,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
         },
         startTimeout: function() {
             //console.log("LOADING startTimeout", service);
-            if (service.timeout != null) {
+            if (service.timeout !== null) {
                 return;
             }
             service.timeout = window.setTimeout(function() {
@@ -81,7 +81,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
             if (service.errorHandlingRequested) {
                 service.errorHandlingRequested = false;
             }
-            else if (service.errorHandlingRequested == null) {
+            else if (service.errorHandlingRequested === null) {
                 throw 'loadingService.onErrorHandled called from outside of error callback';
             }
         },
@@ -158,7 +158,7 @@ angular.module('loading', ['localisation']).factory('loadingService', function()
     $scope.$watch(function() {
         return loadingService.errors;
     }, function(value, oldv) {
-            if (value > 0 && oldv == 0) {
+            if (value > 0 && oldv === 0) {
                 showErrorDialog();
             }
         });

@@ -70,8 +70,9 @@ app.service('TreeHandlers', function() {
        * 2TAB tree click handler
        */
     singleton.selectTreeHandler = function(obj, event) {
+        var i;
         if (event === 'SELECTED') {
-            for (var i = 0; i < singleton.scope.model.hakutulos.length; i++) {
+            for (i = 0; i < singleton.scope.model.hakutulos.length; i++) {
                 if (singleton.scope.model.hakutulos[i].oid === obj.oid) {
                     singleton.scope.model.selectedRowData.push(singleton.scope.model.hakutulos[i]);
                     break;
@@ -79,7 +80,7 @@ app.service('TreeHandlers', function() {
             }
         }
         else {
-            for (var i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
+            for (i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
                 if (singleton.scope.model.selectedRowData[i].oid === obj.oid) {
                     singleton.scope.model.selectedRowData.splice(i, 1);
                     break;

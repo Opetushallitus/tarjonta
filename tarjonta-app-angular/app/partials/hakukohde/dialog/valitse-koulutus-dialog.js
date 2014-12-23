@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers */
 var app = angular.module('app.hakukohde.dialog.ctrl', []);
 app.controller('ValitseKoulutusDialogCtrl', [
@@ -8,6 +7,7 @@ app.controller('ValitseKoulutusDialogCtrl', [
     '$scope',
     'input',
     'HakukohdeKoulutukses', function($modalInstance, LocalisationService, $q, $scope, input, HakukohdeKoulutukses) {
+        'use strict';
         $scope.model = {
             errors: [],
             komotos: [],

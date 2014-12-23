@@ -2,7 +2,6 @@ var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
                     Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout,
                     TarjontaService, Kuvaus, CommonUtilService, PermissionService) {
-    $log = $log.getInstance('HakukohdeAikuLukioEditController');
     var filterHakuWithHakutapa = function(hakus) {
         var filteredHakus = [];
         angular.forEach(hakus, function(haku) {
@@ -20,18 +19,17 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
     };
     var validateAikuHakukohde = function() {
         var errors = [];
-        console.log('AIKU HAKUKOHDE : ', $scope.model.hakukohde);
         if (!$scope.model.hakukohde.hakukohteenNimiUri
             || $scope.model.hakukohde.hakukohteenNimiUri.trim().length < 1) {
-            var err = {};
-            err.errorMessageKey = 'hakukohde.edit.nimi.missing';
             $scope.model.nimiValidationFailed = true;
-            errors.push(err);
+            errors.push({
+                errorMessageKey: 'hakukohde.edit.nimi.missing'
+            });
         }
         if (!$scope.model.hakukohde.hakuOid || $scope.model.hakukohde.hakuOid.trim().length < 1) {
-            var err = {};
-            err.errorMessageKey = 'hakukohde.edit.haku.missing';
-            errors.push(err);
+            errors.push({
+                errorMessageKey: 'hakukohde.edit.haku.missing'
+            });
         }
         if (!$scope.status.validateValintakokeet()) {
             errors.push({
@@ -53,11 +51,11 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
         );
     };
     /**
-               *
-               * Controller initialization function which is called when controller
-               * loads
-               *
-               */
+    *
+    * Controller initialization function which is called when controller
+    * loads
+    *
+    */
     var init = function() {
         $scope.model.userLang = AuthService.getLanguage();
         if ($scope.model.userLang === undefined) {

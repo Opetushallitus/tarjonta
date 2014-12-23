@@ -1,13 +1,11 @@
-'use strict';
 var app = angular.module('Contact', ['Yhteyshenkilo']);
 app.directive('contactPerson', function(YhteyshenkiloService) {
+    'use strict';
     function controller($scope) {
         $scope.editYhModel = {};
         if (!$scope.orgOid) {
-            $log.error('organisaatio Oid is unknown!!');
+            console.error('organisaatio Oid is unknown!!');
         }
-        $log = $log.getInstance('contactPerson');
-        $log.debug('init');
         $scope.yhteyshenkilot = [];
         YhteyshenkiloService.etsi({
             org: [$scope.orgOid]
@@ -20,24 +18,24 @@ app.directive('contactPerson', function(YhteyshenkiloService) {
             }
         });
         /*
-             * Clearing of the contact person data.
-             */
+         * Clearing of the contact person data.
+         */
         $scope.editYhModel.clearYh = function() {
             $scope.model.contactPerson = {
                 henkiloTyyppi: 'YHTEYSHENKILO'
             };
         };
         /*
-             * Sets the contact person to be the one that the user selected
-             * from the autocomplete field.
-             */
+         * Sets the contact person to be the one that the user selected
+         * from the autocomplete field.
+         */
         $scope.editYhModel.selectHenkilo = function(selectedUser) {
             var to = $scope.model.contactPerson;
             $scope.setValues(to, selectedUser);
         };
         /**
-             * kopioi data modeliin
-             */
+         * kopioi data modeliin
+         */
         $scope.setValues = function(to, selectedUser) {
             var henkiloOid = selectedUser.oidHenkilo;
             YhteyshenkiloService.haeHenkilo(henkiloOid).then(function(data) {

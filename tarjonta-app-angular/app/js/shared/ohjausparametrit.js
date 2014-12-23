@@ -9,7 +9,7 @@ angular.module('Parameter', [
     var loadingService = $injector.get('loadingService');
     $log = $log.getInstance('ParameterService');
     var NAME = 'tarjontaOhjausparametritRestUrlPrefix';
-    if (Config.env[NAME] == undefined) {
+    if (Config.env[NAME] === undefined) {
         throw '\'' + NAME + '\' ei ole m\xE4\xE4ritelty!';
     }
     var baseUrl = Config.env[NAME] + '/api/v1/rest/parametri';

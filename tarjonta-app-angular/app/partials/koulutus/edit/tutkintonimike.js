@@ -1,10 +1,10 @@
-'use strict';
 var app = angular.module('app.edit.ctrl.tutkintonimike', ['localisation']);
 app.directive('tutkintonimike', [
     '$log',
     '$modal',
     'LocalisationService', function($log, $modal, LocalisationService) {
         function controller($scope, $q, $element, $compile) {
+            'use strict';
             if (angular.isUndefined($scope.model)) {
                 new Error('Tarjonta application error - model cannot be null or undefined!');
             }

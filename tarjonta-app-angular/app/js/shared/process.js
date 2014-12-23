@@ -12,7 +12,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-'use strict';
 angular.module('Process', [
     'ngResource',
     'config',
@@ -22,6 +21,7 @@ angular.module('Process', [
  * Process resource
  */
 .factory('ProcessV1', function($resource, $log, Config) {
+    'use strict';
     $log = $log.getInstance('ProcessV1');
     $log.info('ProcessV1()');
     var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'process/:id';
@@ -48,6 +48,7 @@ angular.module('Process', [
  * Process Service
  */
 .factory('ProcessV1Service', function($log, $q, ProcessV1, LocalisationService, AuthService) {
+    'use strict';
     $log = $log.getInstance('ProcessV1Service');
     var defaultPollingTime = 10000;
     var polls = {};
@@ -69,11 +70,11 @@ angular.module('Process', [
                     getProcessStatus(id).then(callback);
                 };
                 poller();
-                polls[id] = setInterval(poller, pollingTime || defaultPollingTime);
+                polls[id] = window.setInterval(poller, pollingTime || defaultPollingTime);
             }
         },
         stopPolling: function(id) {
-            clearInterval(polls[id]);
+            window.clearInterval(polls[id]);
             delete polls[id];
         }
     };

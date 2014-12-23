@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers */
 var app = angular.module('app.koulutus.copy.ctrl', []);
 app.controller('CopyMoveKoulutusController', [
@@ -14,6 +13,7 @@ app.controller('CopyMoveKoulutusController', [
     'PermissionService',
     '$location', function($modalInstance, targetKoulutus, targetOrganisaatio, TarjontaService, LocalisationService,
                           $q, $scope, OrganisaatioService, AuthService, PermissionService, $location) {
+        'use strict';
         // Tähän populoidaan formin valinnat:
         $scope.model = {
             text: {
@@ -44,10 +44,10 @@ app.controller('CopyMoveKoulutusController', [
         var deferred = $q.defer();
         promises.push(deferred.promise);
         /*
-             * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan allaolevista oppilaitoksista,
-             * oppilaitoksen tyypit tulee oppilaitokselta, toimipisteen tyyppi typee ylemmän tason oppilaitokselta.
-             * TODO lisää testi
-             */
+         * Hakee oppilaitostyypit organisaatiolle, koulutustoimijalle haetaan allaolevista oppilaitoksista,
+         * oppilaitoksen tyypit tulee oppilaitokselta, toimipisteen tyyppi typee ylemmän tason oppilaitokselta.
+         * TODO lisää testi
+         */
         var haeOppilaitostyypit = function(organisaatio) {
             var deferred = $q.defer();
             var oppilaitostyypit = [];
@@ -119,8 +119,8 @@ app.controller('CopyMoveKoulutusController', [
             //hakee kaikki valittavissa olevat koulutustyypit
             var oltUrit = [];
             var oltpromises = [];
-            for (var i = 0; i < vastaus.organisaatiot.length; i++) {
-                var oppilaitostyypit = haeOppilaitostyypit(vastaus.organisaatiot[i]);
+            _.each(vastaus.organisaatiot, function(org) {
+                var oppilaitostyypit = haeOppilaitostyypit(org);
                 promises.push(oppilaitostyypit);
                 oppilaitostyypit.then(function(tyypit) {
                     for (var i = 0; i < tyypit.length; i++) {
@@ -129,10 +129,11 @@ app.controller('CopyMoveKoulutusController', [
                         }
                     }
                 });
-            }
+            });
             $q.all(oltpromises).then(function() {
                 $q.all(promises).then(function() {
-                    paivitaKoulutustyypit(oltUrit); //console.log("all done!");
+                    // TODO: korjaa tämä
+                    // paivitaKoulutustyypit(oltUrit);
                 });
             });
         });

@@ -1,4 +1,3 @@
-'use strict';
 /*******************************************************/
 /* Define all project sub-modules with no dependencies */
 /*******************************************************/
@@ -94,6 +93,8 @@ angular.module('app', [
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {
+    'use strict';
+
     var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'permission/recordUiStacktrace';
     var errorsLoggingTimeout = Config.env['errorlog.timeout'] || 60000;
     var errorsLoggingSuspended = false;
@@ -104,7 +105,7 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
         var ua = navigator.userAgent;
         var tem;
         var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) {
+        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) !== null) {
             M[2] = tem[1];
         }
         M = M ? [
@@ -122,7 +123,7 @@ angular.module('app').factory('errorLogService', function($log, $window, Config)
         var ua = navigator.userAgent;
         var tem;
         var M = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) != null) {
+        if (M && (tem = ua.match(/version\/([\.\d]+)/i)) !== null) {
             M[2] = tem[1];
         }
         M = M ? [
@@ -200,11 +201,12 @@ angular.module('app').provider('$exceptionHandler', {
 });
 angular.module('app').config([
     '$routeProvider', function($routeProvider) {
+        'use strict';
         /**
-             *
-             * Helper functions for hakukohde resolvers
-             *
-             * */
+         *
+         * Helper functions for hakukohde resolvers
+         *
+         * */
         var getHakukohdeKoulutukses = function(Hakukohde, $log, $route, SharedStateService, TarjontaService) {
             var koulutusSet = new buckets.Set();
             var selectedKoulutusOids;
@@ -221,6 +223,7 @@ angular.module('app').config([
         };
         var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService,
                                         TarjontaService) {
+            var deferred = $q.defer();
             if ('new' === $route.current.params.id) {
                 var selectedTarjoajaOids;
                 var selectedKoulutusOids;
@@ -236,7 +239,6 @@ angular.module('app').config([
                 else {
                     selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
                 }
-                var deferred = $q.defer();
                 //Initialize model and arrays inside it
                 var hakukohde = new Hakukohde({
                     liitteidenToimitusOsoite: {},
@@ -264,10 +266,8 @@ angular.module('app').config([
                     hakukohde.toteutusTyyppi = res.result.toteutustyyppi;
                     deferred.resolve(hakukohde);
                 });
-                return deferred.promise;
             }
             else {
-                var deferred = $q.defer();
                 Hakukohde.get({
                     oid: $route.current.params.id
                 }).$promise.then(function(res) {
@@ -291,8 +291,8 @@ angular.module('app').config([
                         deferred.resolve(res);
                     }
                 });
-                return deferred.promise;
             }
+            return deferred.promise;
         };
         var resolveCanEditHakukohde = function(Hakukohde, $log, $route, $q, PermissionService) {
             if ($route.current.params.id !== 'new') {
@@ -551,6 +551,7 @@ angular.module('app').controller('AppRoutingCtrl', [
     '$routeParams',
     '$log',
     'PermissionService', function($scope, $route, $routeParams, $log, PermissionService) {
+        'use strict';
         $log = $log.getInstance('AppRoutingCtrl');
         $log.debug('init');
         $scope.count = 0;
@@ -581,12 +582,14 @@ angular.module('app').controller('AppRoutingCtrl', [
 // "Production" mode
 //
 angular.module('app').config(function($logProvider) {
+    'use strict';
     $logProvider.debugEnabled(true);
 });
 /**
  * Fix IE caching AJAX-requests to tarjonta-service.
  */
 angular.module('app').factory('ieCacheInterceptor', function() {
+    'use strict';
     return {
         request: function(config) {
             if (config.method === 'GET' && config.url.indexOf('/tarjonta-service/') !== -1) {
@@ -596,5 +599,6 @@ angular.module('app').factory('ieCacheInterceptor', function() {
         }
     };
 }).config(function($httpProvider) {
+    'use strict';
     $httpProvider.interceptors.push('ieCacheInterceptor');
 });

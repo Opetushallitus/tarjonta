@@ -1,4 +1,3 @@
-'use strict';
 var app = angular.module('MonikielinenTabs', [
     'Koodisto',
     'localisation',
@@ -6,6 +5,7 @@ var app = angular.module('MonikielinenTabs', [
     'Logging'
 ]);
 app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
+    'use strict';
     $log = $log.getInstance('<mkTabs>');
     var userLangs = window.CONFIG.app.userLanguages;
     function controller($scope) {
@@ -20,7 +20,7 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
             $scope.model = [];
         }
         function updateLangs() {
-            if ($scope.codes == null) {
+            if ($scope.codes === null) {
                 //console.log("UPDATE -> postpone");
                 return;
             }
@@ -52,7 +52,7 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
                 $scope.selection = undefined;
             }
             if ($scope.selection === undefined || $scope.selection === null && !$scope.mutable) {
-                $scope.onSelect($scope.langs.length == 0 ? null : $scope.langs[0], false);
+                $scope.onSelect($scope.langs.length === 0 ? null : $scope.langs[0], false);
                 console.log('Preselected:', [
                     $scope.selection,
                     $scope.langs
@@ -60,7 +60,7 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
             } //console.log("POST UPDATE", [$scope.selection, $scope.langs, $scope.model]);
         }
         $scope.onSelect = function(kieli, user) {
-            if (user && $scope.codes == null) {
+            if (user && $scope.codes === null) {
                 return;
             }
             for (var k in $scope.active) {
@@ -70,7 +70,7 @@ app.directive('mkTabs', function(Koodisto, LocalisationService, $log, $modal) {
             $scope.selection = kieli;
         };
         $scope.$watch('selection', function(nv, ov) {
-            if (nv === ov || $scope.codes == null) {
+            if (nv === ov || $scope.codes === null) {
                 return;
             }
             $scope.onSelect(nv, false);

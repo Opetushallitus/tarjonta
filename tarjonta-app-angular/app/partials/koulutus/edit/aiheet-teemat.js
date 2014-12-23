@@ -50,8 +50,8 @@ app.directive('aiheetJaTeemat', function(LocalisationService, Koodisto, $log) {
             for (var j in $scope.teemat) {
                 var t = $scope.teemat[j];
                 if (t.uri == turi) {
-                    for (var j in t.aiheet) {
-                        var a = t.aiheet[j];
+                    for (var k in t.aiheet) {
+                        var a = t.aiheet[k];
                         if (a.uri == auri) {
                             a.selected = i == -1;
                             break;
@@ -71,8 +71,8 @@ app.directive('aiheetJaTeemat', function(LocalisationService, Koodisto, $log) {
             $scope.model.splice(i, 1);
             for (var j in $scope.teemat) {
                 var t = $scope.teemat[j];
-                for (var j in t.aiheet) {
-                    var a = t.aiheet[j];
+                for (var k in t.aiheet) {
+                    var a = t.aiheet[k];
                     if (a.uri == uri) {
                         a.selected = false;
                         t.size += i == -1 ? 1 : -1;

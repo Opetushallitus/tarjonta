@@ -131,7 +131,7 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
             var nimiEmpty = !notEmpty(li.valintakoeNimi);
             var tyyppiEmpty = !notEmpty(li.valintakoetyyppi);
             var kuvausEmpty = !notEmpty(li.valintakokeenKuvaus.teksti);
-            var ajankohtaEmpty = li.valintakoeAjankohtas.length == 0;
+            var ajankohtaEmpty = li.valintakoeAjankohtas.length === 0;
             if (nimiEmpty && tyyppiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
                 continue;
             }
@@ -227,15 +227,15 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
         });
     };
     function addEmptyValintakokeet() {
-        for (var opetuskieli in $scope.kokeetModel.valintakoeLangs) {
-            var kieliUri = $scope.kokeetModel.valintakoeLangs[opetuskieli].koodiUri;
+        _.each($scope.kokeetModel.valintakoeLangs, function(kieli) {
+            var kieliUri = kieli.koodiUri;
             var found = _.find($scope.model.hakukohde.valintakokeet, function(valintakoe) {
                 return valintakoe.kieliUri === kieliUri;
             });
             if (!found) {
                 HakukohdeService.addValintakoe($scope.model.hakukohde, kieliUri);
             }
-        }
+        });
     }
     $scope.$on('addEmptyValintakokeet', function() {
         addEmptyValintakokeet();

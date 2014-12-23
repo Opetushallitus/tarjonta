@@ -1,9 +1,9 @@
-'use strict';
 var app = angular.module('KoodistoCombo', [
     'ngResource',
     'Logging'
 ]);
 app.directive('koodistocombo', function(Koodisto, $log, $q) {
+    'use strict';
     $log = $log.getInstance('<koodistocombo>');
     var filterKoodis = function(koodistoFilterUri, koodisParam) {
         var filteredkoodis = [];
@@ -114,12 +114,9 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                     }
                 }
             };
-            if ($scope.isrequired) {
-                $scope.valuerequired = true;
-            }
-            else {
-                $scope.valuerequired = false;
-            }
+
+            $scope.valuerequired = $scope.isrequired;
+
             if ($scope.usearvocombo !== undefined) {
                 $scope.combotype = {
                     value: 'arvo'
@@ -137,9 +134,9 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                         $log.info('isalakoodi was undefined');
                         $scope.isalakoodi = true;
                     }
+                    var koodiPromises = [];
                     if ($scope.isalakoodi) {
                         if (angular.isArray($scope.parentkoodiuri)) {
-                            var koodiPromises = [];
                             angular.forEach($scope.parentkoodiuri, function(parentKoodiUri) {
                                 koodiPromises.push(Koodisto.getAlapuolisetKoodit(parentKoodiUri, $scope.locale));
                                 var allPromises = $q.all(koodiPromises);
@@ -151,13 +148,12 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                             });
                         }
                         else {
-                            var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                            koodisPromise.then(processAlapuolisetKoodit);
+                            Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                            .then(processAlapuolisetKoodit);
                         }
                     }
                     else {
                         if (angular.isArray($scope.parentkoodiuri)) {
-                            var koodiPromises = [];
                             angular.forEach($scope.parentkoodiuri, function(parentKoodiUri) {
                                 koodiPromises.push(Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale));
                                 var allPromises = $q.all(koodiPromises);
@@ -169,8 +165,8 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                             });
                         }
                         else {
-                            var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                            koodisPromise.then(processYlapuolisetKoodit);
+                            Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                            .then(processYlapuolisetKoodit);
                         }
                     }
                 }
@@ -232,9 +228,9 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                         $log.info('isalakoodi was undefined');
                         $scope.isalakoodi = true;
                     }
+                    var koodiPromises = [];
                     if ($scope.isalakoodi) {
                         if (angular.isArray($scope.parentkoodiuri)) {
-                            var koodiPromises = [];
                             angular.forEach($scope.parentkoodiuri, function(parentKoodiUri) {
                                 koodiPromises.push(Koodisto.getAlapuolisetKoodit(parentKoodiUri, $scope.locale));
                                 var allPromises = $q.all(koodiPromises);
@@ -246,13 +242,12 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                             });
                         }
                         else {
-                            var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                            koodisPromise.then(processAlapuolisetKoodit);
+                            Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                            .then(processAlapuolisetKoodit);
                         }
                     }
                     else {
                         if (angular.isArray($scope.parentkoodiuri)) {
-                            var koodiPromises = [];
                             angular.forEach($scope.parentkoodiuri, function(parentKoodiUri) {
                                 koodiPromises.push(Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale));
                                 var allPromises = $q.all(koodiPromises);
@@ -264,8 +259,8 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
                             });
                         }
                         else {
-                            var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                            koodisPromise.then(processYlapuolisetKoodit);
+                            Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                            .then(processYlapuolisetKoodit);
                         }
                     }
                 }
@@ -285,6 +280,7 @@ app.directive('koodistocombo', function(Koodisto, $log, $q) {
     };
 });
 app.directive('koodistocomboaiku', function(Koodisto, $log, $q) {
+    'use strict';
     $log = $log.getInstance('<koodistocomboaiku>');
     var filterKoodis = function(mapFilterDublicates, koodistoFilterUri, koodisParam) {
         var filteredkoodis = [];

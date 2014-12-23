@@ -1,4 +1,3 @@
-'use strict';
 /* Controllers */
 var app = angular.module('app.haku.copy.ctrl', [
     'app.haku.ctrl',
@@ -16,6 +15,8 @@ app.controller('HakuCopyController', [
     'HakuV1Service',
     'ProcessV1Service', function($injector, $q, $scope, Koodisto, $modal, OrganisaatioService,
                                  AuthService, $log, HakuV1Service, ProcessV1Service) {
+        'use strict';
+
         var loadingService = $injector.get('loadingService');
         var oid = $scope.model.hakux.result.oid;
         // mistä kopioidaan

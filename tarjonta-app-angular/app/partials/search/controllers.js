@@ -1,4 +1,3 @@
-'use strict';
 angular.module('app.search.controllers', [
     'app.services',
     'localisation',
@@ -8,6 +7,8 @@ angular.module('app.search.controllers', [
 ]).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto,
        OrganisaatioService, TarjontaService, PermissionService, Config, loadingService, $modal, $window,
        SharedStateService, AuthService, $q, dialogService, $log, HakukohdeKoulutukses) {
+    'use strict';
+
     $log = $log.getInstance('SearchController');
     var OPH_ORG_OID = Config.env['root.organisaatio.oid'];
     var selectOrg;
@@ -121,6 +122,7 @@ angular.module('app.search.controllers', [
                 else {
                     return row.aloituspaikat;
                 }
+                break;
             default:
                 return row[col];
         }
@@ -129,13 +131,13 @@ angular.module('app.search.controllers', [
         return row.tulokset;
     };
     $scope.tuloksetGetIdentifier = function(row) {
-        return row.tulokset == undefined && row.oid;
+        return row.tulokset === undefined && row.oid;
     };
     $scope.koulutusGetLink = function(row) {
-        return row.tulokset == undefined && '#/koulutus/' + row.oid;
+        return row.tulokset === undefined && '#/koulutus/' + row.oid;
     };
     $scope.hakukohdeGetLink = function(row) {
-        return row.tulokset == undefined && '#/hakukohde/' + row.oid;
+        return row.tulokset === undefined && '#/hakukohde/' + row.oid;
     };
     // organisaatiotyypit; TODO jostain jotenkin dynaamisesti
     $scope.organisaatiotyypit = [
@@ -175,7 +177,7 @@ angular.module('app.search.controllers', [
     // 2. Koulutusten/Hakujen haku
     // hakuparametrit ja organisaatiovalinta
     function fromParams(key, def) {
-        return $routeParams[key] != null ? $routeParams[key] : def;
+        return $routeParams[key] !== null ? $routeParams[key] : def;
     }
     // Selected org from route path or based on user organisation or oph org
     $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
@@ -225,10 +227,10 @@ angular.module('app.search.controllers', [
         });
     }
     function copyIfSet(dst, key, value, def) {
-        if (value != null && value != undefined && (value + '').length > 0 && value != '*') {
+        if (value !== null && value !== undefined && (value + '').length > 0 && value != '*') {
             dst[key] = value;
         }
-        else if (def != undefined) {
+        else if (def !== undefined) {
             dst[key] = def;
         }
     }
@@ -240,7 +242,7 @@ angular.module('app.search.controllers', [
         copyIfSet(sargs, 'year', $scope.spec.year);
         copyIfSet(sargs, 'season', $scope.spec.season);
         // Location should contain selected ORG oid if any
-        if ($scope.selectedOrgOid != null) {
+        if ($scope.selectedOrgOid !== null) {
             $location.path('/etusivu/' + $scope.selectedOrgOid);
         }
         else {
@@ -264,7 +266,7 @@ angular.module('app.search.controllers', [
         hakukohteet: []
     };
     $scope.$watch('selection.koulutukset', function(newObj, oldObj) {
-        if (!newObj || newObj.length == 0) {
+        if (!newObj || newObj.length === 0) {
             //mitään ei valittuna
             $scope.koulutusActions.canMoveOrCopy = false;
             $scope.koulutusActions.canCreateHakukohde = false;
@@ -286,14 +288,12 @@ angular.module('app.search.controllers', [
         TarjontaService.haeKoulutukset({
             koulutusOid: newObj
         }).then(function(koulutukset) {
-            if (koulutukset && koulutukset.tulokset && koulutukset.tulokset.length > 0) {
-                for (var i = 0; i < koulutukset.tulokset.length; i++) {
-                    PermissionService.hakukohde.canCreate(koulutukset.tulokset[i].oid).then(function(result) {
-                        r.result = r.result && result;
-                        $scope.koulutusActions.canCreateHakukohde = r.result;
-                    });
-                }
-            }
+            _.each((koulutukset || {}).tulokset, function(tulos) {
+                PermissionService.hakukohde.canCreate(tulos.oid).then(function(result) {
+                    r.result = r.result && result;
+                    $scope.koulutusActions.canCreateHakukohde = r.result;
+                });
+            });
         });
     }, true);
     $scope.menuOptions = [];
@@ -452,7 +452,7 @@ angular.module('app.search.controllers', [
         return $scope.selection.koulutukset !== undefined && $scope.selection.koulutukset.length > 0 &&
             $scope.koulutusActions.canCreateHakukohde;
     };
-    if ($scope.spec.terms != '' || $scope.selectedOrgOid != OPH_ORG_OID) {
+    if ($scope.spec.terms !== '' || $scope.selectedOrgOid != OPH_ORG_OID) {
         if ($scope.spec.terms == '*') {
             $scope.spec.terms = '';
         }
@@ -485,7 +485,7 @@ angular.module('app.search.controllers', [
         ns.otsikko = LocalisationService.t('tarjonta.poistovahvistus.otsikko.' + prefix);
         ns.ohje = LocalisationService.t('tarjonta.poistovahvistus.ohje.' + prefix);
         if (prefix == 'hakukohde') {
-            var modalInstance = $modal.open({
+            $modal.open({
                 controller: DeleteDialogCtrl,
                 templateUrl: 'partials/search/delete-dialog.html',
                 resolve: {
@@ -493,8 +493,7 @@ angular.module('app.search.controllers', [
                         return ns;
                     }
                 }
-            });
-            modalInstance.result.then(function() {
+            }).result.then(function() {
                 TarjontaService.deleteHakukohde(oid).then(function() {
                     deleteAction();
                     // poistaa rivin hakutuloslistasta
@@ -504,7 +503,7 @@ angular.module('app.search.controllers', [
             });
         }
         else {
-            var modalInstance = $modal.open({
+            $modal.open({
                 templateUrl: 'partials/koulutus/remove/poista-koulutus.html',
                 controller: 'PoistaKoulutusCtrl',
                 resolve: {
@@ -522,8 +521,7 @@ angular.module('app.search.controllers', [
                         };
                     }
                 }
-            });
-            modalInstance.result.then(function() {
+            }).result.then(function() {
                 deleteAction();
                 // poistaa rivin hakutuloslistasta
                 $scope.koulutusResults.tuloksia--;
@@ -558,7 +556,7 @@ angular.module('app.search.controllers', [
         ns.oid = oid;
         ns.nimi = nimi;
         //console.log("LINKS p="+prefix+", o="+oid+", n="+nimi);
-        var modalInstance = $modal.open({
+        $modal.open({
             controller: LinksDialogCtrl,
             templateUrl: 'partials/search/links-dialog.html',
             scope: ns
@@ -612,8 +610,8 @@ angular.module('app.search.controllers', [
         });
     };
     /**
-               * Avaa "luoKoulutus 1. dialogi"
-               */
+    * Avaa "luoKoulutus 1. dialogi"
+    */
     $scope.openLuoKoulutusDialogi = function() {
         //aseta esivalittu organisaatio
         $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
@@ -642,7 +640,7 @@ angular.module('app.search.controllers', [
                 break;
             }
         }
-        var modalInstance = $modal.open({
+        $modal.open({
             templateUrl: 'partials/koulutus/copy/copy-move-koulutus.html',
             controller: 'CopyMoveKoulutusController',
             resolve: {
@@ -675,10 +673,10 @@ angular.module('app.search.controllers', [
         };
         init();
         /**
-                     * Valitsee ryhmän nimen.
-                     *
-                     * TODO käyttäjän kieli ryhmön nimen näyttäminen...
-                     */
+         * Valitsee ryhmän nimen.
+         *
+         * TODO käyttäjän kieli ryhmön nimen näyttäminen...
+         */
         $scope.getNimi = function(ryhma) {
             var nimi;
             nimi = nimi ? nimi : ryhma.nimi.fi;
@@ -694,8 +692,8 @@ angular.module('app.search.controllers', [
             $scope.teeLiitosRyhmaan('POISTA');
         };
         /**
-                     * Liitä valitut hakukohteet valittuihin ryhmiin TAI poistaa ne niistä.
-                     */
+         * Liitä valitut hakukohteet valittuihin ryhmiin TAI poistaa ne niistä.
+         */
         $scope.teeLiitosRyhmaan = function(tyyppi) {
             $log.info('AddHakukohdeToGroupController.teeLiitosRyhmaan()', tyyppi);
             var valitutRyhmat = $scope.model.ryhmat.filter(function(ryhma) {

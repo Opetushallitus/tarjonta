@@ -85,7 +85,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             //console.log("DELEGATE getContent", $scope.getContent);
             var ret = $scope.getContent() && $scope.getContent()(row, col);
             try {
-                return ret == null || ret == undefined ? '' : ret;
+                return ret === null || ret === undefined ? '' : ret;
             }
             catch (err) {
                 console.log(err);
@@ -129,7 +129,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             // automaattinen sulkeutuminen hiiren kursorin siirtyessä muualle
             menu.mouseenter(function() {
                 var timer = menu.data('popupTimer');
-                if (timer != null) {
+                if (timer !== null) {
                     clearTimeout(timer);
                     menu.data('popupTimer', null);
                 }
@@ -270,7 +270,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 cb.trigger('click');
             });
             $('a.fold', element).click(function(ev) {
-                if (ev.button != 0) {
+                if (ev.button !== 0) {
                     return;
                 }
                 ev.preventDefault();
@@ -284,7 +284,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 element.detach();
             };
             $('a.options', element).click(function(ev) {
-                if (ev.button != 0) {
+                if (ev.button !== 0) {
                     return;
                 }
                 ev.preventDefault();
@@ -324,13 +324,13 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
         }
         // HTML-RENDERÖINTI
         function renderClasses(cs) {
-            if (!(cs instanceof Array) || cs.length == 0) {
+            if (!(cs instanceof Array) || cs.length === 0) {
                 return '';
             }
             var ret = null;
             for (var i in cols) {
                 var cn = cols[i];
-                ret = ret == null ? cn : ret + ' ' + cn;
+                ret = ret === null ? cn : ret + ' ' + cn;
             }
             return ' class="' + ret + '"';
         }
@@ -377,8 +377,8 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             }
             html = html + '</td>';
             if (link) {
-                for (var i in $scope.columns) {
-                    var cn = $scope.columns[i];
+                for (var j in $scope.columns) {
+                    var cn = $scope.columns[j];
                     html = html + '<td' + renderClasses(getCssClass(row, cn)) + '>' + getContent(row, cn) + '</td>';
                 }
             }
@@ -401,7 +401,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 }
                 $scope.model = [];
             }
-            if ($scope.model.length == 0) {
+            if ($scope.model.length === 0) {
                 return;
             }
             loadingService.beforeOperation();
@@ -411,7 +411,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
         }
         function appendRows(index, model, serial, dst, ems, indent, parent) {
             //console.log("ResultsTreeTable.appendRows()",[index, model, serial, dst, ems, indent, parent]);
-            var first = index == 0;
+            var first = index === 0;
             if ($scope.serial != serial) {
                 // uusi päivitys käynnistynyt -> keskeytetään
                 loadingService.afterOperation();
@@ -422,7 +422,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
                 dst = appendRow(model[index], dst, ems, indent, parent);
                 index++;
             }
-            if (index == 0) {
+            if (index === 0) {
                 throw new Error('Invalid amount of append-rows: ' + getAppendRows());
             }
             if (model.length > index) {
@@ -443,7 +443,7 @@ app.directive('resultsTreeTable', function(LocalisationService, loadingService, 
             var html = $(renderTableRowHtml(row, indent));
             bindRow(row, html, indent, parent);
             ems.push(html);
-            if (dst == null) {
+            if (dst === null) {
                 getTableEm().append(html);
                 return null;
             }

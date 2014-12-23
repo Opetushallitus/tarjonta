@@ -42,35 +42,35 @@ app.factory('Localisations', function($log, $resource, Config) {
     return $resource(uri + '/:id', {
         id: '@id'
     }, {
-            update: {
-                method: 'PUT',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            save: {
-                method: 'POST',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            updateAccessed: {
-                method: 'PUT',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                }
-            },
-            authorize: {
-                method: 'GET',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'text/plain; charset=UTF-8'
-                }
+        update: {
+            method: 'PUT',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
             }
-        });
+        },
+        save: {
+            method: 'POST',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        },
+        updateAccessed: {
+            method: 'PUT',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        },
+        authorize: {
+            method: 'GET',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'text/plain; charset=UTF-8'
+            }
+        }
+    });
 });
 /**
  * UI-directive for using translations.
@@ -99,6 +99,7 @@ app.directive('tt', function($log, $interpolate, LocalisationService) {
                 var key = tAttrs.tt;
                 var locale = angular.isDefined(tAttrs.locale) ? tAttrs.locale : LocalisationService.getLocale();
                 var translation = '';
+                var localName;
                 if (LocalisationService.hasTranslation(key, locale)) {
                     // Existing translations, just return it
                     translation = LocalisationService.tl(key, locale);
@@ -107,7 +108,7 @@ app.directive('tt', function($log, $interpolate, LocalisationService) {
                     // Missing / new translation
                     // Grab the original / placeholder text in the template
                     var originalText = '';
-                    var localName = tElement[0].localName;
+                    localName = tElement[0].localName;
                     if (localName === 'input') {
                         originalText = tAttrs.value;
                     }
@@ -231,7 +232,7 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
         }
         else {
             // Expand parameters
-            if (params != undefined) {
+            if (params !== undefined) {
                 result = result.replace(/{(\d+)}/g, function(match, number) {
                     return angular.isDefined(params[number]) ? params[number] : match;
                 });
@@ -262,7 +263,7 @@ app.service('LocalisationService', function($log, Localisations, Config, AuthSer
        * @returns {v.value}
        */
     this.getRawTranslation = function(key, locale) {
-        if (!key == null) {
+        if (!key) {
             throw new Error('Illegal translation key: \'' + key + '\'');
         }
         // Get translations by locale

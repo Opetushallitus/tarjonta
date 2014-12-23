@@ -8,8 +8,8 @@ app.directive('multiLangSimpleTextarea', function(Koodisto, LocalisationService,
         console.log('MULTILANGSIMPLE TEXTAREA : ', $scope.model);
         $scope.langs = {};
         $scope.selectedLangs = [];
-        if ($scope.model instanceof Array || typeof $scope.model != 'object' || $scope.model == null
-            || $scope.model == undefined) {
+        if ($scope.model instanceof Array || typeof $scope.model != 'object' || $scope.model === null
+            || $scope.model === undefined) {
             console.log('MODEL FAIL', $scope.model);
             throw new Error('mkRichTextarea.model must be a non-array object');
         }

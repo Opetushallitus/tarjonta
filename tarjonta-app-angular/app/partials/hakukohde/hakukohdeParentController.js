@@ -208,9 +208,7 @@ app.controller('HakukohdeParentController', [
         // All kieles is received from koodistomultiselect
         $scope.model.allkieles = [];
         $scope.model.selectedKieliUris = [];
-        $scope.model.koulutusVuosi;
         $scope.model.integerval = /^\d*$/;
-        $scope.koulutusKausiUri;
         $scope.julkaistuVal = 'JULKAISTU';
         $scope.luonnosVal = 'LUONNOS';
         $scope.valmisVal = 'VALMIS';
@@ -355,39 +353,41 @@ app.controller('HakukohdeParentController', [
             if ($scope.needsHakukelpoisuus($scope.model.hakukohde.toteutusTyyppi)) {
                 if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined
                     || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
-                    var error = {};
-                    error.errorMessageKey = 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing';
                     $scope.model.hakukelpoisuusValidationErrMsg = true;
-                    errors.push(error);
+                    errors.push({
+                        errorMessageKey: 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing'
+                    });
                 }
             }
             if ($scope.model.hakukohde.hakuOid === undefined || $scope.model.hakukohde.hakuOid.length < 1) {
-                var error = {};
-                error.errorMessageKey = 'hakukohde.edit.haku.missing';
-                errors.push(error);
+                errors.push({
+                    errorMessageKey: 'hakukohde.edit.haku.missing'
+                });
             }
             if ($scope.needsLiitteidenToimitustiedot(toteutusTyyppi)) {
                 if (!$scope.isValidHakukohdeToimitusOsoite()) {
-                    var error = {};
-                    error.errorMessageKey = 'hakukohde.edit.liitteet.toimitusosoite.errors';
-                    errors.push(error);
+                    errors.push({
+                        errorMessageKey: 'hakukohde.edit.liitteet.toimitusosoite.errors'
+                    });
                 }
                 if (!$scope.isValidHakukohdeSahkoinenOsoite()) {
-                    var error = {};
-                    error.errorMessageKey = 'hakukohde.edit.liitteet.sahkoinenosoite.errors';
-                    errors.push(error);
+                    errors.push({
+                        errorMessageKey: 'hakukohde.edit.liitteet.sahkoinenosoite.errors'
+                    });
                 }
             }
             if (!$scope.toisenAsteenKoulutus(toteutusTyyppi)) {
-                var err = {};
                 if (!validateNames()) {
                     err.errorMessageKey = 'hakukohde.edit.nimi.missing';
                     $scope.model.nimiValidationFailed = true;
-                    errors.push(err);
+                    errors.push({
+                        errorMessageKey: 'hakukohde.edit.nimi.missing'
+                    });
                 }
                 if (!$scope.validateNameLengths($scope.model.hakukohde.hakukohteenNimet)) {
-                    err.errorMessageKey = 'hakukohde.edit.nimi.too.long';
-                    errors.push(err);
+                    errors.push({
+                        errorMessageKey: 'hakukohde.edit.nimi.too.long'
+                    });
                 }
             }
             else {
@@ -417,7 +417,6 @@ app.controller('HakukohdeParentController', [
                         errorMessageKey: 'hakukohde.edit.aloituspaikatKuvaukset.too.long'
                     });
                     $scope.model.aloituspaikatKuvauksetFailed = true;
-                    return;
                 }
             });
             if ($scope.model.hakukohde.hakuaikaAlkuPvm || $scope.model.hakukohde.hakuaikaLoppuPvm) {
@@ -431,10 +430,7 @@ app.controller('HakukohdeParentController', [
                 }
             }
             if (errors.length < 1 && $scope.editHakukohdeForm.$valid) {
-                if (!$scope.model.canSaveHakukohde()) {
-                    return false;
-                }
-                return true;
+                return $scope.model.canSaveHakukohde();
             }
             else {
                 $scope.showError(errors);
@@ -598,24 +594,25 @@ app.controller('HakukohdeParentController', [
             }
         };
         $scope.handleConfigurableHakuaika = function() {
+            var hakuaika;
             if ($scope.model.hakukohde.hakuOid) {
                 var toteutustyyppi = getToteutustyyppiFromHakukohdeOrSharedState();
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if ($scope.toisenAsteenKoulutus(toteutustyyppi)) {
-                    var hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
+                    hakuaika = getHakuaikaForToisenAsteenKoulutus(haku);
                     $scope.model.configurableHakuaika = oph.removeKoodiVersion(haku.hakutyyppiUri) === 'hakutyyppi_03'
                         || oph.removeKoodiVersion(haku.hakutapaUri) === 'hakutapa_02';
                     $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
                     $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
-                    var hakuaika = $scope.getSelectedHakuaika();
+                    hakuaika = $scope.getSelectedHakuaika();
                     $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
                 }
                 else if (toteutustyyppi === 'KORKEAKOULUTUS') {
                     $scope.model.configurableHakuaika = !(oph.removeKoodiVersion(haku.hakutapaUri) === 'hakutapa_01'
                         && oph.removeKoodiVersion(haku.hakutyyppiUri) === 'hakutyyppi_01');
-                    var hakuaika = $scope.getSelectedHakuaika();
+                    hakuaika = $scope.getSelectedHakuaika();
                     if ($scope.model.hakukohde.hakuaikaId !== hakuaika.hakuaikaId) {
                         $scope.model.hakukohde.hakuaikaId = hakuaika.hakuaikaId;
                     }
@@ -1103,8 +1100,8 @@ app.controller('HakukohdeParentController', [
             return pattern.test(url);
         }
         function validEmail(email) {
-            var pattern = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*'
-                            + '@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?');
+            var pattern = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*'
+                            + '@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?');
             return pattern.test(email);
         }
         $scope.liitteidenSahkoinenOsoiteEnabledChanged = function() {
@@ -1214,11 +1211,12 @@ app.controller('HakukohdeParentController', [
                 }
             });
             _.each($scope.model.opetusKielet, function(opetuskieli) {
+                var newYhteystieto;
                 var existingYhteystieto = getHakukohteenYhteystietoByKieliUri(opetuskieli.koodiUri);
                 if (!existingYhteystieto) {
                     var opetuskielenOrganisaationYhteystiedot = getOrganisaatioOsoiteByKieliUri(opetuskieli.koodiUri);
                     if (opetuskielenOrganisaationYhteystiedot) {
-                        var newYhteystieto = {
+                        newYhteystieto = {
                             lang: opetuskieli.koodiUri,
                             langTitle: opetuskieli.koodiNimi,
                             koodiUri: opetuskieli.koodiUri,
@@ -1232,7 +1230,7 @@ app.controller('HakukohdeParentController', [
                         $scope.model.hakukohde.yhteystiedot.push(newYhteystieto);
                     }
                     else {
-                        var newYhteystieto = {
+                        newYhteystieto = {
                             lang: opetuskieli.koodiUri,
                             langTitle: opetuskieli.koodiNimi,
                             koodiUri: opetuskieli.koodiUri,
@@ -1297,8 +1295,7 @@ app.controller('HakukohdeParentController', [
                             };
                         });
                         $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
-                        var returnResource = $scope.model.hakukohde.$save();
-                        returnResource.then(function(hakukohde) {
+                        $scope.model.hakukohde.$save().then(function(hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                             reloadHakukohdeModel();
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
@@ -1321,13 +1318,12 @@ app.controller('HakukohdeParentController', [
                             $scope.editHakukohdeForm.$dirty = false;
                             $scope.modelInitialState = null;
                         }, function(error) {
-                                $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
-                                $scope.showCommonUnknownErrorMsg();
-                            });
+                            $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
+                            $scope.showCommonUnknownErrorMsg();
+                        });
                     }
                     else {
-                        var returnResource = $scope.model.hakukohde.$update();
-                        returnResource.then(function(hakukohde) {
+                        $scope.model.hakukohde.$update().then(function(hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
                             reloadHakukohdeModel();
                             $scope.handleConfigurableHakuaika();
@@ -1349,9 +1345,9 @@ app.controller('HakukohdeParentController', [
                             }
                             $scope.modelInitialState = null;
                         }, function(error) {
-                                $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
-                                $scope.showCommonUnknownErrorMsg();
-                            });
+                            $log.debug('EXCEPTION UPDATING HAKUKOHDE: ', error);
+                            $scope.showCommonUnknownErrorMsg();
+                        });
                     }
                 }
                 else {

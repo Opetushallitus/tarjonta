@@ -1,9 +1,9 @@
-'use strict';
 var app = angular.module('KoodistoTypeAhead', [
     'ngResource',
     'Logging'
 ]);
 app.directive('koodistotypeahead', function(Koodisto, $log) {
+    'use strict';
     $log = $log.getInstance('<koodistotypeahead>');
     var filterKoodis = function(koodistoFilterUri, koodisParam) {
         var filteredkoodis = [];
@@ -62,14 +62,14 @@ app.directive('koodistotypeahead', function(Koodisto, $log) {
                         $scope.isalakoodi = true;
                     }
                     if ($scope.isalakoodi) {
-                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             $scope.koodis = koodisParam;
                         });
                     }
                     else {
-                        var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             $scope.koodis = koodisParam;
                             angular.forEach(koodisParam, function(koodi) {
                                 $scope.allKoodis.push(koodi);
@@ -79,8 +79,7 @@ app.directive('koodistotypeahead', function(Koodisto, $log) {
                 }
             }
             else {
-                var koodisPromise = Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri, $scope.locale);
-                koodisPromise.then(function(koodisParam) {
+                Koodisto.getAllKoodisWithKoodiUri($scope.koodistouri, $scope.locale).then(function(koodisParam) {
                     $scope.koodis = koodisParam;
                     angular.forEach(koodisParam, function(koodi) {
                         if ($scope.allkoodis !== undefined) {
@@ -108,8 +107,8 @@ app.directive('koodistotypeahead', function(Koodisto, $log) {
                         $scope.isalakoodi = true;
                     }
                     if ($scope.isalakoodi) {
-                        var koodisPromise = Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getAlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             if ($scope.filterwithkoodistouri !== undefined) {
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri, koodisParam);
                             }
@@ -119,8 +118,8 @@ app.directive('koodistotypeahead', function(Koodisto, $log) {
                         });
                     }
                     else {
-                        var koodisPromise = Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale);
-                        koodisPromise.then(function(koodisParam) {
+                        Koodisto.getYlapuolisetKoodit($scope.parentkoodiuri, $scope.locale)
+                        .then(function(koodisParam) {
                             if ($scope.filterwithkoodistouri !== undefined) {
                                 $scope.koodis = filterKoodis($scope.filterwithkoodistouri, koodisParam);
                             }
@@ -135,12 +134,7 @@ app.directive('koodistotypeahead', function(Koodisto, $log) {
                 $log.info('Removing object : ');
                 $log.info(selectedValue);
                 $scope.selectedkoodiuris = _($scope.selectedkoodiuris).select(function(koodi) {
-                    if (selectedValue.$$hashKey === koodi.$$hashKey) {
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
+                    return selectedValue.$$hashKey !== koodi.$$hashKey;
                 });
                 var specifiedElementIndx = $scope.koodiuris.indexOf(selectedValue);
                 $scope.koodiuris.splice(specifiedElementIndx, 1);

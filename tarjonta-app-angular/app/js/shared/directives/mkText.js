@@ -1,10 +1,10 @@
-'use strict';
 var app = angular.module('MonikielinenText', [
     'Koodisto',
     'localisation',
     'pasvaz.bindonce'
 ]);
 app.directive('mkText', function(Koodisto, LocalisationService, $log, $modal) {
+    'use strict';
     $log = $log.getInstance('<mkText>');
     var userLangs = window.CONFIG.app.userLanguages;
     function controller($scope) {
