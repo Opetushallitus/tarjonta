@@ -237,6 +237,7 @@ footer {
 .wsidebar-main {
 	margin-left:300px;
 	padding-right:20px;
+    min-width: 1024px;
 }
 
 /* tabset korjaus */
@@ -250,6 +251,9 @@ footer {
     display:block;
 }
 
+.wsidebar-main select {
+    width: 100%;
+}
 /* organisaatiohaku */
 
 div#orgSearch {
@@ -302,17 +306,16 @@ div#searchSpec > table.spec select {
 
 }
 
-div#searchSpec > div.search {
-	position:absolute;
-	left:0;
-	bottom:0;
-	width:20%;
+#searchSpec .koulutustyyppi select {
+    max-width: 250px;
 }
 
-div#searchSpec > div.search > input {
-	width:100%;
-	position:relative;
-	top:-1px;
+#searchSpec .search-control {
+    margin-right: 20px;
+}
+
+#searchSpec .search, #searchSpec .search-actions {
+    margin-top: 20px;
 }
 
 div.resultsTreeTable table th.column-tila {
@@ -880,4 +883,24 @@ table tr.aloituspaikatKuvaukset table {
 
 ::-ms-clear {
     display: none;
+}
+
+.advancedSearch {
+    margin-bottom: 20px;
+}
+
+.advancedSearch table {
+    width: 100%;
+}
+
+.advancedSearch select {
+    width: 250px;
+}
+
+.advancedSearch .search-control {
+    margin-right: 20px;
+}
+
+.advancedSearch .search-row {
+    height: 60px;
 }

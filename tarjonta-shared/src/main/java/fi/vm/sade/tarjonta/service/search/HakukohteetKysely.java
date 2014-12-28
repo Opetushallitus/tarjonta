@@ -12,24 +12,34 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 
-public class HakukohteetKysely implements Serializable
-{
+public class HakukohteetKysely implements Serializable {
 
     private final static long serialVersionUID = 100L;
+
     private String nimi;
     private String nimiKoodiUri;
-    private List<String> tarjoajaOids = new ArrayList<String>();
-    private List<String> koulutusOids = new ArrayList<String>();
-    private Integer koulutuksenAlkamisvuosi;
-    private List<TarjontaTila> tilat = new ArrayList<TarjontaTila>();
     private String koulutuksenAlkamiskausi;
     private String hakuOid;
     private String hakukohdeOid;
-    private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>();
-    private Set<String> koulutustyyppi = new HashSet<String>();
+    private String hakutapa;
+    private String hakutyyppi;
+    private String koulutuslaji;
+    private String kohdejoukko;
+    private String oppilaitostyyppi;
     private String organisaatioRyhmaOid;
-    private Set<ToteutustyyppiEnum> toteutustyypit = new HashSet<ToteutustyyppiEnum>();
+    private String kunta;
 
+    private Integer koulutuksenAlkamisvuosi;
+
+    private List<String> tarjoajaOids = new ArrayList<String>();
+    private List<String> koulutusOids = new ArrayList<String>();
+    private List<String> opetuskielet = new ArrayList<String>();
+
+    private List<TarjontaTila> tilat = new ArrayList<TarjontaTila>();
+    private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>();
+
+    private Set<String> koulutustyyppi = new HashSet<String>();
+    private Set<ToteutustyyppiEnum> toteutustyypit = new HashSet<ToteutustyyppiEnum>();
 
     public String getOrganisaatioRyhmaOid() {
         return organisaatioRyhmaOid;
@@ -96,11 +106,9 @@ public class HakukohteetKysely implements Serializable
 
     /**
      * Lisää tila hakuehtoihin (haussa käytetään OR).
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TarjontaTila }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TarjontaTila }
      */
     public void addTila(TarjontaTila value) {
         this.tilat.add(value);
@@ -113,8 +121,8 @@ public class HakukohteetKysely implements Serializable
     public void setKoulutuksenAlkamiskausi(String value) {
         this.koulutuksenAlkamiskausi = value;
     }
-    
-    public static final HakukohteetKysely byHakukohdeOid(String oid){
+
+    public static final HakukohteetKysely byHakukohdeOid(String oid) {
         HakukohteetKysely kys = new HakukohteetKysely();
         kys.hakukohdeOid = oid;
         return kys;
@@ -125,11 +133,66 @@ public class HakukohteetKysely implements Serializable
     }
 
     public Set<ToteutustyyppiEnum> getTotetustyyppi() {
-        return this.toteutustyypit ;
+        return this.toteutustyypit;
     }
 
     public Set<String> getKoulutustyyppi() {
         return koulutustyyppi;
     }
 
+    public String getHakutapa() {
+        return hakutapa;
+    }
+
+    public void setHakutapa(String hakutapa) {
+        this.hakutapa = hakutapa;
+    }
+
+    public String getHakutyyppi() {
+        return hakutyyppi;
+    }
+
+    public void setHakutyyppi(String hakutyyppi) {
+        this.hakutyyppi = hakutyyppi;
+    }
+
+    public String getKoulutuslaji() {
+        return koulutuslaji;
+    }
+
+    public void setKoulutuslaji(String koulutuslaji) {
+        this.koulutuslaji = koulutuslaji;
+    }
+
+    public String getKohdejoukko() {
+        return kohdejoukko;
+    }
+
+    public void setKohdejoukko(String kohdejoukko) {
+        this.kohdejoukko = kohdejoukko;
+    }
+
+    public void setOppilaitostyyppi(String oppilaitostyyppi) {
+        this.oppilaitostyyppi = oppilaitostyyppi;
+    }
+
+    public String getOppilaitostyyppi() {
+        return oppilaitostyyppi;
+    }
+
+    public void setKunta(String kunta) {
+        this.kunta = kunta;
+    }
+
+    public String getKunta() {
+        return kunta;
+    }
+
+    public void setOpetuskielet(List<String> opetuskielet) {
+        this.opetuskielet = opetuskielet;
+    }
+
+    public List<String> getOpetuskielet() {
+        return opetuskielet;
+    }
 }

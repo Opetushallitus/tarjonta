@@ -38,10 +38,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -96,10 +93,13 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private ContextDataService contextDataService;
 
     @Autowired
-    ProcessResourceV1 processResource;
+    private ProcessResourceV1 processResource;
 
     @Autowired
-    TarjontaSearchService tarjontaSearchService;
+    private KoulutusSearchService koulutusSearchService;
+
+    @Autowired
+    private HakukohdeSearchService hakukohdeSearchService;
 
     @Override
     public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
@@ -683,7 +683,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
-        HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
+        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
 
         Collection<HakukohdePerustieto> tulokset = v.getHakukohteet();
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen

@@ -15,40 +15,14 @@
  */
 package fi.vm.sade.tarjonta.dao;
 
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.index.HakuAikaIndexEntity;
-import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
-import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public interface IndexerDAO {
-
-    List<HakukohdeIndexEntity> findAllHakukohteet();
-
-    HakukohdeIndexEntity findHakukohdeById(Long hakukohdeId);
-
-    List<KoulutusIndexEntity> findKoulutusmoduuliToteutusesByHakukohdeId(Long hakukohdeId);
 
     List<Long> findAllHakukohdeIds();
 
     List<Long> findAllKoulutusIds();
-
-    List<HakuAikaIndexEntity> findHakuajatForHaku(Long id);
-
-    List<KoulutusIndexEntity> findAllKoulutukset();
-
-    KoulutusIndexEntity findKoulutusById(Long koulutusmoduulitoteutusId);
-
-    List<HakukohdeIndexEntity> findhakukohteetByKoulutusmoduuliToteutusId(Long id);
-
-    List<String> findKoulutusLajisForKoulutus(Long koulutusmoduuliToteutusId);
-
-    MonikielinenTeksti getKomoNimi(Long id);
-
-    MonikielinenTeksti getNimiForHakukohde(Long hakukohdeId);
 
     List<Long> findUnindexedHakukohdeIds();
 
@@ -58,9 +32,4 @@ public interface IndexerDAO {
 
     void updateKoulutusIndexed(Long id, Date time);
 
-    MonikielinenTeksti getKomotoNimi(Long koulutusId);
-
-    Set<String> getOwners(String oid, String type);
-
-    MonikielinenTeksti getAloituspaikatKuvausForHakukohde(long hakukohdeId);
 }

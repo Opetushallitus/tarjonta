@@ -1,37 +1,9 @@
 package fi.vm.sade.tarjonta.service.search.it;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.*;
-
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -59,14 +31,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.OrganisaatioHakukohdeGroup;
-import fi.vm.sade.tarjonta.service.search.SolrServerFactory;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.LueHakukohdeVastausTyyppi;
@@ -74,15 +39,42 @@ import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class})
+        DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("embedded-solr")
 public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
@@ -91,6 +83,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         OrganisaatioPerustieto perus = new OrganisaatioPerustieto();
         perus.setOid(orgOid);
         perus.setParentOidPath(Joiner.on("/").join(ophOid, orgOid));
+        perus.setOppilaitostyyppi("oppilaitostyyppi");
+        perus.setKotipaikkaUri("kunta");
         perus.setNimi("fi", "org nimi fi for oid:" + orgOid);
         perus.setNimi("sv", "org nimi sv for oid:" + orgOid);
         perus.setNimi("en", "org nimi en for oid:" + orgOid);
@@ -98,17 +92,26 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
     }
 
     @Autowired
-    private TarjontaSearchService tarjontaSearchService;
+    private KoulutusSearchService koulutusSearchService;
+
+    @Autowired
+    private HakukohdeSearchService hakukohdeSearchService;
+
     @Autowired
     private OrganisaatioSearchService organisaatioSearchService;
+
     @Autowired
     private OrganisaatioService organisaatioService;
+
     @Autowired
     private SolrServerFactory solrServerFactory;
+
     @Autowired
     private TarjontaAdminService adminService;
+
     @Autowired
     private TarjontaPublicService publicService;
+
     @Autowired
     private KoodiService koodiService;
 
@@ -156,27 +159,27 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.555"))).toReturn(
-                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.556"))).toReturn(
-                        Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.556")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets
                         .newHashSet("1.2.3.4.557"))).toReturn(
-                        Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets.newHashSet(
-                                "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
+                        "1.2.3.4.555", "1.2.3.4.556", "1.2.3.4.557")))
                 .toReturn(
                         Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
                                 getOrganisaatio("1.2.3.4.556"),
                                 getOrganisaatio("1.2.3.4.557")));
         Mockito.stub(
                 organisaatioSearchService.findByOidSet(Sets.newHashSet(
-                                "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
-                        Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
-                                getOrganisaatio("1.2.3.4.556")));
+                        "1.2.3.4.555", "1.2.3.4.556"))).toReturn(
+                Lists.newArrayList(getOrganisaatio("1.2.3.4.555"),
+                        getOrganisaatio("1.2.3.4.556")));
         Mockito.stub(organisaatioService.findByOid("1.2.3.4.555")).toReturn(
                 getOrgDTO("1.2.3.4.555"));
 
@@ -234,14 +237,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.555");
                 LueHakukohdeVastausTyyppi hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                        .getOid()));
+                                .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
 
                 hakukohde = tarjontaFixtures
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.556");
                 hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                        .getOid()));
+                                .getOid()));
 
 
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
@@ -250,7 +253,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
                         .createPersistedHakukohdeWithKoulutus("1.2.3.4.557");
                 hakukohdeVastaus = publicService
                         .lueHakukohde(new LueHakukohdeKyselyTyyppi(hakukohde
-                                        .getOid()));
+                                .getOid()));
                 adminService.paivitaHakukohde(hakukohdeVastaus.getHakukohde());
             }
 
@@ -265,15 +268,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         createTestDataInTransaction();
 
         KoulutuksetKysely kysely = new KoulutuksetKysely();
-        KoulutuksetVastaus vastaus = tarjontaSearchService
-                .haeKoulutukset(kysely);
+        KoulutuksetVastaus vastaus = koulutusSearchService.haeKoulutukset(kysely);
 
         assertNotNull(vastaus);
 
         assertEquals(3, vastaus.getKoulutukset().size());
 
         kysely.setNimi("foo");
-        vastaus = tarjontaSearchService.haeKoulutukset(kysely);
+        vastaus = koulutusSearchService.haeKoulutukset(kysely);
 
         assertNotNull(vastaus);
 
@@ -286,15 +288,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         createTestDataInTransaction();
 
         HakukohteetKysely kysely = new HakukohteetKysely();
-        HakukohteetVastaus vastaus = tarjontaSearchService
-                .haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
         assertEquals(3, vastaus.getHakukohteet().size());
 
         kysely.setNimi("foo");
-        vastaus = tarjontaSearchService.haeHakukohteet(kysely);
+        vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
@@ -307,8 +308,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.setHakuOid(hakukohde.getHaku().getOid());
-        HakukohteetVastaus vastaus = tarjontaSearchService
-                .haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
 
         assertNotNull(vastaus);
 
@@ -321,15 +321,14 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.getTarjoajaOids().add("1.2.3.4.555");
-        HakukohteetVastaus vastaus = tarjontaSearchService
-                .haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getHakukohteet().size());
         assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0)
                 .getTarjoajaOid());
 
         kysely.getTarjoajaOids().add("1.2.3.4.556");
-        vastaus = tarjontaSearchService.haeHakukohteet(kysely);
+        vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(2, vastaus.getHakukohteet().size());
         assertEquals("1.2.3.4.555", vastaus.getHakukohteet().get(0)
@@ -340,9 +339,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
 
     @Test
     public void testKKKoulutus() throws SolrServerException {
-        OrganisaatioPerustieto organisaatioPerustieto = new OrganisaatioPerustieto();
-        organisaatioPerustieto.setOid("1.2.3.4.5.6.7.8.9");
-        Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(organisaatioPerustieto));
+        Mockito.stub(organisaatioSearchService.findByOidSet(Mockito.anySet())).toReturn(Arrays.asList(getOrganisaatio("1.2.3.4.5.6.7.8.9")));
 
         // tee kk koulutus
         executeInTransaction(new Runnable() {
@@ -357,7 +354,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.setNimi("otsikko");
         kysely.getTotetustyyppi().add(ToteutustyyppiEnum.KORKEAKOULUTUS);
-        KoulutuksetVastaus vastaus = tarjontaSearchService.haeKoulutukset(kysely);
+        KoulutuksetVastaus vastaus = koulutusSearchService.haeKoulutukset(kysely);
 
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getKoulutukset().size());
@@ -384,8 +381,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         kysely.getTotetustyyppi().add(ToteutustyyppiEnum.KORKEAKOULUTUS);
         kysely.setNimi("kkhakukohdenimi");
 
-        HakukohteetVastaus vastaus = tarjontaSearchService
-                .haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
         assertNotNull(vastaus);
         assertEquals(1, vastaus.getHakukohteet().size());
 
@@ -474,7 +470,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         return hakukohde;
     }
 
-     /**
+    /**
      * Tee asioita transaktiossa, välttämätöntä koska esim indeksointi on
      * hookattu nyt transaktion onnistumiseen.
      *
@@ -499,7 +495,7 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         Mockito.stub(
                 koodiService.searchKoodis(Matchers
                         .argThat(new KoodistoCriteriaMatcher(uri)))).toReturn(
-                        vastaus);
+                vastaus);
     }
 
     public static KoodiType getKoodiType(String uri, String arvo) {
@@ -541,6 +537,8 @@ public class TarjontaSearchServiceTest extends SecurityAwareTestBase {
         @Override
         public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
         }
-    };
+    }
+
+    ;
 
 }

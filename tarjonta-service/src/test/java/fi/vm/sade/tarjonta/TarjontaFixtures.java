@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.*;
 
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -222,6 +223,7 @@ public class TarjontaFixtures {
         t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
         t.setViimIndeksointiPvm(new Date());
+        t.setToteutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         return t;
 
     }

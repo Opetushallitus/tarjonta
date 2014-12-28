@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.jws.WebParam;
 
+import fi.vm.sade.tarjonta.service.search.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +57,6 @@ import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.conversion.HakukohdeSetToDTOConverter;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutustyyppiKoosteV1RDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
-import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
-import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetKyselyTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenLiitteetVastausTyyppi;
 import fi.vm.sade.tarjonta.service.types.HaeHakukohteenValintakokeetHakukohteenTunnisteellaKyselyTyyppi;
@@ -115,22 +109,30 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     protected static final Logger log = LoggerFactory.getLogger(TarjontaPublicServiceImpl.class);
     @Autowired
     private HakuService businessService;
+
     @Autowired
     private HakuDAO hakuDao;
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
     @Autowired
     private ConversionService conversionService;
+
     @Value("${tarjonta-alkamiskausi-syksy}")
     private String kausiUri;
+
     @Autowired
-    private TarjontaSearchService searchService;
-    //private final static String SYKSY = "syksy";
-    //private final static String KEVAT = "kevat";
+    private KoulutusSearchService koulutusSearchService;
+
+    @Autowired
+    private HakukohdeSearchService hakukohdeSearchService;
 
     @Autowired(required = true)
     private OppilaitosKoodiRelations oppilaitosKoodiRelations;
@@ -387,7 +389,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
 //    @Override
 //    public HaeHakukohteetVastausTyyppi haeHakukohteet(HaeHakukohteetKyselyTyyppi kysely) {
-//        HaeHakukohteetVastausTyyppi vastaus = this.searchService.haeHakukohteet(kysely);
+//        HaeHakukohteetVastausTyyppi vastaus = this.koulutusSearchService.haeHakukohteet(kysely);
 //        return vastaus;
 //    }
     @Override
@@ -398,7 +400,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         KoulutuksetKysely kysely = new KoulutuksetKysely();
         kysely.getHakukohdeOids().add(hakukohdeKysely.getHakukohdeOid());
 
-        KoulutuksetVastaus koulutusVastaus = searchService.haeKoulutukset(kysely);
+        KoulutuksetVastaus koulutusVastaus = koulutusSearchService.haeKoulutukset(kysely);
 
         for (KoulutusPerustieto tulos : koulutusVastaus.getKoulutukset()) {
 
@@ -424,10 +426,6 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
 
     }
 
-//    @Override
-//    public HaeKoulutuksetVastausTyyppi haeKoulutukset(HaeKoulutuksetKyselyTyyppi kysely) {
-//        return this.searchService.haeKoulutukset(kysely);
-//    }
     private List<Integer> getAlkuKuukaudet(String kausi) {
         List<Integer> kuukaudet = new ArrayList<Integer>();
         if (kausi != null && kausi.contains(kausiUri)) {
@@ -542,7 +540,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
         HakukohteetKysely kysely = new HakukohteetKysely();
         kysely.getKoulutusOids().add(fromKoulutus.getOid());
         kysely.setKoulutuksenAlkamisvuosi(0);
-        HakukohteetVastaus vastaus = searchService.haeHakukohteet(kysely);
+        HakukohteetVastaus vastaus = hakukohdeSearchService.haeHakukohteet(kysely);
         if (fromKoulutus.getHakukohdes() != null) {
             for (HakukohdePerustieto hakukohde : vastaus.getHakukohteet()) {
                 HakukohdeKoosteTyyppi hakukohdeKoosteTyyppi = new HakukohdeKoosteTyyppi();

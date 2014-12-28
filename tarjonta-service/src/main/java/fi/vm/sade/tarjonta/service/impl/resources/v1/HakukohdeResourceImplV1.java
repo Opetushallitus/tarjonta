@@ -27,7 +27,6 @@ import fi.vm.sade.organisaatio.api.model.types.OrganisaatioDTO;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.dao.KuvausDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
@@ -77,17 +76,18 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Autowired
     private HakuDAO hakuDAO;
-    @Autowired
-    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired
-    private KuvausDAO kuvausDAO;
+    private HakukohdeDAO hakukohdeDAO;
 
     @Autowired(required = true)
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Autowired(required = true)
-    TarjontaSearchService tarjontaSearchService;
+    private KoulutusSearchService koulutusSearchService;
+
+    @Autowired(required = true)
+    private HakukohdeSearchService hakukohdeSearchService;
 
     @Autowired(required = true)
     private OrganisaatioService organisaatioService;
@@ -121,15 +121,9 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     public final static String KOULUTUSASTE_KEY = "koulutusaste";
 
-    public final static String KOULUTUSASTE_LUKIO = "LUKIOKOULUTUS";
-
-    public final static String KOULUSTUSASTE_KK = "KORKEAKOULUTUS";
-
     public final static String KOULUTUSLAJI_KEY = "koulutuslaji";
 
     public final static String KOULUTUS_TOTEUTUS_TYYPPI = "toteutustyyppi";
-
-    public final static String KOULUTUSLAJI_AIKUISET = "A";
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
@@ -137,7 +131,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid,
                 List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid,
                 String organisaatioRyhmaOid, List<ToteutustyyppiEnum> koulutustyypit,
-                String defaultTarjoaja) {
+                String defaultTarjoaja,
+                String hakutapa,
+                String hakutyyppi,
+                String koulutuslaji,
+                String kohdejoukko,
+                String oppilaitostyyppi,
+                String kunta,
+                List<String> opetuskielet) {
 
         organisationOids = organisationOids != null ? organisationOids
                 : new ArrayList<String>();
@@ -149,6 +150,14 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
+        q.setHakutapa(hakutapa);
+        q.setHakutyyppi(hakutyyppi);
+        q.setKoulutuslaji(koulutuslaji);
+        q.setKohdejoukko(kohdejoukko);
+        q.setOppilaitostyyppi(oppilaitostyyppi);
+        q.setKunta(kunta);
+        q.setOpetuskielet(opetuskielet);
+
         if (hakukohdeOid != null) {
             q.setHakukohdeOid(hakukohdeOid);
         }
@@ -172,7 +181,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             q.getKoulutustyyppi().add(koulutustyyppi.uri());
         }
 
-        HakukohteetVastaus r = tarjontaSearchService.haeHakukohteet(q, defaultTarjoaja);
+        HakukohteetVastaus r = hakukohdeSearchService.haeHakukohteet(q, defaultTarjoaja);
 
         r.setHakukohteet(filterRemovedHakukohteet(r.getHakukohteet()));
 
@@ -1099,7 +1108,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         KoulutuksetKysely ks = new KoulutuksetKysely();
         ks.getHakukohdeOids().add(oid);
 
-        KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
+        KoulutuksetVastaus kv = koulutusSearchService.haeKoulutukset(ks);
         List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
         for (KoulutusPerustieto kp : kv.getKoulutukset()) {
             ret.add(new NimiJaOidRDTO(kp.getNimi(), kp.getKomotoOid()));
@@ -1414,7 +1423,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         Set<String> toteutustyyppis = Sets.<String>newHashSet();
         KoulutuksetKysely ks = new KoulutuksetKysely();
         ks.getKoulutusOids().addAll(oids);
-        KoulutuksetVastaus kv = tarjontaSearchService.haeKoulutukset(ks);
+        KoulutuksetVastaus kv = koulutusSearchService.haeKoulutukset(ks);
 
         List<NimiJaOidRDTO> names = new ArrayList<NimiJaOidRDTO>();
         for (KoulutusPerustieto kp : kv.getKoulutukset()) {

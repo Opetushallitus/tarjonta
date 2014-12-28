@@ -283,17 +283,17 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
 
     private void resetAll() {
         EasyMock.reset(koulutusSisaltyvyysDAO);
-        EasyMock.reset(tarjontaSearchService);
+        EasyMock.reset(koulutusSearchService);
     }
 
     private void verifyAll() {
         EasyMock.verify(koulutusSisaltyvyysDAO);
-        EasyMock.verify(tarjontaSearchService);
+        EasyMock.verify(koulutusSearchService);
     }
 
     private void replayAll() {
         EasyMock.replay(koulutusSisaltyvyysDAO);
-        EasyMock.replay(tarjontaSearchService);
+        EasyMock.replay(koulutusSearchService);
     }
 
     private KoulutusmoduuliToteutus quickKKInsert(KoulutusKorkeakouluV1RDTO dto) throws Exception {

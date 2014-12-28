@@ -15,26 +15,22 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
-
-import java.util.*;
-
-import javax.persistence.*;
-
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+
+import javax.persistence.*;
+import java.util.*;
+
+import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 /**
  *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version","organisaatioRyhmaOids"})
+@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version", "organisaatioRyhmaOids"})
 @Table(name = Hakukohde.TABLE_NAME)
 public class Hakukohde extends TarjontaBaseEntity {
 
@@ -91,10 +87,10 @@ public class Hakukohde extends TarjontaBaseEntity {
     @Column(name = "tila")
     @Enumerated(EnumType.STRING)
     private TarjontaTila tila;
-    
+
     @OneToMany(mappedBy = "hakukohde", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Yhteystiedot> yhteystiedot = new HashSet<Yhteystiedot>();
-    
+
     @Embedded
     private Osoite liitteidenToimitusOsoite;
     @Column(name = "sahkoinenToimitusOsoite")
@@ -251,8 +247,6 @@ public class Hakukohde extends TarjontaBaseEntity {
      * Set uri to koodisto that points to hakukohde's name. Example of a name
      * is: "Autoalan Tutkinto, YO" (where Hakukohde could be for one
      * KoulutusmoduuliToteutus that is "Autoalan Tutkinto").
-     *
-     *
      */
     public void setHakukohdeNimi(String hakukohde) {
         this.hakukohdeNimi = hakukohde;
@@ -320,14 +314,6 @@ public class Hakukohde extends TarjontaBaseEntity {
             valintakoe.setHakukohde(null);
         }
     }
-    /*
-     public String getHakukelpoisuusvaatimus() {
-     return hakukelpoisuusvaatumus;
-     }
-
-     public void setHakukelpoisuusvaatimus(String hakukelpoisuusvaatimus) {
-     this.hakukelpoisuusvaatumus = hakukelpoisuusvaatimus;
-     } */
 
     public TarjontaTila getTila() {
         return tila;
@@ -503,7 +489,7 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     /**
      * @param valintaperustekuvausKoodiUri the valintaperustekuvausKoodiUri to
-     * set
+     *                                     set
      */
     public void setValintaperustekuvausKoodiUri(String valintaperustekuvausKoodiUri) {
         this.valintaperustekuvausKoodiUri = valintaperustekuvausKoodiUri;
@@ -736,5 +722,9 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public boolean hakuaikasSet() {
         return getHakuaikaAlkuPvm() != null && getHakuaikaLoppuPvm() != null;
+    }
+
+    public KoulutusmoduuliToteutus getFirstKoulutus() {
+        return getKoulutusmoduuliToteutuses().iterator().next();
     }
 }

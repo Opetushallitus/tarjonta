@@ -113,7 +113,15 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             hakuOid: args.hakuOid,
-            defaultTarjoaja: args.defaultTarjoaja
+            defaultTarjoaja: args.defaultTarjoaja,
+            koulutustyyppi: args.koulutustyyppi ? args.koulutustyyppi : null,
+            hakutapa: args.hakutapa,
+            hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null,
+            koulutuslaji: args.koulutuslaji ? args.koulutuslaji : null,
+            kohdejoukko: args.kohdejoukko ? args.kohdejoukko : null,
+            oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
+            kunta: args.kunta ? args.kunta : null,
+            opetuskielet: args.kieli ? args.kieli : null
         };
         $log.debug('haeHakukohteet()', params);
         return CacheService.lookupResource(searchCacheKey('hakukohde', args), hakukohdeHaku, params, function(result) {
@@ -149,7 +157,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             komoOid: args.komoOid,
             tila: args.state,
             alkamisKausi: args.season,
-            alkamisVuosi: args.year
+            alkamisVuosi: args.year,
+            koulutustyyppi: args.koulutustyyppi ? args.koulutustyyppi : null,
+            hakutapa: args.hakutapa ? args.hakutapa : null,
+            hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null,
+            koulutuslaji: args.koulutuslaji ? args.koulutuslaji : null,
+            opetuskielet: args.kieli ? args.kieli : null,
+            kohdejoukko: args.kohdejoukko ? args.kohdejoukko : null,
+            oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
+            kunta: args.kunta ? args.kunta : null,
+            hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null
         };
         if (args.defaultTarjoaja) {
             params.defaultTarjoaja = args.defaultTarjoaja;

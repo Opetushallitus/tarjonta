@@ -12,22 +12,34 @@ import java.util.Date;
 public class KoulutuksetKysely implements Serializable {
 
     private final static long serialVersionUID = 100L;
+
     private String nimi;
-    private List<String> tarjoajaOids = new ArrayList<String>();
-    private List<String> koulutusOids = new ArrayList<String>();
-    private TarjontaTila koulutuksenTila;
-    private Integer koulutuksenAlkamisvuosi;
+    private String komoOid;
+    private String koulutuslaji;
+    private String hakutapa;
+    private String hakutyyppi;
+    private String kohdejoukko;
+    private String oppilaitostyyppi;
+    private String kunta;
     private String koulutuksenAlkamiskausi;
     private String koulutusKoodi;
-    private List<String> hakukohdeOids = new ArrayList<String>();
     private String koulutusOid;
+
+    private Integer koulutuksenAlkamisvuosi;
+
+    private List<String> tarjoajaOids = new ArrayList<String>();
+    private List<String> koulutusOids = new ArrayList<String>();
+    private List<String> hakukohdeOids = new ArrayList<String>();
+    private List<String> koulutustyyppi = new ArrayList<String>();
+    private List<String> opetuskielet = new ArrayList<String>();
+
     @Deprecated
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>(); //use the koulutustyyppi
+
     private List<ToteutustyyppiEnum> totetustyyppi = new ArrayList<ToteutustyyppiEnum>(); //more detailed data than in koulutusasteTyyppi
-    private String komoOid;
-    private List<String> koulutustyyppi = new ArrayList<String>();
+
+    private TarjontaTila koulutuksenTila;
     private Date koulutuksenAlkamisPvmAlkaen = null;
-    private String koulutuslaji;
 
     public String getKomoOid() {
         return komoOid;
@@ -191,4 +203,52 @@ public class KoulutuksetKysely implements Serializable {
         this.koulutuslaji = koulutuslaji;
     }
 
+    public String getHakutapa() {
+        return hakutapa;
+    }
+
+    public void setHakutapa(String hakutapa) {
+        this.hakutapa = hakutapa;
+    }
+
+    public String getHakutyyppi() {
+        return hakutyyppi;
+    }
+
+    public void setHakutyyppi(String hakutyyppi) {
+        this.hakutyyppi = hakutyyppi;
+    }
+
+    public String getKohdejoukko() {
+        return kohdejoukko;
+    }
+
+    public void setKohdejoukko(String kohdejoukko) {
+        this.kohdejoukko = kohdejoukko;
+    }
+
+    public String getOppilaitostyyppi() {
+        return oppilaitostyyppi;
+    }
+
+    public void setOppilaitostyyppi(String oppilaitostyyppi) {
+        this.oppilaitostyyppi = oppilaitostyyppi;
+    }
+
+    public void setKunta(String kunta) {
+        this.kunta = kunta;
+    }
+
+    public String getKunta() {
+        return kunta;
+    }
+
+
+    public void opetuskielet(List<String> opetuskielet) {
+        this.opetuskielet = opetuskielet;
+    }
+
+    public List<String> getOpetuskielet() {
+        return opetuskielet;
+    }
 }

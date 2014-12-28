@@ -82,7 +82,7 @@ import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
@@ -141,7 +141,7 @@ public class TarjontaAdminServiceImpl implements TarjontaAdminService {
     @Autowired
     private IndexerResource solrIndexer;
     @Autowired
-    private TarjontaSearchService searchService;
+    private KoulutusSearchService searchService;
     @Autowired
     private PermissionChecker permissionChecker;
     @Autowired

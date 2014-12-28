@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -38,33 +39,9 @@ import fi.vm.sade.tarjonta.service.resources.dto.HakuDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeNimiRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
-import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
-import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
-import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
-/**
- * Run:
- *
- * <pre>
- * mvn -Dlog4j.configuration=file:`pwd`/src/test/resources/log4j.properties  jetty:run
- * </pre>
- *
- * Test:
- *
- * <pre>
- * http://localhost:8084/tarjonta-service/rest?_wadl
- * </pre>
- *
- * Internal documentation:
- * http://liitu.hard.ware.fi/confluence/display/PROG/Tarjonnan+REST+palvelut
- *
- * @author mlyly
- * @see HakuResource
- */
-// @Path("/haku")
 @Transactional(readOnly = true, rollbackFor = Throwable.class)
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public class HakuResourceImpl implements HakuResource {
@@ -72,18 +49,19 @@ public class HakuResourceImpl implements HakuResource {
     private static final Logger LOG = LoggerFactory.getLogger(HakuResourceImpl.class);
     @Autowired
     private HakuDAO hakuDAO;
-    @Autowired
-    private HakuaikaDAO hakuaikaDAO;
+
     @Autowired
     private TarjontaAdminService tarjontaAdminService;
+
     @Autowired
-    private TarjontaKoodistoHelper tarjontaKoodistoHelper;
+    private KoulutusSearchService koulutusSearchService;
+
     @Autowired
-    private OrganisaatioService organisaatioService;
-    @Autowired
-    private TarjontaSearchService tarjontaSearchService;
+    private HakukohdeSearchService hakukohdeSearchService;
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
     @Autowired(required = true)
     private ConversionService conversionService;
 
@@ -225,7 +203,7 @@ public class HakuResourceImpl implements HakuResource {
             }
         }
 
-        HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
+        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
         LOG.debug("  kysely for haku '{}' found '{}'", new Object[] { oid, v.getHakukohteet().size() });
         Collection<HakukohdePerustieto> tulokset = v.getHakukohteet();
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen

@@ -43,12 +43,17 @@ public class SolrFields {
         protected static final String TUTKINTONIMIKE_EN = "tutkintonimikeen_t";                   //this is used in search
         protected static final String TUTKINTONIMIKE_URI = "tutkintonimikeuri_s";             //this is used in search
         protected static final String VUOSI_KOODI = "vuosikoodi_s";                             //this is used in search
+        protected static final String KAUSI_FI = "kausifi_s";
+        protected static final String KAUSI_SV = "kausisv_s";
+        protected static final String KAUSI_EN = "kausien_s";
         protected static final String KAUSI_URI = "kausiuri_s";                                  //this is used in search
         protected static final String TILA = "tila_s";
         protected static final String KOULUTUSMODUULI_OID = "koulutusmoduuli_s";
         protected static final String KOULUTUSASTETYYPPI_ENUM = "koulutustyyppi_s";
         protected static final String KOULUTUSTYYPPI_URI = "koulutustyyppiuri_s";
-        protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppiuri_s";
+        protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppi_s";
+        protected static final String HAKUTAPA_URIS = "hakutapauri_ss";
+        protected static final String HAKUTYYPPI_URIS = "hakutyyppiuri_ss";
 
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
@@ -61,9 +66,12 @@ public class SolrFields {
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
         protected static final String KOULUTUSLAJI_EN = "koulutuslajien_s";
 
-//        protected static final String KOULUTUALKAMISPVM = "koulutusalkamispvm_dt";
         protected static final String KOULUTUALKAMISPVM_MIN = "koulutusalkamispvm_min_dt";
         protected static final String KOULUTUALKAMISPVM_MAX = "koulutusalkamispvm_max_dt";
+        protected static final String KOHDEJOUKKO_URIS = "kohdejoukkouri_ss";
+        protected static final String OPPILAITOSTYYPPI_URIS = "oppilaitostyyppiuri_ss";
+        protected static final String KUNTA_URIS = "kuntauri_ss";
+        protected static final String OPETUSKIELI_URIS = "opetuskieliuri_ss";
     }
 
     /**
@@ -85,6 +93,7 @@ public class SolrFields {
         protected static final String KOULUTUSLAJI_SV = "koulutuslajisv_s";
         protected static final String KOULUTUSLAJI_EN = "koulutuslajen_s";
         protected static final String KOULUTUSLAJI_URI = "koulutuslajiuri_s";
+        protected static final String KOULUTUSLAJI_URIS = "koulutuslajiuri_ss";
         protected static final String KAUSI_URI = "kausiuri_s";
         protected static final String KAUSI_FI = "kausifi_s";
         protected static final String KAUSI_SV = "kausisv_s";
@@ -109,7 +118,12 @@ public class SolrFields {
         protected static final String HAKUTYYPPI_URI = "hakutyyppiuri_s";
         protected static final String KOULUTUSASTETYYPPI = "koulutusastetyyppi_s";
         protected static final String ORGANISAATIORYHMAOID = "organisaatioryhmaoid_ss";
-        protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppiuri_s";
+        protected static final String KOHDEJOUKKO_URI = "kohdejoukkouri_s";
+        protected static final String OPPILAITOSTYYPPI_URIS = "oppilaitostyyppiuri_ss";
+        protected static final String KUNTA_URIS = "kuntauri_ss";
+        protected static final String OPETUSKIELI_URIS = "opetuskieliuri_ss";
+        protected static final String KOULUTUSTYYPPI_URI = "koulutustyyppiuri_s";
+        protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppi_s";
     }
 
 }

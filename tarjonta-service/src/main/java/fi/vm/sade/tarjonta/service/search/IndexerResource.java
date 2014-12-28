@@ -1,15 +1,11 @@
 package fi.vm.sade.tarjonta.service.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
+import fi.vm.sade.tarjonta.dao.IndexerDAO;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
@@ -22,15 +18,14 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
-import fi.vm.sade.tarjonta.dao.IndexerDAO;
-import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.index.HakukohdeIndexEntity;
-import fi.vm.sade.tarjonta.model.index.KoulutusIndexEntity;
-import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Transactional(readOnly = true)
 @Component
@@ -38,22 +33,25 @@ import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 public class IndexerResource {
 
     private static Logger logger = LoggerFactory.getLogger(IndexerResource.class);
+
     private SolrServer hakukohdeSolr;
     private SolrServer koulutusSolr;
+
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
     @Autowired
     private IndexerDAO indexerDao;
-    @Autowired
-    HakukohdeIndexEntityToSolrDocument hakukohdeConverter;
-    @Autowired
-    KoulutusIndexEntityToSolrDocument koulutusConverter;
 
-    /**
-     * Clear koulutusindex.
-     */
+    @Autowired
+    HakukohdeToSolrDocument hakukohdeConverter;
+
+    @Autowired
+    KoulutusToSolrDocument koulutusConverter;
+
     @GET
     @Path("/koulutukset/clear")
     @Produces("text/plain")
@@ -103,13 +101,13 @@ public class IndexerResource {
     @Path("/hakukohteet")
     @Produces("text/plain")
     public String buildHakukohdeIndex(@QueryParam("clear") final boolean clear) throws SolrServerException, IOException {
-        List<HakukohdeIndexEntity> hakukohteet = indexerDao.findAllHakukohteet();
-        logger.info("Found {} hakukohdes to index.", hakukohteet.size());
+        List<Long> hakukohdeIds = indexerDao.findAllHakukohdeIds();
+        logger.info("Found {} hakukohdes to index.", hakukohdeIds.size());
         if (clear) {
             clearIndex(hakukohdeSolr);
         }
-        indexHakukohdeIndexEntities(hakukohteet);
-        return Integer.toString(hakukohteet.size());
+        indexHakukohdeIndexEntities(hakukohdeIds);
+        return Integer.toString(hakukohdeIds.size());
     }
 
     @Autowired
@@ -185,7 +183,7 @@ public class IndexerResource {
     }
 
     public void indexHakukohteet(List<Long> hakukohdeIdt) {
-        if(hakukohdeIdt.size()==0) {
+        if (hakukohdeIdt.size() == 0) {
             return;
         }
         List<SolrInputDocument> docs = Lists.newArrayList();
@@ -196,12 +194,7 @@ public class IndexerResource {
 
                 Long hakukohdeId = hakukohdeIdt.get(j);
                 logger.info(j + ". Fetching hakukohde:" + hakukohdeId);
-                HakukohdeIndexEntity hakukohde = indexerDao.findHakukohdeById(hakukohdeId);
-                if (hakukohde != null) {
-                    docs.addAll(hakukohdeConverter.apply(hakukohde));
-                } else {
-                    logger.info("Could not find hakukohde with id:" + hakukohdeId);
-                }
+                docs.addAll(hakukohdeConverter.apply(hakukohdeId));
             }
             index += batch_size;
             logger.info("indexing:" + docs.size() + " docs");
@@ -212,12 +205,12 @@ public class IndexerResource {
         commit(hakukohdeSolr);
     }
 
-    public void indexHakukohdeIndexEntities(List<HakukohdeIndexEntity> hakukohteet) throws SolrServerException,
+    public void indexHakukohdeIndexEntities(List<Long> hakukohdeIds) throws SolrServerException,
             IOException {
         List<SolrInputDocument> docs = Lists.newArrayList();
         int batch_size = 100;
-        for (HakukohdeIndexEntity hkie : hakukohteet) {
-            docs.addAll(hakukohdeConverter.apply(hkie));
+        for (Long hakukohdeId : hakukohdeIds) {
+            docs.addAll(hakukohdeConverter.apply(hakukohdeId));
             if (docs.size() > batch_size) {
                 logger.info("indexing:" + docs.size() + " docs");
                 hakukohdeSolr.add(docs);
@@ -240,7 +233,7 @@ public class IndexerResource {
      * @throws SolrServerException
      */
     public void indexKoulutukset(List<Long> koulutukset) {
-        if(koulutukset.size()==0) {
+        if (koulutukset.size() == 0) {
             return;
         }
         int batch_size = 50;
@@ -252,8 +245,7 @@ public class IndexerResource {
 
                 Long koulutusId = koulutukset.get(j);
                 logger.info(j + ". Fetching koulutus:" + koulutusId);
-                KoulutusIndexEntity koulutus = indexerDao.findKoulutusById(koulutusId);
-                docs.addAll(koulutusConverter.apply(koulutus));
+                docs.addAll(koulutusConverter.apply(koulutusId));
             }
             index += batch_size;
             logger.info("indexing:" + docs.size() + " docs");
@@ -288,12 +280,12 @@ public class IndexerResource {
     }
 
     public void indexMuutokset(Tilamuutokset tm) {
-        if(tm.getMuutetutKomotot().size()>0) {
+        if (tm.getMuutetutKomotot().size() > 0) {
             indexKoulutukset(koulutusmoduuliToteutusDAO.findIdsByoids(tm.getMuutetutKomotot()));
         }
-        if(tm.getMuutetutHakukohteet().size()>0) {
+        if (tm.getMuutetutHakukohteet().size() > 0) {
             indexHakukohteet(hakukohdeDAO.findIdsByoids(tm.getMuutetutHakukohteet()));
         }
-        
+
     }
 }
