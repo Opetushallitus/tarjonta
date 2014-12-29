@@ -81,11 +81,12 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             loppuPvm: null
         });
     };
-    $scope.goBack = function(event, hakuForm) {
-        $log.info('goBack()', hakuForm);
-        var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
-        $log.info('goBack(), dirty?', dirty);
-        if (dirty) {
+    function isDirty() {
+        return $scope.modelInitialState &&
+            !_.isEqual(angular.copy($scope.model.hakux.result), $scope.modelInitialState);
+    }
+    $scope.goBack = function() {
+        if (isDirty()) {
             dialogService.showModifedDialog().result.then(function(result) {
                 if (result) {
                     $scope.navigateBack();
@@ -150,6 +151,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
                 $scope.model.showSuccess = false;
                 $scope.model.validationmsgs = result.errors;
             }
+            $scope.modelInitialState = null;
         }, function(error) {
                 // Mainly 50x errors
                 $log.info('doSaveHakuAndParameters() - FAILED', error);
@@ -429,6 +431,21 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         // $log.info("stripVersionFromKoodistoUri()", uri, result);
         return result;
     };
+    $scope.setInitialState = function(state) {
+        $scope.modelInitialState = state;
+    };
+    /**
+     * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
+     * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
+     */
+    $scope.setDirtyListener = function() {
+        $('body').on('focus mouseenter', '#editHaku .tab-content:first *', function(e) {
+            e.stopPropagation();
+            if (!$scope.modelInitialState) {
+                $scope.setInitialState(angular.copy($scope.model.hakux.result));
+            }
+        });
+    };
     $scope.init = function() {
         var model = {
             formControls: {},
@@ -469,6 +486,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         if ($scope.shouldSelectParentHaku()) {
             populateParentHakuCandidates();
         }
+        $scope.setDirtyListener();
     };
     $scope.isLuonnosOrNew = function() {
         return $scope.isNewHaku() || $scope.model.hakux.result.tila === 'LUONNOS';
