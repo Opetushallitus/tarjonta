@@ -61,22 +61,30 @@
 
             <div class="pull-right search-control">
                 <div class="search-label">{{t('tarjonta.haku.tila')}}</div>
-                <select ng-model="spec.state" ng-options="s as t for (s,t) in states"/>
+                <select ng-model="spec.state" ng-options="state.key as state.label for state in states | orderBy: 'label'">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
             </div>
 
             <div class="pull-right koulutustyyppi search-control">
                 <div class="search-label">{{t('tarjonta.haku.tyyppi')}}</div>
-                <select ng-model="spec.koulutustyyppi" ng-options="s as t for (s,t) in koulutustyyppioptions"/>
+                <select ng-model="spec.koulutustyyppi" ng-options="koulutustyyppi.key as koulutustyyppi.label for koulutustyyppi in koulutustyyppioptions | orderBy: 'label'">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
             </div>
 
             <div class="pull-right search-control">
                 <div class="search-label">{{t('tarjonta.haku.alkamisVuosi')}}</div>
-                <select ng-model="spec.year" ng-options="s as t for (s,t) in years"/>
+                <select ng-model="spec.year" ng-options="year.key as year.label for year in years">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
             </div>
 
             <div class="pull-right search-control">
                 <div class="search-label">{{t('tarjonta.haku.alkamisKausi')}}</div>
-                <select ng-model="spec.season" ng-options="s as t for (s,t) in seasons"/>
+                <select ng-model="spec.season" ng-options="season.key as season.label for season in seasons | orderBy: 'label'">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
             </div>
 
         </div>
@@ -93,17 +101,23 @@
                 <div class="search-row">
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.hakutapa')}}</div>
-                        <select ng-model="spec.hakutapa" ng-options="s as t for (s,t) in hakutapaoptions"/>
+                        <select ng-model="spec.hakutapa" ng-options="hakutapa.key as hakutapa.label for hakutapa in hakutapaoptions | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
                     </div>
 
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.hakutyyppi')}}</div>
-                        <select ng-model="spec.hakutyyppi" ng-options="s as t for (s,t) in hakutyyppioptions"/>
+                        <select ng-model="spec.hakutyyppi" ng-options="hakutyyppi.key as hakutyyppi.label for hakutyyppi in hakutyyppioptions | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
                     </div>
 
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.koulutuslaji')}}</div>
-                        <select ng-model="spec.koulutuslaji" ng-options="s as t for (s,t) in koulutuslajioptions"/>
+                        <select ng-model="spec.koulutuslaji" ng-options="koulutuslaji.key as koulutuslaji.label for koulutuslaji in koulutuslajioptions | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
                     </div>
 
                     <div class="pull-left search-control">
@@ -120,17 +134,24 @@
                 <div class="search-row">
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.kohdejoukko')}}</div>
-                        <select ng-model="spec.kohdejoukko" ng-options="s as t for (s,t) in kohdejoukkooptions"/>
+                        <select ng-model="spec.kohdejoukko" ng-options="kohdejoukko.key as kohdejoukko.label for kohdejoukko in kohdejoukkooptions | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
                     </div>
 
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.oppilaitostyyppi')}}</div>
-                        <select ng-model="spec.oppilaitostyyppi" ng-options="s as t for (s,t) in oppilaitostyyppioptions"/>
+                        <select ng-model="spec.oppilaitostyyppi" ng-options="oppilaitostyyppi.key as oppilaitostyyppi.label for oppilaitostyyppi in oppilaitostyyppioptions | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
                     </div>
 
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.kunta')}}</div>
-                        <select ng-model="spec.kunta" ng-options="s as t for (s,t) in kuntaoptions"/>
+                        <select ng-model="spec.kunta" ng-options="kunta.key as kunta.label for kunta in kuntaoptions | orderBy: 'label'">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
+
                     </div>
 
                     <div class="pull-left search-control">

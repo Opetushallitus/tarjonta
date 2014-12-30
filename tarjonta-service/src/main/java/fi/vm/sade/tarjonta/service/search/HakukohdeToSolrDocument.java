@@ -28,6 +28,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
@@ -55,6 +56,9 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
 
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
+
+    @Autowired
+    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
 
     @Override
     public List<SolrInputDocument> apply(final Long hakukohdeId) {
@@ -185,19 +189,20 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addOppilaitostyypit(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        Set<String> oppilaitostyypis = new HashSet<String>();
+        Set<String> oppilaitostyypit = new HashSet<String>();
 
         for (KoulutusmoduuliToteutus koulutusmoduuliToteutus : hakukohde.getKoulutusmoduuliToteutuses()) {
             List<OrganisaatioPerustieto> organisaatiotiedot = organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getOwnerOids());
 
             for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-                if (organisaatioPerustieto.getOppilaitostyyppi() != null) {
-                    oppilaitostyypis.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getOppilaitostyyppi()));
+                String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
+                if (oppilaitostyyppi != null) {
+                    oppilaitostyypit.add(oppilaitostyyppi);
                 }
             }
         }
 
-        for (String oppilaitostyyppi : oppilaitostyypis) {
+        for (String oppilaitostyyppi : oppilaitostyypit) {
             add(hakukohdeDoc, OPPILAITOSTYYPPI_URIS, oppilaitostyyppi);
         }
     }

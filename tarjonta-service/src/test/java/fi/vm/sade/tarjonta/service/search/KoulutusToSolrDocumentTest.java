@@ -5,13 +5,13 @@ import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
+import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
-import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTime;
@@ -44,6 +44,9 @@ public class KoulutusToSolrDocumentTest {
     @Mock
     private KoodiService koodiService;
 
+    @Mock
+    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
+
     @InjectMocks
     private KoulutusToSolrDocument converter;
 
@@ -56,6 +59,8 @@ public class KoulutusToSolrDocumentTest {
 
         when(koulutusmoduuliToteutusDAO.findBy("id", 1L)).thenReturn(Arrays.asList(new KoulutusmoduuliToteutus[]{koulutusmoduuliToteutus}));
         when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3", "4.5.6")))).thenReturn(organisaatioPerustiedot);
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(1))).thenReturn("oppilaitostyyppi_42");
     }
 
     @Test
@@ -331,8 +336,9 @@ public class KoulutusToSolrDocumentTest {
     public void thatOppilaitostyyppiUrisAreConverted() {
         SolrInputDocument doc = convert();
 
-        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).size() == 1);
-        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).contains("oppilaitostyyppi"));
+        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).size() == 2);
+        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).contains("oppilaitostyyppi_41"));
+        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).contains("oppilaitostyyppi_42"));
     }
 
     @Test
@@ -432,14 +438,14 @@ public class KoulutusToSolrDocumentTest {
         firstOrganisaatioPerustieto.setOid("1.2.3");
         firstOrganisaatioPerustieto.setNimi("fi", "Organisaatio");
         firstOrganisaatioPerustieto.setKotipaikkaUri("kotipaikka");
-        firstOrganisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi");
+        firstOrganisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi_41");
         firstOrganisaatioPerustieto.setParentOidPath("123/456");
 
         OrganisaatioPerustieto secondOrganisaatioPerustieto = new OrganisaatioPerustieto();
         secondOrganisaatioPerustieto.setOid("4.5.6");
         secondOrganisaatioPerustieto.setNimi("fi", "Organisaatio");
         secondOrganisaatioPerustieto.setKotipaikkaUri("kotipaikka");
-        secondOrganisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi");
+        secondOrganisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi_42");
         secondOrganisaatioPerustieto.setParentOidPath("987/654");
 
         return Arrays.asList(new OrganisaatioPerustieto[]{firstOrganisaatioPerustieto, secondOrganisaatioPerustieto});

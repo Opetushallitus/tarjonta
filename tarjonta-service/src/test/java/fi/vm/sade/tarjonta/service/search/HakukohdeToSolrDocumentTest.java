@@ -8,6 +8,7 @@ import fi.vm.sade.tarjonta.dao.HakukohdeDAO;
 import fi.vm.sade.tarjonta.helpers.KoodistoHelper;
 import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -44,6 +45,9 @@ public class HakukohdeToSolrDocumentTest {
     @Mock
     private HakukohdeDAO hakukohdeDAO;
 
+    @Mock
+    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
+
     @InjectMocks
     private HakukohdeToSolrDocument converter;
 
@@ -56,6 +60,7 @@ public class HakukohdeToSolrDocumentTest {
 
         when(hakukohdeDAO.findBy("id", 1L)).thenReturn(Arrays.asList(new Hakukohde[]{hakukohde}));
         when(organisaatioSearchService.findByOidSet(new HashSet<String>(Arrays.asList("1.2.3")))).thenReturn(organisaatioPerustiedot);
+        when(oppilaitostyyppiResolver.resolve(organisaatioPerustiedot.get(0))).thenReturn("oppilaitostyyppi_41");
     }
 
     @Test
@@ -242,7 +247,8 @@ public class HakukohdeToSolrDocumentTest {
     public void thatOppilaitostyypitAreConverted() {
         SolrInputDocument doc = convert();
 
-        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).contains("oppilaitostyyppi"));
+        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).size() == 1);
+        assertTrue(doc.getFieldValues(OPPILAITOSTYYPPI_URIS).contains("oppilaitostyyppi_41"));
     }
 
     @Test
@@ -350,7 +356,7 @@ public class HakukohdeToSolrDocumentTest {
         organisaatioPerustieto.setOid("1.2.3");
         organisaatioPerustieto.setNimi("fi", "Organisaatio");
         organisaatioPerustieto.setKotipaikkaUri("kotipaikka");
-        organisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi");
+        organisaatioPerustieto.setOppilaitostyyppi("oppilaitostyyppi_41");
         organisaatioPerustieto.setParentOidPath("123/456");
 
         return Arrays.asList(new OrganisaatioPerustieto[]{organisaatioPerustieto});

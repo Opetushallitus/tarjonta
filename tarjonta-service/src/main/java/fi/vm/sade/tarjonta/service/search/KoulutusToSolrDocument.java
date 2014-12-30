@@ -27,6 +27,7 @@ import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.organisaatio.service.search.OrganisaatioSearchService;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.search.resolver.OppilaitostyyppiResolver;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
@@ -52,6 +53,9 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    private OppilaitostyyppiResolver oppilaitostyyppiResolver;
 
     @Override
     public List<SolrInputDocument> apply(final Long koulutusId) {
@@ -116,15 +120,16 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
     }
 
     private void addOppilaitostyypit(SolrInputDocument komotoDoc, List<OrganisaatioPerustieto> organisaatiotiedot) {
-        Set<String> oppilaitostyyppis = new HashSet<String>();
+        Set<String> oppilaitostyypit = new HashSet<String>();
 
         for (OrganisaatioPerustieto organisaatioPerustieto : organisaatiotiedot) {
-            if (organisaatioPerustieto.getOppilaitostyyppi() != null) {
-                oppilaitostyyppis.add(getKoodiURIFromVersionedUri(organisaatioPerustieto.getOppilaitostyyppi()));
+            String oppilaitostyyppi = oppilaitostyyppiResolver.resolve(organisaatioPerustieto);
+            if (oppilaitostyyppi != null) {
+                oppilaitostyypit.add(oppilaitostyyppi);
             }
         }
 
-        for (String oppilaitostyyppi : oppilaitostyyppis) {
+        for (String oppilaitostyyppi : oppilaitostyypit) {
             add(komotoDoc, OPPILAITOSTYYPPI_URIS, oppilaitostyyppi);
         }
     }
@@ -268,17 +273,29 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                 addOrganisaatioTiedot(komotoDoc, org);
             }
 
-            if (org.getParentOidPath() != null) {
-                ArrayList<String> oidPath = Lists.newArrayList();
+            ArrayList<String> oidPath = getReversedParentOrgOids(org);
 
-                Iterables.addAll(oidPath, Splitter.on("/").omitEmptyStrings().split(org.getParentOidPath()));
-                Collections.reverse(oidPath);
-
-                for (String path : oidPath) {
-                    add(komotoDoc, ORG_PATH, path);
-                }
+            for (String path : oidPath) {
+                add(komotoDoc, ORG_PATH, path);
             }
         }
+    }
+
+    private ArrayList<String> getReversedParentOrgOids(OrganisaatioPerustieto org) {
+        ArrayList<String> oids = getParentOrgOids(org);
+        Collections.reverse(oids);
+        return oids;
+    }
+
+    private ArrayList<String> getParentOrgOids(OrganisaatioPerustieto org) {
+        ArrayList<String> oids = Lists.newArrayList();
+
+        if (org.getParentOidPath() == null) {
+            return oids;
+        }
+
+        Iterables.addAll(oids, Splitter.on("/").omitEmptyStrings().split(org.getParentOidPath()));
+        return oids;
     }
 
     private void addFirstOwner(SolrInputDocument komotoDoc, String firstOwner) {
