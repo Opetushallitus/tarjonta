@@ -38,7 +38,10 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakuV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
-import fi.vm.sade.tarjonta.service.search.*;
+import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
+import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
+import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -96,24 +99,21 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private ProcessResourceV1 processResource;
 
     @Autowired
-    private KoulutusSearchService koulutusSearchService;
-
-    @Autowired
     private HakukohdeSearchService hakukohdeSearchService;
 
     @Override
-    public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
-        LOG.debug("search({})", params);
+    public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO genericSearchParamsDTO, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
+        LOG.debug("search({})", genericSearchParamsDTO);
 
-        if (params == null) {
-            params = new GenericSearchParamsV1RDTO();
+        if (genericSearchParamsDTO == null) {
+            genericSearchParamsDTO = new GenericSearchParamsV1RDTO();
         }
 
         criteriaList = getCriteriaListFromUri(uriInfo, criteriaList);
 
-        List<String> oidList = hakuDAO.findOIDByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+        List<String> oidList = hakuDAO.findOIDByCriteria(genericSearchParamsDTO.getCount(), genericSearchParamsDTO.getStartIndex(), criteriaList);
         ResultV1RDTO<List<String>> result = new ResultV1RDTO<List<String>>(oidList);
-        result.setParams(params);
+        result.setParams(genericSearchParamsDTO);
 
         LOG.debug(" --> result = {}", result);
 
@@ -146,13 +146,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
 
         if (criteriaList.isEmpty()) {
             return findAllHakus(params);
-        }
-        else {
+        } else {
             List<Haku> hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
 
             ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult( hakusToHakuRDTO(hakus, params) );
+            resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
 
             return resultV1RDTO;
         }
@@ -171,7 +170,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
         if (hakus.size() > 0) {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult( hakusToHakuRDTO(hakus, params) );
+            resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
         } else {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
@@ -787,9 +786,9 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             criteriaList = new ArrayList<HakuSearchCriteria>();
         }
 
-        MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
+        MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters(true);
 
-        for (String key : values.keySet()) {
+        for (String key : queryParameters.keySet()) {
 
             if (!key.toUpperCase().equals(key)) {
                 continue;  //our fields are upper cased, see HakuSearchCriteria.Field.
@@ -803,7 +802,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
                 continue;
             }
 
-            for (String sValue : values.get(key)) {
+            for (String sValue : queryParameters.get(key)) {
                 Object value = null;
                 Match match = Match.MUST_MATCH;  //default match type
                 switch (field) {

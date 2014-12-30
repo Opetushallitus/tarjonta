@@ -15,15 +15,14 @@
  */
 package fi.vm.sade.tarjonta.dao.impl;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-
+import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.TarjontaFixtures;
+import fi.vm.sade.tarjonta.model.Haku;
+import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
+import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import junit.framework.Assert;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,24 +34,18 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
-import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
-import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-/**
- *
- * @author jani
- */
 @ContextConfiguration(locations = "classpath:spring/test-context.xml")
 @TestExecutionListeners(listeners = {
-    DependencyInjectionTestExecutionListener.class,
-    DirtiesContextTestExecutionListener.class,
-    TransactionalTestExecutionListener.class
+        DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
@@ -76,9 +69,6 @@ public class HakuDAOImplTest extends TestData {
         super.clean();
     }
 
-    /**
-     * Test of findByOid method, of class HakuDAOImpl.
-     */
     @Test
     public void testFindByOid() {
         setUp();
@@ -105,94 +95,48 @@ public class HakuDAOImplTest extends TestData {
         cleanUp();
     }
 
-    
-    @Test
-    public void testMultiGet(){
-        super.clean();
-        final String OID1="1.2.3";
-        final String OID2="2.2.3";
-        
-        Haku h1 = new Haku();
-        h1.setOid(OID1);
-        h1.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
-        h1.setKoulutuksenAlkamiskausiUri("k");
-        h1.setKoulutuksenAlkamisVuosi(2014);
-        h1.setTila(TarjontaTila.VALMIS);
-        h1.setHakutyyppiUri("hakutyyppi1");
-        h1.setHakukausiUri("k");
-        h1.setHakutapaUri("hakutapa1");
-        h1.setKohdejoukkoUri("kohdejoukko1");
-        h1.setHakukausiVuosi(2014);
-        dao.insert(h1);
-        
-        Haku h2 = new Haku();
-        h2.setNimi(new MonikielinenTeksti("fi", "nimi2_fi"));
-        h2.setOid(OID2);
-        h2.setKoulutuksenAlkamiskausiUri("s");
-        h2.setKoulutuksenAlkamisVuosi(2015);
-        h2.setTila(TarjontaTila.KOPIOITU);
-        h2.setHakutyyppiUri("hakutyyppi2");
-        h2.setHakukausiUri("s");
-        h2.setHakutapaUri("hakutapa2");
-        h2.setKohdejoukkoUri("kohdejoukko2");
-        h2.setHakukausiVuosi(2015);
-        dao.insert(h2);
 
-        Assert.assertEquals(2,dao.findByOids(Lists.newArrayList(OID1,OID2)).size());
+    @Test
+    public void testMultiGet() {
+        super.clean();
+        final String OID1 = "1.2.3";
+        final String OID2 = "2.2.3";
+
+        createHaku1(OID1);
+        createHaku2(OID2);
+
+        Assert.assertEquals(2, dao.findByOids(Lists.newArrayList(OID1, OID2)).size());
     }
-    
-    @Test
-    public void testFindHakuByCriteria(){
-        super.clean();
-        final String OID1="1.2.3";
-        final String OID2="2.2.3";
-        
-        Haku h1 = new Haku();
-        h1.setOid(OID1);
-        h1.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
-        h1.setKoulutuksenAlkamiskausiUri("k");
-        h1.setKoulutuksenAlkamisVuosi(2014);
-        h1.setTila(TarjontaTila.VALMIS);
-        h1.setHakutyyppiUri("hakutyyppi1");
-        h1.setHakukausiUri("k");
-        h1.setHakutapaUri("hakutapa1");
-        h1.setKohdejoukkoUri("kohdejoukko1");
-        h1.setHakukausiVuosi(2014);
-        dao.insert(h1);
-        
-        Haku h2 = new Haku();
-        h2.setNimi(new MonikielinenTeksti("fi", "nimi2_fi"));
-        h2.setOid(OID2);
-        h2.setKoulutuksenAlkamiskausiUri("s");
-        h2.setKoulutuksenAlkamisVuosi(2015);
-        h2.setTila(TarjontaTila.KOPIOITU);
-        h2.setHakutyyppiUri("hakutyyppi2");
-        h2.setHakukausiUri("s");
-        h2.setHakutapaUri("hakutapa2");
-        h2.setKohdejoukkoUri("kohdejoukko2");
-        h2.setHakukausiVuosi(2015);
-        dao.insert(h2);
 
-        int count =0;
-        int index=0;
+    @Test
+    public void testFindHakuByCriteria() {
+        super.clean();
+        final String OID1 = "1.2.3";
+        final String OID2 = "2.2.3";
+
+        createHaku1(OID1);
+        createHaku2(OID2);
+
+        int count = 0;
+        int index = 0;
         List<HakuSearchCriteria> criteria;
         List<String> result = dao.findOIDByCriteria(count, index, new ArrayList<HakuSearchCriteria>());
-        Assert.assertEquals(2, result.size());
-        
+        assertEquals(2, result.size());
+
         //countilla
-        count =1;
+        count = 1;
         result = dao.findOIDByCriteria(count, index, new ArrayList<HakuSearchCriteria>());
-        Assert.assertEquals(1, result.size());
+        assertEquals(1, result.size());
 
         //indexillä
-        count=0;
-        index=1;
+        count = 0;
+        index = 1;
         result = dao.findOIDByCriteria(count, index, new ArrayList<HakuSearchCriteria>());
-        Assert.assertEquals(1, result.size());
-        
-        count=0;
-        index=0;
-        
+        assertEquals(1, result.size());
+
+        count = 0;
+        index = 0;
+
         //hakukauden vuodella
         criteria = new HakuSearchCriteria.Builder().mustMatch(Field.HAKUVUOSI, 2014).build();
         assertResult(OID1, dao.findOIDByCriteria(count, index, criteria));
@@ -242,11 +186,108 @@ public class HakuDAOImplTest extends TestData {
 
     }
 
+    @Test
+    public void thatHakuIsFoundWithKoodiVersions() {
+        createHakuWithKoodiVersions();
+
+        int count = 0;
+        int startIndex = 0;
+
+        HakuSearchCriteria.Builder builder = new HakuSearchCriteria.Builder();
+        builder.mustMatch(Field.HAKUKAUSI, "kausi_k#1");
+        builder.mustMatch(Field.HAKUTAPA, "hakutapa_01#1");
+        builder.mustMatch(Field.HAKUTYYPPI, "hakutyyppi_01#1");
+        builder.mustMatch(Field.KOHDEJOUKKO, "haunkohdejoukko_01#1");
+        builder.mustMatch(Field.KOULUTUKSEN_ALKAMISKAUSI, "kausi_k#1");
+
+        List<Object> oids = dao.findByCriteria(count, startIndex, builder.build(), true);
+
+        assertTrue(oids.size() == 1);
+    }
+
+    @Test
+    public void thatHakuIsFoundWihtoutKoodiversions() {
+        createHakuWithKoodiVersions();
+
+        int count = 0;
+        int startIndex = 0;
+
+        HakuSearchCriteria.Builder builder = new HakuSearchCriteria.Builder();
+        builder.mustMatch(Field.HAKUKAUSI, "kausi_k");
+        builder.mustMatch(Field.HAKUTAPA, "hakutapa_01");
+        builder.mustMatch(Field.HAKUTYYPPI, "hakutyyppi_01");
+        builder.mustMatch(Field.KOHDEJOUKKO, "haunkohdejoukko_01");
+        builder.mustMatch(Field.KOULUTUKSEN_ALKAMISKAUSI, "kausi_k");
+
+        List<Object> oids = dao.findByCriteria(count, startIndex, builder.build(), true);
+
+        assertTrue(oids.size() == 1);
+    }
+
+    @Test
+    public void thatHakuIsNotFoundWithIncompleteKoodiUri() {
+        createHakuWithKoodiVersions();
+
+        int count = 0;
+        int startIndex = 0;
+
+        HakuSearchCriteria.Builder builder = new HakuSearchCriteria.Builder();
+        builder.mustMatch(Field.HAKUKAUSI, "kausi");
+
+        List<Object> oids = dao.findByCriteria(count, startIndex, builder.build(), true);
+
+        assertTrue(oids.isEmpty());
+    }
+
+    private void createHakuWithKoodiVersions() {
+        Haku haku = new Haku();
+        haku.setOid("1.2.3");
+        haku.setNimi(new MonikielinenTeksti("fi", "haku_fi"));
+        haku.setKoulutuksenAlkamiskausiUri("kausi_k#1");
+        haku.setKoulutuksenAlkamisVuosi(2014);
+        haku.setTila(TarjontaTila.VALMIS);
+        haku.setHakutyyppiUri("hakutyyppi_01#1");
+        haku.setHakukausiUri("kausi_k#1");
+        haku.setHakutapaUri("hakutapa_01#1");
+        haku.setKohdejoukkoUri("haunkohdejoukko_01#1");
+        haku.setHakukausiVuosi(2014);
+        dao.insert(haku);
+    }
+
+    private void createHaku1(String oid) {
+        Haku haku = new Haku();
+        haku.setOid(oid);
+        haku.setNimi(new MonikielinenTeksti("fi", "nimi1_fi"));
+        haku.setKoulutuksenAlkamiskausiUri("k#1");
+        haku.setKoulutuksenAlkamisVuosi(2014);
+        haku.setTila(TarjontaTila.VALMIS);
+        haku.setHakutyyppiUri("hakutyyppi1#1");
+        haku.setHakukausiUri("k#1");
+        haku.setHakutapaUri("hakutapa1#1");
+        haku.setKohdejoukkoUri("kohdejoukko1#1");
+        haku.setHakukausiVuosi(2014);
+        dao.insert(haku);
+    }
+
+    private void createHaku2(String oid) {
+        Haku haku = new Haku();
+        haku.setNimi(new MonikielinenTeksti("fi", "nimi2_fi"));
+        haku.setOid(oid);
+        haku.setKoulutuksenAlkamiskausiUri("s#1");
+        haku.setKoulutuksenAlkamisVuosi(2015);
+        haku.setTila(TarjontaTila.KOPIOITU);
+        haku.setHakutyyppiUri("hakutyyppi2#1");
+        haku.setHakukausiUri("s#1");
+        haku.setHakutapaUri("hakutapa2#1");
+        haku.setKohdejoukkoUri("kohdejoukko2#1");
+        haku.setHakukausiVuosi(2015);
+        dao.insert(haku);
+    }
+
     private void assertResult(String oid, List<String> result) {
         assertEquals(1, result.size());
         assertEquals(oid, result.get(0));
     }
-    
-    
-    
+
+
 }
