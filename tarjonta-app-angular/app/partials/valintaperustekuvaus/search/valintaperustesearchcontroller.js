@@ -9,7 +9,8 @@ var app = angular.module('app.kk.search.valintaperustekuvaus.ctrl', [
     'config'
 ]);
 app.controller('ValintaperusteSearchController', function($scope, $rootScope, $route, $q, LocalisationService,
-      Koodisto, Kuvaus, AuthService, $location, dialogService, OrganisaatioService, CommonUtilService, $modal, $log) {
+        Koodisto, Kuvaus, AuthService, $location, dialogService, OrganisaatioService, CommonUtilService, $modal, $log,
+        PermissionService) {
     var oppilaitosKoodistoUri = 'oppilaitostyyppi';
     var kausiKoodistoUri = 'kausi';
     $scope.selection = {
@@ -200,11 +201,7 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
         return AuthService.isUserOph();
     };
     $scope.canCreateNew = function() {
-        var organisations = AuthService.getOrganisations([
-            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_CRUD',
-            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_KK_CRUD'
-        ]);
-        return organisations.length > 0;
+        return PermissionService.kuvaus.canCreateToinenAste() || PermissionService.kuvaus.canCreateKK();
     };
     $scope.createNew = function(kuvausTyyppi) {
         if ($scope.model.userOrgTypes.length > 0 && $scope.model.userOrgTypes.length < 2) {
@@ -275,25 +272,55 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
         var type = row.avain ? row.avain : $scope.model.userOrgTypes[0];
         return '#/valintaPerusteKuvaus/edit/' + type + '/' + row.kuvauksenTyyppi + '/' + row.kuvauksenTunniste;
     };
-    $scope.kuvauksetGetOptions = function(row) {
-        return [
-            {
-                title: LocalisationService.t('tarjonta.toiminnot.muokkaa'),
-                href: $scope.kuvauksetGetLink(row)
-            },
-            {
-                title: LocalisationService.t('tarjonta.toiminnot.poista'),
-                action: function() {
-                    removeKuvaus(row, row.$delete);
-                }
-            },
-            {
-                title: LocalisationService.t('tarjonta.toiminnot.kopioi'),
-                action: function() {
-                    $scope.copyKuvaus(row);
-                }
+    var isToinenAste = function(row) {
+        return row.avain !== undefined;
+    };
+    var getEditOption = function(row) {
+        return {
+            title: LocalisationService.t('tarjonta.toiminnot.muokkaa'),
+            href: $scope.kuvauksetGetLink(row)
+        };
+    };
+    var getDeleteOption = function(row) {
+        return {
+            title: LocalisationService.t('tarjonta.toiminnot.poista'),
+            action: function() {
+                removeKuvaus(row, row.$delete);
             }
-        ];
+        };
+    };
+    var getCopyOptions = function(row) {
+        return {
+            title: LocalisationService.t('tarjonta.toiminnot.kopioi'),
+            action: function() {
+                $scope.copyKuvaus(row);
+            }
+        };
+    };
+    $scope.kuvauksetGetOptions = function(row) {
+        var options = [];
+        if (isToinenAste(row)) {
+            if (PermissionService.kuvaus.canUpdateToinenAste()) {
+                options.push(getEditOption(row));
+            }
+            if (PermissionService.kuvaus.canDeleteToinenAste()) {
+                options.push(getDeleteOption(row));
+            }
+            if (PermissionService.kuvaus.canCopyToinenAste()) {
+                options.push(getCopyOptions(row));
+            }
+        } else {
+            if (PermissionService.kuvaus.canUpdateKK()) {
+                options.push(getEditOption(row));
+            }
+            if (PermissionService.kuvaus.canDeleteKK()) {
+                options.push(getDeleteOption(row));
+            }
+            if (PermissionService.kuvaus.canCopyKK()) {
+                options.push(getCopyOptions(row));
+            }
+        }
+        return options;
     };
 });
 app.controller('LuoUusiValintaPerusteDialog', function($scope, $modalInstance, LocalisationService, Koodisto,

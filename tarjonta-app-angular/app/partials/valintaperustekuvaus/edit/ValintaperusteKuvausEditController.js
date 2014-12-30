@@ -10,13 +10,7 @@ var app = angular.module('app.kk.edit.valintaperustekuvaus.ctrl', [
     'MonikielinenTextArea'
 ]);
 app.controller('ValintaperusteEditController', function($scope, $rootScope, $route, $q, LocalisationService,
-    OrganisaatioService, Koodisto, Kuvaus, AuthService, $modal, Config, $location, $timeout, YhteyshenkiloService) {
-    /*
-
-          --------------> Variable initializations
-
-       */
-    var commonExceptionMsgKey = 'tarjonta.common.unexpected.error.msg';
+    OrganisaatioService, Koodisto, Kuvaus, AuthService, PermissionService) {
     $scope.model = {};
     $scope.model.years = [];
     $scope.model.validationmsgs = [];
@@ -34,18 +28,12 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
         $scope.model.valintaperustekuvaus.avain = $scope.model.valintaperustekuvaus.organisaatioTyyppi;
         $scope.model.valintaperustekuvaus.organisaatioTyyppi = null;
     }
-    //var kuvausId = $route.current.params.kuvausId;
     $scope.model.valintaperustekuvaus.kuvaukset = {};
     $scope.formControls = {};
-    // controls-layouttia varten
     $scope.model.showError = false;
     $scope.model.showSuccess = false;
     $scope.model.nimiValidationFailed = false;
-    /*
 
-          -----------------> Helper and initialization functions etc.
-
-       */
     var getYears = function() {
         var today = new Date();
         var currentYear = today.getFullYear();
@@ -179,17 +167,15 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
     };
     getYears();
     initialializeForm();
-    /*
-
-          ---------------->  Click etc. handlers
-
-       */
+    var isNew = function() {
+        return $scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined;
+    };
     $scope.model.saveValmis = function() {
         var resultPromise;
         resetErrorMsgs();
         if (validateForm()) {
             removeEmptyKuvaukses();
-            if ($scope.model.valintaperustekuvaus.kuvauksenTunniste === undefined) {
+            if (isNew()) {
                 resultPromise = Kuvaus.insertKuvaus($scope.model.valintaperustekuvaus.kuvauksenTyyppi,
                     $scope.model.valintaperustekuvaus);
                 resultPromise.then(function(data) {
@@ -236,6 +222,21 @@ app.controller('ValintaperusteEditController', function($scope, $rootScope, $rou
         }
         else {
             return false;
+        }
+    };
+    $scope.hasPermissionToSave = function() {
+        if (isNew()) {
+            if ($scope.isToinenAste) {
+                return PermissionService.kuvaus.canCreateToinenAste();
+            } else {
+                return PermissionService.kuvaus.canCreateKK();
+            }
+        } else {
+            if ($scope.isToinenAste) {
+                return PermissionService.kuvaus.canUpdateToinenAste();
+            } else {
+                return PermissionService.kuvaus.canUpdateKK();
+            }
         }
     };
     $scope.getNimetKey = function() {

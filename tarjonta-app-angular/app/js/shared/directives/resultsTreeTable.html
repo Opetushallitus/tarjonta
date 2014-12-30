@@ -3,8 +3,8 @@
 	<div>&nbsp;</div>
 
 	<table><!-- jquery --></table>
-	
-	<ul class="dropdown-menu">
+
+	<ul class="dropdown-menu" ng-show="menuOptions.length > 0">
         <li ng-repeat="o in menuOptions">
             <a ng-show="o.href" href="{{o.href}}">{{o.title}}</a>
             <a ng-hide="o.href" href ng-click="o.action()">{{o.title}}</a>

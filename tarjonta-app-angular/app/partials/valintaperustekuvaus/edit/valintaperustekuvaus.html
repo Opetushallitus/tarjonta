@@ -8,7 +8,7 @@
             dto="model.valintaperustekuvaus">
 
         <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
-        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
+        <controls-button ng-if="hasPermissionToSave()" tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" primary="true" disabled="!model.canSaveVpk()"></controls-button>
 
         <controls-notify type="message" tt-expr="getNimetKey()" tt-params="[ getNimet() ]"></controls-notify>
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>

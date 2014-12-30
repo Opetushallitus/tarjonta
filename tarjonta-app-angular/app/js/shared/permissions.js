@@ -268,6 +268,32 @@ angular.module('TarjontaPermissions', [
         }
         return defer.promise;
     }
+    var canCRUDValintaperustekuvausToinenAste = function() {
+        var organisations = AuthService.getOrganisations([
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_CRUD'
+        ]);
+        return organisations.length > 0;
+    };
+    var canCRUDValintaperustekuvausKK = function() {
+        var organisations = AuthService.getOrganisations([
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_KK_CRUD'
+        ]);
+        return organisations.length > 0;
+    };
+    var canUpdateValintaperustekuvausToinenAste = function() {
+        var organisations = AuthService.getOrganisations([
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_CRUD',
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_RU'
+        ]);
+        return organisations.length > 0;
+    };
+    var canUpdateValintaperustekuvausKK = function() {
+        var organisations = AuthService.getOrganisations([
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_KK_CRUD',
+            'APP_VALINTAPERUSTEKUVAUSTENHALLINTA_KK_RU'
+        ]);
+        return organisations.length > 0;
+    };
     return {
         /**
          * funktiot jotka ottavat organisaatio oidin ovat yhteisiä molemmille (hk + k)!:
@@ -384,6 +410,32 @@ angular.module('TarjontaPermissions', [
             },
             canDelete: function(hakuOrHakuOid) {
                 return hasHakuPermission(hakuOrHakuOid, canCRUDHaku());
+            }
+        },
+        kuvaus: {
+            canCreateToinenAste: function() {
+                return canCRUDValintaperustekuvausToinenAste();
+            },
+            canCreateKK: function() {
+                return canCRUDValintaperustekuvausKK();
+            },
+            canUpdateToinenAste: function() {
+                return canUpdateValintaperustekuvausToinenAste();
+            },
+            canUpdateKK: function() {
+                return canUpdateValintaperustekuvausKK();
+            },
+            canDeleteToinenAste: function() {
+                return canCRUDValintaperustekuvausToinenAste();
+            },
+            canDeleteKK: function() {
+                return canCRUDValintaperustekuvausKK();
+            },
+            canCopyToinenAste: function() {
+                return canCRUDValintaperustekuvausToinenAste();
+            },
+            canCopyKK: function() {
+                return canCRUDValintaperustekuvausKK();
             }
         },
         permissionResource: function() {
