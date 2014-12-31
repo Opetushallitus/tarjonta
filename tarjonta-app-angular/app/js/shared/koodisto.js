@@ -85,7 +85,6 @@ app.factory('Koodisto', function($resource, $log, $q, Config, CacheService) {
             }
             if (endDate && endDate < currentDate) {
                 koodiValid = false;
-                $log.warn('koodi ' + JSON.stringify(getKoodiViewModelFromKoodi(koodi, locale)) + ' ei voimassa');
             }
         }
         return koodiValid;

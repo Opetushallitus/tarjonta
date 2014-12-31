@@ -3,18 +3,24 @@ angular.module('app.search.controllers', [
     'localisation',
     'Organisaatio',
     'config',
-    'ResultsTreeTable'
-]).controller('SearchController', function($scope, $routeParams, $location, LocalisationService, Koodisto,
-                                           OrganisaatioService, TarjontaService, PermissionService, Config,
-                                           loadingService, $modal, $window, SharedStateService, AuthService,
-                                           $q, dialogService, $log, HakukohdeKoulutukses) {
+    'ResultsTreeTable',
+    'search.hakutulokset.rows',
+    'search.hakutulokset.hakukohteet',
+    'search.hakutulokset.searchparameters'
+]).factory('Cache', function($cacheFactory) {
+    return $cacheFactory('app.search.controllers');
+}).controller('SearchController', function($scope, $routeParams, $location, $cacheFactory, LocalisationService,
+                                           Koodisto, OrganisaatioService, TarjontaService,
+                                           PermissionService, Config, loadingService, $modal, $window,
+                                           SharedStateService, AuthService, $q, dialogService,
+                                           HakukohdeKoulutukses, RowActions, HakukohderyhmatActions,
+                                           SearchParameters, Cache) {
     'use strict';
 
-    $log = $log.getInstance('SearchController');
     var OPH_ORG_OID = Config.env['root.organisaatio.oid'];
     var selectOrg;
     //organisaation vaihtuessa suoritettavat toimenpiteet
-    $scope.$watch('selectedOrgOid', function(newObj, oldObj) {
+    $scope.$watch('selectedOrgOid', function(newObj) {
         if (newObj) {
             //päivitä permissio
             PermissionService.koulutus.canCreate(newObj).then(function(data) {
@@ -28,17 +34,20 @@ angular.module('app.search.controllers', [
             });
         }
     });
-    // 1. Organisaatiohaku
-    function setDefaultHakuehdot() {
-        $scope.hakuehdot = {
-            'searchStr': '',
-            'organisaatiotyyppi': '',
-            'oppilaitostyyppi': undefined,
-            'lakkautetut': false,
-            'suunnitellut': false,
-            'skipparents': true
+    var getSearchStateFromScope = function() {
+        var state = {
+            advancedSearchOpen: $scope.isopen,
+            koulutuksetActive: $scope.tabs.koulutukset.active,
+            hakukohteetActive: $scope.tabs.hakukohteet.active
         };
-        $scope.koulutustyyppioptions = fetchCodeElementsToObject('koulutustyyppi');
+        return state;
+    };
+    $scope.$on('$destroy', function() {
+        Cache.put('app.search.controllers', getSearchStateFromScope());
+    });
+    function setDefaultHakuehdot() {
+        $scope.hakuehdot = SearchParameters.getDefaultHakuehdot();
+        $scope.koulutustyyppioptions = SearchParameters.fetchCodeElementsToObject('koulutustyyppi');
     }
     setDefaultHakuehdot();
     if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio &&
@@ -46,7 +55,6 @@ angular.module('app.search.controllers', [
         $routeParams.oid = SharedStateService.state.puut.organisaatio.selected;
     }
     if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio.scope !== $scope) {
-        console.log('scope has changed???');
         SharedStateService.state.puut.organisaatio.scope = $scope;
     }
     var orgs = AuthService.getOrganisations([
@@ -54,19 +62,14 @@ angular.module('app.search.controllers', [
         'APP_TARJONTA_UPDATE',
         'APP_TARJONTA_READ'
     ]);
-    console.log('user orgs:', orgs);
-    //käyttäjän oletusorganisaatio
     function getDefaultOrg() {
         if (orgs && orgs.length > 0) {
             return orgs[0];
         }
     }
-    //jos organisaatiota ei ole urlissa määritelty ja käyttäjällä on oletusorganisaatio
     if (getDefaultOrg() && !$routeParams.oid) {
         selectOrg = getDefaultOrg();
         if (orgs.indexOf(OPH_ORG_OID) == -1) {
-            //hae orgsit jos ei oph
-            console.log('orgsit:', orgs);
             OrganisaatioService.etsi({
                 oidRestrictionList: orgs
             }).then(function(vastaus) {
@@ -74,17 +77,53 @@ angular.module('app.search.controllers', [
             });
         }
     }
-    $scope.oppilaitostyypit = Koodisto.getAllKoodisWithKoodiUri(Config.env['koodisto-uris.oppilaitostyyppi'],
-        AuthService.getLanguage()).then(function(koodit) {
-            angular.forEach(koodit, function(koodi) {
-                koodi.koodiUriWithVersion = koodi.koodiUri + '#' + koodi.koodiVersio;
-            });
-            $scope.oppilaitostyypit = koodit;
-        });
-    //valittu organisaatio populoidaan tänne
+    $scope.tabs = {
+        koulutukset: {
+            active: true
+        },
+        hakukohteet: {
+            active: false
+        }
+    };
+    $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
+    $scope.hakukohdeResults = {};
+    $scope.koulutusResults = {};
+    $scope.oppilaitostyypit = SearchParameters.getOppilaitostyypit();
+    $scope.organisaatiotyypit = SearchParameters.getOrganisaatiotyypit();
+    $scope.spec = SearchParameters.getSpec();
+    $scope.states = SearchParameters.getStates();
+    $scope.years = SearchParameters.getYears();
+    $scope.seasons = SearchParameters.fetchCodeElementsToObject('kausi');
+    $scope.initAdditionalFields = function() {
+        $scope.hakutapaoptions = SearchParameters.fetchCodeElementsToObject('hakutapa');
+        $scope.hakutyyppioptions = SearchParameters.fetchCodeElementsToObject('hakutyyppi');
+        $scope.koulutuslajioptions = SearchParameters.fetchCodeElementsToObject('koulutuslaji');
+        $scope.kielioptions = SearchParameters.fetchCodeElementsToList('kieli');
+        $scope.kohdejoukkooptions = SearchParameters.fetchCodeElementsToObject('haunkohdejoukko');
+        $scope.oppilaitostyyppioptions = SearchParameters.fetchCodeElementsToObject('oppilaitostyyppi');
+        $scope.kuntaoptions = SearchParameters.fetchCodeElementsToObject('kunta');
+    };
+    $scope.selectLanguage = function(item) {
+        $scope.spec.addLanguage(item);
+        $scope.languageSearch = '';
+    };
+    $scope.removeLanguage = function(key) {
+        $scope.spec.removeLanguage(key);
+    };
+    var initFormSelections = function() {
+        var state = Cache.get('app.search.controllers');
+        if (state) {
+            $scope.isopen = state.advancedSearchOpen;
+            if ($scope.isopen) {
+                $scope.initAdditionalFields();
+            }
+            $scope.tabs.koulutukset.active = state.koulutuksetActive;
+            $scope.tabs.hakukohteet.active = state.hakukohteetActive;
+        }
+    };
+    initFormSelections();
     $scope.organisaatio = {};
-    //watchi valitulle organisaatiolle, tästä varmaan lähetetään "organisaatio valittu" eventti jonnekkin?
-    $scope.$watch('organisaatio.currentNode', function(newObj, oldObj) {
+    $scope.$watch('organisaatio.currentNode', function() {
         if ($scope.organisaatio && angular.isObject($scope.organisaatio.currentNode)) {
             $scope.selectedOrgOid = $scope.organisaatio.currentNode.oid;
             $scope.selectedOrgName = $scope.organisaatio.currentNode.nimi;
@@ -139,139 +178,17 @@ angular.module('app.search.controllers', [
     $scope.hakukohdeGetLink = function(row) {
         return row.tulokset === undefined && '#/hakukohde/' + row.oid;
     };
-    // organisaatiotyypit; TODO jostain jotenkin dynaamisesti
-    $scope.organisaatiotyypit = [
-        {
-            nimi: LocalisationService.t('organisaatiotyyppi.koulutustoimija'),
-            koodi: 'Koulutustoimija'
-        },
-        {
-            nimi: LocalisationService.t('organisaatiotyyppi.oppilaitos'),
-            koodi: 'Oppilaitos'
-        },
-        {
-            nimi: LocalisationService.t('organisaatiotyyppi.toimipiste'),
-            koodi: 'Toimipiste'
-        },
-        {
-            nimi: LocalisationService.t('organisaatiotyyppi.oppisopimustoimipiste'),
-            koodi: 'Oppisopimustoimipiste'
-        }
-    ];
-    // Kutsutaan formin submitissa, käynnistää haun
     $scope.submitOrg = function() {
         var hakutulos = OrganisaatioService.etsi($scope.hakuehdot);
         hakutulos.then(function(vastaus) {
-            $scope.$root.tulos = vastaus.organisaatiot; //TODO, keksi miten tilan saa säästettyä ilman root scopea.
+            $scope.$root.tulos = vastaus.organisaatiot;
         });
     };
     $scope.setDefaultOrg = function() {
         $scope.selectedOrgOid = getDefaultOrg();
     };
-    // Kutsutaan formin resetissä, palauttaa default syötteet modeliin
     $scope.resetOrg = function() {
         setDefaultHakuehdot();
-    };
-    // 2. Koulutusten/Hakujen haku
-    // hakuparametrit ja organisaatiovalinta
-    function fromParams(key, def) {
-        return $routeParams[key] !== undefined ? $routeParams[key] : def;
-    }
-    // Selected org from route path or based on user organisation or oph org
-    $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
-    $scope.hakukohdeResults = {};
-    $scope.koulutusResults = {};
-    $scope.spec = {
-        terms: fromParams('terms', ''),
-        state: fromParams('state', '*'),
-        year: fromParams('year', '*'),
-        season: fromParams('season', '*'),
-        hakutapa: fromParams('hakutapa', '*'),
-        koulutustyyppi: fromParams('koulutustyyppi', '*'),
-        hakutyyppi: fromParams('hakutyyppi', '*'),
-        koulutuslaji: fromParams('koulutuslaji', '*'),
-        kieli: fromParams('kieli', []),
-        kohdejoukko: fromParams('kohdejoukko', '*'),
-        oppilaitostyyppi: fromParams('oppilaitostyyppi', '*'),
-        kunta: fromParams('kunta', '*')
-    };
-
-    // tarjonnan tilat
-    $scope.states = [];
-    for (var s in CONFIG.env['tarjonta.tila']) {
-        if (s !== 'POISTETTU') {
-            $scope.states.push({key: s, label: LocalisationService.t('tarjonta.tila.' + s)});
-        }
-    }
-
-    // alkamisvuodet; 2012 .. nykyhetki + 10v
-    $scope.years = [];
-    var lyr = new Date().getFullYear() + 10;
-    for (var y = 2012; y < lyr; y++) {
-        $scope.years.push({key: y, label: y});
-    }
-
-    function fetchCodeElementsToObject(koodisto) {
-        var options = [];
-        Koodisto.getAllKoodisWithKoodiUri(koodisto, AuthService.getLanguage()).then(function(koodit) {
-            for (var i in koodit) {
-                var k = koodit[i];
-                options.push({key: k.koodiUri, label: k.koodiNimi});
-            }
-        });
-        return options;
-    }
-    function fetchCodeElementsToList(koodisto) {
-        var list = [];
-        Koodisto.getAllKoodisWithKoodiUri(koodisto, AuthService.getLanguage()).then(function(koodit) {
-            console.log('koodit', koodit);
-            for (var i in koodit) {
-                var k = koodit[i];
-                var o = {};
-                o.key = k.koodiUri;
-                o.value = k.koodiNimi;
-                list.push(o);
-            }
-        });
-        return list;
-    }
-
-    $scope.languageSearch = '';
-    $scope.selectLanguage = function(item) {
-        var unique = true;
-        $scope.spec.kieli.forEach(function(lang) {
-            unique = unique && lang.key != item.key;
-        });
-        if (unique) {
-            $scope.spec.kieli.push(item);
-        }
-        $scope.languageSearch = '';
-    };
-    $scope.removeLanguage = function(key) {
-        var list = [];
-        $scope.spec.kieli.forEach(function(lang) {
-            if (lang.key != key) {
-                list.push(lang);
-            }
-        });
-        $scope.spec.kieli = list;
-    };
-
-    $scope.seasons = fetchCodeElementsToObject('kausi');
-
-    // Initialization of hidden fields upon clicking 'show more'
-    var initialized = false;
-    $scope.initAdditionalFields = function() {
-        if (!initialized) {
-            $scope.hakutapaoptions = fetchCodeElementsToObject('hakutapa');
-            $scope.hakutyyppioptions = fetchCodeElementsToObject('hakutyyppi');
-            $scope.koulutuslajioptions = fetchCodeElementsToObject('koulutuslaji');
-            $scope.kielioptions = fetchCodeElementsToList('kieli');
-            $scope.kohdejoukkooptions = fetchCodeElementsToObject('haunkohdejoukko');
-            $scope.oppilaitostyyppioptions = fetchCodeElementsToObject('oppilaitostyyppi');
-            $scope.kuntaoptions = fetchCodeElementsToObject('kunta');
-            initialized = true;
-        }
     };
     if (!$scope.selectedOrgName) {
         OrganisaatioService.nimi($scope.selectedOrgOid).then(function(nimi) {
@@ -287,20 +204,17 @@ angular.module('app.search.controllers', [
         }
     }
     function updateLocation() {
-        // Query parameters collected here
         var sargs = {};
-        copyIfSet(sargs, 'terms', $scope.spec.terms, '*');
-        copyIfSet(sargs, 'state', $scope.spec.state);
-        copyIfSet(sargs, 'year', $scope.spec.year);
-        copyIfSet(sargs, 'season', $scope.spec.season);
-        // Location should contain selected ORG oid if any
+        copyIfSet(sargs, 'terms', $scope.spec.attributes.terms, '*');
+        copyIfSet(sargs, 'state', $scope.spec.attributes.state);
+        copyIfSet(sargs, 'year', $scope.spec.attributes.year);
+        copyIfSet(sargs, 'season', $scope.spec.attributes.season);
         if ($scope.selectedOrgOid !== null) {
             $location.path('/etusivu/' + $scope.selectedOrgOid);
         }
         else {
             $location.path('/etusivu');
         }
-        // Add query parameters
         $location.search(sargs);
     }
     $scope.clearOrg = function() {
@@ -308,19 +222,7 @@ angular.module('app.search.controllers', [
         $scope.$broadcast('clearOrg');
     };
     $scope.reset = function() {
-        $scope.spec.terms = '';
-        $scope.spec.state = '*';
-        $scope.spec.year = '*';
-        $scope.spec.season = '*';
-        $scope.spec.koulutustyyppi = '*';
-
-        $scope.spec.hakutapa = '*';
-        $scope.spec.hakutyyppi = '*';
-        $scope.spec.koulutuslaji = '*';
-        $scope.spec.kieli = [];
-        $scope.spec.kohdejoukko = '*';
-        $scope.spec.oppilaitostyyppi = '*';
-        $scope.spec.kunta = '*';
+        $scope.spec.reset();
     };
     $scope.selection = {
         koulutukset: [],
@@ -363,146 +265,15 @@ angular.module('app.search.controllers', [
         canCreateHakukohde: false,
         canCreateKoulutus: false
     };
-    function canRemoveHakukohde(hakukohde) {
-        return TarjontaService.parameterCanRemoveHakukohdeFromHaku(hakukohde.hakuOid) &&
-            TarjontaService.parameterCanEditHakukohde(hakukohde.hakuOid);
-    }
-    function rowActions(prefix, row, actions) {
-        var oid = row.oid;
-        var tila = row.tila;
-        var nimi = row.nimi;
-        var ret = [];
-        var tt = TarjontaService.getTilat()[tila];
-        var actionsByPrefix = {
-            hakukohde: function(row) {
-                tt.removable = tt.removable && canRemoveHakukohde(row);
-            }
-        };
-        if (actionsByPrefix[prefix]) {
-            actionsByPrefix[prefix](row);
-        }
-        var canRead = PermissionService[prefix].canPreview(oid);
-        console.log('row actions can read (' + prefix + ')', canRead);
-        // tarkastele
-        if (canRead) {
-            var url = '/' + prefix + '/' + oid;
-            ret.push({
-                action: function() {
-                    $location.path(url);
-                },
-                title: LocalisationService.t('tarjonta.toiminnot.tarkastele')
-            });
-        }
-        // muokkaa
-        if (tt.mutable) {
-            PermissionService[prefix].canEdit(oid, {
-                defaultTarjoaja: AuthService.getUserDefaultOid()
-            }).then(function(result) {
-                console.log('row actions can edit (' + prefix + ')', result);
-                var url = '/' + prefix + '/' + oid + '/edit';
-                if (result) {
-                    ret.push({
-                        action: function() {
-                            $location.path(url);
-                        },
-                        title: LocalisationService.t('tarjonta.toiminnot.muokkaa')
-                    });
-                }
-            });
-        }
-        // näytä hakukohteet
-        if (canRead) {
-            ret.push({
-                title: LocalisationService.t('tarjonta.toiminnot.' + prefix + '.linkit'),
-                action: function(ev) {
-                    $scope.openLinksDialog(prefix, oid, nimi);
-                }
-            });
-        }
-        // tilasiirtymä
-        switch (tila) {
-            case 'PERUTTU':
-            case 'VALMIS':
-                PermissionService[prefix].canTransition(oid, tila, 'JULKAISTU').then(function(canTransition) {
-                    console.log('row actions can transition (' + prefix + ')', tila, 'JULKAISTU', canTransition);
-                    if (canTransition) {
-                        ret.push({
-                            title: LocalisationService.t('tarjonta.toiminnot.julkaise'),
-                            action: function() {
-                                TarjontaService.togglePublished(prefix, oid, true).then(function(ns) {
-                                    row.tila = 'JULKAISTU';
-                                    actions.update();
-                                    TarjontaService.evictHakutulokset();
-                                });
-                            }
-                        });
-                    }
-                });
-                break;
-            case 'JULKAISTU':
-                PermissionService[prefix].canTransition(oid, tila, 'PERUTTU').then(function(canTransition) {
-                    if (canTransition) {
-                        ret.push({
-                            title: LocalisationService.t('tarjonta.toiminnot.peruuta'),
-                            action: function() {
-                                TarjontaService.togglePublished(prefix, oid, false).then(function(ns) {
-                                    row.tila = 'PERUTTU';
-                                    actions.update();
-                                    TarjontaService.evictHakutulokset();
-                                });
-                            }
-                        });
-                    }
-                });
-                break;
-        }
-        // poista
-        if (tt.removable) {
-            PermissionService[prefix].canDelete(oid).then(function(canDelete) {
-                if (canDelete) {
-                    ret.push({
-                        title: LocalisationService.t('tarjonta.toiminnot.poista'),
-                        action: function(ev) {
-                            $scope.openDeleteDialog(prefix, oid, nimi, actions.delete);
-                        }
-                    });
-                }
-            });
-        }
-        return ret;
-    }
     $scope.koulutusGetOptions = function(row, actions) {
-        return rowActions('koulutus', row, actions);
+        return RowActions.get('koulutus', row, actions, $scope);
     };
     $scope.hakukohdeGetOptions = function(row, actions) {
-        return rowActions('hakukohde', row, actions);
-    };
-    var languagesAsList = function() {
-        var list = [];
-        $scope.spec.kieli.forEach(function(lang) {
-            list.push(lang.key);
-        });
-        return list;
+        return RowActions.get('hakukohde', row, actions, $scope);
     };
     $scope.search = function() {
-        var spec = {
-            oid: $scope.selectedOrgOid,
-            terms: $scope.spec.terms,
-            state: $scope.spec.state == '*' ? null : $scope.spec.state,
-            year: $scope.spec.year == '*' ? null : $scope.spec.year,
-            season: $scope.spec.season == '*' ? null : $scope.spec.season,
-            defaultTarjoaja: $scope.selectedOrgOid,
-            hakutapa: $scope.spec.hakutapa == '*' ? null : $scope.spec.hakutapa,
-            hakutyyppi: $scope.spec.hakutyyppi == '*' ? null : $scope.spec.hakutyyppi,
-            koulutustyyppi: $scope.spec.koulutustyyppi == '*' ? null : $scope.spec.koulutustyyppi,
-            koulutuslaji: $scope.spec.koulutuslaji == '*' ? null : $scope.spec.koulutuslaji,
-            kieli: languagesAsList(),
-            kohdejoukko: $scope.spec.kohdejoukko == '*' ? null : $scope.spec.kohdejoukko,
-            oppilaitostyyppi: $scope.spec.oppilaitostyyppi == '*' ? null : $scope.spec.oppilaitostyyppi,
-            kunta: $scope.spec.kunta == '*' ? null : $scope.spec.kunta
-        };
+        var spec = $scope.spec.getSpecForSearchQuery($scope.selectedOrgOid);
         updateLocation();
-        // valinnat
         TarjontaService.haeKoulutukset(spec).then(function(data) {
             $scope.koulutusResults = data;
         });
@@ -526,118 +297,14 @@ angular.module('app.search.controllers', [
         return $scope.selection.koulutukset !== undefined && $scope.selection.koulutukset.length > 0 &&
             $scope.koulutusActions.canCreateHakukohde;
     };
-    if ($scope.spec.terms !== '' || $scope.selectedOrgOid != OPH_ORG_OID) {
-        if ($scope.spec.terms == '*') {
-            $scope.spec.terms = '';
-        }
-
-        if ($scope.selectedOrgOid !== OPH_ORG_OID) {
-            // estää angularia tuhoamasta "liian nopeasti" haettua hakutuloslistausta
-            // TODO ei toimi luotettavasti -> korjaa
-            setTimeout($scope.search, 100);
-        }
+    if ($scope.spec.attributes.terms == '*') {
+        $scope.spec.attributes.terms = '';
     }
-    $scope.report = function() {
-        console.log('TODO raportti');
-    };
-    var DeleteDialogCtrl = function($scope, $modalInstance, ns) {
-        var init = function() {
-            $scope.oid = ns.oid;
-            $scope.nimi = ns.nimi;
-            $scope.otsikko = ns.otsikko;
-            $scope.ohje = ns.ohje;
-        };
-        init();
-        $scope.ok = function() {
-            $modalInstance.close();
-        };
-        $scope.cancel = function() {
-            $modalInstance.dismiss();
-        };
-    };
-    $scope.openDeleteDialog = function(prefix, oid, nimi, deleteAction) {
-        var ns = {};
-        ns.oid = oid;
-        ns.nimi = nimi;
-        ns.otsikko = LocalisationService.t('tarjonta.poistovahvistus.otsikko.' + prefix);
-        ns.ohje = LocalisationService.t('tarjonta.poistovahvistus.ohje.' + prefix);
-        if (prefix == 'hakukohde') {
-            $modal.open({
-                controller: DeleteDialogCtrl,
-                templateUrl: 'partials/search/delete-dialog.html',
-                resolve: {
-                    ns: function() {
-                        return ns;
-                    }
-                }
-            }).result.then(function() {
-                    TarjontaService.deleteHakukohde(oid).then(function() {
-                        deleteAction();
-                        // poistaa rivin hakutuloslistasta
-                        $scope.hakukohdeResults.tuloksia--;
-                        TarjontaService.evictHakutulokset();
-                    });
-                });
-        }
-        else {
-            $modal.open({
-                templateUrl: 'partials/koulutus/remove/poista-koulutus.html',
-                controller: 'PoistaKoulutusCtrl',
-                resolve: {
-                    targetKomoto: function() {
-                        return {
-                            oid: oid,
-                            koulutuskoodi: '',
-                            nimi: nimi
-                        };
-                    },
-                    organisaatioOid: function() {
-                        return {
-                            oid: '',
-                            nimi: ''
-                        };
-                    }
-                }
-            }).result.then(function() {
-                    deleteAction();
-                    // poistaa rivin hakutuloslistasta
-                    $scope.koulutusResults.tuloksia--;
-                    TarjontaService.evictHakutulokset();
-                });
-        }
-    };
-    var LinksDialogCtrl = function($scope, $modalInstance) {
-        $scope.otsikko = 'tarjonta.linkit.otsikko.' + $scope.prefix;
-        $scope.eohje = 'tarjonta.linkit.eohje.' + $scope.prefix;
-        $scope.items = [];
-        $scope.ok = function() {
-            $modalInstance.close();
-        };
-        var base = $scope.prefix == 'koulutus' ? 'hakukohde' : 'koulutus';
-        var ret = $scope.prefix == 'koulutus' ?
-            TarjontaService.getKoulutuksenHakukohteet($scope.oid) :
-            TarjontaService.getHakukohteenKoulutukset($scope.oid);
-        ret.then(function(ret) {
-            for (var i in ret) {
-                var s = ret[i];
-                $scope.items.push({
-                    url: '#/' + base + '/' + s.oid,
-                    nimi: s.nimi
-                });
-            }
-        });
-    };
-    $scope.openLinksDialog = function(prefix, oid, nimi) {
-        var ns = $scope.$new();
-        ns.prefix = prefix;
-        ns.oid = oid;
-        ns.nimi = nimi;
-        $modal.open({
-            controller: LinksDialogCtrl,
-            templateUrl: 'partials/search/links-dialog.html',
-            scope: ns
-        });
-    };
+    if ($scope.selectedOrgOid !== OPH_ORG_OID || $scope.spec.filtersActive()) {
+        // estää angularia tuhoamasta "liian nopeasti" haettua hakutuloslistausta
+        // TODO ei toimi luotettavasti -> korjaa
+        setTimeout($scope.search, 100);
+    }
     $scope.luoUusiHakukohde = function() {
         if ($scope.selection.koulutukset.length === 0) {
             return; // napin pitäisi olla disabloituna, eli tätä ei pitäisi tapahtua, mutta varmuuden vuoksi..
@@ -735,104 +402,15 @@ angular.module('app.search.controllers', [
             }
         });
     };
-    //
-    // KJOH-810 Valittujen hakukohteiden liittaminen (tyhmiin?) ryhmiin
-    //
-    var AddHakukohdeToGroupController = function($scope, $modalInstance, valitutHakukohteet, ryhmat) {
-        $log.info('AddHakukohdeToGroupController()');
-        var init = function() {
-            $log.info('AddHakukohdeToGroupController.init()', valitutHakukohteet, ryhmat);
-            $scope.model = $scope.model ? $scope.model : {};
-            $scope.model.hakukohteet = valitutHakukohteet;
-            $scope.model.ryhmat = ryhmat;
-            $scope.model.completed = false;
-        };
-        init();
-        /**
-         * Valitsee ryhmän nimen.
-         *
-         * TODO käyttäjän kieli ryhmön nimen näyttäminen...
-         */
-        $scope.getNimi = function(ryhma) {
-            var nimi;
-            nimi = nimi ? nimi : ryhma.nimi.fi;
-            nimi = nimi ? nimi : ryhma.nimi.sv;
-            nimi = nimi ? nimi : ryhma.nimi.en;
-            nimi = nimi ? nimi : 'SIN NOMBRE?';
-            return nimi;
-        };
-        $scope.okLiita = function() {
-            $scope.teeLiitosRyhmaan('LISAA');
-        };
-        $scope.okPoista = function() {
-            $scope.teeLiitosRyhmaan('POISTA');
-        };
-        /**
-         * Liitä valitut hakukohteet valittuihin ryhmiin TAI poistaa ne niistä.
-         */
-        $scope.teeLiitosRyhmaan = function(tyyppi) {
-            $log.info('AddHakukohdeToGroupController.teeLiitosRyhmaan()', tyyppi);
-            var valitutRyhmat = $scope.model.ryhmat.filter(function(ryhma) {
-                return ryhma.selected;
-            });
-            $log.debug('  valitut ryhm\xE4t: ', valitutRyhmat);
-            // Create request data
-            var requestData = [];
-            angular.forEach(valitutRyhmat, function(ryhma) {
-                angular.forEach($scope.model.hakukohteet, function(hakukohdeOid) {
-                    requestData.push({
-                        toiminto: tyyppi,
-                        hakukohdeOid: hakukohdeOid,
-                        ryhmaOid: ryhma.oid
-                    });
-                });
-            });
-            // Tee pyyntö
-            $log.debug('call server with data', requestData);
-            TarjontaService.hakukohdeRyhmaOperaatiot(requestData).then(function(res) {
-                $log.info('RESULT OK', res);
-                $scope.model.completed = true;
-                $scope.model.result.status = res.status;
-                $scope.model.result.errors = res.errors;
-            }, function(err) {
-                $log.info('RESULT ERROR', err);
-                // TODO disable error dialog!
-                $scope.model.completed = true;
-                $scope.model.result.status = 'ERROR';
-                $scope.model.result.errors = [{
-                    errorCode: 'ERROR',
-                    errorField: 'none',
-                    errorMessageKey: 'system.error'
-                }];
-            });
-            $scope.model.completed = true;
-            $scope.model.result = {
-                status: 'OK',
-                errors: []
-            };
-        };
-        $scope.cancel = function() {
-            $log.info('AddHakukohdeToGroupController.cancel()');
-            $modalInstance.dismiss();
-        };
-        $scope.close = function() {
-            $log.info('AddHakukohdeToGroupController.close()');
-            $modalInstance.close();
-        };
-    };
     $scope.liitaHakukohteetRyhmaan = function() {
-        $log.info('liitaHakukohteetRyhmaan()', $scope.selection.hakukohteet);
-        $modal.open({
-            templateUrl: 'partials/search/liita-hakukohde-ryhmaan-dialog.html',
-            controller: AddHakukohdeToGroupController,
-            resolve: {
-                valitutHakukohteet: function() {
-                    return $scope.selection.hakukohteet;
-                },
-                ryhmat: function() {
-                    return OrganisaatioService.getRyhmat();
-                }
-            }
-        });
+        HakukohderyhmatActions.liitaHakukohteetRyhmaan($scope);
+    };
+    $scope.hakukohteetSelected = function() {
+        $scope.tabs.hakukohteet.active = true;
+        $scope.tabs.koulutukset.active = false;
+    };
+    $scope.koulutuksetSelected = function() {
+        $scope.tabs.hakukohteet.active = false;
+        $scope.tabs.koulutukset.active = true;
     };
 });
