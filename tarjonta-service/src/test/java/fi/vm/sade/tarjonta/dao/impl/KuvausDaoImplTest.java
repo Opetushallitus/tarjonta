@@ -53,13 +53,12 @@ public class KuvausDaoImplTest {
 
     @Before
     public void setUp() {
-        fixtures.createPersistedValintaperusteSoraKuvaus();
+        fixtures.createPersistedValintaperustekuvaukset();
     }
 
     @Test
-    public void testSearchByTerm() {
+    public void thatTermSearchMatches() {
         KuvausSearchV1RDTO searhParams = new KuvausSearchV1RDTO();
-        searhParams.setVuosi(2014);
         searhParams.setHakusana("Suomi");
 
         List<ValintaperusteSoraKuvaus> result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
@@ -75,6 +74,15 @@ public class KuvausDaoImplTest {
 
         searhParams.setHakusana(null);
         result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+        assertTrue(result.size() == 2);
+    }
+
+    @Test
+    public void thatAvainSearchMatches() {
+        KuvausSearchV1RDTO searhParams = new KuvausSearchV1RDTO();
+        searhParams.setAvain("valintaperusteryhma_01");
+
+        List<ValintaperusteSoraKuvaus> result = kuvausDAO.findBySearchSpec(searhParams, ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
         assertTrue(result.size() == 1);
     }
 }

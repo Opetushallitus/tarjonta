@@ -66,10 +66,8 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     var checkForUserOrgs = function() {
         //If user has not selected anything for oppilaitostyyppi and has oppilaitostyyppis in userOrgTypes, then
         //it is safe to assume that user is not ophadmin so restrict the query with first available oppilaitostyyppi
-        $log.info('SEARCH SPEC OPPILAITOSTYYPPI : ', $scope.model.searchSpec.oppilaitosTyyppi);
         if ($scope.model.searchSpec.oppilaitosTyyppi === undefined && $scope.model.userOrgTypes.length > 0) {
             $scope.model.searchSpec.oppilaitosTyyppi = $scope.model.userOrgTypes[0];
-            $log.info(' USER ORG TYPE SET :  ', $scope.model.userOrgTypes[0]);
         }
     };
     var showCreateNewDialog = function(vpkTyyppiParam) {
@@ -118,7 +116,6 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     var resolveKausi = function(kuvaukset, doAfter) {
         var resolvedKuvaukset = [];
         Koodisto.getAllKoodisWithKoodiUri(kausiKoodistoUri, $scope.model.userLang).then(function(res) {
-            //console.log("KAUDET",kuvaukset);
             var koodisto = koodistoToMap(res);
             for (var i in kuvaukset) {
                 var v = kuvaukset[i];
@@ -129,7 +126,6 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     };
     var resolveOppilaitosTyyppi = function(kuvaukset, doAfter) {
         Koodisto.getAllKoodisWithKoodiUri(oppilaitosKoodistoUri, $scope.model.userLang).then(function(res) {
-            //console.log("OPPILAITOSTYYPIT",kuvaukset);
             var koodisto = koodistoToMap(res);
             for (var i in kuvaukset) {
                 var v = kuvaukset[i];
@@ -188,12 +184,9 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     getUserOrgs();
     getYears();
     $scope.selectKuvaus = function(kuvaus) {
-        console.log('KUVAUS : ', kuvaus);
         if (kuvaus.organisaatioTyyppi !== undefined) {
-            console.log('KUVAUS: ', kuvaus);
             var kuvausEditUri = '/valintaPerusteKuvaus/edit/' + kuvaus.organisaatioTyyppi + '/' +
                 kuvaus.kuvauksenTyyppi + '/' + kuvaus.kuvauksenTunniste;
-            console.log('KUVAUS EDIT URI : ', kuvausEditUri);
             $location.path(kuvausEditUri);
         }
     };
@@ -254,8 +247,10 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
             });
         });
     };
+    $scope.reset = function() {
+        $scope.model.searchSpec = {};
+    };
     $scope.kuvauksetGetContent = function(row, col) {
-        console.log('GET CONTENT ' + col, row);
         switch (col) {
             case 'kausi':
                 return row.kausiNimi + ' ' + row.vuosi;
