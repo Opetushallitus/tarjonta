@@ -399,26 +399,32 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
                 return r.$resolved;
             })
         ]).then(function(results) {
-            var hasPermissionToEdit = results[0] === true;
             var hasPermissionToRemove = results[1] === true && results[2] === true;
-            var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
-            var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited(
-                $scope.model.hakukohde.hakuOid
-            );
             $scope.isRemovable = hasPermissionToRemove && TarjontaService.parameterCanRemoveHakukohdeFromHaku(
                 $scope.model.hakukohde.hakuOid
             );
-            if (canEditHakukohdeAtAll && hasPermissionToEdit) {
+            // Rekisterinpitäjällä on aina oikeudet muokata hakukohdetta
+            if (AuthService.isUserOph()) {
                 $scope.isMutable = true;
                 $scope.isPartiallyMutable = true;
-            }
-            else if (canPartiallyEditHakukohde && hasPermissionToEdit) {
-                $scope.isMutable = false;
-                $scope.isPartiallyMutable = true;
-            }
-            else {
-                $scope.isMutable = false;
-                $scope.isPartiallyMutable = false;
+            } else {
+                var hasPermissionToEdit = results[0] === true;
+                var canEditHakukohdeAtAll = TarjontaService.parameterCanEditHakukohde($scope.model.hakukohde.hakuOid);
+                var canPartiallyEditHakukohde = TarjontaService.parameterCanEditHakukohdeLimited(
+                    $scope.model.hakukohde.hakuOid
+                );
+                if (canEditHakukohdeAtAll && hasPermissionToEdit) {
+                    $scope.isMutable = true;
+                    $scope.isPartiallyMutable = true;
+                }
+                else if (canPartiallyEditHakukohde && hasPermissionToEdit) {
+                    $scope.isMutable = false;
+                    $scope.isPartiallyMutable = true;
+                }
+                else {
+                    $scope.isMutable = false;
+                    $scope.isPartiallyMutable = false;
+                }
             }
         });
     };
