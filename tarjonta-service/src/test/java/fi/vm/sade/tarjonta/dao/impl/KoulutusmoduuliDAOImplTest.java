@@ -71,10 +71,10 @@ public class KoulutusmoduuliDAOImplTest {
     private static final String SEARCH_BY_URI_A = "uri_170";
     private static final String SEARCH_BY_URI_B = "uri_2";
     private static final String SEARCH_BY_URI_C = "uri_a";
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliDAOImpl instance;
     private Koulutusmoduuli komo1, komo2, komo3, komo4, komo5, komo6;
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
     private EntityManager em;
 

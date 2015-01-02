@@ -62,7 +62,17 @@ app.controller('HakukohdeParentController', [
                 ], toteutusTyyppi);
         };
         $scope.needsHakukelpoisuus = function(toteutusTyyppi) {
-            return $scope.toisenAsteenKoulutus(toteutusTyyppi);
+            return !_.contains([
+                'PERUSOPETUKSEN_LISAOPETUS',
+                'LUKIOKOULUTUS',
+                'AMMATILLISEEN_PERUSKOULUTUKSEEN_OHJAAVA_JA_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_AMMATILLISEEN_PERUSKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'MAAHANMUUTTAJIEN_JA_VIERASKIELISTEN_LUKIOKOULUTUKSEEN_VALMISTAVA_KOULUTUS',
+                'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
+                'VAPAAN_SIVISTYSTYON_KOULUTUS',
+                'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
+                'AMMATILLINEN_PERUSTUTKINTO'
+            ], toteutusTyyppi);
         };
         $scope.needsLiitteidenToimitustiedot = function(toteutusTyyppi) {
             return _.contains([

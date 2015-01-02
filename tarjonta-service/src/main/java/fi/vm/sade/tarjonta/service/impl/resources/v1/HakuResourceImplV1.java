@@ -89,7 +89,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private KoodistoValidator koodistoValidator;
 
-    @Autowired(required = true)
+    @Autowired
     private PublicationDataService publication;
 
     @Autowired

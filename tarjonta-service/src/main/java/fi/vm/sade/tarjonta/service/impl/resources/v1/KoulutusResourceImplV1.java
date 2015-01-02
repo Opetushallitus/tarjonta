@@ -93,64 +93,64 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusSearchService koulutusSearchService;
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeSearchService hakukohdeSearchService;
 
-    @Autowired(required = true)
+    @Autowired
     private IndexerResource indexerResource;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutuskoodiRelations koulutuskoodiRelations;
 
-    @Autowired(required = true)
+    @Autowired
     private KoodiService koodiService;
 
-    @Autowired(required = true)
+    @Autowired
     private OrganisaatioService organisaatioService;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
 
-    @Autowired(required = true)
+    @Autowired
     private ConverterV1 converterV1;
 
-    @Autowired(required = true)
+    @Autowired
     private PermissionChecker permissionChecker;
 
-    @Autowired(required = true)
+    @Autowired
     private ContextDataService contextDataService;
 
-    @Autowired(required = true)
+    @Autowired
     private EntityConverterToRDTO converterToRDTO;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusDTOConverterToEntity convertToEntity;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private LinkingV1Resource linkingV1Resource;
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private OppilaitosKoodiRelations oppilaitosKoodiRelations;
 
-    @Autowired(required = true)
+    @Autowired
     private PublicationDataService publicationDataService;
 
     @Override

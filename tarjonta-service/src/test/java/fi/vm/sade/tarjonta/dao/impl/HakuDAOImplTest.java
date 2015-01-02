@@ -51,10 +51,10 @@ import static org.junit.Assert.assertTrue;
 @Transactional
 public class HakuDAOImplTest extends TestData {
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
     private EntityManager em;
-    @Autowired(required = true)
+    @Autowired
     private HakuDAOImpl dao;
 
     public HakuDAOImplTest() {

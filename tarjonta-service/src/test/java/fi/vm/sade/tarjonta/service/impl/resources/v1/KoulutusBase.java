@@ -140,10 +140,10 @@ abstract class KoulutusBase {
     @Autowired
     protected KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;
 
     protected IndexerResource indexerResourceMock;

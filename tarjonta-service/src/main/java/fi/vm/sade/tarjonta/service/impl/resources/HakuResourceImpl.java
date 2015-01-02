@@ -62,7 +62,7 @@ public class HakuResourceImpl implements HakuResource {
     @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private ConversionService conversionService;
 
     public static List<OidRDTO> convertOidList(List<String> oids) {

@@ -48,10 +48,10 @@ public class OppilaitosKoodiRelations {
 
     private static final Logger LOG = LoggerFactory.getLogger(OppilaitosKoodiRelations.class);
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
-    @Autowired(required = true)
+    @Autowired
     private OrganisaatioService organisaatioService;
 
     @Value("${root.organisaatio.oid:}")

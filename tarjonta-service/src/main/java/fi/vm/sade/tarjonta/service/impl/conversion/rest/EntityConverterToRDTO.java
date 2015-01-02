@@ -47,11 +47,11 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private static final KoulutusCommonConverter.Nullable YES = KoulutusCommonConverter.Nullable.YES;
     private static final String NO_OVERRIDE_URI = EntityConverterToKomoRDTO.NO_OVERRIDE_URI;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusCommonConverter commonConverter;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;

@@ -727,4 +727,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     public KoulutusmoduuliToteutus getFirstKoulutus() {
         return getKoulutusmoduuliToteutuses().iterator().next();
     }
+
+    public boolean isPoistettu() {
+        return TarjontaTila.POISTETTU.equals(getTila());
+    }
 }

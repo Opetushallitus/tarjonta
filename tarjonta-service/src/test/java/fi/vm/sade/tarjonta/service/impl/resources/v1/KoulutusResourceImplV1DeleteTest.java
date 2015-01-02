@@ -79,7 +79,7 @@ public class KoulutusResourceImplV1DeleteTest extends KoulutusBase {
     @Autowired
     private HakukohdeDAOImpl hakukohdeDao;
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
 
     private Hakukohde hakukohde;

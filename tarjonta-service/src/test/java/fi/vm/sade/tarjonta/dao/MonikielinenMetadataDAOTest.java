@@ -31,7 +31,7 @@ public class MonikielinenMetadataDAOTest {
     public static final String CAT_A = MetaCategory.SORA_KUVAUS.toString();
     public static final String CAT_B = MetaCategory.VALINTAPERUSTEKUVAUS.toString();
 
-    @Autowired(required = true)
+    @Autowired
     private MonikielinenMetadataDAO monikielinenMetadataDAO;
 
     @Test

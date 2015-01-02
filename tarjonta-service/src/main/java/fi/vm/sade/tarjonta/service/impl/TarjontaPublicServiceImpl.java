@@ -134,7 +134,7 @@ public class TarjontaPublicServiceImpl implements TarjontaPublicService {
     @Autowired
     private HakukohdeSearchService hakukohdeSearchService;
 
-    @Autowired(required = true)
+    @Autowired
     private OppilaitosKoodiRelations oppilaitosKoodiRelations;
 
     public TarjontaPublicServiceImpl() {

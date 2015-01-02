@@ -40,7 +40,7 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
  */
 public abstract class BaseRDTOConverter<FROM, TO> implements Converter<FROM, TO> {
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
 
     @Autowired

@@ -76,9 +76,9 @@ public class KomoResourceImplV1 implements KomoV1Resource {
     private EntityConverterToKomoRDTO converterToRDTO;
     @Autowired
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
-    @Autowired(required = true)
+    @Autowired
     private ContextDataService contextDataService;
 
     @Override

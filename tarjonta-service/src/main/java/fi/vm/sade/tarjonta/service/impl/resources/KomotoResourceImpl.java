@@ -49,7 +49,7 @@ public class KomotoResourceImpl implements KomotoResource {
 
     @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired(required = true)
+    @Autowired
     private ConversionService conversionService;
 
     // GET /komoto/hello

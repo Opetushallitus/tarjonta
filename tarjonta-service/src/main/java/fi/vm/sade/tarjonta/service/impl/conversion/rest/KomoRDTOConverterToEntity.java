@@ -59,7 +59,7 @@ public class KomoRDTOConverterToEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(KomoRDTOConverterToEntity.class);
     private static final boolean ALLOW_NULL_KOODI_URI = true;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
