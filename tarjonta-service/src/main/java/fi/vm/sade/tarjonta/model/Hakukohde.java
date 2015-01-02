@@ -657,6 +657,7 @@ public class Hakukohde extends TarjontaBaseEntity {
     public void filterHTMLFields() {
         filter(getHakukelpoisuusVaatimusKuvaus());
         filter(getValintaperusteKuvaus());
+        filter(getSoraKuvaus());
     }
 
     public String getUlkoinenTunniste() {

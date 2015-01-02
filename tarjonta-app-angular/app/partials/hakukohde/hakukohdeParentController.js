@@ -1274,6 +1274,14 @@ app.controller('HakukohdeParentController', [
                 populateHakukohteenYhteystiedot();
             }
         };
+        function initValintaperusteAndSoraKuvaukset() {
+            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
+                $scope.model.hakukohde.valintaperusteKuvaukset = {};
+            }
+            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
+                $scope.model.hakukohde.soraKuvaukset = {};
+            }
+        }
         $scope.model.saveParent = function(tila, hakukohdeValidationFunction) {
             if (!tila) {
                 throw 'tila cannot be undefined!';
@@ -1288,7 +1296,6 @@ app.controller('HakukohdeParentController', [
                     updateTila(tila);
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
                     $scope.removeEmptyKuvaukses();
-                    // Hakukohteiden liitteiden järjestys
                     angular.forEach($scope.model.hakukohde.hakukohteenLiitteet, function(liite, index) {
                         liite.jarjestys = index;
                     });
@@ -1307,6 +1314,7 @@ app.controller('HakukohdeParentController', [
                         $scope.model.hakukohde.koulutusmoduuliToteutusTarjoajatiedot = tarjoajatiedot;
                         $scope.model.hakukohde.$save().then(function(hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                            initValintaperusteAndSoraKuvaukset();
                             reloadHakukohdeModel();
                             if (hakukohde.errors === undefined || hakukohde.errors.length < 1) {
                                 $scope.model.hakukohdeOid = $scope.model.hakukohde.oid;
@@ -1315,12 +1323,6 @@ app.controller('HakukohdeParentController', [
                             }
                             else {
                                 $scope.showError(hakukohde.errors);
-                            }
-                            if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                            }
-                            if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                $scope.model.hakukohde.soraKuvaukset = {};
                             }
                             $scope.canEdit = true;
                             $scope.model.continueToReviewEnabled = true;
@@ -1335,6 +1337,7 @@ app.controller('HakukohdeParentController', [
                     else {
                         $scope.model.hakukohde.$update().then(function(hakukohde) {
                             $scope.model.hakukohde = new Hakukohde(hakukohde.result);
+                            initValintaperusteAndSoraKuvaukset();
                             reloadHakukohdeModel();
                             $scope.handleConfigurableHakuaika();
                             if (hakukohde.status === 'OK') {
@@ -1345,12 +1348,6 @@ app.controller('HakukohdeParentController', [
                                 $scope.showSuccess();
                             }
                             else {
-                                if ($scope.model.hakukohde.valintaperusteKuvaukset === undefined) {
-                                    $scope.model.hakukohde.valintaperusteKuvaukset = {};
-                                }
-                                if ($scope.model.hakukohde.soraKuvaukset === undefined) {
-                                    $scope.model.hakukohde.soraKuvaukset = {};
-                                }
                                 $scope.showError(hakukohde.errors);
                             }
                             $scope.modelInitialState = null;
