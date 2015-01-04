@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -291,12 +290,11 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     @Override
     public void safeDelete(final String hakuOid, final String userOid) {
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
-        List<String> oids = Lists.<String>newArrayList();
-        oids.add(hakuOid);
-        Haku findByOid = findByOid(hakuOid);
-        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
-        findByOid.setTila(TarjontaTila.POISTETTU);
-        findByOid.setLastUpdatedByOid(userOid);
+        Haku haku = findByOid(hakuOid);
+        Preconditions.checkArgument(haku != null, "Delete failed, entity not found.");
+        haku.setTila(TarjontaTila.POISTETTU);
+        haku.setLastUpdatedByOid(userOid);
+        haku.setLastUpdateDate(new Date());
     }
 
 }

@@ -30,23 +30,6 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
-/**
- * Supported operations.
- * <p/>
- * <pre>
- * GET    /v1/haku/              ?count=100 & startIndex=0      -- list of oids
- * GET    /v1/haku/multi              ?oid=oid1&oid=oid2&oid=oidN... -- json of hakus
- * GET    /v1/haku/oid                                          -- json of haku
- * GET    /v1/haku/oid/hakukohde ?count=100 & startIndex=0      -- list of oids
- * GET    /v1/haku/oid/state                                    -- state
- * PUT    /v1/haku/oid/state                                    -- update state
- * POST   /v1/haku                                              -- create haku
- * POST   /v1/haku/oid                                          -- update haku
- * DELETE /v1/haku/oid                                          -- remove haku
- * </pre>
- *
- * @author mlyly
- */
 @Path("/v1/haku")
 @Api(value = "/v1/haku", description = "Haun REST-rajapinnan versio 1 operaatiot")
 public interface HakuV1Resource {
