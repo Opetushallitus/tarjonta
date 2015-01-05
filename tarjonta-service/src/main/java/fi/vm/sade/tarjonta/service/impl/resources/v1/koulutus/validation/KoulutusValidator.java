@@ -457,7 +457,7 @@ public class KoulutusValidator {
     public static void validateMimeType(String mimeType, final String errorInObjectfieldname, ResultV1RDTO result) {
         if (mimeType == null || mimeType.isEmpty()) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_missing_mime_type"));
-        } else if (ImageMimeValidator.validate(mimeType)) {
+        } else if (!ImageMimeValidator.isValid(mimeType)) {
             result.addError(ErrorV1RDTO.createValidationError(errorInObjectfieldname, "error_unrecognized_mime_type"));
         }
     }

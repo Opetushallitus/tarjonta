@@ -54,25 +54,25 @@ public class MassCommitProcess {
 
     private ProcessV1RDTO state;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private MassakopiointiDAO massakopiointi;
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private IndexerResource indexerResource;
 
-    @Autowired(required = true)
+    @Autowired
     private HakuDAO hakuDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private OidService oidService;
 
     private int countHakukohde = 0;

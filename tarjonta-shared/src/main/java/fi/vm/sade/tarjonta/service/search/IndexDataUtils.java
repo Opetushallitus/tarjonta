@@ -15,20 +15,6 @@
  */
 package fi.vm.sade.tarjonta.service.search;
 
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_EN;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_FI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_URI;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KAUSI_SV;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
-
-import java.util.*;
-
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrInputDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisCriteriaType;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
@@ -38,11 +24,19 @@ import fi.vm.sade.koodisto.util.KoodiServiceSearchCriteriaBuilder;
 import fi.vm.sade.koodisto.util.KoodistoHelper;
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.ORG_OID;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.TILA;
 
 /**
- *
  * @author Markus
- *
  */
 public class IndexDataUtils {
 
@@ -148,8 +142,8 @@ public class IndexDataUtils {
     }
 
     public static KoodistoKoodi createKoodistoKoodi(String koodiUri,
-            String koodiFi, String koodiSv,
-            String koodiEn, SolrDocument koulutusDoc) {
+                                                    String koodiFi, String koodiSv,
+                                                    String koodiEn, SolrDocument koulutusDoc) {
         final Object valueO = koulutusDoc.getFieldValue(koodiUri);
         String value;
         if (valueO instanceof List) {
@@ -184,52 +178,52 @@ public class IndexDataUtils {
     }
 
     public static Tarjoaja createTarjoaja(SolrDocument koulutusDoc,
-            Map<String, OrganisaatioPerustieto> orgResponse, String defaultTarjoaja) {
-      final Tarjoaja tarjoaja = new Tarjoaja();
+                                          Map<String, OrganisaatioPerustieto> orgResponse, String defaultTarjoaja) {
+        final Tarjoaja tarjoaja = new Tarjoaja();
 
-      if (koulutusDoc.getFieldValue(ORG_OID) != null ) {
-          ArrayList<String> orgOidCandidates = (ArrayList<String>) koulutusDoc.getFieldValue(ORG_OID);
+        if (koulutusDoc.getFieldValue(ORG_OID) != null) {
+            ArrayList<String> orgOidCandidates = (ArrayList<String>) koulutusDoc.getFieldValue(ORG_OID);
 
-          // If query param for organization -> try to find matching organization in Solr doc
-          if (defaultTarjoaja != null) {
+            // If query param for organization -> try to find matching organization in Solr doc
+            if (defaultTarjoaja != null) {
 
-              for ( String tmpOrgOid : orgOidCandidates ) {
+                for (String tmpOrgOid : orgOidCandidates) {
 
-                  // Need to check whole organization path
-                  OrganisaatioPerustieto organisaatioPerustieto = orgResponse.get(tmpOrgOid);
-                  ArrayList<String> path = new ArrayList<String>();
-                  path.add(tmpOrgOid);
-                  path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
+                    // Need to check whole organization path
+                    OrganisaatioPerustieto organisaatioPerustieto = orgResponse.get(tmpOrgOid);
+                    ArrayList<String> path = new ArrayList<String>();
+                    path.add(tmpOrgOid);
+                    path.addAll(Arrays.asList(organisaatioPerustieto.getParentOidPath().split("/")));
 
-                  if (path.indexOf(defaultTarjoaja) != -1) {
-                      tarjoaja.setOid(tmpOrgOid);
-                      break;
-                  }
-              }
-          }
+                    if (path.indexOf(defaultTarjoaja) != -1) {
+                        tarjoaja.setOid(tmpOrgOid);
+                        break;
+                    }
+                }
+            }
 
-          // If no query param or invalid query param -> use first matching tarjoaja
-          if ( tarjoaja.getOid() == null ) {
-              for (String tmpOrgOid : orgOidCandidates) {
-                  if (orgResponse.get(tmpOrgOid) != null) {
-                      tarjoaja.setOid(tmpOrgOid);
-                      break;
-                  }
-              }
-          }
-      }
+            // If no query param or invalid query param -> use first matching tarjoaja
+            if (tarjoaja.getOid() == null) {
+                for (String tmpOrgOid : orgOidCandidates) {
+                    if (orgResponse.get(tmpOrgOid) != null) {
+                        tarjoaja.setOid(tmpOrgOid);
+                        break;
+                    }
+                }
+            }
+        }
 
-      // Fallback KJOH-778 monta tarjoajaa
-      else if (koulutusDoc.getFieldValue("orgoid_s") != null) {
-          tarjoaja.setOid("" + koulutusDoc.getFieldValue("orgoid_s"));
-      }
+        // Fallback KJOH-778 monta tarjoajaa
+        else if (koulutusDoc.getFieldValue("orgoid_s") != null) {
+            tarjoaja.setOid("" + koulutusDoc.getFieldValue("orgoid_s"));
+        }
 
-      final OrganisaatioPerustieto organisaatio = orgResponse.get(tarjoaja.getOid());
-      if (organisaatio != null) {
-          tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
-      }
+        final OrganisaatioPerustieto organisaatio = orgResponse.get(tarjoaja.getOid());
+        if (organisaatio != null) {
+            tarjoaja.setNimi(getOrganisaatioNimi(organisaatio));
+        }
 
-      return tarjoaja;
+        return tarjoaja;
     }
 
     private static Nimi getOrganisaatioNimi(
@@ -249,16 +243,24 @@ public class IndexDataUtils {
         if (koodi != null) {
             KoodiMetadataType metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("fi"));
             add(doc, KAUSI_FI, metadata.getNimi());
+
             metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("sv"));
             add(doc, KAUSI_SV, metadata.getNimi());
+
             metadata = IndexDataUtils.getKoodiMetadataForLanguage(koodi, new Locale("en"));
             add(doc, KAUSI_EN, metadata.getNimi());
-            add(doc, KAUSI_URI,
-                    koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
+
+            add(doc, KAUSI_URI, koodi.getKoodiUri() + IndexDataUtils.KOODI_URI_AND_VERSION_SEPARATOR + koodi.getVersio());
         }
     }
 
-    public static void addKoodiLyhytnimiTiedot(SolrInputDocument doc, String koodiUri, KoodiService koodiService, String uriField, String fiField, String svField, String enField) {
+    public static void addKoodiLyhytnimiTiedot(SolrInputDocument doc,
+                                               String koodiUri,
+                                               KoodiService koodiService,
+                                               String uriField,
+                                               String fiField,
+                                               String svField,
+                                               String enField) {
         if (koodiUri == null) {
             return;
         }

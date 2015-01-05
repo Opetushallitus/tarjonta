@@ -51,8 +51,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiUrisV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.HenkiloTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
@@ -66,6 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createMockBuilder;
 import static org.easymock.EasyMock.expect;
 import org.joda.time.DateTime;
 import static org.junit.Assert.assertEquals;
@@ -138,10 +140,10 @@ abstract class KoulutusBase {
     @Autowired
     protected KoulutusmoduuliDAO koulutusmoduuliDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusSisaltyvyysDAO KoulutusSisaltyvyysDAO;
 
     protected IndexerResource indexerResourceMock;
@@ -153,7 +155,8 @@ abstract class KoulutusBase {
     protected ContextDataService contextDataService;
     protected KoodistoURI koodistoUri;
     protected KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
-    protected TarjontaSearchService tarjontaSearchService;
+    protected KoulutusSearchService koulutusSearchService;
+    protected HakukohdeSearchService hakukohdeSearchService;
     protected OppilaitosKoodiRelations oppilaitosKoodiRelations;
     protected HakukohdeDAO hakukohdeDAO;
     protected LinkingV1Resource linkingV1Resource;
@@ -184,7 +187,8 @@ abstract class KoulutusBase {
         koodistoUri = createMock(KoodistoURI.class);
         contextDataService = new ContextDataServiceImpl();
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
-        tarjontaSearchService = createMock(TarjontaSearchService.class);
+        koulutusSearchService = createMock(KoulutusSearchService.class);
+        hakukohdeSearchService = createMock(HakukohdeSearchService.class);
         oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
         tarjontaKoodistoHelperMock = createMock(TarjontaKoodistoHelper.class);
         publicationDataService = createMock(PublicationDataService.class);
@@ -297,7 +301,7 @@ abstract class KoulutusBase {
         permissionChecker = createMock(PermissionChecker.class);
         koodistoUri = createMock(KoodistoURI.class);
         koulutusSisaltyvyysDAO = createMock(KoulutusSisaltyvyysDAO.class);
-        tarjontaSearchService = createMock(TarjontaSearchService.class);
+        koulutusSearchService = createMock(KoulutusSearchService.class);
         hakukohdeDAO = createMock(HakukohdeDAO.class);
         oppilaitosKoodiRelations = createMock(OppilaitosKoodiRelations.class);
         linkingV1Resource = createMock(LinkingV1Resource.class);
@@ -308,7 +312,8 @@ abstract class KoulutusBase {
         Whitebox.setInternalState(instance, "permissionChecker", permissionChecker);
         Whitebox.setInternalState(instance, "contextDataService", contextDataService);
         Whitebox.setInternalState(instance, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
-        Whitebox.setInternalState(instance, "tarjontaSearchService", tarjontaSearchService);
+        Whitebox.setInternalState(instance, "koulutusSearchService", koulutusSearchService);
+        Whitebox.setInternalState(instance, "hakukohdeSearchService", hakukohdeSearchService);
         Whitebox.setInternalState(instance, "hakukohdeDAO", hakukohdeDAO);
         Whitebox.setInternalState(instance, "oppilaitosKoodiRelations", oppilaitosKoodiRelations);
         Whitebox.setInternalState(instance, "linkingV1Resource", linkingV1Resource);

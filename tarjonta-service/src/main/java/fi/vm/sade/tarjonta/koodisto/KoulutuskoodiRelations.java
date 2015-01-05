@@ -83,9 +83,9 @@ public class KoulutuskoodiRelations<TYPE extends KoulutusmoduuliStandardRelation
         KoodistoURI.KOODISTO_TARJONTA_KOULUTUSTYYPPI
     };
 
-    @Autowired(required = true)
+    @Autowired
     private TarjontaKoodistoHelper tarjontaKoodistoHelper;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusCommonConverter commonConverter;
 
     /**

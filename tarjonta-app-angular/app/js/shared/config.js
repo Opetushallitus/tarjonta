@@ -12,42 +12,41 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-
 /*
- * Help: 
+ * Help:
  * Add service factory(/js/shared/config.js) to your module.
  * Module name : 'config'.
  * Factory name : 'Config'.
- * 
+ *
  * FAQ:
  * How to get an environment variable by a key: <factory-object>.env[<string-key>].
  * How to get AngularJS application variable by a key: <factory-object>.app[<string-key>].
- * 
+ *
  * Example:
  * cfg.env["koodi-uri.koulutuslaji.nuortenKoulutus"];
  * result value : "koulutuslaji_n"
  */
 angular.module('config', []).factory('Config', function(globalConfig) {
-    var factoryObj = (function() {
-        var ENV_CONF = 'env'; //system properties from common properties files, service uris etc.
-        var APP_CONF = 'app'; //AngularJS application properties
-        var DEV_CONF = 'developerConfigLocation'; //AngularJS developer properties
-
-        if (globalConfig === null || typeof globalConfig === 'undefined')
-            throw "Configuration variable cannot be null.";
-
-        if (globalConfig[ENV_CONF] === null || typeof globalConfig[ENV_CONF] === 'undefined')
-            throw "Environment data cannot be null.";
-
-        if (globalConfig[APP_CONF] === null || typeof globalConfig[APP_CONF] === 'undefined')
-            throw "Angular application data cannot be null.";
-
+    var factoryObj = function() {
+        var ENV_CONF = 'env';
+        //system properties from common properties files, service uris etc.
+        var APP_CONF = 'app';
+        //AngularJS application properties
+        var DEV_CONF = 'developerConfigLocation';
+        //AngularJS developer properties
+        if (globalConfig === null || typeof globalConfig === 'undefined') {
+            throw 'Configuration variable cannot be null.';
+        }
+        if (globalConfig[ENV_CONF] === null || typeof globalConfig[ENV_CONF] === 'undefined') {
+            throw 'Environment data cannot be null.';
+        }
+        if (globalConfig[APP_CONF] === null || typeof globalConfig[APP_CONF] === 'undefined') {
+            throw 'Angular application data cannot be null.';
+        }
         var output = {};
         output[ENV_CONF] = angular.copy(globalConfig[ENV_CONF]);
         output[APP_CONF] = angular.copy(globalConfig[APP_CONF]);
-
         return output;
-    }());
+    }();
     return factoryObj;
 });
-

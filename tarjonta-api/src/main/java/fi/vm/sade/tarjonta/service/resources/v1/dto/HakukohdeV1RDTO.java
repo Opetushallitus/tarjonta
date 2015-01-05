@@ -499,4 +499,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public boolean isLukioKoulutus() {
         return ToteutustyyppiEnum.LUKIOKOULUTUS.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
     }
+
+    @JsonIgnore
+    public boolean isAmmatillinenPerustutkinto() {
+        return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
+    }
 }

@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import javax.persistence.EntityManagerFactory;
 
+import fi.vm.sade.tarjonta.matchers.KoodistoCriteriaMatcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

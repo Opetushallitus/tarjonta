@@ -5,6 +5,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Hakukohde;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeLiiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
@@ -12,24 +14,30 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.KoodistoKoodi;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
+import fi.vm.sade.tarjonta.shared.KoulutusasteResolver;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static fi.vm.sade.tarjonta.shared.KoulutusasteResolver.isToisenAsteenKoulutus;
-
-/*
- * @author: Tuomas Katva 15/11/13
- */
+@Component
 public class HakukohdeValidator {
 
     private static final int MAX_PRECISION = 2;
 
-    private static List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @Autowired
+    public HakukohdeValidator(KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO) {
+        this.koulutusmoduuliToteutusDAO = koulutusmoduuliToteutusDAO;
+    }
+
+    private List<HakukohdeValidationMessages> validateCommonProperties(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
@@ -66,7 +74,7 @@ public class HakukohdeValidator {
         return validationMessages;
     }
 
-    public static List<HakukohdeValidationMessages> validateAikuLukioHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public List<HakukohdeValidationMessages> validateAikuLukioHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
@@ -79,11 +87,12 @@ public class HakukohdeValidator {
         return validationMessages;
     }
 
-    public static List<HakukohdeValidationMessages> validateToisenAsteenHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public List<HakukohdeValidationMessages> validateToisenAsteenHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
 
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
         validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
+        validationMessages.addAll(validateDuplicateHakukohteet(hakukohdeRDTO));
 
         if (Strings.isNullOrEmpty(hakukohdeRDTO.getHakukohteenNimiUri())) {
             validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_NIMI_MISSING);
@@ -101,7 +110,7 @@ public class HakukohdeValidator {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING);
                 } else if (painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
-                } else if(painokerroinHasInvalidPrecision(painotettavaOppiaineV1RDTO)) {
+                } else if (painokerroinHasInvalidPrecision(painotettavaOppiaineV1RDTO)) {
                     validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
                 }
 
@@ -114,19 +123,19 @@ public class HakukohdeValidator {
         return validationMessages;
     }
 
-    private static boolean painokerroinHasInvalidPrecision(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+    private boolean painokerroinHasInvalidPrecision(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
         return painotettavaOppiaineV1RDTO.getPainokerroin().scale() > MAX_PRECISION;
     }
 
-    private static boolean painokerroinTooLarge(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+    private boolean painokerroinTooLarge(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
         return painotettavaOppiaineV1RDTO.getPainokerroin().compareTo(new BigDecimal(20)) > 0;
     }
 
-    private static boolean painokerroinTooSmall(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
+    private boolean painokerroinTooSmall(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {
         return painotettavaOppiaineV1RDTO.getPainokerroin().compareTo(new BigDecimal(1)) < 0;
     }
 
-    public static List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
+    public List<HakukohdeValidationMessages> validateHakukohde(HakukohdeV1RDTO hakukohdeRDTO) {
         List<HakukohdeValidationMessages> validationMessages = new ArrayList<HakukohdeValidationMessages>();
 
         validationMessages.addAll(validateCommonProperties(hakukohdeRDTO));
@@ -151,17 +160,47 @@ public class HakukohdeValidator {
         return validationMessages;
     }
 
+    private List<HakukohdeValidationMessages> validateDuplicateHakukohteet(HakukohdeV1RDTO hakukohdeRDTO) {
+        List<HakukohdeValidationMessages> messages = new ArrayList<HakukohdeValidationMessages>();
+
+        if (hakukohdeRDTO.isLukioKoulutus() || hakukohdeRDTO.isAmmatillinenPerustutkinto()) {
+            List<String> koulutusOids = hakukohdeRDTO.getHakukohdeKoulutusOids();
+            for (String koulutusOid : koulutusOids) {
+                KoulutusmoduuliToteutus komoto = koulutusmoduuliToteutusDAO.findByOid(koulutusOid);
+                if(isDuplicateHakukohde(hakukohdeRDTO, komoto)) {
+                    messages.add(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI);
+                }
+            }
+        }
+        return messages;
+    }
+
+    private boolean isDuplicateHakukohde(HakukohdeV1RDTO hakukohdeDTO, KoulutusmoduuliToteutus komoto) {
+        String hakuOid = hakukohdeDTO.getHakuOid();
+        String nimiUri = hakukohdeDTO.getHakukohteenNimiUri();
+
+        for (Hakukohde hakukohde : komoto.getHakukohdes()) {
+            if (hakukohde.getHaku().getOid().equals(hakuOid) &&
+                    hakukohde.getHakukohdeNimi().equals(nimiUri) &&
+                    !hakukohde.isPoistettu()) {
+                if (!hakukohde.getOid().equals(hakukohdeDTO.getOid())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Tarkista että kaikilla koulutuksilla sama vuosi/kausi ja että niiden tila
      * ei ole peruttu, poistettu
      *
      * @param komotot
      */
-    public static List<HakukohdeValidationMessages> checkKoulutukset(Collection<KoulutusmoduuliToteutus> komotot) {
+    public List<HakukohdeValidationMessages> checkKoulutukset(Collection<KoulutusmoduuliToteutus> komotot) {
         String kausi = null;
         Integer vuosi = null;
 
-//        boolean tilaOk = false;
         if (komotot.size() == 0) {
             return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_MISSING);
         }
@@ -176,18 +215,11 @@ public class HakukohdeValidator {
                 }
             }
 
-//            if(komoto.getTila()!=TarjontaTila.PERUTTU && komoto.getTila()!=TarjontaTila.POISTETTU) {
-//            	tilaOk = true;
-//            }
         }
-
-//        if (!tilaOk) {
-//            return Lists.newArrayList(HakukohdeValidationMessages.HAKUKOHDE_KOULUTUS_TILA_INVALID);
-//        }
         return Collections.EMPTY_LIST;
     }
 
-    public static List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite) {
+    public List<HakukohdeValidationMessages> validateLiite(HakukohdeLiiteV1RDTO liite) {
 
         Set<HakukohdeValidationMessages> liiteValidationMsgs = new HashSet<HakukohdeValidationMessages>();
 
@@ -212,7 +244,7 @@ public class HakukohdeValidator {
         return new ArrayList<HakukohdeValidationMessages>(liiteValidationMsgs);
     }
 
-    public static List<HakukohdeValidationMessages> validateLiites(List<HakukohdeLiiteRDTO> liites) {
+    public List<HakukohdeValidationMessages> validateLiites(List<HakukohdeLiiteRDTO> liites) {
 
         Set<HakukohdeValidationMessages> liiteValidationMsgs = new HashSet<HakukohdeValidationMessages>();
 
@@ -232,7 +264,7 @@ public class HakukohdeValidator {
 
     }
 
-    public static List<HakukohdeValidationMessages> validateValintakokees(List<ValintakoeV1RDTO> valintakoeV1RDTOs) {
+    public List<HakukohdeValidationMessages> validateValintakokees(List<ValintakoeV1RDTO> valintakoeV1RDTOs) {
         Set<HakukohdeValidationMessages> validationMessages = new HashSet<HakukohdeValidationMessages>();
 
         for (Iterator<ValintakoeV1RDTO> i = valintakoeV1RDTOs.iterator(); i.hasNext(); ) {
@@ -251,7 +283,7 @@ public class HakukohdeValidator {
         return new ArrayList<HakukohdeValidationMessages>(validationMessages);
     }
 
-    private static boolean isEmptyValintakoe(ValintakoeV1RDTO valintakoeV1RDTO) {
+    private boolean isEmptyValintakoe(ValintakoeV1RDTO valintakoeV1RDTO) {
         return Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoeNimi())
                 && Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakoetyyppi())
                 && (valintakoeV1RDTO.getValintakokeenKuvaus() == null || Strings.isNullOrEmpty(valintakoeV1RDTO.getValintakokeenKuvaus().getTeksti()))
@@ -259,7 +291,7 @@ public class HakukohdeValidator {
                 && !valintakoeV1RDTO.hasPisterajat();
     }
 
-    private static void validateNames(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
+    private void validateNames(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
 
         if (valintakoeV1RDTO.hasPisterajat()) {
             return;
@@ -273,7 +305,7 @@ public class HakukohdeValidator {
         }
     }
 
-    private static void validateAjankohdat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
+    private void validateAjankohdat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
         for (ValintakoeAjankohtaRDTO ajankohta : valintakoeV1RDTO.getValintakoeAjankohtas()) {
             if (ajankohta.getLoppuu() == null || ajankohta.getAlkaa() == null) {
                 validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_START_OR_END_DATE_MISSING);
@@ -288,7 +320,7 @@ public class HakukohdeValidator {
         }
     }
 
-    private static void validatePisterajat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
+    private void validatePisterajat(Set<HakukohdeValidationMessages> validationMessages, ValintakoeV1RDTO valintakoeV1RDTO) {
         if (valintakoeV1RDTO.hasPisterajat()) {
             if (validPrecision(valintakoeV1RDTO)) {
                 if (validRestictions(valintakoeV1RDTO)) {
@@ -310,7 +342,7 @@ public class HakukohdeValidator {
         }
     }
 
-    private static boolean validLisanaytot(ValintakoeV1RDTO valintakoeV1RDTO) {
+    private boolean validLisanaytot(ValintakoeV1RDTO valintakoeV1RDTO) {
         for (ValintakoePisterajaV1RDTO valintakoePisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
             if (valintakoePisterajaV1RDTO.isLisapisteet()) {
                 Map<String, String> lisanaytot = valintakoeV1RDTO.getLisanaytot();
@@ -322,7 +354,7 @@ public class HakukohdeValidator {
         return true;
     }
 
-    private static boolean validKuvaus(ValintakoeV1RDTO valintakoeV1RDTO) {
+    private boolean validKuvaus(ValintakoeV1RDTO valintakoeV1RDTO) {
         for (ValintakoePisterajaV1RDTO valintakoePisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
             if (valintakoePisterajaV1RDTO.isPaasykoe()) {
                 Map<String, String> kuvaukset = valintakoeV1RDTO.getKuvaukset();
@@ -334,7 +366,7 @@ public class HakukohdeValidator {
         return true;
     }
 
-    private static boolean allEmptyValues(Map<String, String> kuvaukset) {
+    private boolean allEmptyValues(Map<String, String> kuvaukset) {
         boolean allEmpty = true;
         for (Map.Entry<String, String> entry : kuvaukset.entrySet()) {
             if (StringUtils.isNotBlank(entry.getValue())) {
@@ -344,7 +376,7 @@ public class HakukohdeValidator {
         return allEmpty;
     }
 
-    private static boolean validPrecision(ValintakoeV1RDTO valintakoeV1RDTO) {
+    private boolean validPrecision(ValintakoeV1RDTO valintakoeV1RDTO) {
         for (ValintakoePisterajaV1RDTO valintakoePisterajaV1RDTO : valintakoeV1RDTO.getPisterajat()) {
 
             BigDecimal alinHyvaksyttyPistemaara = valintakoePisterajaV1RDTO.getAlinHyvaksyttyPistemaara();
@@ -369,7 +401,7 @@ public class HakukohdeValidator {
         return true;
     }
 
-    private static boolean validRestictions(ValintakoeV1RDTO valintakoeV1RDTO) {
+    private boolean validRestictions(ValintakoeV1RDTO valintakoeV1RDTO) {
 
         ValintakoePisterajaV1RDTO paasykoerajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.PAASYKOE);
         ValintakoePisterajaV1RDTO lisapisterajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.LISAPISTEET);
@@ -405,34 +437,34 @@ public class HakukohdeValidator {
         return true;
     }
 
-    private static double getYlinPistemaara(ValintakoePisterajaV1RDTO pisteraja) {
+    private double getYlinPistemaara(ValintakoePisterajaV1RDTO pisteraja) {
         if (pisteraja != null) {
             return pisteraja.getYlinPistemaara().doubleValue();
         }
         return Double.parseDouble("0.0");
     }
 
-    private static double getAlinPistemaara(ValintakoePisterajaV1RDTO pisteraja) {
+    private double getAlinPistemaara(ValintakoePisterajaV1RDTO pisteraja) {
         if (pisteraja != null) {
             return pisteraja.getAlinPistemaara().doubleValue();
         }
         return Double.parseDouble("0.0");
     }
 
-    private static boolean rowRestrictionsViolated(double pkAlin, double pkYlin, double pkAlinHyvaksytty) {
+    private boolean rowRestrictionsViolated(double pkAlin, double pkYlin, double pkAlinHyvaksytty) {
         return pkAlin > pkYlin ||
                 pkAlinHyvaksytty < pkAlin ||
                 pkAlinHyvaksytty > pkYlin;
     }
 
-    private static boolean rowRestrictionsViolated(double pkAlin, double pkYlin) {
+    private boolean rowRestrictionsViolated(double pkAlin, double pkYlin) {
         return pkAlin > pkYlin;
     }
 
-    private static boolean isOutOfRange(double pkAlin,
-                                        double pkYlin,
-                                        double lpAlin,
-                                        double lpYlin) {
+    private boolean isOutOfRange(double pkAlin,
+                                 double pkYlin,
+                                 double lpAlin,
+                                 double lpYlin) {
         return pkAlin < 0 ||
                 pkAlin > 10 ||
                 pkYlin < 0 ||
@@ -443,11 +475,11 @@ public class HakukohdeValidator {
                 lpYlin > 10;
     }
 
-    private static boolean sumsExceedMaximum(double pkYlin, double lpYlin) {
+    private boolean sumsExceedMaximum(double pkYlin, double lpYlin) {
         return pkYlin + lpYlin > 10;
     }
 
-    private static boolean validKokonaispisteet(ValintakoeV1RDTO valintakoeV1RDTO) {
+    private boolean validKokonaispisteet(ValintakoeV1RDTO valintakoeV1RDTO) {
         ValintakoePisterajaV1RDTO kokonaispisterajat = valintakoeV1RDTO.getValintakoePisteraja(ValintakoePisterajaV1RDTO.KOKONAISPISTEET);
 
         if (kokonaispisterajat == null) {
@@ -478,17 +510,17 @@ public class HakukohdeValidator {
         return true;
     }
 
-    private static boolean kpAlinHViolates(double kpAlinH, double pkAlin, double pkYlin,
-                                           double lpAlin, double lpYlin) {
+    private boolean kpAlinHViolates(double kpAlinH, double pkAlin, double pkYlin,
+                                    double lpAlin, double lpYlin) {
         return kpAlinH < (pkAlin + lpAlin) || kpAlinH > (pkYlin + lpYlin);
     }
 
-    public static ResultV1RDTO<ValitutKoulutuksetV1RDTO> getValidKomotoSelection(final KoulutuksetVastaus kv) {
+    public ResultV1RDTO<ValitutKoulutuksetV1RDTO> getValidKomotoSelection(final KoulutuksetVastaus kv) {
         ResultV1RDTO<ValitutKoulutuksetV1RDTO> result = new ResultV1RDTO<ValitutKoulutuksetV1RDTO>();
         ValitutKoulutuksetV1RDTO dto = new ValitutKoulutuksetV1RDTO();
-        Map<String, Set<String>> mapSelectedKomos = Maps.<String, Set<String>>newHashMap();
+        Map<String, Set<String>> mapSelectedKomos = Maps.newHashMap();
 
-        Map<HakukohdeValidationMessages, Set<String>> map = Maps.<HakukohdeValidationMessages, Set<String>>newHashMap();
+        Map<HakukohdeValidationMessages, Set<String>> map = Maps.newHashMap();
 
         for (KoulutusPerustieto kp : kv.getKoulutukset()) {
 
@@ -518,9 +550,9 @@ public class HakukohdeValidator {
                 } else if (!isEqualKoodistoKoodiUri(kp.getKoulutuksenAlkamiskausi(), o.getKoulutuksenAlkamiskausi())) {
                     //koulutus koodi must be same
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_KAUSI_URI);
-                } else if (isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
+                } else if (KoulutusasteResolver.isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !kp.getTarjoaja().getOid().equals(o.getTarjoaja().getOid())) {
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_ERI_TARJOAJAT);
-                } else if (isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
+                } else if (KoulutusasteResolver.isToisenAsteenKoulutus(kp.getToteutustyyppi()) && !isEqualKoodistoKoodiUri(kp.getPohjakoulutusvaatimus(), o.getPohjakoulutusvaatimus())) {
                     createError(kp.getKomotoOid(), o.getKomotoOid(), mapSelectedKomos, map, HakukohdeValidationMessages.KOMOTO_ERI_POHJAKOULUTUSVAATIMUKSET);
                 }
             }
@@ -562,7 +594,7 @@ public class HakukohdeValidator {
         return result;
     }
 
-    private static void createError(
+    private void createError(
             final String oid1,
             final String oid2,
             final Map<String, Set<String>> mapSelectedKomos,
@@ -577,7 +609,7 @@ public class HakukohdeValidator {
         mapSelectedKomos.get(oid1).add(oid2);
     }
 
-    private static boolean isEqualKoodistoKoodiUri(KoodistoKoodi koodi1, KoodistoKoodi koodi2) {
+    private boolean isEqualKoodistoKoodiUri(KoodistoKoodi koodi1, KoodistoKoodi koodi2) {
         if (koodi1 == null
                 || koodi1.getUri() == null
                 || koodi2 == null

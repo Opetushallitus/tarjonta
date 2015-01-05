@@ -1,4 +1,4 @@
-<div id="kopioi-koulutus-dialogi">
+<div id="kopioi-koulutus-dialogi" data-ng-controller="LocalisationCtrl">
     <div class="modal-header">
         <h3><span  tt="koulutus.copy.otsikko">Kopioi tai siirrä koulutus</span></h3>
     </div>
@@ -16,8 +16,8 @@
                     <span tt="koulutus.copy.siirra-tai-kopioi">Siirrä tai kopioi</span>
                 </td>
                 <td style="vertical-align: top">
-                    <input type="radio" ng-model="model.mode" value="COPY"><span tt="koulutus.copy.kopioi">Kopioi</span><br/>
-                    <input type="radio" ng-model="model.mode" value="MOVE"><span tt="koulutus.copy.siirra">Siirrä</span><br/>
+                    <label><input type="radio" ng-model="model.mode" value="COPY"><span tt="koulutus.copy.kopioi">Kopioi</span></label><br/>
+                    <label><input type="radio" ng-model="model.mode" value="MOVE"><span tt="koulutus.copy.siirra">Siirrä</span></label><br/>
                 </td>
             </tr>
         </table>
@@ -52,6 +52,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn" ng-click="peruuta()"><span tt="luoKoulutusDialogi.peruuta">Peruuta</span></button>
-        <button class="btn btn-primary" ng-disabled="organisaatioValittu() <= 0" ng-click="jatka()"><span tt="luoKoulutusDialogi.jatka">Jatka</span></button>
+        <button class="btn btn-primary" ng-disabled="organisaatioValittu() <= 0" ng-click="jatka()">{{t('luoKoulutusDialogi.' + model.mode)}}</button>
     </div>
 </div>

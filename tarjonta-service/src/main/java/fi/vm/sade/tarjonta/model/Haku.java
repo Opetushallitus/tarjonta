@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -31,11 +29,6 @@ import java.util.Set;
 
 import static fi.vm.sade.generic.common.validation.ValidationConstants.WWW_PATTERN;
 
-/**
- * Haku entity.
- *
- * @author Team2
- */
 @Entity
 @JsonIgnoreProperties({"id", "version", "hakukohdes", "hibernateLazyInitializer", "handler", "parentHaku", "sisaltyvatHaut"})
 @Table(name = Haku.TABLE_NAME, uniqueConstraints = {
@@ -46,8 +39,6 @@ public class Haku extends TarjontaBaseEntity {
     private static final long serialVersionUID = 1L;
 
     public static final String TABLE_NAME = "haku";
-    public static final String HAUN_ALKAMIS_PVM = "haunAlkamisPvm";
-    public static final String HAUN_LOPPUMIS_PVM = "haunLoppumisPvm";
 
     @NotNull
     @Column(unique = true)
@@ -122,6 +113,7 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "viimPaivitysPvm")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateDate = new Date();
+
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
 

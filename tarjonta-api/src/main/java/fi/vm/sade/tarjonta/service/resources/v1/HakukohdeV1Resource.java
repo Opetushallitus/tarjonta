@@ -222,9 +222,18 @@ public interface HakukohdeV1Resource {
             @ApiParam(value = "Alkamiskausi", required = false) @QueryParam("alkamisKausi") String alkamisKausi,
             @ApiParam(value = "Alkamisvuosi", required = false) @QueryParam("alkamisVuosi") Integer alkamisVuosi,
             @ApiParam(value = "Hakukohteen oid", required = false) @QueryParam("hakukohdeOid") String hakukohdeOid,
-            @ApiParam(value = "Lista koulutusasteen tyyppejä", required = false) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi, @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid, @ApiParam(value = "Hakukohderyhmä", required = false) @QueryParam("organisaatioRyhmaOid") String organisaatioRyhmaOid,
+            @ApiParam(value = "Lista koulutusasteen tyyppejä", required = false) @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
+            @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid,
+            @ApiParam(value = "Hakukohderyhmä", required = false) @QueryParam("organisaatioRyhmaOid") String organisaatioRyhmaOid,
             @ApiParam(value = "Lista toteutustyyppejä", required = false) @QueryParam("koulutustyyppi") List<ToteutustyyppiEnum> koulutustyypit,
-            @QueryParam("defaultTarjoaja") String defaultTarjoaja);
+            @QueryParam("defaultTarjoaja") String defaultTarjoaja,
+            @QueryParam("hakutapa") String hakutapa,
+            @QueryParam("hakutyyppi") String hakutyyppi,
+            @QueryParam("koulutuslaji") String koulutuslaji,
+            @QueryParam("kohdejoukko") String kohdejoukko,
+            @QueryParam("oppilaitostyyppi") String oppilaitostyyppi,
+            @QueryParam("kunta") String kunta,
+            @QueryParam("opetuskielet") List<String> opetuskielet);
 
     /**
      * Hakukohteen koulutuksten nimi ja oid, muut tiedot saa /search

@@ -17,7 +17,6 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
@@ -57,7 +56,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
                 "LEFT JOIN FETCH h.hakuaikas as ha " +
                 "LEFT JOIN FETCH ha.nimi AS hanimi " +
                 "LEFT JOIN FETCH hanimi.tekstis " +
-                "LEFT JOIN FETCH h.sisaltyvatHaut "); 
+                "LEFT JOIN FETCH h.sisaltyvatHaut ");
         Query query = getEntityManager().createQuery(q);
         return query.getResultList();
     }
@@ -180,7 +179,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     public void update(final Haku entity) {
         getEntityManager().detach(entity);
         Preconditions.checkNotNull(getEntityManager().find(Haku.class, entity.getId()));
-        
+
         entity.setLastUpdateDate(new Date());
         super.update(entity);
     }
@@ -206,7 +205,7 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             .build();
 
     public <T> List<T> findByCriteria(int count, int startIndex,
-            List<HakuSearchCriteria> criteriaList, boolean oidOnly) {
+                                      List<HakuSearchCriteria> criteriaList, boolean oidOnly) {
 
         String q = "SELECT distinct " + (oidOnly ? "haku.oid" : "haku") + " from Haku haku join haku.nimi nimi join nimi.tekstis tekstiKaannos" + (criteriaList.size() > 0 ? " where " : "");
 
@@ -222,20 +221,28 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
             }
             String template = (criteria.getField() == Field.HAKUSANA ? "LOWER(%s)" : "%s");
 
-            if ( criteria.getMatch() == Match.LIKE_OR ) {
+            if (criteria.getMatch() == Match.LIKE_OR) {
                 q += "(1 = 2";
                 String[] orValues = criteria.getValue().toString().split(",");
-                orOffset --; // Decrement -1, so that the first loop isn't counted
+                orOffset--; // Decrement -1, so that the first loop isn't counted
                 for (String val : orValues) {
-                    orOffset ++;
+                    orOffset++;
                     q += " OR " + String.format(template, field) + " LIKE ?" + (i + 1 + orOffset);
                     paramList.add("%" + val + "%");
                 }
                 q += ")";
-            }
-            else {
-                q += String.format(template, field) + matchType.get(criteria.getMatch()) + "?" + (i + 1 + orOffset);
-                paramList.add(criteria.getField() == Field.HAKUSANA ? criteria.getValue().toString().toLowerCase() : criteria.getValue());
+            } else {
+                if (fieldHasKoodiUriValue(criteria)) {
+                    q += String.format(template, field) + matchType.get(Match.LIKE) + "?" + (i + 1 + orOffset);
+                    if (valueContainsKoodiVersion(criteria)) {
+                        paramList.add(criteria.getValue());
+                    } else {
+                        paramList.add(criteria.getValue() + "#%");
+                    }
+                } else {
+                    q += String.format(template, field) + matchType.get(criteria.getMatch()) + "?" + (i + 1 + orOffset);
+                    paramList.add(criteria.getField() == Field.HAKUSANA ? criteria.getValue().toString().toLowerCase() : criteria.getValue());
+                }
             }
             if (i < criteriaList.size() - 1) {
                 q += " AND ";
@@ -258,27 +265,36 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         return query.getResultList();
     }
 
+    private boolean valueContainsKoodiVersion(HakuSearchCriteria criteria) {
+        return criteria.getValue().toString().contains("#");
+    }
+
+    private boolean fieldHasKoodiUriValue(HakuSearchCriteria criteria) {
+        return Field.HAKUTAPA.equals(criteria.getField()) ||
+                Field.HAKUKAUSI.equals(criteria.getField()) ||
+                Field.KOULUTUKSEN_ALKAMISKAUSI.equals(criteria.getField()) ||
+                Field.HAKUTYYPPI.equals(criteria.getField()) ||
+                Field.KOHDEJOUKKO.equals(criteria.getField());
+    }
+
     @Override
-    public List<String> findOIDByCriteria(int count, int startIndex,
-            List<HakuSearchCriteria> criteriaList) {
+    public List<String> findOIDByCriteria(int count, int startIndex, List<HakuSearchCriteria> criteriaList) {
         return findByCriteria(count, startIndex, criteriaList, true);
     }
 
     @Override
-    public List<Haku> findHakuByCriteria(int count, int startIndex,
-            List<HakuSearchCriteria> criteriaList) {
+    public List<Haku> findHakuByCriteria(int count, int startIndex, List<HakuSearchCriteria> criteriaList) {
         return findByCriteria(count, startIndex, criteriaList, false);
     }
 
     @Override
     public void safeDelete(final String hakuOid, final String userOid) {
         Preconditions.checkNotNull(hakuOid, "Haku OID cannot be null.");
-        List<String> oids = Lists.<String>newArrayList();
-        oids.add(hakuOid);
-        Haku findByOid = findByOid(hakuOid);
-        Preconditions.checkArgument(findByOid != null, "Delete failed, entity not found.");
-        findByOid.setTila(TarjontaTila.POISTETTU);
-        findByOid.setLastUpdatedByOid(userOid);
+        Haku haku = findByOid(hakuOid);
+        Preconditions.checkArgument(haku != null, "Delete failed, entity not found.");
+        haku.setTila(TarjontaTila.POISTETTU);
+        haku.setLastUpdatedByOid(userOid);
+        haku.setLastUpdateDate(new Date());
     }
 
 }

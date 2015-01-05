@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import fi.vm.sade.tarjonta.model.KoulutusOwner;
+import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import fi.vm.sade.tarjonta.TarjontaFixtures;
 import fi.vm.sade.tarjonta.model.BinaryData;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
+
+import java.util.Calendar;
 import java.util.Map;
 
 /**

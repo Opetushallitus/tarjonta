@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
  */
 public class ImageMimeValidator {
 
-    private static final String IMAGE_PATTERN = "^image/(jpg|png|gif|bmp)$";
+    private static final String IMAGE_PATTERN = "^image/(jpg|jpeg|png|gif|bmp)$";
 
-    public static boolean validate(String mime) {
+    public static boolean isValid(String mime) {
         return Pattern.compile(IMAGE_PATTERN).matcher(mime).matches();
     }
 }

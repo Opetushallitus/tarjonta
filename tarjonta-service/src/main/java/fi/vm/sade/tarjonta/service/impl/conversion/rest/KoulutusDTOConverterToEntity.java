@@ -53,19 +53,19 @@ public class KoulutusDTOConverterToEntity {
 
     private static final boolean ALLOW_NULL_KOODI_URI = true;
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusDTOConverterToEntity.class);
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKuvausConverters;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired(required = true)
+    @Autowired
     private OidService oidService;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusCommonConverter commonConverter;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired(required = true)
+    @Autowired
     private IndexerResource indexerResource;
 
 

@@ -46,10 +46,10 @@ public class MassCopyProcess implements ProcessDefinition {
     public static final String TO_HAKU_OID = "haku.oid.to";
     public static final String SELECTED_PROCESS_COPY_ID = "process.copy.id";
 
-    @Autowired(required = true)
+    @Autowired
     private MassPepareProcess prepare;
 
-    @Autowired(required = true)
+    @Autowired
     private MassCommitProcess commit;
 
     private boolean isPrepare = true;

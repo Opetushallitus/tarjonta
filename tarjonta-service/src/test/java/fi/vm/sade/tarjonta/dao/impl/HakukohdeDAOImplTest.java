@@ -57,9 +57,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class HakukohdeDAOImplTest extends TestData {
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAOImpl instance;
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
     private EntityManager em;
 

@@ -51,16 +51,16 @@ public class MassPepareProcess {
     private ProcessV1RDTO state;
     private long startTs = 0L;
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private OidService oidService;
 
-    @Autowired(required = true)
+    @Autowired
     private MassakopiointiDAO massakopiointiDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
 
     private int countHakukohde = 0;

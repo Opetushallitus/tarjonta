@@ -12,116 +12,135 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-
-var app = angular.module('Hakukohde', ['ngResource', 'config', 'Logging']);
-
+var app = angular.module('Hakukohde', [
+    'ngResource',
+    'config',
+    'Logging'
+]);
 //TODO: after refactoring the rest to v1 change this
 app.factory('Hakukohde', function($resource, Config) {
-
-    var hakukohdeUri = Config.env.tarjontaRestUrlPrefix + "hakukohde/:oid";
-
-    return $resource(hakukohdeUri, {oid: '@oid'}, {
-        update: {
-            method: 'PUT',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        remove: {
-            method: 'DELETE',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        save: {
-            method: 'POST',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        checkStateChange: {
-            url: Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid/stateChangeCheck',
-            method: 'GET',
-            withCredentials: true
-        },
-        get: {
-            method: 'GET',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        }
-
-    });
-
+    var hakukohdeUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid';
+    return $resource(hakukohdeUri, {
+        oid: '@oid'
+    }, {
+            update: {
+                method: 'PUT',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            remove: {
+                method: 'DELETE',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            save: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            checkStateChange: {
+                url: Config.env.tarjontaRestUrlPrefix + 'hakukohde/:oid/stateChangeCheck',
+                method: 'GET',
+                withCredentials: true
+            },
+            get: {
+                method: 'GET',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        });
 });
-
 app.factory('Liite', function($resource, Config) {
-    var hakukohdeLiiteUri = Config.env.tarjontaRestUrlPrefix + "hakukohde/:hakukohdeOid/liite/:liiteId";
-
-    return $resource(hakukohdeLiiteUri, {hakukohdeOid: '@hakukohdeOid', liiteId: '@liiteId'}, {
-        update: {
-            method: 'PUT',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        save: {
-            method: 'POST',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        getAll: {
-            method: 'GET',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        remove: {
-            method: 'DELETE',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        }
-
-    });
-
+    var hakukohdeLiiteUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/:hakukohdeOid/liite/:liiteId';
+    return $resource(hakukohdeLiiteUri, {
+        hakukohdeOid: '@hakukohdeOid',
+        liiteId: '@liiteId'
+    }, {
+            update: {
+                method: 'PUT',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            save: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            getAll: {
+                method: 'GET',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            remove: {
+                method: 'DELETE',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        });
 });
-
-
 app.factory('Valintakoe', function($resource, $log, $q, Config) {
-
-    var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix + "hakukohde/:hakukohdeOid/valintakoe/:valintakoeOid";
-
-    return $resource(hakukohdeValintakoeUri, {hakukohdeOid: '@hakukohdeOid', valintakoeOid: '@valintakoeOid'}, {
-        update: {
-            method: 'PUT',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        save: {
-            method: 'POST',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        getAll: {
-            method: 'GET',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        remove: {
-            method: 'DELETE',
-            withCredentials: true,
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        }
-
-    });
-
+    var hakukohdeValintakoeUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/:hakukohdeOid/valintakoe/:valintakoeOid';
+    return $resource(hakukohdeValintakoeUri, {
+        hakukohdeOid: '@hakukohdeOid',
+        valintakoeOid: '@valintakoeOid'
+    }, {
+            update: {
+                method: 'PUT',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            save: {
+                method: 'POST',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            getAll: {
+                method: 'GET',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            remove: {
+                method: 'DELETE',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        });
 });
-
 app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
-
     return {
         removeKoulutuksesFromHakukohde: function(hakukohdeOid, koulutusOids) {
-
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + "hakukohde/" + hakukohdeOid + "/koulutukset";
-
+                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' +
+                    hakukohdeOid + '/koulutukset';
                 $http.post(hakukohdeKoulutusUri, koulutusOids, {
                     withCredentials: true,
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    }
                 }).success(function(data) {
                     return data;
                 }).error(function(data) {
@@ -132,12 +151,15 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         addKoulutuksesToHakukohde: function(hakukohdeOid, koulutusOids) {
             var promise = $q.defer();
             if (hakukohdeOid !== undefined && koulutusOids !== undefined) {
-                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + "hakukohde/" + hakukohdeOid + "/koulutukset/lisaa";
+                var hakukohdeKoulutusUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid +
+                    '/koulutukset/lisaa';
                 $http.post(hakukohdeKoulutusUri, koulutusOids, {
                     withCredentials: true,
-                    headers: {'Content-Type': 'application/json; charset=UTF-8'}
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    }
                 }).success(function(data) {
-                    promise.resolve("OK" === data.status);
+                    promise.resolve('OK' === data.status);
                 }).error(function(data) {
                     promise.resolve(false);
                 });
@@ -147,15 +169,15 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         getKoulutusHakukohdes: function(koulutusOid) {
             var promise = $q.defer();
             if (koulutusOid !== undefined) {
-                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix + "koulutus/" + koulutusOid + "/hakukohteet";
-                $http.get(getKoulutusHakukohdesUri)
-                    .success(function(data) {
-                        promise.resolve(data);
-                    })
-                    .error(function(data) {
-                        promise.resolve(data);
-                    });
-            } else {
+                var getKoulutusHakukohdesUri = Config.env.tarjontaRestUrlPrefix + 'koulutus/' + koulutusOid +
+                    '/hakukohteet';
+                $http.get(getKoulutusHakukohdesUri).success(function(data) {
+                    promise.resolve(data);
+                }).error(function(data) {
+                    promise.resolve(data);
+                });
+            }
+            else {
                 promise.resolve();
             }
             return promise.promise;
@@ -163,25 +185,22 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
         getHakukohdeKoulutukses: function(hakukohdeOid) {
             if (hakukohdeOid !== undefined) {
                 var promise = $q.defer();
-                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix + "hakukohde/" + hakukohdeOid + "/koulutukset";
-                $http.get(getHakukohdeKoulutuksesUri)
-                    .success(function(data) {
-                        promise.resolve(data);
-                    })
-                    .error(function(data) {
-                        promise.resolve(data);
-                    });
+                var getHakukohdeKoulutuksesUri = Config.env.tarjontaRestUrlPrefix + 'hakukohde/' + hakukohdeOid +
+                    '/koulutukset';
+                $http.get(getHakukohdeKoulutuksesUri).success(function(data) {
+                    promise.resolve(data);
+                }).error(function(data) {
+                    promise.resolve(data);
+                });
                 return promise.promise;
-
-            } else {
+            }
+            else {
                 return undefined;
             }
         },
         geValidateHakukohdeKomotos: function(komotoIds) {
             var promise = $q.defer();
-
-            var serviceUrl = Config.env.tarjontaRestUrlPrefix + "hakukohde/komotoSelectedCheck";
-
+            var serviceUrl = Config.env.tarjontaRestUrlPrefix + 'hakukohde/komotoSelectedCheck';
             $http({
                 method: 'GET',
                 url: serviceUrl,
@@ -193,35 +212,27 @@ app.factory('HakukohdeKoulutukses', function($http, Config, $q) {
             }).error(function(data) {
                 promise.resolve(data);
             });
-
             return promise.promise;
         }
     };
-
 });
-
 app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
-
     function addValintakoeIfEmpty(hakukohde) {
         if (hakukohde.valintakokeet.length === 0) {
             var kieli = hakukohde.opetusKielet[0];
             $scope.addValintakoe(kieli);
         }
     }
-
     function addPainotettavaOppiaine(hakukohde) {
         var po = {
-            oppiaineUri: "",
-            painokerroin: ""
+            oppiaineUri: '',
+            painokerroin: ''
         };
         hakukohde.painotettavatOppiaineet.push(po);
     }
-
     /**
-     * Lisää hakukohteeseen valintakokeen-
-     * @param hakukohde
-     * @param kieliUri
-     */
+    * Lisää hakukohteeseen valintakokeen
+    */
     function addValintakoe(hakukohde, kieliUri) {
         var vk = {
             hakukohdeOid: hakukohde.oid,
@@ -234,56 +245,43 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
             valintakoeAjankohtas: [],
             isNew: true
         };
-
         hakukohde.valintakokeet.push(vk);
         return vk;
     }
-
     /**
-     * Lisää hakukohteeseen liitteen jos siinä ei ole vielä yhtään.
-     * @param hakukohde
-     */
+    * Lisää hakukohteeseen liitteen jos siinä ei ole vielä yhtään.
+    */
     function addLiiteIfEmpty(hakukohde) {
-
-        if(!hakukohde.hakukohteenLiitteet){
-            hakukohde.hakukohteenLiitteet=[];
+        if (!hakukohde.hakukohteenLiitteet) {
+            hakukohde.hakukohteenLiitteet = [];
         }
-
         if (hakukohde.hakukohteenLiitteet.length === 0) {
-            var kieli = hakukohde.opetusKielet[0]||"kieli_fi";
-            addLiite(hakukohde, kieli,{});
+            var kieli = hakukohde.opetusKielet[0] || 'kieli_fi';
+            addLiite(hakukohde, kieli, {});
         }
     }
-
     /**
-     * Lisää hakukohteeseen liitteen (opetuskieli[0]).
-     * @param hakukohde
-     * @param kieliUri
-     */
-    function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite){
-        var liite = newLiite(hakukohde, kieliUri,liitteidenToimitusosoite);
+    * Lisää hakukohteeseen liitteen (opetuskieli[0]).
+    */
+    function addLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
+        var liite = newLiite(hakukohde, kieliUri, liitteidenToimitusosoite);
         hakukohde.hakukohteenLiitteet.push(liite);
         $rootScope.$broadcast('liiteAdded', liite);
     }
-
-
     /**
-     * Luo liitte objektin
-     * @param hakukohdeOid
-     * @param kieliUri
-     * @param liitteidenToimitusosoite
-     */
+    * Luo liite objektin
+    */
     function newLiite(hakukohde, kieliUri, liitteidenToimitusosoite) {
         var kuvaukset = {};
-        kuvaukset[kieliUri] = "";
-
+        kuvaukset[kieliUri] = '';
         var addr = liitteidenToimitusosoite;
         return {
-            hakukohdeOid:hakukohde.oid,
+            hakukohdeOid: hakukohde.oid,
             kieliUri: kieliUri,
-            liitteenNimi: "",
-            liitteenKuvaukset:kuvaukset,
-            toimitettavaMennessa: null, //tmennessa,
+            liitteenNimi: '',
+            liitteenKuvaukset: kuvaukset,
+            toimitettavaMennessa: null,
+            //tmennessa,
             liitteenToimitusOsoite: addr ? angular.copy(addr) : {},
             muuOsoiteEnabled: !addr,
             sahkoinenOsoiteEnabled: false,
@@ -291,31 +289,24 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
             isNew: true
         };
     }
-
-
     function removeEmptyLiites(liitteetArray) {
-        var loopIndex = liitteetArray.length
+        var loopIndex = liitteetArray.length;
         while (loopIndex--) {
             var liite = liitteetArray[loopIndex];
-            if (liite.isNew &&
-                !liite.liitteenNimi &&
-                !liite.liitteenTyyppi &&
-                !liite.toimitettavaMennessa) {
+            if (liite.isNew && !liite.liitteenNimi && !liite.liitteenTyyppi && !liite.toimitettavaMennessa) {
                 liitteetArray.splice(loopIndex, 1);
             }
         }
-    };
-
+    }
     function removeNotUsedYhteystiedot(yhteystiedotArray) {
-        var loopIndex = yhteystiedotArray.length
+        var loopIndex = yhteystiedotArray.length;
         while (loopIndex--) {
             var yhteystieto = yhteystiedotArray[loopIndex];
             if (!yhteystieto.kaytossa) {
                 yhteystiedotArray.splice(loopIndex, 1);
             }
         }
-    };
-
+    }
     return {
         addValintakoeIfEmpty: addValintakoeIfEmpty,
         addValintakoe: addValintakoe,
@@ -325,8 +316,7 @@ app.factory('HakukohdeService', function($resource, Config, $http, $rootScope) {
         removeNotUsedYhteystiedot: removeNotUsedYhteystiedot,
         addPainotettavaOppiaine: addPainotettavaOppiaine,
         findHakukohdesByKuvausId: function(kuvausId) {
-            return $http.get(Config.env.tarjontaRestUrlPrefix + "hakukohde/findHakukohdesByKuvausId/" + kuvausId);
+            return $http.get(Config.env.tarjontaRestUrlPrefix + 'hakukohde/findHakukohdesByKuvausId/' + kuvausId);
         }
     };
-
 });

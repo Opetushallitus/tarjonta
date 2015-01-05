@@ -134,6 +134,10 @@ public class KuvausDaoImpl extends AbstractJpaDAOImpl<ValintaperusteSoraKuvaus, 
             whereExpr = QuerydslUtils.and(whereExpr, qValintaperusteSoraKuvaus.kausi.eq(searchSpec.getKausiUri()));
         }
 
+        if (searchSpec.getAvain() != null) {
+            whereExpr = QuerydslUtils.and(whereExpr,qValintaperusteSoraKuvaus.avain.eq(searchSpec.getAvain()));
+        }
+
         if (searchSpec.getHakusana() != null) {
             whereExpr = QuerydslUtils.and(whereExpr, qTekstiKaannos.arvo.toLowerCase().like("%" + searchSpec.getHakusana().toLowerCase() + "%"));
             whereExpr = QuerydslUtils.and(whereExpr, qTekstiKaannos.teksti.id.eq(qMonikielinenTeksti.id));

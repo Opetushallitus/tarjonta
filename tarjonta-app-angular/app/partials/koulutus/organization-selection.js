@@ -1,62 +1,51 @@
 /**
  * Created by alexGofore on 29.9.2014.
  */
-
 var app = angular.module('app.koulutus.ctrl');
-
-app.controller('OrganizationSelectionController',
-    function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
-             SharedStateService, AuthService, $log, $timeout) {
-
-        $scope.lkorganisaatio = {
-            currentNode: null
-        };
-
-        $scope.$watch('lkorganisaatio.currentNode', function(organization) {
-            if (organization && organization.oid && _.findWhere($scope.selectedOrganizations, {oid: organization.oid}) === undefined) {
-                $scope.selectedOrganizations.push(organization);
-            }
+app.controller('OrganizationSelectionController', function($location, $q, $scope, Koodisto, $modal,
+                                   OrganisaatioService, SharedStateService, AuthService, $log, $timeout) {
+    $scope.lkorganisaatio = {
+        currentNode: null
+    };
+    $scope.$watch('lkorganisaatio.currentNode', function(organization) {
+        if (organization && organization.oid && _.findWhere($scope.selectedOrganizations, {
+                oid: organization.oid
+            }) === undefined) {
+            $scope.selectedOrganizations.push(organization);
+        }
+    });
+    $scope.cancel = function() {
+        $scope.organizationSelectionDialog.dismiss('cancel');
+    };
+    $scope.done = function() {
+        $scope.model.organisaatiot = [];
+        $scope.model.opetusTarjoajat = [];
+        angular.forEach($scope.selectedOrganizations, function(org) {
+            $scope.model.organisaatiot.push(org);
+            $scope.model.opetusTarjoajat.push(org.oid);
         });
-
-        $scope.cancel = function() {
-            $scope.organizationSelectionDialog.dismiss('cancel');
-        };
-
-        $scope.done = function() {
-            $scope.model.organisaatiot = [];
-            $scope.model.opetusTarjoajat = [];
-            angular.forEach($scope.selectedOrganizations, function(org) {
-                $scope.model.organisaatiot.push(org);
-                $scope.model.opetusTarjoajat.push(org.oid);
+        $scope.organizationSelectionDialog.dismiss();
+    };
+    var searchOrganizationTimeout = null;
+    $scope.searchOrganizations = function(qterm) {
+        if (searchOrganizationTimeout !== null) {
+            $timeout.cancel(searchOrganizationTimeout);
+        }
+        if (qterm.length < 4) {
+            return;
+        }
+        searchOrganizationTimeout = $timeout(function() {
+            OrganisaatioService.etsi({
+                searchStr: qterm,
+                lakkautetut: false,
+                skipparents: false,
+                suunnitellut: false
+            }).then(function(result) {
+                $scope.lkorganisaatiot = result.organisaatiot;
             });
-            $scope.organizationSelectionDialog.dismiss();
-        };
-
-        var searchOrganizationTimeout = null;
-        $scope.searchOrganizations = function(qterm) {
-            if ( searchOrganizationTimeout !== null ) {
-                $timeout.cancel(searchOrganizationTimeout);
-            }
-
-            if ( qterm.length < 4 ) {
-                return;
-            }
-
-            searchOrganizationTimeout = $timeout(function() {
-                OrganisaatioService.etsi({
-                    searchStr: qterm,
-                    lakkautetut: false,
-                    skipparents: false,
-                    suunnitellut: false
-                }).then(function (result) {
-                    $scope.lkorganisaatiot = result.organisaatiot;
-                });
-            }, 500);
-        };
-
-        $scope.deleteOrganization = function(index) {
-            $scope.selectedOrganizations.splice(index, 1);
-        };
-
-    }
-);
+        }, 500);
+    };
+    $scope.deleteOrganization = function(index) {
+        $scope.selectedOrganizations.splice(index, 1);
+    };
+});

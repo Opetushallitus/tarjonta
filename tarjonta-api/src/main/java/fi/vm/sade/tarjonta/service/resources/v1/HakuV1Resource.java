@@ -30,31 +30,17 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
-/**
- * Supported operations.
- *
- * <pre>
- * GET    /v1/haku/              ?count=100 & startIndex=0      -- list of oids
- * GET    /v1/haku/multi              ?oid=oid1&oid=oid2&oid=oidN... -- json of hakus
- * GET    /v1/haku/oid                                          -- json of haku
- * GET    /v1/haku/oid/hakukohde ?count=100 & startIndex=0      -- list of oids
- * GET    /v1/haku/oid/state                                    -- state
- * PUT    /v1/haku/oid/state                                    -- update state
- * POST   /v1/haku                                              -- create haku
- * POST   /v1/haku/oid                                          -- update haku
- * DELETE /v1/haku/oid                                          -- remove haku
- * </pre>
- *
- * @author mlyly
- */
 @Path("/v1/haku")
 @Api(value = "/v1/haku", description = "Haun REST-rajapinnan versio 1 operaatiot")
 public interface HakuV1Resource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t", notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
-    public ResultV1RDTO<List<String>> search(@QueryParam("") GenericSearchParamsV1RDTO params, @QueryParam("c") List<HakuSearchCriteria> hakuSearchCriteria, @Context UriInfo uriInfo);
+    @ApiOperation(value = "Palauttaa hakuehtojen puitteissa hakujen oid:t",
+            notes = "Listaa hakujen oidit", response = OidV1RDTO.class)
+    public ResultV1RDTO<List<String>> search(@QueryParam("") GenericSearchParamsV1RDTO params,
+                                             @QueryParam("c") List<HakuSearchCriteria> hakuSearchCriteria,
+                                             @Context UriInfo uriInfo);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -91,7 +77,7 @@ public interface HakuV1Resource {
     @Path("/find")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Palauttaa kaikki haut hakuparametrien mukaisesti", notes = "Palauttaa kaikki haut hakuparametrien mukaisesti", response = HakuV1RDTO.class)
-    public ResultV1RDTO<List<HakuV1RDTO>> find(@QueryParam("") HakuSearchParamsV1RDTO params);
+    public ResultV1RDTO<List<HakuV1RDTO>> find(@QueryParam("") HakuSearchParamsV1RDTO params, @Context UriInfo uriInfo);
 
     @DELETE
     @Path("/{oid}")
@@ -121,7 +107,7 @@ public interface HakuV1Resource {
     @Path("/{oid}/state")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @ApiOperation(value = "Päivittää haun tilan ja julkaisee samalla siihen liitetyt hakukohteet ja koulutukset jos onlyHaku=false", notes = "Päivittää annetun haun oid:n perusteella haun tilan", response = Tilamuutokset.class)
-    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila,  @QueryParam("onlyHaku") @DefaultValue("false")boolean onlyHaku);
+    public ResultV1RDTO<Tilamuutokset> setHakuState(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila, @QueryParam("onlyHaku") @DefaultValue("false") boolean onlyHaku);
 
     @PUT
     @Path("/{oid}/copy")
@@ -133,13 +119,13 @@ public interface HakuV1Resource {
     @Path("{oid}/hakukohdeTulos")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public HakukohdeTulosV1RDTO getHakukohdeTulos(@PathParam("oid") String oid,
-                                                     @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
-                                                     @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
-                                                     @QueryParam("lastModifiedSince") Date lastModifiedSince,
-                                                     @QueryParam("organisationOids") String organisationOidsStr,
-                                                     @QueryParam("hakukohdeTilas") String hakukohdeTilasStr,
-                                                     @QueryParam("alkamisVuosi") Integer alkamisVuosi,
-                                                     @QueryParam("alkamisKausi") String alkamisKausi
+                                                  @QueryParam("searchTerms") String searchTerms, @QueryParam("count") int count,
+                                                  @QueryParam("startIndex") int startIndex, @QueryParam("lastModifiedBefore") Date lastModifiedBefore,
+                                                  @QueryParam("lastModifiedSince") Date lastModifiedSince,
+                                                  @QueryParam("organisationOids") String organisationOidsStr,
+                                                  @QueryParam("hakukohdeTilas") String hakukohdeTilasStr,
+                                                  @QueryParam("alkamisVuosi") Integer alkamisVuosi,
+                                                  @QueryParam("alkamisKausi") String alkamisKausi
     );
 
 }

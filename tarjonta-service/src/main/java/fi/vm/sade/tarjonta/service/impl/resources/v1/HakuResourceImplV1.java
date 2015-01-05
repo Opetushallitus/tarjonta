@@ -39,9 +39,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.ProcessResourceV1;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO.ResultStatus;
 import fi.vm.sade.tarjonta.service.search.HakukohdePerustieto;
+import fi.vm.sade.tarjonta.service.search.HakukohdeSearchService;
 import fi.vm.sade.tarjonta.service.search.HakukohteetKysely;
 import fi.vm.sade.tarjonta.service.search.HakukohteetVastaus;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
@@ -89,86 +89,31 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     @Autowired
     private KoodistoValidator koodistoValidator;
 
-    @Autowired(required = true)
+    @Autowired
     private PublicationDataService publication;
 
     @Autowired
     private ContextDataService contextDataService;
 
     @Autowired
-    ProcessResourceV1 processResource;
+    private ProcessResourceV1 processResource;
 
     @Autowired
-    TarjontaSearchService tarjontaSearchService;
+    private HakukohdeSearchService hakukohdeSearchService;
 
     @Override
-    public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO params, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
-        LOG.debug("search({})", params);
+    public ResultV1RDTO<List<String>> search(GenericSearchParamsV1RDTO genericSearchParamsDTO, List<HakuSearchCriteria> criteriaList, UriInfo uriInfo) {
+        LOG.debug("search({})", genericSearchParamsDTO);
 
-        MultivaluedMap<String, String> values = uriInfo.getQueryParameters(true);
-
-        for (String key : values.keySet()) {
-
-            if (!key.toUpperCase().equals(key)) {
-                continue;  //our fields are upper cased, see HakuSearchCriteria.Field.
-            }
-
-            Field field;
-            try {
-                field = Field.valueOf(key);
-            } catch (Throwable t) {
-                LOG.info("Ignoring unknown parameter:" + key);
-                continue;
-            }
-
-            for (String sValue : values.get(key)) {
-                Object value = null;
-                Match match = Match.MUST_MATCH;  //default match type
-                switch (field) {
-                    case HAKUVUOSI:
-                    case KOULUTUKSEN_ALKAMISVUOSI:
-                        value = Integer.parseInt(sValue);
-                        break;
-                    case TILA:
-                        if (sValue.equals("NOT_POISTETTU")) {
-                            match = Match.MUST_NOT;
-                            value = TarjontaTila.POISTETTU;
-                        } else {
-                            value = TarjontaTila.valueOf(sValue);
-                        }
-                        break;
-                    case HAKUSANA:
-                        match = Match.LIKE; // %foo% haku
-                        value = "%" + sValue + "%";
-                        break;
-                    case TARJOAJAOID:
-                        // OR-type LIKE '%foo%' search
-                        // split string by comma "value1,value1" => "(field LIKE '%value1%' OR field LIKE '%value2%)'
-                        match = Match.LIKE_OR;
-                        value = sValue;
-                        break;
-                    case HAKUKAUSI:
-                    case HAKUTAPA:
-                    case HAKUTYYPPI:
-                    case KOHDEJOUKKO:
-                    case KOULUTUKSEN_ALKAMISKAUSI:
-                        value = sValue;
-                        break;
-
-                    default:
-                        throw new RuntimeException("unhandled parameter:" + key + "=" + sValue);
-                }
-                criteriaList.addAll(new HakuSearchCriteria.Builder().add(field, value, match).build());
-            }
+        if (genericSearchParamsDTO == null) {
+            genericSearchParamsDTO = new GenericSearchParamsV1RDTO();
         }
 
-        if (params == null) {
-            params = new GenericSearchParamsV1RDTO();
-        }
+        criteriaList = getCriteriaListFromUri(uriInfo, criteriaList);
 
-        List<String> oidList = hakuDAO.findOIDByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+        List<String> oidList = hakuDAO.findOIDByCriteria(genericSearchParamsDTO.getCount(), genericSearchParamsDTO.getStartIndex(), criteriaList);
         ResultV1RDTO<List<String>> result = new ResultV1RDTO<List<String>>(oidList);
-        result.setParams(params);
+        result.setParams(genericSearchParamsDTO);
 
         LOG.debug(" --> result = {}", result);
 
@@ -196,8 +141,20 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     }
 
     @Override
-    public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params) {
-        return findAllHakus(params);
+    public ResultV1RDTO<List<HakuV1RDTO>> find(HakuSearchParamsV1RDTO params, UriInfo uriInfo) {
+        List<HakuSearchCriteria> criteriaList = getCriteriaListFromUri(uriInfo, null);
+
+        if (criteriaList.isEmpty()) {
+            return findAllHakus(params);
+        } else {
+            List<Haku> hakus = hakuDAO.findHakuByCriteria(params.getCount(), params.getStartIndex(), criteriaList);
+
+            ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
+            resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
+            resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
+
+            return resultV1RDTO;
+        }
     }
 
     @Override
@@ -210,31 +167,34 @@ public class HakuResourceImplV1 implements HakuV1Resource {
     private ResultV1RDTO<List<HakuV1RDTO>> findAllHakus(HakuSearchParamsV1RDTO params) {
         List<Haku> hakus = hakuDAO.findAll();
         LOG.debug("FOUND  : {} hakus", hakus.size());
-        Map<String, List<String>> hakukohdeMap = null;
-        if (params.addHakukohdes) {
-            hakukohdeMap = hakukohdeDAO.findAllHakuToHakukohde();
-        }
-        List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
         ResultV1RDTO<List<HakuV1RDTO>> resultV1RDTO = new ResultV1RDTO<List<HakuV1RDTO>>();
-        if (hakus != null && hakus.size() > 0) {
-            for (Haku haku : hakus) {
-                List<String> hakukohteet = null;
-                if (params.addHakukohdes) {
-                    hakukohteet = hakukohdeMap.get(haku.getOid());
-                    if (hakukohteet == null) {
-                        hakukohteet = Collections.emptyList();
-                    }
-                }
-                HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes, hakukohteet);
-                hakuDtos.add(hakuV1RDTO);
-            }
+        if (hakus.size() > 0) {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.OK);
-            resultV1RDTO.setResult(hakuDtos);
+            resultV1RDTO.setResult(hakusToHakuRDTO(hakus, params));
         } else {
             resultV1RDTO.setStatus(ResultV1RDTO.ResultStatus.NOT_FOUND);
         }
-
         return resultV1RDTO;
+    }
+
+    private List<HakuV1RDTO> hakusToHakuRDTO(List<Haku> hakus, HakuSearchParamsV1RDTO params) {
+        Map<String, List<String>> hakukohdeMap = null;
+        List<HakuV1RDTO> hakuDtos = new ArrayList<HakuV1RDTO>();
+        if (params.addHakukohdes) {
+            hakukohdeMap = hakukohdeDAO.findAllHakuToHakukohde();
+        }
+        for (Haku haku : hakus) {
+            List<String> hakukohteet = null;
+            if (params.addHakukohdes && hakukohdeMap != null) {
+                hakukohteet = hakukohdeMap.get(haku.getOid());
+                if (hakukohteet == null) {
+                    hakukohteet = Collections.emptyList();
+                }
+            }
+            HakuV1RDTO hakuV1RDTO = converterV1.fromHakuToHakuRDTO(haku, params.addHakukohdes, hakukohteet);
+            hakuDtos.add(hakuV1RDTO);
+        }
+        return hakuDtos;
     }
 
     @Override
@@ -722,7 +682,7 @@ public class HakuResourceImplV1 implements HakuV1Resource {
             }
         }
 
-        HakukohteetVastaus v = tarjontaSearchService.haeHakukohteet(hakukohteetKysely);
+        HakukohteetVastaus v = hakukohdeSearchService.haeHakukohteet(hakukohteetKysely);
 
         Collection<HakukohdePerustieto> tulokset = v.getHakukohteet();
         // filtteroi tarvittaessa tulokset joko tarjoaja- tai hakukohdenimen
@@ -819,5 +779,70 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         }
 
         return count;
+    }
+
+    private List<HakuSearchCriteria> getCriteriaListFromUri(UriInfo uriInfo, List<HakuSearchCriteria> criteriaList) {
+        if (criteriaList == null) {
+            criteriaList = new ArrayList<HakuSearchCriteria>();
+        }
+
+        MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters(true);
+
+        for (String key : queryParameters.keySet()) {
+
+            if (!key.toUpperCase().equals(key)) {
+                continue;  //our fields are upper cased, see HakuSearchCriteria.Field.
+            }
+
+            Field field;
+            try {
+                field = Field.valueOf(key);
+            } catch (Throwable t) {
+                LOG.info("Ignoring unknown parameter:" + key);
+                continue;
+            }
+
+            for (String sValue : queryParameters.get(key)) {
+                Object value = null;
+                Match match = Match.MUST_MATCH;  //default match type
+                switch (field) {
+                    case HAKUVUOSI:
+                    case KOULUTUKSEN_ALKAMISVUOSI:
+                        value = Integer.parseInt(sValue);
+                        break;
+                    case TILA:
+                        if (sValue.equals("NOT_POISTETTU")) {
+                            match = Match.MUST_NOT;
+                            value = TarjontaTila.POISTETTU;
+                        } else {
+                            value = TarjontaTila.valueOf(sValue);
+                        }
+                        break;
+                    case HAKUSANA:
+                        match = Match.LIKE; // %foo% haku
+                        value = "%" + sValue + "%";
+                        break;
+                    case TARJOAJAOID:
+                        // OR-type LIKE '%foo%' search
+                        // split string by comma "value1,value1" => "(field LIKE '%value1%' OR field LIKE '%value2%)'
+                        match = Match.LIKE_OR;
+                        value = sValue;
+                        break;
+                    case HAKUKAUSI:
+                    case HAKUTAPA:
+                    case HAKUTYYPPI:
+                    case KOHDEJOUKKO:
+                    case KOULUTUKSEN_ALKAMISKAUSI:
+                        value = sValue;
+                        break;
+
+                    default:
+                        throw new RuntimeException("unhandled parameter:" + key + "=" + sValue);
+                }
+                criteriaList.addAll(new HakuSearchCriteria.Builder().add(field, value, match).build());
+            }
+        }
+
+        return criteriaList;
     }
 }

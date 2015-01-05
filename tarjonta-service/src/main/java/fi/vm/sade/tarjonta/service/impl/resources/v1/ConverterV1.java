@@ -73,9 +73,6 @@ public class ConverterV1 {
     KoulutusmoduuliToteutusDAO komotoDao;
 
     @Autowired
-    private MonikielinenMetadataDAO monikielinenMetadataDAO;
-
-    @Autowired
     HakukohdeDAO hakukohdeDao;
 
     @Autowired

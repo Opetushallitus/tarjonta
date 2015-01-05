@@ -15,53 +15,23 @@
  */
 package fi.vm.sade.tarjonta.model;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Ordering;
+import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
+import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import javax.annotation.Nullable;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyEnumerated;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.apache.commons.lang.StringUtils;
-
-import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
-import org.apache.commons.lang.time.DateUtils;
-
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
-
-import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
-
-import javax.persistence.Enumerated;
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.opensaml.xml.signature.J;
 
 /**
  * KoulutusmoduuliToteutus (LearningOpportunityInstance) tarkentaa
@@ -943,11 +913,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         this.koulutuksenAlkamisPvms.add(DateUtils.truncate(koulutuksenAlkamisPvm, Calendar.DATE));
     }
 
-    /**
-     * Amattillisella- ja lukiokoulutuksella on vain yksi aloituspvm.
-     *
-     * @return
-     */
     public Date getKoulutuksenAlkamisPvm() {
         if (this.koulutuksenAlkamisPvms.size() > 1) {
             throw new RuntimeException("Not allowed error - Too many starting dates, maybe you are using a wrong method?");
@@ -957,6 +922,20 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         }
 
         return this.koulutuksenAlkamisPvms.iterator().next();
+    }
+
+    public Date getMinAlkamisPvm() {
+        if (koulutuksenAlkamisPvms.isEmpty()) {
+            return null;
+        }
+        return Ordering.<Date>natural().min(koulutuksenAlkamisPvms);
+    }
+
+    public Date getMaxAlkamisPvm() {
+        if (koulutuksenAlkamisPvms.isEmpty()) {
+            return null;
+        }
+        return Ordering.<Date>natural().max(koulutuksenAlkamisPvms);
     }
 
     public MonikielinenTeksti getNimi() {
@@ -1091,4 +1070,36 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setOwners(Set<KoulutusOwner> owners) {
         this.owners = owners;
     }
+
+    public Set<String> getOwnerOids() {
+        Set<String> oids = new HashSet<String>();
+        for (KoulutusOwner owner : owners) {
+            oids.add(owner.getOwnerOid());
+        }
+        return oids;
+    }
+
+    public Set<String> getTarjoajaOids() {
+        Set<String> oids = new HashSet<String>();
+        for (KoulutusOwner owner : owners) {
+            if (KoulutusOwner.TARJOAJA.equals(owner.getOwnerType())) {
+                oids.add(owner.getOwnerOid());
+            }
+        }
+
+        if (oids.isEmpty()) {
+            oids.add(getTarjoaja());
+        }
+
+        return oids;
+    }
+
+    public List<String> getKoulutuslajiKoodiUris() {
+        List<String> koodiUris = new ArrayList<String>();
+        for (KoodistoUri koulutuslaji : koulutuslajis) {
+            koodiUris.add(koulutuslaji.getKoodiUri());
+        }
+        return koodiUris;
+    }
+
 }

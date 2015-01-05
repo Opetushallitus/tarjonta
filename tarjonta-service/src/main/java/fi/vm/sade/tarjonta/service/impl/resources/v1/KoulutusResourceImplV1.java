@@ -93,51 +93,64 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoulutusResourceImplV1.class);
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired(required = true)
+
+    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired(required = true)
-    private TarjontaSearchService tarjontaSearchService;
-    @Autowired(required = true)
+
+    @Autowired
+    private KoulutusSearchService koulutusSearchService;
+
+    @Autowired
+    private HakukohdeSearchService hakukohdeSearchService;
+
+    @Autowired
     private IndexerResource indexerResource;
-    @Autowired(required = true)
+
+    @Autowired
     private KoulutuskoodiRelations koulutuskoodiRelations;
-    @Autowired(required = true)
+
+    @Autowired
     private KoodiService koodiService;
-    @Autowired(required = true)
+
+    @Autowired
     private OrganisaatioService organisaatioService;
-    @Autowired(required = true)
+
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKoulutusConverters;
-    @Autowired(required = true)
+
+    @Autowired
     private KoulutusKuvausV1RDTO<KomotoTeksti> komotoKoulutusConverters;
-    @Autowired(required = true)
+
+    @Autowired
     private ConverterV1 converterV1;
-    @Autowired(required = true)
+
+    @Autowired
     private PermissionChecker permissionChecker;
 
-    @Autowired(required = true)
+    @Autowired
     private ContextDataService contextDataService;
 
-    @Autowired(required = true)
+    @Autowired
     private EntityConverterToRDTO converterToRDTO;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusDTOConverterToEntity convertToEntity;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private LinkingV1Resource linkingV1Resource;
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAO hakukohdeDAO;
 
-    @Autowired(required = true)
+    @Autowired
     private OppilaitosKoodiRelations oppilaitosKoodiRelations;
 
-    @Autowired(required = true)
+    @Autowired
     private PublicationDataService publicationDataService;
 
     @Override
@@ -576,31 +589,12 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return result;
     }
 
-//    public ResultV1RDTO deleteByOid(String oid) {
-//        permissionChecker.checkRemoveKoulutus(oid);
-//        KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findByOid(oid);
-//
-//        ResultV1RDTO result = new ResultV1RDTO();
-//
-//        if (komoto.getHakukohdes().isEmpty()) {
-//            this.koulutusmoduuliToteutusDAO.remove(komoto);
-//            try {
-//                solrIndexer.deleteKoulutus(Lists.newArrayList(oid));
-//
-//            } catch (IOException e) {
-//                throw new TarjontaBusinessException("indexing.error", e);
-//            }
-//        } else {
-//            result.setStatus(ResultStatus.VALIDATION);
-//        }
-//        return result;
-//    }
     @Override
     public ResultV1RDTO<List<NimiJaOidRDTO>> getHakukohteet(String oid) {
         HakukohteetKysely ks = new HakukohteetKysely();
         ks.getKoulutusOids().add(oid);
 
-        HakukohteetVastaus vs = tarjontaSearchService.haeHakukohteet(ks);
+        HakukohteetVastaus vs = hakukohdeSearchService.haeHakukohteet(ks);
         List<NimiJaOidRDTO> ret = new ArrayList<NimiJaOidRDTO>();
         for (HakukohdePerustieto hk : vs.getHakukohteet()) {
             ret.add(new NimiJaOidRDTO(hk.getNimi(), hk.getOid(), hk.getHakuOid()));
@@ -810,28 +804,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String komoOid,
             String alkamisPvmAlkaenTs,
             String koulutuslaji,
-            String defaultTarjoaja) {
-
-        // Process alkamispvm search criteria
-        // TODO alkamispvm not used yet!
-        Date alkamisPvm = null;
-        if (alkamisPvmAlkaenTs != null) {
-            Long tsRequired = Long.parseLong(alkamisPvmAlkaenTs);
-            if (tsRequired < 0) {
-                // Go back in time the required amaount
-                tsRequired = System.currentTimeMillis() + tsRequired;
-            }
-            alkamisPvm = new Date(tsRequired);
-        }
+            String defaultTarjoaja,
+            String hakutapa,
+            String hakutyyppi,
+            String kohdejoukko,
+            String oppilaitoistyyppi,
+            String kunta,
+            List<String> opetuskielet) {
 
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
-
-        LOG.debug("/koulutus/search - searchInfo(st={}, orgOids={}, oids={}, tila={}, aKausi={}, aVuosi={}, "
-                + "koulTyyppi={}, totTyyppi={}, komoOid={}, alkPvmTs={})",
-                new Object[]{
-                    searchTerms, organisationOids, koulutusOids, komotoTila, alkamisKausi, alkamisVuosi,
-                    koulutustyyppi, toteutustyyppi, komoOid, alkamisPvmAlkaenTs
-                });
 
         KoulutuksetKysely q = new KoulutuksetKysely();
 
@@ -843,10 +824,17 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutusOids().addAll(koulutusOids);
         q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
-        q.getKoulutustyyppi().addAll(koulutustyyppi); //uri
-        q.getTotetustyyppi().addAll(toteutustyyppi); //enum
+        q.getKoulutustyyppi().addAll(koulutustyyppi);
+        q.getTotetustyyppi().addAll(toteutustyyppi);
         q.setKoulutuslaji(koulutuslaji);
-        KoulutuksetVastaus r = tarjontaSearchService.haeKoulutukset(q, defaultTarjoaja);
+        q.setHakutapa(hakutapa);
+        q.setHakutyyppi(hakutyyppi);
+        q.setKohdejoukko(kohdejoukko);
+        q.setOppilaitostyyppi(oppilaitoistyyppi);
+        q.setKunta(kunta);
+        q.opetuskielet(opetuskielet);
+
+        KoulutuksetVastaus r = koulutusSearchService.haeKoulutukset(q, defaultTarjoaja);
 
         return new ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>>(converterV1.fromKoulutuksetVastaus(r));
     }

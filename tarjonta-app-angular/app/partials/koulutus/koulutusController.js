@@ -12,41 +12,46 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
-
 var app = angular.module('app.koulutus.ctrl', []);
-
-app.controller('KoulutusRoutingController', ['$scope', '$log', '$routeParams', '$route', '$location', 'KoulutusConverterFactory', 'TarjontaService', 'PermissionService', 'OrganisaatioService', 'Koodisto', 'LocalisationService', 'KoulutusConverterFactory',
-    function KoulutusRoutingController($scope, $log, $routeParams, $route, $location, converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService, converter) {
-        $log = $log.getInstance("KoulutusRoutingController");
-
+app.controller('KoulutusRoutingController', [
+    '$scope',
+    '$log',
+    '$routeParams',
+    '$route',
+    '$location',
+    'KoulutusConverterFactory',
+    'TarjontaService',
+    'PermissionService',
+    'OrganisaatioService',
+    'Koodisto',
+    'LocalisationService', function KoulutusRoutingController($scope, $log, $routeParams, $route, $location,
+       converter, TarjontaService, PermissionService, organisaatioService, Koodisto, LocalisationService) {
         /*
          * Page routing data
          */
-        $scope.resultPageUri;
-
         $scope.resolvePath = function(actionType) {
             if (!angular.isUndefined($route.current.locals.koulutusModel.result)) {
                 var type = $route.current.locals.koulutusModel.result.toteutustyyppi;
                 if (angular.isDefined(converter.STRUCTURE[type])) {
-                    if ( converter.STRUCTURE[type].templates && converter.STRUCTURE[type].templates[actionType] ) {
-                        $scope.resultPageUri = "partials/koulutus/" + actionType + "/"
-                           + converter.STRUCTURE[type].templates[actionType] + ".html";
+                    if (converter.STRUCTURE[type].templates && converter.STRUCTURE[type].templates[actionType]) {
+                        $scope.resultPageUri = 'partials/koulutus/' + actionType + '/' +
+                            converter.STRUCTURE[type].templates[actionType] + '.html';
                     }
                     else {
-                        $scope.resultPageUri = "partials/koulutus/" + actionType + "/" + type + ".html";
+                        $scope.resultPageUri = 'partials/koulutus/' + actionType + '/' + type + '.html';
                     }
-                } else {
-                    $scope.resultPageUri = "partials/koulutus/" + actionType + "/UNKNOWN.html";
                 }
-            } else {
-                $location.path("/error");
+                else {
+                    $scope.resultPageUri = 'partials/koulutus/' + actionType + '/UNKNOWN.html';
+                }
+            }
+            else {
+                $location.path('/error');
             }
         };
-
         $scope.getKoulutusPartialName = function(actionType) {
             $scope.resolvePath(actionType, $scope.koulutusModel);
         };
-
         return $scope;
     }
 ]);

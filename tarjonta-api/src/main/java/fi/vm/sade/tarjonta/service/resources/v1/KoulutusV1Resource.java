@@ -239,28 +239,6 @@ public interface KoulutusV1Resource {
             notes = "Operaatio päivittää koulutuksen tilan")
     public ResultV1RDTO<Tilamuutokset> updateTila(@PathParam("oid") String oid, @QueryParam("state") TarjontaTila tila);
 
-    /**
-     * Hakukysely tarjonnan käyttöliittymää varten.
-     *
-     * @param searchTerms
-     * @param organisationOids filter result to be in or "under" given
-     * organisations
-     * @param koulutusOids
-     * @param koulutusTila filter result to be only in states given
-     * @param alkamisKausi
-     * @param alkamisVuosi
-     * @param koulutustyyppi Koodisto-palvelun koulutustyyppi URI (esim.
-     * koulutustyyppi_1).
-     * @param toteutustyyppi Enum, vastaa koodiston koulutustyyppiä, tietyin
-     * laajennuksin.
-     * @param koulutusastetyyppi (deprecated) Karkea erottelu koulutuksille.
-     * Enum, ei vastaa koodiston koulutusytyyppiä.
-     * @param komoOid
-     * @param alkamisPvmAlkaenTs not supported
-     * @param koulutuslaji Koodisto-palvelun koulutuslaji URI (esim.
-     * koulutuslaji_a tai koulutuslaji_b).
-     * @return
-     */
     @GET
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
@@ -276,13 +254,17 @@ public interface KoulutusV1Resource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
             @QueryParam("koulutustyyppi") List<String> koulutustyyppi,
             @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
-            @Deprecated
-            @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
+            @Deprecated @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid,
             @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs,
             @QueryParam("koulutuslaji") String koulutuslaji,
-            // Mikä organisaatio asetetaan oletusorganisaatioksi (jos koulutuksella on monta tarjoajaa)
-            @QueryParam("defaultTarjoaja") String defaultTarjoaja
+            @QueryParam("defaultTarjoaja") String defaultTarjoaja,
+            @QueryParam("hakutapa") String hakutapa,
+            @QueryParam("hakutyyppi") String hakutyyppi,
+            @QueryParam("kohdejoukko") String kohdejoukko,
+            @QueryParam("oppilaitostyyppi") String oppilaitostyyppi,
+            @QueryParam("kunta") String kunta,
+            @QueryParam("opetuskielet") List<String> opetuskielet
     );
 
     /**

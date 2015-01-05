@@ -86,7 +86,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class PublicationDataServiceImpl implements PublicationDataService {
 
     private static final Logger log = LoggerFactory.getLogger(PublicationDataServiceImpl.class);
-    @Autowired(required = true)
+    @Autowired
     private EventSender eventSender;
     @Autowired
     private KoulutusmoduuliToteutusDAO komotoDAO;

@@ -83,21 +83,21 @@ public class MassakopiointiTest extends TestData {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MassakopiointiTest.class);
     private static final Date DATE_2014 = (new DateTime(KOULUTUS_START_DATE)).plusYears(1).toDate();
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAOImpl hakukohdeDAO;
-    @Autowired(required = true)
+    @Autowired
     private HakuDAOImpl hakuDAO;
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
     private EntityManager em;
 
-    @Autowired(required = true)
+    @Autowired
     private HakuV1Resource hakuResource;
 
-    @Autowired(required = true)
+    @Autowired
     private MassCopyProcess copyProcess;
 
-    @Autowired(required = true)
+    @Autowired
     private OidService oidService;
 
     private String foo;

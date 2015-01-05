@@ -50,9 +50,9 @@ public class EntityConverterToKomoRDTO {
     private static final KoulutusCommonConverter.Nullable NO = KoulutusCommonConverter.Nullable.NO;
     public static final String NO_OVERRIDE_URI = null;
 
-    @Autowired(required = true)
+    @Autowired
     private KoulutusKuvausV1RDTO<KomoTeksti> komoKuvausConverters;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusCommonConverter commonConverter;
 
     public KomoV1RDTO convert(final Koulutusmoduuli komo, final RestParam restParam) {

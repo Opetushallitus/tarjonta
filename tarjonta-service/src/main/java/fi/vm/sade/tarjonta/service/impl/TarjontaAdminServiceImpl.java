@@ -82,7 +82,7 @@ import fi.vm.sade.tarjonta.service.business.impl.HakuService;
 import fi.vm.sade.tarjonta.service.search.IndexerResource;
 import fi.vm.sade.tarjonta.service.search.KoulutuksetKysely;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
-import fi.vm.sade.tarjonta.service.search.TarjontaSearchService;
+import fi.vm.sade.tarjonta.service.search.KoulutusSearchService;
 import fi.vm.sade.tarjonta.service.types.GeneerinenTilaTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeLiiteTyyppi;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
@@ -116,32 +116,32 @@ import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 public class TarjontaAdminServiceImpl implements TarjontaAdminService {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(TarjontaAdminServiceImpl.class);
-    @Autowired(required = true)
+    @Autowired
     private HakuService hakuBusinessService;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusBusinessService koulutusBusinessService;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
-    @Autowired(required = true)
+    @Autowired
     private HakuDAO hakuDAO;
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAO hakukohdeDAO;
-    @Autowired(required = true)
+    @Autowired
     private ConversionService conversionService;
-    @Autowired(required = true)
+    @Autowired
     private PublicationDataService publication;
-    @Autowired(required = true)
+    @Autowired
     private MonikielinenMetadataDAO metadataDAO;
     @Autowired
     private TarjontaPublicService publicService;
     @Autowired
     private IndexerResource solrIndexer;
     @Autowired
-    private TarjontaSearchService searchService;
+    private KoulutusSearchService searchService;
     @Autowired
     private PermissionChecker permissionChecker;
     @Autowired

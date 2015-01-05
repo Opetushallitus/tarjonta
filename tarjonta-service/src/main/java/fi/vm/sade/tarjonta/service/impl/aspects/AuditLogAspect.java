@@ -36,7 +36,7 @@ public class AuditLogAspect {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuditLogAspect.class);
 
-    @Autowired(required = true)
+    @Autowired
     private fi.vm.sade.log.client.Logger auditLogger;
 
     public static final String INSERT_OPERATION = "Insert";

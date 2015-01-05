@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 
 import java.util.*;
 
+import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -222,6 +223,7 @@ public class TarjontaFixtures {
         t.addOpetuskieli(new KoodistoUri("http://kielet/fi"));
         t.addOpetusmuoto(new KoodistoUri("http://opetusmuodot/lahiopetus"));
         t.setViimIndeksointiPvm(new Date());
+        t.setToteutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS);
         return t;
 
     }
@@ -531,18 +533,31 @@ public class TarjontaFixtures {
 
     }
 
-    public void createPersistedValintaperusteSoraKuvaus() {
-        ValintaperusteSoraKuvaus kuvaus = new ValintaperusteSoraKuvaus();
+    public void createPersistedValintaperustekuvaukset() {
+        ValintaperusteSoraKuvaus kuvausKK = new ValintaperusteSoraKuvaus();
 
-        kuvaus.setTyyppi(ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
-        kuvaus.setTila(ValintaperusteSoraKuvaus.Tila.VALMIS);
-        kuvaus.setVuosi(2014);
+        kuvausKK.setTyyppi(ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+        kuvausKK.setTila(ValintaperusteSoraKuvaus.Tila.VALMIS);
+        kuvausKK.setVuosi(2014);
 
-        MonikielinenTeksti monikielinenTeksti = new MonikielinenTeksti();
-        monikielinenTeksti.addTekstiKaannos("kieli_fi", "Suomi");
-        monikielinenTeksti.addTekstiKaannos("kieli_en", "English");
-        kuvaus.setMonikielinenNimi(monikielinenTeksti);
+        MonikielinenTeksti nimiKK = new MonikielinenTeksti();
+        nimiKK.addTekstiKaannos("kieli_fi", "Suomi");
+        nimiKK.addTekstiKaannos("kieli_en", "English");
+        kuvausKK.setMonikielinenNimi(nimiKK);
 
-        kuvausDAO.insert(kuvaus);
+        kuvausDAO.insert(kuvausKK);
+
+        ValintaperusteSoraKuvaus kuvausToinenAste = new ValintaperusteSoraKuvaus();
+
+        kuvausToinenAste.setTyyppi(ValintaperusteSoraKuvaus.Tyyppi.VALINTAPERUSTEKUVAUS);
+        kuvausToinenAste.setTila(ValintaperusteSoraKuvaus.Tila.VALMIS);
+        kuvausToinenAste.setVuosi(2014);
+        kuvausToinenAste.setAvain("valintaperusteryhma_01");
+
+        MonikielinenTeksti nimiToinenAste = new MonikielinenTeksti();
+        nimiToinenAste.addTekstiKaannos("kieli_fi", "Ammatillinen pt, pk");
+        kuvausToinenAste.setMonikielinenNimi(nimiToinenAste);
+
+        kuvausDAO.insert(kuvausToinenAste);
     }
 }

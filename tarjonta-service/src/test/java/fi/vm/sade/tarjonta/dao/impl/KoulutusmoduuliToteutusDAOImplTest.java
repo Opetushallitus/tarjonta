@@ -60,12 +60,12 @@ public class KoulutusmoduuliToteutusDAOImplTest extends TestData {
     private static final String IMAGE_FILENAME = "kuva.jpg";
     private static final String IMAGE_MIME = "image/jpeg";
 
-    @Autowired(required = true)
+    @Autowired
     private HakukohdeDAOImpl instance;
-    @Autowired(required = true)
+    @Autowired
     private TarjontaFixtures fixtures;
     private EntityManager em;
-    @Autowired(required = true)
+    @Autowired
     private KoulutusmoduuliToteutusDAOImpl komotoDao;
 
     @Before

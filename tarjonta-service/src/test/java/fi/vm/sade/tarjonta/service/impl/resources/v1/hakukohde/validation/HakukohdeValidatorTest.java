@@ -1,7 +1,10 @@
 package fi.vm.sade.tarjonta.service.impl.resources.v1.hakukohde.validation;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.Haku;
 import fi.vm.sade.tarjonta.model.Hakukohde;
+import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
 import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
@@ -11,21 +14,21 @@ import fi.vm.sade.tarjonta.service.search.KoulutuksetVastaus;
 import fi.vm.sade.tarjonta.service.search.KoulutusPerustieto;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
-import org.junit.Test;
-
-/**
- * @author jani
- */
+@RunWith(MockitoJUnitRunner.class)
 public class HakukohdeValidatorTest {
-
-    public HakukohdeValidatorTest() {
-    }
 
     private static final int VUOSI_2014 = 2014;
     private static final int VUOSI_2015 = 2015;
@@ -43,23 +46,29 @@ public class HakukohdeValidatorTest {
     private static final String KAUSI_S = "kausi_s";
     private static final String KAUSI_S_VERSIO = "kausi_s#1";
 
-    /**
-     * Test of isValidKomotoSelection method, of class HakukohdeValidator.
-     */
+    @Mock
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
+
+    @InjectMocks
+    private HakukohdeValidator hakukohdeValidator;
+
+    @Before
+    public void before() {
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3.4.5")).thenReturn(komoto);
+    }
+
     @Test
     public void testIsValidKomotoSelectionSuccess() {
         KoulutuksetVastaus kv = new KoulutuksetVastaus();
 
-        /*
-         * Common education:
-         */
         List<KoulutusPerustieto> list = Lists.<KoulutusPerustieto>newArrayList();
         list.add(perustieto(KOMOTO_OID1, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_S_VERSIO));
         list.add(perustieto(KOMOTO_OID2, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A_VERSIO, VUOSI_2014, KAUSI_S));
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A, VUOSI_2014, KAUSI_S));
         kv.setKoulutukset(list);
 
-        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
         Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
         assertEquals(ResultStatus.OK, dto.getStatus());
         assertNotNull("result was null?", result.size());
@@ -78,7 +87,7 @@ public class HakukohdeValidatorTest {
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_C_VERSIO, VUOSI_2014, KAUSI_K));
         kv.setKoulutukset(list);
 
-        dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        dto = hakukohdeValidator.getValidKomotoSelection(kv);
         result = dto.getResult().getOidConflictingWithOids();
         assertEquals(ResultStatus.OK, dto.getStatus());
         assertNotNull("result was null?", result.size());
@@ -99,7 +108,7 @@ public class HakukohdeValidatorTest {
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_B_VERSIO, VUOSI_2014, KAUSI_K));
         kv.setKoulutukset(list);
 
-        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
         Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
 
         assertEquals(ResultStatus.ERROR, dto.getStatus());
@@ -122,7 +131,7 @@ public class HakukohdeValidatorTest {
         list.add(perustieto(KOMOTO_OID3, ToteutustyyppiEnum.AMMATTITUTKINTO, KOULUTUS_A_VERSIO, VUOSI_2014, KAUSI_K));
         kv.setKoulutukset(list);
 
-        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
         Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
 
         assertEquals(ResultStatus.ERROR, dto.getStatus());
@@ -146,7 +155,7 @@ public class HakukohdeValidatorTest {
 
         kv.setKoulutukset(list);
 
-        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
         Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
 
         assertEquals(ResultStatus.ERROR, dto.getStatus());
@@ -169,7 +178,7 @@ public class HakukohdeValidatorTest {
 
         kv.setKoulutukset(list);
 
-        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
         Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
 
         assertEquals(ResultStatus.ERROR, dto.getStatus());
@@ -193,7 +202,7 @@ public class HakukohdeValidatorTest {
 
         kv.setKoulutukset(list);
 
-        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        ResultV1RDTO<ValitutKoulutuksetV1RDTO> dto = hakukohdeValidator.getValidKomotoSelection(kv);
         Map<String, Set<String>> result = dto.getResult().getOidConflictingWithOids();
 
         assertEquals(ResultStatus.ERROR, dto.getStatus());
@@ -211,7 +220,7 @@ public class HakukohdeValidatorTest {
         list.add(koulutusperustieto(KOMOTO_OID3, ToteutustyyppiEnum.KORKEAKOULUTUS, KOULUTUS_C_VERSIO, VUOSI_2015, KAUSI_K, TarjontaTila.VALMIS));
 
         kv.setKoulutukset(list);
-        dto = HakukohdeValidator.getValidKomotoSelection(kv);
+        dto = hakukohdeValidator.getValidKomotoSelection(kv);
 
         assertEquals("Found errors?", null, dto.getErrors());
         kv.setKoulutukset(list);
@@ -255,25 +264,25 @@ public class HakukohdeValidatorTest {
     public void thatPisterajatPrecisionIsValidated() {
         ValintakoeV1RDTO valintakoe = getValintakoe();
 
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
 
         getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("4.555"));
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("9.55"));
         getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(null);
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
 
         getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("4.55"));
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("9.555"));
         getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(null);
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
 
         getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("4.55"));
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("9.55"));
         getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("4.555"));
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID_TYPE));
     }
 
@@ -285,7 +294,7 @@ public class HakukohdeValidatorTest {
     public void thatRestrictionsAreValidated() {
         ValintakoeV1RDTO valintakoe = getValintakoe();
 
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
 
         validateYlinPistemaaraOverTen();
@@ -302,21 +311,21 @@ public class HakukohdeValidatorTest {
     public void thatPaasykoekuvauksetAreValidated() {
         ValintakoeV1RDTO valintakoe = getValintakoe();
 
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING));
 
         valintakoe.getKuvaukset().put("kieli_fi", "");
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING));
 
         valintakoe.getKuvaukset().put("kieli_en", "");
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING));
 
         valintakoe.getKuvaukset().remove("kieli_fi");
         valintakoe.getKuvaukset().remove("kieli_en");
 
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_PAASYKOE_DATA_MISSING));
     }
 
@@ -324,22 +333,110 @@ public class HakukohdeValidatorTest {
     public void thatLisanaytotAreValidated() {
         ValintakoeV1RDTO valintakoe = getValintakoe();
 
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_LISANAYTOT_DATA_MISSING));
 
         valintakoe.getLisanaytot().put("kieli_fi", "");
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_LISANAYTOT_DATA_MISSING));
 
         valintakoe.getLisanaytot().put("kieli_en", "");
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_LISANAYTOT_DATA_MISSING));
 
         valintakoe.getLisanaytot().remove("kieli_fi");
         valintakoe.getLisanaytot().remove("kieli_en");
 
-        messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_LISANAYTOT_DATA_MISSING));
+    }
+
+
+    @Test
+    public void thatDuplicateHakukohdeCheckDoesNotBlockUpdatingHakukohde() {
+        HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
+        hakukohdeDTO.setOid("hakukohdeOid");
+        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setHakuOid("hakuOid");
+        hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
+        hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setOid("komotoOid");
+
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid("hakukohdeOid");
+        hakukohde.setHakukohdeNimi("hakukohdeNimi");
+
+        Haku haku = new Haku();
+        haku.setOid("hakuOid");
+        hakukohde.setHaku(haku);
+
+        komoto.addHakukohde(hakukohde);
+
+        when(koulutusmoduuliToteutusDAO.findByOid("komotoOid")).thenReturn(komoto);
+
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI));
+    }
+
+    @Test
+    public void thatDuplicateHakukohdeCannotBeCreated() {
+        HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
+        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setHakuOid("hakuOid");
+        hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
+        hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setOid("komotoOid");
+
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid("hakukohdeOid");
+        hakukohde.setHakukohdeNimi("hakukohdeNimi");
+        hakukohde.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.JULKAISTU);
+
+        Haku haku = new Haku();
+        haku.setOid("hakuOid");
+        hakukohde.setHaku(haku);
+
+        komoto.addHakukohde(hakukohde);
+
+        when(koulutusmoduuliToteutusDAO.findByOid("komotoOid")).thenReturn(komoto);
+
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI));
+    }
+
+    @Test
+    public void thatDuplicateHakukohdeCanBeCreatedWhenDuplicateIsPoistettu() {
+        HakukohdeV1RDTO hakukohdeDTO = new HakukohdeV1RDTO();
+        hakukohdeDTO.setToteutusTyyppi("LUKIOKOULUTUS");
+        hakukohdeDTO.setHakuOid("hakuOid");
+        hakukohdeDTO.setHakukohteenNimiUri("hakukohdeNimi");
+        hakukohdeDTO.getHakukohdeKoulutusOids().add("komotoOid");
+
+        KoulutusmoduuliToteutus komoto = new KoulutusmoduuliToteutus();
+        komoto.setOid("komotoOid");
+
+        Hakukohde hakukohde = new Hakukohde();
+        hakukohde.setOid("hakukohdeOid");
+        hakukohde.setHakukohdeNimi("hakukohdeNimi");
+        hakukohde.setTila(fi.vm.sade.tarjonta.shared.types.TarjontaTila.POISTETTU);
+
+        Haku haku = new Haku();
+        haku.setOid("hakuOid");
+        hakukohde.setHaku(haku);
+
+        komoto.addHakukohde(hakukohde);
+
+        when(koulutusmoduuliToteutusDAO.findByOid("komotoOid")).thenReturn(komoto);
+
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+
+        assertFalse(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_DUPLIKAATTI));
     }
 
     private void validateKokonaispisteetAlinHyvaksyttyGreaterThanYlimmatPisterajat() {
@@ -347,7 +444,7 @@ public class HakukohdeValidatorTest {
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("2.00"));
         getLisapisteetPisterajat(valintakoe).setYlinPistemaara(new BigDecimal("2.00"));
         getKokonaispisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("5.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_KOKONAISPISTEET_NOT_VALID));
     }
 
@@ -356,7 +453,7 @@ public class HakukohdeValidatorTest {
         getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("1.00"));
         getLisapisteetPisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("1.00"));
         getKokonaispisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("1.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_KOKONAISPISTEET_NOT_VALID));
     }
 
@@ -364,7 +461,7 @@ public class HakukohdeValidatorTest {
         ValintakoeV1RDTO valintakoe = getValintakoe();
         getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("2.00"));
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("1.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
     }
 
@@ -372,7 +469,7 @@ public class HakukohdeValidatorTest {
         ValintakoeV1RDTO valintakoe = getValintakoe();
         getPaasykoepisterajat(valintakoe).setAlinPistemaara(new BigDecimal("2.00"));
         getPaasykoepisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("1.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
     }
 
@@ -380,7 +477,7 @@ public class HakukohdeValidatorTest {
         ValintakoeV1RDTO valintakoe = getValintakoe();
         getLisapisteetPisterajat(valintakoe).setAlinPistemaara(new BigDecimal("2.00"));
         getLisapisteetPisterajat(valintakoe).setYlinPistemaara(new BigDecimal("1.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
     }
 
@@ -388,14 +485,14 @@ public class HakukohdeValidatorTest {
         ValintakoeV1RDTO valintakoe = getValintakoe();
         getLisapisteetPisterajat(valintakoe).setAlinPistemaara(new BigDecimal("2.00"));
         getLisapisteetPisterajat(valintakoe).setAlinHyvaksyttyPistemaara(new BigDecimal("1.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
     }
 
     private void validateYlinPistemaaraOverTen() {
         ValintakoeV1RDTO valintakoe = getValintakoe();
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("10.1"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
     }
 
@@ -403,7 +500,7 @@ public class HakukohdeValidatorTest {
         ValintakoeV1RDTO valintakoe = getValintakoe();
         getPaasykoepisterajat(valintakoe).setYlinPistemaara(new BigDecimal("6.00"));
         getLisapisteetPisterajat(valintakoe).setYlinPistemaara(new BigDecimal("6.00"));
-        List<HakukohdeValidationMessages> messages = HakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
+        List<HakukohdeValidationMessages> messages = hakukohdeValidator.validateValintakokees(getValintkoeAsList(valintakoe));
         assertTrue(messages.contains(HakukohdeValidationMessages.HAKUKOHDE_VALINTAKOE_PISTERAJAT_NOT_VALID));
     }
 
@@ -482,7 +579,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(21), "oppiaineUri"));
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal("5.555"), "oppiaineUri"));
 
-        List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+        List<HakukohdeValidationMessages> validationMessages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
 
         assertTrue(validationMessages.size() == 4);
         assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING, validationMessages.get(0));
@@ -494,7 +591,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), "oppiaineUri"));
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(20), "oppiaineUri"));
 
-        validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+        validationMessages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
 
         assertTrue(validationMessages.isEmpty());
     }
@@ -517,7 +614,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), ""));
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), null));
 
-        List<HakukohdeValidationMessages> validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+        List<HakukohdeValidationMessages> validationMessages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
 
         assertTrue(validationMessages.size() == 2);
         assertEquals(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING, validationMessages.get(0));
@@ -526,7 +623,7 @@ public class HakukohdeValidatorTest {
         hakukohdeDTO.getPainotettavatOppiaineet().clear();
         hakukohdeDTO.getPainotettavatOppiaineet().add(createPainokerroin(new BigDecimal(1), "oppiaineUri"));
 
-        validationMessages = HakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
+        validationMessages = hakukohdeValidator.validateToisenAsteenHakukohde(hakukohdeDTO);
 
         assertTrue(validationMessages.isEmpty());
     }

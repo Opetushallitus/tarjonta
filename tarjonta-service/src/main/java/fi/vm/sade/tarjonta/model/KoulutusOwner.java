@@ -54,4 +54,7 @@ public class KoulutusOwner extends TarjontaBaseEntity {
         this.ownerType = ownerType;
     }
 
+    public boolean isTarjoaja() {
+        return TARJOAJA.equals(getOwnerType());
+    }
 }
