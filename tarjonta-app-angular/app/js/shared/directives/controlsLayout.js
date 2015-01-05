@@ -224,7 +224,7 @@ app.directive('displayControls', function($log, LocalisationService, $filter, Yh
                     return '';
                 }
                 var tkey = $scope.isNew() ? $scope.model.ttCreate : $scope.model.ttEdit;
-                return tkey === null ? ttext : LocalisationService.t(tkey, [ttext]);
+                return tkey === undefined ? ttext : LocalisationService.t(tkey, [ttext]);
             };
             return $scope;
         }
