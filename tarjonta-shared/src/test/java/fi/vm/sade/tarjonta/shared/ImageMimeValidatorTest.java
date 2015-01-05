@@ -18,35 +18,34 @@ package fi.vm.sade.tarjonta.shared;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author jani
- */
 public class ImageMimeValidatorTest {
 
     @Test
     public void validateImageMimeType() {
-        // TODO review the generated test code and remove the default call to fail.
-        boolean validate = ImageMimeValidator.validate("image/bmp");
-        assertTrue(validate);
 
-        validate = ImageMimeValidator.validate("image/jpg");
-        assertTrue(validate);
+        boolean isValid = ImageMimeValidator.isValid("image/bmp");
+        assertTrue(isValid);
 
-        validate = ImageMimeValidator.validate("image/png");
-        assertTrue(validate);
+        isValid = ImageMimeValidator.isValid("image/jpg");
+        assertTrue(isValid);
 
-        validate = ImageMimeValidator.validate(" image/png ");
-        assertFalse(validate);
+        isValid = ImageMimeValidator.isValid("image/png");
+        assertTrue(isValid);
 
-        validate = ImageMimeValidator.validate("image/xxx");
-        assertFalse(validate);
+        isValid = ImageMimeValidator.isValid("image/jpeg");
+        assertTrue(isValid);
 
-        validate = ImageMimeValidator.validate("mage/png");
-        assertFalse(validate);
+        isValid = ImageMimeValidator.isValid(" image/png ");
+        assertFalse(isValid);
 
-        validate = ImageMimeValidator.validate("");
-        assertFalse(validate);
+        isValid = ImageMimeValidator.isValid("image/xxx");
+        assertFalse(isValid);
+
+        isValid = ImageMimeValidator.isValid("mage/png");
+        assertFalse(isValid);
+
+        isValid = ImageMimeValidator.isValid("");
+        assertFalse(isValid);
     }
 
 }
