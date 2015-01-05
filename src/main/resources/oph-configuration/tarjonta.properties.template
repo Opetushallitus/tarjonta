@@ -1,6 +1,6 @@
 #
 # TÄHÄN TIEDOSTOON EI SAA TALLENTAA YMPÄRISTÖKOHTAISIA ARVOJA MUUTOIN KUIN MUUTTUJINA!!!
-# 
+#
 # Tämä tiedosto toimii pohjana oph-configuration/common.properties tiedostolle,
 # joka asettaa tomcatin ympäristökohtaiset arvot.
 #
@@ -88,3 +88,6 @@ user.home.conf=/data00/oph/tarjonta/oph-configuration
 user.webservice.url.backend=https://${host.virkailija}/authentication-service/services/userService
 web.url.cas=https://${host.cas}/cas
 organisaatio.api.rest.url=https://${host.virkailija}/organisaatio-service/rest/
+
+# Caller-Id
+callerid.tarjonta.tarjonta-app.frontend=tarjonta.tarjonta-app.frontend
