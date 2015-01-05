@@ -324,7 +324,9 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         });
         //If no name found according to lang => just get some name
         if (!hakukohdeNimi) {
-            hakukohdeNimi = hakukohde.nimi[_.keys(hakukohde.nimi)[0]];
+            hakukohdeNimi = _.find(hakukohde.nimi, function(nimi) {
+                return $.trim(nimi) !== '';
+            });
         }
         return hakukohdeNimi;
     };
