@@ -4,7 +4,6 @@ module.exports = function(config) {
         basePath: '../app',
         files: [
             'lib/jquery-1.10.2.min.js',
-            'jquery-1.10.2.min.map',
             'lib/underscore/underscore.js',
             'lib/angular/angular.js',
             'lib/angular/angular-resource.js',
@@ -21,10 +20,9 @@ module.exports = function(config) {
             'partials/**/*.js',
             'partials/ie9.js',
             '../test/unit/**/*.js',
-            '../test/lib/jasmine.async.node.js',
             'lib/ngGrid/ng-grid-2.0.7.min.js',
             'lib/ui-bootstrap-0.9.0.js',
-            'lib/ui-bootstrap-tpls-0.9.0.js',
+            'lib/ui-bootstrap-tpls-0.11.0.js',
             'lib/imageupload.js'
         ],
         autoWatch: true,
@@ -50,4 +48,3 @@ module.exports = function(config) {
         }
     });
 };
-
