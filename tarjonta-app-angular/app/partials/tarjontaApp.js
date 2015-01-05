@@ -585,13 +585,16 @@ angular.module('app').config(function($logProvider) {
     'use strict';
     $logProvider.debugEnabled(true);
 });
-/**
- * Fix IE caching AJAX-requests to tarjonta-service.
- */
-angular.module('app').factory('ieCacheInterceptor', function() {
+
+angular.module('app').factory('ajaxInterceptor', function(Config) {
     'use strict';
+    var callerid = Config.env['callerid.tarjonta.tarjonta-app.frontend'];
     return {
         request: function(config) {
+            if (callerid) {
+                config.headers['Caller-Id'] = callerid;
+            }
+            // Fix IE caching AJAX-requests to tarjonta-service.
             if (config.method === 'GET' && config.url.indexOf('/tarjonta-service/') !== -1) {
                 config.headers['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT';
             }
@@ -600,5 +603,5 @@ angular.module('app').factory('ieCacheInterceptor', function() {
     };
 }).config(function($httpProvider) {
     'use strict';
-    $httpProvider.interceptors.push('ieCacheInterceptor');
+    $httpProvider.interceptors.push('ajaxInterceptor');
 });
