@@ -3,8 +3,6 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
                                                             Koodisto, Hakukohde, AuthService, HakuService, Config,
                                                             $location, $timeout, TarjontaService, Kuvaus,
                                                             CommonUtilService) {
-    $scope.model = $scope.model || {};
-    $scope.model.hakukohde = $scope.model.hakukohde || {};
     var filterHakus = function(hakus) {
         return $scope.filterHakusWithOrgs(
             $scope.filterHakuWithKohdejoukko(hakus, 'haku.kohdejoukko.aiku.uri')

@@ -48,7 +48,8 @@ app.controller('HakukohdeParentController', [
             'PERUSOPETUKSEN_LISAOPETUS': toinenAsteHakukohdePartialUri,
             'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS': toinenAsteHakukohdePartialUri,
             'VAPAAN_SIVISTYSTYON_KOULUTUS': toinenAsteHakukohdePartialUri,
-            'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA': toinenAsteHakukohdePartialUri
+            'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA': toinenAsteHakukohdePartialUri,
+            AIKUISTEN_PERUSOPETUS: aikuLukioHakukohdePartialUri
         };
         $scope.toisenAsteenKoulutus = function(toteutusTyyppi) {
             return _.contains([
@@ -835,8 +836,6 @@ app.controller('HakukohdeParentController', [
             $scope.modelInitialState = state;
         };
         $scope.model.takaisin = function(confirm) {
-            // console.log("LINK CONFIRM TAKAISIN", [confirm,
-            // $scope.editHakukohdeForm, $scope]);
             if (!confirm && isDirty()) {
                 dialogService.showModifedDialog().result.then(function(result) {
                     if (result) {
@@ -849,8 +848,6 @@ app.controller('HakukohdeParentController', [
             }
         };
         $scope.model.tarkastele = function(confirm) {
-            // console.log("LINK CONFIRM TARKASTELE", [confirm,
-            // $scope.editHakukohdeForm, $scope]);
             if (!confirm && isDirty()) {
                 dialogService.showModifedDialog().result.then(function(result) {
                     if (result) {
@@ -1194,7 +1191,6 @@ app.controller('HakukohdeParentController', [
                             $scope.canEdit = true;
                             $scope.model.continueToReviewEnabled = true;
                             $scope.status.dirty = false;
-                            $scope.editHakukohdeForm.$dirty = false;
                             $scope.modelInitialState = null;
                         }, function(error) {
                             $log.debug('ERROR INSERTING HAKUKOHDE : ', error);
@@ -1209,9 +1205,6 @@ app.controller('HakukohdeParentController', [
                             $scope.handleConfigurableHakuaika();
                             if (hakukohde.status === 'OK') {
                                 $scope.status.dirty = false;
-                                if ($scope.editHakukohdeForm) {
-                                    $scope.editHakukohdeForm.$dirty = false;
-                                }
                                 $scope.showSuccess();
                             }
                             else {

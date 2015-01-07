@@ -19,7 +19,7 @@
 
         <h4 tt="selectTutkintoOhjelma.tekstihaku">Tekstihaku</h4>
         <div class="modal-form">
-            <input type="text" data-ng-model="stoModel.hakulause" />
+            <input type="text" ng-model="stoModel.hakulause" ng-enter="searchTutkinnot()" />
             <button class="btn btn-warning" ng-click="clearCriteria()"><div tt="selectTutkintoOhjelma.tyhjenna">Tyhjennä</div></button>
             <button class="btn btn-primary" ng-click="searchTutkinnot()"><div tt="selectTutkintoOhjelma.hae">Hae</div></button>
         </div>
