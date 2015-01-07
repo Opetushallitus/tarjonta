@@ -89,7 +89,8 @@ angular.module('app', [
     'Parameter',
     'Logging',
     'ValidDecimal',
-    'taiPlaceholder'
+    'taiPlaceholder',
+    'Validator'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {

@@ -1,61 +1,15 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
-                    Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout,
-                    TarjontaService, Kuvaus, CommonUtilService, PermissionService) {
-    var filterHakuWithHakutapa = function(hakus) {
-        var filteredHakus = [];
-        angular.forEach(hakus, function(haku) {
-            if (haku.hakutapaUri.indexOf(window.CONFIG.app['haku.hakutapa.erillishaku.uri']) != -1) {
-                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
-                    && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                    filteredHakus.push(haku);
-                }
-            }
-            else {
-                filteredHakus.push(haku);
-            }
-        });
-        return filteredHakus;
-    };
-    var validateAikuHakukohde = function() {
-        var errors = [];
-        if (!$scope.model.hakukohde.hakukohteenNimiUri
-            || $scope.model.hakukohde.hakukohteenNimiUri.trim().length < 1) {
-            $scope.model.nimiValidationFailed = true;
-            errors.push({
-                errorMessageKey: 'hakukohde.edit.nimi.missing'
-            });
-        }
-        if (!$scope.model.hakukohde.hakuOid || $scope.model.hakukohde.hakuOid.trim().length < 1) {
-            errors.push({
-                errorMessageKey: 'hakukohde.edit.haku.missing'
-            });
-        }
-        if (!$scope.status.validateValintakokeet()) {
-            errors.push({
-                errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
-            });
-        }
-        $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected(errors);
-        if (errors.length < 1) {
-            return true;
-        }
-        else {
-            $scope.showError(errors);
-            return false;
-        }
-    };
+                                                            Koodisto, Hakukohde, AuthService, HakuService, Config,
+                                                            $location, $timeout, TarjontaService, Kuvaus,
+                                                            CommonUtilService) {
+    $scope.model = $scope.model || {};
+    $scope.model.hakukohde = $scope.model.hakukohde || {};
     var filterHakus = function(hakus) {
         return $scope.filterHakusWithOrgs(
             $scope.filterHakuWithKohdejoukko(hakus, 'haku.kohdejoukko.aiku.uri')
         );
     };
-    /**
-    *
-    * Controller initialization function which is called when controller
-    * loads
-    *
-    */
     var init = function() {
         $scope.model.userLang = AuthService.getLanguage();
         if ($scope.model.userLang === undefined) {
@@ -79,10 +33,10 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
         return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
     };
     $scope.saveAikuLukioAsLuonnos = function() {
-        $scope.model.saveParent('LUONNOS', validateAikuHakukohde);
+        $scope.model.saveParent('LUONNOS');
     };
     $scope.saveAikuLukioAsValmis = function() {
-        $scope.model.saveParent('VALMIS', validateAikuHakukohde);
+        $scope.model.saveParent('VALMIS');
     };
     $scope.model.hakuChanged = function() {
         if ($scope.model.hakukohde.hakuOid !== undefined) {
@@ -93,7 +47,7 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
                     var formattedStartDate = $scope.createFormattedDateString(hakuaika.alkuPvm);
                     var formattedEndDate = $scope.createFormattedDateString(hakuaika.loppuPvm);
                     hakuaika.formattedNimi = resolveLocalizedValue(hakuaika.nimet)
-                                                + ', ' + formattedStartDate + ' - ' + formattedEndDate;
+                    + ', ' + formattedStartDate + ' - ' + formattedEndDate;
                     $scope.model.hakuaikas.push(hakuaika);
                 });
                 $scope.model.showHakuaikas = true;

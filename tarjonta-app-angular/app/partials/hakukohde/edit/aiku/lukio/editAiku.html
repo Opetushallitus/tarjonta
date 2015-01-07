@@ -12,12 +12,7 @@
         <controls-button tt-key="koulutus.edit.tallenna.valmis" action="saveAikuLukioAsValmis()" primary="true"></controls-button>
         <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
 
-        <!-- TODO on koulutuksessa, pitäiskö olla hakukohteessakin?
-        <controls-button tt-key="koulutus.edit.tallenna.jatka" action="goToReview($event)" disabled="koulutusForm.$invalid"></controls-button>
-        -->
-        <!-- TODO uutta luotaessa vaihtoehtoinen teksti "olet luomassa... " tjsp. -->
         <controls-notify type="message" tt-expr="getKoulutustenNimetKey()" tt-params="[ getKoulutustenNimet() ]"></controls-notify>
-
         <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
         <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
         <controls-notify ng-repeat="e in model.validationmsgs track by $index" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
@@ -30,7 +25,7 @@
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
             <form name="editHakukohdeForm" novalidate>
 
-                <export-to-parent name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
+                <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->
@@ -51,21 +46,9 @@
                                  name="hakutapa"
                                  class="wide"></div>
                         </td>
-                        <td>
-                            <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->
-                        </td>
+                        <td></td>
                     </tr>
 
-                    <!--                     <tr>
-                                            <th tt="kk.hakukohde.ulkoinen.tunniste">Ulkoinen tunniste</th>
-                                            <td>
-                                                <input name="ulkoinen tunniste" maxlength="35"  class="thin" data-ng-model="model.hakukohde.ulkoinenTunniste"/>
-
-                                            </td>
-                                        </tr>
-                    -->
-
-                    <!-- haku -->
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
@@ -86,12 +69,10 @@
                         </td>
                     </tr>
 
-
-                    <!-- aloituspaikat -->
                     <tr>
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" required />
+                            <input name="aloituspaikatlkm" class="thin" type="number" ng-pattern="model.integerval" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" />
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>

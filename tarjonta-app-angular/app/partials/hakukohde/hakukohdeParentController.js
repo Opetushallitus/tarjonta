@@ -22,10 +22,12 @@ app.controller('HakukohdeParentController', [
     'CommonUtilService',
     'PermissionService',
     'dialogService',
-    'HakukohdeService', function($scope, $log, $routeParams, $route, $q, $modal, $location, Hakukohde,
+    'HakukohdeService',
+    'ValidatorService',
+    function($scope, $log, $routeParams, $route, $q, $modal, $location, Hakukohde,
                  Koodisto, AuthService, HakuService, LocalisationService, OrganisaatioService,
                  SharedStateService, TarjontaService, Kuvaus, CommonUtilService, PermissionService,
-                 dialogService, HakukohdeService) {
+                 dialogService, HakukohdeService, ValidatorService) {
 
         var korkeakoulutusHakukohdePartialUri = 'partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html';
         var aikuLukioHakukohdePartialUri = 'partials/hakukohde/edit/aiku/lukio/editAiku.html';
@@ -165,14 +167,6 @@ app.controller('HakukohdeParentController', [
             dirtify: function() {
                 console.log('DIRTIFY hakukohde');
                 $scope.status.dirty = true;
-            },
-            // alikontrollerit ylikirjoittavat nämä
-            validateLiitteet: function() {
-                console.log('dummy liite validator, not validating anything!!');
-                return true;
-            },
-            validateValintakokeet: function() {
-                return true;
             }
         };
         $scope.showCommonUnknownErrorMsg = function() {
@@ -263,15 +257,6 @@ app.controller('HakukohdeParentController', [
                 $log.error('TOTEUTUSTYYPPI WAS: ', toteutusTyyppi, ' not returning template!!');
             }
         };
-        $scope.validateNameLengths = function(hakukohteenNimet) {
-            var retval = true;
-            angular.forEach(hakukohteenNimet, function(hakukohdeNimi) {
-                if (hakukohdeNimi.length > 225) {
-                    retval = false;
-                }
-            });
-            return retval;
-        };
         $scope.checkJatkaBtn = function(hakukohde) {
             if (hakukohde === undefined || hakukohde.oid === undefined) {
                 $log.debug('HAKUKOHDE OR HAKUKOHDE OID UNDEFINED');
@@ -344,114 +329,6 @@ app.controller('HakukohdeParentController', [
                 getOppilaitosTyyppis(data.organisaatiot);
             });
         };
-        var validPainotettavatOppiaineet = function() {
-            for (var i in $scope.model.hakukohde.painotettavatOppiaineet) {
-                var painokerroin = $scope.model.hakukohde.painotettavatOppiaineet[i].painokerroin;
-                var oppiaine = $scope.model.hakukohde.painotettavatOppiaineet[i].oppiaineUri;
-                if (!painokerroin || !oppiaine) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        $scope.validateHakukohde = function(toteutusTyyppi) {
-            $scope.model.aloituspaikatKuvauksetFailed = false;
-            $scope.model.hakuaikaValidationFailed = false;
-            $scope.model.hakukelpoisuusValidationErrMsg = false;
-            $scope.model.painotettavatOppiaineetValidationFailed = false;
-            var errors = [];
-            if ($scope.needsHakukelpoisuus($scope.model.hakukohde.toteutusTyyppi)) {
-                if ($scope.model.hakukohde.hakukelpoisuusvaatimusUris === undefined
-                    || $scope.model.hakukohde.hakukelpoisuusvaatimusUris.length < 1) {
-                    $scope.model.hakukelpoisuusValidationErrMsg = true;
-                    errors.push({
-                        errorMessageKey: 'tarjonta.hakukohde.hakukelpoisuusvaatimus.missing'
-                    });
-                }
-            }
-            if ($scope.model.hakukohde.hakuOid === undefined || $scope.model.hakukohde.hakuOid.length < 1) {
-                errors.push({
-                    errorMessageKey: 'hakukohde.edit.haku.missing'
-                });
-            }
-            if ($scope.needsLiitteidenToimitustiedot(toteutusTyyppi)) {
-                if (!$scope.isValidHakukohdeToimitusOsoite()) {
-                    errors.push({
-                        errorMessageKey: 'hakukohde.edit.liitteet.toimitusosoite.errors'
-                    });
-                }
-                if (!$scope.isValidHakukohdeSahkoinenOsoite()) {
-                    errors.push({
-                        errorMessageKey: 'hakukohde.edit.liitteet.sahkoinenosoite.errors'
-                    });
-                }
-            }
-            if (!$scope.toisenAsteenKoulutus(toteutusTyyppi)) {
-                if (!validateNames()) {
-                    err.errorMessageKey = 'hakukohde.edit.nimi.missing';
-                    $scope.model.nimiValidationFailed = true;
-                    errors.push({
-                        errorMessageKey: 'hakukohde.edit.nimi.missing'
-                    });
-                }
-                if (!$scope.validateNameLengths($scope.model.hakukohde.hakukohteenNimet)) {
-                    errors.push({
-                        errorMessageKey: 'hakukohde.edit.nimi.too.long'
-                    });
-                }
-            }
-            else {
-                $scope.model.nimiValidationFailed = false;
-            }
-            if (toteutusTyyppi === 'LUKIOKOULUTUS') {
-                if (!validPainotettavatOppiaineet()) {
-                    $scope.model.painotettavatOppiaineetValidationFailed = true;
-                    errors.push({
-                        errorMessageKey: 'tarjonta.hakukohde.edit.painotettavatOppiaineet.errors'
-                    });
-                }
-            }
-            if (!$scope.status.validateValintakokeet()) {
-                errors.push({
-                    errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
-                });
-            }
-            if (!$scope.status.validateLiitteet()) {
-                errors.push({
-                    errorMessageKey: 'hakukohde.edit.liitteet.errors'
-                });
-            }
-            angular.forEach($scope.model.hakukohde.aloituspaikatKuvaukset, function(arvo) {
-                if (arvo.length > 20) {
-                    errors.push({
-                        errorMessageKey: 'hakukohde.edit.aloituspaikatKuvaukset.too.long'
-                    });
-                    $scope.model.aloituspaikatKuvauksetFailed = true;
-                }
-            });
-            if ($scope.model.hakukohde.hakuaikaAlkuPvm || $scope.model.hakukohde.hakuaikaLoppuPvm) {
-                var alku = $scope.model.hakukohde.hakuaikaAlkuPvm;
-                var loppu = $scope.model.hakukohde.hakuaikaLoppuPvm;
-                if (!(alku && loppu)) {
-                    errors.push({
-                        errorMessageKey: 'hakukohde.edit.hakuaika.errors'
-                    });
-                    $scope.model.hakuaikaValidationFailed = true;
-                }
-            }
-            if (errors.length < 1 && $scope.editHakukohdeForm.$valid) {
-                return $scope.model.canSaveHakukohde();
-            }
-            else {
-                $scope.showError(errors);
-                return false;
-            }
-        };
-        /*
-             *
-             * ------> Load hakukohde koulutusnames
-             *
-             */
         $scope.loadKoulutukses = function(hakuFilterFunction) {
             var koulutusSet = new buckets.Set();
             var spec = {
@@ -994,17 +871,6 @@ app.controller('HakukohdeParentController', [
         $scope.haeSora = function() {
             $scope.naytaHaeValintaperusteKuvaus('SORA');
         };
-        /*
-             * -----> Helper functions
-             */
-        var validateNames = function() {
-            for (var i in $scope.model.hakukohde.hakukohteenNimet) {
-                if ($scope.model.hakukohde.hakukohteenNimet[i]) {
-                    return true;
-                }
-            }
-            return false;
-        };
         $scope.getHakuWithOid = function(hakuOid) {
             var foundHaku;
             angular.forEach($scope.model.hakus, function(haku) {
@@ -1282,16 +1148,20 @@ app.controller('HakukohdeParentController', [
                 $scope.model.hakukohde.soraKuvaukset = {};
             }
         }
-        $scope.model.saveParent = function(tila, hakukohdeValidationFunction) {
+        $scope.model.saveParent = function(tila) {
             if (!tila) {
                 throw 'tila cannot be undefined!';
             }
+            $scope.model.hakukohde.toteutusTyyppi = $scope.model.hakukohde.toteutusTyyppi ||
+                SharedStateService.getFromState('SelectedToteutusTyyppi');
             $scope.model.showError = false;
             PermissionService.permissionResource().authorize({}, function() {
                 $scope.emptyErrorMessages();
                 HakukohdeService.removeEmptyLiites($scope.model.hakukohde.hakukohteenLiitteet);
-                if (hakukohdeValidationFunction()) {
-                    $scope.model.showError = false;
+                var errors = ValidatorService.hakukohde.validate(
+                    $scope.model,
+                    $scope.getHakuByOid($scope.model.hakukohde.hakuOid));
+                if (errors.length === 0 && $scope.editHakukohdeForm.$valid) {
                     HakukohdeService.removeNotUsedYhteystiedot($scope.model.hakukohde.yhteystiedot);
                     updateTila(tila);
                     $scope.model.hakukohde.modifiedBy = AuthService.getUserOid();
@@ -1301,9 +1171,6 @@ app.controller('HakukohdeParentController', [
                     });
                     $scope.checkIsCopy($scope.luonnosVal);
                     if ($scope.model.hakukohde.oid === undefined) {
-                        // OVT-8199, OVT-8205 Fix "toteutusTyyppi", was not sent to server side... was validated though :)
-                        var toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
-                        $scope.model.hakukohde.toteutusTyyppi = toteutusTyyppi;
                         // KJOH-778, pitää tietää mille organisaatiolle ollaan luomassa hakukohdetta
                         var tarjoajatiedot = {};
                         angular.forEach($scope.hakukohdex.hakukohdeKoulutusOids, function(komotoOid) {
@@ -1358,6 +1225,7 @@ app.controller('HakukohdeParentController', [
                     }
                 }
                 else {
+                    $scope.showError(errors);
                     $scope.$broadcast('addEmptyLitteet');
                     $scope.$broadcast('addEmptyValintakokeet');
                 }
@@ -1467,28 +1335,6 @@ app.controller('HakukohdeParentController', [
                 }
             });
             return haku;
-        };
-        /*
-             * Testaa onko haun 'Ei sähköistä hakua. Lisatietoa hakemisesta tarjotaan hakukohteen tiedoissa.' valittu.
-             * Kaytossa : AIKU lukio / amm
-             */
-        $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected = function(errors) {
-            var haku = $scope.getHakuByOid($scope.model.hakukohde.hakuOid);
-            if (haku && !haku.jarjestelmanHakulomake &&
-                (!haku.hakulomakeUri || haku.hakulomakeUri.trim().length === 0)) {
-                var empty = true;
-                angular.forEach($scope.model.hakukohde.lisatiedot, function(val) {
-                    if (val && val.trim().length > 0) {
-                        empty = false;
-                        return;
-                    }
-                });
-                if (empty) {
-                    var err = {};
-                    err.errorMessageKey = 'hakukohde.edit.lisatietoja-hakemisesta.required';
-                    errors.push(err);
-                }
-            }
         };
         $scope.updateKaytaHaunPaattymisenAikaa = function(value) {
             if (value === true) {

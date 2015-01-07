@@ -116,39 +116,6 @@ app.controller('ValintakokeetController', function($scope, $q, $filter, Localisa
             valintakoe.selectedAjankohta = newAjankohta();
         }
     };
-    $scope.isValidAjankohta = function(ajankohta) {
-        return notEmpty([
-            ajankohta.alkaa,
-            ajankohta.loppuu,
-            ajankohta.osoite.osoiterivi1,
-            ajankohta.osoite.postinumero
-        ]);
-    };
-    // kutsutaan parentista
-    $scope.status.validateValintakokeet = function() {
-        for (var i in $scope.model.hakukohde.valintakokeet) {
-            var li = $scope.model.hakukohde.valintakokeet[i];
-            var nimiEmpty = !notEmpty(li.valintakoeNimi);
-            var tyyppiEmpty = !notEmpty(li.valintakoetyyppi);
-            var kuvausEmpty = !notEmpty(li.valintakokeenKuvaus.teksti);
-            var ajankohtaEmpty = li.valintakoeAjankohtas.length === 0;
-            if (nimiEmpty && tyyppiEmpty && kuvausEmpty && ajankohtaEmpty && li.isNew) {
-                continue;
-            }
-            if (nimiEmpty && tyyppiEmpty) {
-                return false;
-            }
-            if (kuvausEmpty) {
-                return false;
-            }
-            for (var j in li.valintakoeAjankohtas) {
-                if (!$scope.isValidAjankohta(li.valintakoeAjankohtas[j])) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    };
     $scope.addAjankohta = function(valintakoe) {
         valintakoe.valintakoeAjankohtas.push(newAjankohta());
         $scope.status.dirtify();

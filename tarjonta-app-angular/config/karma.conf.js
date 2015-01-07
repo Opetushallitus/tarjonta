@@ -11,6 +11,7 @@ module.exports = function(config) {
             'lib/angular/angular-mocks.js',
             'lib/angular/angular-animate.js',
             'lib/angular/angular-sanitize.js',
+            'lib/ui-angular-tinymce.js',
             'js/**/*.js',
             'js/shared/directives/*.html',
             'js/shared/directives/org-puu.js',

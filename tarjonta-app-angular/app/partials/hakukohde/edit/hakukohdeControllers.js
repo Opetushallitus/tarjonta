@@ -308,14 +308,11 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.handleConfigurableHakuaika();
         }
     };
-    var validateHakukohdeFunction = function() {
-        return $scope.validateHakukohde($scope.model.hakukohde.toteutusTyyppi);
-    };
     $scope.model.saveValmis = function() {
-        $scope.model.saveParent('VALMIS', validateHakukohdeFunction);
+        $scope.model.saveParent('VALMIS');
     };
     $scope.model.saveLuonnos = function() {
-        $scope.model.saveParent('LUONNOS', validateHakukohdeFunction);
+        $scope.model.saveParent('LUONNOS');
     };
     $scope.$watch(function() {
         return angular.toJson($scope.model.hakukohde.valintaperusteKuvaukset);
