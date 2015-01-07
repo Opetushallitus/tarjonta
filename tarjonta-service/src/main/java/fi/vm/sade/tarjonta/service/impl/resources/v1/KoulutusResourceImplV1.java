@@ -1134,6 +1134,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         case PERUSOPETUKSEN_LISAOPETUS:
                             persisted = insertKoulutusGeneric((KoulutusPerusopetuksenLisaopetusV1RDTO) koulutusDtoForCopy(KoulutusPerusopetuksenLisaopetusV1RDTO.class, komoto, orgOid));
                             break;
+                        case AIKUISTEN_PERUSOPETUS:
+                            persisted = insertKoulutusGeneric((KoulutusAikuistenPerusopetusV1RDTO) koulutusDtoForCopy(KoulutusAikuistenPerusopetusV1RDTO.class, komoto, orgOid));
+                            break;
                         default:
                             throw new RuntimeException("Not implemented type : " + getType(komoto));
                     }
