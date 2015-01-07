@@ -33,10 +33,6 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
                TarjontaService, Kuvaus, CommonUtilService, HAKUTAPA) {
     'use strict';
     $log = $log.getInstance('HakukohdeEditController');
-    // Get organisation groups, see "tarjontaApp.js" routing resolve for hakukohde/id/edit
-    var organisationGroups = $route.current.locals.organisationGroups || [];
-    var commonExceptionMsgKey = 'tarjonta.common.unexpected.error.msg';
-    var postinumero;
     $scope.model.canSaveHakukohde = function() {
         if ($scope.editHakukohdeForm !== undefined) {
             return $scope.editHakukohdeForm.$valid && $scope.checkCanCreateOrEditHakukohde($scope.model.hakukohde);
@@ -185,9 +181,23 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         if ($scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua === undefined) {
             $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
         }
-        // Mahdolliset Organisaatiopalvelun hakukohdetyhmät joissa hakukohde voi olla, routerissa resolvattuna
-        // [{ key: XXX, value: YYY}, ...]
-        $scope.model.hakukohdeRyhmat = organisationGroups;
+
+        if ($scope.model.hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS') {
+            // Mahdolliset Organisaatiopalvelun hakukohdetyhmät joissa hakukohde voi olla
+            // [{ key: XXX, value: YYY}, ...]
+            $scope.model.hakukohdeRyhmat = [];
+            OrganisaatioService.getRyhmat().then(function(ryhmat) {
+                var result = [];
+                angular.forEach(ryhmat, function(ryhma) {
+                    result.push({
+                        key: ryhma.oid,
+                        value: ryhma.nimi.fi
+                    });
+                });
+                $scope.model.hakukohdeRyhmat = result;
+            });
+        }
+
         // Alusta ryhmälista tyhjäksi jos ei valintoja
         if (!$scope.model.hakukohde.organisaatioRyhmaOids) {
             $scope.model.hakukohde.organisaatioRyhmaOids = [];

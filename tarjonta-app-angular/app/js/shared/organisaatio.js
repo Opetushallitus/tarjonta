@@ -17,7 +17,6 @@ angular.module('Organisaatio', [
          * @returns {$q@call;defer.promise}
          */
         function getRyhmat() {
-            $log.info('getRyhmat()');
             var ret = $q.defer();
             var orgRyhmat = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid/ryhmat', {
                 oid: '@oid'
@@ -25,12 +24,12 @@ angular.module('Organisaatio', [
                 get: {
                     method: 'GET',
                     withCredentials: true,
-                    isArray: true
+                    isArray: true,
+                    cache: true
                 }
             });
             orgRyhmat.get({
-                oid: 'perse',
-                noCache: new Date().getTime()
+                oid: 'perse'
             }, function(result) {
                 $log.debug('  got result', result);
                 // Filter correct type
@@ -40,7 +39,6 @@ angular.module('Organisaatio', [
                         tmp.push(group);
                     }
                 });
-                $log.debug('getRyhmat() - resolved to: ', tmp);
                 ret.resolve(tmp);
             }, function(err) {
                 $log.error('  got error', err);
