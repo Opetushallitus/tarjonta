@@ -253,7 +253,7 @@ public class KoulutusDTOConverterToEntity {
                 commonConverter.convertToKielivalikoima(lukioV1RDTO.getKielivalikoima(), komoto);
             }
         }
-        else if (dto.getKoulutusohjelma() != null) {
+        else if (dto.getKoulutusohjelma() != null && dto.getKoulutusohjelma().getUri() != null) {
             if (commonConverter.isOsaamisala(dto.getKoulutusohjelma())) {
                 komoto.setOsaamisalaUri(commonConverter.convertToUri(dto.getKoulutusohjelma(), FieldNames.OSAAMISALA));
             }
