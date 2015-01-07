@@ -37,19 +37,35 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
                         <td>
-                            <div koodistocombo
-                                 onchangecallback="fnTemp"
-                                 koodistouri="'hakukohteet'"
-                                 koodiuri="model.hakukohde.hakukohteenNimiUri"
-                                 parentkoodiuri="'lukiolinjat_0086'"
-                                 isdependent="true"
-                                 locale="'fi'"
-                                 version="true"
-                                 isrequired="true"
-                                 excludeuris="temp"
-                                 isalakoodi="temp"
-                                 name="hakutapa"
-                                 class="wide"></div>
+                            <koodistocombo
+                                ng-if="model.hakukohde.toteutusTyyppi === 'AIKUISTEN_PERUSOPETUS'"
+                                onchangecallback="fnTemp"
+                                koodistouri="'aikuhakukohteet'"
+                                koodiuri="model.hakukohde.hakukohteenNimiUri"
+                                parentkoodiuri="'koulutus_201101'"
+                                isdependent="true"
+                                locale="'fi'"
+                                version="true"
+                                isrequired="true"
+                                excludeuris="temp"
+                                isalakoodi="temp"
+                                name="hakutapa"
+                                class="wide" />
+
+                            <koodistocombo
+                                ng-if="model.hakukohde.toteutusTyyppi !== 'AIKUISTEN_PERUSOPETUS'"
+                                onchangecallback="fnTemp"
+                                koodistouri="'hakukohteet'"
+                                koodiuri="model.hakukohde.hakukohteenNimiUri"
+                                parentkoodiuri="'lukiolinjat_0086'"
+                                isdependent="true"
+                                locale="'fi'"
+                                version="true"
+                                isrequired="true"
+                                excludeuris="temp"
+                                isalakoodi="temp"
+                                name="hakutapa"
+                                class="wide" />
                         </td>
                         <td>
                             <!--<p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>-->

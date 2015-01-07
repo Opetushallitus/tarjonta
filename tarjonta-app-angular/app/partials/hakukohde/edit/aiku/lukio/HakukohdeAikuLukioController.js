@@ -31,8 +31,14 @@ app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, Lo
         }
     };
     var filterHakus = function(hakus) {
+        var targetUri = 'haku.kohdejoukko.aiku.uri';
+
+        if ($scope.model.hakukohde.toteutusTyyppi === 'AIKUISTEN_PERUSOPETUS') {
+            targetUri = 'haku.kohdejoukko.aikuistenPerusopetus.uri';
+        }
+
         return $scope.filterHakusWithOrgs(
-            $scope.filterHakuWithKohdejoukko(hakus, 'haku.kohdejoukko.aiku.uri')
+            $scope.filterHakuWithKohdejoukko(hakus, targetUri)
         );
     };
     /**

@@ -46,7 +46,8 @@ app.controller('HakukohdeParentController', [
             'PERUSOPETUKSEN_LISAOPETUS': toinenAsteHakukohdePartialUri,
             'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS': toinenAsteHakukohdePartialUri,
             'VAPAAN_SIVISTYSTYON_KOULUTUS': toinenAsteHakukohdePartialUri,
-            'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA': toinenAsteHakukohdePartialUri
+            'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA': toinenAsteHakukohdePartialUri,
+            AIKUISTEN_PERUSOPETUS: aikuLukioHakukohdePartialUri
         };
         $scope.toisenAsteenKoulutus = function(toteutusTyyppi) {
             return _.contains([
