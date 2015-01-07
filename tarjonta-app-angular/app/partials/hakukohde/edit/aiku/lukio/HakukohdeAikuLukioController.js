@@ -1,22 +1,7 @@
 var app = angular.module('app.kk.edit.hakukohde.ctrl');
 app.controller('HakukohdeAikuLukioEditController', function($scope, $q, $log, LocalisationService, OrganisaatioService,
                     Koodisto, Hakukohde, AuthService, HakuService, $route, $modal, Config, $location, $timeout,
-                    TarjontaService, Kuvaus, CommonUtilService, PermissionService) {
-    var filterHakuWithHakutapa = function(hakus) {
-        var filteredHakus = [];
-        angular.forEach(hakus, function(haku) {
-            if (haku.hakutapaUri.indexOf(window.CONFIG.app['haku.hakutapa.erillishaku.uri']) != -1) {
-                if (haku.koulutuksenAlkamiskausiUri === $scope.koulutusKausiUri
-                    && haku.koulutuksenAlkamisVuosi === $scope.model.koulutusVuosi) {
-                    filteredHakus.push(haku);
-                }
-            }
-            else {
-                filteredHakus.push(haku);
-            }
-        });
-        return filteredHakus;
-    };
+                    TarjontaService, Kuvaus, CommonUtilService) {
     var validateAikuHakukohde = function() {
         var errors = [];
         if (!$scope.model.hakukohde.hakukohteenNimiUri
