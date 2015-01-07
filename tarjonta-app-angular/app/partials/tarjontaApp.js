@@ -208,20 +208,6 @@ angular.module('app').config([
          * Helper functions for hakukohde resolvers
          *
          * */
-        var getHakukohdeKoulutukses = function(Hakukohde, $log, $route, SharedStateService, TarjontaService) {
-            var koulutusSet = new buckets.Set();
-            var selectedKoulutusOids;
-            if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
-                selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
-            }
-            else {
-                selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
-            }
-            var spec = {
-                koulutusOid: selectedKoulutusOids
-            };
-            return TarjontaService.haeKoulutukset(spec);
-        };
         var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService,
                                         TarjontaService) {
             var deferred = $q.defer();
@@ -465,7 +451,6 @@ angular.module('app').config([
             resolve: {
                 canEdit: resolveCanEditHakukohde,
                 canCreate: resolveCanCreateHakukohde,
-                hakukohdeKoulutuksesx: getHakukohdeKoulutukses,
                 hakukohdex: resolveHakukohde
             }
         }).when('/haku', {
