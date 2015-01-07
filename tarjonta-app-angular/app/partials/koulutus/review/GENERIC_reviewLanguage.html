@@ -71,7 +71,7 @@
         </tr>
 
         <!-- tutkintonimike -->
-        <tr>
+        <tr ng-if="!koulutusStructure.params.isPerusopetus">
             <th tt="koulutus.review.perustiedot.tutkintonimike">Tutkintonimike</th>
             <td colspan="2">
                 {{model.koulutus.tutkintonimike.meta[lang.koodi_uri].nimi}}
@@ -95,8 +95,7 @@
         </tr>
 
         <!-- pohjakoulutusvaatimus -->
-
-        <tr>
+        <tr ng-if="!koulutusStructure.params.isPerusopetus">
             <th tt="koulutus.review.perustiedot.pohjakoulutusvaatimus">Pohjakoulutusvaatimukset</th>
             <td colspan="2">
                 {{model.koulutus.pohjakoulutusvaatimus.meta[lang.koodi_uri].nimi}}

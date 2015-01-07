@@ -49,7 +49,7 @@
     </tr>
 
     <!-- tutkintonimike -->
-    <tr>
+    <tr ng-hide="koulutusStructure.params.isPerusopetus">
         <th tt="koulutus.edit.tutkintonimike">Tutkintonimike</th>
         <td>{{model.tutkintonimike.nimi}}</td>
         <td></td>
@@ -68,7 +68,7 @@
         <td>{{model.koulutuslaji.nimi}}</td>
         <td></td>
     </tr>
-    <tr>
+    <tr ng-hide="koulutusStructure.params.isPerusopetus">
         <th tt="koulutus.edit.pohjakoulutusvaatimus">Pohjakoulutusvaatimus</th>
         <td>{{model.pohjakoulutusvaatimus.nimi}}</td>
         <td></td>
