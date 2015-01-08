@@ -89,7 +89,8 @@ angular.module('app', [
     'Parameter',
     'Logging',
     'ValidDecimal',
-    'taiPlaceholder'
+    'taiPlaceholder',
+    'Validator'
 ]);
 angular.module('app').value('globalConfig', window.CONFIG);
 angular.module('app').factory('errorLogService', function($log, $window, Config) {
@@ -346,29 +347,6 @@ angular.module('app').config([
                 return undefined;
             }
         };
-        /**
-         * Resolve org groups, for "hakukohde" usage.
-         *
-         * Returns promise which will
-         * be resolved with "[{key: "oid", value: "name fi"}, ...]"
-         */
-        var resolveOrganisationGroups = function($log, OrganisaatioService) {
-            $log.info('resolveOrganisationGroups()');
-            // Return the promise
-            return OrganisaatioService.getRyhmat().then(function(ryhmat) {
-                $log.info('resolveOrganisationGroups() --> got ryhmat!', ryhmat);
-                var result = [];
-                angular.forEach(ryhmat, function(ryhma) {
-                    $log.warn('--> -->', ryhma.oid, ryhma.nimi.fi);
-                    result.push({
-                        key: ryhma.oid,
-                        value: ryhma.nimi.fi
-                    });
-                });
-                $log.info('resolveOrganisationGroups() --> --> got ryhmat processed', result);
-                return result;
-            });
-        };
         function resolveKoulutus(TarjontaService, OrganisaatioService, $log, $route, $q) {
             $log.info('/koulutus/ID', $route);
             var defer = $q.defer();
@@ -488,8 +466,7 @@ angular.module('app').config([
                 canEdit: resolveCanEditHakukohde,
                 canCreate: resolveCanCreateHakukohde,
                 hakukohdeKoulutuksesx: getHakukohdeKoulutukses,
-                hakukohdex: resolveHakukohde,
-                organisationGroups: resolveOrganisationGroups
+                hakukohdex: resolveHakukohde
             }
         }).when('/haku', {
             action: 'haku.list',

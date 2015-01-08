@@ -485,6 +485,7 @@ public class KoulutusToSolrDocumentTest {
         koulutusmoduuli.setOid("1.2.3.4");
         koulutusmoduuli.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
         koulutusmoduuli.setKoulutusUri("lukio");
+        koulutusmoduuli.setLukiolinjaUri("lukiolinja");
 
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
 

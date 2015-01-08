@@ -211,7 +211,8 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         if (koulutusmoduuliToteutus.getToteutustyyppi() != null) {
             switch (koulutusmoduuliToteutus.getToteutustyyppi()) {
                 case LUKIOKOULUTUS:
-                    addKoulutusohjelmaTiedot(komotoDoc, koulutusmoduuliToteutus.getLukiolinjaUri());
+                case LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA:
+                    addKoulutusohjelmaTiedot(komotoDoc, koulutusmoduuliToteutus.getKoulutusmoduuli().getLukiolinjaUri());
                     break;
 
                 case KORKEAKOULUTUS:

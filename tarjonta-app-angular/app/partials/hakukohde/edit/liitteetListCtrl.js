@@ -13,7 +13,7 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
     var osoitteetReceived = false;
     function postProcessLiite(liite) {
         if (liite.sahkoinenOsoiteEnabled === undefined) {
-            liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite;
+            liite.sahkoinenOsoiteEnabled = liite.sahkoinenToimitusOsoite !== undefined;
         }
         if (liite.muuOsoiteEnabled === undefined && osoitteetReceived) {
             if ($scope.model.liitteidenToimitusOsoite[liite.kieliUri]) {
@@ -209,44 +209,6 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
             $scope.status.dirtify();
         }
     };
-    $scope.isValidToimitusOsoite = function(liite) {
-        var r = !liite.muuOsoiteEnabled || notEmpty([
-                liite.liitteenToimitusOsoite.osoiterivi1,
-                liite.liitteenToimitusOsoite.postinumero
-            ]);
-        return r;
-    };
-    $scope.isValidSahkoinenOsoite = function(liite) {
-        var r = !liite.sahkoinenOsoiteEnabled || notEmpty(liite.sahkoinenToimitusOsoite);
-        return r;
-    };
-    // kutsutaan parentista
-    $scope.status.validateLiitteet = function() {
-        for (var i in $scope.model.hakukohde.hakukohteenLiitteet) {
-            var li = $scope.model.hakukohde.hakukohteenLiitteet[i];
-            if (!notEmpty(li.liitteenNimi)
-                && !notEmpty(li.liitteenTyyppi)
-                || !notEmpty(li.toimitettavaMennessa)
-                || !$scope.isValidSahkoinenOsoite(li)
-                || !$scope.isValidToimitusOsoite(li)) {
-                return false;
-            }
-        }
-        return true;
-    };
-    function notEmpty(v) {
-        if (v instanceof Array) {
-            for (var i in v) {
-                if (!notEmpty(v[i])) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        else {
-            return v && ('' + v).trim().length > 0;
-        }
-    }
     var setLiitetyypit = function(toteutusTyyppi) {
         var liitetyypit = [];
         liitetyypit.push(Koodisto.getKoodi('liitetyypitamm', 'liitetyypitamm_1', $scope.model.userLang));

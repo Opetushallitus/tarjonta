@@ -16,36 +16,13 @@ app.controller('HakukohdeAikuNayttoEditController', function($scope, $q, $log, L
     $scope.model.canSaveAsLuonnos = function() {
         return CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila);
     };
-    var validateAikuHakukohde = function() {
-        var errors = [];
-        console.log('AIKU HAKUKOHDE : ', $scope.model.hakukohde);
-        if (!$scope.model.hakukohde.hakukohteenNimiUri || $scope.model.hakukohde.hakukohteenNimiUri.trim().length < 1) {
-            var err = {};
-            err.errorMessageKey = 'hakukohde.edit.nimi.missing';
-            $scope.model.nimiValidationFailed = true;
-            errors.push(err);
-        }
-        if (!$scope.status.validateValintakokeet()) {
-            errors.push({
-                errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
-            });
-        }
-        $scope.validateIsHakuEisahkoistaHakuaRadioButtonSelected(errors);
-        if (errors.length < 1) {
-            return true;
-        }
-        else {
-            $scope.showError(errors);
-            return false;
-        }
-    };
     $scope.saveAsLuonnos = function() {
         if (CommonUtilService.canSaveAsLuonnos($scope.model.hakukohde.tila)) {
-            $scope.model.saveParent('LUONNOS', validateAikuHakukohde);
+            $scope.model.saveParent('LUONNOS');
         }
     };
     $scope.saveAsValmis = function() {
-        $scope.model.saveParent('VALMIS', validateAikuHakukohde);
+        $scope.model.saveParent('VALMIS');
     };
     var readOsaamisAlat = function() {
         var koulutukses = [];

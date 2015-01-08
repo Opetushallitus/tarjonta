@@ -3,7 +3,7 @@
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
- * of the EUPL (the "Licence");
+ * of the EUPL (the 'Licence');
  *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
@@ -17,23 +17,50 @@ describe('Tarjonta', function() {
 
     var CONFIG_ENV_MOCK = {
         env: {
-            "key-env-1": "mock-value-env-1",
-            "key-env-2": "mock-value-env-2",
-            "tarjonta.localisations": [],
-            "casUrl" : "cas_myroles_tiimi221",
-            tarjontaRestUrlPrefix:"/",
-            "tarjontaOhjausparametritRestUrlPrefix" : "PARAMETRIT",
-            cas:{userinfo:{
-            	  "uid":"tiimi2",
-            	  "oid":"1.2.246.562.24.67912964565",
-            	  "firstName":"etu",
-            	  "lastName":"suku",
-            	  "groups":["APP_ANOMUSTENHALLINTA","APP_ANOMUSTENHALLINTA_READ","APP_ORGANISAATIOHALLINTA","APP_ORGANISAATIOHALLINTA_READ_UPDATE","APP_HENKILONHALLINTA","APP_HENKILONHALLINTA_READ","APP_KOODISTO","APP_KOODISTO_READ","APP_KOOSTEROOLIENHALLINTA","APP_KOOSTEROOLIENHALLINTA_READ","APP_OID","APP_OID_READ","APP_OMATTIEDOT","APP_OMATTIEDOT_READ_UPDATE","APP_TARJONTA","APP_TARJONTA_CRUD","VIRKAILIJA","LANG_sv","APP_OMATTIEDOT_READ_UPDATE_1.2.246.562.10.51053050251","APP_KOOSTEROOLIENHALLINTA_READ_1.2.246.562.10.51053050251","APP_TARJONTA_CRUD_1.2.246.562.10.51053050251","APP_OID_READ_1.2.246.562.10.51053050251","APP_ANOMUSTENHALLINTA_READ_1.2.246.562.10.51053050251","APP_KOODISTO_READ_1.2.246.562.10.51053050251","APP_ORGANISAATIOHALLINTA_READ_UPDATE_1.2.246.562.10.51053050251","APP_HENKILONHALLINTA_READ_1.2.246.562.10.51053050251"],
-            	  "lang":"sv"
-            	}}
+            'key-env-1': 'mock-value-env-1',
+            'key-env-2': 'mock-value-env-2',
+            'tarjonta.localisations': [],
+            'casUrl': 'cas_myroles_tiimi221',
+            tarjontaRestUrlPrefix: '/',
+            'tarjontaOhjausparametritRestUrlPrefix': 'PARAMETRIT',
+            cas: {
+                userinfo: {
+                    'uid': 'tiimi2',
+                    'oid': '1.2.246.562.24.67912964565',
+                    'firstName': 'etu',
+                    'lastName': 'suku',
+                    'groups': ['APP_ANOMUSTENHALLINTA',
+                        'APP_ANOMUSTENHALLINTA_READ',
+                        'APP_ORGANISAATIOHALLINTA',
+                        'APP_ORGANISAATIOHALLINTA_READ_UPDATE',
+                        'APP_HENKILONHALLINTA',
+                        'APP_HENKILONHALLINTA_READ',
+                        'APP_KOODISTO',
+                        'APP_KOODISTO_READ',
+                        'APP_KOOSTEROOLIENHALLINTA',
+                        'APP_KOOSTEROOLIENHALLINTA_READ',
+                        'APP_OID',
+                        'APP_OID_READ',
+                        'APP_OMATTIEDOT',
+                        'APP_OMATTIEDOT_READ_UPDATE',
+                        'APP_TARJONTA',
+                        'APP_TARJONTA_CRUD',
+                        'VIRKAILIJA',
+                        'LANG_sv',
+                        'APP_OMATTIEDOT_READ_UPDATE_1.2.246.562.10.51053050251',
+                        'APP_KOOSTEROOLIENHALLINTA_READ_1.2.246.562.10.51053050251',
+                        'APP_TARJONTA_CRUD_1.2.246.562.10.51053050251',
+                        'APP_OID_READ_1.2.246.562.10.51053050251',
+                        'APP_ANOMUSTENHALLINTA_READ_1.2.246.562.10.51053050251',
+                        'APP_KOODISTO_READ_1.2.246.562.10.51053050251',
+                        'APP_ORGANISAATIOHALLINTA_READ_UPDATE_1.2.246.562.10.51053050251',
+                        'APP_HENKILONHALLINTA_READ_1.2.246.562.10.51053050251'],
+                    'lang': 'sv'
+                }
+            }
 
         }, app: {
-            "key-app-1": "mock-value-app-1"
+            'key-app-1': 'mock-value-app-1'
         }
     };
 
@@ -43,8 +70,8 @@ describe('Tarjonta', function() {
     beforeEach(module('TarjontaCache'));
     beforeEach(module('Logging'));
 
-    var mockHttp = function($httpBackend){
-    	var response = {status:true, data:["a","b","c","d"]};
+    var mockHttp = function($httpBackend) {
+        var response = {status: true, data: ['a', 'b', 'c', 'd']};
         $httpBackend.whenGET('/link/oid-1.2.3.4.5.6.7').respond(response);
         $httpBackend.whenGET('/link/oid-1.2.3.4.5.6.7/parents').respond(response);
         $httpBackend.whenPOST('/link').respond(function(method, url, data) {
@@ -56,52 +83,53 @@ describe('Tarjonta', function() {
             return response;
         });
         $httpBackend.whenDELETE('/link/p-oid-1.2.3.4.5.6.7/oid-1.2.3.4.5.6.7').respond(response);
-        
+
         // Parameters
         var parameterResponse = {
-            "1.2.3.4" : {
-//                "PH_TJT" : { date : 1400149187429 },
-                "PH_HKMT" : { date : 1399973779271 },
-                "PH_HKLPT" : { date : 1399887372781 }
+            '1.2.3.4': {
+//                'PH_TJT' : { date : 1400149187429 },
+                'PH_HKMT': {date: 1399973779271},
+                'PH_HKLPT': {date: 1399887372781}
             }
         };
 
         $httpBackend.whenGET('PARAMETRIT/api/v1/rest/parametri/ALL').respond(parameterResponse);
     };
 
-    beforeEach(function(){
-      module(function ($provide) {
-          $provide.value('Config', CONFIG_ENV_MOCK);
+    beforeEach(function() {
+        module(function($provide) {
+            $provide.value('Config', CONFIG_ENV_MOCK);
 
-          //mock localisation service
-          var noop = function(){};
-          $provide.value('LocalisationService', {getLocale:noop,t:noop});
-      });
-  });
-    
+            //mock localisation service
+            var noop = function() {
+            };
+            $provide.value('LocalisationService', {getLocale: noop, t: noop});
+        });
+    });
+
     describe('TarjontaService', function($injector) {
 
         it('should declare resourcelink service with known api', inject(function($httpBackend, TarjontaService) {
-        	var resourceLink = TarjontaService.resourceLink;
-        	expect(resourceLink).toNotEqual(undefined);
-        	expect(resourceLink.save).toNotEqual(undefined);
-        	expect(resourceLink.test).toNotEqual(undefined);
-        	expect(resourceLink.remove).toNotEqual(undefined);
-        	expect(resourceLink.get).toNotEqual(undefined);
-        	expect(resourceLink.parents).toNotEqual(undefined);
+            var resourceLink = TarjontaService.resourceLink;
+            expect(resourceLink).toBeDefined();
+            expect(resourceLink.save).toBeDefined();
+            expect(resourceLink.test).toBeDefined();
+            expect(resourceLink.remove).toBeDefined();
+            expect(resourceLink.get).toBeDefined();
+            expect(resourceLink.parents).toBeDefined();
         }));
 
         it('should call the known rest api', inject(function($httpBackend, TarjontaService) {
-        	mockHttp($httpBackend);
-        	var oid = "oid-1.2.3.4.5.6.7";
-        	var parentOid = "p-oid-1.2.3.4.5.6.7";
-        	var resourceLink = TarjontaService.resourceLink;
-        	resourceLink.get({oid:oid});
-        	resourceLink.parents({oid:oid});
-        	resourceLink.save({parent:parentOid, children:[oid]});
-        	resourceLink.test({parent:parentOid, children:[oid]});
-        	resourceLink.remove({parent:parentOid, child:oid});
-        	$httpBackend.flush();
+            mockHttp($httpBackend);
+            var oid = 'oid-1.2.3.4.5.6.7';
+            var parentOid = 'p-oid-1.2.3.4.5.6.7';
+            var resourceLink = TarjontaService.resourceLink;
+            resourceLink.get({oid: oid});
+            resourceLink.parents({oid: oid});
+            resourceLink.save({parent: parentOid, children: [oid]});
+            resourceLink.test({parent: parentOid, children: [oid]});
+            resourceLink.remove({parent: parentOid, child: oid});
+            $httpBackend.flush();
         }));
 
     });
