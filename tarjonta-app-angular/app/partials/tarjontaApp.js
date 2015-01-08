@@ -208,20 +208,6 @@ angular.module('app').config([
          * Helper functions for hakukohde resolvers
          *
          * */
-        var getHakukohdeKoulutukses = function(Hakukohde, $log, $route, SharedStateService, TarjontaService) {
-            var koulutusSet = new buckets.Set();
-            var selectedKoulutusOids;
-            if (angular.isArray(SharedStateService.getFromState('SelectedKoulutukses'))) {
-                selectedKoulutusOids = SharedStateService.getFromState('SelectedKoulutukses');
-            }
-            else {
-                selectedKoulutusOids = [SharedStateService.getFromState('SelectedKoulutukses')];
-            }
-            var spec = {
-                koulutusOid: selectedKoulutusOids
-            };
-            return TarjontaService.haeKoulutukset(spec);
-        };
         var resolveHakukohde = function(Hakukohde, $log, $route, SharedStateService, $q, OrganisaatioService,
                                         TarjontaService) {
             var deferred = $q.defer();
@@ -256,17 +242,12 @@ angular.module('app').config([
                     yhteystiedot: [],
                     isNew: true
                 });
-                TarjontaService.getKoulutusPromise(selectedKoulutusOids[0]).then(function(res) {
-                    var multipleOwners = false;
-                    try {
-                        multipleOwners = res.result.opetusTarjoajat.length > 1;
-                    }
-                    catch (e) {}
-                    hakukohde.multipleOwners = multipleOwners;
-                    hakukohde.opetusKielet = Object.keys(res.result.opetuskielis.uris);
-                    hakukohde.toteutusTyyppi = res.result.toteutustyyppi;
-                    deferred.resolve(hakukohde);
-                });
+                var koulutus = SharedStateService.getFromState('firstSelectedKoulutus');
+                SharedStateService.removeState('firstSelectedKoulutus');
+                hakukohde.multipleOwners = koulutus.opetusTarjoajat.length > 1;
+                hakukohde.opetusKielet = _.keys(koulutus.opetuskielis.uris);
+                hakukohde.toteutusTyyppi = koulutus.toteutustyyppi;
+                deferred.resolve(hakukohde);
             }
             else {
                 Hakukohde.get({
@@ -465,7 +446,6 @@ angular.module('app').config([
             resolve: {
                 canEdit: resolveCanEditHakukohde,
                 canCreate: resolveCanCreateHakukohde,
-                hakukohdeKoulutuksesx: getHakukohdeKoulutukses,
                 hakukohdex: resolveHakukohde
             }
         }).when('/haku', {

@@ -341,9 +341,8 @@ app.controller('HakukohdeReviewController', function($scope, $q, $log, Localisat
             };
             TarjontaService.haeKoulutukset(spec).then(function(data) {
                 var tarjoajaOidsSet = new buckets.Set();
-                console.log('HAKUKOHDE REVIEW KOULUTUKSET : ', data);
                 if (data.tulokset !== undefined) {
-                    $scope.model.koulutukses.splice(0, $scope.model.koulutukses.length);
+                    $scope.model.koulutukses = [];
                     angular.forEach(data.tulokset, function(tulos) {
                         tarjoajaOidsSet.add(tulos.oid);
                         if (tulos.tulokset !== undefined) {
