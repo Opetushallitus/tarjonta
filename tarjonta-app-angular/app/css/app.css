@@ -271,7 +271,7 @@ div#orgSearchResults span {
 /* tarjonnan hakunäkymä */
 
 div#searchSpec {
-	height:96px;
+	height:86px;
 	position:relative;
 }
 
@@ -312,6 +312,14 @@ div#searchSpec > table.spec select {
 
 #searchSpec .search-control {
     margin-right: 20px;
+}
+
+#searchSpec .search {
+    margin-right: 20px;
+}
+
+#searchSpec .search input[type="text"] {
+    width: 255px;
 }
 
 #searchSpec .search, #searchSpec .search-actions {
@@ -889,12 +897,21 @@ table tr.aloituspaikatKuvaukset table {
     margin-bottom: 20px;
 }
 
+.advancedSearch .toggle-link {
+    display: block;
+    margin-bottom: 10px;
+}
+
 .advancedSearch table {
     width: 100%;
 }
 
 .advancedSearch select {
-    width: 250px;
+    width: 270px;
+}
+
+.advancedSearch select.small {
+    width: 125px;
 }
 
 .advancedSearch .search-control {

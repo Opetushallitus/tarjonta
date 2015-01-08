@@ -48,50 +48,43 @@
 
             <div class="search pull-left">
                 <input type="text"
-                       class="input-xlarge"
                        ng-model="spec.attributes.terms"
                        ng-enter="search()"
                        placeholder="{{ t('tarjonta.haku.placeholder') }}"/>
             </div>
 
-            <div class="pull-right search-actions">
-                <a href class="btn" ng-click="reset()"><span tt="tarjonta.haku.tyhjenna">Tyhjennä</span></a>
-                <a href class="btn btn-primary" ng-click="search()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></a>
-            </div>
-
-            <div class="pull-right search-control">
-                <div class="search-label">{{t('tarjonta.haku.tila')}}</div>
-                <select ng-model="spec.attributes.state" ng-options="state.key as state.label for state in states | orderBy: 'label'">
-                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
-                </select>
-            </div>
-
-            <div class="pull-right koulutustyyppi search-control">
-                <div class="search-label">{{t('tarjonta.haku.tyyppi')}}</div>
-                <select ng-model="spec.attributes.koulutustyyppi" ng-options="koulutustyyppi.key as koulutustyyppi.label for koulutustyyppi in koulutustyyppioptions | orderBy: 'label'">
-                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
-                </select>
-            </div>
-
-            <div class="pull-right search-control">
-                <div class="search-label">{{t('tarjonta.haku.alkamisVuosi')}}</div>
-                <select ng-model="spec.attributes.year" ng-options="year.key as year.label for year in years">
-                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
-                </select>
-            </div>
-
-            <div class="pull-right search-control">
+            <div class="pull-left search-control">
                 <div class="search-label">{{t('tarjonta.haku.alkamisKausi')}}</div>
                 <select ng-model="spec.attributes.season" ng-options="season.key as season.label for season in seasons | orderBy: 'label'">
                     <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
                 </select>
             </div>
 
+            <div class="pull-left search-control">
+                <div class="search-label">{{t('tarjonta.haku.alkamisVuosi')}}</div>
+                <select ng-model="spec.attributes.year" ng-options="year.key as year.label for year in years">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
+            </div>
+
+            <div class="pull-left search-control">
+                <div class="search-label">{{t('tarjonta.haku.tila')}}</div>
+                <select ng-model="spec.attributes.state" ng-options="state.key as state.label for state in states | orderBy: 'label'">
+                    <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                </select>
+            </div>
+
+            <div class="pull-left search-actions">
+                <a href class="btn" ng-click="reset()"><span tt="tarjonta.haku.tyhjenna">Tyhjennä</span></a>
+                <a href class="btn btn-primary" ng-click="search()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></a>
+            </div>
+
         </div>
 
         <div class="controls advancedSearch">
 
-            <a href="" ng-click="isopen = !isopen"><i class="pull-left toggle" ng-class="{'icon-chevron-down': isopen, 'icon-chevron-right': !isopen}"></i>
+            <a href="" ng-click="isopen = !isopen" class="toggle-link">
+                <i class="pull-left toggle" ng-class="{'icon-chevron-down': isopen, 'icon-chevron-right': !isopen}"></i>
                 <span ng-if="!isopen" ng-click="initAdditionalFields()">{{t('tarjonta.haku.nayta.lisaa')}}</span>
                 <span ng-if="isopen">{{t('tarjonta.haku.nayta.vahemman')}}</span>
             </a>
@@ -101,14 +94,25 @@
                 <div class="search-row">
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.hakutapa')}}</div>
-                        <select ng-model="spec.attributes.hakutapa" ng-options="hakutapa.key as hakutapa.label for hakutapa in hakutapaoptions | orderBy: 'label'">
+                        <select ng-model="spec.attributes.hakutapa"
+                                ng-options="hakutapa.key as hakutapa.label for hakutapa in hakutapaoptions | orderBy: 'label'"
+                                class="small">
                             <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
                         </select>
                     </div>
 
                     <div class="pull-left search-control">
                         <div class="search-label">{{t('tarjonta.haku.hakutyyppi')}}</div>
-                        <select ng-model="spec.attributes.hakutyyppi" ng-options="hakutyyppi.key as hakutyyppi.label for hakutyyppi in hakutyyppioptions | orderBy: 'label'">
+                        <select ng-model="spec.attributes.hakutyyppi"
+                                ng-options="hakutyyppi.key as hakutyyppi.label for hakutyyppi in hakutyyppioptions | orderBy: 'label'"
+                                class="small">
+                            <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
+                        </select>
+                    </div>
+
+                    <div class="pull-left koulutustyyppi search-control">
+                        <div class="search-label">{{t('tarjonta.haku.koulutustyyppi')}}</div>
+                        <select ng-model="spec.attributes.koulutustyyppi" ng-options="koulutustyyppi.key as koulutustyyppi.label for koulutustyyppi in koulutustyyppioptions | orderBy: 'label'">
                             <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
                         </select>
                     </div>
@@ -155,8 +159,9 @@
                     </div>
 
                     <div class="pull-left search-control">
-                        <div ng-repeat="lang in spec.attributes.kieli" ng-click="removeLanguage(lang.key)" style="cursor: pointer;">
-                            <span class="icon-trash"></span><span> {{lang.value}}</span>
+                        <div ng-repeat="lang in spec.attributes.kieli">
+                            <a href="" ng-click="removeLanguage(lang.key)">[X]</a>
+                            <span> {{lang.value}}</span>
                         </div>
                     </div>
                 </div>

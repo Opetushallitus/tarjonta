@@ -47,7 +47,6 @@ angular.module('app.search.controllers', [
     });
     function setDefaultHakuehdot() {
         $scope.hakuehdot = SearchParameters.getDefaultHakuehdot();
-        $scope.koulutustyyppioptions = SearchParameters.fetchCodeElementsToObject('koulutustyyppi');
     }
     setDefaultHakuehdot();
     if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio &&
@@ -102,6 +101,7 @@ angular.module('app.search.controllers', [
         $scope.kohdejoukkooptions = SearchParameters.fetchCodeElementsToObject('haunkohdejoukko');
         $scope.oppilaitostyyppioptions = SearchParameters.fetchCodeElementsToObject('oppilaitostyyppi');
         $scope.kuntaoptions = SearchParameters.fetchCodeElementsToObject('kunta');
+        $scope.koulutustyyppioptions = SearchParameters.fetchCodeElementsToObject('koulutustyyppi');
     };
     $scope.selectLanguage = function(item) {
         $scope.spec.addLanguage(item);
