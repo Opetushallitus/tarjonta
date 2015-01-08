@@ -2,18 +2,18 @@ angular.module('Validator', [])
     .factory('ValidatorService', function() {
         'use strict';
 
-        function validUrl(url) {
+        function isValidUrl(url) {
             var pattern = new RegExp('^(https?:\\/\\/)?' + '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'
             + '((\\d{1,3}\\.){3}\\d{1,3}))' + '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + '(\\?[;&a-z\\d%_.~+=-]*)?'
             + '(\\#[-a-z\\d_]*)?$', 'i');
             return pattern.test(url);
         }
-        function validEmail(email) {
+        function isValidEmail(email) {
             var pattern = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*'
             + '@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?');
             return pattern.test(email);
         }
-        function validLisatiedot(hakukohde, haku) {
+        function isValidLisatiedot(hakukohde, haku) {
             if (haku && !haku.jarjestelmanHakulomake &&
                 (!haku.hakulomakeUri || haku.hakulomakeUri.trim().length === 0)) {
                 var empty = true;
@@ -50,7 +50,7 @@ angular.module('Validator', [])
                 return v && ('' + v).trim().length > 0;
             }
         }
-        function validValintakokeet(valintakokeet) {
+        function isValidValintakokeet(valintakokeet) {
             for (var i in valintakokeet) {
                 var valintakoe = valintakokeet[i];
                 var nimiEmpty = !notEmpty(valintakoe.valintakoeNimi);
@@ -67,14 +67,14 @@ angular.module('Validator', [])
                     return false;
                 }
                 for (var j in valintakoe.valintakoeAjankohtas) {
-                    if (isValidAjankohta(valintakoe.valintakoeAjankohtas[j])) {
+                    if (!isValidAjankohta(valintakoe.valintakoeAjankohtas[j])) {
                         return false;
                     }
                 }
             }
             return true;
         }
-        function validLiitteet(liitteet) {
+        function isValidLiitteet(liitteet) {
             var isValidToimitusOsoite = function(liite) {
                 var r = !liite.muuOsoiteEnabled || notEmpty([
                         liite.liitteenToimitusOsoite.osoiterivi1,
@@ -98,7 +98,7 @@ angular.module('Validator', [])
             }
             return true;
         }
-        function validPainotettavatOppiaineet(hakukohde) {
+        function isValidPainotettavatOppiaineet(hakukohde) {
             for (var i in hakukohde.painotettavatOppiaineet) {
                 var painokerroin = hakukohde.painotettavatOppiaineet[i].painokerroin;
                 var oppiaine = hakukohde.painotettavatOppiaineet[i].oppiaineUri;
@@ -141,7 +141,7 @@ angular.module('Validator', [])
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA'
             ], toteutusTyyppi);
         }
-        function validateNames(hakukohde) {
+        function isValidNames(hakukohde) {
             for (var i in hakukohde.hakukohteenNimet) {
                 if (hakukohde.hakukohteenNimet[i]) {
                     return true;
@@ -156,14 +156,14 @@ angular.module('Validator', [])
         }
         function isValidHakukohdeSahkoinenOsoite(model) {
             if (model.liitteidenSahkoinenOsoiteEnabled) {
-                return validUrl(model.hakukohde.sahkoinenToimitusOsoite) ||
-                    validEmail(model.hakukohde.sahkoinenToimitusOsoite);
+                return isValidUrl(model.hakukohde.sahkoinenToimitusOsoite) ||
+                    isValidEmail(model.hakukohde.sahkoinenToimitusOsoite);
             }
             else {
                 return true;
             }
         }
-        function validateNameLengths(hakukohteenNimet) {
+        function isValidNameLengths(hakukohteenNimet) {
             var retval = true;
             angular.forEach(hakukohteenNimet, function(hakukohdeNimi) {
                 if (hakukohdeNimi.length > 225) {
@@ -184,12 +184,12 @@ angular.module('Validator', [])
                     errorMessageKey: 'hakukohde.edit.haku.missing'
                 });
             }
-            if (!validValintakokeet(hakukohde.valintakokeet)) {
+            if (!isValidValintakokeet(hakukohde.valintakokeet)) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
                 });
             }
-            if (!validLisatiedot(hakukohde, haku)) {
+            if (!isValidLisatiedot(hakukohde, haku)) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.lisatietoja-hakemisesta.required'
                 });
@@ -225,30 +225,30 @@ angular.module('Validator', [])
                 }
             }
             if (!toisenAsteenKoulutus(hakukohde.toteutusTyyppi)) {
-                if (!validateNames(hakukohde)) {
+                if (!isValidNames(hakukohde)) {
                     errors.push({
                         errorMessageKey: 'hakukohde.edit.nimi.missing'
                     });
                 }
-                if (!validateNameLengths(hakukohde.hakukohteenNimet)) {
+                if (!isValidNameLengths(hakukohde.hakukohteenNimet)) {
                     errors.push({
                         errorMessageKey: 'hakukohde.edit.nimi.too.long'
                     });
                 }
             }
             if (hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS') {
-                if (!validPainotettavatOppiaineet(hakukohde)) {
+                if (!isValidPainotettavatOppiaineet(hakukohde)) {
                     errors.push({
                         errorMessageKey: 'tarjonta.hakukohde.edit.painotettavatOppiaineet.errors'
                     });
                 }
             }
-            else if (!validValintakokeet(hakukohde.valintakokeet)) {
+            else if (!isValidValintakokeet(hakukohde.valintakokeet)) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
                 });
             }
-            if (!validLiitteet(hakukohde.hakukohteenLiitteet)) {
+            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet)) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.liitteet.errors'
                 });
