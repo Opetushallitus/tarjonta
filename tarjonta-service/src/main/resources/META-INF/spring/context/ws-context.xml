@@ -2,33 +2,51 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:cxf="http://cxf.apache.org/core"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://cxf.apache.org/core  http://cxf.apache.org/schemas/core.xsd">
 
-    <import resource="classpath:META-INF/cxf/cxf.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
     <jaxws:client id="organisaatioService"
                   serviceClass="fi.vm.sade.organisaatio.api.model.OrganisaatioService"
-                  address="${organisaatio.webservice.url.backend}"/>
+                  address="${organisaatio.webservice.url.backend}">
+        <jaxws:outInterceptors>
+            <ref bean="callerIdInterceptor"></ref>
+        </jaxws:outInterceptors>
+    </jaxws:client>
 
     <jaxws:client id="koodiPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodiService"
-                  address="${koodi.public.webservice.url.backend}"/>
+                  address="${koodi.public.webservice.url.backend}">
+        <jaxws:outInterceptors>
+            <ref bean="callerIdInterceptor"></ref>
+        </jaxws:outInterceptors>
+    </jaxws:client>
 
     <jaxws:client id="koodistoPublicService"
                   serviceClass="fi.vm.sade.koodisto.service.KoodistoService"
-                  address="${koodisto.public.webservice.url.backend}"/>
+                  address="${koodisto.public.webservice.url.backend}">
+        <jaxws:outInterceptors>
+            <ref bean="callerIdInterceptor"></ref>
+        </jaxws:outInterceptors>
+    </jaxws:client>
+
     <jaxws:client id="userService"
                   serviceClass="fi.vm.sade.authentication.service.UserService"
-                  address="${user.webservice.url.backend}"/>
+                  address="${user.webservice.url.backend}">
+        <jaxws:outInterceptors>
+            <ref bean="callerIdInterceptor"></ref>
+        </jaxws:outInterceptors>
+    </jaxws:client>
+
+    <bean id="callerIdInterceptor" class="fi.vm.sade.generic.rest.CallerIdCxfInterceptor">
+        <property name="headerValue" value="${callerid.tarjonta.tarjonta-service.backend}"/>
+    </bean>
 
     <bean id="tarjontaAdminService" class="fi.vm.sade.tarjonta.service.impl.TarjontaAdminServiceImpl"/>
     <bean id="tarjontaPublicService" class="fi.vm.sade.tarjonta.service.impl.TarjontaPublicServiceImpl"/>
@@ -37,28 +55,30 @@
 
     <bean id="tarjontaHakuResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakuResourceImpl"/>
     <bean id="tarjontaHakukohdeResource" class="fi.vm.sade.tarjonta.service.impl.resources.HakukohdeResourceImpl"/>
-    <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl" />
-    <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl" />
+    <bean id="tarjontaKomoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomoResourceImpl"/>
+    <bean id="tarjontaKomotoResource" class="fi.vm.sade.tarjonta.service.impl.resources.KomotoResourceImpl"/>
 
     <!-- API V1 -->
-    <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1" />
-    <bean id="tarjontaHakukohdeResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1" />
-    <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1" />
-    <bean id="tarjontaTilaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.TilaResourceImplV1" />
-    <bean id="linkingResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LinkingResourceImplV1" />
-    <bean id="permissionResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.PermissionResourceImplV1" />
+    <bean id="tarjontaHakuResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakuResourceImplV1"/>
+    <bean id="tarjontaHakukohdeResourceV1"
+          class="fi.vm.sade.tarjonta.service.impl.resources.v1.HakukohdeResourceImplV1"/>
+    <bean id="tarjontaKoulutusResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KoulutusResourceImplV1"/>
+    <bean id="tarjontaTilaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.TilaResourceImplV1"/>
+    <bean id="linkingResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LinkingResourceImplV1"/>
+    <bean id="permissionResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.PermissionResourceImplV1"/>
     <bean id="kuvausResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KuvausResourceImplV1"/>
-    <bean id="komoResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1" />
-    <bean id="lastModifiedResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LastModifiedResourceV1Impl" />
+    <bean id="komoResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1"/>
+    <bean id="lastModifiedResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LastModifiedResourceV1Impl"/>
 
-    <bean id="tarjontaProcessResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ProcessResourceV1Impl" />
-    <bean id="tarjontaExportResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ExportResourceV1Impl" />
+    <bean id="tarjontaProcessResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ProcessResourceV1Impl"/>
+    <bean id="tarjontaExportResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ExportResourceV1Impl"/>
 
     <!--
       TEST PROCESS, just to show how to define these, require parameter, time.
       For example, post this to create it: { process: "processTest", parameters: { time : 13 } }
     -->
-    <bean id="massCopyProcess" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
+    <bean id="massCopyProcess" scope="prototype"
+          class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.MassCopyProcess"/>
     <bean id="processTest" scope="prototype" class="fi.vm.sade.tarjonta.service.impl.resources.v1.process.TestProcess"/>
 
     <!-- CORS (cross domain) support for rest services -->
@@ -72,8 +92,8 @@
     <jaxrs:server id="tarjontaPublicationREST" address="/rest">
         <jaxrs:serviceBeans>
             <!-- API V0 -->
-            <ref bean="tarjontaHakuResource" />
-            <ref bean="tarjontaHakukohdeResource" />
+            <ref bean="tarjontaHakuResource"/>
+            <ref bean="tarjontaHakukohdeResource"/>
             <ref bean="tarjontaKomoResource"/>
             <ref bean="tarjontaKomotoResource"/>
             <ref bean="indexerResource"/>
@@ -95,24 +115,27 @@
         <jaxrs:providers>
             <!--             <ref bean="cors-filter" /> -->
             <!--             <ref bean="tarjontaExceptionMapper"/> -->
-            <ref bean="tarjontaJacksonJsonProvider" />
+            <ref bean="tarjontaJacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:server>
 
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaAdminService" implementor="#tarjontaAdminService" serviceName="tns:TarjontaAdminService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
-    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaPublicService" implementor="#tarjontaPublicService" serviceName="tns:TarjontaPublicService" xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
-
+    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaAdminService"
+                    implementor="#tarjontaAdminService" serviceName="tns:TarjontaAdminService"
+                    xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
+    <jaxws:endpoint xmlns="http://cxf.apache.org/jaxws" address="/services/tarjontaPublicService"
+                    implementor="#tarjontaPublicService" serviceName="tns:TarjontaPublicService"
+                    xmlns:tns="http://service.tarjonta.sade.vm.fi/"/>
 
 
     <!-- Swagger API listing resource -->
-    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON" />
+    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
 
     <!-- Swagger writers -->
-    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" />
-    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" />
+    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider"/>
+    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider"/>
 
     <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean" init-method="create">
-        <property name="address" value="/" />
+        <property name="address" value="/"/>
         <property name="serviceBeans">
             <list>
 
@@ -123,7 +146,7 @@
                 <!-- ... -->
                 <!-- ... -->
                 <!-- Swagger API Listing resource -->
-                <ref bean="swaggerResourceJSON" />
+                <ref bean="swaggerResourceJSON"/>
             </list>
         </property>
         <property name="providers">
@@ -132,8 +155,8 @@
                 <!-- ... -->
                 <!-- ... -->
                 <!-- required for writing swagger classes -->
-                <ref bean="resourceWriter" />
-                <ref bean="apiWriter" />
+                <ref bean="resourceWriter"/>
+                <ref bean="apiWriter"/>
             </list>
         </property>
     </bean>
