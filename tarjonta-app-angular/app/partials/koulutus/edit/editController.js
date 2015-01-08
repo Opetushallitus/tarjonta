@@ -929,7 +929,7 @@ app.controller('BaseEditController', [
             });
         };
         $scope.setMinMax = function(restricted) {
-            $scope.model.isMinmax = true;
+            $scope.model.isMinmax = restricted;
             $scope.restricted = restricted;
             var vuosi;
             if (restricted) {
