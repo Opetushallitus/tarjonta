@@ -315,17 +315,16 @@ angular.module('app.search.controllers', [
         });
         $q.all(promises).then(function(results) {
             var arrKomotoIds = [];
-            for (var i = 0; i < results.length; i++) {
-                if (results[i].result.oid) {
-                    arrKomotoIds.push(results[i].result.oid);
-                }
-            }
+            _.each(results, function(res) {
+                arrKomotoIds.push(res.result.oid);
+            });
             HakukohdeKoulutukses.geValidateHakukohdeKomotos(arrKomotoIds).then(function(response) {
                 if (response.status === 'OK' && $scope.selection.koulutukset.length === 1 && response.result &&
                     response.result.toteutustyyppis && response.result.toteutustyyppis.length === 1) {
                     SharedStateService.addToState('SelectedKoulutukses', arrKomotoIds);
                     SharedStateService.addToState('SelectedToteutusTyyppi', response.result.toteutustyyppis[0]);
                     SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
+                    SharedStateService.addToState('firstSelectedKoulutus', results[0].result);
                     $location.path('/hakukohde/new/edit');
                 }
                 else {
