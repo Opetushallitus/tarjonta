@@ -74,9 +74,9 @@ app.controller('BaseEditController', [
         };
         //clear
         /*
-             * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
-             * LUKIO, KORKEAKOULU etc.
-             */
+         * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
+         * LUKIO, KORKEAKOULU etc.
+         */
         $scope.setModel = function(m) {
             $scope.model = m;
         };
@@ -144,9 +144,9 @@ app.controller('BaseEditController', [
             return $scope.modelInitialState && !_.isEqual(currentModel, $scope.modelInitialState);
         };
         /**
-             * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
-             * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
-             */
+         * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
+         * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
+         */
         $scope.setDirtyListener = function() {
             $('form[name="koulutusForm"]').on('focus click', '*', function(e) {
                 e.stopPropagation();
@@ -469,9 +469,9 @@ app.controller('BaseEditController', [
                 }
             });
             /*
-                   * Load data to mltiselect fields
-                   * remove version data from the list
-                   */
+            * Load data to mltiselect fields
+            * remove version data from the list
+            */
             angular.forEach(KoulutusConverterFactory.STRUCTURE[tyyppi].MCOMBO, function(value, key) {
                 if (angular.isDefined(model[key])) {
                     if (angular.isDefined(value.types)) {
@@ -495,15 +495,15 @@ app.controller('BaseEditController', [
             });
         };
         /*
-             * LISATIEDOT PAGE FUNCTIONS
-             */
+         * LISATIEDOT PAGE FUNCTIONS
+         */
         /**
-             * Try to find all language uris for textarea objects.
-             * Set founded uris to uiModel.lisatietoKielet property.
-             *
-             * @param {type} model
-             * @param {type} uiModel
-             */
+         * Try to find all language uris for textarea objects.
+         * Set founded uris to uiModel.lisatietoKielet property.
+         *
+         * @param {type} model
+         * @param {type} uiModel
+         */
         $scope.getLisatietoKielet = function(model, uiModel, requireKomoTexts) {
             var arrLanguageUris = [];
             if (model.kuvausKomoto) {
@@ -587,17 +587,17 @@ app.controller('BaseEditController', [
             });
         };
         /**
-             * Refaktorointi: aiempien, melkein identtisten koulutusControllerien toiminnallisuus
-             * siirrettiin tänne ja jätettiin yksittäisiin controllereihin vain niille spesifiset koodit
-             */
+         * Refaktorointi: aiempien, melkein identtisten koulutusControllerien toiminnallisuus
+         * siirrettiin tänne ja jätettiin yksittäisiin controllereihin vain niille spesifiset koodit
+         */
         /**
-             * Tämä funktio palauttaa koodiston arvoista vain ne, joista
-             * on olemassa koulutusmoduuli tietokannassa.
-             */
-        function filterByKomos(koodistoResult, komos, compareField) {
+         * Tämä funktio palauttaa koodiston arvoista vain ne, joista
+         * on olemassa koulutusmoduuli tietokannassa.
+         */
+        function filterByKomos(koodistoResult, komos, compareFunction) {
             var tutkintoModules = {};
             angular.forEach(komos.result, function(komo) {
-                var key = komo[compareField];
+                var key = compareFunction(komo);
                 if (koodistoResult.map[key]) {
                     tutkintoModules[key] = angular.extend(koodistoResult.map[key], {
                         oid: komo.oid,
@@ -611,8 +611,8 @@ app.controller('BaseEditController', [
             $log.debug('init');
             initValues = initValues || {};
             /*
-                   * INITIALIZE PAGE CONFIG
-                   */
+             * INITIALIZE PAGE CONFIG
+             */
             $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
             var model = initValues.model || {};
             var uiModel = initValues.uiModel || {};
@@ -635,13 +635,13 @@ app.controller('BaseEditController', [
                 });
             }
             /*
-                   * HANDLE EDIT / CREATE NEW ROUTING
-                   */
+             * HANDLE EDIT / CREATE NEW ROUTING
+             */
             if ($routeParams.id) {
                 /*
-                         *  SHOW KOULUTUS BY GIVEN KOMOTO OID
-                         *  Look more info from koulutusController.js.
-                         */
+                 *  SHOW KOULUTUS BY GIVEN KOMOTO OID
+                 *  Look more info from koulutusController.js.
+                 */
                 model = $route.current.locals.koulutusModel.result;
                 uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                 $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
@@ -649,13 +649,13 @@ app.controller('BaseEditController', [
             }
             else if ($routeParams.org) {
                 /*
-                         * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
-                         * Look more info from koulutusController.js.
-                         */
+                 * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
+                 * Look more info from koulutusController.js.
+                 */
                 $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                 /*
-                         * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
-                         */
+                 * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
+                 */
                 var resource = TarjontaService.komo();
                 var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit([$scope.CONFIG.KOULUTUSTYYPPI], 'koulutus',
                     $scope.koodistoLocale);
@@ -664,11 +664,13 @@ app.controller('BaseEditController', [
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         moduuli: ENUMS.ENUM_KOMO_MODULE_TUTKINTO
                     }, function(komos) {
-                            uiModel.tutkintoModules = filterByKomos(koodistoResult, komos, 'koulutuskoodiUri');
-                            uiModel.tutkinto = _.map(uiModel.tutkintoModules, function(num, key) {
-                                return num;
-                            });
+                        uiModel.tutkintoModules = filterByKomos(koodistoResult, komos, function(komo) {
+                            return komo.koulutuskoodiUri;
                         });
+                        uiModel.tutkinto = _.map(uiModel.tutkintoModules, function(num, key) {
+                            return num;
+                        });
+                    });
                 });
             }
             else {
@@ -744,8 +746,8 @@ app.controller('BaseEditController', [
                 TarjontaService.komo().tekstis({
                     oid: komoOid
                 }, function(komoTekstisResponse) {
-                        setUiModelTexts(komoTekstisResponse.result);
-                    });
+                    setUiModelTexts(komoTekstisResponse.result);
+                });
             }
         };
         $scope.loadRelationKoodistoData = function(apiModel, uiModel, koodiUri, tutkintoTyyppi) {
@@ -809,8 +811,8 @@ app.controller('BaseEditController', [
                 $scope.callbackAfterSave);
         };
         /*
-             * WATCHES
-             */
+         * WATCHES
+         */
         $scope.$watch('model.koulutusohjelma.uri', function(uri, oUri) {
             if (angular.isDefined(uri) && uri !== null && oUri != uri) {
                 $scope.model.koulutuksenTavoitteet = null;
@@ -820,16 +822,16 @@ app.controller('BaseEditController', [
                     $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri,
                         ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
                     /**
-                               * Osalla koulutuksista on omia KOMO-tekstejä lapsi KOMOISSA, jotka pitää hakea
-                               * erikseen tässä. Tällä hetkellä ainoa teksti on koulutuksenTavoitteet.
-                               */
+                    * Osalla koulutuksista on omia KOMO-tekstejä lapsi KOMOISSA, jotka pitää hakea
+                    * erikseen tässä. Tällä hetkellä ainoa teksti on koulutuksenTavoitteet.
+                    */
                     TarjontaService.komo().tekstis({
                         oid: $scope.model.komoOid
                     }, function(komoTekstisResponse) {
-                            if (komoTekstisResponse.result && komoTekstisResponse.result.TAVOITTEET) {
-                                $scope.model.koulutuksenTavoitteet = komoTekstisResponse.result.TAVOITTEET.tekstis;
-                            }
-                        });
+                        if (komoTekstisResponse.result && komoTekstisResponse.result.TAVOITTEET) {
+                            $scope.model.koulutuksenTavoitteet = komoTekstisResponse.result.TAVOITTEET.tekstis;
+                        }
+                    });
                 }
                 else {
                     $log.error('missing koulutus by ' + uri);
@@ -861,32 +863,34 @@ app.controller('BaseEditController', [
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         moduuli: ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
                     }, function(komos) {
-                            $scope.uiModel.koulutusohjelmaModules = filterByKomos(koodistoResult, komos, 'ohjelmaUri');
-                            $scope.uiModel.koulutusohjelma = _.map(
-                                $scope.uiModel.koulutusohjelmaModules, function(num) {
-                                return num;
-                            });
-                            // Hack, lukiokoulutuksella ei saa näyttää aikuisten lukiokoulutus valintaa.
-                            // Tämä relaatio olisi parempi saada koodistoon, mutta nyt joudutaan tekemään näin
-                            if ($scope.CONFIG.TYYPPI === 'LUKIOKOULUTUS') {
-                                $scope.uiModel.koulutusohjelma = _.filter(
-                                    $scope.uiModel.koulutusohjelma, function(uri) {
-                                    return uri.koodiArvo !== '0086';
-                                });
-                            }
-                            $scope.uiModel.enableOsaamisala = $scope.uiModel.koulutusohjelma.length > 0;
-                            if (!$scope.uiModel.enableOsaamisala) {
-                                $scope.model.komoOid = $scope.uiModel.tutkintoModules[uriNew].oid;
-                            }
+                        $scope.uiModel.koulutusohjelmaModules = filterByKomos(koodistoResult, komos, function(komo) {
+                            return komo.ohjelmaUri || komo.osaamisalaUri;
                         });
+                        $scope.uiModel.koulutusohjelma = _.map(
+                            $scope.uiModel.koulutusohjelmaModules, function(num) {
+                            return num;
+                        });
+                        // Hack, lukiokoulutuksella ei saa näyttää aikuisten lukiokoulutus valintaa.
+                        // Tämä relaatio olisi parempi saada koodistoon, mutta nyt joudutaan tekemään näin
+                        if ($scope.CONFIG.TYYPPI === 'LUKIOKOULUTUS') {
+                            $scope.uiModel.koulutusohjelma = _.filter(
+                                $scope.uiModel.koulutusohjelma, function(uri) {
+                                return uri.koodiArvo !== '0086';
+                            });
+                        }
+                        $scope.uiModel.enableOsaamisala = $scope.uiModel.koulutusohjelma.length > 0;
+                        if (!$scope.uiModel.enableOsaamisala) {
+                            $scope.model.komoOid = $scope.uiModel.tutkintoModules[uriNew].oid;
+                        }
+                    });
                 });
             }
         });
         /**
-             * tarjonta-service ei pidä yllä tarjoajien järjestystä, mistä syystä
-             * tästä pidetään huolta alla olevan $watchin avulla (eli varmistetaan,
-             * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
-             */
+         * tarjonta-service ei pidä yllä tarjoajien järjestystä, mistä syystä
+         * tästä pidetään huolta alla olevan $watchin avulla (eli varmistetaan,
+         * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
+         */
         $scope.$watch('model.opetusTarjoajat', function() {
             $scope.initOpetustarjoajat();
         });

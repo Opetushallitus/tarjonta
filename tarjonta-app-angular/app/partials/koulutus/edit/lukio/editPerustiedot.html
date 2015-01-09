@@ -18,19 +18,21 @@
     </tr>
 
     <!-- koulutusohjelma -->
-    <tr class="required" ng-if="!koulutusStructure.params.isPerusopetus">
-        <th tt="koulutus.edit.lukiolinja">Lukiolinja</th>
+    <tr class="required">
+        <th ng-if="!koulutusStructure.params.isPerusopetus" tt="koulutus.edit.lukiolinja">Lukiolinja</th>
+        <th ng-if="koulutusStructure.params.isPerusopetus" tt="koulutus.edit.linja">Linja</th>
         <td>
-            <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined" class="thin" ng-model="model.koulutusohjelma.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
+            <select required class="span5" name="koulutusohjelma" ng-if="model.oid === Undefined"
+                    ng-model="model.koulutusohjelma.uri"
+                    ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in uiModel.koulutusohjelma | orderBy:'koodiNimi'">
                 <!-- OVT-7744 / angular-bugi: IE vaatii tämän tai select ei toimi kunnolla -->
                 <option value="" ng-disabled="model.koulutusohjelma.uri"></option>
             </select>
             <span ng-if="model.oid !== Undefined">{{model.koulutusohjelma.nimi}}</span><!-- loaded -->
-
         </td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required"
-               tt="koulutus.edit.lukiolinja.required">Lukiolinja vaaditaan</p>
+               tt="form.pakollinenKentta">Pakollinen kenttä</p>
         </td>
     </tr>
 

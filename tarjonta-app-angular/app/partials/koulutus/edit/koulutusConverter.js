@@ -1219,6 +1219,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 koulutusala: {
                     module: 'TUTKINTO'
                 },
+                koulutusaste: {
+                    module: 'TUTKINTO'
+                },
                 opintoala: {
                     module: 'TUTKINTO'
                 },
@@ -1239,6 +1242,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 },
                 tutkintonimike: {
                     module: 'TUTKINTO'
+                },
+                koulutusohjelma: {
+                    module: 'TUTKINTO_OHJELMA'
                 }
             },
             COMBO: {

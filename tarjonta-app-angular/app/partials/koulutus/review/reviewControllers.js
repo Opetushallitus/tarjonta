@@ -3,7 +3,6 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
      $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, Koodisto,
      KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
     $log = $log.getInstance('BaseReviewController');
-    $log.info('BaseReviewController()');
     var koulutusModel = $route.current.locals.koulutusModel.result;
     if (angular.isUndefined(koulutusModel)) {
         $location.path('/error');
@@ -251,6 +250,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         var koulutusOids = [];
         koulutusOids.push($scope.model.koulutus.oid);
         SharedStateService.addToState('SelectedKoulutukses', koulutusOids);
+        SharedStateService.addToState('firstSelectedKoulutus', $scope.model.koulutus);
         SharedStateService.addToState('SelectedToteutusTyyppi', $scope.model.koulutus.toteutustyyppi);
         SharedStateService.addToState('SelectedOrgOid', $scope.model.koulutus.organisaatio.oid);
         $location.path('/hakukohde/new/edit');
