@@ -17,8 +17,8 @@ package fi.vm.sade.tarjonta.dao.impl;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.TarjontaFixtures;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
@@ -39,6 +39,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,6 +60,11 @@ public class HakuDAOImplTest extends TestData {
     @Autowired
     private HakuDAOImpl hakuDAO;
 
+    @Autowired
+    private HakukohdeDAOImpl hakukohdeDAO;
+
+    @Autowired
+    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private EntityManager em;
 
     public HakuDAOImplTest() {
@@ -252,6 +258,63 @@ public class HakuDAOImplTest extends TestData {
         assertTrue(haku.getLastUpdateDate().after(getLastUpdatedDate()));
     }
 
+    @Test
+    public void thatHakukohteidenTarjoajatAreFetchedForHaku() {
+        createHakuWithMontaTarjoajaa();
+        Set<String> oids = hakuDAO.findOrganisaatioOidsFromHakukohteetByHakuOid("1.1.1");
+
+        assertTrue(oids.size() == 4);
+        assertTrue(oids.contains("2.2.2"));
+        assertTrue(oids.contains("4.4.4"));
+        assertTrue(oids.contains("6.6.6"));
+        assertTrue(oids.contains("8.8.8"));
+    }
+
+    @Test
+    public void thatHakukohteidenTarjoajatDoesNotFailWithEmptyResults() {
+        Set<String> oids = hakuDAO.findOrganisaatioOidsFromHakukohteetByHakuOid("1.1.1");
+        assertTrue(oids.isEmpty());
+    }
+
+    private void createHakuWithMontaTarjoajaa() {
+        Haku haku = new Haku();
+        haku.setOid("1.1.1");
+        haku.setTila(TarjontaTila.VALMIS);
+        haku.setHakutyyppiUri("hakutyyppi_01#1");
+        haku.setHakukausiUri("kausi_k#1");
+        haku.setHakutapaUri("hakutapa_01#1");
+        haku.setKohdejoukkoUri("haunkohdejoukko_01#1");
+        haku.setHakukausiVuosi(2014);
+
+        hakuDAO.insert(haku);
+
+        Hakukohde hakukohde = new Hakukohde();
+
+        KoulutusmoduuliToteutusTarjoajatiedot tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+        tarjoajatiedot.getTarjoajaOids().add("2.2.2");
+        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put("3.3.3", tarjoajatiedot);
+
+        tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+        tarjoajatiedot.getTarjoajaOids().add("4.4.4");
+        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put("5.5.5", tarjoajatiedot);
+
+        hakukohde.setHaku(haku);
+        hakukohdeDAO.insert(hakukohde);
+
+        hakukohde = new Hakukohde();
+
+        tarjoajatiedot = new KoulutusmoduuliToteutusTarjoajatiedot();
+        tarjoajatiedot.getTarjoajaOids().add("6.6.6");
+        hakukohde.getKoulutusmoduuliToteutusTarjoajatiedot().put("7.7.7", tarjoajatiedot);
+
+        hakukohde.setHaku(haku);
+        hakukohdeDAO.insert(hakukohde);
+
+        hakukohde = fixtures.createPersistedHakukohdeWithKoulutus("8.8.8");
+        hakukohde.setHaku(haku);
+        hakukohdeDAO.update(hakukohde);
+    }
+
     private void createHakuWithKoodiVersions() {
         Haku haku = new Haku();
         haku.setOid("1.2.3");
@@ -307,6 +370,4 @@ public class HakuDAOImplTest extends TestData {
         assertEquals(1, result.size());
         assertEquals(oid, result.get(0));
     }
-
-
 }

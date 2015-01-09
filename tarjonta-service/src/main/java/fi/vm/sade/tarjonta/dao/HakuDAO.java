@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.tarjonta.model.Haku;
@@ -19,19 +20,19 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
     List<Haku> findByOids(List<String> oids);
 
     /**
-     * @deprecated in 9.0 Use {@link #findBySearchCriteria()} instead
      * @param searchString
      * @param kieliKoodi
      * @return
+     * @deprecated in 9.0 Use {@link #findBySearchCriteria()} instead
      */
     @Deprecated
     List<Haku> findBySearchString(String searchString, String kieliKoodi);
 
     /**
-     * @deprecated in 9.0 Use {@link HakukohdeDAO} instead
      * @param searchString
      * @param kieliKoodi
      * @return
+     * @deprecated in 9.0 Use {@link HakukohdeDAO} instead
      */
     @Deprecated
     List<Haku> findHakukohdeHakus(Haku haku);
@@ -49,28 +50,28 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
     List<String> findOIDsBy(TarjontaTila tila, int count, int startIndex, Date lastModifiedBefore, Date lastModifiedSince);
 
     /**
-     * @deprecated in 9.0 Use {@link #findBySearchCriteria()} instead
      * @param searchString
      * @param kieliKoodi
      * @return
+     * @deprecated in 9.0 Use {@link #findBySearchCriteria()} instead
      */
     @Deprecated
     List<Haku> findByKoulutuksenKausi(String kausi, Integer alkamisVuosi);
 
     /**
-     * @deprecated in 9.0 Use {@link #findBySearchCriteria()} instead
      * @param searchString
      * @param kieliKoodi
      * @return
+     * @deprecated in 9.0 Use {@link #findBySearchCriteria()} instead
      */
     @Deprecated
     List<Haku> findBySearchCriteria(ListHakuSearchParam param);
 
     List<String> findOIDByCriteria(int count, int startIndex,
-            List<HakuSearchCriteria> criteriaList);
+                                   List<HakuSearchCriteria> criteriaList);
 
     List<Haku> findHakuByCriteria(int count, int startIndex,
-            List<HakuSearchCriteria> criteriaList);
+                                  List<HakuSearchCriteria> criteriaList);
 
     /**
      * Vaihtaa haun tilan suoraa poistetuksi/passivoiduksi.
@@ -78,5 +79,7 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
      * @param hakuOid
      * @param userOid
      */
-    public void safeDelete(final String hakuOid, final String userOid);
+    void safeDelete(final String hakuOid, final String userOid);
+
+    Set<String> findOrganisaatioOidsFromHakukohteetByHakuOid(String hakuOid);
 }
