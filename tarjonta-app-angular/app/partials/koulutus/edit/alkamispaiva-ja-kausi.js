@@ -55,7 +55,7 @@ app.directive('alkamispaivaJaKausi', [
                     $scope.minYear = pScope.minYear;
                     $scope.maxYear = pScope.maxYear;
                 }
-                pScope.model.isMinmax = true;
+                pScope.model.isMinmax = restricted;
             });
             $scope.$watch('ctrl.kausi', function(valNew, valOld) {
                 $scope.form[$scope.ctrl.kausivuosi] = valNew;

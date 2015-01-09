@@ -99,28 +99,32 @@ public class HakukohdeValidator {
         }
 
         if (hakukohdeRDTO.isLukioKoulutus()) {
-            if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() != 0) {
-                if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() < 4 || hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() > 10) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALIN_HYVAKSYTTY_KESKIARVO_RANGE);
-                }
-            }
-
-            for (PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
-                if (painotettavaOppiaineV1RDTO.getPainokerroin() == null) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING);
-                } else if (painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
-                } else if (painokerroinHasInvalidPrecision(painotettavaOppiaineV1RDTO)) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
-                }
-
-                if (StringUtils.isBlank(painotettavaOppiaineV1RDTO.getOppiaineUri())) {
-                    validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING);
-                }
-            }
+            validatePainotettavatOppiaineet(hakukohdeRDTO, validationMessages);
         }
 
         return validationMessages;
+    }
+
+    private void validatePainotettavatOppiaineet(HakukohdeV1RDTO hakukohdeRDTO, List<HakukohdeValidationMessages> validationMessages) {
+        if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() != 0) {
+            if (hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() < 4 || hakukohdeRDTO.getAlinHyvaksyttavaKeskiarvo() > 10) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_ALIN_HYVAKSYTTY_KESKIARVO_RANGE);
+            }
+        }
+
+        for (PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
+            if (painotettavaOppiaineV1RDTO.getPainokerroin() == null) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_MISSING);
+            } else if (painokerroinTooLarge(painotettavaOppiaineV1RDTO) || painokerroinTooSmall(painotettavaOppiaineV1RDTO)) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
+            } else if (painokerroinHasInvalidPrecision(painotettavaOppiaineV1RDTO)) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_PAINOKERROIN_RANGE);
+            }
+
+            if (StringUtils.isBlank(painotettavaOppiaineV1RDTO.getOppiaineUri())) {
+                validationMessages.add(HakukohdeValidationMessages.HAKUKOHDE_PAINOTETTAVA_OPPIAINE_OPPIAINE_MISSING);
+            }
+        }
     }
 
     private boolean painokerroinHasInvalidPrecision(PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO) {

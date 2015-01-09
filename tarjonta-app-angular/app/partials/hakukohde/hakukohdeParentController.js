@@ -351,11 +351,9 @@ app.controller('HakukohdeParentController', [
                     $scope.model.koulutusnimet = koulutusSet.toArray();
                     $scope.model.hakukohde.tarjoajaOids = tarjoajaOidsSet.toArray();
                     $scope.getTarjoajaParentPathsAndHakus($scope.model.hakukohde.tarjoajaOids, hakuFilterFunction);
-                    var orgQueryPromises = [];
-                    angular.forEach($scope.model.hakukohde.tarjoajaOids, function(tarjoajaOid) {
-                        orgQueryPromises.push(OrganisaatioService.byOid(tarjoajaOid));
-                    });
-                    $q.all(orgQueryPromises).then(function(orgs) {
+
+                    OrganisaatioService.getPopulatedOrganizations($scope.model.hakukohde.tarjoajaOids)
+                    .then(function(orgs) {
                         var counter = 0;
                         angular.forEach(orgs, function(data) {
                             orgSet.add(data.nimi);
@@ -372,7 +370,6 @@ app.controller('HakukohdeParentController', [
                             counter++;
                         });
                         $scope.model.organisaatioNimet = orgSet.toArray();
-                        $log.debug('ORGANISAATIO NIMET : ', $scope.model.organisaatioNimet);
                     });
                 }
             });
@@ -588,7 +585,7 @@ app.controller('HakukohdeParentController', [
         };
         $scope.model.hakuChanged = function() {
             if ($scope.model.hakukohde.hakuOid !== undefined) {
-                $scope.model.hakuaikas.splice(0, $scope.model.hakuaikas.length);
+                $scope.model.hakuaikas = [];
                 var haku = $scope.getHakuWithOid($scope.model.hakukohde.hakuOid);
                 if (haku.hakuaikas.length > 1) {
                     angular.forEach(haku.hakuaikas, function(hakuaika) {

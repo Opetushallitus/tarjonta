@@ -760,6 +760,12 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         return new HakukohdeTulosV1RDTO(size, results);
     }
 
+    @Override
+    public ResultV1RDTO<Set<String>> getHakukohteidenOrganisaatioOids(String oid) {
+        Set<String> oids = hakuDAO.findOrganisaatioOidsFromHakukohteetByHakuOid(oid);
+        return new ResultV1RDTO<Set<String>>(oids);
+    }
+
     private List<String> splitToList(String input, String separator) {
         if (input == null || input.trim().isEmpty()) {
             return Collections.EMPTY_LIST;

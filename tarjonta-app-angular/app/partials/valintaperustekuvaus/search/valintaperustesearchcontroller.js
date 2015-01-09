@@ -227,6 +227,7 @@ app.controller('ValintaperusteSearchController', function($scope, $rootScope, $r
     };
     $scope.search = function() {
         $scope.model.valintaperusteet = [];
+        $scope.model.sorat = [];
         checkForUserOrgs();
         angular.forEach($scope.model.kuvaustyyppis, function(tyyppi) {
             var searchPromise = Kuvaus.findKuvauksesWithSearchSpec($scope.model.searchSpec, tyyppi);

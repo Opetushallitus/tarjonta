@@ -495,7 +495,6 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 validationMessageses.addAll(hakukohdeValidator
                         .validateHakukohde(hakukohdeV1RDTO));
                 break;
-            case AMMATILLINEN_PERUSTUTKINTO:
             case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
             case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA_VALMISTAVA:
@@ -506,6 +505,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
                 validationMessageses.addAll(hakukohdeValidator
                         .validateAikuLukioHakukohde(hakukohdeV1RDTO));
                 break;
+            case AMMATILLINEN_PERUSTUTKINTO:
             case LUKIOKOULUTUS:
                 validationMessageses.addAll(hakukohdeValidator
                         .validateToisenAsteenHakukohde(hakukohdeV1RDTO));

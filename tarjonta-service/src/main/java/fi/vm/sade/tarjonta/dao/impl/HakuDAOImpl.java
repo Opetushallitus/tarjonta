@@ -36,10 +36,7 @@ import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Antti Salonen
@@ -297,4 +294,30 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         haku.setLastUpdateDate(new Date());
     }
 
+    public Set<String> findOrganisaatioOidsFromHakukohteetByHakuOid(String hakuOid) {
+        Set<String> firstSet = getMontaTarjoajaaOrganisaatioOids(hakuOid);
+        Set<String> secondSet = getKomotoTarjoajaOrganisaatioOids(hakuOid);
+        firstSet.addAll(secondSet);
+        return firstSet;
+    }
+
+    private Set<String> getKomotoTarjoajaOrganisaatioOids(String hakuOid) {
+        String hql = "select komoto.tarjoaja " +
+                "from Hakukohde hk " +
+                "join hk.koulutusmoduuliToteutuses as komoto " +
+                "where hk.haku.oid = :hakuOid";
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("hakuOid", hakuOid);
+        return new HashSet<String>(query.getResultList());
+    }
+
+    private Set<String> getMontaTarjoajaaOrganisaatioOids(String hakuOid) {
+        String hql = "select elements(koulutusmoduuliToteutusTarjoajatiedot.tarjoajaOids) " +
+                "from Hakukohde hk " +
+                "join hk.koulutusmoduuliToteutusTarjoajatiedot koulutusmoduuliToteutusTarjoajatiedot " +
+                "where hk.haku.oid = :hakuOid";
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("hakuOid", hakuOid);
+        return new HashSet<String>(query.getResultList());
+    }
 }

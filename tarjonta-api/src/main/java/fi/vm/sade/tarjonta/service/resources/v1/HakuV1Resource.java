@@ -14,21 +14,19 @@
  */
 package fi.vm.sade.tarjonta.service.resources.v1;
 
-import java.util.Date;
-import java.util.List;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
+import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-
-import fi.vm.sade.tarjonta.service.resources.dto.HakukohdeTulosRDTO;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
-import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Path("/v1/haku")
 @Api(value = "/v1/haku", description = "Haun REST-rajapinnan versio 1 operaatiot")
@@ -128,4 +126,8 @@ public interface HakuV1Resource {
                                                   @QueryParam("alkamisKausi") String alkamisKausi
     );
 
+    @GET
+    @Path("{oid}/hakukohteidenOrganisaatiot")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    public ResultV1RDTO<Set<String>> getHakukohteidenOrganisaatioOids(@PathParam("oid") String oid);
 }

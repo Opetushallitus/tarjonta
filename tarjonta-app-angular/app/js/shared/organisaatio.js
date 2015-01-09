@@ -5,8 +5,16 @@ angular.module('Organisaatio', [
 ]) // "organisaatioservice"
     .factory('OrganisaatioService', function($resource, $log, $q, Config) {
         $log = $log.getInstance('OrganisaatioService');
-        var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae');
-        var orgLuku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid');
+        var orgHaku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/hae', null, {
+            get: {
+                cache: true
+            }
+        });
+        var orgLuku = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid', null, {
+            get: {
+                cache: true
+            }
+        });
         /**
          * Hakee organisaatiopalvelusta ryhmät ja filtteroi niistä vain "hakukohde" käyttöön tarkoitetut ryhmät.
          * Eli jos "ryhmatyypit"-array sisältää "hakukohde" stringing.

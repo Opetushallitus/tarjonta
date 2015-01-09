@@ -165,13 +165,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             opetuskielet: args.kieli ? args.kieli : null,
             kohdejoukko: args.kohdejoukko ? args.kohdejoukko : null,
             oppilaitostyyppi: args.oppilaitostyyppi ? args.oppilaitostyyppi : null,
-            kunta: args.kunta ? args.kunta : null,
-            hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null
+            kunta: args.kunta ? args.kunta : null
         };
         if (args.defaultTarjoaja) {
             params.defaultTarjoaja = args.defaultTarjoaja;
         }
-        $log.debug('haeKoulutukset()', params);
         return CacheService.lookupResource(searchCacheKey('koulutus', args), koulutusHaku, params, function(result) {
             result = result.result;
             //unwrap v1

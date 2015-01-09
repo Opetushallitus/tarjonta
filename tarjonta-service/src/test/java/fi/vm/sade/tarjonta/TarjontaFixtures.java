@@ -373,7 +373,7 @@ public class TarjontaFixtures {
 
     public Hakukohde createPersistedHakukohdeWithKoulutus(String tarjoajaOid) {
 
-        Hakukohde h = createPersistedHakukohde();//createHakukohde();
+        Hakukohde h = createPersistedHakukohde();
         h.setAloituspaikatLkm(1);
         h.setValintojenAloituspaikatLkm(1);
         KoulutusmoduuliToteutus t1 = createTutkintoOhjelmaToteutusWithTarjoajaOid(tarjoajaOid);

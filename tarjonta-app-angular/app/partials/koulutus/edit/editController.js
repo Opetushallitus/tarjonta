@@ -405,18 +405,10 @@ app.controller('BaseEditController', [
             model.isNew = true;
             $scope.controlFormMessages(form, uiModel, 'INIT');
             KoulutusConverterFactory.createAPIModel(model, Config.app.userLanguages, tyyppi);
+            var orgOid = $routeParams.org || model.organisaatio.oid;
+            model.opetusTarjoajat = [orgOid];
             if ($routeParams.opetusTarjoajat) {
-                model.opetusTarjoajat = $routeParams.opetusTarjoajat.split(',');
-                $scope.initOpetustarjoajat(model);
-            }
-            if (angular.isDefined($routeParams.org) || angular.isDefined(model.organisaatio) &&
-                angular.isDefined(model.organisaatio.oid)) {
-                var promiseOrg = OrganisaatioService.nimi(angular.isDefined($routeParams.org) ?
-                    $routeParams.org :
-                    model.organisaatio.oid);
-                promiseOrg.then(function(vastaus) {
-                    KoulutusConverterFactory.updateOrganisationApiModel(model, $routeParams.org, vastaus);
-                });
+                model.opetusTarjoajat = _.union(model.opetusTarjoajat, $routeParams.opetusTarjoajat.split(','));
             }
         };
         $scope.commonLoadModelHandler = function(form, model, uiModel, tyyppi) {
@@ -501,7 +493,6 @@ app.controller('BaseEditController', [
                     console.error('invalid key mapping : ', key);
                 }
             });
-            $scope.initOpetustarjoajat(model);
         };
         /*
              * LISATIEDOT PAGE FUNCTIONS
@@ -915,6 +906,7 @@ app.controller('BaseEditController', [
                     nimet += ' | ' + org.nimi;
                 });
                 $scope.model.organisaatioidenNimet = nimet.substring(3);
+                KoulutusConverterFactory.updateOrganisationApiModel($scope.model, orgs[0].oid, orgs[0].nimi);
             });
         };
         $scope.editOrganizations = function() {
@@ -929,7 +921,7 @@ app.controller('BaseEditController', [
             });
         };
         $scope.setMinMax = function(restricted) {
-            $scope.model.isMinmax = true;
+            $scope.model.isMinmax = restricted;
             $scope.restricted = restricted;
             var vuosi;
             if (restricted) {
