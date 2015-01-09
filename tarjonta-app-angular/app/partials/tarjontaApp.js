@@ -89,6 +89,7 @@ angular.module('app', [
     'Parameter',
     'Logging',
     'ValidDecimal',
+    'ValidPositiveNumber',
     'taiPlaceholder',
     'Validator'
 ]);
