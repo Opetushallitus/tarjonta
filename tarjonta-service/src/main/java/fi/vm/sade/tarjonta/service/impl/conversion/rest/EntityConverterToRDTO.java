@@ -165,6 +165,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             KoulutusAikuistenPerusopetusV1RDTO perusDto = (KoulutusAikuistenPerusopetusV1RDTO) dto;
 
             perusDto.setKielivalikoima(commonConverter.convertToKielivalikoimaDTO(komoto.getTarjotutKielet(), param));
+            perusDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getOsaamisalaUri(), komoto.getOsaamisalaUri(), FieldNames.OSAAMISALA, NO, param));
             perusDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
             perusDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             perusDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));

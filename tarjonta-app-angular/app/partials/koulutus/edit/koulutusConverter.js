@@ -1239,6 +1239,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 },
                 tutkintonimike: {
                     module: 'TUTKINTO'
+                },
+                koulutusohjelma: {
+                    module: 'TUTKINTO_OHJELMA'
                 }
             },
             COMBO: {

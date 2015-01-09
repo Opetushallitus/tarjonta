@@ -594,10 +594,10 @@ app.controller('BaseEditController', [
          * Tämä funktio palauttaa koodiston arvoista vain ne, joista
          * on olemassa koulutusmoduuli tietokannassa.
          */
-        function filterByKomos(koodistoResult, komos, compareField) {
+        function filterByKomos(koodistoResult, komos, compareFunction) {
             var tutkintoModules = {};
             angular.forEach(komos.result, function(komo) {
-                var key = komo[compareField];
+                var key = compareFunction(komo);
                 if (koodistoResult.map[key]) {
                     tutkintoModules[key] = angular.extend(koodistoResult.map[key], {
                         oid: komo.oid,
@@ -664,11 +664,13 @@ app.controller('BaseEditController', [
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         moduuli: ENUMS.ENUM_KOMO_MODULE_TUTKINTO
                     }, function(komos) {
-                            uiModel.tutkintoModules = filterByKomos(koodistoResult, komos, 'koulutuskoodiUri');
-                            uiModel.tutkinto = _.map(uiModel.tutkintoModules, function(num, key) {
-                                return num;
-                            });
+                        uiModel.tutkintoModules = filterByKomos(koodistoResult, komos, function(komo) {
+                            return komo.koulutuskoodiUri;
                         });
+                        uiModel.tutkinto = _.map(uiModel.tutkintoModules, function(num, key) {
+                            return num;
+                        });
+                    });
                 });
             }
             else {
@@ -809,8 +811,8 @@ app.controller('BaseEditController', [
                 $scope.callbackAfterSave);
         };
         /*
-             * WATCHES
-             */
+         * WATCHES
+         */
         $scope.$watch('model.koulutusohjelma.uri', function(uri, oUri) {
             if (angular.isDefined(uri) && uri !== null && oUri != uri) {
                 $scope.model.koulutuksenTavoitteet = null;
@@ -861,24 +863,26 @@ app.controller('BaseEditController', [
                         koulutustyyppi: $scope.CONFIG.KOULUTUSTYYPPI,
                         moduuli: ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
                     }, function(komos) {
-                            $scope.uiModel.koulutusohjelmaModules = filterByKomos(koodistoResult, komos, 'ohjelmaUri');
-                            $scope.uiModel.koulutusohjelma = _.map(
-                                $scope.uiModel.koulutusohjelmaModules, function(num) {
-                                return num;
-                            });
-                            // Hack, lukiokoulutuksella ei saa näyttää aikuisten lukiokoulutus valintaa.
-                            // Tämä relaatio olisi parempi saada koodistoon, mutta nyt joudutaan tekemään näin
-                            if ($scope.CONFIG.TYYPPI === 'LUKIOKOULUTUS') {
-                                $scope.uiModel.koulutusohjelma = _.filter(
-                                    $scope.uiModel.koulutusohjelma, function(uri) {
-                                    return uri.koodiArvo !== '0086';
-                                });
-                            }
-                            $scope.uiModel.enableOsaamisala = $scope.uiModel.koulutusohjelma.length > 0;
-                            if (!$scope.uiModel.enableOsaamisala) {
-                                $scope.model.komoOid = $scope.uiModel.tutkintoModules[uriNew].oid;
-                            }
+                        $scope.uiModel.koulutusohjelmaModules = filterByKomos(koodistoResult, komos, function(komo) {
+                            return komo.ohjelmaUri || komo.osaamisalaUri;
                         });
+                        $scope.uiModel.koulutusohjelma = _.map(
+                            $scope.uiModel.koulutusohjelmaModules, function(num) {
+                            return num;
+                        });
+                        // Hack, lukiokoulutuksella ei saa näyttää aikuisten lukiokoulutus valintaa.
+                        // Tämä relaatio olisi parempi saada koodistoon, mutta nyt joudutaan tekemään näin
+                        if ($scope.CONFIG.TYYPPI === 'LUKIOKOULUTUS') {
+                            $scope.uiModel.koulutusohjelma = _.filter(
+                                $scope.uiModel.koulutusohjelma, function(uri) {
+                                return uri.koodiArvo !== '0086';
+                            });
+                        }
+                        $scope.uiModel.enableOsaamisala = $scope.uiModel.koulutusohjelma.length > 0;
+                        if (!$scope.uiModel.enableOsaamisala) {
+                            $scope.model.komoOid = $scope.uiModel.tutkintoModules[uriNew].oid;
+                        }
+                    });
                 });
             }
         });
