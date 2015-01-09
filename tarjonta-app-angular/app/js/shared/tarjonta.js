@@ -180,8 +180,12 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
                     if (t.nimi) {
-                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi !== 'LUKIOKOULUTUS' &&
-                        r.pohjakoulutusvaatimus !== undefined ? ', ' + localize(r.pohjakoulutusvaatimus) : '');
+                        r.nimi = localize(r.nimi);
+                        if (!_.contains(['LUKIOKOULUTUS',
+                                         'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                                         'AIKUISTEN_PERUSOPETUS'], r.toteutustyyppiEnum) && r.pohjakoulutusvaatimus) {
+                            r.nimi += ', ' + localize(r.pohjakoulutusvaatimus);
+                        }
                     }
                     else {
                         r.nimi = r.oid;
