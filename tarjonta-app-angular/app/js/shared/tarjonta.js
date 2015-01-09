@@ -176,20 +176,19 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             for (var i in result.tulokset) {
                 var validKoulutukset = [];
                 var t = result.tulokset[i];
-                if (t.nimi === null || typeof t.nimi === 'undefined') {
-                    t.nimi = t.oid;
-                }
-                else {
-                    t.nimi = localize(t.nimi);
-                }
+                t.nimi = t.nimi ? localize(t.nimi) : t.oid;
                 for (var j in t.tulokset) {
                     var r = t.tulokset[j];
-                    if (t.nimi === null || typeof t.nimi === 'undefined') {
-                        r.nimi = r.oid;
+                    if (t.nimi) {
+                        r.nimi = localize(r.nimi);
+                        if (!_.contains(['LUKIOKOULUTUS',
+                                         'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                                         'AIKUISTEN_PERUSOPETUS'], r.toteutustyyppiEnum) && r.pohjakoulutusvaatimus) {
+                            r.nimi += ', ' + localize(r.pohjakoulutusvaatimus);
+                        }
                     }
                     else {
-                        r.nimi = localize(r.nimi) + (r.koulutusasteTyyppi !== 'LUKIOKOULUTUS' &&
-                            r.pohjakoulutusvaatimus !== undefined ? ', ' + localize(r.pohjakoulutusvaatimus) : '');
+                        r.nimi = r.oid;
                     }
                     r.tilaNimi = LocalisationService.t('tarjonta.tila.' + r.tila);
                     r.koulutuslaji = localize(r.koulutuslaji);
