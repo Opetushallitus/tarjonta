@@ -74,9 +74,9 @@ app.controller('BaseEditController', [
         };
         //clear
         /*
-             * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
-             * LUKIO, KORKEAKOULU etc.
-             */
+         * ALL ABSTRACT FUNCTIONS FOR KOULUTUS EDIT PAGES
+         * LUKIO, KORKEAKOULU etc.
+         */
         $scope.setModel = function(m) {
             $scope.model = m;
         };
@@ -144,9 +144,9 @@ app.controller('BaseEditController', [
             return $scope.modelInitialState && !_.isEqual(currentModel, $scope.modelInitialState);
         };
         /**
-             * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
-             * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
-             */
+         * Tallenna modelin tila ennen käyttäjän tekemiä muutoksia, jotta
+         * voidaan tarvittaessa ilmoittaa tallentamattomista tiedoista jne.
+         */
         $scope.setDirtyListener = function() {
             $('form[name="koulutusForm"]').on('focus click', '*', function(e) {
                 e.stopPropagation();
@@ -469,9 +469,9 @@ app.controller('BaseEditController', [
                 }
             });
             /*
-                   * Load data to mltiselect fields
-                   * remove version data from the list
-                   */
+            * Load data to mltiselect fields
+            * remove version data from the list
+            */
             angular.forEach(KoulutusConverterFactory.STRUCTURE[tyyppi].MCOMBO, function(value, key) {
                 if (angular.isDefined(model[key])) {
                     if (angular.isDefined(value.types)) {
@@ -495,15 +495,15 @@ app.controller('BaseEditController', [
             });
         };
         /*
-             * LISATIEDOT PAGE FUNCTIONS
-             */
+         * LISATIEDOT PAGE FUNCTIONS
+         */
         /**
-             * Try to find all language uris for textarea objects.
-             * Set founded uris to uiModel.lisatietoKielet property.
-             *
-             * @param {type} model
-             * @param {type} uiModel
-             */
+         * Try to find all language uris for textarea objects.
+         * Set founded uris to uiModel.lisatietoKielet property.
+         *
+         * @param {type} model
+         * @param {type} uiModel
+         */
         $scope.getLisatietoKielet = function(model, uiModel, requireKomoTexts) {
             var arrLanguageUris = [];
             if (model.kuvausKomoto) {
@@ -587,13 +587,13 @@ app.controller('BaseEditController', [
             });
         };
         /**
-             * Refaktorointi: aiempien, melkein identtisten koulutusControllerien toiminnallisuus
-             * siirrettiin tänne ja jätettiin yksittäisiin controllereihin vain niille spesifiset koodit
-             */
+         * Refaktorointi: aiempien, melkein identtisten koulutusControllerien toiminnallisuus
+         * siirrettiin tänne ja jätettiin yksittäisiin controllereihin vain niille spesifiset koodit
+         */
         /**
-             * Tämä funktio palauttaa koodiston arvoista vain ne, joista
-             * on olemassa koulutusmoduuli tietokannassa.
-             */
+         * Tämä funktio palauttaa koodiston arvoista vain ne, joista
+         * on olemassa koulutusmoduuli tietokannassa.
+         */
         function filterByKomos(koodistoResult, komos, compareField) {
             var tutkintoModules = {};
             angular.forEach(komos.result, function(komo) {
@@ -611,8 +611,8 @@ app.controller('BaseEditController', [
             $log.debug('init');
             initValues = initValues || {};
             /*
-                   * INITIALIZE PAGE CONFIG
-                   */
+             * INITIALIZE PAGE CONFIG
+             */
             $scope.commonCreatePageConfig($routeParams, $route.current.locals.koulutusModel.result);
             var model = initValues.model || {};
             var uiModel = initValues.uiModel || {};
@@ -635,13 +635,13 @@ app.controller('BaseEditController', [
                 });
             }
             /*
-                   * HANDLE EDIT / CREATE NEW ROUTING
-                   */
+             * HANDLE EDIT / CREATE NEW ROUTING
+             */
             if ($routeParams.id) {
                 /*
-                         *  SHOW KOULUTUS BY GIVEN KOMOTO OID
-                         *  Look more info from koulutusController.js.
-                         */
+                 *  SHOW KOULUTUS BY GIVEN KOMOTO OID
+                 *  Look more info from koulutusController.js.
+                 */
                 model = $route.current.locals.koulutusModel.result;
                 uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                 $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
@@ -649,13 +649,13 @@ app.controller('BaseEditController', [
             }
             else if ($routeParams.org) {
                 /*
-                         * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
-                         * Look more info from koulutusController.js.
-                         */
+                 * CREATE NEW KOULUTUS BY ORG OID AND KOULUTUSKOODI
+                 * Look more info from koulutusController.js.
+                 */
                 $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                 /*
-                         * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
-                         */
+                 * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
+                 */
                 var resource = TarjontaService.komo();
                 var tutkintoPromise = Koodisto.getYlapuolisetKoodiUrit([$scope.CONFIG.KOULUTUSTYYPPI], 'koulutus',
                     $scope.koodistoLocale);
@@ -744,8 +744,8 @@ app.controller('BaseEditController', [
                 TarjontaService.komo().tekstis({
                     oid: komoOid
                 }, function(komoTekstisResponse) {
-                        setUiModelTexts(komoTekstisResponse.result);
-                    });
+                    setUiModelTexts(komoTekstisResponse.result);
+                });
             }
         };
         $scope.loadRelationKoodistoData = function(apiModel, uiModel, koodiUri, tutkintoTyyppi) {
@@ -820,16 +820,16 @@ app.controller('BaseEditController', [
                     $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, uri,
                         ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
                     /**
-                               * Osalla koulutuksista on omia KOMO-tekstejä lapsi KOMOISSA, jotka pitää hakea
-                               * erikseen tässä. Tällä hetkellä ainoa teksti on koulutuksenTavoitteet.
-                               */
+                    * Osalla koulutuksista on omia KOMO-tekstejä lapsi KOMOISSA, jotka pitää hakea
+                    * erikseen tässä. Tällä hetkellä ainoa teksti on koulutuksenTavoitteet.
+                    */
                     TarjontaService.komo().tekstis({
                         oid: $scope.model.komoOid
                     }, function(komoTekstisResponse) {
-                            if (komoTekstisResponse.result && komoTekstisResponse.result.TAVOITTEET) {
-                                $scope.model.koulutuksenTavoitteet = komoTekstisResponse.result.TAVOITTEET.tekstis;
-                            }
-                        });
+                        if (komoTekstisResponse.result && komoTekstisResponse.result.TAVOITTEET) {
+                            $scope.model.koulutuksenTavoitteet = komoTekstisResponse.result.TAVOITTEET.tekstis;
+                        }
+                    });
                 }
                 else {
                     $log.error('missing koulutus by ' + uri);
@@ -883,10 +883,10 @@ app.controller('BaseEditController', [
             }
         });
         /**
-             * tarjonta-service ei pidä yllä tarjoajien järjestystä, mistä syystä
-             * tästä pidetään huolta alla olevan $watchin avulla (eli varmistetaan,
-             * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
-             */
+         * tarjonta-service ei pidä yllä tarjoajien järjestystä, mistä syystä
+         * tästä pidetään huolta alla olevan $watchin avulla (eli varmistetaan,
+         * että se organisaatio joka loi koulutuksen, on aina taulukon ensimmäisenä).
+         */
         $scope.$watch('model.opetusTarjoajat', function() {
             $scope.initOpetustarjoajat();
         });
