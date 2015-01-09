@@ -345,6 +345,7 @@ angular.module('app.search.controllers', [
                         SharedStateService.addToState('SelectedKoulutukses', response.oids);
                         SharedStateService.addToState('SelectedToteutusTyyppi', response.toteutustyyppi);
                         SharedStateService.addToState('SelectedOrgOid', $scope.selectedOrgOid);
+                        SharedStateService.addToState('firstSelectedKoulutus', results[0].result);
                         $location.path('/hakukohde/new/edit');
                     }, function() {});
                 }
