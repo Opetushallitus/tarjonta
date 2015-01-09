@@ -273,11 +273,12 @@ angular.module('Validator', [])
         }
         function validate(model, haku) {
             var hakukohde = model.hakukohde;
-            if (hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA' ||
-                hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA' ||
-                hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS' ||
-                hakukohde.toteutusTyyppi === 'ERIKOISAMMATTITUTKINTO' ||
-                hakukohde.toteutusTyyppi === 'AMMATTITUTKINTO') {
+            if (_.contains(['LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA',
+                            'AIKUISTEN_PERUSOPETUS',
+                            'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA',
+                            'AMMATILLINEN_PERUSKOULUTUS',
+                            'ERIKOISAMMATTITUTKINTO',
+                            'AMMATTITUTKINTO'], hakukohde.toteutusTyyppi)) {
                 return validateAiku(hakukohde, haku);
             } else {
                 return validateHakukohde(model, haku);
