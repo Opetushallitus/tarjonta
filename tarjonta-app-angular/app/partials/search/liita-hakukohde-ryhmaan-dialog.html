@@ -8,9 +8,9 @@
         <p class="help" data-tt="search.ryhmat.liita.help">Valitse ryhmä(t) joihin haluat annetut hakukohteet liittää tai niistä poistaa.</p>
 
         <div ng-show="!model.completed">
-            <span ng-repeat="ryhma in model.ryhmat">
-              <input type="checkbox" ng-model="ryhma.selected"> {{ getNimi(ryhma) }}<br/>
-            </span>
+            <label for="ryhma_{{$index}}" ng-repeat="ryhma in model.ryhmat|orderBy:'displayName'">
+              <input id="ryhma_{{$index}}" type="checkbox" ng-model="ryhma.selected"> {{ryhma.displayName}}<br>
+            </label>
         </div>
 
         <div ng-show="model.completed && model.result.errors">

@@ -4,22 +4,20 @@ angular.module('search.hakutulokset.hakukohteet', [])
         'use strict';
 
         var AddHakukohdeToGroupController = function($scope, $modalInstance, valitutHakukohteet, ryhmat) {
+            function getNimi(ryhma) {
+                var nimi = ryhma.nimi;
+                return nimi.fi || nimi.sv || nimi.en;
+            }
             var init = function() {
                 $scope.model = $scope.model ? $scope.model : {};
                 $scope.model.hakukohteet = valitutHakukohteet;
                 $scope.model.ryhmat = ryhmat;
+                _.each($scope.model.ryhmat, function(ryhma) {
+                    ryhma.displayName = getNimi(ryhma);
+                });
                 $scope.model.completed = false;
             };
             init();
-
-            $scope.getNimi = function(ryhma) {
-                var nimi;
-                nimi = nimi ? nimi : ryhma.nimi.fi;
-                nimi = nimi ? nimi : ryhma.nimi.sv;
-                nimi = nimi ? nimi : ryhma.nimi.en;
-                nimi = nimi ? nimi : 'SIN NOMBRE?';
-                return nimi;
-            };
             $scope.okLiita = function() {
                 $scope.teeLiitosRyhmaan('LISAA');
             };
