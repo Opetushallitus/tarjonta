@@ -274,7 +274,10 @@ angular.module('Validator', [])
         function validate(model, haku) {
             var hakukohde = model.hakukohde;
             if (hakukohde.toteutusTyyppi === 'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA' ||
-                hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA') {
+                hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA' ||
+                hakukohde.toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS' ||
+                hakukohde.toteutusTyyppi === 'ERIKOISAMMATTITUTKINTO' ||
+                hakukohde.toteutusTyyppi === 'AMMATTITUTKINTO') {
                 return validateAiku(hakukohde, haku);
             } else {
                 return validateHakukohde(model, haku);
