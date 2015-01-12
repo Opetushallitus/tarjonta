@@ -15,6 +15,7 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.base.Preconditions;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,6 +57,8 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
     private KoulutusCommonConverter commonConverter;
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+    @Autowired
+    KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAO;
 
     public TYPE convert(Class<TYPE> clazz, final KoulutusmoduuliToteutus komoto, final RestParam param) {
         LOG.debug("in KomotoConverterToKorkeakouluDTO : {}", komoto);
@@ -90,6 +94,17 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         KuvausV1RDTO<KomotoTeksti> komotoKuvaus = new KuvausV1RDTO<KomotoTeksti>();
         komotoKuvaus.putAll(komotoKuvausConverters.convertMonikielinenTekstiToTekstiDTO(komoto.getTekstit(), param.getShowMeta()));
         dto.setKuvausKomoto(komotoKuvaus);
+
+        String komoOid = komoto.getKoulutusmoduuli().getOid();
+        if (komoOid != null) {
+            Set<String> parents = new HashSet<String>();
+            parents.addAll(koulutusSisaltyvyysDAO.getParents(komoOid));
+            dto.setParents(parents);
+
+            Set<String> children = new HashSet<String>();
+            children.addAll(koulutusSisaltyvyysDAO.getChildren(komoOid));
+            dto.setChildren(children);
+        }
 
         //KOMO
         if (dto instanceof KoulutusKorkeakouluV1RDTO) {

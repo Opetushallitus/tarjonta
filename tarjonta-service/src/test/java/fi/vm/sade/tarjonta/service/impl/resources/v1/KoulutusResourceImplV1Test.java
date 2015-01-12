@@ -41,6 +41,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.ResultV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusKorkeakouluV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -161,12 +162,14 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaMapUris(MAP_POHJAKOULUTUS);
         expectMetaUri(SUUNNITELTU_KESTO_TYYPPI);
         expectMetaMapUris(MAP_AMMATTINIMIKE);
+        expectHierarchy();
 
         //  expectKoulutusohjelmaUris(KOULUTUSOHELMA);
 
         /* REPLAY */
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
+        replay(koulutusSisaltyvyysDAO);
         /*
          * INSERT KORKEAKOULU TO DB
          */
@@ -181,6 +184,11 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertLoadData(result1);
 
         verify(organisaatioServiceMock);
+    }
+
+    private void expectHierarchy() {
+        expect(koulutusSisaltyvyysDAO.getParents("komo_oid")).andReturn(new ArrayList<String>()).atLeastOnce();
+        expect(koulutusSisaltyvyysDAO.getChildren("komo_oid")).andReturn(new ArrayList<String>()).atLeastOnce();
     }
 
     private void assertLoadData(final KoulutusKorkeakouluV1RDTO result) {

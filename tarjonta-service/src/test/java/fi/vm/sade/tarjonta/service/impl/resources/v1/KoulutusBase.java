@@ -214,6 +214,7 @@ abstract class KoulutusBase {
         Whitebox.setInternalState(converterToRDTO, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(converterToRDTO, "komotoKuvausConverters", komotoKoulutusConverters);
         Whitebox.setInternalState(converterToRDTO, "koulutusmoduuliDAO", koulutusmoduuliDAO);
+        Whitebox.setInternalState(converterToRDTO, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAO);
 
         Whitebox.setInternalState(convertToEntity, "komoKuvausConverters", komoKoulutusConverters);
         Whitebox.setInternalState(convertToEntity, "komotoKuvausConverters", komotoKoulutusConverters);

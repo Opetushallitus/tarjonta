@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -100,9 +101,12 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
          */
         expectKoodis();
 
+        expectHierarchy();
+
         /* REPLAY */
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
+        replay(koulutusSisaltyvyysDAO);
         /*
          * INSERT LUKIO TO DB
          */
@@ -111,20 +115,24 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         
         verify(organisaatioServiceMock);
         verify(tarjontaKoodistoHelperMock);
+        verify(koulutusSisaltyvyysDAO);
 
         /*
          * LOAD LUKIO DTO FROM DB
          */
         reset(organisaatioServiceMock);
         reset(tarjontaKoodistoHelperMock);
+        reset(koulutusSisaltyvyysDAO);
 
         /* 2nd round, convert to dto */
         expectKoodis();
         
         expect(organisaatioServiceMock.findByOid(ORGANISATION_OID)).andReturn(organisaatioDTO).times(1);
-        
+        expectHierarchy();
+
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
+        replay(koulutusSisaltyvyysDAO);
         
         final ResultV1RDTO result = instance.findByOid(KOMOTO_OID, true, false, "FI");
         KoulutusLukioV1RDTO result1 = (KoulutusLukioV1RDTO) result.getResult();
@@ -218,6 +226,11 @@ public class KoulutusResourceImplV1LukioTest extends KoulutusBase {
         
         KoodiType koodiLanguageFi = createKoodiType(URI_KIELI_FI, "fi");
         expect(tarjontaKoodistoHelperMock.convertKielikoodiToKoodiType(LOCALE_FI)).andReturn(koodiLanguageFi).times(1);
+    }
+
+    private void expectHierarchy() {
+        expect(koulutusSisaltyvyysDAO.getParents("komo_child_oid")).andReturn(new ArrayList<String>());
+        expect(koulutusSisaltyvyysDAO.getChildren("komo_child_oid")).andReturn(new ArrayList<String>());
     }
 
     /*
