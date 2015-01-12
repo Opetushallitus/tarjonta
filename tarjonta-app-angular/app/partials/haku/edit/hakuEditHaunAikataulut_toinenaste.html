@@ -117,31 +117,23 @@
             <th></th>
             <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_SST.help">Tiheys määritetään kokonaistunteina välillä 1 - 336 (14 vuorokautta)</td>
         </tr>
-
-<!--
-        <tr>
-            <th tt='haku.edit.aikataulu.PH_SSKA'>Sijoittelun suorittaminen päivittäin kello</th>
-            <td>
-                <span tt="haku.klo">klo</span>
-                <input type="text" ng-model="model.parameter.PH_SSKA" name="PH_SSKA" placeholder="23:59" ng-pattern="/[012][0-9]:[0-5][0-9]/">
-            </td>
-            <td>
-                <div>
-                    <show-errors form="hakuForm" field="PH_SSKA" tt-prefix="haku.edit.aikataulu"></show-errors>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <th></th>
-            <td colspan="2" class="help" tt="haku.edit.aikataulu.PH_SSKA.help">Sijoittelu suoritetaan valitulla tiheydellä tästä kellonajasta alkaen.</td>
-        </tr>
--->
-
     </table>
 
     <h3 tt='haku.edit.aikataulu.tuloksetJaPaikanVastaanotto'>Tulokset ja paikan vastaanotto</h3>
 
     <table class="tarjontaForm">
+        <tr ng-if="stripVersionFromKoodistoUri(model.hakux.result.kohdejoukkoUri) === 'haunkohdejoukko_11'">
+            <th tt='haku.edit.aikataulu.PH_OPVP'>Opiskelijan paikan vastaanotto päättyy</th>
+            <td>
+                <t-date-time type="long" timestamp="true" name="PH_OPVP" scope-model="model.parameter.PH_OPVP.date"></t-date-time>
+            </td>
+            <td>
+                <div>
+                    <show-errors form="hakuForm" field="PH_OPVP" tt-prefix="haku.edit.aikataulu"></show-errors>
+                </div>
+            </td>
+        </tr>
+
         <tr>
             <th tt='haku.edit.aikataulu.PH_JKLIP'>Jälkiohjauskirjeen aineiston lähettäminen iPostiin</th>
             <td>
