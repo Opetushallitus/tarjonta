@@ -228,10 +228,10 @@
                             </tr>
                             </tbody>
                         </table>
-                        <div ng-if="model.hakukohde.valintakoe.valintakoeAjankohtas">
+                        <div ng-if="model.hakukohde.paasykoe">
                             <h2><span tt="tarjonta.hakukohde.valintakoe.pisterajat.paasykoe">Pääsykoe</span></h2>
                             <div><mk-text model="model.hakukohde.valintakoe.kuvaukset" display="tabs"/></div>
-                            <table class="table">
+                            <table class="table" ng-if="model.hakukohde.valintakoe.valintakoeAjankohtas">
                                 <thead>
                                     <tr>
                                         <th tt="tarjonta.hakukohde.valintakoe.ajankohta">Ajankohta</th>
