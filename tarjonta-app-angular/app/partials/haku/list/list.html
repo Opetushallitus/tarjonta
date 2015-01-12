@@ -12,27 +12,27 @@
         <!-- 1. komponenttirivi -->
         <tr>
             <td class="query">
-                <input type="text" ng-model="searchParams.HAKUSANA" placeholder="{{t('haku.list.hakuehto')}}" ng-enter="doSearch()"/>
+                <input type="text" ng-model="spec.attributes.HAKUSANA" placeholder="{{t('haku.list.hakuehto')}}" ng-enter="doSearch()"/>
             </td>
             <td colspan="2">
                 <!-- hakutapa -->
-                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'hakutapa'" koodiuri="searchParams.HAKUTAPA" version="true"></koodistocombo>
+                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'hakutapa'" koodiuri="spec.attributes.HAKUTAPA" version="true"></koodistocombo>
             </td>
             <td>
                 <!-- hakutyyppi -->
-                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'hakutyyppi'" koodiuri="searchParams.HAKUTYYPPI" version="true"></koodistocombo>
+                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'hakutyyppi'" koodiuri="spec.attributes.HAKUTYYPPI" version="true"></koodistocombo>
             </td>
             <td>
                 <!-- haun kohdejoukko -->
-                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'haunkohdejoukko'" koodiuri="searchParams.KOHDEJOUKKO" version="true"></koodistocombo>
+                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'haunkohdejoukko'" koodiuri="spec.attributes.KOHDEJOUKKO" version="true"></koodistocombo>
             </td>
         </tr>
         <!-- 2. otsikkorivi -->
         <tr>
             <td rowspan="2" class="mode">
 	            <ul>
-	                <li><input type="radio" ng-model="searchParams.KAUSIVUOSI" value="HAKU"/> <span tt="haku.list.haku.byhaku">Haun alkamiskauden ja/tai vuoden mukaan</span></li>
-	                <li><input type="radio" ng-model="searchParams.KAUSIVUOSI" value="KOULUTUKSEN_ALKAMIS"/> <span tt="haku.list.haku.bykoulutus">Koulutuksen alkamiskauden ja/tai vuoden mukaan</span></li>
+	                <li><label><input type="radio" ng-model="spec.attributes.KAUSIVUOSI" value="HAKU"/><span tt="haku.list.haku.byhaku">Haun alkamiskauden ja/tai vuoden mukaan</span></label></li>
+	                <li><label><input type="radio" ng-model="spec.attributes.KAUSIVUOSI" value="KOULUTUKSEN_ALKAMIS"/><span tt="haku.list.haku.bykoulutus">Koulutuksen alkamiskauden ja/tai vuoden mukaan</span></label></li>
 	            </ul>
             </td>
             <th colspan="2" tt="haku.list.alkamisKausiJaVuosi">Alkamiskausi- ja vuosi</th>
@@ -43,17 +43,17 @@
         <tr>
             <td>
                 <!-- alkamiskausi -->
-                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'kausi'" koodiuri="searchParams.KAUSI" version="true"></koodistocombo>
+                <koodistocombo prompt="t('tarjonta.haku.kaikki')" koodistouri="'kausi'" koodiuri="spec.attributes.KAUSI" version="true"></koodistocombo>
             </td>
             <td class="align-right">
                 <!-- alkamisvuosi -->
-                <select class="thin" ng-model="searchParams.VUOSI" ng-options="vk for vk in vuosi">
+                <select class="thin" ng-model="spec.attributes.VUOSI" ng-options="vk.key as vk.label for vk in vuosi">
                     <option value="" data-tt="tarjonta.haku.kaikki"></option>
                 </select>
             </td>
             <td>
                 <!-- haun tila -->
-                <select ng-model="searchParams.TILA" ng-options="s as t for (s,t) in states">
+                <select ng-model="spec.attributes.TILA" ng-options="state.key as state.label for state in states | orderBy: 'label'">
                     <option value="" data-tt="tarjonta.haku.kaikki"></option>
                 </select>
             </td>
@@ -68,7 +68,7 @@
         <tr>
             <td class="controls" colspan="5">
                 <button class="btn" ng-click="clearSearch()"><span tt="tarjonta.haku.tyhjenna">Tyhjennä</span></button>
-                <button class="btn btn-primary" ng-disabled="!searchParams.KAUSIVUOSI || unloadedKoodis>0" ng-click="doSearch()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></button>
+                <button class="btn btn-primary" ng-click="doSearch()"><span tt="tarjonta.haku.hae">Hae</span> <span class="icon-search"></span></button>
             </td>
         </tr>
     </table>
@@ -76,11 +76,11 @@
     <tabset>
         <tab heading="{{t('haku.list.hakuvastaus.lkm', [model.hakus.length])}}" ng-hide="model.hakus == 0"></tab>
     </tabset>
-    
+
     <div id="searchResults" class="haku">
 	    <div class="controls">
 	        <button class="btn" ng-click="doDeleteSelected()" ng-disabled="!canDeleteSelected()" tt="haku.list.poista">Poista</button>
-	        <button class="btn float-right" ng-click="doCreateNew()" ng-disabled="!canCreateNew()"><span tt="haku.list.luoUusiHaku">Luo uusi haku</span> <span class="icon-plus-sign"></span></button>        
+	        <button class="btn float-right" ng-click="doCreateNew()" ng-disabled="!canCreateNew()"><span tt="haku.list.luoUusiHaku">Luo uusi haku</span> <span class="icon-plus-sign"></span></button>
 	        <!-- ei käytetty:
 	        <select class="float-right"><option data-tt="haku.list.sorttaa.tila">Tilan mukainen järjestys</option></select>
 	         -->
@@ -99,7 +99,7 @@
             ></results-tree-table>
 
     </div>
-    
 
-    
+
+
 </div>
