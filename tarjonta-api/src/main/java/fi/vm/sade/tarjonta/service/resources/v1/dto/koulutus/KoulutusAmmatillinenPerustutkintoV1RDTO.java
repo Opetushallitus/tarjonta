@@ -30,6 +30,9 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends Koulutus2AsteV1RDTO
     @ApiModelProperty(value = "Koulutuksen-tavoitteet", required = false)
     private Map<String, String> koulutuksenTavoitteet;
 
+    @ApiModelProperty(value = "OPH tutkintonimike-koodit (korkeakoulutuksella eri koodistot kuin ammatillisella- ja lukio-koulutuksella)")
+    private KoodiUrisV1RDTO tutkintonimikes;
+
     public KoulutusAmmatillinenPerustutkintoV1RDTO() {
         super(ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO, ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
     }
@@ -49,4 +52,23 @@ public class KoulutusAmmatillinenPerustutkintoV1RDTO extends Koulutus2AsteV1RDTO
     public void setKoulutuksenTavoitteet(Map<String, String> koulutuksenTavoitteet) {
         this.koulutuksenTavoitteet = koulutuksenTavoitteet;
     }
+
+    /**
+     * @return the tutkintonimike
+     */
+    public KoodiUrisV1RDTO getTutkintonimikes() {
+        if (this.tutkintonimikes == null) {
+            this.tutkintonimikes = new KoodiUrisV1RDTO();
+        }
+
+        return tutkintonimikes;
+    }
+
+    /**
+     * @param tutkintonimikes the tutkintonimikes to set
+     */
+    public void setTutkintonimikes(KoodiUrisV1RDTO tutkintonimikes) {
+        this.tutkintonimikes = tutkintonimikes;
+    }
+
 }

@@ -194,7 +194,19 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              */
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
-            amisDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
+            amisDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(
+                komoto.getTutkintonimikes(),
+                FieldNames.TUTKINTONIMIKE,
+                param
+            ));
+            // Aseta myös yksittäinen "tutkintonimike"-kenttä, jotta vanha rajapinta ei hajoa
+            amisDto.setTutkintonimike(commonConverter.convertToKoodiDTO(
+                komo.getTutkintonimikeUri(),
+                komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
+                FieldNames.TUTKINTONIMIKE,
+                NO,
+                param
+            ));
             amisDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
             amisDto.setLinkkiOpetussuunnitelmaan(getFirstUrlOrNull(komoto.getLinkkis()));
             amisDto.setKoulutuslaji(commonConverter.convertToKoodiDTO(getFirstUriOrNull(komoto.getKoulutuslajis()), NO_OVERRIDE_URI, FieldNames.KOULUTUSLAJI, NO, param));
