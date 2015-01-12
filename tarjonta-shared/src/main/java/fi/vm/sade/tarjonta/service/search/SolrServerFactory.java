@@ -1,12 +1,7 @@
 package fi.vm.sade.tarjonta.service.search;
 
-//import org.apache.http.client.HttpClient;
-//import org.apache.http.impl.NoConnectionReuseStrategy;
-//import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import com.google.common.base.Preconditions;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.params.AllClientPNames;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
@@ -19,15 +14,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Preconditions;
-
 @Component
 @Profile(value = {"default", "solr"})
 public class SolrServerFactory implements InitializingBean {
 
+    private static int TIMEOUT_MILLISECONDS = 10000;
+
     @Value("${tarjonta.solr.baseurl:}")
     protected String solrBaseUrl;
-    
+
     @Value("${organisaatio.solr.url:}")
     protected String organisaatioSolrUrl;
 
@@ -41,19 +36,18 @@ public class SolrServerFactory implements InitializingBean {
     }
 
     HttpRequestRetryHandler rh;
-    
+
     private SolrServer getSolr(final String url) {
         PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
         mgr.setDefaultMaxPerRoute(20);
         mgr.setDefaultMaxPerRoute(100);
         DefaultHttpClient client = new DefaultHttpClient(mgr);
         HttpParams params = client.getParams();
-//        HttpConnectionParams.setConnectionTimeout(params, 30);
-        HttpConnectionParams.setStaleCheckingEnabled( params, true);
-        HttpConnectionParams.setSoTimeout(params, 1000);
-        client.setHttpRequestRetryHandler(new StandardHttpRequestRetryHandler(3,true));
+        HttpConnectionParams.setStaleCheckingEnabled(params, true);
+        HttpConnectionParams.setSoTimeout(params, TIMEOUT_MILLISECONDS);
+        client.setHttpRequestRetryHandler(new StandardHttpRequestRetryHandler(3, true));
         return new HttpSolrServer(url, client);
-        
+
     }
 
     @Override
