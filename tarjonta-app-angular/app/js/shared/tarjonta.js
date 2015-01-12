@@ -520,10 +520,11 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
     */
     dataFactory.getKoulutuksetPromise = function(oidRetrievePromise) {
         var deferred = $q.defer();
-        oidRetrievePromise.then(function(parentOids) {
+
+        function getKoulutukset(oidList) {
             var promises = [];
             var koulutukset = [];
-            _.each(parentOids.result, function(parentOid) {
+            _.each(oidList, function(parentOid) {
                 var promise = dataFactory.haeKoulutukset({
                     komoOid: parentOid
                 }).then(function(result) {
@@ -538,9 +539,17 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             $q.all(promises).then(function() {
                 deferred.resolve(koulutukset);
             });
-        }, function() {
-            deferred.reject();
-        });
+        }
+
+        if (angular.isArray(oidRetrievePromise)) {
+            getKoulutukset(oidRetrievePromise);
+        }
+        else {
+            oidRetrievePromise.then(function(parentOids) {
+                getKoulutukset(parentOids.result);
+            });
+        }
+
         return deferred.promise;
     };
     /**
