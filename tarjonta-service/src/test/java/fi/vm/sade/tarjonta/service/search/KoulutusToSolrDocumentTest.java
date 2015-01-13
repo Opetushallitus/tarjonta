@@ -86,6 +86,7 @@ public class KoulutusToSolrDocumentTest {
         assertEquals(TarjontaTila.JULKAISTU, doc.getFieldValue(TILA));
         assertEquals("1.2.3.4", doc.getFieldValue(KOULUTUSMODUULI_OID));
         assertEquals("Lukiokoulutus", doc.getFieldValue(KOULUTUSASTETYYPPI_ENUM));
+        assertEquals(KoulutusmoduuliTyyppi.TUTKINTO, doc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM));
         assertTrue("2", doc.getFieldValues(HAKUKOHDE_OIDS).contains("2"));
     }
 
@@ -484,6 +485,7 @@ public class KoulutusToSolrDocumentTest {
         Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli();
         koulutusmoduuli.setOid("1.2.3.4");
         koulutusmoduuli.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
+        koulutusmoduuli.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         koulutusmoduuli.setKoulutusUri("lukio");
         koulutusmoduuli.setLukiolinjaUri("lukiolinja");
 

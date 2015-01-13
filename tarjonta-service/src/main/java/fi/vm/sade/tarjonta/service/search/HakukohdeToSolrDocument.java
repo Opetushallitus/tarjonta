@@ -155,6 +155,14 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         addOppilaitostyypit(hakukohdeDoc, hakukohde);
         addKunnat(hakukohdeDoc, hakukohde);
         addOpetuskielet(hakukohdeDoc, hakukohde);
+        addKoulutusmoduuliTyyppi(hakukohdeDoc, hakukohde);
+    }
+
+    private void addKoulutusmoduuliTyyppi(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
+        KoulutusmoduuliTyyppi moduuliTyyppi = hakukohde.getFirstKoulutus().getKoulutusmoduuli().getModuuliTyyppi();
+        if (moduuliTyyppi != null) {
+            add(hakukohdeDoc, KOULUTUSMODUULITYYPPI_ENUM, moduuliTyyppi);
+        }
     }
 
     private void addOpetuskielet(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {

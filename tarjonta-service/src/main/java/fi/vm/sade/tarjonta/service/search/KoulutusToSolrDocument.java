@@ -93,12 +93,20 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addOppilaitostyypit(komotoDoc, organisaatiotiedot);
         addKunnat(komotoDoc, organisaatiotiedot);
         addOpetuskielet(komotoDoc, koulutusmoduuliToteutus);
+        addKoulutusmoduuliTyyppi(komotoDoc, koulutusmoduuliToteutus);
         addDataFromHakukohde(komotoDoc, koulutusmoduuliToteutus);
         addTekstihaku(komotoDoc);
 
         docs.add(komotoDoc);
 
         return docs;
+    }
+
+    private void addKoulutusmoduuliTyyppi(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
+        KoulutusmoduuliTyyppi moduuliTyyppi = koulutusmoduuliToteutus.getKoulutusmoduuli().getModuuliTyyppi();
+        if (moduuliTyyppi != null) {
+            add(komotoDoc, KOULUTUSMODUULITYYPPI_ENUM, moduuliTyyppi);
+        }
     }
 
     private void addOpetuskielet(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {

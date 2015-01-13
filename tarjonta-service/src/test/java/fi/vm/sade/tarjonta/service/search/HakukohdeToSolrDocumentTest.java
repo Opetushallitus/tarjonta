@@ -229,6 +229,7 @@ public class HakukohdeToSolrDocumentTest {
         assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS.getKoulutusasteTyyppi().value(), doc.getFieldValue(KOULUTUSASTETYYPPI));
         assertEquals("koulutustyyppi_2", doc.getFieldValue(KOULUTUSTYYPPI_URI));
         assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS, doc.getFieldValue(TOTEUTUSTYYPPI_ENUM));
+        assertEquals(KoulutusmoduuliTyyppi.TUTKINTO, doc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM));
     }
 
     @Test
@@ -317,6 +318,7 @@ public class HakukohdeToSolrDocumentTest {
 
         Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli();
         koulutusmoduuli.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
+        koulutusmoduuli.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
 
         KoulutusOwner koulutusOwner = new KoulutusOwner();
