@@ -20,10 +20,13 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -128,6 +131,7 @@ public class KoulutusSearchService extends SearchService {
         addFilterForOppilaitostyyppi(kysely, q);
         addFilterForKunta(kysely, q);
         addFilterForOpetuskielet(kysely, q);
+        addFilterForKoulutusmoduuliTyyppi(kysely.getKoulutusmoduuliTyyppi(), q);
 
         // Älä palauta valmistavia koulutuksia. Nämä on aina "liitetty" johonkin toiseen koulutukseen, eikä niitä
         // listata hakutuloksissa siitä syystä
@@ -276,4 +280,15 @@ public class KoulutusSearchService extends SearchService {
         }
     }
 
+    private void addFilterForKoulutusmoduuliTyyppi(List<KoulutusmoduuliTyyppi> tyypit, SolrQuery q) {
+        if (tyypit.size() > 0) {
+            final ArrayList<String> strings = Lists.newArrayList(Iterables.transform(tyypit, new Function<KoulutusmoduuliTyyppi, String>() {
+                @Override
+                public String apply(KoulutusmoduuliTyyppi src) {
+                    return src.name();
+                }
+            }));
+            q.addFilterQuery(String.format("%s:(%s)", KOULUTUSMODUULITYYPPI_ENUM, Joiner.on(" ").join(strings)));
+        }
+    }
 }
