@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.Date;
 
 public class KoulutuksetKysely implements Serializable {
@@ -37,6 +39,7 @@ public class KoulutuksetKysely implements Serializable {
     private List<KoulutusasteTyyppi> koulutusasteTyypit = new ArrayList<KoulutusasteTyyppi>(); //use the koulutustyyppi
 
     private List<ToteutustyyppiEnum> totetustyyppi = new ArrayList<ToteutustyyppiEnum>(); //more detailed data than in koulutusasteTyyppi
+    private List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi = new ArrayList<KoulutusmoduuliTyyppi>();
 
     private TarjontaTila koulutuksenTila;
     private Date koulutuksenAlkamisPvmAlkaen = null;
@@ -251,4 +254,9 @@ public class KoulutuksetKysely implements Serializable {
     public List<String> getOpetuskielet() {
         return opetuskielet;
     }
+
+    public List<KoulutusmoduuliTyyppi> getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
 }

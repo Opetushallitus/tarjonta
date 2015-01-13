@@ -1673,7 +1673,7 @@ public class ConverterV1 {
         dto.setTila(TarjontaTila.valueOf(hakukohdePerustieto.getTila()));
         dto.setAloituspaikatKuvaukset(hakukohdePerustieto.getAloituspaikatKuvaukset());
         dto.setKoulutusasteTyyppi(hakukohdePerustieto.getKoulutusastetyyppi());
-        dto.setKoulutusmoduuliTyyppi(hakukohdePerustieto.getKoulutusmoduuliTyyppi().name());
+        dto.setKoulutusmoduuliTyyppi(hakukohdePerustieto.getKoulutusmoduuliTyyppi());
         return dto;
     }
 
