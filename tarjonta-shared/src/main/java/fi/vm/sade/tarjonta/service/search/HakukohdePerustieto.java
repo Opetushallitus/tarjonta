@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
 public class HakukohdePerustieto implements Serializable
@@ -31,6 +32,7 @@ public class HakukohdePerustieto implements Serializable
     private KoodistoKoodi pohjakoulutusvaatimus; 
     private KoulutusasteTyyppi koulutusastetyyppi;
     private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
     public KoulutusasteTyyppi getKoulutusastetyyppi() {
         return koulutusastetyyppi;
@@ -206,7 +208,8 @@ public class HakukohdePerustieto implements Serializable
                 + ", hakuPaattymisPvm=" + hakuPaattymisPvm + ", koulutuslaji="
                 + koulutuslaji + ", hakutyyppiUri=" + hakutyyppiUri
                 + ", pohjakoulutusvaatimus=" + pohjakoulutusvaatimus
-                + ", koulutusastetyyppi=" + koulutusastetyyppi + "]";
+                + ", koulutusastetyyppi=" + koulutusastetyyppi 
+                + ", koulutusmoduuliTyyppi=" + koulutusmoduuliTyyppi + "]";
     }
 
     public Map<String, String> getAloituspaikatKuvaukset() {
@@ -216,4 +219,13 @@ public class HakukohdePerustieto implements Serializable
     public void setAloituspaikatKuvaukset(Map<String, String> aloituspaikatKuvaukset) {
         this.aloituspaikatKuvaukset = aloituspaikatKuvaukset;
     }
+
+    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+    }
+
 }

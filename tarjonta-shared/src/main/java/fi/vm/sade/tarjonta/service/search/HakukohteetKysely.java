@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
@@ -40,6 +41,8 @@ public class HakukohteetKysely implements Serializable {
 
     private Set<String> koulutustyyppi = new HashSet<String>();
     private Set<ToteutustyyppiEnum> toteutustyypit = new HashSet<ToteutustyyppiEnum>();
+
+    private List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi = new ArrayList<KoulutusmoduuliTyyppi>();
 
     public String getOrganisaatioRyhmaOid() {
         return organisaatioRyhmaOid;
@@ -194,5 +197,13 @@ public class HakukohteetKysely implements Serializable {
 
     public List<String> getOpetuskielet() {
         return opetuskielet;
+    }
+
+    public List<KoulutusmoduuliTyyppi> getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
 }
