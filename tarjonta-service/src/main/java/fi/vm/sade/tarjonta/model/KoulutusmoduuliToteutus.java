@@ -19,7 +19,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
-import fi.vm.sade.tarjonta.service.resources.v1.dto.HakukohdeV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
@@ -223,6 +222,38 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "suunniteltukesto_arvo")
     private String suunniteltukestoArvo;
 
+    @Column(name = "koulutuksenloppumispvm")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date koulutuksenLoppumisPvm = null;
+
+    /**
+     * Sisältyy opintokokonaisuuteen 
+     */
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {})
+    @JoinColumn(name = "opintokokonaisuus_id", nullable = true)
+    private KoulutusmoduuliToteutus opintoKokonaisuus;
+
+    /**
+     * Sisältää opinnot (opintojaksot ja opintokokonaisuudet)
+     */
+    @OneToMany(mappedBy = "opintoKokonaisuus", cascade = {})
+    private Set<KoulutusmoduuliToteutus> osaOpinnot = new HashSet<KoulutusmoduuliToteutus>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = TABLE_NAME + "_koulutusryhma",
+            joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
+    @Column(name = "koulutusryhma_oid")
+    private Set<String> koulutusRyhmaOids = new HashSet<String>();
+
+    @Column(name = "oppiaine")
+    private String oppiaine;
+
+    @Column(name = "opettaja")
+    private String opettaja;
+
+    @Column(name = "opinnontyyppi_uri")
+    private String opinnonTyyppiUri;
+    
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
     }
@@ -1102,4 +1133,55 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return koodiUris;
     }
 
+    /**
+     * Koulutuksen loppumispvm, tutkintoonjohtamattomille koulutuksille.
+     * @return
+     */
+    public Date getKoulutuksenLoppumisPvm() {
+        return koulutuksenLoppumisPvm;
+    }
+
+    public void setKoulutuksenLoppumisPvm(Date koulutuksenLoppumisPvm) {
+        this.koulutuksenLoppumisPvm = koulutuksenLoppumisPvm;
+    }
+
+    public String getOpinnonTyyppiUri() {
+        return opinnonTyyppiUri;
+}
+
+    public void setOpinnonTyyppiUri(String opinnonTyyppiUri) {
+        this.opinnonTyyppiUri = opinnonTyyppiUri;
+    }
+
+    public KoulutusmoduuliToteutus getOpintoKokonaisuus() {
+        return opintoKokonaisuus;
+    }
+
+    public void setOpintoKokonaisuus(KoulutusmoduuliToteutus opintoKokonaisuus) {
+        this.opintoKokonaisuus = opintoKokonaisuus;
+    }
+
+    public Set<KoulutusmoduuliToteutus> getOsaOpinnot() {
+        return osaOpinnot;
+    }
+
+    public void setOsaOpinnot(Set<KoulutusmoduuliToteutus> osaOpinnot) {
+        this.osaOpinnot = osaOpinnot;
+    }
+
+    public String getOppiaine() {
+        return oppiaine;
+    }
+
+    public void setOppiaine(String oppiaine) {
+        this.oppiaine = oppiaine;
+    }
+
+    public String getOpettaja() {
+        return opettaja;
+    }
+
+    public void setOpettaja(String opettaja) {
+        this.opettaja = opettaja;
+    }
 }

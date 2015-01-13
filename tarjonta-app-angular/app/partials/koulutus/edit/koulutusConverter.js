@@ -987,7 +987,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 pohjakoulutusvaatimus: {
                     module: 'TUTKINTO'
                 }
-            })
+            }),
+            RELATIONS: {
+                tutkintonimikes: {}
+            }
         }),
         /*******************************************/
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */

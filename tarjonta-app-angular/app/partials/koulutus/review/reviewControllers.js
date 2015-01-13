@@ -102,14 +102,11 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             }
         });
     };
-    var komoOid = koulutusModel.komoOid;
-    TarjontaService.getChildKoulutuksetPromise(komoOid).then(function(children) {
+    TarjontaService.getKoulutuksetPromise(koulutusModel.children).then(function(children) {
         $scope.children = children;
-        $log.debug('children:', children);
     });
-    TarjontaService.getParentKoulutuksetPromise(komoOid).then(function(parents) {
+    TarjontaService.getKoulutuksetPromise(koulutusModel.parents).then(function(parents) {
         $scope.parents = parents;
-        $log.debug('parents:', parents);
     });
     $scope.lisatiedot = KoulutusConverterFactory.STRUCTURE[koulutusModel.toteutustyyppi].KUVAUS_ORDER;
     // Valmistavan koulutuksen sisältäviä koulutuksia varten

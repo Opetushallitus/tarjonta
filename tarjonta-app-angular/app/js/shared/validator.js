@@ -189,6 +189,11 @@ angular.module('Validator', [])
                     errorMessageKey: 'hakukohde.edit.valintakokeet.errors'
                 });
             }
+            if (!isValidLiitteet(hakukohde.hakukohteenLiitteet)) {
+                errors.push({
+                    errorMessageKey: 'hakukohde.edit.liitteet.errors'
+                });
+            }
             if (!isValidLisatiedot(hakukohde, haku)) {
                 errors.push({
                     errorMessageKey: 'hakukohde.edit.lisatietoja-hakemisesta.required'

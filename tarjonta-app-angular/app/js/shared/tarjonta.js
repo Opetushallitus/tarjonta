@@ -311,8 +311,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         KomoTekstis.get({
             'oid': oid
         }, function(res) {
-                ret.resolve(res);
-            });
+            ret.resolve(res);
+        });
         return ret.$promise;
     };
     dataFactory.saveKomoTekstis = function(komoOid, params) {
@@ -373,29 +373,29 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/tekstis/komo', {
             'oid': komotoOid
         }, {
-                update: {
-                    method: 'PUT',
-                    withCredentials: true,
-                    isArray: true,
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    }
-                },
-                save: {
-                    method: 'POST',
-                    withCredentials: true,
-                    isArray: true,
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    }
-                },
-                get: {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    }
+            update: {
+                method: 'PUT',
+                withCredentials: true,
+                isArray: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
                 }
-            });
+            },
+            save: {
+                method: 'POST',
+                withCredentials: true,
+                isArray: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            },
+            get: {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        });
     };
     dataFactory.saveImage = function(komotoOid, kieliuri, image, fnSuccess, fnError) {
         if (angular.isUndefined(komotoOid) || komotoOid === null) {
@@ -442,20 +442,20 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             'oid': komotoOid,
             'uri': kieliuri
         }, {
-                get: {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    }
-                },
-                'delete': {
-                    method: 'DELETE',
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8'
-                    }
+            get: {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
                 }
-            });
+            },
+            'delete': {
+                method: 'DELETE',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }
+        });
         return ResourceImge;
     };
     dataFactory.saveResourceLink = function(parent, child, fnSuccess, fnError) {
@@ -515,15 +515,16 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         }
     });
     /**
-       * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
-       * oidRetrievePromise = promise joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
-       */
+    * Hakee koulutukset, palauttaa promisen joka täytetään koulutuslistalla
+    * oidRetrievePromise = promise joka resolvautuu oidilistalla (ks getParentKoulutukset, getChildKoulutukset).
+    */
     dataFactory.getKoulutuksetPromise = function(oidRetrievePromise) {
         var deferred = $q.defer();
-        oidRetrievePromise.then(function(parentOids) {
+
+        function getKoulutukset(oidList) {
             var promises = [];
             var koulutukset = [];
-            _.each(parentOids.result, function(parentOid) {
+            _.each(oidList, function(parentOid) {
                 var promise = dataFactory.haeKoulutukset({
                     komoOid: parentOid
                 }).then(function(result) {
@@ -538,22 +539,30 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             $q.all(promises).then(function() {
                 deferred.resolve(koulutukset);
             });
-        }, function() {
-                deferred.reject();
+        }
+
+        if (angular.isArray(oidRetrievePromise)) {
+            getKoulutukset(oidRetrievePromise);
+        }
+        else {
+            oidRetrievePromise.then(function(parentOids) {
+                getKoulutukset(parentOids.result);
             });
+        }
+
         return deferred.promise;
     };
     /**
-       * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
-       */
+    * Hakee alapuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
+    */
     dataFactory.getChildKoulutuksetPromise = function(koulutusoid) {
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.get({
             oid: koulutusoid
         }).$promise);
     };
     /**
-       * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
-       */
+    * Hakee yläpuoliset koulutukset, palauttaa promisen joka täytetään koulutusoid-listalla
+    */
     dataFactory.getParentKoulutuksetPromise = function(koulutusoid) {
         return dataFactory.getKoulutuksetPromise(dataFactory.resourceLink.parents({
             oid: koulutusoid

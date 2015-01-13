@@ -83,7 +83,8 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     private String tunniste;
 
     //OTHER DATA
-    @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true) // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
+    @ApiModelProperty(value = "Koulutuksen julkaisun tila", required = true)
+    // allowableValues = "LUONNOS,VALMIS,JULKAISTU,PERUTTU,KOPIOITU"
     private TarjontaTila tila;
 
     @ApiModelProperty(value = "Koulutuksen koulutusmoduulin tyyppi", required = true)
@@ -134,6 +135,12 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
 
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
+
+    @ApiModelProperty(value = "Koulutuksen yläpuoliset kouloutukset")
+    private Set<String> parents;
+
+    @ApiModelProperty(value = "Koulutuksen lapset")
+    private Set<String> children;
 
     public KoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         this.toteutustyyppi = toteutustyyppi;
@@ -544,4 +551,21 @@ public abstract class KoulutusV1RDTO extends KoulutusmoduuliStandardRelationV1RD
     public void setAihees(KoodiUrisV1RDTO aihees) {
         this.aihees = aihees;
     }
+
+    public void setParents(Set<String> parents) {
+        this.parents = parents;
+    }
+
+    public Set<String> getParents() {
+        return parents;
+    }
+
+    public void setChildren(Set<String> children) {
+        this.children = children;
+    }
+
+    public Set<String> getChildren() {
+        return children;
+    }
+
 }

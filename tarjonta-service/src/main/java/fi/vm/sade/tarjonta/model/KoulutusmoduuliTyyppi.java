@@ -31,6 +31,10 @@ public enum KoulutusmoduuliTyyppi {
     /**
      * 
      */
-    TUTKINTO
+    TUTKINTO,
+    
+    OPINTOJAKSO,
+    
+    OPINTOKOKONAISUUS;
 }
 

@@ -1007,6 +1007,8 @@
             <xs:enumeration value="TUTKINNON_OSA"/>
             <xs:enumeration value="TUTKINTO"/>
             <xs:enumeration value="TUTKINTO_OHJELMA"/>
+            <xs:enumeration value="OPINTOKOKONAISUUS"/>
+            <xs:enumeration value="OPINTOJAKSO"/>
         </xs:restriction>
     </xs:simpleType>
 

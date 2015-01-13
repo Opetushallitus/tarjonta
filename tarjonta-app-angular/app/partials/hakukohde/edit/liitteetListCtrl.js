@@ -43,7 +43,14 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
                 postProcessLiite(li);
             }
         }
-        addEmptyLitteet();
+        Koodisto.getAllKoodisWithKoodiUri('kieli', LocalisationService.getLocale()).then(function(ret) {
+            if (!$scope.model.hakukohde.opetusKielet) {
+                $scope.model.hakukohde.opetusKielet = [];
+            }
+            $scope.liitteetModel.langs = ret;
+            updateLanguages();
+            addEmptyLitteet();
+        });
     });
     function containsOpetuskieli(lc) {
         for (var i in $scope.liitteetModel.opetusKielet) {
@@ -53,13 +60,6 @@ app.controller('LiitteetListController', function($scope, $q, LocalisationServic
         }
         return false;
     }
-    Koodisto.getAllKoodisWithKoodiUri('kieli', LocalisationService.getLocale()).then(function(ret) {
-        if (!$scope.model.hakukohde.opetusKielet) {
-            $scope.model.hakukohde.opetusKielet = [];
-        }
-        $scope.liitteetModel.langs = ret;
-        updateLanguages();
-    });
     function addEmptyLitteet() {
         for (var opetuskieli in $scope.liitteetModel.opetusKielet) {
             var kieliUri = $scope.liitteetModel.opetusKielet[opetuskieli].koodiUri;

@@ -16,13 +16,9 @@
 package fi.vm.sade.tarjonta.service.impl.conversion.rest;
 
 import com.google.common.collect.Sets;
+import fi.vm.sade.tarjonta.dao.KoulutusSisaltyvyysDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
-import fi.vm.sade.tarjonta.model.Kielivalikoima;
-import fi.vm.sade.tarjonta.model.KoodistoUri;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi;
-import fi.vm.sade.tarjonta.model.MonikielinenTeksti;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
@@ -34,6 +30,8 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +39,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.mockito.Matchers;
 import org.powermock.reflect.Whitebox;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -76,11 +75,14 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
 
     private KoulutusmoduuliDAO koulutusmoduuliDAOMock;
 
+    private KoulutusSisaltyvyysDAO koulutusSisaltyvyysDAOMock;
+
     @Before
     public void setUp() {
         commonConverterMock = createMock(KoulutusCommonConverter.class);
         komotoKuvausConvertersMock = createMock(KoulutusKuvausV1RDTO.class);
         komoKuvausConvertersMock = createMock(KoulutusKuvausV1RDTO.class);
+        koulutusSisaltyvyysDAOMock = createMock(KoulutusSisaltyvyysDAO.class);
 
         instanceKk = new EntityConverterToRDTO<KoulutusKorkeakouluV1RDTO>();
         instanceLukio = new EntityConverterToRDTO<KoulutusLukioV1RDTO>();
@@ -94,7 +96,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         Whitebox.setInternalState(instanceLukio, "komoKuvausConverters", komoKuvausConvertersMock);
         Whitebox.setInternalState(instanceLukio, "komotoKuvausConverters", komotoKuvausConvertersMock);
         Whitebox.setInternalState(instanceLukio, "koulutusmoduuliDAO", koulutusmoduuliDAOMock);
-
+        Whitebox.setInternalState(instanceLukio, "koulutusSisaltyvyysDAO", koulutusSisaltyvyysDAOMock);
     }
 
     @Test
@@ -247,6 +249,8 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect(commonConverterMock.convertToNimiDTO(testKey(Type.KOMO_CHILD, FieldNames.LUKIOLINJA), testKey(Type.KOMOTO, FieldNames.LUKIOLINJA), FieldNames.LUKIOLINJA, NO, PARAM)).andReturn(toKoodiUriNimi(Type.KOMOTO, FieldNames.LUKIOLINJA));
         expect_x_x_return(Type.KOMO_CHILD, returnKomoto, returnKomoto, FieldNames.TUTKINTONIMIKE, NO);
         expect(koulutusmoduuliDAOMock.findParentKomo(ohjelmaChildKomo)).andReturn(tukintoParentKomo);
+        expect(koulutusSisaltyvyysDAOMock.getParents(ohjelmaChildKomo.getOid())).andReturn(new ArrayList<String>());
+        expect(koulutusSisaltyvyysDAOMock.getChildren(ohjelmaChildKomo.getOid())).andReturn(new ArrayList<String>());
 
         //correct only one uri in komoto, data is a list of uris in komo
         expect_koulutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
@@ -265,6 +269,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
+        EasyMock.replay(koulutusSisaltyvyysDAOMock);
 
         final KoulutusLukioV1RDTO convert = instanceLukio.convert(KoulutusLukioV1RDTO.class, t, PARAM);
         EasyMock.verify(commonConverterMock);
@@ -299,6 +304,9 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         expect_x_x_return(Type.KOMO_CHILD, NO_URI, returnKomoto, FieldNames.TUTKINTONIMIKE, NO);
         expect(koulutusmoduuliDAOMock.findParentKomo(ohjelmaChildKomo)).andReturn(tukintoParentKomo);
 
+        expect(koulutusSisaltyvyysDAOMock.getParents(ohjelmaChildKomo.getOid())).andReturn(new ArrayList<String>());
+        expect(koulutusSisaltyvyysDAOMock.getChildren(ohjelmaChildKomo.getOid())).andReturn(new ArrayList<String>());
+
         //correct only one uri in komoto, data is a list of uris in komo
         expect_koulutustyyppi(ToteutustyyppiEnum.LUKIOKOULUTUS, returnKomoto, FieldNames.KOULUTUSTYYPPI, NO);
         expect_komo_x(returnKomoto, NO_URI, FieldNames.KOULUTUS, NO);
@@ -316,6 +324,7 @@ public class EntityConverterToRDTOTest extends KoulutusRestBase {
         EasyMock.replay(komoKuvausConvertersMock);
         EasyMock.replay(komotoKuvausConvertersMock);
         EasyMock.replay(commonConverterMock);
+        EasyMock.replay(koulutusSisaltyvyysDAOMock);
 
         final KoulutusLukioV1RDTO convert = instanceLukio.convert(KoulutusLukioV1RDTO.class, t, PARAM);
         EasyMock.verify(commonConverterMock);
