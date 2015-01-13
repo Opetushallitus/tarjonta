@@ -200,6 +200,10 @@ public class ConverterV1Test {
         koulutusmoduuliToteutus.setOid("1.2.3");
         koulutusmoduuliToteutus.setTarjoaja("4.5.6");
 
+        Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli();
+        koulutusmoduuli.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
+        koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
+
         hakukohde.addKoulutusmoduuliToteutus(koulutusmoduuliToteutus);
 
         HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);

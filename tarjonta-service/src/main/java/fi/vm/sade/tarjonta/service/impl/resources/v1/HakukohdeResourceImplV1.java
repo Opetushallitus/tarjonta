@@ -42,7 +42,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.*;
-import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.*;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -124,10 +125,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
-                                                                             List<String> organisationOids, List<String> hakukohdeTilas,
-                                                                             String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid,
-                                                                             List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid,
-                                                                             String organisaatioRyhmaOid, List<ToteutustyyppiEnum> koulutustyypit,
+                                                                             List<String> organisationOids,
+                                                                             List<String> hakukohdeTilas,
+                                                                             String alkamisKausi,
+                                                                             Integer alkamisVuosi,
+                                                                             String hakukohdeOid,
+                                                                             List<KoulutusasteTyyppi> koulutusastetyyppi,
+                                                                             String hakuOid,
+                                                                             String organisaatioRyhmaOid,
+                                                                             List<ToteutustyyppiEnum> koulutustyypit,
+                                                                             List<KoulutusmoduuliTyyppi> koulutusmoduulityypit,
                                                                              String defaultTarjoaja,
                                                                              String hakutapa,
                                                                              String hakutyyppi,
@@ -152,6 +159,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setOppilaitostyyppi(oppilaitostyyppi);
         q.setKunta(kunta);
         q.setOpetuskielet(opetuskielet);
+        q.setKoulutusmoduuliTyyppi(koulutusmoduulityypit);
 
         if (hakukohdeOid != null) {
             q.setHakukohdeOid(hakukohdeOid);

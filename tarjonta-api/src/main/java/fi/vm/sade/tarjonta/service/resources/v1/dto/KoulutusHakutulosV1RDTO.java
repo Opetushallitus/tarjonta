@@ -29,6 +29,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private Date koulutuksenAlkamisPvmMin = null;
     private Date koulutuksenAlkamisPvmMax = null;
     private ArrayList<String> tarjoajat;
+    private String koulutusmoduuliTyyppi;
 
     private String komoOid;
 
@@ -173,4 +174,11 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
         return toteutustyyppiEnum;
     }
 
+    public String getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(String koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+    }
 }
