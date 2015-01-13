@@ -124,6 +124,12 @@ public class Hakukohde extends TarjontaBaseEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "sorakuvaus_teksti_id")
     private MonikielinenTeksti soraKuvaus;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "hakumenettely_teksti_id")
+    private MonikielinenTeksti hakuMenettelyKuvaus;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "peruutusehdot_teksti_id")
+    private MonikielinenTeksti peruutusEhdotKuvaus;
 
     @Column(name = "valintaperustekuvaus_koodi_uri")
     private String valintaperustekuvausKoodiUri; //the koodi uri points to metadata
@@ -515,6 +521,22 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public void setSoraKuvaus(MonikielinenTeksti soraKuvaus) {
         this.soraKuvaus = soraKuvaus;
+    }
+
+    public MonikielinenTeksti getHakuMenettelyKuvaus() {
+        return hakuMenettelyKuvaus;
+    }
+
+    public void setHakuMenettelyKuvaus(MonikielinenTeksti hakuMenettelyKuvaus) {
+        this.hakuMenettelyKuvaus = hakuMenettelyKuvaus;
+    }
+
+    public MonikielinenTeksti getPeruutusEhdotKuvaus() {
+        return peruutusEhdotKuvaus;
+    }
+
+    public void setPeruutusEhdotKuvaus(MonikielinenTeksti peruutusEhdotKuvaus) {
+        this.peruutusEhdotKuvaus = peruutusEhdotKuvaus;
     }
 
     /**
