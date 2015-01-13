@@ -197,7 +197,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             // Aseta myös yksittäinen "tutkintonimike"-kenttä, jotta vanha rajapinta ei hajoa
             amisDto.setTutkintonimike(commonConverter.convertToKoodiDTO(
                 komo.getTutkintonimikeUri(),
-                komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
+                komoto.getTutkintonimikes().isEmpty() ? null : komoto.getTutkintonimikes().iterator().next().getKoodiUri(),
                 FieldNames.TUTKINTONIMIKE,
                 NO,
                 param
