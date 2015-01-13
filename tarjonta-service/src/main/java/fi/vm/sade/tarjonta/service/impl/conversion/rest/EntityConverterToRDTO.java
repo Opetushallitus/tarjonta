@@ -130,12 +130,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 kkDto.setKandidaatinKoulutuskoodi(commonConverter.convertToKoodiDTO(komo.getKandidaatinKoulutusUri(), komoto.getKandidaatinKoulutusUri(), FieldNames.KOULUTUSKOODI_KANDIDAATTI, YES, param));
             }
 
-            if (komoto.getTutkintonimikes().isEmpty()) {
-                kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komo.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE, param));
-            } else {
-                //huomaa: rinnakkainen komoton takia tutkintonimikeet haetaan komoto:lta
-                kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(komoto.getTutkintonimikes(), FieldNames.TUTKINTONIMIKE, param));
-            }
+            kkDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(getTutkintonimikes(komoto, komo), FieldNames.TUTKINTONIMIKE, param));
 
             final String maksullisuus = komoto.getMaksullisuus();
             kkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
@@ -195,7 +190,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
             amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
             amisDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(
-                komoto.getTutkintonimikes(),
+                getTutkintonimikes(komoto, komo),
                 FieldNames.TUTKINTONIMIKE,
                 param
             ));
@@ -278,7 +273,7 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 ((KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto)
                     .setTutkintonimikes(
                         commonConverter.convertToKoodiUrisDTO(
-                            komoto.getTutkintonimikes(),
+                            getTutkintonimikes(komoto, komo),
                             FieldNames.TUTKINTONIMIKE,
                             param
                         )
@@ -394,6 +389,14 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         }
 
         return dto;
+    }
+
+    private Set<KoodistoUri> getTutkintonimikes(KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo) {
+        Set<KoodistoUri> tutkintonimikes = komoto.getTutkintonimikes();
+        if (tutkintonimikes.isEmpty()) {
+            tutkintonimikes = komo.getTutkintonimikes();
+        }
+        return tutkintonimikes;
     }
 
     /**
