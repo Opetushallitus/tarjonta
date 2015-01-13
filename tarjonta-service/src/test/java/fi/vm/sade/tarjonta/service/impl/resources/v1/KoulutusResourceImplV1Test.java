@@ -30,9 +30,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
@@ -319,11 +318,14 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         expectMetaMapUris(MAP_OPETUMUOTO);
         expectMetaMapUris(MAP_POHJAKOULUTUS);
 
+        expectHierarchy();
+
         //  expectKoulutusohjelmaUris(KOULUTUSOHELMA);
 
         /* REPLAY */
         replay(organisaatioServiceMock);
         replay(tarjontaKoodistoHelperMock);
+        replay(koulutusSisaltyvyysDAO);
         /*
          * INSERT KORKEAKOULU TO DB
          */

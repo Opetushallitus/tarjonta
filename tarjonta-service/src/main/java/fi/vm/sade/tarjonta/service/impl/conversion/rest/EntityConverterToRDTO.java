@@ -188,9 +188,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             } catch(NumberFormatException nfe) {
                 // Invalid value will not be set
             }
-            if (komoto.getAihees() != null) {
-                tjkkDto.setAihees(commonConverter.convertToKoodiUrisDTO(komoto.getAihees(), FieldNames.AIHEES, param));
-            }
             final String maksullisuus = komoto.getMaksullisuus();
             tjkkDto.setOpintojenMaksullisuus(maksullisuus != null && Boolean.valueOf(maksullisuus));
             if (komoto.getHinta() != null) {
