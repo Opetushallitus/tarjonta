@@ -32,6 +32,7 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
+
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
@@ -56,6 +57,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.*;
 import org.apache.commons.codec.binary.Base64;
@@ -464,8 +466,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
                         result, KoulutusValidationMessages.KOULUTUS_TARJOAJA_MISSING,
                         KoulutusValidationMessages.KOULUTUS_TARJOAJA_INVALID)
                 && validateOrganisation(dto.getJarjestavaOrganisaatio(),
-                        result, KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
-                        KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID)) {
+                result, KoulutusValidationMessages.KOULUTUS_JARJESTAJA_MISSING,
+                KoulutusValidationMessages.KOULUTUS_JARJESTAJA_INVALID)) {
 
             if (dto.getOid() != null && dto.getOid().length() > 0) {
                 final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(dto.getOid());
