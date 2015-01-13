@@ -25,7 +25,9 @@ package fi.vm.sade.tarjonta.shared.types;
  * @author Timo Santasalo / Teknokala Ky
  */
 public enum KomotoTeksti {
-
+    LISATIEDOT,
+    EDELTAVAT_OPINNOT,
+    OPETUKSEN_AIKA_JA_PAIKKA,
     MAKSULLISUUS,
     ARVIOINTIKRITEERIT,
     LOPPUKOEVAATIMUKSET,

@@ -136,6 +136,7 @@ public class KoulutusBusinessServiceImpl implements KoulutusBusinessService {
         komotoModel.setToteutustyyppi(tt);
         komotoModel.setAlkamiskausiUri(getKausiFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
         komotoModel.setAlkamisVuosi(getYearFromDate(komotoModel.getKoulutuksenAlkamisPvm()));
+        komotoModel.setKoulutuksenLoppumisPvm(komotoModel.getKoulutuksenLoppumisPvm());
         KoulutusmoduuliToteutus response = koulutusmoduuliToteutusDAO.insert(komotoModel);
         return koulutusmoduuliToteutusDAO.findByOid(response.getOid());
     }
