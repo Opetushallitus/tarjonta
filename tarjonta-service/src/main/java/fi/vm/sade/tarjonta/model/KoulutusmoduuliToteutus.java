@@ -251,18 +251,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Column(name = "opettaja")
     private String opettaja;
 
-    @Column(name = "yhteyshenkilo_nimi")
-    private String yhteyshenkiloNimi;
-
-    @Column(name = "yhteyshenkilo_email")
-    private String yhteyshenkiloEmail;
-
-    @Column(name = "yhteyshenkilo_puhelin")
-    private String yhteyshenkiloPuhelin;
-
-    @Column(name = "yhteyshenkilo_titteli")
-    private String yhteyshenkiloTitteli;
-
     @Column(name = "opinnontyyppi_uri")
     private String opinnonTyyppiUri;
     
@@ -1195,37 +1183,5 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setOpettaja(String opettaja) {
         this.opettaja = opettaja;
-    }
-
-    public String getYhteyshenkiloNimi() {
-        return yhteyshenkiloNimi;
-    }
-
-    public void setYhteyshenkiloNimi(String yhteyshenkiloNimi) {
-        this.yhteyshenkiloNimi = yhteyshenkiloNimi;
-    }
-
-    public String getYhteyshenkiloEmail() {
-        return yhteyshenkiloEmail;
-    }
-
-    public void setYhteyshenkiloEmail(String yhteyshenkiloEmail) {
-        this.yhteyshenkiloEmail = yhteyshenkiloEmail;
-    }
-
-    public String getYhteyshenkiloPuhelin() {
-        return yhteyshenkiloPuhelin;
-    }
-
-    public void setYhteyshenkiloPuhelin(String yhteyshenkiloPuhelin) {
-        this.yhteyshenkiloPuhelin = yhteyshenkiloPuhelin;
-    }
-
-    public String getYhteyshenkiloTitteli() {
-        return yhteyshenkiloTitteli;
-    }
-
-    public void setYhteyshenkiloTitteli(String yhteyshenkiloTitteli) {
-        this.yhteyshenkiloTitteli = yhteyshenkiloTitteli;
     }
 }

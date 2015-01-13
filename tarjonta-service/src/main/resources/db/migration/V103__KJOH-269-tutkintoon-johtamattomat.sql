@@ -4,10 +4,6 @@ alter table koulutusmoduuli_toteutus add column koulutuksenloppumispvm timestamp
 alter table koulutusmoduuli_toteutus add column opintokokonaisuus_id bigint NULL;
 alter table koulutusmoduuli_toteutus add column oppiaine varchar(255) NULL;
 alter table koulutusmoduuli_toteutus add column opettaja varchar(255) NULL;
-alter table koulutusmoduuli_toteutus add column yhteyshenkilo_nimi varchar(255) NULL;
-alter table koulutusmoduuli_toteutus add column yhteyshenkilo_puhelin varchar(255) NULL;
-alter table koulutusmoduuli_toteutus add column yhteyshenkilo_titteli varchar(255) NULL;
-alter table koulutusmoduuli_toteutus add column yhteyshenkilo_email varchar(255) NULL;
 
 alter table koulutusmoduuli_toteutus 
   add constraint FKOPINTOKOKONAISUUS
