@@ -95,7 +95,6 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         addKoulutuslajit(hakukohdeDoc, hakukohde);
         addKoulutusAsteTyyppi(hakukohdeDoc, hakukohde);
         addToteutustyyppi(hakukohdeDoc, hakukohde);
-        // addModuulityyppi(hakukohdeDoc, hakukohde);  TODO FIXME this adds duplicate KOULUTUSMODUULITYYPPI_ENUM!!! Which is correct?
         addPohjakoulutusvaatimus(hakukohdeDoc, hakukohde);
         addKohdejoukko(hakukohdeDoc, hakukohde);
         addDataFromKoulutus(hakukohdeDoc, hakukohde);
@@ -160,8 +159,8 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addKoulutusmoduuliTyyppi(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        KoulutusmoduuliTyyppi moduuliTyyppi = hakukohde.getFirstKoulutus().getKoulutusmoduuli().getModuuliTyyppi();
-        if (moduuliTyyppi != null) {
+        if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
+            KoulutusmoduuliTyyppi moduuliTyyppi = hakukohde.getFirstKoulutus().getKoulutusmoduuli().getModuuliTyyppi();
             add(hakukohdeDoc, KOULUTUSMODUULITYYPPI_ENUM, moduuliTyyppi);
         }
     }
@@ -254,14 +253,6 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
             KoulutusmoduuliToteutus koulutusmoduuliToteutus = hakukohde.getFirstKoulutus();
             add(hakukohdeDoc, KOULUTUSTYYPPI_URI, koulutusmoduuliToteutus.getToteutustyyppi().uri());
             add(hakukohdeDoc, TOTEUTUSTYYPPI_ENUM, koulutusmoduuliToteutus.getToteutustyyppi());
-        }
-    }
-
-    private void addModuulityyppi(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        
-        if (!hakukohde.getKoulutusmoduuliToteutuses().isEmpty()) {
-            KoulutusmoduuliToteutus koulutusmoduuliToteutus = hakukohde.getFirstKoulutus();
-            add(hakukohdeDoc, KOULUTUSMODUULITYYPPI_ENUM, koulutusmoduuliToteutus.getKoulutusmoduuli().getModuuliTyyppi());
         }
     }
 
