@@ -69,21 +69,28 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     + "WHERE komoto.koulutusmoduuli = komo "
                     + "AND komoto.pohjakoulutusvaatimusUri = :pkv "
                     + "AND komoto.tarjoaja = :tarjoaja "
-                    + "AND komo.koulutusUri = :koulutusUri "
-                    + "AND komo.koulutusohjelmaUri = :koulutusohjelmaUri "
-                    + "AND o.koodiUri IN (:opetuskielis) "
+                    + "AND komo.koulutusUri = :koulutusUri ";
+
+            if (koulutusohjelma != null) {
+                query += "AND komo.koulutusohjelmaUri = :koulutusohjelmaUri ";
+            }
+
+            query += "AND o.koodiUri IN (:opetuskielis) "
                     + "AND k.koodiUri IN (:koulutuslajis)";
 
-            return getEntityManager()
-                    .createQuery(query)
-                    .setParameter("pkv", pohjakoulutus.trim())
+            Query jpQuery = getEntityManager().createQuery(query);
+
+            jpQuery.setParameter("pkv", pohjakoulutus.trim())
                     .setParameter("tarjoaja", tarjoaja.trim())
                     .setParameter("koulutusUri", koulutusluokitus.trim())
-                    .setParameter("koulutusohjelmaUri", koulutusohjelma.trim())
                     .setParameter("opetuskielis", opetuskielis)
-                    .setParameter("koulutuslajis", koulutuslajis)
-                    .getResultList();
+                    .setParameter("koulutuslajis", koulutuslajis);
 
+            if (koulutusohjelma != null) {
+                jpQuery.setParameter("koulutusohjelmaUri", koulutusohjelma.trim());
+            }
+
+            return jpQuery.getResultList();
         } else {
             log.info("Koulutuslajis and opetuskielis was null!!!");
             return null;

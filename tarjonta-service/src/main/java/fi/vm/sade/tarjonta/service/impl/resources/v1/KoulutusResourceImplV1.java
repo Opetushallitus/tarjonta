@@ -1274,11 +1274,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         List<String> koulutuslajis = new ArrayList<String>();
         koulutuslajis.add(getKoodiUriFromKoodiV1RDTO(dto.getKoulutuslaji(), true));
 
+        String koulutusohjelma = null;
+        if (dto.getKoulutusohjelma() != null && dto.getKoulutusohjelma().getUri() != null) {
+            koulutusohjelma = getKoodiUriFromKoodiV1RDTO(dto.getKoulutusohjelma(), true);
+        }
+
         List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKoulutusModuuliWithPohjakoulutusAndTarjoaja(
             dto.getOrganisaatio().getOid(),
             getKoodiUriFromKoodiV1RDTO(dto.getPohjakoulutusvaatimus(), true),
             getKoodiUriFromKoodiV1RDTO(dto.getKoulutuskoodi(), true),
-            getKoodiUriFromKoodiV1RDTO(dto.getKoulutusohjelma(), true),
+            koulutusohjelma,
             dto.getOpetuskielis().getUrisAsStringList(true),
             koulutuslajis
         );
