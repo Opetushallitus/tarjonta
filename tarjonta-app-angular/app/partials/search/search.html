@@ -69,7 +69,7 @@
 
             <div class="pull-left search-control">
                 <div class="search-label">{{t('tarjonta.haku.tyyppi')}}</div>
-                <select ng-model="spec.attributes.type" ng-options="types[key].label for key in typeKeys">
+                <select ng-model="spec.attributes.type" ng-options="type.key as type.label for type in types">
                     <option value=""><span tt="tarjonta.haku.kaikki">Kaikki</span></option>
                 </select>
             </div>

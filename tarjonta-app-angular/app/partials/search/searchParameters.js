@@ -25,6 +25,7 @@ angular.module('search.hakutulokset.searchparameters', [])
                 this.attributes.season = '*';
                 this.attributes.koulutustyyppi = '*';
                 this.attributes.hakutapa = '*';
+                this.attributes.type = '*';
                 this.attributes.hakutyyppi = '*';
                 this.attributes.koulutuslaji = '*';
                 this.attributes.kieli = [];
@@ -57,6 +58,9 @@ angular.module('search.hakutulokset.searchparameters', [])
                     });
                     return list;
                 }
+                function koulutusmoduuliTyypitAsList(tyyppiIndex) {
+                    return Config.app['tarjonta.koulutusmoduuliTyypit'][tyyppiIndex];
+                }
                 return {
                     oid: selectedOrgOid,
                     terms: this.attributes.terms,
@@ -67,6 +71,7 @@ angular.module('search.hakutulokset.searchparameters', [])
                     hakutapa: this.attributes.hakutapa == '*' ? null : this.attributes.hakutapa,
                     hakutyyppi: this.attributes.hakutyyppi == '*' ? null : this.attributes.hakutyyppi,
                     koulutustyyppi: this.attributes.koulutustyyppi == '*' ? null : this.attributes.koulutustyyppi,
+                    type: koulutusmoduuliTyypitAsList(this.attributes.type),
                     koulutuslaji: this.attributes.koulutuslaji == '*' ? null : this.attributes.koulutuslaji,
                     kieli: languagesAsList(this.attributes.kieli),
                     kohdejoukko: this.attributes.kohdejoukko == '*' ? null : this.attributes.kohdejoukko,
@@ -177,6 +182,14 @@ angular.module('search.hakutulokset.searchparameters', [])
                 }
             ];
         }
+        function getTypes() {
+            var types = [];
+            _.each(Config.app['tarjonta.koulutusmoduuliTyypit'], function(typeContainer, index) {
+                var first = _.first(typeContainer);
+                types.push({label: LocalisationService.t('tarjonta.tyyppi.' + first), key: index});
+            });
+            return types;
+        }
         return {
             getDefaultHakuehdot: getDefaultHakuehdot,
             fetchCodeElementsToObject: fetchCodeElementsToObject,
@@ -186,15 +199,6 @@ angular.module('search.hakutulokset.searchparameters', [])
             getSpec: getSpec,
             getStates: getStates,
             getYears: getYears,
-            setTypes: function($scope) {
-                // koulutusmoduuliTyypit
-                $scope.types = {'*': {label: LocalisationService.t('tarjonta.haku.kaikki'), types: []}};
-                $scope.typeKeys = ['*'];
-                angular.forEach(Config.app['tarjonta.koulutusmoduuliTyypit'], function(element) {
-                    var k = element[0];
-                    $scope.types[k] = {label: LocalisationService.t('tarjonta.tyyppi.' + k), types: element};
-                    $scope.typeKeys.push(k);
-                });
-            }
+            getTypes: getTypes
         };
     });

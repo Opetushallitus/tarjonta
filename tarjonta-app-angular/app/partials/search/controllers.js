@@ -93,7 +93,7 @@ angular.module('app.search.controllers', [
     $scope.states = SearchParameters.getStates();
     $scope.years = SearchParameters.getYears();
     $scope.seasons = SearchParameters.fetchCodeElementsToObject('kausi');
-    SearchParameters.setTypes($scope);
+    $scope.types = SearchParameters.getTypes();
     $scope.initAdditionalFields = function() {
         $scope.hakutapaoptions = SearchParameters.fetchCodeElementsToObject('hakutapa');
         $scope.hakutyyppioptions = SearchParameters.fetchCodeElementsToObject('hakutyyppi');
