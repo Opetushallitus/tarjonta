@@ -16,7 +16,6 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
@@ -260,8 +259,6 @@ public interface KoulutusV1Resource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
             @QueryParam("koulutustyyppi") List<String> koulutustyyppi,
             @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
-            @ApiParam("ilman moduulityyppirajausta haku palauttaa vain tutkintoon johtavat koulutukset; "
-                    + "tutkintoon johtamattomat saa mukaan vain asettamalla tähän OPINTOJAKSO ja/tai OPINTOKOKONAISUUS tyypit") 
             @QueryParam("koulutusmoduuliTyyppi") List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi,
             @Deprecated @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid,
