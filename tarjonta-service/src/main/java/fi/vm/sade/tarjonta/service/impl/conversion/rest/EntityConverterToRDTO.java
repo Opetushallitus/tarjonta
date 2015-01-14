@@ -188,7 +188,9 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              * 2ASTE : AMMATILLINEN_PERUSTUTKINTO
              */
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
-            amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+            if (komo.getKoulutusohjelmaUri() != null || komoto.getKoulutusohjelmaUri() != null) {
+                amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+            }
             amisDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(
                 getTutkintonimikes(komoto, komo),
                 FieldNames.TUTKINTONIMIKE,
@@ -213,7 +215,14 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
                 }
             }
 
-            mergeParentAndChildDataToRDTO(dto, koulutusmoduuliDAO.findParentKomo(komo), komo, komoto, param);
+            // Tutke 2 muutoksen myötä koulutuksella ei aina ole koulutusohjelmaa, joten ei myöskään aina
+            // ole parent komoa
+            Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+            if (parentKomo == null) {
+                parentKomo = komo;
+            }
+
+            mergeParentAndChildDataToRDTO(dto, parentKomo, komo, komoto, param);
         }
 
         else if (dto instanceof ValmistavaKoulutusV1RDTO) {
