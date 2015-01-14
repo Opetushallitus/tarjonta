@@ -224,6 +224,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                     break;
 
                 case KORKEAKOULUTUS:
+                case KORKEAKOULUOPINTO:
                     MonikielinenTeksti nimi = koulutusmoduuliToteutus.getNimi();
                     if (nimi == null) {
                         nimi = koulutusmoduuliToteutus.getKoulutusmoduuli().getNimi();
