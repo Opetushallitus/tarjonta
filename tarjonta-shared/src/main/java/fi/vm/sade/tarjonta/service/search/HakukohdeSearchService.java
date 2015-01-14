@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
-import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromVersionedUri;
 
 @Component
 public class HakukohdeSearchService extends SearchService {
@@ -115,13 +114,13 @@ public class HakukohdeSearchService extends SearchService {
 
     private void addFilterForKohdejoukko(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getKohdejoukko() != null) {
-            q.addFilterQuery(String.format(matchUri(), KOHDEJOUKKO_URI, getKoodiURIFromVersionedUri(kysely.getKohdejoukko())));
+            q.addFilterQuery(getFilterQueryForUri(KOHDEJOUKKO_URI, kysely.getKohdejoukko()));
         }
     }
 
     private void addFilterForKoulutustyypit(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getKoulutustyyppi().size() > 0) {
-            q.addFilterQuery(String.format(matchUri(), KOULUTUSTYYPPI_URI, Joiner.on(" ").join(kysely.getKoulutustyyppi())));
+            q.addFilterQuery(getFilterQueryForUri(KOULUTUSTYYPPI_URI, Joiner.on(" ").join(kysely.getKoulutustyyppi())));
         }
     }
 
@@ -132,7 +131,7 @@ public class HakukohdeSearchService extends SearchService {
                     return src.value();
                 }
             }));
-            q.addFilterQuery(String.format(matchUri(), KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
+            q.addFilterQuery(getFilterQueryForUri(KOULUTUSASTETYYPPI, Joiner.on(" ").join(tyypit)));
         }
     }
 
@@ -183,19 +182,19 @@ public class HakukohdeSearchService extends SearchService {
 
     private void addFilterForHakutapa(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getHakutapa() != null) {
-            q.addFilterQuery(String.format(matchUri(), HAKUTAPA_URI, getKoodiURIFromVersionedUri(kysely.getHakutapa())));
+            q.addFilterQuery(getFilterQueryForUri(HAKUTAPA_URI, kysely.getHakutapa()));
         }
     }
 
     private void addFilterForHakutyyppi(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getHakutyyppi() != null) {
-            q.addFilterQuery(String.format(matchUri(), HAKUTYYPPI_URI, getKoodiURIFromVersionedUri(kysely.getHakutyyppi())));
+            q.addFilterQuery(getFilterQueryForUri(HAKUTYYPPI_URI, kysely.getHakutyyppi()));
         }
     }
 
     private void addFilterForKunta(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getKunta() != null) {
-            q.addFilterQuery(String.format(matchUri(), KUNTA_URIS, getKoodiURIFromVersionedUri(kysely.getKunta())));
+            q.addFilterQuery(getFilterQueryForUri(KUNTA_URIS, kysely.getKunta()));
         }
     }
 
@@ -207,13 +206,13 @@ public class HakukohdeSearchService extends SearchService {
 
     private void addFilterForOppilaitostyyppi(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getOppilaitostyyppi() != null) {
-            q.addFilterQuery(String.format(matchUri(), OPPILAITOSTYYPPI_URIS, getKoodiURIFromVersionedUri(kysely.getOppilaitostyyppi())));
+            q.addFilterQuery(getFilterQueryForUri(OPPILAITOSTYYPPI_URIS, kysely.getOppilaitostyyppi()));
         }
     }
 
     private void addFilterForKoulutuslaji(HakukohteetKysely kysely, SolrQuery q) {
         if (kysely.getKoulutuslaji() != null) {
-            q.addFilterQuery(String.format(matchUri(), KOULUTUSLAJI_URIS, getKoodiURIFromVersionedUri(kysely.getKoulutuslaji())));
+            q.addFilterQuery(getFilterQueryForUri(KOULUTUSLAJI_URIS, kysely.getKoulutuslaji()));
         }
     }
 
