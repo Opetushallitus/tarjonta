@@ -93,6 +93,7 @@ angular.module('app.search.controllers', [
     $scope.states = SearchParameters.getStates();
     $scope.years = SearchParameters.getYears();
     $scope.seasons = SearchParameters.fetchCodeElementsToObject('kausi');
+    SearchParameters.setTypes($scope);
     $scope.initAdditionalFields = function() {
         $scope.hakutapaoptions = SearchParameters.fetchCodeElementsToObject('hakutapa');
         $scope.hakutyyppioptions = SearchParameters.fetchCodeElementsToObject('hakutyyppi');
@@ -209,6 +210,7 @@ angular.module('app.search.controllers', [
         copyIfSet(sargs, 'state', $scope.spec.attributes.state);
         copyIfSet(sargs, 'year', $scope.spec.attributes.year);
         copyIfSet(sargs, 'season', $scope.spec.attributes.season);
+        copyIfSet(sargs, 'type', $scope.spec.type);
         if ($scope.selectedOrgOid !== null) {
             $location.path('/etusivu/' + $scope.selectedOrgOid);
         }

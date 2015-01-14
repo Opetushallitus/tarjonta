@@ -8,6 +8,7 @@ angular.module('search.hakutulokset.searchparameters', [])
                 state: fromParams('state', '*'),
                 year: fromParams('year', '*'),
                 season: fromParams('season', '*'),
+                type: fromParams('type', '*'),
                 hakutapa: fromParams('hakutapa', '*'),
                 koulutustyyppi: fromParams('koulutustyyppi', '*'),
                 hakutyyppi: fromParams('hakutyyppi', '*'),
@@ -184,6 +185,16 @@ angular.module('search.hakutulokset.searchparameters', [])
             getOrganisaatiotyypit: getOrganisaatiotyypit,
             getSpec: getSpec,
             getStates: getStates,
-            getYears: getYears
+            getYears: getYears,
+            setTypes: function($scope) {
+                // koulutusmoduuliTyypit
+                $scope.types = {'*': {label: LocalisationService.t('tarjonta.haku.kaikki'), types: []}};
+                $scope.typeKeys = ['*'];
+                angular.forEach(Config.app['tarjonta.koulutusmoduuliTyypit'], function(element) {
+                    var k = element[0];
+                    $scope.types[k] = {label: LocalisationService.t('tarjonta.tyyppi.' + k), types: element};
+                    $scope.typeKeys.push(k);
+                });
+            }
         };
     });

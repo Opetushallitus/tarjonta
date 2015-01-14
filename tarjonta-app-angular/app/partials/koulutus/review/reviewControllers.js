@@ -1,7 +1,8 @@
 var app = angular.module('app.review.ctrl', []);
 app.controller('BaseReviewController', function BaseReviewController(PermissionService, $q, $scope, $window,
      $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, Koodisto,
-     KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+     KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService,
+     KoulutusService) {
     $log = $log.getInstance('BaseReviewController');
     var koulutusModel = $route.current.locals.koulutusModel.result;
     if (angular.isUndefined(koulutusModel)) {
@@ -121,6 +122,9 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
     }
+    else if (koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO') {
+        $scope.model.header.nimi = 'Nimi';  // TODO
+    }
     else if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
         for (kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
             if (kieliUri.indexOf(kieliUri) != -1) {
@@ -165,6 +169,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                             vuosi: $scope.model.koulutus.koulutuksenAlkamisvuosi,
                             kausi: $scope.model.koulutus.koulutuksenAlkamiskausi,
                             oid: $scope.model.koulutus.komoOid,
+                            toteutustyyppi: $scope.model.koulutus.toteutustyyppi,
+                            koulutusModuuliTyyppi: $scope.model.koulutus.koulutusModuuliTyyppi,
                             nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                         };
                     },
@@ -284,6 +290,16 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             }
         });
         copyModalDialog.result.then(function() {}, function() {});
+    };
+    $scope.doCreateLinked = function(event) {
+        // Aseta esivalittu organisaatio
+        $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+        // Aseta lähde koulutus
+        $scope.model.sourceKoulutus = $scope.model.koulutus;
+        // Avaa luonti
+        KoulutusService.extendKorkeakouluOpinto(
+            $scope.model.sourceKoulutus.koulutustyyppi.uri, $scope.model.sourceKoulutus.organisaatio.oid,
+            $scope.model.sourceKoulutus.koulutusmoduuliTyyppi, $scope);
     };
     $scope.doMoveToBeSubPart = function(event) {
         $log.info('doMoveToBeSubPart()...');
@@ -432,8 +448,16 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             // Get user's language and update scope with it
             var userLangUri = 'kieli_' + AuthService.getLanguage();
             $scope.model.userLangUri = userLangUri;
-            var result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
-            if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
+            var result;
+            if (koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO') {
+                //result = "[Opintojakson tai kokonaisuuden nimi...]";   // TODO
+                if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {
+                    // Just take first value for language
+                    userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
+                }
+                result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
+            }
+            else if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
                 if ($scope.model.opetusKieliUri) {
                     result = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.opetusKieliUri];
                 }
@@ -466,6 +490,9 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                     userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.meta)[0];
                 }
                 result = $scope.model.koulutus.koulutusohjelma.meta[userLangUri].nimi;
+            }
+            else {
+                result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
             }
             $scope.model.header.nimi = result;
         }

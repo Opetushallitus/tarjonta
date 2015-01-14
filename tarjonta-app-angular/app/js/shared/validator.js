@@ -118,7 +118,8 @@ angular.module('Validator', [])
                 'VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS',
                 'VAPAAN_SIVISTYSTYON_KOULUTUS',
                 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA',
-                'AMMATILLINEN_PERUSTUTKINTO'
+                'AMMATILLINEN_PERUSTUTKINTO',
+                'KORKEAKOULUOPINTO'
             ], toteutusTyyppi);
         }
         function toisenAsteenKoulutus(toteutusTyyppi) {

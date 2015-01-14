@@ -952,6 +952,72 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 }
             }
         },
+        /***********************************************/
+        /* KORKEAKOULUOPINTO INITIALIZATION PARAMETERS */
+        /***********************************************/
+        KORKEAKOULUOPINTO: {
+            KUVAUS_ORDER: [
+                {type: 'SISALTO', isKomo: false, length: 2000},
+                {type: 'TAVOITTEET', isKomo: true, length: 2000},
+                {type: 'KOHDERYHMA', isKomo: false, length: 2000},
+                {type: 'MAKSULLISUUS', isKomo: false, length: 1000},
+                {type: 'EDELTAVAT_OPINNOT', isKomo: false, length: 2000},
+                {type: 'ARVIOINTIKRITEERIT', isKomo: false, length: 2000},
+                {type: 'OPETUKSEN_AIKA_JA_PAIKKA', isKomo: false, length: 2000},
+                {type: 'LISATIEDOT', isKomo: false, length: 2000}
+            ],
+            MLANG: {
+                koulutusohjelma: {'defaultLangs': true, 'default': {tekstis: []}}
+            },
+            RELATION: {
+                koulutuskoodi: {},
+                koulutusaste: {},
+                koulutusala: {},
+                opintoala: {},
+                eqf: {},
+                koulutustyyppi: {}
+            },
+            RELATIONS: {
+            },
+            COMBO: {
+            },
+            MCOMBO: {
+                opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},
+                opetusAikas: {koodisto: 'koodisto-uris.opetusaika'},
+                opetusPaikkas: {koodisto: 'koodisto-uris.opetuspaikka'},
+                opetuskielis: {koodisto: 'koodisto-uris.kieli'},
+                aihees: {koodisto: 'koodisto-uris.aiheet'}
+            },
+            STR: {
+                koulutuksenAlkamisvuosi: {'default': ''},
+                koulutusmoduuliTyyppi: {'default': 'OPINTOKOKONAISUUS'},
+                toteutustyyppi: {'default': 'KORKEAKOULUOPINTO'},
+                tila: {'default': 'LUONNOS'},
+                tunniste: {'default': ''}
+            },
+            DATES: {
+                koulutuksenAlkamisPvms: {'default': new Date()}
+            },
+            BOOL: {
+                opintojenMaksullisuus: {'default': false}
+            },
+            IMAGES: {
+            },
+            DESC: {
+                kuvausKomo: {'nullable': false, 'default': factory.createBaseDescUiField([
+                    'TAVOITTEET'
+                ])},
+                kuvausKomoto: {'nullable': false, 'default': factory.createBaseDescUiField([
+                    'MAKSULLISUUS',
+                    'SISALTO',
+                    'ARVIOINTIKRITEERIT',
+                    'KOHDERYHMA',
+                    'EDELTAVAT_OPINNOT',
+                    'OPETUKSEN_AIKA_JA_PAIKKA',
+                    'LISATIEDOT'
+                ])}
+            }
+        },
         /*******************************************/
         /* LUKIOKOULUTUS_AIKUISTEN INITIALIZATION PARAMETERS */
         /*******************************************/

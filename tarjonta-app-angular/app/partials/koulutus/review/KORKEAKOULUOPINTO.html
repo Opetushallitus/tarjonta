@@ -1,0 +1,10 @@
+<div id="koulutusReview"">
+
+    <h2>{{ getKoulutusohjelmaNimi() }}</h2>
+
+    <tabset>
+        <tab data-ng-repeat="lang in model.languages" heading="{{lang.name}}">
+            <div data-ng-include="'partials/koulutus/review/KORKEAKOULUTUOPINTO_reviewLanguage.html'"></div>
+        </tab>
+    </tabset>
+</div>

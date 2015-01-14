@@ -1,7 +1,8 @@
 /* Controllers */
 var app = angular.module('app.koulutus.ctrl');
 app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
-                    SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService) {
+                    SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService,
+                    KoulutusService) {
     'use strict';
 
     $log = $log.getInstance('LuoKoulutusDialogiController');
@@ -9,6 +10,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     $log.debug('resetting form selections');
     $scope.model = {
         koulutustyyppi: undefined,
+        koulutusmoduuliTyyppi: $scope.spec.type !== '*' ? $scope.spec.type : undefined,  // inherit default value from parent
         organisaatiot: []
     };
     //resolvaa tarvittavat koodit ja suhteet... rakentaa mapit validointia varten:
@@ -225,6 +227,13 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             return;
         }
         if (toteutustyyppi === 'KORKEAKOULUTUS') {
+            if (_.contains(['OPINTOKOKONAISUUS',
+                            'OPINTOJAKSO'], $scope.model.koulutusmoduuliTyyppi)) {
+                $scope.luoKoulutusDialog.close();
+                KoulutusService.luoKorkeakouluOpinto($scope.model.koulutustyyppi.koodiUri,
+                    $scope.model.organisaatiot[0].oid, $scope.model.koulutusmoduuliTyyppi);
+                return;
+            }
             var olt = OrganisaatioService.haeOppilaitostyypit($scope.model.organisaatiot[0].oid);
             olt.then(function(oppilaitostyypit) {
                 Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002')
@@ -331,6 +340,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     $scope.jatkaDisabled = function() {
         var jatkaEnabled = $scope.organisaatioValittu() && $scope.koulutustyyppiValidi() // pohjakoulutus pitää olla valittuna osalle koulutuksista
             && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus);
+        jatkaEnabled &= ($scope.model.koulutusmoduuliTyyppi !== undefined);
         return !jatkaEnabled;
     };
     /**

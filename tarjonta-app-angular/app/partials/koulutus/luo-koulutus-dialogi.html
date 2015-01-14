@@ -20,6 +20,23 @@
             </select>
         </div>
 
+        <h4><span tt="luoKoulutsDialogi.koulutusmoduulinTyyppi">Koulutuksen tyyppi</span></h4>
+        <label for="tyyppiTutkinto">
+            <input id="tyyppiTutkinto" type="radio" ng-model="model.koulutusmoduuliTyyppi" value="TUTKINTO"
+                   tt="tarjonta.tyyppi.TUTKINTO">
+            Tutkinto
+        </label>
+        <label for="tyyppiOpintokokonaisuus">
+            <input id="tyyppiOpintokokonaisuus" type="radio" ng-model="model.koulutusmoduuliTyyppi"
+                   value="OPINTOKOKONAISUUS" tt="tarjonta.tyyppi.OPINTOKOKONAISUUS">
+            Opintokokonaisuus
+        </label>
+        <label for="tyyppiOpintojakso">
+            <input id="tyyppiOpintojakso" type="radio" ng-model="model.koulutusmoduuliTyyppi"
+                   value="OPINTOJAKSO" tt="tarjonta.tyyppi.OPINTOJAKSO">
+            Opintojakso
+        </label>
+
         <h4><span tt="luoKoulutusDialogi.valitseKoulutuksenToteutuspaikka">Valitse koulutuksen toteutuspaikka</span></h4>
         <label for="showOtherOrganizations" ng-show="model.showOtherOrganizationsCheckbox">
             <input id="showOtherOrganizations" ng-click="toggleOtherOrganizations()"

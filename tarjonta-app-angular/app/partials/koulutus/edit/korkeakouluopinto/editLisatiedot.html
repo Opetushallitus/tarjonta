@@ -1,0 +1,25 @@
+<mk-tabs
+    model="uiModel.lisatietoKielet"
+    selection="uiModel.selectedKieliUri"
+    mutable="true"
+    ></mk-tabs>
+
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri==null">
+    <multi-select
+        on-change="onLisatietoLangSelection(uris, CONFIG.TYYPPI)"
+        model="uiModel.tmp"
+        promise="uiModel.opetuskielis.promise"
+        order-with="userLanguages"
+        selection="uiModel.lisatietoKielet"
+        display="dualpane"></multi-select>
+</div>
+
+<div class="mkTabsContent" ng-show="uiModel.selectedKieliUri">
+    <div ng-if="uiModel.lisatietoKielet.length > 0" ng-repeat="lisatieto in lisatiedot" ng-show="lisatieto.type != 'MAKSULLISUUS' || model.opintojenMaksullisuus">
+        <!-- keep the ng-if="arr.length > 0", or model will receive empty keys {'':''} -->
+        <h4>{{t('koulutus.tjkk.edit.' + lisatieto.type + '.title')}}</h4>
+        <p>{{t('koulutus.tjkk.edit.' + lisatieto.type + '.help')}}</p>
+        <rich-textarea max="{{lisatieto.length}}" mode="false" model="getKuvausApiModelLanguageUri(lisatieto.isKomo, lisatieto.type, uiModel.selectedKieliUri)[uiModel.selectedKieliUri]"></rich-textarea>
+    </div>
+
+</div>

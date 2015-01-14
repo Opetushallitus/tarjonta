@@ -182,6 +182,14 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.model.hakukohde.kaytetaanJarjestelmanValintaPalvelua = true;
         }
 
+        if ($scope.model.hakukohde.hakuMenettelyKuvaukset === undefined) {
+            $scope.model.hakukohde.hakuMenettelyKuvaukset = {};  // korkeakouluopinto
+        }
+
+        if ($scope.model.hakukohde.peruutusEhdotKuvaukset === undefined) {
+            $scope.model.hakukohde.peruutusEhdotKuvaukset = {};  // korkeakouluopinto
+        }
+
         if ($scope.model.hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS') {
             // Mahdolliset Organisaatiopalvelun hakukohdetyhmät joissa hakukohde voi olla
             // [{ key: XXX, value: YYY}, ...]
