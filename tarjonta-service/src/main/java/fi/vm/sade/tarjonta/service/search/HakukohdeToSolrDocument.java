@@ -95,7 +95,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         addKoulutuslajit(hakukohdeDoc, hakukohde);
         addKoulutusAsteTyyppi(hakukohdeDoc, hakukohde);
         addToteutustyyppi(hakukohdeDoc, hakukohde);
-        addModuulityyppi(hakukohdeDoc, hakukohde);
+        // addModuulityyppi(hakukohdeDoc, hakukohde);  TODO FIXME this adds duplicate KOULUTUSMODUULITYYPPI_ENUM!!! Which is correct?
         addPohjakoulutusvaatimus(hakukohdeDoc, hakukohde);
         addKohdejoukko(hakukohdeDoc, hakukohde);
         addDataFromKoulutus(hakukohdeDoc, hakukohde);
