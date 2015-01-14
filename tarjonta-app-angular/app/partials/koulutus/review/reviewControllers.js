@@ -122,9 +122,6 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         $scope.model.header.nimi = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.userLangUri];
     }
-    else if (koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO') {
-        $scope.model.header.nimi = 'Nimi';  // TODO
-    }
     else if (koulutusModel.toteutustyyppi === 'LUKIOKOULUTUS') {
         for (kieliUri in $scope.model.koulutus.koulutusohjelma.meta) {
             if (kieliUri.indexOf(kieliUri) != -1) {
