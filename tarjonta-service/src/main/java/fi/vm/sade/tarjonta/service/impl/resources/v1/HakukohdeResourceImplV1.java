@@ -159,6 +159,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setOppilaitostyyppi(oppilaitostyyppi);
         q.setKunta(kunta);
         q.setOpetuskielet(opetuskielet);
+        // Taaksepäin yhteensopivuuden vuoksi oletuksena palautetaan vain tutkintoon johtavia koulutuksia
+        if (koulutusmoduulityypit == null || koulutusmoduulityypit.isEmpty()) {
+            koulutusmoduulityypit = KoulutusResourceImplV1.OLETUS_MODUULITYYPIT;
+        }
         q.setKoulutusmoduuliTyyppi(koulutusmoduulityypit);
 
         if (hakukohdeOid != null) {

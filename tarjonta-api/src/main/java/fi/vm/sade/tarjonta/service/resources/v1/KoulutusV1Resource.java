@@ -16,6 +16,8 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
@@ -28,14 +30,15 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutustyyppiKoost
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
-
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,6 +50,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 
@@ -256,6 +260,8 @@ public interface KoulutusV1Resource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
             @QueryParam("koulutustyyppi") List<String> koulutustyyppi,
             @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
+            @ApiParam("ilman moduulityyppirajausta haku palauttaa vain tutkintoon johtavat koulutukset; "
+                    + "tutkintoon johtamattomat saa mukaan vain asettamalla tähän OPINTOJAKSO ja/tai OPINTOKOKONAISUUS tyypit") 
             @QueryParam("koulutusmoduuliTyyppi") List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi,
             @Deprecated @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid,

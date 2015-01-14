@@ -19,6 +19,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import fi.vm.sade.koodisto.service.GenericFault;
 import fi.vm.sade.koodisto.service.KoodiService;
 import fi.vm.sade.koodisto.service.types.SearchKoodisByKoodistoCriteriaType;
@@ -32,7 +33,6 @@ import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
 import fi.vm.sade.tarjonta.koodisto.KoulutuskoodiRelations;
 import fi.vm.sade.tarjonta.koodisto.OppilaitosKoodiRelations;
-
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
@@ -57,9 +57,11 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.*;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTulos;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.types.*;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -74,10 +76,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -863,6 +868,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return new ResultV1RDTO<Tilamuutokset>(tm);
     }
 
+    public static final List<KoulutusmoduuliTyyppi> OLETUS_MODUULITYYPIT = Collections.unmodifiableList(Arrays.asList(
+            KoulutusmoduuliTyyppi.TUTKINTO,
+            KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA,
+            KoulutusmoduuliTyyppi.TUTKINNON_OSA));
+    
     @SuppressWarnings("unchecked")
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<KoulutusHakutulosV1RDTO>> searchInfo(
@@ -901,6 +911,10 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);
         q.getKoulutustyyppi().addAll(koulutustyyppi);
         q.getTotetustyyppi().addAll(toteutustyyppi);
+        // Taaksepäin yhteensopivuuden vuoksi oletuksena palautetaan vain tutkintoon johtavia koulutuksia
+        if (koulutusmoduuliTyyppi == null || koulutusmoduuliTyyppi.isEmpty()) {
+            koulutusmoduuliTyyppi = OLETUS_MODUULITYYPIT;
+        }
         q.getKoulutusmoduuliTyyppi().addAll(koulutusmoduuliTyyppi);
         q.setKoulutuslaji(koulutuslaji);
         q.setHakutapa(hakutapa);
