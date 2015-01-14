@@ -500,6 +500,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         switch (toteutustyyppi) {
 
             case KORKEAKOULUTUS:
+            case KORKEAKOULUOPINTO:
                 validationMessageses.addAll(hakukohdeValidator
                         .validateHakukohde(hakukohdeV1RDTO));
                 break;

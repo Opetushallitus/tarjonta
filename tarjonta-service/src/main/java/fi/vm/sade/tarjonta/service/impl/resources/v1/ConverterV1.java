@@ -541,6 +541,9 @@ public class ConverterV1 {
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
 
+        hakukohdeRDTO.setHakuMenettelyKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getHakuMenettelyKuvaus()));
+        hakukohdeRDTO.setPeruutusEhdotKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getPeruutusEhdotKuvaus()));
+
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
@@ -898,6 +901,7 @@ public class ConverterV1 {
 
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdeRDTO.isKaytetaanHaunPaattymisenAikaa());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
+        hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
 
         if (KoulutusasteResolver.isToisenAsteenKoulutus(ToteutustyyppiEnum.valueOf(hakukohdeRDTO.getToteutusTyyppi()))) {
@@ -960,6 +964,13 @@ public class ConverterV1 {
 
         for (PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
             hakukohde.addPainotettavaOppiaine(convertPainotettavaOppiaineRDTOToPainotettavaOppiaine(painotettavaOppiaineV1RDTO));
+        }
+
+        if (hakukohdeRDTO.getHakuMenettelyKuvaukset() != null) {
+            hakukohde.setHakuMenettelyKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakuMenettelyKuvaukset()));
+        }
+        if (hakukohdeRDTO.getPeruutusEhdotKuvaukset() != null) {
+            hakukohde.setPeruutusEhdotKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getPeruutusEhdotKuvaukset()));
         }
 
         hakukohde.setOrganisaatioRyhmaOids(hakukohdeRDTO.getOrganisaatioRyhmaOids());
