@@ -791,6 +791,12 @@ app.controller('BaseEditController', [
                         uiModel[key].meta = restRelationData[key].meta;
                         uiModel[key].uris = apiModel[key] ? _.keys(apiModel[key].uris) : [];
                     }
+                    // Resetoi vanha malli, jotta ei näytettäisi edellisen koulutus-dropdown
+                    // valinnan dataa (koskee esim. tutkintonimikkeitä)
+                    else if (uiModel[key]) {
+                        uiModel[key].meta = {};
+                        uiModel[key].uris = [];
+                    }
                 });
             });
         };
