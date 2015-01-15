@@ -105,7 +105,9 @@ public class SolrDocumentToHakukohdeConverter {
             return null;
         }
         hakukohde.setKoulutusastetyyppi(createKoulutusastetyyppi(hakukohdeDoc));
-        hakukohde.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)));
+        if (hakukohdeDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM) != null) {
+            hakukohde.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)));
+        }
         return hakukohde;
     }
 
