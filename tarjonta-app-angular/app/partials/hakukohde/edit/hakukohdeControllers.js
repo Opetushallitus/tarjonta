@@ -61,6 +61,11 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.model.selectedKieliUris.push(lisatieto.uri);
         });
     }
+    var hakukohdeBeforeSyksy2015 = function() {
+        return $scope.model.koulutusVuosi < 2015 ||
+            ($scope.koulutusKausiUri.indexOf('kausi_k') !== -1 &&
+            $scope.model.koulutusVuosi === 2015);
+    };
     var filterHakuWithAikaAndKohdejoukko = function(hakus) {
         var filteredHakus = [];
         angular.forEach(hakus, function(haku) {
@@ -87,13 +92,21 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_17#1');
     };
     var filterHakusForValmentavaJaKuntouttavaOpetus = function(hakus) {
-        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_16#1');
+        if (hakukohdeBeforeSyksy2015()) {
+            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_16#1');
+        } else {
+            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_20#1');
+        }
     };
     var filterHakusForVapaanSivistystyonKoulutus = function(hakus) {
         return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_18#1');
     };
     var filterHakusForAmmatillinenPeruskoulutusErityisopetuksena = function(hakus) {
-        return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_15#1');
+        if (hakukohdeBeforeSyksy2015()) {
+            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_15#1');
+        } else {
+            return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_20#1');
+        }
     };
     var hakuajanLoppuPvmInFuture = function(hakuaika) {
         return hakuaika.loppuPvm > new Date().getTime();

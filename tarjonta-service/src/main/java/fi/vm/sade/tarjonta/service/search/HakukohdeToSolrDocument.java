@@ -412,7 +412,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         for (Hakuaika aika : hakuaikas) {
             if (startDate == null) {
                 startDate = aika.getAlkamisPvm();
-            } else if (aika.getAlkamisPvm().before(startDate)) {
+            } else if (aika.getAlkamisPvm() != null && aika.getAlkamisPvm().before(startDate)) {
                 startDate = aika.getAlkamisPvm();
             }
         }
@@ -433,7 +433,7 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         for (Hakuaika aika : hakuaikas) {
             if (endDate == null) {
                 endDate = aika.getPaattymisPvm();
-            } else if (aika.getPaattymisPvm().after(endDate)) {
+            } else if (aika.getPaattymisPvm() != null && aika.getPaattymisPvm().after(endDate)) {
                 endDate = aika.getPaattymisPvm();
             }
         }

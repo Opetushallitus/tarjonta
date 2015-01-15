@@ -214,12 +214,14 @@ public class KoulutusValidator {
     }
 
     private static void validateKoodistoRelationsGeneric(KoulutusGenericV1RDTO dto, ResultV1RDTO result) {
-        validateKoodi(
-            result,
-            dto.getKoulutusohjelma(),
-            KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING,
-            KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID
-        );
+        if (!(dto instanceof KoulutusAmmatillinenPerustutkintoV1RDTO)) {
+            validateKoodi(
+                result,
+                dto.getKoulutusohjelma(),
+                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_MISSING,
+                KoulutusValidationMessages.KOULUTUS_KOULUTUSOHJELMA_INVALID
+            );
+        }
 
         validateKoodi(result, dto.getKoulutusala(), KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSALA_INVALID);
         validateKoodi(result, dto.getKoulutuskoodi(), KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_MISSING, KoulutusValidationMessages.KOULUTUS_KOULUTUSKOODI_INVALID);

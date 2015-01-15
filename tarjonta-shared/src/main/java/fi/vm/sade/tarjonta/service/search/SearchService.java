@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Koulutus.*;
+import static fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper.getKoodiURIFromVersionedUri;
 
 public class SearchService {
 
@@ -55,7 +56,7 @@ public class SearchService {
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
         }
-        addQuery(kausi, queryParts, matchUri(), KAUSI_URI, kausi);
+        addQuery(kausi, queryParts, matchUriWithUnknownVersion(), KAUSI_URI, kausi);
         q.addFilterQuery(Joiner.on(" ").join(queryParts));
         queryParts.clear();
     }
@@ -73,8 +74,24 @@ public class SearchService {
         return "%s:(%s)";
     }
 
-    protected String matchUri() {
-        return "%s:(%s*)";
+    private String matchUriWithUnknownVersion() {
+        return "%s:(%s#*) %s:(%s)";
+    }
+
+    private String matchUriWithKnownVersion() {
+        return "%s:(%s) %s:(%s)";
+    }
+
+    protected String getFilterQueryForUri(String fieldName, String fieldValue) {
+        if (fieldValue.contains("#")) {
+            return String.format(matchUriWithKnownVersion(),
+                    fieldName, getKoodiURIFromVersionedUri(fieldValue),
+                    fieldName, fieldValue);
+        } else {
+            return String.format(matchUriWithUnknownVersion(),
+                    fieldName, getKoodiURIFromVersionedUri(fieldValue),
+                    fieldName, fieldValue);
+        }
     }
 
     protected String noMatch() {
