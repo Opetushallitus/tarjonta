@@ -16,14 +16,14 @@
         <tr>
             <th tt="hakukohde.review.perustiedot.haku"/>
             <td colspan="2">
-                {{ model.hakuNimi }}
+                {{ model.hakuNimiInformation.nimi }}
             </td>
         </tr>
 
         <tr>
             <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
             <td colspan="2">
-                {{ model.hakukohde.aloituspaikatLkm }}
+                <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
             </td>
         </tr>
 

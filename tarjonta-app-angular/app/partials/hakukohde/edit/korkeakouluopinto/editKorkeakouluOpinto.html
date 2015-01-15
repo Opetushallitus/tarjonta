@@ -29,7 +29,7 @@
 
         	<form name="editHakukohdeForm" novalidate>
                 <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
-                
+
                 <table class="tarjontaForm">
 
                     <!-- hakukohteen nimi -->
@@ -76,10 +76,10 @@
                     <tr>
                         <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
                         <td>
-                            <input name="aloituspaikatlkm" ng-disabled="model.isPartiallyDeEnabled"  class="thin" type="number" min="1" max="999" data-ng-model="model.hakukohde.aloituspaikatLkm" />
+                            <mk-textfield show-user-languages="false" model="model.hakukohde.aloituspaikatKuvaukset"></mk-textfield>
                         </td>
                         <td>
-                            <p class="error" ng-show="model.showError && editHakukohdeForm.aloituspaikatlkm.$invalid" tt="tarjonta.hakukohde.aloituspaikatlkm.validation.failed">Tarkista aloituspaikat</p>
+                            <p class="error" ng-show="model.showError && model.aloituspaikatKuvauksetFailed" tt="hakukohde.edit.aloituspaikatKuvaukset.too.long">Kuvaus voi olla enintään 20 merkkiä pitkä.</p>
                         </td>
                     </tr>
 
@@ -87,9 +87,9 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.ilmoittautumisaika">Ilmoittautumisen alkamis- ja loppumispvm</th>
                         <td>
-                            <t-date-time type="long" name="alkuPvm" timestamp="false" ng-model="model.hakukohde.hakuaikaAlkuPvm" required
+                            <t-date-time type="long" name="alkuPvm" timestamp="false" scope-model="model.hakukohde.hakuaikaAlkuPvm" required
                                 tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
-                            <t-date-time type="long" name="loppuPvm" timestamp="false" ng-model="model.hakukohde.hakuaikaLoppuPvm"
+                            <t-date-time type="long" name="loppuPvm" timestamp="false" scope-model="model.hakukohde.hakuaikaLoppuPvm"
                                 tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
                         </td>
                         <td>

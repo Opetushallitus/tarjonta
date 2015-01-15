@@ -41,16 +41,7 @@ app.factory('Hakukohde', function($resource, Config) {
                 method: 'POST',
                 withCredentials: true,
                 headers: {
-                    'Content-Type': 'application/json; charset=UTF-8',
-                    interceptor: {
-                        response: function(response) {
-                            if (response.data.result.aloituspaikatLkm === 0) {
-                                // interpret zero value as empty
-                                response.data.result.aloituspaikatLkm = '';
-                            }
-                            return response.data;
-                        }
-                    }
+                    'Content-Type': 'application/json; charset=UTF-8'
                 }
             },
             checkStateChange: {
