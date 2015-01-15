@@ -56,7 +56,11 @@ public class SearchService {
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
             queryParts.clear();
         }
-        addQuery(kausi, queryParts, matchUriWithUnknownVersion(), KAUSI_URI, kausi);
+
+        if (kausi != null) {
+            addQuery(kausi, queryParts, getFilterQueryForUri(KAUSI_URI, kausi));
+        }
+
         q.addFilterQuery(Joiner.on(" ").join(queryParts));
         queryParts.clear();
     }
