@@ -21,6 +21,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
@@ -226,6 +227,7 @@ public interface HakukohdeV1Resource {
             @ApiParam(value = "Haun oid", required = false) @QueryParam("hakuOid") String hakuOid,
             @ApiParam(value = "Hakukohderyhmä", required = false) @QueryParam("organisaatioRyhmaOid") String organisaatioRyhmaOid,
             @ApiParam(value = "Lista toteutustyyppejä", required = false) @QueryParam("koulutustyyppi") List<ToteutustyyppiEnum> koulutustyypit,
+            @ApiParam(value = "Lista koulutusmoduuli tyyppejä", required = false) @QueryParam("koulutusmoduuliTyyppi") List<KoulutusmoduuliTyyppi> koulutusmoduulityypit,
             @QueryParam("defaultTarjoaja") String defaultTarjoaja,
             @QueryParam("hakutapa") String hakutapa,
             @QueryParam("hakutyyppi") String hakutyyppi,

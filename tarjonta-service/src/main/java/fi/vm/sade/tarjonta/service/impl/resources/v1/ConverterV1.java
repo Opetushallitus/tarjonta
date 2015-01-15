@@ -14,6 +14,7 @@
  */
 package fi.vm.sade.tarjonta.service.impl.resources.v1;
 
+import com.google.common.collect.Iterables;
 import fi.vm.sade.koodisto.service.types.common.KieliType;
 import fi.vm.sade.koodisto.service.types.common.KoodiMetadataType;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
@@ -540,6 +541,9 @@ public class ConverterV1 {
         hakukohdeRDTO.setKaytetaanJarjestelmanValintaPalvelua(hakukohde.isKaytetaanJarjestelmanValintapalvelua());
         hakukohdeRDTO.setKaytetaanHaunPaattymisenAikaa(hakukohde.isKaytetaanHaunPaattymisenAikaa());
 
+        hakukohdeRDTO.setHakuMenettelyKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getHakuMenettelyKuvaus()));
+        hakukohdeRDTO.setPeruutusEhdotKuvaukset(convertMonikielinenTekstiToMapWithoutVersions(hakukohde.getPeruutusEhdotKuvaus()));
+
         convertTarjoatiedotToDTO(hakukohde, hakukohdeRDTO);
         convertHakukohteenNimetToDTO(hakukohde, hakukohdeRDTO);
         convertOpetuskieletToDTO(hakukohde, hakukohdeRDTO);
@@ -552,8 +556,21 @@ public class ConverterV1 {
         convertTarjoajaNimetToDTO(hakukohdeRDTO);
         convertOrganisaatioRyhmaOidsToDTO(hakukohde, hakukohdeRDTO);
         convertPainotettavatOppianeetToDTO(hakukohde, hakukohdeRDTO);
+        convertKoulutusmoduuliTyyppi(hakukohde, hakukohdeRDTO);
 
         return hakukohdeRDTO;
+    }
+
+    private void convertKoulutusmoduuliTyyppi(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        Set<String> koulutusmoduulityypit = new HashSet<String>();
+        for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
+            koulutusmoduulityypit.add(komoto.getKoulutusmoduuli().getModuuliTyyppi().name());
+        }
+        if (koulutusmoduulityypit.size() > 1) {
+            throw new IllegalArgumentException(String.format(
+                    "Eri tyyppiset koulutukset hakukohteella %s ei tuettu", hakukohde.getOid()));
+        }
+        hakukohdeRDTO.setKoulutusmoduuliTyyppi(Iterables.getFirst(koulutusmoduulityypit, null));
     }
 
     private void convertHakukohteenNimetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -837,7 +854,8 @@ public class ConverterV1 {
         hakukohde.setHakuaikaAlkuPvm(hakukohdeRDTO.getHakuaikaAlkuPvm());
         hakukohde.setHakuaikaLoppuPvm(hakukohdeRDTO.getHakuaikaLoppuPvm());
 
-        if (ToteutustyyppiEnum.KORKEAKOULUTUS.toString().equals(hakukohdeRDTO.getToteutusTyyppi())) {
+        if (ToteutustyyppiEnum.KORKEAKOULUTUS.toString().equals(hakukohdeRDTO.getToteutusTyyppi())
+                || ToteutustyyppiEnum.KORKEAKOULUOPINTO.toString().equals(hakukohdeRDTO.getToteutusTyyppi())) {
             if (hakukohdeRDTO.getHakukohteenNimet() != null && hakukohdeRDTO.getHakukohteenNimet().size() > 0) {
                 hakukohde.setHakukohdeMonikielinenNimi(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakukohteenNimet()));
             }
@@ -883,6 +901,7 @@ public class ConverterV1 {
         }
 
         hakukohde.setKaytetaanHaunPaattymisenAikaa(hakukohdeRDTO.isKaytetaanHaunPaattymisenAikaa());
+        hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setSoraKuvausKoodiUri(hakukohdeRDTO.getSoraKuvausKoodiUri());
         hakukohde.setValintaperustekuvausKoodiUri(hakukohdeRDTO.getValintaperustekuvausKoodiUri());
 
@@ -946,6 +965,13 @@ public class ConverterV1 {
 
         for (PainotettavaOppiaineV1RDTO painotettavaOppiaineV1RDTO : hakukohdeRDTO.getPainotettavatOppiaineet()) {
             hakukohde.addPainotettavaOppiaine(convertPainotettavaOppiaineRDTOToPainotettavaOppiaine(painotettavaOppiaineV1RDTO));
+        }
+
+        if (hakukohdeRDTO.getHakuMenettelyKuvaukset() != null) {
+            hakukohde.setHakuMenettelyKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getHakuMenettelyKuvaukset()));
+        }
+        if (hakukohdeRDTO.getPeruutusEhdotKuvaukset() != null) {
+            hakukohde.setPeruutusEhdotKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getPeruutusEhdotKuvaukset()));
         }
 
         hakukohde.setOrganisaatioRyhmaOids(hakukohdeRDTO.getOrganisaatioRyhmaOids());
@@ -1659,6 +1685,7 @@ public class ConverterV1 {
         dto.setTila(TarjontaTila.valueOf(hakukohdePerustieto.getTila()));
         dto.setAloituspaikatKuvaukset(hakukohdePerustieto.getAloituspaikatKuvaukset());
         dto.setKoulutusasteTyyppi(hakukohdePerustieto.getKoulutusastetyyppi());
+        dto.setKoulutusmoduuliTyyppi(hakukohdePerustieto.getKoulutusmoduuliTyyppi());
         return dto;
     }
 

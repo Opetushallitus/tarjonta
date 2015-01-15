@@ -8,6 +8,7 @@ angular.module('app.kk', [
     'app.kk.search.valintaperustekuvaus.ctrl',
     'app.edit.ctrl',
     'app.edit.ctrl.kk',
+    'app.edit.ctrl.kko',
     'app.edit.ctrl.generic',
     'app.edit.ctrl.amm',
     'app.edit.ctrl.alkamispaiva',
@@ -29,6 +30,7 @@ angular.module('app.kk', [
  * Main module dependecies                             *
  *******************************************************/
 angular.module('app', [
+    'Koulutus',
     'app.directives',
     'app.services',
     'app.search.controllers',
@@ -39,6 +41,7 @@ angular.module('app', [
     'app.koulutus.remove.ctrl',
     'app.koulutus.kuvausRemove.ctrl',
     'app.koulutus.copy.ctrl',
+    'app.koulutus.extend.ctrl',
     'app.dialog',
     'ngRoute',
     'ngResource',

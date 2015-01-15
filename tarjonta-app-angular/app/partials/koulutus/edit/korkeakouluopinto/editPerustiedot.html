@@ -1,0 +1,213 @@
+   <table class="tarjontaForm">
+        <!-- koulutusohjelma -->
+        <tr class="required">
+
+            <th tt="koulutus.edit.{{CONFIG.TYYPPI}}.nimi">Opinnon nimi</th>
+            <td>
+        <mk-textfield model="model.koulutusohjelma.tekstis"
+                      name="koulutusohjelma" required></mk-textfield>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p>
+        </td>
+        </tr>
+
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="koulutus.edit.opinnon.nimi.help">Opinnon nimi HELP</td>
+        </tr>
+
+        <!-- väli -->
+        <tr class="padding"><td colspan="3"></td></tr>
+
+        <!-- tutkinto-ohjelman tunniste -->
+        <tr>
+            <th tt="koulutus.edit.tunniste">Tunniste</th>
+            <td></pre><input name="tutkintoOhjelmanTunniste" ng-maxlength="35" type="text" data-ng-model="model.tunniste" /></td>
+            <td><p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.tutkintoOhjelmanTunniste.$error.maxlength" tt="koulutus.edit.tutkinto-ohjelman-tunniste.length">Tutkinto-ohjelman tunnisteen maksimipituus on 35 merkkiä</p></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="koulutus.edit.opinnon-tunniste.help">Opinnon tunniste HELP</td>
+        </tr>
+
+        <tr>
+            <th tt="koulutus.edit.opinnon-tyyppi">Opinnon tyyppi</th>
+            <td>
+            	<select ng-model="model.opinnonTyyppiUri" ng-required="false" ng-options="item.koodiUri as item.koodiNimi for item in uiModel.opinnonTyypit | orderBy:'koodiNimi'"></select>
+            </td>
+        </tr>
+
+        <!-- opintojen laajuus -->
+        <tr class="required">
+            <th tt="koulutus.edit.opintojen-laajuus">Opintojen laajuus</th>
+            <td>
+                <input ng-required="koulutus.edit.opintojenLaajuus.required" name="opintopisteet" class="thin" type="text" data-ng-model="model.opintojenLaajuusPistetta" />
+                <span tt="koulutus.edit.opintopistetta">opintopistettä</span>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opintopisteet.$error.required" tt="koulutus.edit.opintojenLaajuus.required">Opintojen laajuus vaaditaan</p>
+            </td>
+        </tr>
+
+        <!-- väli -->
+        <tr class="padding"><td colspan="3"><hr/></td></tr>
+
+        <!-- koulutuksen alkamispvm -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetuksen-alkamis-loppumispvm">Opetuksen alkamis- ja loppumispvm</th>
+            <td>
+	            <t-date-time type="long" name="alkuPvm" timestamp="false" scope-model="model.koulutuksenAlkamisPvm" required
+	                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
+	            <t-date-time type="long" name="loppuPvm" timestamp="false" scope-model="model.koulutuksenLoppumisPvm"
+	                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
+        </td>
+        <td>
+             <p class="error" ng-show="uiModel.showValidationErrors && !koulutusForm.kausivuosi && koulutusForm.alkamisPvm.$error.required" tt="koulutus.edit.alkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
+             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.kausivuosi && (koulutusForm.alkamiskausi.$error.required || koulutusForm.alkamisvuosi.$error.required || koulutusForm.alkamisvuosi.$error.number || koulutusForm.alkamisvuosi.$error.min || koulutusForm.alkamisvuosi.$error.max)" tt="koulutus.edit.alkamis-kausi-ja-vuosi.required">Opintojen alkamiskausi ja alkamisvuosi vaaditaan</p>
+        </td>
+        </tr>
+
+        <!-- väli -->
+        <tr class="padding"><td colspan="3"></td></tr>
+
+        <!-- opetuskielet -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetuskielet">Opetuskielet</th>
+            <td>
+
+        <multi-select
+            order-with="userLanguages"
+            selection="uiModel.opetuskielis.uris"
+            model="uiModel.tmp"
+            promise="uiModel.opetuskielis.promise"
+            display="combobox"
+            name="opetuskielis" required>
+
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetuskielis.$error.required" tt="koulutus.edit.opetuskielet.required">
+                Opetuskielet vaaditaan
+            </p>
+        </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="koulutus.edit.opetuskielet.help">Opetuskielet HELP</td>
+        </tr>
+
+        <!-- k. maksullisuus -->
+        <tr>
+            <th tt="koulutus.edit.maksullisuus">Maksullisuus</th>
+            <td>
+                <input type="checkbox" data-ng-model="model.opintojenMaksullisuus"/>
+                <span tt="koulutus.edit.maksullisuus.valinta">Maksullisuuden valinta</span>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td>
+                <span tt="koulutus.edit.maksullisuus.hinta">Hinta</span>
+                <input  ng-required="model.opintojenMaksullisuus" name="hinta" ng-disabled="!model.opintojenMaksullisuus" class="thin" type="text" data-ng-model="model.hinta" ng-change="onMaksullisuusChanged()"  />
+                <span tt="koulutus.edit.maksullisuus.euroa_lukuvuodessa">euroa lukuvuodessa</span>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.hinta.$error.required" tt="koulutus.edit.maksullisuus.required">
+                    Maksullisuus vaaditaan
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="koulutus.edit.maksullisuus.help">Maksullisuus HELP</td>
+        </tr>
+
+        <!-- opetusaikas -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetusaikas">Opetusajat</th>
+            <td>
+        <multi-select
+            model="uiModel.tmp"
+            selection="uiModel.opetusAikas.uris"
+            promise="uiModel.opetusAikas.promise"
+            columns="2"
+            name="opetusAikas" required/>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusAikas.$error.required" tt="koulutus.edit.opetusAikas.required">Opetusajat vaaditaan</p>
+        </td>
+        </tr>
+
+        <!-- opetusmuodot -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetusmuodot">Opetusmuodot</th>
+            <td>
+        <multi-select
+            model="uiModel.tmp"
+            selection="uiModel.opetusmuodos.uris"
+            promise="uiModel.opetusmuodos.promise"
+            columns="2"
+            name="opetusmuodos" required/>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusmuodos.$error.required" tt="koulutus.edit.opetusmuodot.required">Opetusmuodot vaaditaan</p>
+        </td>
+        </tr>
+
+        <!-- opetuspaikka -->
+        <tr class="required">
+            <th tt="koulutus.edit.opetusPaikkas">Opetuspaikat</th>
+            <td>
+        <multi-select
+            model="uiModel.tmp"
+            selection="uiModel.opetusPaikkas.uris"
+            promise="uiModel.opetusPaikkas.promise"
+            columns="2"
+            name="opetusPaikkas" required/>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.opetusPaikkas.$error.required" tt="koulutus.edit.opetusPaikkas.required">Opetuspaikat vaaditaan</p>
+        </td>
+        </tr>
+
+        <!-- teemat -->
+        <tr class="required">
+            <th tt="koulutus.edit.aiheet">Aiheet</th>
+            <td>
+        <aiheet-ja-teemat  model="uiModel.aihees.uris"></aiheet-ja-teemat>
+        </td>
+        <td>
+            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.aiheetJaTeemat.$error.required" tt="koulutus.edit.aihees.required"/>
+        </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td colspan="2" class="help" tt="koulutus.edit.aihe-teema.help">Aiheet vaaditaan</td>
+        </tr>
+
+        <!-- väli -->
+        <tr class="padding"><td colspan="3"></td></tr>
+
+        <tr>
+            <th tt="koulutus.edit.oppiaine">Oppiaine</th>
+            <td><input type="text" data-ng-model="model.oppiaine" /></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <th tt="koulutus.edit.opettaja.name">Opettaja</th>
+            <td><input type="text" data-ng-model="model.opettaja" /></td>
+            <td></td>
+        </tr>
+
+       <!-- väli -->
+       <tr class="padding"><td colspan="3"></td></tr>
+       <tbody ng-include="'partials/koulutus/edit/editYhteyshenkilo.html'"></tbody>
+
+        <!-- väli -->
+        <tr class="padding"><td colspan="3"></td></tr>
+
+
+    </table>
+

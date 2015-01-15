@@ -1,7 +1,8 @@
 /* Controllers */
 var app = angular.module('app.koulutus.ctrl');
 app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
-                    SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService) {
+                    SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService,
+                    KoulutusService) {
     'use strict';
 
     $log = $log.getInstance('LuoKoulutusDialogiController');
@@ -9,6 +10,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     $log.debug('resetting form selections');
     $scope.model = {
         koulutustyyppi: undefined,
+        koulutusmoduuliTyyppi: $scope.spec.type !== '*' ? $scope.spec.type : undefined,  // inherit default value from parent
         organisaatiot: []
     };
     //resolvaa tarvittavat koodit ja suhteet... rakentaa mapit validointia varten:
@@ -185,15 +187,15 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
     //alusta koulutustyypit (kaikki valittavissa olevat)
     paivitaKoulutustyypit();
     /**
-           * Peruuta nappulaa klikattu, sulje dialogi
-           */
+       * Peruuta nappulaa klikattu, sulje dialogi
+       */
     $scope.peruuta = function() {
         $log.debug('peruuta');
         $scope.luoKoulutusDialog.dismiss('cancel');
     };
     /**
-           * Jatka nappulaa klikattu, avaa seuraava dialogi TODO jos ei kk pitäisi mennä suoraan lomakkeelle?
-           */
+       * Jatka nappulaa klikattu, avaa seuraava dialogi TODO jos ei kk pitäisi mennä suoraan lomakkeelle?
+       */
     $scope.jatka = function() {
         // Tarkista, että valittuna vähintään yksi oma organisaatio
         var firstOwnOrg;
@@ -225,6 +227,13 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             return;
         }
         if (toteutustyyppi === 'KORKEAKOULUTUS') {
+            if (_.contains(['OPINTOKOKONAISUUS',
+                            'OPINTOJAKSO'], $scope.model.koulutusmoduuliTyyppi)) {
+                $scope.luoKoulutusDialog.close();
+                KoulutusService.luoKorkeakouluOpinto($scope.model.koulutustyyppi.koodiUri,
+                    $scope.model.organisaatiot[0].oid, $scope.model.koulutusmoduuliTyyppi);
+                return;
+            }
             var olt = OrganisaatioService.haeOppilaitostyypit($scope.model.organisaatiot[0].oid);
             olt.then(function(oppilaitostyypit) {
                 Koodisto.getAlapuolisetKoodiUrit(oppilaitostyypit, 'koulutusasteoph2002')
@@ -299,8 +308,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         }
     };
     /**
-           * "Ei toteutettu" dialogi
-           */
+       * "Ei toteutettu" dialogi
+       */
     var eiToteutettu = function() {
         //ei toteutettu hässäkkä, positetaan kun muutkin tyypit on tuettu:
         $scope.dialog = {
@@ -325,29 +334,33 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         });
     };
     /**
-           * Jatka nappula enabloitu:
-           * -organisaatio valittu && koulutus valittu && valinta on validi, olettaa että vain yhden organisaation voi valita.
-           */
+       * Jatka nappula enabloitu:
+       * -organisaatio valittu && koulutus valittu && valinta on validi, olettaa että vain yhden organisaation voi valita.
+       */
     $scope.jatkaDisabled = function() {
         var jatkaEnabled = $scope.organisaatioValittu() && $scope.koulutustyyppiValidi() // pohjakoulutus pitää olla valittuna osalle koulutuksista
             && !($scope.showPohjakoulutusvaatimus && !$scope.model.pohjakoulutusvaatimus);
+        if ($scope.model.tutkintoonJohtamattomatEnabled && $scope.model.koulutustyyppi
+            && $scope.model.koulutustyyppi.koodiUri === 'koulutustyyppi_3') {
+            jatkaEnabled &= ($scope.model.koulutusmoduuliTyyppi !== undefined);
+        }
         return !jatkaEnabled;
     };
     /**
-           * Tarkista että Koulutustyyppi valittu ja validi vrt valittu organisaatio
-           */
+       * Tarkista että Koulutustyyppi valittu ja validi vrt valittu organisaatio
+       */
     $scope.koulutustyyppiValidi = function() {
         return $scope.sallitutKoulutustyypit.indexOf($scope.model.koulutustyyppi) != -1;
     };
     /**
-           * Organisaatio valittu
-           */
+       * Organisaatio valittu
+       */
     $scope.organisaatioValittu = function() {
         return $scope.model.organisaatiot.length > 0;
     };
     /**
-           * Poista valittu organisaatio ruksista
-           */
+       * Poista valittu organisaatio ruksista
+       */
     $scope.poistaValittu = function(organisaatio) {
         var valitut = [];
         for (var i = 0; i < $scope.model.organisaatiot.length; i++) {
@@ -374,9 +387,9 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         }, 500);
     };
     /**
-           * Palauta organisaatiopuunäkymän oletusarvo, jos käyttäjä
-           * poistaa ruksin "Näytä myös muut korkeakoulut".
-           */
+       * Palauta organisaatiopuunäkymän oletusarvo, jos käyttäjä
+       * poistaa ruksin "Näytä myös muut korkeakoulut".
+       */
     var lkorganisaatiotInit = null;
     $scope.toggleOtherOrganizations = function(skipInit) {
         if (lkorganisaatiotInit === null && !skipInit && $scope.lkorganisaatiot) {
@@ -386,4 +399,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             $scope.lkorganisaatiot = lkorganisaatiotInit;
         }
     };
+
+    // TODO: muuta kun tutkintoon johtamaton otetaan käyttöön
+    // tällä hetkellä voi käyttää vain rekisterinpitäjän oikeuksilla
+    $scope.model.tutkintoonJohtamattomatEnabled = AuthService.isUserOph();
 });

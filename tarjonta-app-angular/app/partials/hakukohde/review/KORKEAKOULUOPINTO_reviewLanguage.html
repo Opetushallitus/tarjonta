@@ -1,0 +1,104 @@
+<table class="tarjontaForm">
+    <tr><th></th><td></td><td></td></tr>
+
+    <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
+        <td><a class="btn" ng-disabled="!isPartiallyMutable" href ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a>
+    </tr>
+
+    <tbody ng-show="!model.collapse.perusTiedot">
+        <tr>
+            <th tt="hakukohde.review.perustiedot.nimi"/>
+            <td colspan="2">
+                {{model.hakukohde.hakukohteenNimet[lang.koodi_uri]}}
+            </td>
+        </tr>
+        <tr>
+            <th tt="hakukohde.review.perustiedot.haku"/>
+            <td colspan="2">
+                {{ model.hakuNimiInformation.nimi }}
+            </td>
+        </tr>
+
+        <tr>
+            <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
+            <td colspan="2">
+                <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
+            </td>
+        </tr>
+
+        <tr>
+            <th tt="hakukohde.review.perustiedot.ilmoittautumisaika">Ilmoittautumisaika</th>
+            <td colspan="2">
+                {{ model.hakukohde.hakuaikaAlkuPvm | date:'dd.MM.yyyy'}} -
+                {{ model.hakukohde.hakuaikaLoppuPvm | date:'dd.MM.yyyy'}}
+            </td>
+        </tr>
+
+        <tr>
+            <th tt="hakukohde.review.hakumenettely.kuvaus"/>
+            <td colspan="2" data-ng-bind-html="model.hakukohde.hakuMenettelyKuvaukset[lang.koodi_uri]"></td>
+        </tr>
+
+        <tr>
+            <th tt="hakukohde.review.peruutusehdot.kuvaus"/>
+            <td colspan="2" data-ng-bind-html="model.hakukohde.peruutusEhdotKuvaukset[lang.koodi_uri]"></td>
+        </tr>
+
+        <tr>
+            <th tt="hakukohde.review.perustiedot.lisatietoja.hakemisestaTaiIlmoittautumisesta">Lisätietoja hakemisesta tai ilmoittautumisesta</th>
+            <td colspan="2" data-ng-bind-html="model.hakukohde.lisatiedot[lang.koodi_uri]"></td>
+        </tr>
+    </tbody>
+
+    <tr class="collapse" ng-class="model.collapse.koulutukset ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.koulutukset.otsikko" ng-click="model.collapse.koulutukset = !model.collapse.koulutukset"></th>
+        <td><a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaKoulutusModal()"><span tt="hakukohde.review.liita.koulutus"/> <span class="icon-plus-sign"></span></a>
+    </tr>
+
+    <tr ng-show="!model.collapse.koulutukset">
+        <th></th>
+        <td colspan="2">
+            <table class="table">
+                <tr data-ng-repeat="koulutus in  model.koulutukses">
+                    <td>
+                        <a ng-href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a>
+                    </td>
+                    <td>
+                        <div class="align-right">
+                            <a class="btn" href ng-click="showKoulutusHakukohtees(koulutus)"><span tt="hakukohde.review.koulutus.nayta.hakukohteet"/> <span class="icon-eye-open"></span></a>
+                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeKoulutusFromHakukohde(koulutus)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr class="collapse" ng-class="model.collapse.ryhmat ? '' : 'open'">
+        <th colspan="2" tt="hakukohde.review.ryhmat.otsikko" ng-click="model.collapse.ryhmat = !model.collapse.ryhmat">Ryhmät</th>
+        <td>
+                   <!--
+                   <a class="btn" ng-disabled="!isMutable" href ng-click="openLiitaRyhmaModal()"><span tt="hakukohde.review.liita.ryhma"/> <span class="icon-plus-sign"></span></a>
+                   -->
+               </td>
+    </tr>
+
+    <tr ng-show="!model.collapse.ryhmat">
+        <th></th>
+        <td colspan="2">
+            <table class="table">
+                <tr data-ng-repeat="(oid,nimi) in model.ryhmat">
+                    <td>
+                        {{nimi}}
+                    </td>
+                    <td>
+                        <div class="align-right">
+                            <a class="btn" href ng-disabled="!isMutable" ng-click="removeRyhma(oid)"><span tt="hakukohde.review.koulutus.poista"/> <span class="icon-remove"></span></a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

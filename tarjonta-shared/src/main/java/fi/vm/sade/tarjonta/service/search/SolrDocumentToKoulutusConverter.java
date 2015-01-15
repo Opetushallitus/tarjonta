@@ -12,6 +12,7 @@ import org.apache.solr.common.SolrDocumentList;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
 import org.apache.solr.common.util.Hash;
@@ -78,6 +79,10 @@ public class SolrDocumentToKoulutusConverter {
 
         if (koulutusDoc.getFieldValue(POHJAKOULUTUSVAATIMUS_URI) != null) {
             perustieto.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, koulutusDoc));
+        }
+
+        if (koulutusDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM) != null) {
+            perustieto.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.valueOf("" + koulutusDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM))); 
         }
 
         createKoulutuksenAlkamisPvm(koulutusDoc, perustieto);

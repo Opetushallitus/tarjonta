@@ -1184,4 +1184,12 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     public void setOpettaja(String opettaja) {
         this.opettaja = opettaja;
     }
+
+    public Set<String> getKoulutusRyhmaOids() {
+        return koulutusRyhmaOids;
+    }
+
+    public void setKoulutusRyhmaOids(Set<String> koulutusRyhmaOids) {
+        this.koulutusRyhmaOids = koulutusRyhmaOids;
+    }
 }

@@ -2,6 +2,7 @@ package fi.vm.sade.tarjonta.service.search;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
@@ -104,6 +105,9 @@ public class SolrDocumentToHakukohdeConverter {
             return null;
         }
         hakukohde.setKoulutusastetyyppi(createKoulutusastetyyppi(hakukohdeDoc));
+        if (hakukohdeDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM) != null) {
+            hakukohde.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)));
+        }
         return hakukohde;
     }
 

@@ -30,11 +30,14 @@ app.controller('HakukohdeParentController', [
                  dialogService, HakukohdeService, ValidatorService) {
 
         var korkeakoulutusHakukohdePartialUri = 'partials/hakukohde/edit/korkeakoulu/editKorkeakoulu.html';
+        var korkeakouluOpintoHakukohdePartialUri = 'partials/hakukohde/edit/korkeakouluopinto/' +
+            'editKorkeakouluOpinto.html';
         var aikuLukioHakukohdePartialUri = 'partials/hakukohde/edit/aiku/lukio/editAiku.html';
         var aikuNayttoHakukohdePartialUri = 'partials/hakukohde/edit/aiku/naytto/editAmmatillinenNaytto.html';
         var toinenAsteHakukohdePartialUri = 'partials/hakukohde/edit/TOINEN_ASTE.html';
         var routing = {
             'KORKEAKOULUTUS': korkeakoulutusHakukohdePartialUri,
+            KORKEAKOULUOPINTO: korkeakouluOpintoHakukohdePartialUri,
             'LUKIOKOULUTUS_AIKUISTEN_OPPIMAARA': aikuLukioHakukohdePartialUri,
             'AMMATILLINEN_PERUSKOULUTUS': aikuNayttoHakukohdePartialUri,
             'AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA': aikuNayttoHakukohdePartialUri,
@@ -214,6 +217,7 @@ app.controller('HakukohdeParentController', [
         $scope.model.allkieles = [];
         $scope.model.selectedKieliUris = [];
         $scope.model.integerval = /^\d*$/;
+        $scope.model.languages = [];
         $scope.julkaistuVal = 'JULKAISTU';
         $scope.luonnosVal = 'LUONNOS';
         $scope.valmisVal = 'VALMIS';
@@ -1306,6 +1310,44 @@ app.controller('HakukohdeParentController', [
         };
         $scope.fnTemp = function() {};
         $scope.temp = null;
+
+        $scope.isOpinto = function(hakukohde) {
+            var toteutusTyyppi = hakukohde.toteutusTyyppi;
+            if (!toteutusTyyppi) {
+                toteutusTyyppi = SharedStateService.getFromState('SelectedToteutusTyyppi');
+            }
+            if (!toteutusTyyppi) {
+                $log.error('Cannot determine toteutusTyyppi', hakukohde);
+                throw new Error('Cannot determine toteutusTyyppi');
+            }
+            return toteutusTyyppi === 'KORKEAKOULUOPINTO';
+        };
+
+        $scope.searchKoodi = function(obj, koodistouri, uri, locale) {
+            var promise = Koodisto.getKoodi(koodistouri, uri, locale);
+            promise.then(function(data) {
+                obj.name = data.koodiNimi;
+                obj.versio = data.koodiVersio;
+                obj.koodi_uri = data.koodiUri;
+                obj.locale = data.koodiArvo;
+            });
+        };
+        var initLangs = function() {
+            var map = {};
+            angular.forEach(window.CONFIG.app.userLanguages, function(val) {
+                map[val] = val;
+            });
+            angular.forEach($scope.model.hakukohde.opetusKielet, function(val) {
+                map[val] = val;
+            });
+            angular.forEach(map, function(val, key) {
+                var lang = {'koodi_uri': val};
+                $scope.searchKoodi(lang, window.CONFIG.env['koodisto-uris.kieli'], key, $scope.model.koodistoLocale);
+                $scope.model.languages.push(lang);
+            });
+        };
+        initLangs();
+
         $scope.addPainotettavaOppiaine = function() {
             return HakukohdeService.addPainotettavaOppiaine($scope.model.hakukohde);
         };

@@ -5,6 +5,7 @@ import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import java.util.ArrayList;
 import java.util.Map;
 
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
@@ -29,6 +30,7 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
     private Date koulutuksenAlkamisPvmMin = null;
     private Date koulutuksenAlkamisPvmMax = null;
     private ArrayList<String> tarjoajat;
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
     private String komoOid;
 
@@ -139,6 +141,14 @@ public class KoulutusHakutulosV1RDTO extends BaseV1RDTO {
      */
     public void setKoulutuslajiUri(String koulutuslajiUri) {
         this.koulutuslajiUri = koulutuslajiUri;
+    }
+
+    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
 
     public Date getKoulutuksenAlkamisPvmMax() {

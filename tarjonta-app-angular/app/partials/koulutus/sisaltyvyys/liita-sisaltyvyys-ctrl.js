@@ -124,7 +124,7 @@ app.controller('LiitaSisaltyvyysCtrl', [
         $scope.model = {
             errors: [],
             text: {
-                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti.' + targetKomo.toteutustyyppi, [
                     targetKomo.nimi,
                     organisaatio.nimi
                 ]),

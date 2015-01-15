@@ -1,6 +1,8 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
+
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ALOITUSPAIKAT_KIELET;
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ALOITUSPAIKAT_KUVAUKSET;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.KOULUTUSMODUULITYYPPI_ENUM;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -42,6 +45,7 @@ public class SolrDocumentToHakukohdeConverterTest {
         when(solrDocument.getFieldValues(ALOITUSPAIKAT_KUVAUKSET)).thenReturn(aloituspaikatKuvaukset);
         when(solrDocument.getFieldValues(ALOITUSPAIKAT_KIELET)).thenReturn(aloituspaikatKielet);
         when(solrDocument.getFieldValue("orgoid_s")).thenReturn("1.2.3");
+        when(solrDocument.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)).thenReturn(KoulutusmoduuliTyyppi.TUTKINTO);
 
         HakukohteetVastaus hakukohteetVastaus = converter.convertSolrToHakukohteetVastaus(solrDocumentList, new HashMap<String, OrganisaatioPerustieto>(), "1.2.3");
 

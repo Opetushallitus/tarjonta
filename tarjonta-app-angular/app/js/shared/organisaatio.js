@@ -24,7 +24,8 @@ angular.module('Organisaatio', [
          *
          * @returns {$q@call;defer.promise}
          */
-        function getRyhmat() {
+        function getRyhmat(tyyppi) {
+            tyyppi = tyyppi || 'hakukohde';
             var ret = $q.defer();
             var orgRyhmat = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid/ryhmat', {
                 oid: '@oid'
@@ -43,7 +44,7 @@ angular.module('Organisaatio', [
                 // Filter correct type
                 var tmp = [];
                 angular.forEach(result, function(group) {
-                    if (group.ryhmatyypit && group.ryhmatyypit.indexOf('hakukohde') >= 0) {
+                    if (group.ryhmatyypit && group.ryhmatyypit.indexOf(tyyppi) >= 0) {
                         tmp.push(group);
                     }
                 });

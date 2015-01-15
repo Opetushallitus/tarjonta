@@ -44,7 +44,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 'state=' + escape(args.state) + '&' + 'season=' + escape(args.season) + '&' +
                 'komoOid=' + escape(args.komoOid) + '&' + 'kooulutusOid=' + escape(args.koulutusOid) +
                 '&' + 'hakukohdeOid=' + escape(args.hakukohdeOid) + '&' + 'hakuOid=' + escape(args.hakuOid) +
-                '&' + 'year=' + escape(args.year),
+                '&' + 'year=' + escape(args.year) +
+                '&type=' + escape(args.type),
             expires: 60000,
             pattern: prefix + '/.*'
         };
@@ -115,6 +116,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakuOid: args.hakuOid,
             defaultTarjoaja: args.defaultTarjoaja,
             koulutustyyppi: args.koulutustyyppi ? args.koulutustyyppi : null,
+            koulutusmoduuliTyyppi: args.type,
             hakutapa: args.hakutapa,
             hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null,
             koulutuslaji: args.koulutuslaji ? args.koulutuslaji : null,
@@ -159,6 +161,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             koulutustyyppi: args.koulutustyyppi ? args.koulutustyyppi : null,
+            koulutusmoduuliTyyppi: args.type,
             hakutapa: args.hakutapa ? args.hakutapa : null,
             hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null,
             koulutuslaji: args.koulutuslaji ? args.koulutuslaji : null,
