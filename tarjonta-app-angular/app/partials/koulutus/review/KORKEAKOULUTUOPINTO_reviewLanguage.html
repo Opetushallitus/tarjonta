@@ -4,7 +4,7 @@
 
 <table class="tarjontaForm">
     <tr><th></th><td></td><td></td></tr>
-    
+
     <!-- PERUSTIEDOT / TODO collapse -->
 
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
@@ -57,7 +57,7 @@
             {{ model.koulutus.opintojenLaajuusPistetta }} {{model.koulutus.opintojenLaajuusyksikko.meta[lang.koodi_uri].nimi}}
         </td>
     </tr>
-    
+
 
     <!-- alkamispvm -->
     <tr>
@@ -136,28 +136,27 @@
     <!-- väli -->
     <tr class="padding"><td colspan="3"></td></tr>
 
-    <!-- yhteyshenkilö -->
-    <tr>
-        <th tt="koulutus.review.perustiedot.koulutuksenYhteyshenkilo">Koulutuksen yhteyshenkilö</th>
-        <td colspan="2">
-            {{ model.koulutus.yhteyshenkiloTitteli }} {{ model.koulutus.yhteyshenkiloNimi }}
-        </td>
-    </tr>
-    
-    <tr>
-        <th tt="koulutus.review.perustiedot.yhteyshenkilo.puhelinnumero">Puhelinnumero</th>
-        <td colspan="2">
-            {{ model.koulutus.yhteyshenkiloPuhelin }}
-        </td>
-    </tr>
-    
-    <tr>
-        <th tt="koulutus.review.perustiedot.yhteyshenkilo.sahkoposti">Sähköposti</th>
-        <td colspan="2">
-            {{ model.koulutus.yhteyshenkiloEmail }}
-        </td>
+    <!-- YHTEYSHENKILÖT -->
+    <tr class="collapse" ng-class="model.collapse.yhteysHenkilot ? '' : 'open'">
+        <th colspan="2" tt="koulutus.review.yhteysHenkilot.otsikko" ng-click="model.collapse.yhteysHenkilot = !model.collapse.yhteysHenkilot">Yhteyshenkilöt</th>
+        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
     </tr>
 
+    <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">
+    <tr>
+        <th><b>{{t('koulutus.review.yhteyshenkilo.'+yh.henkiloTyyppi)}}</b></th>
+        <td colspan="2">{{yh.titteli}} {{yh.sukunimi}}, {{yh.etunimet}}</td>
+    </tr>
+
+    <tr>
+        <th tt="koulutus.review.yhteyshenkilo.puhelin">Puhelin</th>
+        <td colspan="2">{{yh.puhelin}}</td>
+    </tr>
+
+    <tr>
+        <th tt="koulutus.review.yhteyshenkilo.sahkoposti">Sähköposti</th>
+        <td colspan="2">{{yh.sahkoposti}}</td>
+    </tr>
     </tbody>
 
     <!-- KUVAILEVAT TIEDOT -->

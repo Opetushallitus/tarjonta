@@ -218,37 +218,9 @@
             <td></td>
         </tr>
 
-        <!-- väli -->
-        <tr class="padding"><td colspan="3"></td></tr>
-
-        <tr>
-            <th tt="koulutus.edit.yhteyshenkilo.name">Koulutuksen yhteyshenkilö</th>
-            <td><input type="text" data-ng-model="model.yhteyshenkiloNimi" /></td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <th tt="koulutus.edit.yhteyshenkilo.title">Tehtävänimike</th>
-            <td><input type="text" data-ng-model="model.yhteyshenkiloTitteli" /></td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <th tt="koulutus.edit.yhteyshenkilo.email">Sähköpostiosoite</th>
-            <td><input type="text" data-ng-model="model.yhteyshenkiloEmail" /></td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <th tt="koulutus.edit.yhteyshenkilo.phone">Puhelinnumero</th>
-            <td><input type="text" data-ng-model="model.yhteyshenkiloPuhelin" /></td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <th></th>
-            <td colspan="2" class="help" tt="koulutus.edit.contactPerson.help">Yhteyshenkilö voi olla myös opinto- tai hakutoimisto</td>
-        </tr>
+       <!-- väli -->
+       <tr class="padding"><td colspan="3"></td></tr>
+       <tbody ng-include="'partials/koulutus/edit/editYhteyshenkilo.html'"></tbody>
 
         <!-- väli -->
         <tr class="padding"><td colspan="3"></td></tr>
