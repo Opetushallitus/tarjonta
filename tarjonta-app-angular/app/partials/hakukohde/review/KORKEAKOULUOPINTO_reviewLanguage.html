@@ -31,7 +31,7 @@
             <th tt="hakukohde.review.perustiedot.ilmoittautumisaika">Ilmoittautumisaika</th>
             <td colspan="2">
                 {{ model.hakukohde.hakuaikaAlkuPvm | date:'dd.MM.yyyy'}} -
-                {{ model.hakukohde.hakuaikaLoppuPvm | date:'dd.MM.yyyy'}} 
+                {{ model.hakukohde.hakuaikaLoppuPvm | date:'dd.MM.yyyy'}}
             </td>
         </tr>
 
@@ -62,7 +62,7 @@
             <table class="table">
                 <tr data-ng-repeat="koulutus in  model.koulutukses">
                     <td>
-                        <a ng-href="#/koulutus/{{koulutus.oid}}/edit">{{koulutus.nimi}}</a>
+                        <a ng-href="#/koulutus/{{koulutus.oid}}">{{koulutus.nimi}}</a>
                     </td>
                     <td>
                         <div class="align-right">
