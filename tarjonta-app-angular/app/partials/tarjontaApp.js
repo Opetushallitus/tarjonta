@@ -351,25 +351,6 @@ angular.module('app').config([
             });
             return defer.promise;
         }
-        /**
-         * Resolve koulutus groups, for "koulutus" usage.
-         *
-         * Returns promise which will
-         * be resolved with "[{key: "oid", value: "name fi"}, ...]"
-         */
-        function resolveKoulutusGroups($log, OrganisaatioService) {
-            // Return the promise
-            return OrganisaatioService.getRyhmat('koulutus').then(function(ryhmat) {
-                var result = [];
-                angular.forEach(ryhmat, function(ryhma) {
-                    result.push({
-                        key: ryhma.oid,
-                        value: ryhma.nimi.fi
-                    });
-                });
-                return result;
-            });
-        }
         var newKoulutus = {
             action: 'koulutus.edit',
             controller: 'KoulutusRoutingController',
@@ -383,8 +364,7 @@ angular.module('app').config([
                             isMinmax: true
                         }
                     };
-                },
-                koulutusGroups: resolveKoulutusGroups
+                }
             }
         };
         $routeProvider.when('/etusivu', {
@@ -412,8 +392,7 @@ angular.module('app').config([
             action: 'koulutus.edit',
             controller: 'KoulutusRoutingController',
             resolve: {
-                koulutusModel: resolveKoulutus,
-                koulutusGroups: resolveKoulutusGroups
+                koulutusModel: resolveKoulutus
             }
         }).when('/koulutus/:toteutustyyppi/:koulutustyyppi/edit/:org/:koulutuskoodi?', newKoulutus)
         .when('/koulutus/:toteutustyyppi/:koulutustyyppi/:koulutuslaji/edit/:org/:koulutuskoodi?', newKoulutus)

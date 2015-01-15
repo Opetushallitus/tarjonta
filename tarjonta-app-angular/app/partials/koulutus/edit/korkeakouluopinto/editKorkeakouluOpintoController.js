@@ -3,9 +3,6 @@ var app = angular.module('app.edit.ctrl.kko', ['Koodisto', 'Yhteyshenkilo', 'ngR
 app.controller('EditKorkeakouluOpintoController', function EditKorkeakouluOpintoController($route, $scope,
        Koodisto) {
 
-    // Get organisation groups, see "tarjontaApp.js" routing resolve for hakukohde/id/edit
-    var koulutusGroups = $route.current.locals.koulutusGroups || [];
-
     $scope.loadOpinnonTyypit = function(apiModel, uiModel) {
         Koodisto.getAllKoodisWithKoodiUri('opinnontyyppi', $scope.koodistoLocale, false).then(function(tyypit) {
             uiModel.opinnonTyypit = tyypit;
@@ -57,14 +54,5 @@ app.controller('EditKorkeakouluOpintoController', function EditKorkeakouluOpinto
 
         // lisätietokielivalinnat
         $scope.getLisatietoKielet($scope.model, $scope.uiModel, true);
-
-        // Mahdolliset Organisaatiopalvelun koulutusryhmät, joissa koulutus voi olla, routerissa resolvattuna
-        // [{ key: XXX, value: YYY}, ...]
-        $scope.uiModel.koulutusRyhmat = koulutusGroups;
-
-        // Alusta ryhmälista tyhjäksi jos ei valintoja
-        if (!$scope.model.koulutusRyhmaOids) {
-            $scope.model.koulutusRyhmaOids = [];
-        }
     });
 });
