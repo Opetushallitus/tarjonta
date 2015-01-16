@@ -200,6 +200,7 @@
                         ></results-tree-table>
 
                 </tab>
+
                 <tab heading="{{t('tarjonta.hakutulos.hakukohteet')}}{{getHakukohdeResultCount()}}"
                      select="hakukohteetSelected()"
                      active="tabs.hakukohteet.active">
@@ -223,6 +224,22 @@
 
                         get-link="hakukohdeGetLink"
                         get-options="hakukohdeGetOptions"
+                        ></results-tree-table>
+                </tab>
+
+                <tab heading="{{t('tarjonta.hakutulos.jarjestettavatKoulutukset')}}{{getJarjestettavatResultCount()}}"
+                     select="jarjestettavatSelected()"
+                     active="tabs.jarjestettavat.active">
+                    <results-tree-table
+                        columns="['kausi', 'koulutuslaji', 'tila']"
+                        column-titles="{kausi:'tarjonta.hakutulokset.kausi', koulutuslaji:'tarjonta.hakutulokset.koulutuslaji', tila:'tarjonta.hakutulokset.tila'}"
+                        model="jarjestettavatResults.tulokset"
+                        selection="selection.jarjestettavat"
+                        get-content="tuloksetGetContent"
+                        get-children="tuloksetGetChildren"
+                        get-identifier="tuloksetGetIdentifier"
+                        get-link="koulutusGetLink"
+                        get-options="koulutusGetOptions"
                         ></results-tree-table>
                 </tab>
             </tabset>

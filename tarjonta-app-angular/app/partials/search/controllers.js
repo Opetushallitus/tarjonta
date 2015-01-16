@@ -87,6 +87,7 @@ angular.module('app.search.controllers', [
     $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
     $scope.hakukohdeResults = {};
     $scope.koulutusResults = {};
+    $scope.jarjestettavatResults = {};
     $scope.oppilaitostyypit = SearchParameters.getOppilaitostyypit();
     $scope.organisaatiotyypit = SearchParameters.getOrganisaatiotyypit();
     $scope.spec = SearchParameters.getSpec();
@@ -282,6 +283,14 @@ angular.module('app.search.controllers', [
         TarjontaService.haeHakukohteet(spec).then(function(data) {
             $scope.hakukohdeResults = data;
         });
+        var jarjestettavatSpec = _.extend({}, spec, {
+            defaultTarjoaja: null,
+            oid: null,
+            opetusJarjestajat: spec.oid
+        });
+        TarjontaService.haeKoulutukset(jarjestettavatSpec).then(function(data) {
+            $scope.jarjestettavatResults = data;
+        });
     };
     function getResultCount(res) {
         return res && res.tuloksia && res.tuloksia > 0 ? ' (' + res.tuloksia + ')' : '';
@@ -291,6 +300,9 @@ angular.module('app.search.controllers', [
     };
     $scope.getHakukohdeResultCount = function() {
         return getResultCount($scope.hakukohdeResults);
+    };
+    $scope.getJarjestettavatResultCount = function() {
+        return getResultCount($scope.jarjestettavatResults);
     };
     $scope.luoKoulutusDisabled = function() {
         return !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
@@ -407,12 +419,21 @@ angular.module('app.search.controllers', [
     $scope.liitaHakukohteetRyhmaan = function() {
         HakukohderyhmatActions.liitaHakukohteetRyhmaan($scope);
     };
+    function clearActiveTabs() {
+        _.each($scope.tabs, function(tab) {
+            tab.active = false;
+        });
+    }
     $scope.hakukohteetSelected = function() {
+        clearActiveTabs();
         $scope.tabs.hakukohteet.active = true;
-        $scope.tabs.koulutukset.active = false;
     };
     $scope.koulutuksetSelected = function() {
-        $scope.tabs.hakukohteet.active = false;
+        clearActiveTabs();
         $scope.tabs.koulutukset.active = true;
+    };
+    $scope.jarjestettavatSelected = function() {
+        clearActiveTabs();
+        $scope.tabs.jarjestettavat.active = true;
     };
 });
