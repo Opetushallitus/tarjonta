@@ -922,9 +922,27 @@ app.controller('BaseEditController', [
                 KoulutusConverterFactory.updateOrganisationApiModel($scope.model, orgs[0].oid, orgs[0].nimi);
             });
         };
-        $scope.editOrganizations = function() {
+        $scope.$watch('model.opetusJarjestajat', function() {
+            $scope.initOpetusJarjestajat();
+        });
+        $scope.initOpetusJarjestajat = function(model) {
+            model = model || $scope.model;
+            OrganisaatioService.getPopulatedOrganizations(model.opetusJarjestajat).then(function(orgs) {
+                $scope.model.jarjestavatOrganisaatiot = orgs;
+            });
+        };
+        $scope.editOrganizations = function(type) {
+            type = type || 'TARJOAJA';
+            var model = $scope.model.organisaatiot;
+            if (type === 'JARJESTAJA') {
+                if (!$scope.model.jarjestavatOrganisaatiot) {
+                    $scope.model.jarjestavatOrganisaatiot = [];
+                }
+                model = $scope.model.jarjestavatOrganisaatiot;
+            }
+            $scope.organizationSelectionType = type;
             $scope.selectedOrganizations = [];
-            angular.forEach($scope.model.organisaatiot, function(org) {
+            angular.forEach(model, function(org) {
                 $scope.selectedOrganizations.push(org);
             });
             $scope.organizationSelectionDialog = $modal.open({

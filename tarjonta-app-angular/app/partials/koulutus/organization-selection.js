@@ -18,12 +18,25 @@ app.controller('OrganizationSelectionController', function($location, $q, $scope
         $scope.organizationSelectionDialog.dismiss('cancel');
     };
     $scope.done = function() {
-        $scope.model.organisaatiot = [];
-        $scope.model.opetusTarjoajat = [];
-        angular.forEach($scope.selectedOrganizations, function(org) {
-            $scope.model.organisaatiot.push(org);
-            $scope.model.opetusTarjoajat.push(org.oid);
-        });
+        var actions = {
+            TARJOAJA: function() {
+                $scope.model.organisaatiot = [];
+                $scope.model.opetusTarjoajat = [];
+                _.each($scope.selectedOrganizations, function(org) {
+                    $scope.model.organisaatiot.push(org);
+                    $scope.model.opetusTarjoajat.push(org.oid);
+                });
+            },
+            JARJESTAJA: function() {
+                $scope.model.jarjestavatOrganisaatiot = [];
+                $scope.model.opetusJarjestajat = [];
+                _.each($scope.selectedOrganizations, function(org) {
+                    $scope.model.jarjestavatOrganisaatiot.push(org);
+                    $scope.model.opetusJarjestajat.push(org.oid);
+                });
+            }
+        };
+        actions[$scope.organizationSelectionType]();
         $scope.organizationSelectionDialog.dismiss();
     };
     var searchOrganizationTimeout = null;

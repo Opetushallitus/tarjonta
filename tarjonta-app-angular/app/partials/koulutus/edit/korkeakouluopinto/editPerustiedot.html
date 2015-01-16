@@ -1,15 +1,33 @@
    <table class="tarjontaForm">
+
+       <tr ng-if="model.opetusTarjoajat">
+           <th>Järjestävät organisaatiot</th>
+           <td ng-if="model.jarjestavatOrganisaatiot.length">
+               <ul>
+                   <li ng-repeat="org in model.jarjestavatOrganisaatiot">{{org.nimi}}</li>
+               </ul>
+           </td>
+           <td>
+               <button class="btn" ng-click="editOrganizations('JARJESTAJA')">
+                   <i class="icon-pencil"></i> Muokkaa organisaatioita
+               </button>
+           </td>
+       </tr>
+       <tr>
+           <th></th>
+           <td colspan="2" class="help">HELP teksti</td>
+       </tr>
+
         <!-- koulutusohjelma -->
         <tr class="required">
-
             <th tt="koulutus.edit.{{CONFIG.TYYPPI}}.nimi">Opinnon nimi</th>
             <td>
-        <mk-textfield model="model.koulutusohjelma.tekstis"
-                      name="koulutusohjelma" required></mk-textfield>
-        </td>
-        <td>
-            <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p>
-        </td>
+                <mk-textfield model="model.koulutusohjelma.tekstis"
+                              name="koulutusohjelma" required></mk-textfield>
+            </td>
+            <td>
+                <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.koulutusohjelma.$error.required" tt="koulutus.edit.koulutusohjelma.required">(TODO virheilmo)</p>
+            </td>
         </tr>
 
         <tr>
