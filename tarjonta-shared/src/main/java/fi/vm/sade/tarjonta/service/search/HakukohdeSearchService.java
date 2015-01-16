@@ -97,7 +97,7 @@ public class HakukohdeSearchService extends SearchService {
         addFilterForHakukohdeTila(tilat, q);
         addFilterForHakuOid(kysely, q);
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
-        addFilterForOrgs(oids, queryParts, q);
+        addFilterForOrgs(oids, queryParts, q, ORG_PATH);
         addFilterForHakutapa(kysely, q);
         addFilterForHakutyyppi(kysely, q);
         addFilterForHakukohdeOid(kysely, q);

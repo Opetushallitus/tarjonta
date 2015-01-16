@@ -1125,6 +1125,21 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return oids;
     }
 
+    public Set<String> getJarjestajaOids() {
+        Set<String> oids = new HashSet<String>();
+        for (KoulutusOwner owner : owners) {
+            if (KoulutusOwner.JARJESTAJA.equals(owner.getOwnerType())) {
+                oids.add(owner.getOwnerOid());
+            }
+        }
+
+        if (oids.isEmpty()) {
+            oids.add(getTarjoaja());
+        }
+
+        return oids;
+    }
+
     public List<String> getKoulutuslajiKoodiUris() {
         List<String> koodiUris = new ArrayList<String>();
         for (KoodistoUri koulutuslaji : koulutuslajis) {

@@ -30,6 +30,7 @@ public class SolrFields {
         protected static final String OID = "id";
         protected static final String ORG_OID = "orgoid_ss";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
+        protected static final String JARJESTAJA_PATH = "jarjestajapath_ss";
         protected static final String KOULUTUSOHJELMA_FI = "koulutusohjelmafi_t";               //this is used in search
         protected static final String KOULUTUSOHJELMA_SV = "koulutusohjelmasv_t";               //this is used in search
         protected static final String KOULUTUSOHJELMA_EN = "koulutusohjelmaen_t";

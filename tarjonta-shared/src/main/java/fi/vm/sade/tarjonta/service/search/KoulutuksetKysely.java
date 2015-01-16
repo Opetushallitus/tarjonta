@@ -30,6 +30,7 @@ public class KoulutuksetKysely implements Serializable {
     private Integer koulutuksenAlkamisvuosi;
 
     private List<String> tarjoajaOids = new ArrayList<String>();
+    private List<String> jarjestajaOids = new ArrayList<String>();
     private List<String> koulutusOids = new ArrayList<String>();
     private List<String> hakukohdeOids = new ArrayList<String>();
     private List<String> koulutustyyppi = new ArrayList<String>();
@@ -104,6 +105,10 @@ public class KoulutuksetKysely implements Serializable {
 
     public List<String> getTarjoajaOids() {
         return this.tarjoajaOids;
+    }
+
+    public List<String> getJarjestajaOids() {
+        return this.jarjestajaOids;
     }
 
     public List<String> getKoulutusOids() {

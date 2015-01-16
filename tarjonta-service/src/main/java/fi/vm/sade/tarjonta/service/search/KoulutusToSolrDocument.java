@@ -97,6 +97,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addDataFromHakukohde(komotoDoc, koulutusmoduuliToteutus);
         addTekstihaku(komotoDoc);
 
+        if (koulutusmoduuliToteutus.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUOPINTO)) {
+            addJarjestajatiedot(komotoDoc, getJarjestajat(koulutusmoduuliToteutus));
+        }
+
         docs.add(komotoDoc);
 
         return docs;
@@ -291,6 +295,16 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         }
     }
 
+    private void addJarjestajatiedot(SolrInputDocument komotoDoc, List<OrganisaatioPerustieto> orgs) {
+        for (OrganisaatioPerustieto org : orgs) {
+            ArrayList<String> oidPath = getReversedParentOrgOids(org);
+
+            for (String path : oidPath) {
+                add(komotoDoc, JARJESTAJA_PATH, path);
+            }
+        }
+    }
+
     private ArrayList<String> getReversedParentOrgOids(OrganisaatioPerustieto org) {
         ArrayList<String> oids = getParentOrgOids(org);
         Collections.reverse(oids);
@@ -316,6 +330,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     private List<OrganisaatioPerustieto> getTarjoajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
         return organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getTarjoajaOids());
+    }
+
+    private List<OrganisaatioPerustieto> getJarjestajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
+        return organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getJarjestajaOids());
     }
 
     private void addTyypit(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {

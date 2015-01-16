@@ -886,9 +886,11 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             String kohdejoukko,
             String oppilaitoistyyppi,
             String kunta,
-            List<String> opetuskielet) {
+            List<String> opetuskielet,
+            List<String> jarjestajaOids) {
 
         organisationOids = organisationOids != null ? organisationOids : new ArrayList<String>();
+        jarjestajaOids = jarjestajaOids != null ? jarjestajaOids : new ArrayList<String>();
 
         KoulutuksetKysely q = new KoulutuksetKysely();
 
@@ -897,6 +899,7 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         q.setKoulutuksenAlkamiskausi(alkamisKausi);
         q.setKoulutuksenAlkamisvuosi(alkamisVuosi);
         q.getTarjoajaOids().addAll(organisationOids);
+        q.getJarjestajaOids().addAll(jarjestajaOids);
         q.getKoulutusOids().addAll(koulutusOids);
         q.setKoulutuksenTila(komotoTila == null ? null : fi.vm.sade.tarjonta.shared.types.TarjontaTila.valueOf(komotoTila).asDto());
         q.getKoulutusasteTyypit().addAll(koulutusastetyyppi);

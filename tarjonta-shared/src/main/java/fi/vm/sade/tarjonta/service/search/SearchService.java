@@ -65,13 +65,19 @@ public class SearchService {
         queryParts.clear();
     }
 
-    protected void addFilterForOrgs(final List<String> oids,
-                                    final List<String> queryParts, SolrQuery q) {
+    protected void addFilterForOrgs(final List<String> oids, final List<String> queryParts, SolrQuery q, String path) {
         if (oids.size() > 0) {
-            addQuery("", queryParts, matchFull(), ORG_PATH,
-                    Joiner.on(" ").join(oids));
+            addQuery("", queryParts, matchFull(), path, Joiner.on(" ").join(oids));
             q.addFilterQuery(Joiner.on(" ").join(queryParts));
         }
+    }
+
+    protected void addFilterForTarjoaja(final List<String> oids, final List<String> queryParts, SolrQuery q) {
+        addFilterForOrgs(oids, queryParts, q, ORG_PATH);
+    }
+
+    protected void addFilterForJarjestaja(final List<String> oids, final List<String> queryParts, SolrQuery q) {
+        addFilterForOrgs(oids, queryParts, q, JARJESTAJA_PATH);
     }
 
     protected String matchFull() {

@@ -105,6 +105,7 @@ public class KoulutusSearchService extends SearchService {
 
         final String koulutuksenTila = kysely.getKoulutuksenTila() != null ? kysely.getKoulutuksenTila().value() : null;
         final List<String> tarjoajaOids = kysely.getTarjoajaOids();
+        final List<String> jarjestajaOids = kysely.getJarjestajaOids();
         final List<String> koulutusOids = kysely.getKoulutusOids();
         final List<String> hakukohdeOids = kysely.getHakukohdeOids();
 
@@ -118,7 +119,8 @@ public class KoulutusSearchService extends SearchService {
         addFilterForKoulutusOid(kysely, q);
         addFilterForKomoOid(kysely, q);
         addFilterForVuosiKausi(kausi, vuosi, queryParts, q);
-        addFilterForOrgs(tarjoajaOids, queryParts, q);
+        addFilterForTarjoaja(tarjoajaOids, queryParts, q);
+        addFilterForJarjestaja(jarjestajaOids, queryParts, q);
         addFilterForHakutapa(kysely.getHakutapa(), q);
         addFilterForHakutyyppi(kysely, q);
         addFilterForHakukohteet(hakukohdeOids, queryParts, q);
