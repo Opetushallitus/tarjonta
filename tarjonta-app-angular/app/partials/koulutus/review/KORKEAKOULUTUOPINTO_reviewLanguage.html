@@ -14,11 +14,28 @@
 
     <tbody ng-show="!model.collapse.perusTiedot">
 
-    <!-- organisaation nimi -->
     <tr>
         <th tt="koulutus.review.perustiedot.organisaatio">Organisaatio</th>
         <td colspan="2">
-            {{model.koulutus.organisaatio.nimi}}
+            <ul>
+                <li ng-repeat="org in model.koulutus.organisaatiot">{{org.nimi}}</li>
+            </ul>
+        </td>
+    </tr>
+
+    <tr>
+        <th tt="koulutus.review.perustiedot.jarjestavatOrganisaatiot">Järjestävät organisaatiot</th>
+        <td>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Organisaatio</th>
+                    <th>Koulutuksen tila</th>
+                </tr>
+                <tr ng-repeat="org in model.koulutus.opetusJarjestajat">
+                    <td>{{org.nimi}}</td>
+                    <td>{{org.tila}} todo</td>
+                </tr>
+            </table>
         </td>
     </tr>
 

@@ -338,14 +338,29 @@ angular.module('app').config([
             TarjontaService.getKoulutus({
                 oid: $route.current.params.id
             }).$promise.then(function(res) {
-                OrganisaatioService.getPopulatedOrganizations(res.result.opetusTarjoajat, res.result.organisaatio.oid)
-                .then(function(orgs) {
-                    res.result.organisaatiot = orgs;
+                var promises = [];
+
+                promises.push(OrganisaatioService.getPopulatedOrganizations(
+                    res.result.opetusTarjoajat, res.result.organisaatio.oid));
+
+                if (res.result.opetusJarjestajat && res.result.opetusJarjestajat.length) {
+                    promises.push(OrganisaatioService.getPopulatedOrganizations(res.result.opetusJarjestajat));
+                }
+
+                $q.all(promises).then(function(data) {
+                    var tarjoajat = data[0];
+                    var jarjestajat = data[1];
+                    // tarjoajat
+                    res.result.organisaatiot = tarjoajat;
                     var nimet = '';
-                    angular.forEach(orgs, function(org) {
+                    angular.forEach(tarjoajat, function(org) {
                         nimet += ' | ' + org.nimi;
                     });
                     res.result.organisaatioidenNimet = nimet.substring(3);
+
+                    // jarjestajat
+                    res.result.opetusJarjestajat = jarjestajat;
+
                     defer.resolve(res);
                 });
             });
