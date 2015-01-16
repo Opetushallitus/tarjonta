@@ -460,6 +460,12 @@ public class KoulutusDTOConverterToEntity {
                 komoto.setNimi(new MonikielinenTeksti(monikielinenTekstiVarags));
             }
         }
+        else if (dto instanceof KoulutusAikuistenPerusopetusV1RDTO) {
+            KoulutusAikuistenPerusopetusV1RDTO aikuPerus = (KoulutusAikuistenPerusopetusV1RDTO) dto;
+            if (aikuPerus.getKielivalikoima() != null) {
+                commonConverter.convertToKielivalikoima(aikuPerus.getKielivalikoima(), komoto);
+            }
+        }
 
         /**
          * ParentKomotojen käsittely. ParentKomotoista oli jo luovuttu samalla kun Vaadin-toteutuksesta
