@@ -162,14 +162,14 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
         ResultV1RDTO<KoulutusV1RDTO> result = new ResultV1RDTO<KoulutusV1RDTO>();
         final KoulutusmoduuliToteutus komoto = this.koulutusmoduuliToteutusDAO.findKomotoByOid(komotoOid);
-        // load lazy
-        komoto.getKoulutusRyhmaOids().size();
-        final RestParam restParam = RestParam.byUserRequest(showMeta, showImg, userLang);
-
         if (komoto == null) {
             result.setStatus(ResultStatus.NOT_FOUND);
             return result;
         }
+
+        // load lazy
+        komoto.getKoulutusRyhmaOids().size();
+        final RestParam restParam = RestParam.byUserRequest(showMeta, showImg, userLang);
 
         //convert required komoto to dto rest format.
         switch (getType(komoto)) {
