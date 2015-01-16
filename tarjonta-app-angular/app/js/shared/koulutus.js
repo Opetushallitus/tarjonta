@@ -56,8 +56,8 @@ app.factory('KoulutusService', function($resource, Config, $location, $modal) {
             $location.path('/koulutus/KORKEAKOULUOPINTO/'
                     + koulutustyyppiKoodiUri
                     + '/edit/'
-                    + organisaatioOid
-                    + '/' + koulutusmoduuliTyyppi);
+                    + organisaatioOid);
+            $location.search('koulutusmoduuliTyyppi', koulutusmoduuliTyyppi);
         }
     };
 

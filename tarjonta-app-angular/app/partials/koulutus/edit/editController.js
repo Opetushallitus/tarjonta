@@ -653,6 +653,9 @@ app.controller('BaseEditController', [
                  * Look more info from koulutusController.js.
                  */
                 $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
+                if ($routeParams.koulutusmoduuliTyyppi) {
+                    model.koulutusmoduuliTyyppi = $routeParams.koulutusmoduuliTyyppi;
+                }
                 /*
                  * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                  */
