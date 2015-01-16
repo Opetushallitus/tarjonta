@@ -87,9 +87,9 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.ilmoittautumisaika">Ilmoittautumisen alkamis- ja loppumispvm</th>
                         <td>
-                            <t-date-time type="long" name="alkuPvm" timestamp="false" scope-model="model.hakukohde.hakuaikaAlkuPvm" required
+                            <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaAlkuPvm" required
                                 tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
-                            <t-date-time type="long" name="loppuPvm" timestamp="false" scope-model="model.hakukohde.hakuaikaLoppuPvm"
+                            <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaLoppuPvm"
                                 tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
                         </td>
                         <td>
