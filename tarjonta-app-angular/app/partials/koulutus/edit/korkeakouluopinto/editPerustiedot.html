@@ -1,6 +1,18 @@
    <table class="tarjontaForm">
 
-       <tr ng-if="model.opetusTarjoajat">
+       <tr>
+           <th>Organisaatiot</th>
+           <td>
+               <ul>
+                   <li ng-repeat="org in model.organisaatiot">{{org.nimi}}</li>
+               </ul>
+           </td>
+           <td>
+               <button class="btn" ng-click="editOrganizations()"><i class="icon-pencil"></i> Muokkaa tarjoajia</button>
+           </td>
+       </tr>
+
+       <tr>
            <th>Järjestävät organisaatiot</th>
            <td ng-if="model.jarjestavatOrganisaatiot.length">
                <ul>
@@ -9,7 +21,7 @@
            </td>
            <td>
                <button class="btn" ng-click="editOrganizations('JARJESTAJA')">
-                   <i class="icon-pencil"></i> Muokkaa organisaatioita
+                   <i class="icon-pencil"></i> Muokkaa järjestäjiä
                </button>
            </td>
        </tr>
