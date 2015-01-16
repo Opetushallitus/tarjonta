@@ -1132,11 +1132,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
                 oids.add(owner.getOwnerOid());
             }
         }
-
-        if (oids.isEmpty()) {
-            oids.add(getTarjoaja());
-        }
-
         return oids;
     }
 

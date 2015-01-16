@@ -97,7 +97,8 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addDataFromHakukohde(komotoDoc, koulutusmoduuliToteutus);
         addTekstihaku(komotoDoc);
 
-        if (koulutusmoduuliToteutus.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUOPINTO)) {
+        if (koulutusmoduuliToteutus.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUOPINTO)
+                && !koulutusmoduuliToteutus.getJarjestajaOids().isEmpty()) {
             addJarjestajatiedot(komotoDoc, getJarjestajat(koulutusmoduuliToteutus));
         }
 
