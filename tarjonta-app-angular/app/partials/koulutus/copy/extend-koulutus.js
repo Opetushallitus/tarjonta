@@ -151,21 +151,12 @@ app.controller('ExtendKoulutusController', ['$modalInstance', 'targetKoulutus', 
                     return;
                 }
 
-                var apiModel = {
-                    mode: $scope.model.mode,
-                    organisationOids: orgOids
-                };
-
                 // Piilota dialogi
                 $modalInstance.dismiss();
 
-                // Luo korkeakouluopinto
-                // TODO Aseta liitos uudelle koulutukselle!
-                KoulutusService.luoKorkeakouluOpinto(
-                    targetKoulutus[0].koulutustyyppiKoodiUri,
-                    targetOrganisaatio.oid,
-                    targetKoulutus[0].koulutusmoduuliTyyppi,
-                    $scope
+                KoulutusService.jarjestaKoulutus(
+                    targetKoulutus[0].oid,
+                    $scope.model.organisaatiot[0].oid
                 );
             });
         };

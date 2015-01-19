@@ -4,7 +4,7 @@ var app = angular.module('Tarjonta', [
     'Logging'
 ]);
 app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
-                                        CacheService, $q, $log) {
+                                        CacheService, $q, $log, OrganisaatioService) {
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
@@ -374,6 +374,51 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             languageCode: '@languageCode'
         });
         return koulutus.get(arg, func);
+    };
+    dataFactory.getJarjestettavatKoulutukset = function(tarjoajanKoulutusOid) {
+        var deferred = $q.defer();
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/'
+                            + tarjoajanKoulutusOid + '/jarjestettavatKoulutukset');
+
+        // Koulutukset tallennetaan mappiin, jossa avaimena toimii organisaation oid
+        var map = {};
+        /**
+         * Tarvitaan mäppäys kaikista oidPathin oideista, jotta järjestettävät
+         * koulutukset osataan näyttää sille organisaatiolle jolle järjestämisoikeus
+         * on annettu. Tämä siitä syystä, että varsinainen koulutus voi olla tallennettuna
+         * aliorganisaatiolle (eli ei voida olettaa sen löytyvän aina suoraan määritetystä
+         * organisaatiosta)
+         */
+        function getOrganizationOidPath(orgOid) {
+            var deferred = $q.defer();
+            OrganisaatioService.byOid(orgOid).then(function(org) {
+                var oids = org.parentOidPath.split('|');
+                oids.push(org.oid);
+                oids = _.filter(oids, function(val) {return val !== '';});
+                deferred.resolve(oids);
+            });
+            return deferred.promise;
+        }
+
+        koulutus.get().$promise.then(function(data) {
+            var promises = [];
+            _.each(data.result, function(koulutus) {
+                _.each(koulutus.tarjoajat, function(tarjoaja) {
+                    var deferred = $q.defer();
+                    getOrganizationOidPath(tarjoaja).then(function(orgOids) {
+                        _.each(orgOids, function(orgOid) {
+                            map[orgOid] = koulutus;
+                        });
+                        deferred.resolve();
+                    });
+                    promises.push(deferred.promise);
+                });
+            });
+            $q.all(promises).then(function() {
+                deferred.resolve(map);
+            });
+        });
+        return deferred.promise;
     };
     dataFactory.resourceKomoKuvaus = function(komotoOid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/tekstis/komo', {

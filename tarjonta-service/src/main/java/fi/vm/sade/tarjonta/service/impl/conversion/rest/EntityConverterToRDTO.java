@@ -187,7 +187,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
 
             tjkkDto.setOppiaine(komoto.getOppiaine());
             tjkkDto.setOpettaja(komoto.getOpettaja());
-            // TODO: alexGofore yhteyshenkilo
+
+            if (komoto.getTarjoajanKoulutus() != null) {
+                tjkkDto.setTarjoajanKoulutus(komoto.getTarjoajanKoulutus().getOid());
+            }
         }
 
         else if (dto instanceof KoulutusLukioV1RDTO) {

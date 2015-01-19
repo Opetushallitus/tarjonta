@@ -129,6 +129,16 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
     }
 
     @Override
+    public List<KoulutusmoduuliToteutus> findKomotosByTarjoajanKoulutusOid(String oid) {
+        QKoulutusmoduuliToteutus qKoulutusmoduuliToteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
+
+        BooleanExpression criteria = qKoulutusmoduuliToteutus.tarjoajanKoulutus.oid.eq(oid);
+        criteria.and(qKoulutusmoduuliToteutus.tila.notIn(TarjontaTila.POISTETTU));
+
+        return from(qKoulutusmoduuliToteutus).where(criteria).list(qKoulutusmoduuliToteutus);
+    }
+
+    @Override
     public List<KoulutusmoduuliToteutus> findKoulutusModuuliToteutusesByOids(List<String> oids) {
         QKoulutusmoduuliToteutus komoto = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
         //Added to enable ordering
@@ -422,7 +432,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                 + "AND o.koodiUri IN (:opetuskielis) "
                 + "AND k.koodiUri IN (:koulutuslajis) "
                 + "AND komoto.oid <> :komotoOid "
-                + "AND komoto.tila NOT IN ('POISTETTU)')";
+                + "AND komoto.tila NOT IN ('POISTETTU')";
 
         List<String> opetuskielis = new ArrayList<String>();
         for(KoodistoUri uri : komoto.getOpetuskielis()) {

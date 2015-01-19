@@ -1406,4 +1406,15 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         return uri;
     }
 
+    public ResultV1RDTO<List<KoulutusHakutulosV1RDTO>> getJarjestettavatKoulutukset(String oid) {
+        List<KoulutusmoduuliToteutus> komotos = koulutusmoduuliToteutusDAO.findKomotosByTarjoajanKoulutusOid(oid);
+
+        List<KoulutusHakutulosV1RDTO> hakutulokset = new ArrayList<KoulutusHakutulosV1RDTO>();
+        for (KoulutusmoduuliToteutus komoto : komotos) {
+            hakutulokset.add(converterV1.fromKomoto(komoto));
+        }
+
+        return new ResultV1RDTO<List<KoulutusHakutulosV1RDTO>>(hakutulokset);
+    }
+
 }

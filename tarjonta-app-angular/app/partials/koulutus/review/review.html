@@ -10,7 +10,8 @@
         <controls-button tt-key="koulutus.review.siirra.osaksi" action="doMoveToBeSubPart($event)"></controls-button>
         <controls-button tt-key="koulutus.review.lisaa.rinnakkainen" action="doAddParallel($event)"></controls-button>
         -->
-        <controls-button icon="plus-sign" tt-key="koulutus.review.jarjesta" action="doCreateLinked($event)"></controls-button>
+        <controls-button ng-if="isJarjestettavaKoulutus" icon="plus-sign" tt-key="koulutus.review.jarjesta"
+                         action="doCreateLinked($event)"></controls-button>
         <controls-button icon="eye-open" tt-key="koulutus.review.esikatsele" action="doPreview($event)"></controls-button>
 
         <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>

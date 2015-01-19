@@ -5,6 +5,11 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
      KoulutusService) {
     $log = $log.getInstance('BaseReviewController');
     var koulutusModel = $route.current.locals.koulutusModel.result;
+
+    // Näytetäänkö "Järjestä"-painike
+    $scope.isJarjestettavaKoulutus = koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO'
+                                        && !koulutusModel.tarjoajanKoulutus;
+
     if (angular.isUndefined(koulutusModel)) {
         $location.path('/error');
         return;

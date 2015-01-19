@@ -42,6 +42,7 @@ describe('TarjontaPermissions', function() {
 
     beforeEach(module('Haku'));
     beforeEach(module('auth'));
+    beforeEach(module('Organisaatio'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('SharedStateService'));
     beforeEach(module('TarjontaCache'));

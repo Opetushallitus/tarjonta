@@ -35,6 +35,7 @@ describe('Edit koulutus testeja', function() {
 //    mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
+    beforeEach(module('Organisaatio'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('SharedStateService'));
     beforeEach(module('KoulutusConverter'));

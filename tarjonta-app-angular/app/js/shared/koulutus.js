@@ -58,6 +58,13 @@ app.factory('KoulutusService', function($resource, Config, $location, $modal) {
                     + '/edit/'
                     + organisaatioOid);
             $location.search('koulutusmoduuliTyyppi', koulutusmoduuliTyyppi);
+        },
+
+        jarjestaKoulutus: function(koulutusOid, organisaatioOid) {
+            $location.path('/koulutus/'
+            + koulutusOid
+            + '/jarjesta/'
+            + organisaatioOid);
         }
     };
 

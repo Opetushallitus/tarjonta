@@ -296,4 +296,13 @@ public interface KoulutusV1Resource {
             notes = "Operaatio näyttää organisaation oid:lla organisaatioon liittyvät koulutustyypit.")
     ResultV1RDTO<KoulutustyyppiKoosteV1RDTO> isAllowedEducationByOrganisationOid(@PathParam("oid") String organisationOid);
 
+    @GET
+    @Path("/{oid}/jarjestettavatKoulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Palauttaa ne koulutukset, jotka on järjestetty annetusta koulutuksesta (oid)",
+            notes = "Palauttaa ne koulutukset, jotka on järjestetty annetusta koulutuksesta (oid)"
+    )
+    ResultV1RDTO<List<KoulutusHakutulosV1RDTO>> getJarjestettavatKoulutukset(@PathParam("oid") String oid);
+
 }

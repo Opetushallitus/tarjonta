@@ -12,6 +12,7 @@ module.exports = function(config) {
             'lib/angular/angular-animate.js',
             'lib/angular/angular-sanitize.js',
             'lib/ui-angular-tinymce.js',
+            'js/shared/organisaatio.js',
             'js/**/*.js',
             'js/shared/directives/*.html',
             'js/shared/directives/org-puu.js',

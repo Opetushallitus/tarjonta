@@ -340,16 +340,34 @@ angular.module('app').config([
             }).$promise.then(function(res) {
                 var promises = [];
 
+                function getNoopPromise() {
+                    var deferred = $q.defer();
+                    deferred.resolve();
+                    return deferred.promise;
+                }
+
                 promises.push(OrganisaatioService.getPopulatedOrganizations(
                     res.result.opetusTarjoajat, res.result.organisaatio.oid));
 
                 if (res.result.opetusJarjestajat && res.result.opetusJarjestajat.length) {
                     promises.push(OrganisaatioService.getPopulatedOrganizations(res.result.opetusJarjestajat));
                 }
+                else {
+                    promises.push(getNoopPromise());
+                }
+
+                if (res.result.toteutustyyppi === 'KORKEAKOULUOPINTO'
+                        && !res.result.tarjoajanKoulutus) {
+                    promises.push(TarjontaService.getJarjestettavatKoulutukset(res.result.oid));
+                }
+                else {
+                    promises.push(getNoopPromise());
+                }
 
                 $q.all(promises).then(function(data) {
                     var tarjoajat = data[0];
                     var jarjestajat = data[1];
+                    var jarjestettavatKoulutukset = data[2];
                     // tarjoajat
                     res.result.organisaatiot = tarjoajat;
                     var nimet = '';
@@ -359,7 +377,9 @@ angular.module('app').config([
                     res.result.organisaatioidenNimet = nimet.substring(3);
 
                     // jarjestajat
-                    res.result.opetusJarjestajat = jarjestajat;
+                    res.result.jarjestavatOrganisaatiot = jarjestajat;
+
+                    res.result.jarjestettavatKoulutuksetMap = jarjestettavatKoulutukset;
 
                     defer.resolve(res);
                 });
@@ -405,6 +425,12 @@ angular.module('app').config([
             }
         }).when('/koulutus/:id/edit', {
             action: 'koulutus.edit',
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusModel: resolveKoulutus
+            }
+        }).when('/koulutus/:id/jarjesta/:organisaatioOid', {
+            action: 'koulutus.jarjesta',
             controller: 'KoulutusRoutingController',
             resolve: {
                 koulutusModel: resolveKoulutus

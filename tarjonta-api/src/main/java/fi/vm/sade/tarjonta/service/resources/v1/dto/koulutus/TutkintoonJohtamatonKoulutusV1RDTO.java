@@ -31,18 +31,12 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
     private String opettaja;
     @ApiModelProperty(value = "Oppiaine")
     private String oppiaine;
-    @ApiModelProperty(value = "Yhteyshenkilön nimi")
-    private String yhteyshenkiloNimi;
-    @ApiModelProperty(value = "Yhteyshenkilön e-mail")
-    private String yhteyshenkiloEmail;
-    @ApiModelProperty(value = "Yhteyshenkilön puhelin")
-    private String yhteyshenkiloPuhelin;
-    @ApiModelProperty(value = "Yhteyshenkilön titteli")
-    private String yhteyshenkiloTitteli;
     @ApiModelProperty(value = "Koulutusryhmät OID listana", required = false)
     private Set<String> koulutusRyhmaOids = new HashSet<String>();
     @ApiModelProperty(value = "Opinnon tyyppi")
     private String opinnonTyyppiUri;
+    @ApiModelProperty(value = "Alkuperäinen koulutus, joka järjestetään")
+    private String tarjoajanKoulutus;
     
     public TutkintoonJohtamatonKoulutusV1RDTO(ToteutustyyppiEnum toteutustyyppi, ModuulityyppiEnum moduulityyppi) {
         super(toteutustyyppi, moduulityyppi);
@@ -163,38 +157,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
         this.oppiaine = oppiaine;
     }
 
-    public String getYhteyshenkiloNimi() {
-        return yhteyshenkiloNimi;
-    }
-
-    public void setYhteyshenkiloNimi(String yhteyshenkiloNimi) {
-        this.yhteyshenkiloNimi = yhteyshenkiloNimi;
-    }
-
-    public String getYhteyshenkiloEmail() {
-        return yhteyshenkiloEmail;
-    }
-
-    public void setYhteyshenkiloEmail(String yhteyshenkiloEmail) {
-        this.yhteyshenkiloEmail = yhteyshenkiloEmail;
-    }
-
-    public String getYhteyshenkiloPuhelin() {
-        return yhteyshenkiloPuhelin;
-    }
-
-    public void setYhteyshenkiloPuhelin(String yhteyshenkiloPuhelin) {
-        this.yhteyshenkiloPuhelin = yhteyshenkiloPuhelin;
-    }
-
-    public String getYhteyshenkiloTitteli() {
-        return yhteyshenkiloTitteli;
-    }
-
-    public void setYhteyshenkiloTitteli(String yhteyshenkiloTitteli) {
-        this.yhteyshenkiloTitteli = yhteyshenkiloTitteli;
-    }
-
     public Set<String> getKoulutusRyhmaOids() {
         return koulutusRyhmaOids;
     }
@@ -209,6 +171,14 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
 
     public void setOpinnonTyyppiUri(String opinnonTyyppiUri) {
         this.opinnonTyyppiUri = opinnonTyyppiUri;
+    }
+
+    public String getTarjoajanKoulutus() {
+        return tarjoajanKoulutus;
+    }
+
+    public void setTarjoajanKoulutus(String tarjoajanKoulutus) {
+        this.tarjoajanKoulutus = tarjoajanKoulutus;
     }
 
 }

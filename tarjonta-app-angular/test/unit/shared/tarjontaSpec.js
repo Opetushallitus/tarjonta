@@ -65,6 +65,7 @@ describe('Tarjonta', function() {
     };
 
     beforeEach(module('auth'));
+    beforeEach(module('Organisaatio'));
     beforeEach(module('Tarjonta'));
     beforeEach(module('Koodisto'));
     beforeEach(module('TarjontaCache'));

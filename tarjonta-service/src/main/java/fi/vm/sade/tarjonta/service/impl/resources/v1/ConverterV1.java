@@ -1720,6 +1720,20 @@ public class ConverterV1 {
         return ret;
     }
 
+    public KoulutusHakutulosV1RDTO fromKomoto(KoulutusmoduuliToteutus komoto) {
+        KoulutusHakutulosV1RDTO hakutulos = new KoulutusHakutulosV1RDTO();
+
+        hakutulos.setTila(komoto.getTila());
+        hakutulos.setOid(komoto.getOid());
+        hakutulos.setNimi(convertMonikielinenTekstiToMap(komoto.getNimi(), true));
+
+        ArrayList<String> tarjoajat = new ArrayList<String>();
+        tarjoajat.addAll(komoto.getTarjoajaOids());
+        hakutulos.setTarjoajat(tarjoajat);
+
+        return hakutulos;
+    }
+
     private KoulutusHakutulosV1RDTO convert(KoulutusPerustieto ht) {
         KoulutusHakutulosV1RDTO ret = new KoulutusHakutulosV1RDTO();
 

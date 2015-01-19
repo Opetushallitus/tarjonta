@@ -267,7 +267,7 @@ app.controller('BaseEditController', [
             }
         };
         $scope.isLoaded = function() {
-            return !angular.isUndefined($scope.model.oid) && $scope.model.oid !== null && $scope.model.oid.length > 0;
+            return $scope.model.tarjoajanKoulutus || $scope.model.oid;
         };
         $scope.getLang = function(tekstis) {
             if (angular.isUndefined(tekstis) || tekstis === null) {
@@ -646,6 +646,13 @@ app.controller('BaseEditController', [
                 uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                 $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                 $scope.loadKomoKuvausTekstis(null, model.kuvausKomo);
+
+                if ($route.current.action === 'koulutus.jarjesta' && $routeParams.organisaatioOid) {
+                    model.tarjoajanKoulutus = model.oid;
+                    model.oid = null;
+                    model.opetusJarjestajat = [];
+                    model.opetusTarjoajat = [$routeParams.organisaatioOid];
+                }
             }
             else if ($routeParams.org) {
                 /*

@@ -257,6 +257,9 @@
                             <div data-ng-switch-when="edit">
                                 <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
                             </div>
+                            <div data-ng-switch-when="jarjesta">
+                                <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
+                            </div>
                             <div data-ng-switch-default>
                                 UNKNOWN ACTION! {{ renderPath | json }}
                             </div>

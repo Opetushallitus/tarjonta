@@ -7,6 +7,7 @@ describe('Validator', function() {
 
     beforeEach(function() {
         module('Validator');
+        module('Organisaatio');
         inject(function($injector) {
             validatorService = $injector.get('ValidatorService');
         });

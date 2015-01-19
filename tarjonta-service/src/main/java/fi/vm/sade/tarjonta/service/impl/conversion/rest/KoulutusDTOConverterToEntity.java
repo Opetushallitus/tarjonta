@@ -201,6 +201,11 @@ public class KoulutusDTOConverterToEntity {
             }
         }
 
+        // Kun koulutusta järjestetään
+        if (dto.getTarjoajanKoulutus() != null) {
+            komoto.setTarjoajanKoulutus(koulutusmoduuliToteutusDAO.findByOid(dto.getTarjoajanKoulutus()));
+        }
+
         if (!addNewKomotoToKomo) {
             /*
              * Only when user create new komo + komoto.
