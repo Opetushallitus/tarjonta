@@ -226,19 +226,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     @Temporal(TemporalType.TIMESTAMP)
     private Date koulutuksenLoppumisPvm = null;
 
-    /**
-     * Sisältyy opintokokonaisuuteen 
-     */
-    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {})
-    @JoinColumn(name = "opintokokonaisuus_id", nullable = true)
-    private KoulutusmoduuliToteutus opintoKokonaisuus;
-
-    /**
-     * Sisältää opinnot (opintojaksot ja opintokokonaisuudet)
-     */
-    @OneToMany(mappedBy = "opintoKokonaisuus", cascade = {})
-    private Set<KoulutusmoduuliToteutus> osaOpinnot = new HashSet<KoulutusmoduuliToteutus>();
-
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_koulutusryhma",
             joinColumns = @JoinColumn(name = TABLE_NAME + "_id"))
@@ -1161,22 +1148,6 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setOpinnonTyyppiUri(String opinnonTyyppiUri) {
         this.opinnonTyyppiUri = opinnonTyyppiUri;
-    }
-
-    public KoulutusmoduuliToteutus getOpintoKokonaisuus() {
-        return opintoKokonaisuus;
-    }
-
-    public void setOpintoKokonaisuus(KoulutusmoduuliToteutus opintoKokonaisuus) {
-        this.opintoKokonaisuus = opintoKokonaisuus;
-    }
-
-    public Set<KoulutusmoduuliToteutus> getOsaOpinnot() {
-        return osaOpinnot;
-    }
-
-    public void setOsaOpinnot(Set<KoulutusmoduuliToteutus> osaOpinnot) {
-        this.osaOpinnot = osaOpinnot;
     }
 
     public String getOppiaine() {

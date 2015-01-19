@@ -257,13 +257,6 @@ public class KoulutusDTOConverterToEntity {
         // Opinnon tyyppi
         komoto.setOpinnonTyyppiUri(dto.getOpinnonTyyppiUri());
 
-        // Liitä koulutukseen
-        if(dto.getOpintoKokonaisuusOid() != null) {
-            KoulutusmoduuliToteutus tt = koulutusmoduuliToteutusDAO.findByOid(dto.getOpintoKokonaisuusOid());
-            komoto.setOpintoKokonaisuus(tt);
-        } else
-            komoto.setOpintoKokonaisuus(null);
-
         komoto.setKoulutuksenLoppumisPvm(dto.getKoulutuksenLoppumisPvm());
         // Set laajuusarvo only if pistearvo is set
         if(dto.getOpintojenLaajuusPistetta() != null) {

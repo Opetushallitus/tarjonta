@@ -1,0 +1,4 @@
+ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN yhteyshenkilo_nimi;
+ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN yhteyshenkilo_puhelin;
+ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN yhteyshenkilo_titteli;
+ALTER TABLE koulutusmoduuli_toteutus DROP COLUMN yhteyshenkilo_email;

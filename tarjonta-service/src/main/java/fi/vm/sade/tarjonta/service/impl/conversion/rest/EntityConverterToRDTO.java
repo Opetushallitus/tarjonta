@@ -166,12 +166,6 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
             // Opinnontyyppi
             tjkkDto.setOpinnonTyyppiUri(komoto.getOpinnonTyyppiUri());
 
-            // Järjestäjän koulutusinstanssin kytkös tarjoajan instanssiin
-            if(komoto.getOpintoKokonaisuus() != null)
-                tjkkDto.setOpintoKokonaisuusOid(komoto.getOpintoKokonaisuus().getOid());
-            else
-                tjkkDto.setOpintoKokonaisuusOid(null);
-
             final boolean useKomotoName = komoto.getNimi() != null && !komoto.getNimi().getTekstiKaannos().isEmpty(); //OVT-7531
             tjkkDto.setKoulutusohjelma(commonConverter.koulutusohjelmaUiMetaDTO(useKomotoName ? komoto.getNimi() : komo.getNimi(), FieldNames.KOULUTUSOHJELMA, param));
 

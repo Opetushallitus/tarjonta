@@ -27,8 +27,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
     private Date koulutuksenLoppumisPvm;
     @ApiModelProperty(value = "Opintojen laajuus opintopisteissä (vapaa teksti)")
     private String opintojenLaajuusPistetta;
-    @ApiModelProperty(value = "OID koulutukselle, joka on tämän koulutuksen opintokokonaisuus")
-    private String opintoKokonaisuusOid;
     @ApiModelProperty(value = "Opettaja")
     private String opettaja;
     @ApiModelProperty(value = "Oppiaine")
@@ -147,18 +145,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
 
     public void setOpintojenLaajuusPistetta(String opintojenLaajuusPistetta) {
         this.opintojenLaajuusPistetta = opintojenLaajuusPistetta;
-    }
-
-    /**
-     * Mihin koulutukseen tämä koulutus liittyy.
-     * @return
-     */
-    public String getOpintoKokonaisuusOid() {
-        return opintoKokonaisuusOid;
-    }
-
-    public void setOpintoKokonaisuusOid(String opintoKokonaisuusOid) {
-        this.opintoKokonaisuusOid = opintoKokonaisuusOid;
     }
 
     public String getOpettaja() {
