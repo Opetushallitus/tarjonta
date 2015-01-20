@@ -38,7 +38,8 @@ angular.module('app.search.controllers', [
         var state = {
             advancedSearchOpen: $scope.isopen,
             koulutuksetActive: $scope.tabs.koulutukset.active,
-            hakukohteetActive: $scope.tabs.hakukohteet.active
+            hakukohteetActive: $scope.tabs.hakukohteet.active,
+            jarjestettavatActive: $scope.tabs.jarjestettavat.active
         };
         return state;
     };
@@ -82,6 +83,9 @@ angular.module('app.search.controllers', [
         },
         hakukohteet: {
             active: false
+        },
+        jarjestettavat: {
+            active: false
         }
     };
     $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
@@ -121,6 +125,7 @@ angular.module('app.search.controllers', [
             }
             $scope.tabs.koulutukset.active = state.koulutuksetActive;
             $scope.tabs.hakukohteet.active = state.hakukohteetActive;
+            $scope.tabs.jarjestettavat.active = state.jarjestettavatActive;
         }
     };
     initFormSelections();
