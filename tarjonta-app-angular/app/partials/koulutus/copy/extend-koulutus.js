@@ -3,7 +3,7 @@ var app = angular.module('app.koulutus.extend.ctrl', []);
 app.controller('ExtendKoulutusController',
     function($modalInstance, targetKoulutus, targetOrganisaatio,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config) {
+            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config, koulutusMap) {
 
         'use strict';
 
@@ -159,7 +159,16 @@ app.controller('ExtendKoulutusController',
         });
 
         var lisaaOrganisaatio = function(organisaatio) {
-            $scope.model.organisaatiot.push(organisaatio);
+            OrganisaatioService.byOid(organisaatio.oid).then(function(org) {
+                var intersection = _.intersection(_.keys(koulutusMap), org.oidAndParentOids);
+                if (intersection.length > 0) {
+                    $scope.model.onJoJarjestetty = koulutusMap[intersection[0]];
+                }
+                else {
+                    $scope.model.onJoJarjestetty = false;
+                    $scope.model.organisaatiot.push(organisaatio);
+                }
+            });
         };
 
         /**
@@ -198,6 +207,12 @@ app.controller('ExtendKoulutusController',
         $scope.organisaatioValittu = function() {
             return $scope.model.organisaatiot.length > 0;
         };
+
+        $scope.reviewExistingKoulutus = function() {
+            $modalInstance.dismiss();
+            $location.path('/koulutus/' + $scope.model.onJoJarjestetty.oid);
+        };
+
         /**
          * Poista valittu organisaatio ruksista
          */

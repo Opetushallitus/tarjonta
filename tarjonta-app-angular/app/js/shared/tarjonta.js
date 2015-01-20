@@ -389,7 +389,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                     var deferred = $q.defer();
                     OrganisaatioService.byOid(tarjoaja).then(function(org) {
                         _.each(org.oidAndParentOids, function(orgOid) {
-                            map[orgOid] = koulutus;
+                            if (orgOid !== Config.env['root.organisaatio.oid']) {
+                                map[orgOid] = koulutus;
+                            }
                         });
                         deferred.resolve();
                     });

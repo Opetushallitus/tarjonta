@@ -16,6 +16,17 @@
                     <span tt="koulutus.extend.kuka-jarjestaa">Valitse kuka koulutuksen järjestää</span>
                 </td>
             </tr>
+            <tr ng-if="model.onJoJarjestetty">
+                <td colspan="2">
+                    <ul class="errors">
+                        <li tt="koulutus.extend.onJoJarjestetty">Koulutus on jo järjestetty valitulle organisaatiolle!</li>
+                        <li>
+                            <a ng-click="reviewExistingKoulutus()"
+                               tt="koulutus.extend.tarkasteleKoulutusta">Tarkastele koulutusta</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
             <tr>
                 <td width="50%">
                     <ul style="height:250px" class="listView">

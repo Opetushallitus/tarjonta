@@ -15,7 +15,7 @@
 
 var app = angular.module('Koulutus', ['ngResource', 'config', 'Logging']);
 
-app.factory('KoulutusService', function($resource, Config, $location, $modal) {
+app.factory('KoulutusService', function($resource, Config, $location, $modal, TarjontaService) {
 
     return {
         /**
@@ -43,6 +43,10 @@ app.factory('KoulutusService', function($resource, Config, $location, $modal) {
                                 oid: $scope.model.koulutus.organisaatio.oid,
                                 nimi: $scope.model.koulutus.organisaatio.nimi
                             };
+                        },
+                        koulutusMap: function() {
+                            // Tarkista, onko koulutus jo järjestetty kyseiselle organisaatiolle (tai sen aliorganisaatiolle)
+                            return TarjontaService.getJarjestettavatKoulutukset($scope.model.koulutus.oid);
                         }
                     }
                 });
