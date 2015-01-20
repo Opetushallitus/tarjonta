@@ -162,24 +162,25 @@ app.controller('PoistaSisaltyvyysCtrl', [
                 _.each(result.tulokset, function(parentRes) {
                     //tulokset is by organisation
                     _.each(parentRes.tulokset, function(res) {
-                        if (res.koulutuskoodi) {
-                            var koulutuskoodiUri = oph.removeKoodiVersion(res.koulutuskoodi);
-                            var item = {
-                                koulutuskoodi: '',
+                        var item = {
                                 nimi: res.nimi,
                                 tarjoaja: parentRes.nimi,
                                 oid: res.komoOid
                             };
+                        if (res.koulutuskoodi) {
+                            var koulutuskoodiUri = oph.removeKoodiVersion(res.koulutuskoodi);
                             var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'],
                                 koulutuskoodiUri, $scope.koodistoLocale);
                             koodisPromise.then(function(koodi) {
                                 item.koulutuskoodi = koodi.koodiArvo;
                             });
-                            searchResult.push(item);
                         }
                         else {
-                            $log.error('koulutus without koodi:', res);
+                            if (targetKomo.koulutusLaji === 'TUTKINTO') {
+                                $log.error('koulutus without koodi:', res);
+                            }
                         }
+                        searchResult.push(item);
                     });
                 });
                 deferred.resolve(searchResult);
