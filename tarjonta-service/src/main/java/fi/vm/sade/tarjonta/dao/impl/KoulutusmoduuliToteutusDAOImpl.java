@@ -133,7 +133,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
         QKoulutusmoduuliToteutus qKoulutusmoduuliToteutus = QKoulutusmoduuliToteutus.koulutusmoduuliToteutus;
 
         BooleanExpression criteria = qKoulutusmoduuliToteutus.tarjoajanKoulutus.oid.eq(oid);
-        criteria.and(qKoulutusmoduuliToteutus.tila.notIn(TarjontaTila.POISTETTU));
+        criteria = and(criteria, qKoulutusmoduuliToteutus.tila.notIn(TarjontaTila.POISTETTU));
 
         return from(qKoulutusmoduuliToteutus).where(criteria).list(qKoulutusmoduuliToteutus);
     }
