@@ -18,8 +18,9 @@
 
         <!-- TODO pitäisikö olla myös viestityyppi 'murupolku' tjsp.. ? -->
         <controls-notify type="message"
-            tt-expr="model.koulutus.toteutustyyppi === 'KORKEAKOULUOPINTO' ? 'opinto.review.murupolku' : 'koulutus.review.murupolku'"
-            tt-params="[getKoulutusohjelmaNimi(), model.koulutus.organisaatio.nimi ]"></controls-notify>
+            tt-expr="model.koulutus.toteutustyyppi === 'KORKEAKOULUOPINTO' ? 'opinto.review.murupolku.'
+                + model.koulutus.koulutusmoduuliTyyppi : 'koulutus.review.murupolku'"
+                tt-params="[getKoulutusohjelmaNimi(), model.koulutus.organisaatio.nimi ]"></controls-notify>
 
     </controls-model>
 
