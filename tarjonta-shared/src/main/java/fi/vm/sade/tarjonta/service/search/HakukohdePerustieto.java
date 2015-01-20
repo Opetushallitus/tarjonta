@@ -2,17 +2,14 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 
-public class HakukohdePerustieto implements Serializable
-{
-    
+public class HakukohdePerustieto implements Serializable {
+
     private final static long serialVersionUID = 100L;
     private String oid;
     private Nimi nimi = new Nimi();
@@ -29,10 +26,11 @@ public class HakukohdePerustieto implements Serializable
     private Date hakuPaattymisPvm;
     private KoodistoKoodi koulutuslaji;
     private String hakutyyppiUri;
-    private KoodistoKoodi pohjakoulutusvaatimus; 
+    private KoodistoKoodi pohjakoulutusvaatimus;
     private KoulutusasteTyyppi koulutusastetyyppi;
     private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
     private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+    private List<SolrRyhmaliitos> ryhmaliitokset = new ArrayList<SolrRyhmaliitos>();
 
     public KoulutusasteTyyppi getKoulutusastetyyppi() {
         return koulutusastetyyppi;
@@ -57,7 +55,7 @@ public class HakukohdePerustieto implements Serializable
     public void setKoulutuslaji(KoodistoKoodi koulutuslaji) {
         this.koulutuslaji = koulutuslaji;
     }
-    
+
     public String getTarjoajaOid() {
         return tarjoajaOid;
     }
@@ -65,7 +63,7 @@ public class HakukohdePerustieto implements Serializable
     public void setTarjoajaOid(String tarjoajaOid) {
         this.tarjoajaOid = tarjoajaOid;
     }
-    
+
     public String getTarjoajaNimi(String locale) {
         return tarjoajaNimi.get(locale);
     }
@@ -73,7 +71,7 @@ public class HakukohdePerustieto implements Serializable
     public void setTarjoajaNimi(String locale, String nimi) {
         tarjoajaNimi.put(locale, nimi);
     }
-    
+
     public Map<String, String> getTarjoajaNimi() {
         return tarjoajaNimi;
     }
@@ -88,13 +86,14 @@ public class HakukohdePerustieto implements Serializable
 
     /**
      * Palauta nimi
+     *
      * @param locale kieli (fi,sv,en)
      * @return
      */
     public String getNimi(String locale) {
         return nimi.get(locale);
     }
-    
+
     /**
      * Palauta kaiki nimet
      */
@@ -104,11 +103,12 @@ public class HakukohdePerustieto implements Serializable
 
     /**
      * Aseta nimi
+     *
      * @param locale kieli (fi,sv,en)
-     * @param nimi nimi
+     * @param nimi   nimi
      */
     public void setNimi(String locale, String nimi) {
-        this.nimi.put(locale,  nimi);
+        this.nimi.put(locale, nimi);
     }
 
     public String getKoodistoNimi() {
@@ -175,7 +175,7 @@ public class HakukohdePerustieto implements Serializable
         this.hakuPaattymisPvm = value;
     }
 
-    public Nimi getHakutapaNimi(){
+    public Nimi getHakutapaNimi() {
         return hakutapakoodi.getNimi();
     }
 
@@ -208,7 +208,7 @@ public class HakukohdePerustieto implements Serializable
                 + ", hakuPaattymisPvm=" + hakuPaattymisPvm + ", koulutuslaji="
                 + koulutuslaji + ", hakutyyppiUri=" + hakutyyppiUri
                 + ", pohjakoulutusvaatimus=" + pohjakoulutusvaatimus
-                + ", koulutusastetyyppi=" + koulutusastetyyppi 
+                + ", koulutusastetyyppi=" + koulutusastetyyppi
                 + ", koulutusmoduuliTyyppi=" + koulutusmoduuliTyyppi + "]";
     }
 
@@ -228,4 +228,15 @@ public class HakukohdePerustieto implements Serializable
         this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
 
+    public List<SolrRyhmaliitos> getRyhmaliitokset() {
+        return ryhmaliitokset;
+    }
+
+    public void setRyhmaliitokset(List<SolrRyhmaliitos> ryhmaliitokset) {
+        this.ryhmaliitokset = ryhmaliitokset;
+    }
+
+    public void addRyhmaliitos(SolrRyhmaliitos ryhmaliitos) {
+        getRyhmaliitokset().add(ryhmaliitos);
+    }
 }

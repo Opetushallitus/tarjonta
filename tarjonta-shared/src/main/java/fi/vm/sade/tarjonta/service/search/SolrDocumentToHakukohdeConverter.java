@@ -7,10 +7,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
@@ -58,6 +55,7 @@ public class SolrDocumentToHakukohdeConverter {
 
         copyHakukohdeNimi(hakukohde, hakukohdeDoc);
         copyAloituspaikatKuvaus(hakukohde, hakukohdeDoc);
+        copyRyhmaliitokset(hakukohde, hakukohdeDoc);
 
         hakukohde.setPohjakoulutusvaatimus(IndexDataUtils.createKoodistoKoodi(POHJAKOULUTUSVAATIMUS_URI, POHJAKOULUTUSVAATIMUS_FI, POHJAKOULUTUSVAATIMUS_SV, POHJAKOULUTUSVAATIMUS_EN, hakukohdeDoc));
         hakukohde.setKoulutuslaji(IndexDataUtils.createKoodistoKoodi(KOULUTUSLAJI_URI, KOULUTUSLAJI_FI, KOULUTUSLAJI_SV, KOULUTUSLAJI_EN, hakukohdeDoc));
@@ -109,6 +107,22 @@ public class SolrDocumentToHakukohdeConverter {
             hakukohde.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.fromValue("" + hakukohdeDoc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)));
         }
         return hakukohde;
+    }
+
+    private void copyRyhmaliitokset(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {
+        if (hakukohdeDoc.getFieldValues(RYHMA_OIDS) != null) {
+            List<Object> oids = new ArrayList<Object>(hakukohdeDoc.getFieldValues(RYHMA_OIDS));
+            List<Object> prioriteetit = new ArrayList<Object>(hakukohdeDoc.getFieldValues(RYHMA_PRIORITEETIT));
+
+            for (int i = 0; i < oids.size(); i++) {
+                SolrRyhmaliitos ryhmaliitos = new SolrRyhmaliitos();
+                ryhmaliitos.setRyhmaOid((String) oids.get(i));
+                if (!SolrFields.RYHMA_PRIORITEETTI_EI_MAARITELTY.equals(prioriteetit.get(i))) {
+                    ryhmaliitos.setPrioriteetti(Integer.valueOf((String) prioriteetit.get(i)));
+                }
+                hakukohde.addRyhmaliitos(ryhmaliitos);
+            }
+        }
     }
 
     private void copyAloituspaikatKuvaus(HakukohdePerustieto hakukohde, SolrDocument hakukohdeDoc) {

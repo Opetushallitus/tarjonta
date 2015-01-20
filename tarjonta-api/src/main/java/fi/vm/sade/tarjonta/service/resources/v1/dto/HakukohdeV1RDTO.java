@@ -71,8 +71,7 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private List<PainotettavaOppiaineV1RDTO> painotettavatOppiaineet = new ArrayList<PainotettavaOppiaineV1RDTO>();
     private Map<String, String> hakuMenettelyKuvaukset;
     private Map<String, String> peruutusEhdotKuvaukset;
-
-    // KJOH-810
+    private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
     private String[] organisaatioRyhmaOids;
 
     public String getHakukohteenNimi() {
@@ -82,18 +81,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public void setHakukohteenNimi(String hakukohteenNimi) {
         this.hakukohteenNimi = hakukohteenNimi;
     }
-
-    /*
-    public List<TekstiRDTO> getHakukohteenNimet() {
-        if (hakukohteenNimet == null) {
-            hakukohteenNimet = new ArrayList<TekstiRDTO>();
-        }
-        return hakukohteenNimet;
-    }
-
-    public void setHakukohteenNimet(List<TekstiRDTO> hakukohteenNimet) {
-        this.hakukohteenNimet = hakukohteenNimet;
-    }*/
 
     public String getHakuOid() {
         return hakuOid;
@@ -536,5 +523,13 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     public void setPeruutusEhdotKuvaukset(Map<String, String> peruutusEhdotKuvaukset) {
         this.peruutusEhdotKuvaukset = peruutusEhdotKuvaukset;
+    }
+
+    public List<RyhmaliitosV1RDTO> getRyhmaliitokset() {
+        return ryhmaliitokset;
+    }
+
+    public void setRyhmaliitokset(ArrayList<RyhmaliitosV1RDTO> ryhmaliitokset) {
+        this.ryhmaliitokset = ryhmaliitokset;
     }
 }

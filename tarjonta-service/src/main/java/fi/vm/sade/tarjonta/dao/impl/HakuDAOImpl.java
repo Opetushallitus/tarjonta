@@ -24,10 +24,7 @@ import com.mysema.query.types.expr.ComparableExpressionBase;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.tarjonta.dao.HakuDAO;
 import fi.vm.sade.tarjonta.dao.impl.util.QuerydslUtils;
-import fi.vm.sade.tarjonta.model.Haku;
-import fi.vm.sade.tarjonta.model.QHaku;
-import fi.vm.sade.tarjonta.model.QMonikielinenTeksti;
-import fi.vm.sade.tarjonta.model.QTekstiKaannos;
+import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.model.searchParams.ListHakuSearchParam;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria;
 import fi.vm.sade.tarjonta.service.resources.v1.HakuSearchCriteria.Field;
@@ -299,6 +296,19 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
         Set<String> secondSet = getKomotoTarjoajaOrganisaatioOids(hakuOid);
         firstSet.addAll(secondSet);
         return firstSet;
+    }
+
+    @Override
+    public List<String> findOrganisaatioryhmaOids(Long hakuId) {
+        QHakukohde qHakukohde = QHakukohde.hakukohde;
+        QRyhmaliitos qRyhmaliitos = QRyhmaliitos.ryhmaliitos;
+        QHaku qHaku = QHaku.haku;
+
+        return from(qHaku, qHakukohde, qRyhmaliitos)
+                .where(qHakukohde.haku.eq(qHaku)
+                        .and(qHaku.id.eq(hakuId)))
+                .distinct()
+                .list(qRyhmaliitos.ryhmaOid);
     }
 
     private Set<String> getKomotoTarjoajaOrganisaatioOids(String hakuOid) {

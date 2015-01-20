@@ -20,6 +20,8 @@ package fi.vm.sade.tarjonta.service.search;
  */
 public class SolrFields {
 
+    public static final String RYHMA_PRIORITEETTI_EI_MAARITELTY = "RYHMA_PRIORITEETTI_EI_MAARITELTY";
+    
     /**
      * Field names for koulutus docs
      */
@@ -127,6 +129,8 @@ public class SolrFields {
         protected static final String KOULUTUSTYYPPI_URI = "koulutustyyppiuri_s";
         protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppi_s";
         protected static final String KOULUTUSMODUULITYYPPI_ENUM = "koulutusmoduulityyppi_s";
+        protected static final String RYHMA_OIDS = "ryhmaoid_ss";
+        protected static final String RYHMA_PRIORITEETIT = "ryhmaprioriteetti_ss";
     }
 
 }

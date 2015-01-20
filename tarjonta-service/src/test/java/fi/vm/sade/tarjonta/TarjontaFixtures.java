@@ -19,21 +19,19 @@ import com.google.common.base.Preconditions;
 import fi.vm.sade.tarjonta.dao.*;
 import fi.vm.sade.tarjonta.dao.impl.KoulutusmoduuliDAOImpl;
 import fi.vm.sade.tarjonta.model.*;
-import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.HakukohdeTyyppi;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
-
-import java.util.*;
-
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.*;
+
 /**
  * Sets up common test fixtures that can be used through out different
  * DAO/service tests.
- *
  */
 @Component
 public class TarjontaFixtures {
@@ -346,6 +344,28 @@ public class TarjontaFixtures {
         return haku;
     }
 
+    public Haku createHakuWithOrganisaatioryhmat() {
+        Haku haku = createPersistedHaku();
+
+        Hakukohde hakukohde = createHakukohde();
+        hakukohde.setHaku(haku);
+        Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setRyhmaOid("1.2.3");
+        hakukohde.addRyhmaliitos(ryhmaliitos);
+        hakukohdeDAO.insert(hakukohde);
+
+        hakukohde = createHakukohde();
+        hakukohde.setHaku(haku);
+        ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setRyhmaOid("4.5.6");
+        hakukohde.addRyhmaliitos(ryhmaliitos);
+        hakukohdeDAO.insert(hakukohde);
+
+        return haku;
+    }
+
     public BinaryData createBinaryData() {
         return createBinaryData("filename", "mimetype");
     }
@@ -434,7 +454,7 @@ public class TarjontaFixtures {
 
     /**
      * Creates structure like (not tree):
-     *
+     * <p/>
      * <pre>
      *    0
      *   / \

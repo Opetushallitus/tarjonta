@@ -97,12 +97,25 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
         addToteutustyyppi(hakukohdeDoc, hakukohde);
         addPohjakoulutusvaatimus(hakukohdeDoc, hakukohde);
         addKohdejoukko(hakukohdeDoc, hakukohde);
+        addRyhmaliitokset(hakukohdeDoc, hakukohde);
         addDataFromKoulutus(hakukohdeDoc, hakukohde);
         addTekstihaku(hakukohdeDoc);
 
         docs.add(hakukohdeDoc);
 
         return docs;
+    }
+
+    private void addRyhmaliitokset(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
+        for (Ryhmaliitos ryhmaliitos : hakukohde.getRyhmaliitokset()) {
+            add(hakukohdeDoc, RYHMA_OIDS, ryhmaliitos.getRyhmaOid());
+
+            if (ryhmaliitos.getPrioriteetti() == null) {
+                add(hakukohdeDoc, RYHMA_PRIORITEETIT, SolrFields.RYHMA_PRIORITEETTI_EI_MAARITELTY);
+            } else {
+                add(hakukohdeDoc, RYHMA_PRIORITEETIT, ryhmaliitos.getPrioriteetti());
+            }
+        }
     }
 
     private boolean addOrganisaatiotiedot(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
@@ -236,8 +249,8 @@ public class HakukohdeToSolrDocument implements Function<Long, List<SolrInputDoc
     }
 
     private void addRyhmat(SolrInputDocument hakukohdeDoc, Hakukohde hakukohde) {
-        for (String oid : hakukohde.getOrganisaatioRyhmaOids()) {
-            hakukohdeDoc.addField(ORGANISAATIORYHMAOID, oid);
+        for (Ryhmaliitos ryhmaliitos : hakukohde.getRyhmaliitokset()) {
+            hakukohdeDoc.addField(ORGANISAATIORYHMAOID, ryhmaliitos.getRyhmaOid());
         }
     }
 

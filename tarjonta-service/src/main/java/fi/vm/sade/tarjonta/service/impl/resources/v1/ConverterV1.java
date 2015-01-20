@@ -44,6 +44,8 @@ import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,6 +161,7 @@ public class ConverterV1 {
             }
         }
 
+        hakuDTO.setOrganisaatioryhmat(hakuDao.findOrganisaatioryhmaOids(haku.getId()));
         hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());
         hakuDTO.setTarjoajaOids(haku.getTarjoajaOids());
 
@@ -556,12 +559,22 @@ public class ConverterV1 {
         convertTarjoajaNimetToDTO(hakukohdeRDTO);
         convertOrganisaatioRyhmaOidsToDTO(hakukohde, hakukohdeRDTO);
         convertPainotettavatOppianeetToDTO(hakukohde, hakukohdeRDTO);
-        convertKoulutusmoduuliTyyppi(hakukohde, hakukohdeRDTO);
+        convertKoulutusmoduuliTyyppiToDTO(hakukohde, hakukohdeRDTO);
+        convertRyhmaliitoksetToDTO(hakukohde, hakukohdeRDTO);
 
         return hakukohdeRDTO;
     }
 
-    private void convertKoulutusmoduuliTyyppi(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+    private void convertRyhmaliitoksetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        for (Ryhmaliitos ryhmaliitos : hakukohde.getRyhmaliitokset()) {
+            RyhmaliitosV1RDTO ryhmaliitosDTO = new RyhmaliitosV1RDTO();
+            ryhmaliitosDTO.setRyhmaOid(ryhmaliitos.getRyhmaOid());
+            ryhmaliitosDTO.setPrioriteetti(ryhmaliitos.getPrioriteetti());
+            hakukohdeRDTO.getRyhmaliitokset().add(ryhmaliitosDTO);
+        }
+    }
+
+    private void convertKoulutusmoduuliTyyppiToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
         Set<String> koulutusmoduulityypit = new HashSet<String>();
         for (KoulutusmoduuliToteutus komoto : hakukohde.getKoulutusmoduuliToteutuses()) {
             koulutusmoduulityypit.add(komoto.getKoulutusmoduuli().getModuuliTyyppi().name());
@@ -757,7 +770,9 @@ public class ConverterV1 {
     }
 
     private void convertOrganisaatioRyhmaOidsToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
-        hakukohdeRDTO.setOrganisaatioRyhmaOids(hakukohde.getOrganisaatioRyhmaOids());
+        List<String> organisaatioRyhmaOids = (List<String>) CollectionUtils.collect(hakukohde.getRyhmaliitokset(),
+                new BeanToPropertyValueTransformer("ryhmaOid"));
+        hakukohdeRDTO.setOrganisaatioRyhmaOids(organisaatioRyhmaOids.toArray(new String[organisaatioRyhmaOids.size()]));
     }
 
     private void convertPainotettavatOppianeetToDTO(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
@@ -973,8 +988,6 @@ public class ConverterV1 {
         if (hakukohdeRDTO.getPeruutusEhdotKuvaukset() != null) {
             hakukohde.setPeruutusEhdotKuvaus(convertMapToMonikielinenTeksti(hakukohdeRDTO.getPeruutusEhdotKuvaukset()));
         }
-
-        hakukohde.setOrganisaatioRyhmaOids(hakukohdeRDTO.getOrganisaatioRyhmaOids());
 
         return hakukohde;
     }
@@ -1686,7 +1699,19 @@ public class ConverterV1 {
         dto.setAloituspaikatKuvaukset(hakukohdePerustieto.getAloituspaikatKuvaukset());
         dto.setKoulutusasteTyyppi(hakukohdePerustieto.getKoulutusastetyyppi());
         dto.setKoulutusmoduuliTyyppi(hakukohdePerustieto.getKoulutusmoduuliTyyppi());
+        dto.setRyhmaliitokset(getRyhmaliitokset(hakukohdePerustieto));
         return dto;
+    }
+
+    private List<RyhmaliitosV1RDTO> getRyhmaliitokset(HakukohdePerustieto hakukohdePerustieto) {
+        List<RyhmaliitosV1RDTO> ryhmaliitosDTOs = new ArrayList<RyhmaliitosV1RDTO>();
+        for (SolrRyhmaliitos solrRyhmaliitos : hakukohdePerustieto.getRyhmaliitokset()) {
+            RyhmaliitosV1RDTO ryhmaliitosDTO = new RyhmaliitosV1RDTO();
+            ryhmaliitosDTO.setRyhmaOid(solrRyhmaliitos.getRyhmaOid());
+            ryhmaliitosDTO.setPrioriteetti(solrRyhmaliitos.getPrioriteetti());
+            ryhmaliitosDTOs.add(ryhmaliitosDTO);
+        }
+        return ryhmaliitosDTOs;
     }
 
     private TarjoajaHakutulosV1RDTO<HakukohdeHakutulosV1RDTO> getTarjoaja(

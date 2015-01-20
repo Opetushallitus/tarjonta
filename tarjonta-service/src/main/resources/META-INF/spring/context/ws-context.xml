@@ -69,6 +69,7 @@
     <bean id="kuvausResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KuvausResourceImplV1"/>
     <bean id="komoResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.KomoResourceImplV1"/>
     <bean id="lastModifiedResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.LastModifiedResourceV1Impl"/>
+    <bean id="organisaatioryhmaResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.OrganisaatioryhmaResourceImplV1"/>
 
     <bean id="tarjontaProcessResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ProcessResourceV1Impl"/>
     <bean id="tarjontaExportResourceV1" class="fi.vm.sade.tarjonta.service.impl.resources.v1.ExportResourceV1Impl"/>
@@ -108,6 +109,7 @@
             <ref bean="kuvausResourceV1"/>
             <ref bean="komoResourceV1"/>
             <ref bean="lastModifiedResourceV1"/>
+            <ref bean="organisaatioryhmaResourceV1"/>
 
             <ref bean="tarjontaProcessResourceV1"/>
             <ref bean="tarjontaExportResourceV1"/>

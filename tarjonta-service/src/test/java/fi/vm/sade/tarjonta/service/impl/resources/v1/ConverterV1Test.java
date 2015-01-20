@@ -11,6 +11,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeAjankohtaRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -317,5 +322,69 @@ public class ConverterV1Test {
 
         hakukohdeLiiteDTO = converter.fromHakukohdeLiite(hakukohdeLiite);
         assertFalse(hakukohdeLiiteDTO.isKaytetaanHakulomakkeella());
+    }
+
+    @Test
+    public void thatRyhmaliitoksetAreConvertedToDTO() {
+        Hakukohde hakukohde = getHakukohde();
+
+        Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setPrioriteetti(1);
+        ryhmaliitos.setRyhmaOid("1.2.3");
+        hakukohde.getRyhmaliitokset().add(ryhmaliitos);
+
+        ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setRyhmaOid("4.5.6");
+        hakukohde.getRyhmaliitokset().add(ryhmaliitos);
+
+        HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertTrue(hakukohdeDTO.getRyhmaliitokset().size() == 2);
+        assertThat(hakukohdeDTO.getRyhmaliitokset(), hasItem(getRyhmaliitosElementMatcher("1.2.3", 1)));
+        assertThat(hakukohdeDTO.getRyhmaliitokset(), hasItem(getRyhmaliitosElementMatcher("4.5.6", null)));
+    }
+
+    @Test
+    public void thatOrganisaatioRyhmaOidsAreConvertedToDTO() {
+        Hakukohde hakukohde = getHakukohde();
+
+        Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setPrioriteetti(1);
+        ryhmaliitos.setRyhmaOid("1.2.3");
+        hakukohde.getRyhmaliitokset().add(ryhmaliitos);
+
+        ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setHakukohde(hakukohde);
+        ryhmaliitos.setRyhmaOid("4.5.6");
+        hakukohde.getRyhmaliitokset().add(ryhmaliitos);
+
+        HakukohdeV1RDTO hakukohdeDTO = converter.toHakukohdeRDTO(hakukohde);
+
+        assertTrue(hakukohdeDTO.getRyhmaliitokset().size() == 2);
+        assertThat(Arrays.asList(hakukohdeDTO.getOrganisaatioRyhmaOids()), hasItem("1.2.3"));
+        assertThat(Arrays.asList(hakukohdeDTO.getOrganisaatioRyhmaOids()), hasItem("4.5.6"));
+    }
+
+    private BaseMatcher<RyhmaliitosV1RDTO> getRyhmaliitosElementMatcher(final String ryhmaOid,
+                                                                        final Integer prioriteetti) {
+        return new BaseMatcher<RyhmaliitosV1RDTO>() {
+            @Override
+            public boolean matches(Object o) {
+                RyhmaliitosV1RDTO ryhmaliitosDTO = (RyhmaliitosV1RDTO) o;
+                if (prioriteetti == null) {
+                    return ryhmaliitosDTO.getRyhmaOid().equals(ryhmaOid) &&
+                            ryhmaliitosDTO.getPrioriteetti() == null;
+                } else {
+                    return ryhmaliitosDTO.getRyhmaOid().equals(ryhmaOid) &&
+                            ryhmaliitosDTO.getPrioriteetti().equals(prioriteetti);
+                }
+            }
+
+            public void describeTo(Description description) {
+            }
+        };
     }
 }
