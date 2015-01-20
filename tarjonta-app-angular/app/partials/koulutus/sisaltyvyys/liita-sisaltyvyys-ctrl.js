@@ -88,17 +88,18 @@ app.service('TreeHandlers', function() {
             }
         }
     };
-    singleton.removeItem = function(scope, obj) {
-        var selected = null;
+    singleton.removeItem = function(obj) {
         for (var i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
             if (singleton.scope.model.selectedRowData[i].oid === obj.oid) {
-                selected = obj;
                 singleton.scope.model.selectedRowData.splice(i, 1);
                 break;
             }
         }
-        if (selected !== null) {
-            singleton.scope.gridOptions.selectItem(singleton.scope.model.hakutulos.indexOf(selected), false);
+        for (var i = 0; i < singleton.scope.model.hakutulos.length; i++) {
+            if (singleton.scope.model.hakutulos[i].oid == obj.oid) {
+                singleton.scope.gridOptions.selectItem(i, false);
+                break;
+            }
         }
     };
     return singleton;
@@ -158,11 +159,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 //search words
                 year: targetKomo.vuosi,
                 season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio,
-                koulutusastetyyppi: [
-                    'Korkeakoulutus',
-                    'Ammattikorkeakoulutus',
-                    'Yliopistokoulutus'
-                ]
+                koulutustyyppi: ['koulutustyyppi_3'],
+                type: config.app['tarjonta.koulutuslajiModuulityypit'][targetKomo.koulutusLaji]
             },
             html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
         };
@@ -176,6 +174,9 @@ app.controller('LiitaSisaltyvyysCtrl', [
             koulutuskoodiMap: {} //key : koulutuskoodi uri : tutkintotyypit
         };
         $scope.koodistoLocale = LocalisationService.getLocale();
+        $scope.isOpinto = function() {
+            return targetKomo.koulutusLaji === "OPINTO";
+        };
         var koodisPromise =
             koodisto.getAllKoodisWithKoodiUri(config.app['koodisto-uris.tutkintotyyppi'], $scope.koodistoLocale);
         koodisPromise.then(function(koodis) {
@@ -251,30 +252,36 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 var arr = [];
                 for (var i = 0; i < result.tulokset.length; i++) {
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
-                        if (result.tulokset[i].tulokset[c].koulutuskoodi) {
-                            var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split('#')[0];
-                            if ($scope.model.tutkinto.uri.length === 0 ||
-                                $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
-                                $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
-                                arr.push({
-                                    koulutuskoodi: koulutuskoodiUri,
-                                    nimi: result.tulokset[i].tulokset[c].nimi,
-                                    tarjoaja: result.tulokset[i].nimi,
-                                    oid: result.tulokset[i].tulokset[c].komoOid
-                                });
+                        var node = {
+                            nimi: result.tulokset[i].tulokset[c].nimi,
+                            tarjoaja: result.tulokset[i].nimi,
+                            oid: result.tulokset[i].tulokset[c].komoOid
+                        };
+                        var koulutuskoodi = result.tulokset[i].tulokset[c].koulutuskoodi;
+                        if (koulutuskoodi) {
+                            var koulutuskoodiUri = koulutuskoodi.split('#')[0];
+                            if ($scope.model.tutkinto.uri.length !== 0 &&
+                                $scope.other.koulutuskoodiMap[koulutuskoodiUri] !== $scope.model.tutkinto.uri) {
+                                continue;
+                            }
+                            node.koulutuskoodi = koulutuskoodiUri;
+                            $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
+                        } else {
+                            if (targetKomo.koulutusLaji === 'TUTKINTO') {
+                                $log.error('koulutus without koulutuskoodi:', result.tulokset[i].tulokset[c]);
                             }
                         }
-                        else {
-                            $log.error('koulutus without koulutuskoodi:', result.tulokset[i].tulokset[c]);
-                        }
+                        arr.push(node);
                     }
                 }
                 angular.forEach(arr, function(value) {
-                    var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], value.koulutuskoodi,
-                        $scope.koodistoLocale);
-                    koodisPromise.then(function(koodi) {
-                        value.koulutuskoodi = koodi.koodiArvo;
-                    });
+                    if (value.koulutuskoodi) {
+                        var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], value.koulutuskoodi,
+                                $scope.koodistoLocale);
+                        koodisPromise.then(function(koodi) {
+                            value.koulutuskoodi = koodi.koodiArvo;
+                        });
+                    }
                 });
                 $scope.model.hakutulos = arr;
             });

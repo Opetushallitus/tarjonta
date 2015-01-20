@@ -51,5 +51,10 @@ window.CONFIG.app = {
     // arvoa, jonka mukaan valinnat ja lokalisoinnit näytetään käyttöliittymässä.
     // Alilistan kaikki arvot välitetään haun parametrina. Siis "Tutkinto" tyyppisen koulutuksen
     // haku palauttaa myös TUTKINTO_OHJELMA tyyppiset koulutukset.
-    'tarjonta.koulutusmoduuliTyypit': [['TUTKINTO', 'TUTKINTO_OHJELMA'], ['OPINTOKOKONAISUUS'], ['OPINTOJAKSO']]
+    'tarjonta.koulutusmoduuliTyypit': [['TUTKINTO', 'TUTKINTO_OHJELMA'], ['OPINTOKOKONAISUUS'], ['OPINTOJAKSO']],
+    // Pääjako TUTKINTO ja OPINTO tyyppisiin koulutusmoduulityyppeihin:
+    'tarjonta.koulutuslajiModuulityypit': {
+        'TUTKINTO': ['TUTKINTO', 'TUTKINTO_OHJELMA'],
+        'OPINTO': ['OPINTOKOKONAISUUS', 'OPINTOJAKSO']
+    }
 };

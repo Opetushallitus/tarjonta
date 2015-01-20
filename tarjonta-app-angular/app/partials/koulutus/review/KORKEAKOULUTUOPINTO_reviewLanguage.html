@@ -9,7 +9,7 @@
 
     <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.perustiedot.otsikko" ng-click="model.collapse.perusTiedot = !model.collapse.perusTiedot"></th>
-        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></a></td>
+        <td><button class="btn" ng-disabled="!isMutable" data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa">Muokkaa</span> <span class="icon-edit"></span></button></td>
     </tr>
 
     <tbody ng-show="!model.collapse.perusTiedot">
@@ -162,7 +162,7 @@
     <!-- YHTEYSHENKILÖT -->
     <tr class="collapse" ng-class="model.collapse.yhteysHenkilot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.yhteysHenkilot.otsikko" ng-click="model.collapse.yhteysHenkilot = !model.collapse.yhteysHenkilot">Yhteyshenkilöt</th>
-        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+        <td><button class="btn" ng-disabled="!isMutable" data-ng-click="doEdit($event, 'PERUSTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
     </tr>
 
     <tbody ng-show="!model.collapse.yhteysHenkilot" ng-repeat="yh in model.koulutus.yhteyshenkilos | orderBy:yh.henkiloTyyppi">
@@ -186,7 +186,7 @@
 
     <tr class="collapse" ng-class="model.collapse.kuvailevatTiedot ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.kuvailevatTiedot.otsikko" ng-click="model.collapse.kuvailevatTiedot = !model.collapse.kuvailevatTiedot">Kuvailevat tiedot</th>
-        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'KUVAILEVATTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></a></td>
+        <td><button class="btn" ng-disabled="!isMutable" data-ng-click="doEdit($event, 'KUVAILEVATTIEDOT')"><span tt="koulutus.review.muokkaa"/> <span class="icon-edit"></span></button></td>
     </tr>
 
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
@@ -203,8 +203,8 @@
     <tr class="collapse" ng-class="model.collapse.sisaltyvatOpintokokonaisuudet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.sisaltyvatOpintokokonaisuudet.otsikko" ng-click="model.collapse.sisaltyvatOpintokokonaisuudet = !model.collapse.sisaltyvatOpintokokonaisuudet">Sisältyvät opintokokonaisuudet</th>
         <td>
-            <a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'SISALTYVATOPINTOKOKONAISUUDET_LIITA')"><span tt="koulutus.review.sisaltyvyys-liita">Liitä</span> <span class="icon-plus-sign"></span></a>
-            <a class="btn" ng-disabled="!isMutable" href data-ng-click="doEdit($event, 'SISALTYVATOPINTOKOKONAISUUDET_POISTA')"><span tt="koulutus.review.sisaltyvyys-poista">Poista</span> <span class="icon-minus-sign"></span></a>
+            <button class="btn" ng-disabled="!isMutable || model.koulutus.koulutusmoduuliTyyppi != 'OPINTOKOKONAISUUS'" data-ng-click="doEdit($event, 'SISALTYVATOPINTOKOKONAISUUDET_LIITA')"><span tt="koulutus.review.sisaltyvyys-liita">Liitä</span> <span class="icon-plus-sign"></span></button>
+            <button class="btn" ng-disabled="!isMutable || model.koulutus.koulutusmoduuliTyyppi != 'OPINTOKOKONAISUUS'" data-ng-click="doEdit($event, 'SISALTYVATOPINTOKOKONAISUUDET_POISTA')"><span tt="koulutus.review.sisaltyvyys-poista">Poista</span> <span class="icon-minus-sign"></span></button>
         </td>
     </tr>
 
@@ -230,7 +230,7 @@
 
     <tr class="collapse" ng-class="model.collapse.hakukohteet ? '' : 'open'">
         <th colspan="2" tt="koulutus.review.hakukohteet.otsikko" ng-click="model.collapse.hakukohteet = !model.collapse.hakukohteet">Hakukohteet</th>
-        <td><a class="btn" ng-disabled="!isMutable" href data-ng-click="addHakukohde()"><span tt="koulutus.review.luo.hakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span></a></td>
+        <td><button class="btn" ng-disabled="!isMutable" data-ng-click="addHakukohde()"><span tt="koulutus.review.luo.hakukohde">Luo uusi hakukohde</span> <span class="icon-edit"></span></button></td>
     </tr>
 
     <tbody ng-show="!model.collapse.hakukohteet">
@@ -245,9 +245,9 @@
                     </td>
                     <td>
                         <div class="align-right">
-                            <!-- <a class="btn" href ><span tt="hakukohde.review.koulutus.nayta.koulutus">Näytä koulutus</span> <span class="icon-eye-open"></span></a> -->
+                            <!-- <button class="btn" ><span tt="hakukohde.review.koulutus.nayta.koulutus">Näytä koulutus</span> <span class="icon-eye-open"></span></button> -->
 
-                            <a class="btn" ng-disabled="!canRemoveHakukohdeFromKoulutus(hakukohde)" href ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></a>
+                            <button class="btn" ng-disabled="!canRemoveHakukohdeFromKoulutus(hakukohde)" ng-click="removeKoulutusFromHakukohde(hakukohde)"><span tt="hakukohde.review.koulutus.poista">Poista hakukohteelta</span> <span class="icon-remove"></span></button>
                         </div>
                     </td>
                 </tr>

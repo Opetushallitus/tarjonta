@@ -161,6 +161,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         $log.info('doEdit()...', event, targetPart);
         if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_LIITA') {
+            var toteutusTyyppi = $scope.model.koulutus.toteutustyyppi;
+            var koulutusLaji = toteutusTyyppi == 'KORKEAKOULUOPINTO' ? 'OPINTO' : 'TUTKINTO';
             $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
             $scope.luoKoulutusDialog = $modal.open({
                 templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
@@ -172,7 +174,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                             kausi: $scope.model.koulutus.koulutuksenAlkamiskausi,
                             oid: $scope.model.koulutus.komoOid,
                             toteutustyyppi: $scope.model.koulutus.toteutustyyppi,
-                            koulutusModuuliTyyppi: $scope.model.koulutus.koulutusModuuliTyyppi,
+                            koulutusLaji: koulutusLaji,
                             nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                         };
                     },
@@ -194,6 +196,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                     targetKomo: function() {
                         return {
                             oid: $scope.model.koulutus.komoOid,
+                            toteutustyyppi: $scope.model.koulutus.toteutustyyppi,
                             nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                         };
                     },

@@ -34,7 +34,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
         $scope.model = {
             errors: [],
             text: {
-                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-poisto-teksti', [
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-poisto-teksti.' + targetKomo.toteutustyyppi, [
                     targetKomo.nimi,
                     organisaatio.nimi
                 ]),
@@ -65,7 +65,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
         /*
          * ng-grid for selecting nodes (with select/remove mode)
          */
-        $scope.selectGridOptions = {
+        $scope.gridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
             columnDefs: [
