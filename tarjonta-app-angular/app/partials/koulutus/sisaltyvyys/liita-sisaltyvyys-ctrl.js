@@ -105,7 +105,8 @@ app.service('TreeHandlers', function() {
     return singleton;
 });
 app.service('sisaltyvyysColumnDefs', ['LocalisationService', function(LocalisationService) {
-    return function(koulutusLaji, locale) {
+    return function(koulutusLaji) {
+        var locale = LocalisationService.getLocale();
         if (koulutusLaji === 'OPINTO') {
             return [{
                 field: 'nimi',
@@ -249,7 +250,7 @@ app.controller('LiitaSisaltyvyysCtrl', [
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
-            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji, $scope.koodistoLocale),
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji),
             showSelectionCheckbox: true,
             multiSelect: true
         };

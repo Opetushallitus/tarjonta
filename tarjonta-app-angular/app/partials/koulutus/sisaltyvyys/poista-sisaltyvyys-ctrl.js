@@ -69,7 +69,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
         $scope.gridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
-            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji, $scope.koodistoLocale),
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji),
             showSelectionCheckbox: true,
             multiSelect: true
         };
@@ -78,7 +78,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
          */
         $scope.reviewGridOptions = {
             data: 'model.selectedRowData',
-            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji, $scope.koodistoLocale),
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji),
             showSelectionCheckbox: false,
             multiSelect: false
         };
