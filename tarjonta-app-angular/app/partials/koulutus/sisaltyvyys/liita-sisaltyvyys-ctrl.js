@@ -106,33 +106,32 @@ app.service('TreeHandlers', function() {
 });
 app.service('sisaltyvyysColumnDefs', ['LocalisationService', function(LocalisationService) {
     return function(koulutusLaji) {
-        var locale = LocalisationService.getLocale();
         if (koulutusLaji === 'OPINTO') {
             return [{
                 field: 'nimi',
-                displayName: LocalisationService.t('sisaltyvyys.hakutulos.opinto', locale),
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.opinto'),
                 width: '50%'
             },
             {
                 field: 'tarjoaja',
-                displayName: LocalisationService.t('sisaltyvyys.hakutulos.organisaatio', locale),
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.organisaatio'),
                 width: '50%'
             }];
         }
         else {
             return [{
                 field: 'koulutuskoodi',
-                displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', locale),
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo'),
                 width: '20%'
             },
             {
                 field: 'nimi',
-                displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', locale),
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi'),
                 width: '50%'
             },
             {
                 field: 'tarjoaja',
-                displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', locale),
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja'),
                 width: '30%'
             }];
         }

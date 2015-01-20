@@ -197,6 +197,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                         return {
                             oid: $scope.model.koulutus.komoOid,
                             toteutustyyppi: $scope.model.koulutus.toteutustyyppi,
+                            koulutusLaji: koulutusLaji,
                             nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                         };
                     },
