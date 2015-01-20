@@ -1,12 +1,9 @@
 var app = angular.module('app.koulutus.extend.ctrl', []);
 
-app.controller('ExtendKoulutusController', ['$modalInstance', 'targetKoulutus', 'targetOrganisaatio',
-    'TarjontaService', 'LocalisationService', '$q', '$scope',
-    'OrganisaatioService', 'AuthService', 'PermissionService', '$location',
-    'KoulutusService',
+app.controller('ExtendKoulutusController',
     function($modalInstance, targetKoulutus, targetOrganisaatio,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService) {
+            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config) {
 
         'use strict';
 
@@ -105,12 +102,20 @@ app.controller('ExtendKoulutusController', ['$modalInstance', 'targetKoulutus', 
             _.each(ownOrganizations, function(orgOid) {
                 var deferred = $q.defer();
                 promises.push(deferred.promise);
-                OrganisaatioService.byOid(orgOid).then(function(org) {
-                    if (_.intersection(orgOids, org.oidAndParentOids).length > 0) {
-                        filteredOrganizations.push(orgOid);
-                        deferred.resolve();
-                    }
-                });
+
+                // Jos ophadmin
+                if (orgOid === Config.env['root.organisaatio.oid']) {
+                    filteredOrganizations = orgOids;
+                    deferred.resolve();
+                }
+                else {
+                    OrganisaatioService.byOid(orgOid).then(function(org) {
+                        if (_.intersection(orgOids, org.oidAndParentOids).length > 0) {
+                            filteredOrganizations.push(orgOid);
+                            deferred.resolve();
+                        }
+                    });
+                }
             });
 
             $q.all(promises).then(function() {
@@ -205,4 +210,4 @@ app.controller('ExtendKoulutusController', ['$modalInstance', 'targetKoulutus', 
             }
             $scope.model.organisaatiot = valitut;
         };
-    }]);
+    });

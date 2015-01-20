@@ -181,9 +181,10 @@ angular.module('Organisaatio', [
                 }).$promise.then(function(result) {
                     // Muodosta oidista ja parentOidPathista taulukko
                     // tätä tietoa käytetään monessa paikassa käyttöoikeuksia varten
-                    var oids = result.parentOidPath.split('|');
-                    oids.push(result.oid);
-                    oids = _.filter(oids, function(val) {return val !== '';});
+                    var oids = [result.oid];
+                    if (result.parentOidPath) {
+                        oids = _.chain(oids).union(result.parentOidPath.split('|')).compact().value();
+                    }
                     result.oidAndParentOids = oids;
                     return localize(result);
                 });
