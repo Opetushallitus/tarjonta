@@ -104,6 +104,39 @@ app.service('TreeHandlers', function() {
     };
     return singleton;
 });
+app.service('sisaltyvyysColumnDefs', ['LocalisationService', function(LocalisationService) {
+    return function(koulutusLaji, locale) {
+        if (koulutusLaji === 'OPINTO') {
+            return [{
+                field: 'nimi',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.opinto', locale),
+                width: '50%'
+            },
+            {
+                field: 'tarjoaja',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.organisaatio', locale),
+                width: '50%'
+            }];
+        }
+        else {
+            return [{
+                field: 'koulutuskoodi',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', locale),
+                width: '20%'
+            },
+            {
+                field: 'nimi',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', locale),
+                width: '50%'
+            },
+            {
+                field: 'tarjoaja',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', locale),
+                width: '30%'
+            }];
+        }
+    }
+}]);
 app.controller('LiitaSisaltyvyysCtrl', [
     '$scope',
     'Config',
@@ -115,10 +148,11 @@ app.controller('LiitaSisaltyvyysCtrl', [
     'targetKomo',
     'organisaatioOid',
     'SisaltyvyysUtil',
+    'sisaltyvyysColumnDefs',
     'TreeHandlers',
     'AuthService',
     '$log', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService, $log) {
+                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers, AuthService, $log) {
         /*
              * Select koulutus data objects.
              */
@@ -211,49 +245,14 @@ app.controller('LiitaSisaltyvyysCtrl', [
         /*
              * Ng-grid component
              */
-        $scope.tutkintoGridOptions = {
+        $scope.gridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
-            columnDefs: [
-                {
-                    field: 'koulutuskoodi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale),
-                    width: '20%'
-                },
-                {
-                    field: 'nimi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale),
-                    width: '50%'
-                },
-                {
-                    field: 'tarjoaja',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale),
-                    width: '30%'
-                }
-            ],
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji, $scope.koodistoLocale),
             showSelectionCheckbox: true,
             multiSelect: true
         };
-        $scope.opintoGridOptions = {
-                data: 'model.hakutulos',
-                selectedItems: $scope.model.selectedRowData,
-                columnDefs: [
-                    {
-                        field: 'nimi',
-                        displayName: LocalisationService.t('sisaltyvyys.hakutulos.opinto', $scope.koodistoLocale),
-                        width: '50%'
-                    },
-                    {
-                        field: 'tarjoaja',
-                        displayName: LocalisationService.t('sisaltyvyys.hakutulos.organisaatio', $scope.koodistoLocale),
-                        width: '50%'
-                    }
-                ],
-                showSelectionCheckbox: true,
-                multiSelect: true
-            };
-        $scope.gridOptions = targetKomo.koulutusLaji === 'OPINTO' ? $scope.opintoGridOptions : $scope.tutkintoGridOptions;
         /*
              * Clear selected data from the search fields.
              */

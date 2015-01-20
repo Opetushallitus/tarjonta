@@ -25,9 +25,10 @@ app.controller('PoistaSisaltyvyysCtrl', [
     'targetKomo',
     'organisaatioOid',
     'SisaltyvyysUtil',
+    'sisaltyvyysColumnDefs',
     'TreeHandlers',
     '$log', function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, $log) {
+                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers, $log) {
         /*
          * Select koulutus data objects.
          */
@@ -68,23 +69,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
         $scope.gridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
-            columnDefs: [
-                {
-                    field: 'koulutuskoodi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale),
-                    width: '20%'
-                },
-                {
-                    field: 'nimi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale),
-                    width: '50%'
-                },
-                {
-                    field: 'tarjoaja',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale),
-                    width: '30%'
-                }
-            ],
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji, $scope.koodistoLocale),
             showSelectionCheckbox: true,
             multiSelect: true
         };
@@ -93,23 +78,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
          */
         $scope.reviewGridOptions = {
             data: 'model.selectedRowData',
-            columnDefs: [
-                {
-                    field: 'koulutuskoodi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale),
-                    width: '20%'
-                },
-                {
-                    field: 'nimi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale),
-                    width: '50%'
-                },
-                {
-                    field: 'tarjoaja',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale),
-                    width: '30%'
-                }
-            ],
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji, $scope.koodistoLocale),
             showSelectionCheckbox: false,
             multiSelect: false
         };
