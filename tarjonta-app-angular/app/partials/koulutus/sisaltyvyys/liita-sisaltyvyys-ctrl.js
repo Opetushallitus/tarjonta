@@ -211,7 +211,7 @@ app.controller('LiitaSisaltyvyysCtrl', [
         /*
              * Ng-grid component
              */
-        $scope.gridOptions = {
+        $scope.tutkintoGridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
@@ -235,6 +235,25 @@ app.controller('LiitaSisaltyvyysCtrl', [
             showSelectionCheckbox: true,
             multiSelect: true
         };
+        $scope.opintoGridOptions = {
+                data: 'model.hakutulos',
+                selectedItems: $scope.model.selectedRowData,
+                columnDefs: [
+                    {
+                        field: 'nimi',
+                        displayName: LocalisationService.t('sisaltyvyys.hakutulos.opinto', $scope.koodistoLocale),
+                        width: '50%'
+                    },
+                    {
+                        field: 'tarjoaja',
+                        displayName: LocalisationService.t('sisaltyvyys.hakutulos.organisaatio', $scope.koodistoLocale),
+                        width: '50%'
+                    }
+                ],
+                showSelectionCheckbox: true,
+                multiSelect: true
+            };
+        $scope.gridOptions = targetKomo.koulutusLaji === 'OPINTO' ? $scope.opintoGridOptions : $scope.tutkintoGridOptions;
         /*
              * Clear selected data from the search fields.
              */
