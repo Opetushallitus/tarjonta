@@ -45,7 +45,7 @@
                     ng-init="jarjestettavaKoulutus = model.koulutus.jarjestettavatKoulutuksetMap[org.oid]">
                     <td>{{org.nimi}}</td>
                     <td ng-if="jarjestettavaKoulutus">
-                        <a href="#/koulutus/{{jarjestettavaKoulutus.oid}}/edit">{{jarjestettavaKoulutus.tila}}</a>
+                        <a href="#/koulutus/{{jarjestettavaKoulutus.oid}}">{{jarjestettavaKoulutus.tila}}</a>
                     </td>
                     <td ng-if="!jarjestettavaKoulutus">
                         EI JÄRJESTETTY

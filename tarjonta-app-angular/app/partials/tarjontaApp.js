@@ -564,6 +564,18 @@ angular.module('app').controller('AppRoutingCtrl', [
             $log.debug('render()');
             var renderAction = $route.current.action;
             var renderPath = renderAction ? renderAction.split('.') : [];
+
+            /**
+             * index.html:ssä olevan ng-switch määrityksen takia controlleria
+             * ei alusteta uudelleen, jos se päätyy aina samaan ng-switch-when kohtaan (katso index.html).
+             * Tämä on ongelma, koska esim. koulutuksen tarkastelunäkymästä pitää pystyä siirtymään
+             * suoraan toisen koulutuksen tarkastelunäkymään ja se edellyttää controllerin alustamista.
+             * Tällä kikalla varmistetaan se, että ng-switch match vaihtuu.
+             */
+            if (renderPath[1] && renderPath[0] === 'koulutus') {
+                renderPath[1] += $scope.count % 2 === 0 ? '_0' : '_1';
+            }
+
             // Store the values in the model.
             $scope.renderAction = renderAction;
             $scope.renderPath = renderPath;
