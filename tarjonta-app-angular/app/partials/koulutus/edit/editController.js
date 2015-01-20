@@ -648,10 +648,18 @@ app.controller('BaseEditController', [
                 $scope.loadKomoKuvausTekstis(null, model.kuvausKomo);
 
                 if ($route.current.action === 'koulutus.jarjesta' && $routeParams.organisaatioOid) {
+                    $scope.tarjoajanKoulutus = angular.copy(model);
                     model.tarjoajanKoulutus = model.oid;
                     model.oid = null;
                     model.opetusJarjestajat = [];
                     model.opetusTarjoajat = [$routeParams.organisaatioOid];
+                }
+                else if (model.tarjoajanKoulutus) {
+                    TarjontaService.getKoulutus({
+                        oid: model.tarjoajanKoulutus
+                    }).$promise.then(function(response) {
+                        $scope.tarjoajanKoulutus = response.result;
+                    });
                 }
             }
             else if ($routeParams.org) {
@@ -1037,6 +1045,11 @@ app.controller('BaseEditController', [
                 $scope.max = maxY;
             }
         };
+
+        $scope.getMonikielinenNimi = function(field) {
+            return field.kieli_fi || field.kieli_sv || field.kieli_en;
+        };
+
         return $scope;
     }
 ]);

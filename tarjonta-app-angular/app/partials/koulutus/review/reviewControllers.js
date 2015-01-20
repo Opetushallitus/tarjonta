@@ -524,4 +524,14 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         return 'data:' + img.mimeType + ';base64,' + img.base64data;
     };
+    if ($scope.model.koulutus.tarjoajanKoulutus) {
+        TarjontaService.getKoulutus({
+            oid: $scope.model.koulutus.tarjoajanKoulutus
+        }).$promise.then(function(response) {
+            $scope.model.tarjoajanKoulutus = response.result;
+        });
+    }
+    $scope.getMonikielinenNimi = function(field) {
+        return field.kieli_fi || field.kieli_sv || field.kieli_en;
+    };
 });

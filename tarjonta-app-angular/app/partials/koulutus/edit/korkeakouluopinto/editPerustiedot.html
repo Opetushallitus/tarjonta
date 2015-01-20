@@ -1,5 +1,13 @@
    <table class="tarjontaForm">
 
+       <tr ng-if="tarjoajanKoulutus">
+           <th tt="koulutus.edit.jarjestetaanKoulutuksesta">Järjestetään koulutuksesta</th>
+           <td>
+               {{getMonikielinenNimi(tarjoajanKoulutus.koulutusohjelma.tekstis)}}
+               ({{tarjoajanKoulutus.organisaatio.nimi}})
+           </td>
+       </tr>
+
        <tr>
            <th>Organisaatiot</th>
            <td>
@@ -12,8 +20,8 @@
            </td>
        </tr>
 
-       <tr>
-           <th>Järjestävät organisaatiot</th>
+       <tr ng-if="!model.tarjoajanKoulutus">
+           <th tt="koulutus.edit.jarjestavatOrganisaatiot">Järjestävät organisaatiot</th>
            <td ng-if="model.jarjestavatOrganisaatiot.length">
                <ul>
                    <li ng-repeat="org in model.jarjestavatOrganisaatiot">{{org.nimi}}</li>
@@ -25,9 +33,10 @@
                </button>
            </td>
        </tr>
+
        <tr>
            <th></th>
-           <td colspan="2" class="help">HELP teksti</td>
+           <td colspan="2" class="help" tt="koulutus.edit.jarjestetaanKoulutuksestaHelp">HELP teksti</td>
        </tr>
 
         <!-- koulutusohjelma -->

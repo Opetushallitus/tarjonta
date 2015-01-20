@@ -14,6 +14,16 @@
 
     <tbody ng-show="!model.collapse.perusTiedot">
 
+    <tr ng-if="model.tarjoajanKoulutus">
+        <th tt="koulutus.review.jarjestetaanKoulutuksesta">Järjestetään koulutuksesta</th>
+        <td>
+            <a href="#/koulutus/{{model.tarjoajanKoulutus.oid}}">
+                {{getMonikielinenNimi(model.tarjoajanKoulutus.koulutusohjelma.tekstis)}}
+            </a>
+            ({{model.tarjoajanKoulutus.organisaatio.nimi}})
+        </td>
+    </tr>
+
     <tr>
         <th tt="koulutus.review.perustiedot.organisaatio">Organisaatio</th>
         <td colspan="2">
@@ -23,7 +33,7 @@
         </td>
     </tr>
 
-    <tr>
+    <tr ng-if="!model.koulutus.tarjoajanKoulutus">
         <th tt="koulutus.review.perustiedot.jarjestavatOrganisaatiot">Järjestävät organisaatiot</th>
         <td>
             <table class="table table-bordered">
