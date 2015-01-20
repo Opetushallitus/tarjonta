@@ -21,36 +21,29 @@ app.factory('KoulutusService', function($resource, Config, $location, $modal, Ta
         /**
          * Luo järjestävä koulutus olemassa olevan pohjalta (extend).
          */
-        extendKorkeakouluOpinto: function(koulutustyyppiKoodiUri, organisaatioOid, koulutusmoduuliTyyppi, $scope) {
-            if (angular.isDefined($scope.model.sourceKoulutus)) {
-                var extendModalDialog = $modal.open({
-                    templateUrl: 'partials/koulutus/copy/extend-koulutus.html',
-                    controller: 'ExtendKoulutusController',
-                    resolve: {
-                        targetKoulutus: function() {
-                            var ohjelma = $scope.model.koulutus.koulutusohjelma;
-                            var strName = '';
-                            if (ohjelma.tekstis && Object.keys(ohjelma.tekstis).length > 0) {
-                                //korkeakoulu etc.
-                                strName = ohjelma.tekstis['kieli_' + $scope.model.koodistoLocale];
-                            }
-                            return [{oid: $scope.model.koulutus.oid, nimi: strName,
-                                koulutustyyppiKoodiUri: koulutustyyppiKoodiUri,
-                                koulutusmoduuliTyyppi: koulutusmoduuliTyyppi}];
-                        },
-                        targetOrganisaatio: function() {
-                            return {
-                                oid: $scope.model.koulutus.organisaatio.oid,
-                                nimi: $scope.model.koulutus.organisaatio.nimi
-                            };
-                        },
-                        koulutusMap: function() {
-                            // Tarkista, onko koulutus jo järjestetty kyseiselle organisaatiolle (tai sen aliorganisaatiolle)
-                            return TarjontaService.getJarjestettavatKoulutukset($scope.model.koulutus.oid);
+        extendKorkeakouluOpinto: function(koulutus, locale) {
+            $modal.open({
+                templateUrl: 'partials/koulutus/copy/extend-koulutus.html',
+                controller: 'ExtendKoulutusController',
+                resolve: {
+                    targetKoulutus: function() {
+                        var ohjelma = koulutus.koulutusohjelma;
+                        var strName = '';
+                        if (ohjelma.tekstis && Object.keys(ohjelma.tekstis).length > 0) {
+                            //korkeakoulu etc.
+                            strName = ohjelma.tekstis['kieli_' + locale];
                         }
+                        return [{
+                            oid: koulutus.oid,
+                            nimi: strName
+                        }];
+                    },
+                    koulutusMap: function() {
+                        // Tarkista, onko koulutus jo järjestetty kyseiselle organisaatiolle (tai sen aliorganisaatiolle)
+                        return TarjontaService.getJarjestettavatKoulutukset(koulutus.oid);
                     }
-                });
-            }
+                }
+            });
         },
 
         /**

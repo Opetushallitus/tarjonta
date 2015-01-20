@@ -60,12 +60,9 @@
         <th tt="koulutus.edit.{{model.koulutus.toteutustyyppi}}.nimi">Opinnon nimi</th>
         <td colspan="2">
             {{model.koulutus.koulutusohjelma.tekstis[lang.koodi_uri]}}
-            <i>({{model.koulutus.tunniste}})</i>
+            <i ng-if="model.koulutus.tunniste">({{model.koulutus.tunniste}})</i>
         </td>
     </tr>
-
-    <!-- väli -->
-    <tr class="padding"><td colspan="3"></td></tr>
 
     <!-- teemat ja aiheet -->
     <tr>
@@ -165,9 +162,6 @@
             {{ model.koulutus.opettaja }}
         </td>
     </tr>
-
-    <!-- väli -->
-    <tr class="padding"><td colspan="3"></td></tr>
 
     <!-- YHTEYSHENKILÖT -->
     <tr class="collapse" ng-class="model.collapse.yhteysHenkilot ? '' : 'open'">

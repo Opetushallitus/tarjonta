@@ -1,7 +1,7 @@
 var app = angular.module('app.koulutus.extend.ctrl', []);
 
 app.controller('ExtendKoulutusController',
-    function($modalInstance, targetKoulutus, targetOrganisaatio,
+    function($modalInstance, targetKoulutus,
             TarjontaService, LocalisationService, $q, $scope,
             OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config, koulutusMap) {
 
@@ -14,7 +14,6 @@ app.controller('ExtendKoulutusController',
             },
             errors: [],
             targetKoulutus: targetKoulutus,
-            targetOrganisaatio: targetOrganisaatio,
             organisaatiot: [],
             mode: 'EXTEND'
         };

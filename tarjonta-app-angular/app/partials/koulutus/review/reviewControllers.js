@@ -303,9 +303,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         // Aseta lähde koulutus
         $scope.model.sourceKoulutus = $scope.model.koulutus;
         // Avaa luonti
-        KoulutusService.extendKorkeakouluOpinto(
-            $scope.model.sourceKoulutus.koulutustyyppi.uri, $scope.model.sourceKoulutus.organisaatio.oid,
-            $scope.model.sourceKoulutus.koulutusmoduuliTyyppi, $scope);
+        KoulutusService.extendKorkeakouluOpinto($scope.model.koulutus, $scope.model.koodistoLocale);
     };
     $scope.doMoveToBeSubPart = function(event) {
         $log.info('doMoveToBeSubPart()...');

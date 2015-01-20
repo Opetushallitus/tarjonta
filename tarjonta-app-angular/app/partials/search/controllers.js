@@ -274,6 +274,9 @@ angular.module('app.search.controllers', [
     $scope.hakukohdeGetOptions = function(row, actions) {
         return RowActions.get('hakukohde', row, actions, $scope);
     };
+    $scope.jarjestaKoulutusGetOptions = function(row, actions) {
+        return RowActions.get('jarjestaKoulutus', row, actions, $scope);
+    };
     $scope.search = function() {
         var spec = $scope.spec.getSpecForSearchQuery($scope.selectedOrgOid);
         updateLocation();
