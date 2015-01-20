@@ -10,6 +10,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.RyhmaliitosV1RDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Set;
 
 @Transactional
@@ -47,7 +48,7 @@ public class OrganisaatioryhmaResourceImplV1 implements OrganisaatioryhmaV1Resou
         } else {
             updateRyhmaliitos(ryhmaliitos, ryhmaliitosDTO);
         }
-        hakukohdeDAO.update(hakukohde);
+        update(hakukohde);
     }
 
     private void removeRyhmaliitos(String ryhmaOid, String hakukohdeOid) {
@@ -56,6 +57,11 @@ public class OrganisaatioryhmaResourceImplV1 implements OrganisaatioryhmaV1Resou
         if (ryhmaliitos != null) {
             hakukohde.removeRyhmaliitos(ryhmaliitos);
         }
+        update(hakukohde);
+    }
+
+    private void update(Hakukohde hakukohde) {
+        hakukohde.setLastUpdateDate(new Date());
         hakukohdeDAO.update(hakukohde);
     }
 
