@@ -352,7 +352,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return ret.promise;
     };
     dataFactory.getKoulutus = function(arg, func) {
-        $log.debug('getKoulutus()');
         //param meta=false filter all meta fields
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid?img=true', {
             oid: '@oid'
@@ -382,31 +381,14 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
 
         // Koulutukset tallennetaan mappiin, jossa avaimena toimii organisaation oid
         var map = {};
-        /**
-         * Tarvitaan mäppäys kaikista oidPathin oideista, jotta järjestettävät
-         * koulutukset osataan näyttää sille organisaatiolle jolle järjestämisoikeus
-         * on annettu. Tämä siitä syystä, että varsinainen koulutus voi olla tallennettuna
-         * aliorganisaatiolle (eli ei voida olettaa sen löytyvän aina suoraan määritetystä
-         * organisaatiosta)
-         */
-        function getOrganizationOidPath(orgOid) {
-            var deferred = $q.defer();
-            OrganisaatioService.byOid(orgOid).then(function(org) {
-                var oids = org.parentOidPath.split('|');
-                oids.push(org.oid);
-                oids = _.filter(oids, function(val) {return val !== '';});
-                deferred.resolve(oids);
-            });
-            return deferred.promise;
-        }
 
         koulutus.get().$promise.then(function(data) {
             var promises = [];
             _.each(data.result, function(koulutus) {
                 _.each(koulutus.tarjoajat, function(tarjoaja) {
                     var deferred = $q.defer();
-                    getOrganizationOidPath(tarjoaja).then(function(orgOids) {
-                        _.each(orgOids, function(orgOid) {
+                    OrganisaatioService.byOid(tarjoaja).then(function(org) {
+                        _.each(org.oidAndParentOids, function(orgOid) {
                             map[orgOid] = koulutus;
                         });
                         deferred.resolve();

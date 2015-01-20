@@ -91,41 +91,68 @@ app.controller('ExtendKoulutusController', ['$modalInstance', 'targetKoulutus', 
 
         // haetaan organisaatihierarkia joka valittuna kälissä tai
         // jos mitään ei ole valittuna organisaatiot joihin käyttöoikeus
-        OrganisaatioService.etsi({oidRestrictionList: AuthService.getOrganisations()}).then(function(vastaus) {
-            //console.log("asetetaan org hakutulos modeliin.");
-            $scope.alkorganisaatiot = vastaus.organisaatiot;
-            //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
-            var buildMapFrom = function(orglist) {
-                for (var i = 0; i < orglist.length; i++) {
-                    var organisaatio = orglist[i];
-                    $scope.organisaatiomap[organisaatio.oid] = organisaatio;
-                    if (organisaatio.children) {
-                        buildMapFrom(organisaatio.children);
-                    }
-                }
-            };
-            buildMapFrom(vastaus.organisaatiot);
-            //hakee kaikki valittavissa olevat koulutustyypit
-            var oltUrit = [];
-            var oltpromises = [];
-            _.each(vastaus.organisaatiot, function(org) {
-                var oppilaitostyypit = haeOppilaitostyypit(org);
-                promises.push(oppilaitostyypit);
-                oppilaitostyypit.then(function(tyypit) {
-                    for (var i = 0; i < tyypit.length; i++) {
-                        if (oltUrit.indexOf(tyypit[i]) == -1) {
-                            oltUrit.push(tyypit[i]);
-                        }
+        TarjontaService.getKoulutus({
+            oid: targetKoulutus[0].oid
+        }).$promise.then(function(response) {
+            var koulutus = response.result;
+            var orgOids = koulutus.opetusJarjestajat;
+            var ownOrganizations = AuthService.getOrganisations();
+            var filteredOrganizations = [];
+            var promises = [];
+
+            // Looppaa kaikki organisaatiot ja hyväksy vain ne, joiden
+            // oid tai parentOidPath sisältää oman organisaation
+            _.each(ownOrganizations, function(orgOid) {
+                var deferred = $q.defer();
+                promises.push(deferred.promise);
+                OrganisaatioService.byOid(orgOid).then(function(org) {
+                    if (_.intersection(orgOids, org.oidAndParentOids).length > 0) {
+                        filteredOrganizations.push(orgOid);
+                        deferred.resolve();
                     }
                 });
             });
-            $q.all(oltpromises).then(function() {
-                $q.all(promises).then(function() {
-                    // TODO: korjaa tämä
-                    // paivitaKoulutustyypit(oltUrit);
-                });
+
+            $q.all(promises).then(function() {
+                if (filteredOrganizations.length > 0) {
+                    OrganisaatioService.etsi({oidRestrictionList: filteredOrganizations}).then(function(vastaus) {
+                        $scope.alkorganisaatiot = vastaus.organisaatiot;
+                        //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
+                        var buildMapFrom = function(orglist) {
+                            for (var i = 0; i < orglist.length; i++) {
+                                var organisaatio = orglist[i];
+                                $scope.organisaatiomap[organisaatio.oid] = organisaatio;
+                                if (organisaatio.children) {
+                                    buildMapFrom(organisaatio.children);
+                                }
+                            }
+                        };
+                        buildMapFrom(vastaus.organisaatiot);
+                        //hakee kaikki valittavissa olevat koulutustyypit
+                        var oltUrit = [];
+                        var oltpromises = [];
+                        _.each(vastaus.organisaatiot, function(org) {
+                            var oppilaitostyypit = haeOppilaitostyypit(org);
+                            promises.push(oppilaitostyypit);
+                            oppilaitostyypit.then(function(tyypit) {
+                                for (var i = 0; i < tyypit.length; i++) {
+                                    if (oltUrit.indexOf(tyypit[i]) == -1) {
+                                        oltUrit.push(tyypit[i]);
+                                    }
+                                }
+                            });
+                        });
+                        $q.all(oltpromises).then(function() {
+                            $q.all(promises).then(function() {
+                                // TODO: korjaa tämä
+                                // paivitaKoulutustyypit(oltUrit);
+                            });
+                        });
+                    });
+                }
             });
         });
+
         var lisaaOrganisaatio = function(organisaatio) {
             $scope.model.organisaatiot.push(organisaatio);
         };

@@ -8,7 +8,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
 
     // Näytetäänkö "Järjestä"-painike
     $scope.isJarjestettavaKoulutus = koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO'
-                                        && !koulutusModel.tarjoajanKoulutus;
+                                        && koulutusModel.opetusJarjestajat.length > 0;
 
     if (angular.isUndefined(koulutusModel)) {
         $location.path('/error');

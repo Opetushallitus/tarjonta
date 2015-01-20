@@ -179,6 +179,12 @@ angular.module('Organisaatio', [
                 return orgLuku.get({
                     oid: oid
                 }).$promise.then(function(result) {
+                    // Muodosta oidista ja parentOidPathista taulukko
+                    // tätä tietoa käytetään monessa paikassa käyttöoikeuksia varten
+                    var oids = result.parentOidPath.split('|');
+                    oids.push(result.oid);
+                    oids = _.filter(oids, function(val) {return val !== '';});
+                    result.oidAndParentOids = oids;
                     return localize(result);
                 });
             },
