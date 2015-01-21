@@ -3,9 +3,37 @@ var app = angular.module('app.koulutus.extend.ctrl', []);
 app.controller('ExtendKoulutusController',
     function($modalInstance, targetKoulutus,
             TarjontaService, LocalisationService, $q, $scope,
-            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config, koulutusMap) {
+            OrganisaatioService, AuthService, PermissionService, $location, KoulutusService, Config, koulutusMap,
+            SharedStateService) {
 
         'use strict';
+
+        // Hakunäkymässä valittu organisaatio
+        var selectedOrganization;
+        if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio
+            && SharedStateService.state.puut.organisaatio.selected) {
+            selectedOrganization = SharedStateService.state.puut.organisaatio.selected;
+        }
+        else {
+            var ownOrgs = AuthService.getOrganisations();
+            if (ownOrgs[0]) {
+                selectedOrganization = ownOrgs[0];
+            }
+        }
+
+        function preselectOrganization(organisaatiot) {
+            if (organisaatiot.length === 1) {
+                lisaaOrganisaatio(organisaatiot[0]);
+            }
+            else if (selectedOrganization) {
+                OrganisaatioService.byOid(selectedOrganization).then(function(org) {
+                    var searchResultOids = _.pluck(organisaatiot, 'oid');
+                    if (_.intersection(searchResultOids, org.oidAndParentOids).length > 0) {
+                        lisaaOrganisaatio(org);
+                    }
+                });
+            }
+        }
 
         // Tähän populoidaan formin valinnat:
         $scope.model = {
@@ -121,6 +149,7 @@ app.controller('ExtendKoulutusController',
                 if (filteredOrganizations.length > 0) {
                     OrganisaatioService.etsi({oidRestrictionList: filteredOrganizations}).then(function(vastaus) {
                         $scope.alkorganisaatiot = vastaus.organisaatiot;
+                        preselectOrganization(vastaus.organisaatiot);
                         //rakennetaan mappi oid -> organisaatio jotta löydetään parentit helposti
                         var buildMapFrom = function(orglist) {
                             for (var i = 0; i < orglist.length; i++) {
