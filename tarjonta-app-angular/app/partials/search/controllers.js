@@ -54,7 +54,8 @@ angular.module('app.search.controllers', [
         SharedStateService.state.puut.organisaatio.selected) {
         $routeParams.oid = SharedStateService.state.puut.organisaatio.selected;
     }
-    if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio.scope !== $scope) {
+    if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio
+        && SharedStateService.state.puut.organisaatio.scope !== $scope) {
         SharedStateService.state.puut.organisaatio.scope = $scope;
     }
     var orgs = AuthService.getOrganisations([
