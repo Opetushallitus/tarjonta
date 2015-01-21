@@ -283,12 +283,12 @@ app.controller('LiitaSisaltyvyysCtrl', [
                                 continue;
                             }
                             node.koulutuskoodi = koulutuskoodiUri;
-                            $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
                         } else {
                             if (targetKomo.koulutusLaji === 'TUTKINTO') {
                                 $log.error('koulutus without koulutuskoodi:', result.tulokset[i].tulokset[c]);
                             }
                         }
+                        $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
                         arr.push(node);
                     }
                 }
