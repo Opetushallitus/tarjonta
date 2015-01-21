@@ -8,6 +8,7 @@ angular.module('app.kk', [
     'app.kk.search.valintaperustekuvaus.ctrl',
     'app.edit.ctrl',
     'app.edit.ctrl.kk',
+    'app.edit.ctrl.kko',
     'app.edit.ctrl.generic',
     'app.edit.ctrl.amm',
     'app.edit.ctrl.alkamispaiva',
@@ -29,6 +30,7 @@ angular.module('app.kk', [
  * Main module dependecies                             *
  *******************************************************/
 angular.module('app', [
+    'Koulutus',
     'app.directives',
     'app.services',
     'app.search.controllers',
@@ -39,6 +41,7 @@ angular.module('app', [
     'app.koulutus.remove.ctrl',
     'app.koulutus.kuvausRemove.ctrl',
     'app.koulutus.copy.ctrl',
+    'app.koulutus.extend.ctrl',
     'app.dialog',
     'ngRoute',
     'ngResource',
@@ -335,14 +338,53 @@ angular.module('app').config([
             TarjontaService.getKoulutus({
                 oid: $route.current.params.id
             }).$promise.then(function(res) {
-                OrganisaatioService.getPopulatedOrganizations(res.result.opetusTarjoajat, res.result.organisaatio.oid)
-                .then(function(orgs) {
-                    res.result.organisaatiot = orgs;
+                var promises = [];
+
+                function getNoopPromise() {
+                    var deferred = $q.defer();
+                    deferred.resolve();
+                    return deferred.promise;
+                }
+
+                promises.push(OrganisaatioService.getPopulatedOrganizations(
+                    res.result.opetusTarjoajat, res.result.organisaatio.oid));
+
+                if (res.result.opetusJarjestajat && res.result.opetusJarjestajat.length) {
+                    promises.push(OrganisaatioService.getPopulatedOrganizations(res.result.opetusJarjestajat));
+                }
+                else {
+                    promises.push(getNoopPromise());
+                }
+
+                if (res.result.toteutustyyppi === 'KORKEAKOULUOPINTO'
+                        && !res.result.tarjoajanKoulutus) {
+                    promises.push(TarjontaService.getJarjestettavatKoulutukset(
+                        res.result.oid,
+                        res.result.opetusJarjestajat
+                    ));
+                }
+                else {
+                    promises.push(getNoopPromise());
+                }
+
+                $q.all(promises).then(function(data) {
+                    var tarjoajat = data[0];
+                    var jarjestajat = data[1];
+                    var jarjestettavatKoulutukset = data[2] || {};
+                    // tarjoajat
+                    res.result.organisaatiot = tarjoajat;
                     var nimet = '';
-                    angular.forEach(orgs, function(org) {
+                    angular.forEach(tarjoajat, function(org) {
                         nimet += ' | ' + org.nimi;
                     });
                     res.result.organisaatioidenNimet = nimet.substring(3);
+
+                    // jarjestajat
+                    res.result.jarjestavatOrganisaatiot = jarjestajat;
+
+                    res.result.jarjestettavatKoulutuksetMap = jarjestettavatKoulutukset.map;
+                    res.result.jarjestettavatKoulutuksetOrphans = jarjestettavatKoulutukset.orphans;
+
                     defer.resolve(res);
                 });
             });
@@ -387,6 +429,12 @@ angular.module('app').config([
             }
         }).when('/koulutus/:id/edit', {
             action: 'koulutus.edit',
+            controller: 'KoulutusRoutingController',
+            resolve: {
+                koulutusModel: resolveKoulutus
+            }
+        }).when('/koulutus/:id/jarjesta/:organisaatioOid', {
+            action: 'koulutus.jarjesta',
             controller: 'KoulutusRoutingController',
             resolve: {
                 koulutusModel: resolveKoulutus
@@ -520,6 +568,18 @@ angular.module('app').controller('AppRoutingCtrl', [
             $log.debug('render()');
             var renderAction = $route.current.action;
             var renderPath = renderAction ? renderAction.split('.') : [];
+
+            /**
+             * index.html:ssä olevan ng-switch määrityksen takia controlleria
+             * ei alusteta uudelleen, jos se päätyy aina samaan ng-switch-when kohtaan (katso index.html).
+             * Tämä on ongelma, koska esim. koulutuksen tarkastelunäkymästä pitää pystyä siirtymään
+             * suoraan toisen koulutuksen tarkastelunäkymään ja se edellyttää controllerin alustamista.
+             * Tällä kikalla varmistetaan se, että ng-switch match vaihtuu.
+             */
+            if (renderPath[1] && renderPath[0] === 'koulutus') {
+                renderPath[1] += $scope.count % 2 === 0 ? '_0' : '_1';
+            }
+
             // Store the values in the model.
             $scope.renderAction = renderAction;
             $scope.renderPath = renderPath;

@@ -15,13 +15,31 @@
                          data-node-label="nimi" data-node-children="children">
                     </div>
                 </td>
-                <td width="50%" ng-if="selectedOrganizations.length === 0" tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
-                <td width="50%" ng-if="selectedOrganizations.length > 0">
+
+                <!-- tarjoajan valinta -->
+                <td width="50%" ng-if="organizationSelectionType == 'TARJOAJA' &&
+                    selectedOrganizations.length === 0"
+                    tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
+                <td width="50%" ng-if="organizationSelectionType == 'TARJOAJA' && selectedOrganizations.length > 0">
                     <p><strong>Valitut organisaatiot</strong></p>
                     <ul>
                         <li ng-repeat="organisaatio in selectedOrganizations">
                             <!-- älä salli sen organisaation poistoa, joka on luonut koulutuksen (ensimmäinen arvo taulukossa) -->
-                            <a ng-if="$index > 0" ng-click="deleteOrganization($index)">[X]</a>
+                            <a ng-if="$index > 0" ng-click="deleteOrganization(organisaatio.oid)">[X]</a>
+                            {{organisaatio.nimi}}
+                        </li>
+                    </ul>
+                </td>
+
+                <!-- järjestäjän valinta -->
+                <td width="50%" ng-if="organizationSelectionType == 'JARJESTAJA' &&
+                    selectedOrganizations.length === 0"
+                    tt="luoKoulutusDialogi.organisaatiotaEiValittu">Organisaatio ei ole valittu</td>
+                <td width="50%" ng-if="organizationSelectionType == 'JARJESTAJA' && selectedOrganizations.length > 0">
+                    <p><strong>Valitut järjestäjät</strong></p>
+                    <ul>
+                        <li ng-repeat="organisaatio in selectedOrganizations | orderBy: 'nimi'">
+                            <a ng-click="deleteOrganization(organisaatio.oid)">[X]</a>
                             {{organisaatio.nimi}}
                         </li>
                     </ul>

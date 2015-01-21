@@ -16,7 +16,9 @@
 
         <h2>{{ getHakukohteenNimi() }}</h2>
 
-        <table class="tarjontaForm">
+        <div ng-include="'partials/hakukohde/review/KORKEAKOULUOPINTO.html'" ng-if="isOpinto(model.hakukohde)"></div>
+
+        <table class="tarjontaForm" ng-if="!isOpinto(model.hakukohde)">
             <tr><th></th><td></td><td></td></tr>
 
             <tr class="collapse" ng-class="model.collapse.perusTiedot ? '' : 'open'">

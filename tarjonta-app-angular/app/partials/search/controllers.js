@@ -38,7 +38,8 @@ angular.module('app.search.controllers', [
         var state = {
             advancedSearchOpen: $scope.isopen,
             koulutuksetActive: $scope.tabs.koulutukset.active,
-            hakukohteetActive: $scope.tabs.hakukohteet.active
+            hakukohteetActive: $scope.tabs.hakukohteet.active,
+            jarjestettavatActive: $scope.tabs.jarjestettavat.active
         };
         return state;
     };
@@ -53,7 +54,8 @@ angular.module('app.search.controllers', [
         SharedStateService.state.puut.organisaatio.selected) {
         $routeParams.oid = SharedStateService.state.puut.organisaatio.selected;
     }
-    if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio.scope !== $scope) {
+    if (SharedStateService.state.puut && SharedStateService.state.puut.organisaatio
+        && SharedStateService.state.puut.organisaatio.scope !== $scope) {
         SharedStateService.state.puut.organisaatio.scope = $scope;
     }
     var orgs = AuthService.getOrganisations([
@@ -82,17 +84,22 @@ angular.module('app.search.controllers', [
         },
         hakukohteet: {
             active: false
+        },
+        jarjestettavat: {
+            active: false
         }
     };
     $scope.selectedOrgOid = $routeParams.oid ? $routeParams.oid : selectOrg ? selectOrg : OPH_ORG_OID;
     $scope.hakukohdeResults = {};
     $scope.koulutusResults = {};
+    $scope.jarjestettavatResults = {};
     $scope.oppilaitostyypit = SearchParameters.getOppilaitostyypit();
     $scope.organisaatiotyypit = SearchParameters.getOrganisaatiotyypit();
     $scope.spec = SearchParameters.getSpec();
     $scope.states = SearchParameters.getStates();
     $scope.years = SearchParameters.getYears();
     $scope.seasons = SearchParameters.fetchCodeElementsToObject('kausi');
+    $scope.types = SearchParameters.getTypes();
     $scope.initAdditionalFields = function() {
         $scope.hakutapaoptions = SearchParameters.fetchCodeElementsToObject('hakutapa');
         $scope.hakutyyppioptions = SearchParameters.fetchCodeElementsToObject('hakutyyppi');
@@ -119,6 +126,7 @@ angular.module('app.search.controllers', [
             }
             $scope.tabs.koulutukset.active = state.koulutuksetActive;
             $scope.tabs.hakukohteet.active = state.hakukohteetActive;
+            $scope.tabs.jarjestettavat.active = state.jarjestettavatActive;
         }
     };
     initFormSelections();
@@ -209,6 +217,7 @@ angular.module('app.search.controllers', [
         copyIfSet(sargs, 'state', $scope.spec.attributes.state);
         copyIfSet(sargs, 'year', $scope.spec.attributes.year);
         copyIfSet(sargs, 'season', $scope.spec.attributes.season);
+        copyIfSet(sargs, 'type', $scope.spec.type);
         if ($scope.selectedOrgOid !== null) {
             $location.path('/etusivu/' + $scope.selectedOrgOid);
         }
@@ -271,6 +280,9 @@ angular.module('app.search.controllers', [
     $scope.hakukohdeGetOptions = function(row, actions) {
         return RowActions.get('hakukohde', row, actions, $scope);
     };
+    $scope.jarjestaKoulutusGetOptions = function(row, actions) {
+        return RowActions.get('jarjestaKoulutus', row, actions, $scope);
+    };
     $scope.search = function() {
         var spec = $scope.spec.getSpecForSearchQuery($scope.selectedOrgOid);
         updateLocation();
@@ -279,6 +291,14 @@ angular.module('app.search.controllers', [
         });
         TarjontaService.haeHakukohteet(spec).then(function(data) {
             $scope.hakukohdeResults = data;
+        });
+        var jarjestettavatSpec = _.extend({}, spec, {
+            defaultTarjoaja: null,
+            oid: null,
+            opetusJarjestajat: spec.oid
+        });
+        TarjontaService.haeKoulutukset(jarjestettavatSpec).then(function(data) {
+            $scope.jarjestettavatResults = data;
         });
     };
     function getResultCount(res) {
@@ -289,6 +309,9 @@ angular.module('app.search.controllers', [
     };
     $scope.getHakukohdeResultCount = function() {
         return getResultCount($scope.hakukohdeResults);
+    };
+    $scope.getJarjestettavatResultCount = function() {
+        return getResultCount($scope.jarjestettavatResults);
     };
     $scope.luoKoulutusDisabled = function() {
         return !($scope.organisaatioValittu() && $scope.koulutusActions.canCreateKoulutus);
@@ -405,12 +428,21 @@ angular.module('app.search.controllers', [
     $scope.liitaHakukohteetRyhmaan = function() {
         HakukohderyhmatActions.liitaHakukohteetRyhmaan($scope);
     };
+    function clearActiveTabs() {
+        _.each($scope.tabs, function(tab) {
+            tab.active = false;
+        });
+    }
     $scope.hakukohteetSelected = function() {
+        clearActiveTabs();
         $scope.tabs.hakukohteet.active = true;
-        $scope.tabs.koulutukset.active = false;
     };
     $scope.koulutuksetSelected = function() {
-        $scope.tabs.hakukohteet.active = false;
+        clearActiveTabs();
         $scope.tabs.koulutukset.active = true;
+    };
+    $scope.jarjestettavatSelected = function() {
+        clearActiveTabs();
+        $scope.tabs.jarjestettavat.active = true;
     };
 });

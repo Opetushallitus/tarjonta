@@ -86,8 +86,6 @@ public class HakukohdeToSolrDocumentTest {
         assertEquals("2.0.0", doc.getFieldValue(HAUN_OID));
         assertEquals("hakutyyppi", doc.getFieldValue(HAKUTYYPPI_URI));
         assertEquals("kohdejoukko", doc.getFieldValue(KOHDEJOUKKO_URI));
-        assertTrue(doc.getFieldValues(ORGANISAATIORYHMAOID).contains("5.5.5"));
-        assertTrue(doc.getFieldValues(ORGANISAATIORYHMAOID).contains("6.6.6"));
         assertTrue(doc.getFieldValues(KOULUTUS_OIDS).contains("4.5.6"));
         assertEquals(100, doc.getFieldValue(ALOITUSPAIKAT));
     }
@@ -229,6 +227,7 @@ public class HakukohdeToSolrDocumentTest {
         assertEquals(ModuulityyppiEnum.LUKIOKOULUTUS.getKoulutusasteTyyppi().value(), doc.getFieldValue(KOULUTUSASTETYYPPI));
         assertEquals("koulutustyyppi_2", doc.getFieldValue(KOULUTUSTYYPPI_URI));
         assertEquals(ToteutustyyppiEnum.LUKIOKOULUTUS, doc.getFieldValue(TOTEUTUSTYYPPI_ENUM));
+        assertEquals(KoulutusmoduuliTyyppi.TUTKINTO, doc.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM));
     }
 
     @Test
@@ -288,6 +287,27 @@ public class HakukohdeToSolrDocumentTest {
         assertTrue(tekstihakuValues.contains("yhteishaku-nimi-EN"));
     }
 
+    @Test
+    public void thatRyhmaliitoksetAreConverted() {
+        SolrInputDocument doc = convert();
+
+        assertTrue(doc.getFieldValues(RYHMA_OIDS).size() == 2);
+        assertTrue(doc.getFieldValues(RYHMA_OIDS).contains("1.2.3"));
+        assertTrue(doc.getFieldValues(RYHMA_OIDS).contains("4.5.6"));
+
+        assertTrue(doc.getFieldValues(RYHMA_PRIORITEETIT).size() == 2);
+        assertTrue(doc.getFieldValues(RYHMA_PRIORITEETIT).contains(0));
+        assertTrue(doc.getFieldValues(RYHMA_PRIORITEETIT).contains(SolrFields.RYHMA_PRIORITEETTI_EI_MAARITELTY));
+    }
+
+    @Test
+    public void thatOrganisaatioryhmaOidsAreConverted() {
+        SolrInputDocument doc = convert();
+
+        assertTrue(doc.getFieldValues(ORGANISAATIORYHMAOID).contains("1.2.3"));
+        assertTrue(doc.getFieldValues(ORGANISAATIORYHMAOID).contains("4.5.6"));
+    }
+
     private SolrInputDocument convert() {
         return converter.apply(hakukohde.getId()).get(0);
     }
@@ -302,8 +322,16 @@ public class HakukohdeToSolrDocumentTest {
         hakukohde.setOid("1.0.0");
         hakukohde.setHakukohdeNimi("hakukohteet_000");
         hakukohde.setTila(TarjontaTila.JULKAISTU);
-        hakukohde.setOrganisaatioRyhmaOids(new String[]{"5.5.5", "6.6.6"});
         hakukohde.setAloituspaikatLkm(100);
+
+        Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setRyhmaOid("1.2.3");
+        ryhmaliitos.setPrioriteetti(0);
+        hakukohde.addRyhmaliitos(ryhmaliitos);
+
+        ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setRyhmaOid("4.5.6");
+        hakukohde.addRyhmaliitos(ryhmaliitos);
 
         KoulutusmoduuliToteutus koulutusmoduuliToteutus = new KoulutusmoduuliToteutus();
         koulutusmoduuliToteutus.setOid("4.5.6");
@@ -317,6 +345,7 @@ public class HakukohdeToSolrDocumentTest {
 
         Koulutusmoduuli koulutusmoduuli = new Koulutusmoduuli();
         koulutusmoduuli.setKoulutustyyppiEnum(ModuulityyppiEnum.LUKIOKOULUTUS);
+        koulutusmoduuli.setModuuliTyyppi(KoulutusmoduuliTyyppi.TUTKINTO);
         koulutusmoduuliToteutus.setKoulutusmoduuli(koulutusmoduuli);
 
         KoulutusOwner koulutusOwner = new KoulutusOwner();

@@ -16,6 +16,7 @@ package fi.vm.sade.tarjonta.service.resources.v1;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+
 import fi.vm.sade.tarjonta.service.resources.dto.NimiJaOidRDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.HakutuloksetV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.KoulutusHakutulosV1RDTO;
@@ -28,12 +29,15 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutustyyppiKoost
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvaV1RDTO;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KuvausV1RDTO;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.Tilamuutokset;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
+
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -45,6 +49,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 
@@ -254,6 +259,7 @@ public interface KoulutusV1Resource {
             @QueryParam("alkamisVuosi") Integer alkamisVuosi,
             @QueryParam("koulutustyyppi") List<String> koulutustyyppi,
             @QueryParam("toteutustyyppi") List<ToteutustyyppiEnum> toteutustyyppi,
+            @QueryParam("koulutusmoduuliTyyppi") List<KoulutusmoduuliTyyppi> koulutusmoduuliTyyppi,
             @Deprecated @QueryParam("koulutusastetyyppi") List<KoulutusasteTyyppi> koulutusastetyyppi,
             @QueryParam("komoOid") String komoOid,
             @QueryParam("alkamisPvmAlkaen") String alkamisPvmAlkaenTs,
@@ -264,7 +270,8 @@ public interface KoulutusV1Resource {
             @QueryParam("kohdejoukko") String kohdejoukko,
             @QueryParam("oppilaitostyyppi") String oppilaitostyyppi,
             @QueryParam("kunta") String kunta,
-            @QueryParam("opetuskielet") List<String> opetuskielet
+            @QueryParam("opetuskielet") List<String> opetuskielet,
+            @QueryParam("opetusJarjestajat") List<String> opetusJarjestajat
     );
 
     /**
@@ -288,5 +295,14 @@ public interface KoulutusV1Resource {
             value = "Näyttää organisaation oid:lla organisaatioon liittyvät koulutustyypit.",
             notes = "Operaatio näyttää organisaation oid:lla organisaatioon liittyvät koulutustyypit.")
     ResultV1RDTO<KoulutustyyppiKoosteV1RDTO> isAllowedEducationByOrganisationOid(@PathParam("oid") String organisationOid);
+
+    @GET
+    @Path("/{oid}/jarjestettavatKoulutukset")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @ApiOperation(
+            value = "Palauttaa ne koulutukset, jotka on järjestetty annetusta koulutuksesta (oid)",
+            notes = "Palauttaa ne koulutukset, jotka on järjestetty annetusta koulutuksesta (oid)"
+    )
+    ResultV1RDTO<List<KoulutusHakutulosV1RDTO>> getJarjestettavatKoulutukset(@PathParam("oid") String oid);
 
 }

@@ -204,8 +204,10 @@ public class HakuResourceImplV1 implements HakuV1Resource {
         ResultV1RDTO<HakuV1RDTO> result = new ResultV1RDTO<HakuV1RDTO>();
 
         try {
-            result.setResult(converterV1.fromHakuToHakuRDTO(oid));
+            HakuV1RDTO hakuDTO = converterV1.fromHakuToHakuRDTO(oid);
+            hakuDTO.setOrganisaatioryhmat(hakuDAO.findOrganisaatioryhmaOids(hakuDTO.getOid()));
 
+            result.setResult(hakuDTO);
             updateRightsInformation(result, result.getResult());
 
             if (result.getResult() == null) {

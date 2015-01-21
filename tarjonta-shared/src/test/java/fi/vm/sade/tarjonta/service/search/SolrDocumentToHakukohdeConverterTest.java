@@ -1,6 +1,7 @@
 package fi.vm.sade.tarjonta.service.search;
 
 import fi.vm.sade.organisaatio.api.search.OrganisaatioPerustieto;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.junit.Test;
@@ -9,13 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ALOITUSPAIKAT_KIELET;
-import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.ALOITUSPAIKAT_KUVAUKSET;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static fi.vm.sade.tarjonta.service.search.SolrFields.Hakukohde.*;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +42,9 @@ public class SolrDocumentToHakukohdeConverterTest {
         when(solrDocument.getFieldValues(ALOITUSPAIKAT_KUVAUKSET)).thenReturn(aloituspaikatKuvaukset);
         when(solrDocument.getFieldValues(ALOITUSPAIKAT_KIELET)).thenReturn(aloituspaikatKielet);
         when(solrDocument.getFieldValue("orgoid_s")).thenReturn("1.2.3");
+        when(solrDocument.getFieldValue(KOULUTUSMODUULITYYPPI_ENUM)).thenReturn(KoulutusmoduuliTyyppi.TUTKINTO);
+        when(solrDocument.getFieldValues(RYHMA_OIDS)).thenReturn(getRyhmaOids());
+        when(solrDocument.getFieldValues(RYHMA_PRIORITEETIT)).thenReturn(getPrioriteetit());
 
         HakukohteetVastaus hakukohteetVastaus = converter.convertSolrToHakukohteetVastaus(solrDocumentList, new HashMap<String, OrganisaatioPerustieto>(), "1.2.3");
 
@@ -52,5 +55,20 @@ public class SolrDocumentToHakukohdeConverterTest {
         assertTrue(perustieto.getAloituspaikatKuvaukset().size() == 2);
         assertEquals("Maksimi 10", perustieto.getAloituspaikatKuvaukset().get("kieli_fi"));
         assertEquals("Max 10", perustieto.getAloituspaikatKuvaukset().get("kieli_en"));
+
+        List<SolrRyhmaliitos> ryhmaliitokset = perustieto.getRyhmaliitokset();
+        assertTrue(ryhmaliitokset.size() == 2);
+        assertEquals("1.2.3", ryhmaliitokset.get(0).getRyhmaOid());
+        assertEquals(new Integer(0), ryhmaliitokset.get(0).getPrioriteetti());
+        assertEquals("4.5.6", ryhmaliitokset.get(1).getRyhmaOid());
+        assertNull(ryhmaliitokset.get(1).getPrioriteetti());
+    }
+
+    private List<Object> getPrioriteetit() {
+        return Arrays.asList(new Object[]{"0", SolrFields.RYHMA_PRIORITEETTI_EI_MAARITELTY});
+    }
+
+    private List<Object> getRyhmaOids() {
+        return Arrays.asList(new Object[]{"1.2.3", "4.5.6"});
     }
 }

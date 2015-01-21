@@ -26,7 +26,7 @@ app.controller('PoistaKoulutusCtrl', [
     'targetKomoto',
     'organisaatioOid',
     'PermissionService',
-    '$log', function LiitaSisaltyvyysCtrl($scope, config, $location, $route, koodisto, LocalisationService,
+    '$log', function($scope, config, $location, $route, koodisto, LocalisationService,
                       TarjontaService, $q, $modalInstance, targetKomoto, organisaatio, PermissionService, $log) {
         $log = $log.getInstance('PoistaKoulutusCtrl');
         /*

@@ -24,7 +24,8 @@ angular.module('Organisaatio', [
          *
          * @returns {$q@call;defer.promise}
          */
-        function getRyhmat() {
+        function getRyhmat(tyyppi) {
+            tyyppi = tyyppi || 'hakukohde';
             var ret = $q.defer();
             var orgRyhmat = $resource(Config.env['organisaatio.api.rest.url'] + 'organisaatio/:oid/ryhmat', {
                 oid: '@oid'
@@ -43,7 +44,7 @@ angular.module('Organisaatio', [
                 // Filter correct type
                 var tmp = [];
                 angular.forEach(result, function(group) {
-                    if (group.ryhmatyypit && group.ryhmatyypit.indexOf('hakukohde') >= 0) {
+                    if (group.ryhmatyypit && group.ryhmatyypit.indexOf(tyyppi) >= 0) {
                         tmp.push(group);
                     }
                 });
@@ -178,6 +179,13 @@ angular.module('Organisaatio', [
                 return orgLuku.get({
                     oid: oid
                 }).$promise.then(function(result) {
+                    // Muodosta oidista ja parentOidPathista taulukko
+                    // tätä tietoa käytetään monessa paikassa käyttöoikeuksia varten
+                    var oids = [result.oid];
+                    if (result.parentOidPath) {
+                        oids = _.chain(oids).union(result.parentOidPath.split('|')).compact().value();
+                    }
+                    result.oidAndParentOids = oids;
                     return localize(result);
                 });
             },

@@ -33,6 +33,7 @@
         <class>fi.vm.sade.tarjonta.model.Massakopiointi</class>
         <class>fi.vm.sade.tarjonta.model.Yhteystiedot</class>
         <class>fi.vm.sade.tarjonta.model.ValintaperusteSoraKuvaus</class>
+        <class>fi.vm.sade.tarjonta.model.Ryhmaliitos</class>
 
         <!-- oid service: -->
         <class>fi.vm.sade.oid.model.OID</class>

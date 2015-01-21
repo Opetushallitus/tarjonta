@@ -15,6 +15,8 @@
  */
 package fi.vm.sade.tarjonta.model;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -30,7 +32,7 @@ import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
  *
  */
 @Entity
-@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version", "organisaatioRyhmaOids"})
+@JsonIgnoreProperties({"koulutusmoduuliToteutuses", "haku", "id", "version", "ryhmaliitokset"})
 @Table(name = Hakukohde.TABLE_NAME)
 public class Hakukohde extends TarjontaBaseEntity {
 
@@ -182,10 +184,8 @@ public class Hakukohde extends TarjontaBaseEntity {
     @MapKeyColumn(name = "koulutusmoduuli_toteutus_oid", nullable = false)
     private Map<String, KoulutusmoduuliToteutusTarjoajatiedot> koulutusmoduuliToteutusTarjoajatiedot = new HashMap<String, KoulutusmoduuliToteutusTarjoajatiedot>();
 
-    /**
-     * KJOH-810 Hakukohteen ryhmän valinta
-     */
-    private String organisaatioRyhmaOids;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "hakukohde", orphanRemoval = true)
+    private Set<Ryhmaliitos> ryhmaliitokset = new HashSet<Ryhmaliitos>();
 
     @PreRemove
     public void detachOnDelete() {
@@ -690,31 +690,6 @@ public class Hakukohde extends TarjontaBaseEntity {
         this.ulkoinenTunniste = ulkoinenTunniste;
     }
 
-    @JsonProperty
-    public String getOrganisaatioRyhmat() {
-        return organisaatioRyhmaOids;
-    }
-
-    public void setOrganisaatioRyhmat(String oids) {
-        organisaatioRyhmaOids = oids;
-    }
-
-
-    public String[] getOrganisaatioRyhmaOids() {
-        if (organisaatioRyhmaOids == null || organisaatioRyhmaOids.isEmpty()) {
-            return new String[0];
-        }
-        return organisaatioRyhmaOids.split(",");
-    }
-
-    public void setOrganisaatioRyhmaOids(String[] organisationOids) {
-        if (organisationOids == null || organisationOids.length == 0) {
-            this.organisaatioRyhmaOids = null;
-        } else {
-            this.organisaatioRyhmaOids = StringUtils.join(organisationOids, ",");
-        }
-    }
-
     public Map<String, KoulutusmoduuliToteutusTarjoajatiedot> getKoulutusmoduuliToteutusTarjoajatiedot() {
         return koulutusmoduuliToteutusTarjoajatiedot;
     }
@@ -753,5 +728,30 @@ public class Hakukohde extends TarjontaBaseEntity {
 
     public boolean isPoistettu() {
         return TarjontaTila.POISTETTU.equals(getTila());
+    }
+
+    public Set<Ryhmaliitos> getRyhmaliitokset() {
+        return ryhmaliitokset;
+    }
+
+    public void setRyhmaliitokset(Set<Ryhmaliitos> ryhmaliitokset) {
+        this.ryhmaliitokset = ryhmaliitokset;
+    }
+
+    public Ryhmaliitos getRyhmaliitosByRyhmaOid(final String ryhmaOid) {
+        return Iterables.tryFind(getRyhmaliitokset(), new Predicate<Ryhmaliitos>() {
+            @Override
+            public boolean apply(Ryhmaliitos ryhmaliitos) {
+                return ryhmaliitos.getRyhmaOid().equals(ryhmaOid);
+            }
+        }).orNull();
+    }
+
+    public void addRyhmaliitos(Ryhmaliitos ryhmaliitos) {
+        getRyhmaliitokset().add(ryhmaliitos);
+    }
+
+    public void removeRyhmaliitos(Ryhmaliitos ryhmaliitos) {
+        getRyhmaliitokset().remove(ryhmaliitos);
     }
 }

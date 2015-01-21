@@ -18,6 +18,7 @@ describe('localisation', function() {
     var mockModule = angular.module('test.module', []);
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
+    beforeEach(module('Organisaatio'));
     beforeEach(module('Logging'));
     beforeEach(module('SharedStateService'));
     beforeEach(module('localisation'));

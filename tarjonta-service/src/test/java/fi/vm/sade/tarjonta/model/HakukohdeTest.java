@@ -43,24 +43,15 @@ public class HakukohdeTest {
     }
 
     @Test
-    public void thatReturnsEmptyRyhmaOids() {
-        Hakukohde h = new Hakukohde();
+    public void thatRyhmaliitosIsReturned() {
+        Hakukohde hakukohde = new Hakukohde();
 
-        assertTrue(h.getOrganisaatioRyhmaOids().length == 0);
+        Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+        ryhmaliitos.setRyhmaOid("1.2.3");
+        hakukohde.getRyhmaliitokset().add(ryhmaliitos);
 
-        h.setOrganisaatioRyhmaOids(new String[]{""});
-
-        assertTrue(h.getOrganisaatioRyhmaOids().length == 0);
+        assertEquals(ryhmaliitos, hakukohde.getRyhmaliitosByRyhmaOid("1.2.3"));
+        assertNull(hakukohde.getRyhmaliitosByRyhmaOid("0"));
     }
 
-    @Test
-    public void thatReturnsRyhmaOids() {
-        Hakukohde h = new Hakukohde();
-        h.setOrganisaatioRyhmaOids(new String[]{"0.1.2", "3.4.5"});
-
-        assertTrue(h.getOrganisaatioRyhmaOids().length == 2);
-        assertEquals("0.1.2", h.getOrganisaatioRyhmaOids()[0]);
-        assertEquals("3.4.5", h.getOrganisaatioRyhmaOids()[1]);
-    }
 }
-

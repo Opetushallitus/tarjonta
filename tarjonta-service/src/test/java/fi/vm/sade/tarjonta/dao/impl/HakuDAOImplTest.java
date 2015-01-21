@@ -63,8 +63,6 @@ public class HakuDAOImplTest extends TestData {
     @Autowired
     private HakukohdeDAOImpl hakukohdeDAO;
 
-    @Autowired
-    private KoulutusmoduuliToteutusDAO koulutusmoduuliToteutusDAO;
     private EntityManager em;
 
     public HakuDAOImplTest() {
@@ -273,6 +271,22 @@ public class HakuDAOImplTest extends TestData {
     @Test
     public void thatHakukohteidenTarjoajatDoesNotFailWithEmptyResults() {
         Set<String> oids = hakuDAO.findOrganisaatioOidsFromHakukohteetByHakuOid("1.1.1");
+        assertTrue(oids.isEmpty());
+    }
+
+    @Test
+    public void thatOrganisaatioryhmaOidsAreFound() {
+        Haku haku = fixtures.createHakuWithOrganisaatioryhmat();
+        List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getOid());
+        assertTrue(oids.size() == 2);
+        assertTrue(oids.contains("1.2.3"));
+        assertTrue(oids.contains("4.5.6"));
+    }
+
+    @Test
+    public void thatEmptyOrganisaatioryhmaOidsIsReturned() {
+        Haku haku = fixtures.createPersistedHaku();
+        List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getOid());
         assertTrue(oids.isEmpty());
     }
 

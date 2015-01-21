@@ -30,6 +30,7 @@ describe('config', function() {
     mockModule.value('globalConfig', CONFIG_ENV_MOCK);
 
     beforeEach(module('test.module')); //mock module with the mock data
+    beforeEach(module('Organisaatio'));
     beforeEach(module('config'));
     beforeEach(module('Logging'));
 

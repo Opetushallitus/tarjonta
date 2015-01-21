@@ -267,7 +267,7 @@ app.controller('BaseEditController', [
             }
         };
         $scope.isLoaded = function() {
-            return !angular.isUndefined($scope.model.oid) && $scope.model.oid !== null && $scope.model.oid.length > 0;
+            return $scope.model.tarjoajanKoulutus || $scope.model.oid;
         };
         $scope.getLang = function(tekstis) {
             if (angular.isUndefined(tekstis) || tekstis === null) {
@@ -646,6 +646,21 @@ app.controller('BaseEditController', [
                 uiModel.loadedKoulutuslaji = angular.copy(model.koulutuslaji);
                 $scope.commonLoadModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
                 $scope.loadKomoKuvausTekstis(null, model.kuvausKomo);
+
+                if ($route.current.action === 'koulutus.jarjesta' && $routeParams.organisaatioOid) {
+                    $scope.tarjoajanKoulutus = angular.copy(model);
+                    model.tarjoajanKoulutus = model.oid;
+                    model.oid = null;
+                    model.opetusJarjestajat = [];
+                    model.opetusTarjoajat = [$routeParams.organisaatioOid];
+                }
+                else if (model.tarjoajanKoulutus) {
+                    TarjontaService.getKoulutus({
+                        oid: model.tarjoajanKoulutus
+                    }).$promise.then(function(response) {
+                        $scope.tarjoajanKoulutus = response.result;
+                    });
+                }
             }
             else if ($routeParams.org) {
                 /*
@@ -653,6 +668,9 @@ app.controller('BaseEditController', [
                  * Look more info from koulutusController.js.
                  */
                 $scope.commonNewModelHandler($scope.koulutusForm, model, uiModel, $scope.CONFIG.TYYPPI);
+                if ($routeParams.koulutusmoduuliTyyppi) {
+                    model.koulutusmoduuliTyyppi = $routeParams.koulutusmoduuliTyyppi;
+                }
                 /*
                  * CUSTOM LOGIC : LOAD KOULUTUSKOODI + LUKIOLINJA KOODI OBJECTS
                  */
@@ -791,6 +809,12 @@ app.controller('BaseEditController', [
                         uiModel[key].meta = restRelationData[key].meta;
                         uiModel[key].uris = apiModel[key] ? _.keys(apiModel[key].uris) : [];
                     }
+                    // Resetoi vanha malli, jotta ei näytettäisi edellisen koulutus-dropdown
+                    // valinnan dataa (koskee esim. tutkintonimikkeitä)
+                    else if (uiModel[key]) {
+                        uiModel[key].meta = {};
+                        uiModel[key].uris = [];
+                    }
                 });
             });
         };
@@ -913,9 +937,27 @@ app.controller('BaseEditController', [
                 KoulutusConverterFactory.updateOrganisationApiModel($scope.model, orgs[0].oid, orgs[0].nimi);
             });
         };
-        $scope.editOrganizations = function() {
+        $scope.$watch('model.opetusJarjestajat', function() {
+            $scope.initOpetusJarjestajat();
+        });
+        $scope.initOpetusJarjestajat = function(model) {
+            model = model || $scope.model;
+            OrganisaatioService.getPopulatedOrganizations(model.opetusJarjestajat).then(function(orgs) {
+                $scope.model.jarjestavatOrganisaatiot = orgs;
+            });
+        };
+        $scope.editOrganizations = function(type) {
+            type = type || 'TARJOAJA';
+            var model = $scope.model.organisaatiot;
+            if (type === 'JARJESTAJA') {
+                if (!$scope.model.jarjestavatOrganisaatiot) {
+                    $scope.model.jarjestavatOrganisaatiot = [];
+                }
+                model = $scope.model.jarjestavatOrganisaatiot;
+            }
+            $scope.organizationSelectionType = type;
             $scope.selectedOrganizations = [];
-            angular.forEach($scope.model.organisaatiot, function(org) {
+            angular.forEach(model, function(org) {
                 $scope.selectedOrganizations.push(org);
             });
             $scope.organizationSelectionDialog = $modal.open({
@@ -1003,6 +1045,11 @@ app.controller('BaseEditController', [
                 $scope.max = maxY;
             }
         };
+
+        $scope.getMonikielinenNimi = function(field) {
+            return field.kieli_fi || field.kieli_sv || field.kieli_en;
+        };
+
         return $scope;
     }
 ]);

@@ -73,13 +73,9 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
     List<Haku> findHakuByCriteria(int count, int startIndex,
                                   List<HakuSearchCriteria> criteriaList);
 
-    /**
-     * Vaihtaa haun tilan suoraa poistetuksi/passivoiduksi.
-     *
-     * @param hakuOid
-     * @param userOid
-     */
     void safeDelete(final String hakuOid, final String userOid);
 
     Set<String> findOrganisaatioOidsFromHakukohteetByHakuOid(String hakuOid);
+
+    List<String> findOrganisaatioryhmaOids(String hakuOid);
 }

@@ -4,8 +4,10 @@
 <p ng-bind-html="model.text.headLabel"></p>
 
 <div class="modal-form">
-	<h4 tt="sisaltyvyys.nayta-tutkintotyyppi"></h4>
-	<select required class="wide" name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select>
+    <div ng-show="!isOpinto()">
+        <h4 tt="sisaltyvyys.nayta-tutkintotyyppi"></h4>
+        <select required class="wide" name="tutkinnot" ng-model="model.tutkinto.uri" ng-options="koodi.koodiUri as koodi.koodiNimi for koodi in model.tutkinto.koodis  | orderByNum:'koodiNimi'"></select>
+    </div>
 	
 	<h4 tt="sisaltyvyys.hae-koulutuksia"></h4>
 	<input type="text" data-ng-model="model.spec.terms" />

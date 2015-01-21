@@ -93,12 +93,25 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         addOppilaitostyypit(komotoDoc, organisaatiotiedot);
         addKunnat(komotoDoc, organisaatiotiedot);
         addOpetuskielet(komotoDoc, koulutusmoduuliToteutus);
+        addKoulutusmoduuliTyyppi(komotoDoc, koulutusmoduuliToteutus);
         addDataFromHakukohde(komotoDoc, koulutusmoduuliToteutus);
         addTekstihaku(komotoDoc);
+
+        if (koulutusmoduuliToteutus.getToteutustyyppi().equals(ToteutustyyppiEnum.KORKEAKOULUOPINTO)
+                && !koulutusmoduuliToteutus.getJarjestajaOids().isEmpty()) {
+            addJarjestajatiedot(komotoDoc, getJarjestajat(koulutusmoduuliToteutus));
+        }
 
         docs.add(komotoDoc);
 
         return docs;
+    }
+
+    private void addKoulutusmoduuliTyyppi(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
+        KoulutusmoduuliTyyppi moduuliTyyppi = koulutusmoduuliToteutus.getKoulutusmoduuli().getModuuliTyyppi();
+        if (moduuliTyyppi != null) {
+            add(komotoDoc, KOULUTUSMODUULITYYPPI_ENUM, moduuliTyyppi);
+        }
     }
 
     private void addOpetuskielet(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
@@ -216,6 +229,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                     break;
 
                 case KORKEAKOULUTUS:
+                case KORKEAKOULUOPINTO:
                     MonikielinenTeksti nimi = koulutusmoduuliToteutus.getNimi();
                     if (nimi == null) {
                         nimi = koulutusmoduuliToteutus.getKoulutusmoduuli().getNimi();
@@ -282,6 +296,16 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
         }
     }
 
+    private void addJarjestajatiedot(SolrInputDocument komotoDoc, List<OrganisaatioPerustieto> orgs) {
+        for (OrganisaatioPerustieto org : orgs) {
+            ArrayList<String> oidPath = getReversedParentOrgOids(org);
+
+            for (String path : oidPath) {
+                add(komotoDoc, JARJESTAJA_PATH, path);
+            }
+        }
+    }
+
     private ArrayList<String> getReversedParentOrgOids(OrganisaatioPerustieto org) {
         ArrayList<String> oids = getParentOrgOids(org);
         Collections.reverse(oids);
@@ -307,6 +331,10 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
     private List<OrganisaatioPerustieto> getTarjoajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
         return organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getTarjoajaOids());
+    }
+
+    private List<OrganisaatioPerustieto> getJarjestajat(KoulutusmoduuliToteutus koulutusmoduuliToteutus) {
+        return organisaatioSearchService.findByOidSet(koulutusmoduuliToteutus.getJarjestajaOids());
     }
 
     private void addTyypit(SolrInputDocument komotoDoc, KoulutusmoduuliToteutus koulutusmoduuliToteutus) {

@@ -3,6 +3,7 @@ package fi.vm.sade.tarjonta.service.search;
 import java.io.Serializable;
 
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.service.types.TarjontaTila;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 
@@ -33,6 +34,7 @@ public class KoulutusPerustieto implements Serializable {
     private Date koulutuksenAlkamisPvmMin;
     private Date koulutuksenAlkamisPvmMax;
     private ArrayList<String> tarjoajat;
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
     /**
      * oikeasti tämä on koulutusohjelman nimi
@@ -212,4 +214,11 @@ public class KoulutusPerustieto implements Serializable {
         return tarjoajat;
     }
 
+    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi= koulutusmoduuliTyyppi ;
+    }
+
+    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
 }

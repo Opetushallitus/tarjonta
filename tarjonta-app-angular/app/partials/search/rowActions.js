@@ -1,6 +1,6 @@
 angular.module('search.hakutulokset.rows', [])
     .factory('RowActions', function(TarjontaService, LocalisationService, PermissionService, AuthService,
-                                     $modal, $location) {
+                                     $modal, $location, KoulutusService) {
         'use strict';
 
         var LinksDialogCtrl = function($scope, $modalInstance) {
@@ -119,12 +119,30 @@ angular.module('search.hakutulokset.rows', [])
             var actionsByPrefix = {
                 hakukohde: function(row) {
                     tt.removable = tt.removable && canRemoveHakukohde(row);
+                },
+                jarjestaKoulutus: function() {
+                    tt = {};
+                    ret.push({
+                        action: function() {
+                            $location.path('/koulutus/' + oid);
+                        },
+                        title: LocalisationService.t('tarjonta.toiminnot.tarkastele')
+                    });
+                    ret.push({
+                        action: function() {
+                            TarjontaService.getKoulutus({oid: oid}).$promise.then(function(response) {
+                                var koulutus = response.result;
+                                KoulutusService.extendKorkeakouluOpinto(koulutus, AuthService.getLanguage() || 'fi');
+                            });
+                        },
+                        title: LocalisationService.t('tarjonta.toiminnot.jarjesta')
+                    });
                 }
             };
             if (actionsByPrefix[prefix]) {
                 actionsByPrefix[prefix](row);
             }
-            var canRead = PermissionService[prefix].canPreview(oid);
+            var canRead = PermissionService[prefix] && PermissionService[prefix].canPreview(oid);
             if (canRead) {
                 var url = '/' + prefix + '/' + oid;
                 ret.push({

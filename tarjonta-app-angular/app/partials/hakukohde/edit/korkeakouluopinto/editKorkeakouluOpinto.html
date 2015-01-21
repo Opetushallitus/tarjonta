@@ -1,0 +1,130 @@
+<div id="editHakukohde" ng-controller="HakukohdeEditController">
+
+    <controls-model
+        model="formControls"
+        tt-create="hakukohde.create.header.title"
+        tt-edit="hakukohde.edit.header.title"
+        title="model.hakukohde.tekstis"
+        dto="model.hakukohde">
+
+        <controls-button tt-key="koulutus.edit.takaisin" action="model.takaisin()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.luonnos" action="model.saveLuonnos()" primary="true" disabled="!model.canSaveAsLuonnos()"></controls-button>
+        <controls-button tt-key="koulutus.edit.tallenna.valmis" action="model.saveValmis()" disabled="model.canSaveAsValmis()" primary="true"></controls-button>
+        <controls-button icon="arrow-right" tt-key="koulutus.edit.tallenna.jatka" action="model.tarkastele()" disabled="model.hakukohdeTabsDisabled"></controls-button>
+
+        <!-- TODO uutta luotaessa vaihtoehtoinen teksti "olet luomassa... " tjsp. -->
+        <controls-notify type="message" tt-expr="getKoulutustenNimetKey()" tt-params="[ getKoulutustenNimet() ]"></controls-notify>
+
+        <controls-notify type="success" tt-expr="'tarjonta.tallennus.ok'" show="model.showSuccess"></controls-notify>
+        <controls-notify type="error" tt-expr="'tarjonta.tallennus.virhe'" show="model.showError"></controls-notify>
+
+        <controls-notify ng-repeat="e in model.validationmsgs" type="error-detail" tt-expr="e" show="model.showError"></controls-notify>
+
+    </controls-model>
+
+    <display-controls model="formControls" display="header" command="controlModelCommandApi"></display-controls>
+
+    <tabset>
+        <tab heading="{{t('kk.hakukohde.perustiedot')}}">
+
+        	<form name="editHakukohdeForm" novalidate>
+                <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
+
+                <table class="tarjontaForm">
+
+                    <!-- hakukohteen nimi -->
+                    <tr class="required">
+                        <th tt="kk.hakukohde.hakukohdenimi">Nimi</th>
+                        <td>
+                            <mk-textfield disable="model.isDeEnabled" model="model.hakukohde.hakukohteenNimet" required></mk-textfield>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.nimiValidationFailed" tt="hakukohde.edit.nimi.missing">Hakukohteen nimi on viallinen</p>
+                        </td>
+                    </tr>
+
+                    <!-- haku -->
+                    <tr class="required">
+                        <th tt="kk.hakukohde.haut">Haut</th>
+                        <td>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
+                        </td>
+                    </tr>
+
+                    <!-- ryhma -->
+                    <tr>
+                        <th data-tt="kk.hakukohde.ryhma.label">Hakukohderyhmät</th>
+                        <td>
+                            <p data-tt="kk.hakukohde.ryhma.help">Hakukohde kuuluu seuraaviin ryhmiin:</p>
+                            <multi-select
+                                    model="model.hakukohdeRyhmat"
+                                    key="key"
+                                    value="value"
+                                    is-disabled="isHkDeEnabled()"
+                                    selection="model.hakukohde.organisaatioRyhmaOids"
+                                    display="dualpane"
+                                    />
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+
+                    <!-- aloituspaikat -->
+                    <tr>
+                        <th tt="kk.hakukohde.hakijoilleilmoitettavataloituspaikat">Hakijoille ilmoitettavat aloituspaikat</th>
+                        <td>
+                            <mk-textfield show-user-languages="false" model="model.hakukohde.aloituspaikatKuvaukset"></mk-textfield>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && model.aloituspaikatKuvauksetFailed" tt="hakukohde.edit.aloituspaikatKuvaukset.too.long">Kuvaus voi olla enintään 20 merkkiä pitkä.</p>
+                        </td>
+                    </tr>
+
+                    <!-- ilmoittautumisaika -->
+                    <tr class="required">
+                        <th tt="kk.hakukohde.ilmoittautumisaika">Ilmoittautumisen alkamis- ja loppumispvm</th>
+                        <td>
+                            <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaAlkuPvm" required
+                                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
+                            <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaLoppuPvm"
+                                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
+                        </td>
+                        <td>
+                             <p class="error" ng-show="model.showError && editHakukohdeForm.alkuPvm.$error.required"
+                                tt="kk.hakukohde.alkuPvm.required">Ilmoittautumisen alkamispäivä vaaditaan</p>
+                        </td>
+                    </tr>
+
+                    <tr class="required" data-ng-show="model.showHakuaikas">
+                        <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
+                        <td>
+                            <select class="wide" name="hakuaikaSelect" ng-disabled="model.isDeEnabled" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
+                        </td>
+                    </tr>
+
+
+                </table>
+
+                <h4 tt="kk.hakukohde.hakumenettely">Haku- tai ilmoittautumismenettely</h4>
+                <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.hakuMenettelyKuvaukset" max="1500"></mk-rich-textarea>
+
+                <h4 tt="kk.hakukohde.peruutusehdot">Peruutusehdot</h4>
+                <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.peruutusEhdotKuvaukset" max="1500"></mk-rich-textarea>
+
+                <h4 tt="kk.hakukohde.lisatietoja.hakemisestaTaiIlmoittautumisesta">Lisätietoja hakemisesta tai ilmoittautumisesta</h4>
+                <mk-rich-textarea is-disabled="isHkDeEnabled()" model="model.hakukohde.lisatiedot" max="1500"></mk-rich-textarea>
+
+            </form>
+        </tab>
+
+    </tabset>
+
+    <display-controls model="formControls" display="footer"></display-controls>
+
+</div>

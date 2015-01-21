@@ -88,21 +88,55 @@ app.service('TreeHandlers', function() {
             }
         }
     };
-    singleton.removeItem = function(scope, obj) {
-        var selected = null;
+    singleton.removeItem = function(obj) {
         for (var i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
             if (singleton.scope.model.selectedRowData[i].oid === obj.oid) {
-                selected = obj;
                 singleton.scope.model.selectedRowData.splice(i, 1);
                 break;
             }
         }
-        if (selected !== null) {
-            singleton.scope.gridOptions.selectItem(singleton.scope.model.hakutulos.indexOf(selected), false);
+        for (var i = 0; i < singleton.scope.model.hakutulos.length; i++) {
+            if (singleton.scope.model.hakutulos[i].oid == obj.oid) {
+                singleton.scope.gridOptions.selectItem(i, false);
+                break;
+            }
         }
     };
     return singleton;
 });
+app.service('sisaltyvyysColumnDefs', ['LocalisationService', function(LocalisationService) {
+    return function(koulutusLaji) {
+        if (koulutusLaji === 'OPINTO') {
+            return [{
+                field: 'nimi',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.opinto'),
+                width: '50%'
+            },
+            {
+                field: 'tarjoaja',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.organisaatio'),
+                width: '50%'
+            }];
+        }
+        else {
+            return [{
+                field: 'koulutuskoodi',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo'),
+                width: '20%'
+            },
+            {
+                field: 'nimi',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi'),
+                width: '50%'
+            },
+            {
+                field: 'tarjoaja',
+                displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja'),
+                width: '30%'
+            }];
+        }
+    }
+}]);
 app.controller('LiitaSisaltyvyysCtrl', [
     '$scope',
     'Config',
@@ -114,17 +148,18 @@ app.controller('LiitaSisaltyvyysCtrl', [
     'targetKomo',
     'organisaatioOid',
     'SisaltyvyysUtil',
+    'sisaltyvyysColumnDefs',
     'TreeHandlers',
     'AuthService',
     '$log', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, AuthService, $log) {
+                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers, AuthService, $log) {
         /*
              * Select koulutus data objects.
              */
         $scope.model = {
             errors: [],
             text: {
-                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti', [
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-luonti-teksti.' + targetKomo.toteutustyyppi, [
                     targetKomo.nimi,
                     organisaatio.nimi
                 ]),
@@ -158,11 +193,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 //search words
                 year: targetKomo.vuosi,
                 season: targetKomo.kausi.uri + '#' + targetKomo.kausi.versio,
-                koulutusastetyyppi: [
-                    'Korkeakoulutus',
-                    'Ammattikorkeakoulutus',
-                    'Yliopistokoulutus'
-                ]
+                koulutustyyppi: ['koulutustyyppi_3'],
+                type: config.app['tarjonta.koulutuslajiModuulityypit'][targetKomo.koulutusLaji]
             },
             html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
         };
@@ -176,6 +208,9 @@ app.controller('LiitaSisaltyvyysCtrl', [
             koulutuskoodiMap: {} //key : koulutuskoodi uri : tutkintotyypit
         };
         $scope.koodistoLocale = LocalisationService.getLocale();
+        $scope.isOpinto = function() {
+            return targetKomo.koulutusLaji === "OPINTO";
+        };
         var koodisPromise =
             koodisto.getAllKoodisWithKoodiUri(config.app['koodisto-uris.tutkintotyyppi'], $scope.koodistoLocale);
         koodisPromise.then(function(koodis) {
@@ -214,23 +249,7 @@ app.controller('LiitaSisaltyvyysCtrl', [
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
             // checkboxCellTemplate: '<div class="ngSelectionCell"><input tabindex="-1" class="ngSelectionCheckbox" type="checkbox" ng-checked="row.selected" /></div>',
-            columnDefs: [
-                {
-                    field: 'koulutuskoodi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale),
-                    width: '20%'
-                },
-                {
-                    field: 'nimi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale),
-                    width: '50%'
-                },
-                {
-                    field: 'tarjoaja',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale),
-                    width: '30%'
-                }
-            ],
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji),
             showSelectionCheckbox: true,
             multiSelect: true
         };
@@ -251,30 +270,36 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 var arr = [];
                 for (var i = 0; i < result.tulokset.length; i++) {
                     for (var c = 0; c < result.tulokset[i].tulokset.length; c++) {
-                        if (result.tulokset[i].tulokset[c].koulutuskoodi) {
-                            var koulutuskoodiUri = result.tulokset[i].tulokset[c].koulutuskoodi.split('#')[0];
-                            if ($scope.model.tutkinto.uri.length === 0 ||
-                                $scope.other.koulutuskoodiMap[koulutuskoodiUri] === $scope.model.tutkinto.uri) {
-                                $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
-                                arr.push({
-                                    koulutuskoodi: koulutuskoodiUri,
-                                    nimi: result.tulokset[i].tulokset[c].nimi,
-                                    tarjoaja: result.tulokset[i].nimi,
-                                    oid: result.tulokset[i].tulokset[c].komoOid
-                                });
+                        var node = {
+                            nimi: result.tulokset[i].tulokset[c].nimi,
+                            tarjoaja: result.tulokset[i].nimi,
+                            oid: result.tulokset[i].tulokset[c].komoOid
+                        };
+                        var koulutuskoodi = result.tulokset[i].tulokset[c].koulutuskoodi;
+                        if (koulutuskoodi) {
+                            var koulutuskoodiUri = koulutuskoodi.split('#')[0];
+                            if ($scope.model.tutkinto.uri.length !== 0 &&
+                                $scope.other.koulutuskoodiMap[koulutuskoodiUri] !== $scope.model.tutkinto.uri) {
+                                continue;
+                            }
+                            node.koulutuskoodi = koulutuskoodiUri;
+                        } else {
+                            if (targetKomo.koulutusLaji === 'TUTKINTO') {
+                                $log.error('koulutus without koulutuskoodi:', result.tulokset[i].tulokset[c]);
                             }
                         }
-                        else {
-                            $log.error('koulutus without koulutuskoodi:', result.tulokset[i].tulokset[c]);
-                        }
+                        $scope.model.searchKomoOids.push(result.tulokset[i].tulokset[c].komoOid);
+                        arr.push(node);
                     }
                 }
                 angular.forEach(arr, function(value) {
-                    var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], value.koulutuskoodi,
-                        $scope.koodistoLocale);
-                    koodisPromise.then(function(koodi) {
-                        value.koulutuskoodi = koodi.koodiArvo;
-                    });
+                    if (value.koulutuskoodi) {
+                        var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'], value.koulutuskoodi,
+                                $scope.koodistoLocale);
+                        koodisPromise.then(function(koodi) {
+                            value.koulutuskoodi = koodi.koodiArvo;
+                        });
+                    }
                 });
                 $scope.model.hakutulos = arr;
             });

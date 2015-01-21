@@ -162,6 +162,8 @@
         <script src="partials/koulutus/edit/editController.js"></script>
         <script src="partials/koulutus/edit/korkeakoulu/editKorkeakouluController.js"></script>
         <script src="partials/koulutus/edit/korkeakoulu/selectTutkintoController.js"></script>
+        <script src="partials/koulutus/edit/korkeakouluopinto/editKorkeakouluOpintoController.js"></script>
+        <script src="js/shared/koulutus.js"></script>
         <script src="partials/koulutus/edit/editGenericController.js"></script>
         <script src="partials/koulutus/edit/amm/editNayttotutkintoController.js"></script>
         <script src="partials/koulutus/edit/amm/jarjestaja-ctrl.js"></script>
@@ -178,6 +180,7 @@
         <script src="partials/koulutus/remove/poista-koulutus-ctrl.js"></script>
         <script src="partials/valintaperustekuvaus/remove/poista-ctrl.js"></script>
         <script src="partials/koulutus/copy/copy-move-koulutus.js"></script>
+        <script src="partials/koulutus/copy/extend-koulutus.js"></script>
 
 
 
@@ -248,10 +251,22 @@
                         <h2 tt="koulutus.title">Koulutusten hallinta</h2>
 
                         <div data-ng-switch on="renderPath[1]" data-ng-controller="KoulutusRoutingController">
-                            <div data-ng-switch-when="review">
+                            <div data-ng-switch-when="review_0">
                                 <div data-ng-include="'partials/koulutus/review/review.html'"></div>
                             </div>
-                            <div data-ng-switch-when="edit">
+                            <div data-ng-switch-when="review_1">
+                                <div data-ng-include="'partials/koulutus/review/review.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit_0">
+                                <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="edit_1">
+                                <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="jarjesta_0">
+                                <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
+                            </div>
+                            <div data-ng-switch-when="jarjesta_1">
                                 <div data-ng-include="'partials/koulutus/edit/edit.html'"></div>
                             </div>
                             <div data-ng-switch-default>

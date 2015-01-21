@@ -22,8 +22,8 @@
 
         <!-- koulutus -->
         <tr>
-            <th ng-if="!koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.tutkinto">Tutkinto</th>
-            <th ng-if="koulutusStructure.params.isLukio" tt="koulutus.review.perustiedot.koulutus">Koulutus</th>
+            <th ng-if="!(koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus)" tt="koulutus.review.perustiedot.tutkinto">Tutkinto</th>
+            <th ng-if="koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus" tt="koulutus.review.perustiedot.koulutus">Koulutus</th>
             <td colspan="2">
                 {{model.koulutus.koulutuskoodi.meta[lang.koodi_uri].nimi}}
                 <i>{{model.koulutus.koulutuskoodi.arvo}}</i>
@@ -205,7 +205,7 @@
     </tr>
 
     <tbody ng-show="!model.collapse.kuvailevatTiedot">
-        <tr ng-if="koulutusStructure.params.isLukio" ng-repeat="(key, val) in model.koulutus.kielivalikoima">
+        <tr ng-if="koulutusStructure.params.isLukio || koulutusStructure.params.isPerusopetus" ng-repeat="(key, val) in model.koulutus.kielivalikoima">
             <th>{{t('koulutus.review.kielivalikoima.' + key)}}</th>
             <td colspan="2">
                 <span ng-repeat="meta in val.meta"><span ng-show="!$first">,</span> {{meta.nimi}}</span>

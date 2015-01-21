@@ -20,6 +20,8 @@ package fi.vm.sade.tarjonta.service.search;
  */
 public class SolrFields {
 
+    public static final String RYHMA_PRIORITEETTI_EI_MAARITELTY = "RYHMA_PRIORITEETTI_EI_MAARITELTY";
+    
     /**
      * Field names for koulutus docs
      */
@@ -30,6 +32,7 @@ public class SolrFields {
         protected static final String OID = "id";
         protected static final String ORG_OID = "orgoid_ss";                                     //needed for permissions
         protected static final String ORG_PATH = "orgpath_ss";                                  //needed search (org restriction)
+        protected static final String JARJESTAJA_PATH = "jarjestajapath_ss";
         protected static final String KOULUTUSOHJELMA_FI = "koulutusohjelmafi_t";               //this is used in search
         protected static final String KOULUTUSOHJELMA_SV = "koulutusohjelmasv_t";               //this is used in search
         protected static final String KOULUTUSOHJELMA_EN = "koulutusohjelmaen_t";
@@ -54,6 +57,7 @@ public class SolrFields {
         protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppi_s";
         protected static final String HAKUTAPA_URIS = "hakutapauri_ss";
         protected static final String HAKUTYYPPI_URIS = "hakutyyppiuri_ss";
+        protected static final String KOULUTUSMODUULITYYPPI_ENUM = "koulutusmoduulityyppi_s";
 
         protected static final String POHJAKOULUTUSVAATIMUS_URI = "pohjakoulutusvaatimusuri_s";
         protected static final String POHJAKOULUTUSVAATIMUS_FI = "pohjakoulutusvaatimusfi_s";
@@ -124,6 +128,9 @@ public class SolrFields {
         protected static final String OPETUSKIELI_URIS = "opetuskieliuri_ss";
         protected static final String KOULUTUSTYYPPI_URI = "koulutustyyppiuri_s";
         protected static final String TOTEUTUSTYYPPI_ENUM = "toteutustyyppi_s";
+        protected static final String KOULUTUSMODUULITYYPPI_ENUM = "koulutusmoduulityyppi_s";
+        protected static final String RYHMA_OIDS = "ryhmaoid_ss";
+        protected static final String RYHMA_PRIORITEETIT = "ryhmaprioriteetti_ss";
     }
 
 }

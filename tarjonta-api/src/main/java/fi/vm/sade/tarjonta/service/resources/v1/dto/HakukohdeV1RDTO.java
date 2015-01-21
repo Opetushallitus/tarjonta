@@ -18,9 +18,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
 
     private String hakukohteenNimi;
     private String hakukohteenNimiUri;
-    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required=false)
-    private Map<String,String> hakukohteenNimet;
-    private Map<String,String> tarjoajaNimet;
+    @ApiModelProperty(value = "Hashmap containing hakukohde names and name language", required = false)
+    private Map<String, String> hakukohteenNimet;
+    private Map<String, String> tarjoajaNimet;
     private Map<String, KoulutusmoduuliTarjoajatiedotV1RDTO> koulutusmoduuliToteutusTarjoajatiedot = new HashMap<String, KoulutusmoduuliTarjoajatiedotV1RDTO>();
     private Set<String> tarjoajaOids;
     @ApiModelProperty(value = "Hakukohde's haku's oid", required = true)
@@ -48,11 +48,12 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private String ulkoinenTunniste;
     private String koulutusAsteTyyppi;
     private String toteutusTyyppi;
+    private String koulutusmoduuliTyyppi;
     private String koulutuslaji;
-    private Map<String,String> lisatiedot;
-    private Map<String,String> valintaperusteKuvaukset;
-    private Map<String,String> soraKuvaukset;
-    private Map<String,String> hakukelpoisuusVaatimusKuvaukset;
+    private Map<String, String> lisatiedot;
+    private Map<String, String> valintaperusteKuvaukset;
+    private Map<String, String> soraKuvaukset;
+    private Map<String, String> hakukelpoisuusVaatimusKuvaukset;
     private Map<String, String> aloituspaikatKuvaukset = new HashMap<String, String>();
     private boolean kaytetaanJarjestelmanValintaPalvelua;
     private boolean kaytetaanHaunPaattymisenAikaa;
@@ -68,8 +69,9 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     private Set<String> valintaPerusteKuvausKielet;
     private Set<String> soraKuvausKielet;
     private List<PainotettavaOppiaineV1RDTO> painotettavatOppiaineet = new ArrayList<PainotettavaOppiaineV1RDTO>();
-
-    // KJOH-810
+    private Map<String, String> hakuMenettelyKuvaukset;
+    private Map<String, String> peruutusEhdotKuvaukset;
+    private List<RyhmaliitosV1RDTO> ryhmaliitokset = new ArrayList<RyhmaliitosV1RDTO>();
     private String[] organisaatioRyhmaOids;
 
     public String getHakukohteenNimi() {
@@ -79,18 +81,6 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     public void setHakukohteenNimi(String hakukohteenNimi) {
         this.hakukohteenNimi = hakukohteenNimi;
     }
-
-    /*
-    public List<TekstiRDTO> getHakukohteenNimet() {
-        if (hakukohteenNimet == null) {
-            hakukohteenNimet = new ArrayList<TekstiRDTO>();
-        }
-        return hakukohteenNimet;
-    }
-
-    public void setHakukohteenNimet(List<TekstiRDTO> hakukohteenNimet) {
-        this.hakukohteenNimet = hakukohteenNimet;
-    }*/
 
     public String getHakuOid() {
         return hakuOid;
@@ -503,5 +493,43 @@ public class HakukohdeV1RDTO extends BaseV1RDTO {
     @JsonIgnore
     public boolean isAmmatillinenPerustutkinto() {
         return ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(ToteutustyyppiEnum.valueOf(getToteutusTyyppi()));
+    }
+
+    public String getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(String koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
+    }
+
+    public Map<String, String> getHakuMenettelyKuvaukset() {
+        if (hakuMenettelyKuvaukset == null) {
+            hakuMenettelyKuvaukset = new TreeMap<String, String>();
+        }
+        return hakuMenettelyKuvaukset;
+    }
+
+    public void setHakuMenettelyKuvaukset(Map<String, String> hakuMenettelyKuvaukset) {
+        this.hakuMenettelyKuvaukset = hakuMenettelyKuvaukset;
+    }
+
+    public Map<String, String> getPeruutusEhdotKuvaukset() {
+        if (peruutusEhdotKuvaukset == null) {
+            peruutusEhdotKuvaukset = new TreeMap<String, String>();
+        }
+        return peruutusEhdotKuvaukset;
+    }
+
+    public void setPeruutusEhdotKuvaukset(Map<String, String> peruutusEhdotKuvaukset) {
+        this.peruutusEhdotKuvaukset = peruutusEhdotKuvaukset;
+    }
+
+    public List<RyhmaliitosV1RDTO> getRyhmaliitokset() {
+        return ryhmaliitokset;
+    }
+
+    public void setRyhmaliitokset(ArrayList<RyhmaliitosV1RDTO> ryhmaliitokset) {
+        this.ryhmaliitokset = ryhmaliitokset;
     }
 }

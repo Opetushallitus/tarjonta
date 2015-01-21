@@ -35,6 +35,7 @@ describe('auth', function() {
         }
     };
 
+    beforeEach(module('Organisaatio'));
     beforeEach(module('SharedStateService'));
     beforeEach(module('Logging'));
 

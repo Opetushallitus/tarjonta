@@ -45,5 +45,16 @@ window.CONFIG.app = {
     'ui.timeout.short': 10000,
     'ui.timeout.long': 60000,
     'errorlog.disabled': false,
-    'errorlog.timeout': 60000
+    'errorlog.timeout': 60000,
+    // Koulutuksen tyyppi vaihtoehdot käyttöliittymässä.
+    // Lista alilistoja: kunkin alilistan ensimmäinen elementti vastaa koulutuksen tyypin enumeraation
+    // arvoa, jonka mukaan valinnat ja lokalisoinnit näytetään käyttöliittymässä.
+    // Alilistan kaikki arvot välitetään haun parametrina. Siis "Tutkinto" tyyppisen koulutuksen
+    // haku palauttaa myös TUTKINTO_OHJELMA tyyppiset koulutukset.
+    'tarjonta.koulutusmoduuliTyypit': [['TUTKINTO', 'TUTKINTO_OHJELMA'], ['OPINTOKOKONAISUUS'], ['OPINTOJAKSO']],
+    // Pääjako TUTKINTO ja OPINTO tyyppisiin koulutusmoduulityyppeihin:
+    'tarjonta.koulutuslajiModuulityypit': {
+        'TUTKINTO': ['TUTKINTO', 'TUTKINTO_OHJELMA'],
+        'OPINTO': ['OPINTOKOKONAISUUS', 'OPINTOJAKSO']
+    }
 };

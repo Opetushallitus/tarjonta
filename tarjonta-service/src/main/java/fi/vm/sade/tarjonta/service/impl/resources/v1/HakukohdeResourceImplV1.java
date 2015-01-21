@@ -43,6 +43,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.HakukohdeV1Resource;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.*;
 import fi.vm.sade.tarjonta.service.search.*;
 import fi.vm.sade.tarjonta.service.types.KoulutusasteTyyppi;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 import fi.vm.sade.tarjonta.shared.ParameterServices;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
@@ -124,10 +125,16 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
     @Override
     public ResultV1RDTO<HakutuloksetV1RDTO<HakukohdeHakutulosV1RDTO>> search(String searchTerms,
-                                                                             List<String> organisationOids, List<String> hakukohdeTilas,
-                                                                             String alkamisKausi, Integer alkamisVuosi, String hakukohdeOid,
-                                                                             List<KoulutusasteTyyppi> koulutusastetyyppi, String hakuOid,
-                                                                             String organisaatioRyhmaOid, List<ToteutustyyppiEnum> koulutustyypit,
+                                                                             List<String> organisationOids,
+                                                                             List<String> hakukohdeTilas,
+                                                                             String alkamisKausi,
+                                                                             Integer alkamisVuosi,
+                                                                             String hakukohdeOid,
+                                                                             List<KoulutusasteTyyppi> koulutusastetyyppi,
+                                                                             String hakuOid,
+                                                                             String organisaatioRyhmaOid,
+                                                                             List<ToteutustyyppiEnum> koulutustyypit,
+                                                                             List<KoulutusmoduuliTyyppi> koulutusmoduulityypit,
                                                                              String defaultTarjoaja,
                                                                              String hakutapa,
                                                                              String hakutyyppi,
@@ -152,6 +159,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         q.setOppilaitostyyppi(oppilaitostyyppi);
         q.setKunta(kunta);
         q.setOpetuskielet(opetuskielet);
+        q.setKoulutusmoduuliTyyppi(koulutusmoduulityypit);
 
         if (hakukohdeOid != null) {
             q.setHakukohdeOid(hakukohdeOid);
@@ -492,6 +500,7 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         switch (toteutustyyppi) {
 
             case KORKEAKOULUTUS:
+            case KORKEAKOULUOPINTO:
                 validationMessageses.addAll(hakukohdeValidator
                         .validateHakukohde(hakukohdeV1RDTO));
                 break;
@@ -584,10 +593,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         if (hakukohdeRDTO.getHakuaikaId() != null) {
             hakukohde.setHakuaika(getHakuAikaForHakukohde(hakukohdeRDTO, haku));
         }
+        addRyhmaliitoksetForNewHakukohde(hakukohde, hakukohdeRDTO);
 
         hakukohde = hakukohdeDAO.insert(hakukohde);
         setHakukohde(komotot, hakukohde);
-
         hakukohdeDAO.update(hakukohde);
 
         indexerResource.indexHakukohteet(Lists.newArrayList(hakukohde.getId()));
@@ -605,6 +614,17 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         updateKoulutusTypesToHakukohdeDto(toHakukohdeRDTO);
         result.setResult(toHakukohdeRDTO);
         return result;
+    }
+
+    private void addRyhmaliitoksetForNewHakukohde(Hakukohde hakukohde, HakukohdeV1RDTO hakukohdeRDTO) {
+        if (hakukohdeRDTO.getOrganisaatioRyhmaOids() != null) {
+            for (String ryhmaOid : hakukohdeRDTO.getOrganisaatioRyhmaOids()) {
+                Ryhmaliitos ryhmaliitos = new Ryhmaliitos();
+                ryhmaliitos.setRyhmaOid(ryhmaOid);
+                ryhmaliitos.setHakukohde(hakukohde);
+                hakukohde.addRyhmaliitos(ryhmaliitos);
+            }
+        }
     }
 
     private Map<String, KoulutusmoduuliToteutusTarjoajatiedot> getTarjoajatiedot(HakukohdeV1RDTO hakukohdeRDTO,
@@ -684,11 +704,11 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             Hakukohde hakukohde = converterV1.toHakukohde(hakukohdeRDTO);
             hakukohde.setLastUpdateDate(today);
             hakukohde.setLastUpdatedByOid(contextDataService.getCurrentUserOid());
-            Hakukohde hakukohdeTemp = hakukohdeDAO
-                    .findHakukohdeByOid(hakukohdeRDTO.getOid());
+            Hakukohde hakukohdeTemp = hakukohdeDAO.findHakukohdeByOid(hakukohdeRDTO.getOid());
 
             hakukohde.setId(hakukohdeTemp.getId());
             hakukohde.setVersion(hakukohdeTemp.getVersion());
+            handleRyhmaliitokset(hakukohde, hakukohdeTemp, hakukohdeRDTO);
 
             hakukohde.setKoulutusmoduuliToteutusTarjoajatiedot(hakukohdeTemp.getKoulutusmoduuliToteutusTarjoajatiedot());
 
@@ -746,6 +766,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
             ResultV1RDTO<HakukohdeV1RDTO> errorResult = new ResultV1RDTO<HakukohdeV1RDTO>();
             errorResult.addTechnicalError(e);
             return errorResult;
+        }
+    }
+
+    private void handleRyhmaliitokset(Hakukohde toBeUpdatedHakukohde, Hakukohde hakukohdeFromDB, HakukohdeV1RDTO hakukohdeRDTO) {
+        if (hakukohdeRDTO.getOrganisaatioRyhmaOids() != null) {
+            for (String ryhmaOid : hakukohdeRDTO.getOrganisaatioRyhmaOids()) {
+                Ryhmaliitos ryhmaliitos = hakukohdeFromDB.getRyhmaliitosByRyhmaOid(ryhmaOid);
+                if (ryhmaliitos == null) {
+                    ryhmaliitos = new Ryhmaliitos();
+                    ryhmaliitos.setRyhmaOid(ryhmaOid);
+                    ryhmaliitos.setHakukohde(toBeUpdatedHakukohde);
+                }
+                toBeUpdatedHakukohde.addRyhmaliitos(ryhmaliitos);
+            }
         }
     }
 
@@ -1346,10 +1380,10 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
 
             switch (operation.getToiminto()) {
                 case LISAA:
-                    hakukohde.setOrganisaatioRyhmaOids(addToArray(hakukohde.getOrganisaatioRyhmaOids(), operation.getRyhmaOid()));
+                    addRyhmaliitos(operation, hakukohde);
                     break;
                 case POISTA:
-                    hakukohde.setOrganisaatioRyhmaOids(removeFromArray(hakukohde.getOrganisaatioRyhmaOids(), operation.getRyhmaOid()));
+                    removeRyhmaliitos(operation, hakukohde);
                     break;
                 default:
                     LOG.warn("UNKNOWN OPERATION: {}", operation.getToiminto());
@@ -1368,6 +1402,20 @@ public class HakukohdeResourceImplV1 implements HakukohdeV1Resource {
         }
 
         return result;
+    }
+
+    private void removeRyhmaliitos(HakukohdeRyhmaV1RDTO operation, Hakukohde hakukohde) {
+        Ryhmaliitos ryhmaliitos = hakukohde.getRyhmaliitosByRyhmaOid(operation.getRyhmaOid());
+        if (ryhmaliitos != null) {
+            hakukohde.removeRyhmaliitos(ryhmaliitos);
+        }
+    }
+
+    private void addRyhmaliitos(HakukohdeRyhmaV1RDTO operation, Hakukohde hakukohde) {
+        Ryhmaliitos newRyhmaliitos = new Ryhmaliitos();
+        newRyhmaliitos.setRyhmaOid(operation.getRyhmaOid());
+        newRyhmaliitos.setHakukohde(hakukohde);
+        hakukohde.addRyhmaliitos(newRyhmaliitos);
     }
 
     private String[] addToArray(String source[], String newValue) {

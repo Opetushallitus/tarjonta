@@ -25,16 +25,17 @@ app.controller('PoistaSisaltyvyysCtrl', [
     'targetKomo',
     'organisaatioOid',
     'SisaltyvyysUtil',
+    'sisaltyvyysColumnDefs',
     'TreeHandlers',
     '$log', function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, TreeHandlers, $log) {
+                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers, $log) {
         /*
          * Select koulutus data objects.
          */
         $scope.model = {
             errors: [],
             text: {
-                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-poisto-teksti', [
+                headLabel: LocalisationService.t('sisaltyvyys.liitoksen-poisto-teksti.' + targetKomo.toteutustyyppi, [
                     targetKomo.nimi,
                     organisaatio.nimi
                 ]),
@@ -65,26 +66,10 @@ app.controller('PoistaSisaltyvyysCtrl', [
         /*
          * ng-grid for selecting nodes (with select/remove mode)
          */
-        $scope.selectGridOptions = {
+        $scope.gridOptions = {
             data: 'model.hakutulos',
             selectedItems: $scope.model.selectedRowData,
-            columnDefs: [
-                {
-                    field: 'koulutuskoodi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale),
-                    width: '20%'
-                },
-                {
-                    field: 'nimi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale),
-                    width: '50%'
-                },
-                {
-                    field: 'tarjoaja',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale),
-                    width: '30%'
-                }
-            ],
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji),
             showSelectionCheckbox: true,
             multiSelect: true
         };
@@ -93,23 +78,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
          */
         $scope.reviewGridOptions = {
             data: 'model.selectedRowData',
-            columnDefs: [
-                {
-                    field: 'koulutuskoodi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.arvo', $scope.koodistoLocale),
-                    width: '20%'
-                },
-                {
-                    field: 'nimi',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.nimi', $scope.koodistoLocale),
-                    width: '50%'
-                },
-                {
-                    field: 'tarjoaja',
-                    displayName: LocalisationService.t('sisaltyvyys.hakutulos.tarjoaja', $scope.koodistoLocale),
-                    width: '30%'
-                }
-            ],
+            columnDefs: sisaltyvyysColumnDefs(targetKomo.koulutusLaji),
             showSelectionCheckbox: false,
             multiSelect: false
         };
@@ -193,24 +162,25 @@ app.controller('PoistaSisaltyvyysCtrl', [
                 _.each(result.tulokset, function(parentRes) {
                     //tulokset is by organisation
                     _.each(parentRes.tulokset, function(res) {
-                        if (res.koulutuskoodi) {
-                            var koulutuskoodiUri = oph.removeKoodiVersion(res.koulutuskoodi);
-                            var item = {
-                                koulutuskoodi: '',
+                        var item = {
                                 nimi: res.nimi,
                                 tarjoaja: parentRes.nimi,
                                 oid: res.komoOid
                             };
+                        if (res.koulutuskoodi) {
+                            var koulutuskoodiUri = oph.removeKoodiVersion(res.koulutuskoodi);
                             var koodisPromise = koodisto.getKoodi(config.env['koodisto-uris.koulutus'],
                                 koulutuskoodiUri, $scope.koodistoLocale);
                             koodisPromise.then(function(koodi) {
                                 item.koulutuskoodi = koodi.koodiArvo;
                             });
-                            searchResult.push(item);
                         }
                         else {
-                            $log.error('koulutus without koodi:', res);
+                            if (targetKomo.koulutusLaji === 'TUTKINTO') {
+                                $log.error('koulutus without koodi:', res);
+                            }
                         }
+                        searchResult.push(item);
                     });
                 });
                 deferred.resolve(searchResult);

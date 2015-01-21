@@ -1,9 +1,15 @@
 var app = angular.module('app.review.ctrl', []);
 app.controller('BaseReviewController', function BaseReviewController(PermissionService, $q, $scope, $window,
      $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, Koodisto,
-     KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService) {
+     KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService,
+     KoulutusService, OrganisaatioService) {
     $log = $log.getInstance('BaseReviewController');
     var koulutusModel = $route.current.locals.koulutusModel.result;
+
+    // Näytetäänkö "Järjestä"-painike
+    $scope.isJarjestettavaKoulutus = koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO'
+                                        && koulutusModel.opetusJarjestajat.length > 0;
+
     if (angular.isUndefined(koulutusModel)) {
         $location.path('/error');
         return;
@@ -155,6 +161,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
         }
         $log.info('doEdit()...', event, targetPart);
         if (targetPart === 'SISALTYVATOPINTOKOKONAISUUDET_LIITA') {
+            var toteutusTyyppi = $scope.model.koulutus.toteutustyyppi;
+            var koulutusLaji = toteutusTyyppi == 'KORKEAKOULUOPINTO' ? 'OPINTO' : 'TUTKINTO';
             $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
             $scope.luoKoulutusDialog = $modal.open({
                 templateUrl: 'partials/koulutus/sisaltyvyys/liita-koulutuksia.html',
@@ -165,6 +173,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                             vuosi: $scope.model.koulutus.koulutuksenAlkamisvuosi,
                             kausi: $scope.model.koulutus.koulutuksenAlkamiskausi,
                             oid: $scope.model.koulutus.komoOid,
+                            toteutustyyppi: $scope.model.koulutus.toteutustyyppi,
+                            koulutusLaji: koulutusLaji,
                             nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                         };
                     },
@@ -186,6 +196,8 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                     targetKomo: function() {
                         return {
                             oid: $scope.model.koulutus.komoOid,
+                            toteutustyyppi: $scope.model.koulutus.toteutustyyppi,
+                            koulutusLaji: koulutusLaji,
                             nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                         };
                     },
@@ -284,6 +296,14 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             }
         });
         copyModalDialog.result.then(function() {}, function() {});
+    };
+    $scope.doCreateLinked = function(event) {
+        // Aseta esivalittu organisaatio
+        $scope.luoKoulutusDialogOrg = $scope.selectedOrgOid;
+        // Aseta lähde koulutus
+        $scope.model.sourceKoulutus = $scope.model.koulutus;
+        // Avaa luonti
+        KoulutusService.extendKorkeakouluOpinto($scope.model.koulutus, $scope.model.koodistoLocale);
     };
     $scope.doMoveToBeSubPart = function(event) {
         $log.info('doMoveToBeSubPart()...');
@@ -432,8 +452,16 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             // Get user's language and update scope with it
             var userLangUri = 'kieli_' + AuthService.getLanguage();
             $scope.model.userLangUri = userLangUri;
-            var result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
-            if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
+            var result;
+            if (koulutusModel.toteutustyyppi === 'KORKEAKOULUOPINTO') {
+                //result = "[Opintojakson tai kokonaisuuden nimi...]";   // TODO
+                if (!angular.isDefined($scope.model.koulutus.koulutusohjelma.tekstis[userLangUri])) {
+                    // Just take first value for language
+                    userLangUri = Object.keys($scope.model.koulutus.koulutusohjelma.tekstis)[0];
+                }
+                result = $scope.model.koulutus.koulutusohjelma.tekstis[userLangUri];
+            }
+            else if (koulutusModel.toteutustyyppi === 'KORKEAKOULUTUS') {
                 if ($scope.model.opetusKieliUri) {
                     result = $scope.model.koulutus.koulutusohjelma.tekstis[$scope.model.opetusKieliUri];
                 }
@@ -467,6 +495,9 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                 }
                 result = $scope.model.koulutus.koulutusohjelma.meta[userLangUri].nimi;
             }
+            else {
+                result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
+            }
             $scope.model.header.nimi = result;
         }
         return $scope.model.header.nimi;
@@ -491,5 +522,15 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             return false;
         }
         return 'data:' + img.mimeType + ';base64,' + img.base64data;
+    };
+    if ($scope.model.koulutus.tarjoajanKoulutus) {
+        TarjontaService.getKoulutus({
+            oid: $scope.model.koulutus.tarjoajanKoulutus
+        }).$promise.then(function(response) {
+            $scope.model.tarjoajanKoulutus = response.result;
+        });
+    }
+    $scope.getMonikielinenNimi = function(field) {
+        return field.kieli_fi || field.kieli_sv || field.kieli_en;
     };
 });

@@ -26,6 +26,7 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -81,39 +82,15 @@ public class KoulutusKuvausV1RDTO<TYPE extends Enum> {
         for (Map.Entry<TYPE, NimiV1RDTO> e : tekstis.entrySet()) {
             Map<String, String> textMap = e.getValue().getTekstis();
 
-            MonikielinenTeksti mkMerge = tekstit.get(e.getKey());
-
-            if (mkMerge == null) {
-                mkMerge = new MonikielinenTeksti();
-                tekstit.put(e.getKey(), mkMerge);
-            }
+            MonikielinenTeksti mkMerge = new MonikielinenTeksti();
 
             for (Map.Entry<String, String> entry : textMap.entrySet()) {
                 String text = entry.getValue();//text
-                if (text == null) {
-                    //remove deleted data when text is set to null.
-                    mkMerge.removeKaannos(entry.getKey());
-                } else {
-                    TekstiKaannos tekstiKaannos = searchByKielikoodi(mkMerge, entry.getKey());
-                    tekstiKaannos.setArvo(text);
-                    mkMerge.addTekstiKaannos(tekstiKaannos);
-                }
+                TekstiKaannos tekstiKaannos = new TekstiKaannos(mkMerge, entry.getKey(), text);
+                mkMerge.addTekstiKaannos(tekstiKaannos);
             }
 
-            boolean clear = true;
-            for (TekstiKaannos kaannos : mkMerge.getTekstiKaannos()) {
-                if (kaannos.getArvo() != null && !kaannos.getArvo().isEmpty()) {
-                    clear = false;
-                    break;
-                }
-            }
-
-            if (clear) {
-                System.out.print("remove key " + e.getKey());
-                tekstit.remove(e.getKey());
-            } else {
-                tekstit.put(e.getKey(), mkMerge);
-            }
+            tekstit.put(e.getKey(), mkMerge);
         }
     }
 

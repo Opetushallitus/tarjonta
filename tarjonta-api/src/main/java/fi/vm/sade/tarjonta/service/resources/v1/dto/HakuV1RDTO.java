@@ -28,46 +28,46 @@ import java.util.*;
 @ApiModel(value = "Haku REST-api malli (rajapinnan versio V1)")
 public class HakuV1RDTO extends BaseV1RDTO {
 
-	@ApiModelProperty(value = "Hakukauden koodisto uri", required=true)
+    @ApiModelProperty(value = "Hakukauden koodisto uri", required = true)
     private String hakukausiUri;
 
-	@ApiModelProperty(value = "Hakukauden vuosi", required=true)
+    @ApiModelProperty(value = "Hakukauden vuosi", required = true)
     private int hakukausiVuosi;
 
-	@ApiModelProperty(value = "Hakutapa koodisto uri", required=true)
+    @ApiModelProperty(value = "Hakutapa koodisto uri", required = true)
     private String hakutapaUri;
 
-	@ApiModelProperty(value = "Hakulomakkeen www-osoite", required=false)
+    @ApiModelProperty(value = "Hakulomakkeen www-osoite", required = false)
     private String hakulomakeUri;
 
-	@ApiModelProperty(value = "Hakutyypin koodisto uri", required=true)
+    @ApiModelProperty(value = "Hakutyypin koodisto uri", required = true)
     private String hakutyyppiUri;
 
-	@ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required=true)
+    @ApiModelProperty(value = "Haun kohdejoukko koodisto uri", required = true)
     private String kohdejoukkoUri;
 
-	@ApiModelProperty(value = "Koulutuksen alkamisvuosi", required=true)
+    @ApiModelProperty(value = "Koulutuksen alkamisvuosi", required = true)
     private int koulutuksenAlkamisVuosi;
 
-	@ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto uri", required=true)
+    @ApiModelProperty(value = "Koulutuksen alkamiskausi koodisto uri", required = true)
     private String koulutuksenAlkamiskausiUri;
 
-	@ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required=true)
+    @ApiModelProperty(value = "Haun tila (LUONNOS, JULKAISTU, VALMIS, ...)", required = true)
     private String tila;
 
-	@ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required=true)
+    @ApiModelProperty(value = "Käytetäänkö järjestelmän sijoittelupalvelua", required = true)
     private boolean sijoittelu;
 
-    @ApiModelProperty(value = "Käytetäänkö järjestelmän hakulomaketta", required=true)
+    @ApiModelProperty(value = "Käytetäänkö järjestelmän hakulomaketta", required = true)
     private boolean jarjestelmanHakulomake;
 
-	@ApiModelProperty(value = "Lista haun hakuaikoja", required=true)
+    @ApiModelProperty(value = "Lista haun hakuaikoja", required = true)
     private List<HakuaikaV1RDTO> hakuaikas;
 
-	@ApiModelProperty(value = "Haun hakukohdehteiden OID lista", required=true)
+    @ApiModelProperty(value = "Haun hakukohdehteiden OID lista", required = true)
     private List<String> hakukohdeOids;
 
-	@ApiModelProperty(value = "Haun tunniste", required=true)
+    @ApiModelProperty(value = "Haun tunniste", required = true)
     private String haunTunniste;
 
 //	@ApiModelProperty(value = "Viimeisen päivittäjän tunniste", required=true)
@@ -76,29 +76,32 @@ public class HakuV1RDTO extends BaseV1RDTO {
 //	@ApiModelProperty(value = "Viimeisen päivityksen aikaleima", required=true)
 //    private Date lastUpdatedDate;
 
-	@ApiModelProperty(value = "Haun monikielinen nimi", required=true)
+    @ApiModelProperty(value = "Haun monikielinen nimi", required = true)
     private Map<String, String> nimi = new HashMap<String, String>();
 
-	@ApiModelProperty(value = "Koodiston avattua metadataa", required=false)
+    @ApiModelProperty(value = "Koodiston avattua metadataa", required = false)
     private Map<String, KoodiV1RDTO> koodiMeta;
 
-	@ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä, ei rajoita tarjontaa vaan kouutusinformaatiossa käytössä", required=true)
+    @ApiModelProperty(value = "Maksimi hakukohteiden lukumäärä, ei rajoita tarjontaa vaan kouutusinformaatiossa käytössä", required = true)
     private int maxHakukohdes;
 
-	@ApiModelProperty(value = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required=false)
+    @ApiModelProperty(value = "Tarjoaja organisatio oidit. Hakukohteita liittävät.", required = false)
     private String[] organisaatioOids;
 
-	@ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required=false)
+    @ApiModelProperty(value = "Tarjoaja organisatio oidit. Muokkaajat.", required = false)
     private String[] tarjoajaOids;
 
-	@ApiModelProperty(value = "Hakukohteet järjestettävä prioriteettijärjestykseen.", required=false)
+    @ApiModelProperty(value = "Hakukohteet järjestettävä prioriteettijärjestykseen.", required = false)
     private boolean usePriority;
 
-    @ApiModelProperty(value = "Isäntähaku, johon haku mahdollisesti linkittyy", required=false)
+    @ApiModelProperty(value = "Isäntähaku, johon haku mahdollisesti linkittyy", required = false)
     private String parentHakuOid;
 
-    @ApiModelProperty(value = "Sisältyvät haut", required=false)
+    @ApiModelProperty(value = "Sisältyvät haut", required = false)
     private Set<String> sisaltyvatHaut = new HashSet<String>();
+
+    @ApiModelProperty(value = "Hakuun liittyvät organisaatioryhmät", required = false)
+    private List<String> organisaatioryhmat;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
@@ -292,5 +295,13 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setParentHakuOid(String parentHakuOid) {
         this.parentHakuOid = parentHakuOid;
+    }
+
+    public List<String> getOrganisaatioryhmat() {
+        return organisaatioryhmat;
+    }
+
+    public void setOrganisaatioryhmat(List<String> organisaatioryhmat) {
+        this.organisaatioryhmat = organisaatioryhmat;
     }
 }

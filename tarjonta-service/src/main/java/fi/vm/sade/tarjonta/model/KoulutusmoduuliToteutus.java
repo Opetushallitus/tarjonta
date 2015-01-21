@@ -227,17 +227,11 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
     private Date koulutuksenLoppumisPvm = null;
 
     /**
-     * Sisältyy opintokokonaisuuteen 
+     * Se koulutus, josta tämä koulutus on järjestetty
      */
     @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {})
-    @JoinColumn(name = "opintokokonaisuus_id", nullable = true)
-    private KoulutusmoduuliToteutus opintoKokonaisuus;
-
-    /**
-     * Sisältää opinnot (opintojaksot ja opintokokonaisuudet)
-     */
-    @OneToMany(mappedBy = "opintoKokonaisuus", cascade = {})
-    private Set<KoulutusmoduuliToteutus> osaOpinnot = new HashSet<KoulutusmoduuliToteutus>();
+    @JoinColumn(name = "tarjoajan_koulutus_id", nullable = true)
+    private KoulutusmoduuliToteutus tarjoajanKoulutus;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = TABLE_NAME + "_koulutusryhma",
@@ -253,7 +247,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     @Column(name = "opinnontyyppi_uri")
     private String opinnonTyyppiUri;
-    
+
     public String getOpintojenLaajuusArvo() {
         return opintojenLaajuusarvo;
     }
@@ -948,7 +942,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         if (this.koulutuksenAlkamisPvms.size() > 1) {
             throw new RuntimeException("Not allowed error - Too many starting dates, maybe you are using a wrong method?");
         } else if (koulutuksenAlkamisPvms.isEmpty()) {
-            //at least parent komoto's date can be null. 
+            //at least parent komoto's date can be null.
             return null;
         }
 
@@ -1007,7 +1001,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         if (this.tutkintonimikes.size() > 1) {
             throw new RuntimeException("Not allowed error - Too many starting tutkintonimike objects, maybe you are using a wrong method?");
         } else if (tutkintonimikes.isEmpty()) {
-            //at least parent komo's tutkintonimike can be null. 
+            //at least parent komo's tutkintonimike can be null.
             return null;
         }
 
@@ -1125,6 +1119,16 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return oids;
     }
 
+    public Set<String> getJarjestajaOids() {
+        Set<String> oids = new HashSet<String>();
+        for (KoulutusOwner owner : owners) {
+            if (KoulutusOwner.JARJESTAJA.equals(owner.getOwnerType())) {
+                oids.add(owner.getOwnerOid());
+            }
+        }
+        return oids;
+    }
+
     public List<String> getKoulutuslajiKoodiUris() {
         List<String> koodiUris = new ArrayList<String>();
         for (KoodistoUri koulutuslaji : koulutuslajis) {
@@ -1147,26 +1151,18 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public String getOpinnonTyyppiUri() {
         return opinnonTyyppiUri;
-}
+    }
 
     public void setOpinnonTyyppiUri(String opinnonTyyppiUri) {
         this.opinnonTyyppiUri = opinnonTyyppiUri;
     }
 
-    public KoulutusmoduuliToteutus getOpintoKokonaisuus() {
-        return opintoKokonaisuus;
+    public KoulutusmoduuliToteutus getTarjoajanKoulutus() {
+        return tarjoajanKoulutus;
     }
 
-    public void setOpintoKokonaisuus(KoulutusmoduuliToteutus opintoKokonaisuus) {
-        this.opintoKokonaisuus = opintoKokonaisuus;
-    }
-
-    public Set<KoulutusmoduuliToteutus> getOsaOpinnot() {
-        return osaOpinnot;
-    }
-
-    public void setOsaOpinnot(Set<KoulutusmoduuliToteutus> osaOpinnot) {
-        this.osaOpinnot = osaOpinnot;
+    public void setTarjoajanKoulutus(KoulutusmoduuliToteutus tarjoajanKoulutus) {
+        this.tarjoajanKoulutus = tarjoajanKoulutus;
     }
 
     public String getOppiaine() {
@@ -1183,5 +1179,13 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setOpettaja(String opettaja) {
         this.opettaja = opettaja;
+    }
+
+    public Set<String> getKoulutusRyhmaOids() {
+        return koulutusRyhmaOids;
+    }
+
+    public void setKoulutusRyhmaOids(Set<String> koulutusRyhmaOids) {
+        this.koulutusRyhmaOids = koulutusRyhmaOids;
     }
 }

@@ -4,7 +4,7 @@ var app = angular.module('Tarjonta', [
     'Logging'
 ]);
 app.factory('TarjontaService', function($resource, $http, Config, LocalisationService, Koodisto,
-                                        CacheService, $q, $log) {
+                                        CacheService, $q, $log, OrganisaatioService) {
     $log = $log.getInstance('TarjontaService');
     var hakukohdeHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'hakukohde/search');
     var koulutusHaku = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/search');
@@ -44,7 +44,8 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                 'state=' + escape(args.state) + '&' + 'season=' + escape(args.season) + '&' +
                 'komoOid=' + escape(args.komoOid) + '&' + 'kooulutusOid=' + escape(args.koulutusOid) +
                 '&' + 'hakukohdeOid=' + escape(args.hakukohdeOid) + '&' + 'hakuOid=' + escape(args.hakuOid) +
-                '&' + 'year=' + escape(args.year),
+                '&' + 'year=' + escape(args.year) +
+                '&type=' + escape(args.type),
             expires: 60000,
             pattern: prefix + '/.*'
         };
@@ -115,6 +116,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             hakuOid: args.hakuOid,
             defaultTarjoaja: args.defaultTarjoaja,
             koulutustyyppi: args.koulutustyyppi ? args.koulutustyyppi : null,
+            koulutusmoduuliTyyppi: args.type,
             hakutapa: args.hakutapa,
             hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null,
             koulutuslaji: args.koulutuslaji ? args.koulutuslaji : null,
@@ -159,6 +161,7 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             alkamisKausi: args.season,
             alkamisVuosi: args.year,
             koulutustyyppi: args.koulutustyyppi ? args.koulutustyyppi : null,
+            koulutusmoduuliTyyppi: args.type,
             hakutapa: args.hakutapa ? args.hakutapa : null,
             hakutyyppi: args.hakutyyppi ? args.hakutyyppi : null,
             koulutuslaji: args.koulutuslaji ? args.koulutuslaji : null,
@@ -169,6 +172,9 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         };
         if (args.defaultTarjoaja) {
             params.defaultTarjoaja = args.defaultTarjoaja;
+        }
+        if (args.opetusJarjestajat) {
+            params.opetusJarjestajat = args.opetusJarjestajat;
         }
         return CacheService.lookupResource(searchCacheKey('koulutus', args), koulutusHaku, params, function(result) {
             result = result.result;
@@ -346,7 +352,6 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         return ret.promise;
     };
     dataFactory.getKoulutus = function(arg, func) {
-        $log.debug('getKoulutus()');
         //param meta=false filter all meta fields
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid?img=true', {
             oid: '@oid'
@@ -368,6 +373,55 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
             languageCode: '@languageCode'
         });
         return koulutus.get(arg, func);
+    };
+    dataFactory.getJarjestettavatKoulutukset = function(tarjoajanKoulutusOid, jarjestajat) {
+        var deferred = $q.defer();
+        var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/'
+                            + tarjoajanKoulutusOid + '/jarjestettavatKoulutukset');
+
+        // Koulutukset tallennetaan mappiin, jossa avaimena toimii organisaation oid
+        var map = {};
+
+        var getOrphan = typeof jarjestajat !== 'undefined';
+
+        // Lista koulutuksista, jotka on jo ehditty järjestää, mutta järjestämisoikeus on
+        // tämän jälkeen poistettu
+        var orphanKoulutukset = [];
+
+        koulutus.get().$promise.then(function(data) {
+            var promises = [];
+            _.each(data.result, function(koulutus) {
+                _.each(koulutus.tarjoajat, function(tarjoaja) {
+                    var deferred = $q.defer();
+                    OrganisaatioService.byOid(tarjoaja).then(function(org) {
+                        _.each(org.oidAndParentOids, function(orgOid) {
+                            if (orgOid !== Config.env['root.organisaatio.oid']) {
+                                map[orgOid] = koulutus;
+                            }
+                        });
+                        if (getOrphan && _.intersection(jarjestajat, org.oidAndParentOids).length === 0) {
+                            orphanKoulutukset.push(_.extend({}, koulutus, {
+                                tarjoajaNimi: org.nimi
+                            }));
+                        }
+                        deferred.resolve();
+                    });
+                    promises.push(deferred.promise);
+                });
+            });
+            $q.all(promises).then(function() {
+                if (getOrphan) {
+                    deferred.resolve({
+                        map: map,
+                        orphans: orphanKoulutukset
+                    });
+                }
+                else {
+                    deferred.resolve(map);
+                }
+            });
+        });
+        return deferred.promise;
     };
     dataFactory.resourceKomoKuvaus = function(komotoOid) {
         return $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/:oid/tekstis/komo', {
