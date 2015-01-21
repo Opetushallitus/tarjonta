@@ -24,7 +24,7 @@
            <th tt="koulutus.edit.jarjestavatOrganisaatiot">Järjestävät organisaatiot</th>
            <td ng-if="model.jarjestavatOrganisaatiot.length">
                <ul>
-                   <li ng-repeat="org in model.jarjestavatOrganisaatiot">{{org.nimi}}</li>
+                   <li ng-repeat="org in model.jarjestavatOrganisaatiot | orderBy: 'nimi'">{{org.nimi}}</li>
                </ul>
            </td>
            <td>

@@ -38,7 +38,7 @@
                 <td width="50%" ng-if="organizationSelectionType == 'JARJESTAJA' && selectedOrganizations.length > 0">
                     <p><strong>Valitut järjestäjät</strong></p>
                     <ul>
-                        <li ng-repeat="organisaatio in selectedOrganizations">
+                        <li ng-repeat="organisaatio in selectedOrganizations | orderBy: 'nimi'">
                             <a ng-click="deleteOrganization($index)">[X]</a>
                             {{organisaatio.nimi}}
                         </li>

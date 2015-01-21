@@ -41,7 +41,7 @@
                     <th>Organisaatio</th>
                     <th>Koulutuksen tila</th>
                 </tr>
-                <tr ng-repeat="org in model.koulutus.jarjestavatOrganisaatiot"
+                <tr ng-repeat="org in model.koulutus.jarjestavatOrganisaatiot | orderBy: 'nimi'"
                     ng-init="jarjestettavaKoulutus = model.koulutus.jarjestettavatKoulutuksetMap[org.oid]">
                     <td>{{org.nimi}}</td>
                     <td ng-if="jarjestettavaKoulutus">
