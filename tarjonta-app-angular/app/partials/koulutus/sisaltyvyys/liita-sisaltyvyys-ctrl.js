@@ -198,7 +198,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 koulutustyyppi: ['koulutustyyppi_3'],
                 type: config.app['tarjonta.koulutuslajiModuulityypit'][targetKomo.koulutusLaji]
             },
-            html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
+            html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html',
+            skipOids: [targetKomo.oid]
         };
         $scope.other = {
             tutkintotyypit: [
@@ -239,6 +240,16 @@ app.controller('LiitaSisaltyvyysCtrl', [
                         }
                     }
                 });
+            });
+            var deferred = $q.defer();
+            promises.push(deferred.promise);
+            TarjontaService.resourceLink.get({
+                oid: targetKomo.oid
+            }).$promise.then(function(res) {
+                _.each(res.result, function(resultOid) {
+                    $scope.model.skipOids.push(resultOid);
+                });
+                deferred.resolve();
             });
             $q.all(promises).then(function(koodisParam) {
                 $scope.searchKomos();
@@ -302,6 +313,9 @@ app.controller('LiitaSisaltyvyysCtrl', [
                             value.koulutuskoodi = koodi.koodiArvo;
                         });
                     }
+                });
+                arr = _.filter(arr, function(koulutus) {
+                    return !_.contains($scope.model.skipOids, koulutus.oid);
                 });
                 $scope.model.hakutulos = arr;
             });
