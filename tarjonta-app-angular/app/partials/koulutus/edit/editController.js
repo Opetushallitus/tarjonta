@@ -317,7 +317,8 @@ app.controller('BaseEditController', [
         };
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
             $scope.controlFormMessages(form, $scope.uiModel, 'CLEAR');
-            if (form.$invalid || !form.$valid || form.$pristine && !$scope.isLoaded()) {
+            if (form.$invalid || !form.$valid || form.$pristine && !$scope.isLoaded() ||
+                (form.tutkintonimike && form.tutkintonimike.$error.required)) {
                 //invalid form data
                 $scope.controlFormMessages(form, $scope.uiModel, 'ERROR', 'UI_ERRORS');
                 return;

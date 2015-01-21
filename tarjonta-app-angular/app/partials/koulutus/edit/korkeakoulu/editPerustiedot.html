@@ -82,7 +82,9 @@
         <!-- tutkintonimike -->
         <tr>
             <th tt="koulutus.edit.tutkintonimike">Tutkintonimike</th>
-            <td><tutkintonimike model="uiModel.tutkintonimikes"></tutkintonimike></td>
+            <td ng-if="uiModel.tutkintonimikes"><tutkintonimike
+                model="uiModel.tutkintonimikes"
+                required="false"></tutkintonimike></td>
         </tr>
         <tr>
             <th tt="koulutus.edit.eqf-luokitus">EQF-luokitus</th>
