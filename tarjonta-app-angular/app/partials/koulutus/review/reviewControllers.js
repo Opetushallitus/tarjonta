@@ -2,7 +2,7 @@ var app = angular.module('app.review.ctrl', []);
 app.controller('BaseReviewController', function BaseReviewController(PermissionService, $q, $scope, $window,
      $location, $route, $log, TarjontaService, $routeParams, LocalisationService, dialogService, Koodisto,
      KoodistoURI, $modal, KoulutusConverterFactory, HakukohdeKoulutukses, SharedStateService, AuthService,
-     KoulutusService) {
+     KoulutusService, OrganisaatioService) {
     $log = $log.getInstance('BaseReviewController');
     var koulutusModel = $route.current.locals.koulutusModel.result;
 

@@ -58,7 +58,12 @@ app.controller('OrganizationSelectionController', function($location, $q, $scope
             });
         }, 500);
     };
-    $scope.deleteOrganization = function(index) {
+    $scope.deleteOrganization = function(oid) {
+        var index;
+        _.find($scope.selectedOrganizations, function(org, i) {
+            index = i;
+            return org.oid === oid;
+        });
         $scope.selectedOrganizations.splice(index, 1);
     };
 });

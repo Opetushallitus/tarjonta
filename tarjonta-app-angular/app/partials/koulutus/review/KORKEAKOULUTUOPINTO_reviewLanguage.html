@@ -47,8 +47,20 @@
                     <td ng-if="jarjestettavaKoulutus">
                         <a href="#/koulutus/{{jarjestettavaKoulutus.oid}}">{{jarjestettavaKoulutus.tila}}</a>
                     </td>
-                    <td ng-if="!jarjestettavaKoulutus">
+                    <td ng-if="!jarjestettavaKoulutus" tt="koulutus.review.tilaEiJarjestetty">
                         EI JÄRJESTETTY
+                    </td>
+                </tr>
+
+                <!-- Listaa myös ne koulutukset, jotka on jo ehditty järjestää, ja joiden järjestämisoikeus
+                    on poistettu tämän jälkeen -->
+                <tr ng-repeat="koulutus in model.koulutus.jarjestettavatKoulutuksetOrphans  | orderBy: 'tarjoajaNimi'">
+                    <td>{{koulutus.tarjoajaNimi}}</td>
+                    <td>
+                        <a href="#/koulutus/{{koulutus.oid}}">{{koulutus.tila}}</a><br>
+                        <span tt="koulutus.review.jarjestettyVaikkaJarjestamisoikeusPoistettu">
+                            (Koulutus on jo ehditty järjestää, vaikka järjestämisoikeus on poistettu)nn
+                        </span>
                     </td>
                 </tr>
             </table>

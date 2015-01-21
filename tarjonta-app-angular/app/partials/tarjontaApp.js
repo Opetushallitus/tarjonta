@@ -358,7 +358,10 @@ angular.module('app').config([
 
                 if (res.result.toteutustyyppi === 'KORKEAKOULUOPINTO'
                         && !res.result.tarjoajanKoulutus) {
-                    promises.push(TarjontaService.getJarjestettavatKoulutukset(res.result.oid));
+                    promises.push(TarjontaService.getJarjestettavatKoulutukset(
+                        res.result.oid,
+                        res.result.opetusJarjestajat
+                    ));
                 }
                 else {
                     promises.push(getNoopPromise());
@@ -367,7 +370,7 @@ angular.module('app').config([
                 $q.all(promises).then(function(data) {
                     var tarjoajat = data[0];
                     var jarjestajat = data[1];
-                    var jarjestettavatKoulutukset = data[2];
+                    var jarjestettavatKoulutukset = data[2] || {};
                     // tarjoajat
                     res.result.organisaatiot = tarjoajat;
                     var nimet = '';
@@ -379,7 +382,8 @@ angular.module('app').config([
                     // jarjestajat
                     res.result.jarjestavatOrganisaatiot = jarjestajat;
 
-                    res.result.jarjestettavatKoulutuksetMap = jarjestettavatKoulutukset;
+                    res.result.jarjestettavatKoulutuksetMap = jarjestettavatKoulutukset.map;
+                    res.result.jarjestettavatKoulutuksetOrphans = jarjestettavatKoulutukset.orphans;
 
                     defer.resolve(res);
                 });

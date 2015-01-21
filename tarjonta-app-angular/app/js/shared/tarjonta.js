@@ -374,13 +374,19 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
         });
         return koulutus.get(arg, func);
     };
-    dataFactory.getJarjestettavatKoulutukset = function(tarjoajanKoulutusOid) {
+    dataFactory.getJarjestettavatKoulutukset = function(tarjoajanKoulutusOid, jarjestajat) {
         var deferred = $q.defer();
         var koulutus = $resource(Config.env.tarjontaRestUrlPrefix + 'koulutus/'
                             + tarjoajanKoulutusOid + '/jarjestettavatKoulutukset');
 
         // Koulutukset tallennetaan mappiin, jossa avaimena toimii organisaation oid
         var map = {};
+
+        var getOrphan = typeof jarjestajat !== 'undefined';
+
+        // Lista koulutuksista, jotka on jo ehditty järjestää, mutta järjestämisoikeus on
+        // tämän jälkeen poistettu
+        var orphanKoulutukset = [];
 
         koulutus.get().$promise.then(function(data) {
             var promises = [];
@@ -393,13 +399,26 @@ app.factory('TarjontaService', function($resource, $http, Config, LocalisationSe
                                 map[orgOid] = koulutus;
                             }
                         });
+                        if (getOrphan && _.intersection(jarjestajat, org.oidAndParentOids).length === 0) {
+                            orphanKoulutukset.push(_.extend({}, koulutus, {
+                                tarjoajaNimi: org.nimi
+                            }));
+                        }
                         deferred.resolve();
                     });
                     promises.push(deferred.promise);
                 });
             });
             $q.all(promises).then(function() {
-                deferred.resolve(map);
+                if (getOrphan) {
+                    deferred.resolve({
+                        map: map,
+                        orphans: orphanKoulutukset
+                    });
+                }
+                else {
+                    deferred.resolve(map);
+                }
             });
         });
         return deferred.promise;
