@@ -81,7 +81,7 @@
         <tr class="required">
             <th tt="koulutus.edit.opintojen-laajuus">Opintojen laajuus</th>
             <td>
-                <input ng-required="koulutus.edit.opintojenLaajuus.required" name="opintopisteet" class="thin" type="text" data-ng-model="model.opintojenLaajuusPistetta" />
+                <input required name="opintopisteet" class="thin" type="text" data-ng-model="model.opintojenLaajuusPistetta" />
                 <span tt="koulutus.edit.opintopistetta">opintopistettä</span>
             </td>
             <td>
@@ -96,15 +96,14 @@
         <tr class="required">
             <th tt="koulutus.edit.opetuksen-alkamis-loppumispvm">Opetuksen alkamis- ja loppumispvm</th>
             <td>
-	            <t-date-time type="long" name="alkuPvm" timestamp="false" scope-model="model.koulutuksenAlkamisPvm" required
+	            <t-date-time type="long" name="alkuPvm" timestamp="false" scope-model="model.koulutuksenAlkamisPvm" required="required"
 	                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
 	            <t-date-time type="long" name="loppuPvm" timestamp="false" scope-model="model.koulutuksenLoppumisPvm"
 	                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
-        </td>
-        <td>
-             <p class="error" ng-show="uiModel.showValidationErrors && !koulutusForm.kausivuosi && koulutusForm.alkamisPvm.$error.required" tt="koulutus.edit.alkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
-             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.kausivuosi && (koulutusForm.alkamiskausi.$error.required || koulutusForm.alkamisvuosi.$error.required || koulutusForm.alkamisvuosi.$error.number || koulutusForm.alkamisvuosi.$error.min || koulutusForm.alkamisvuosi.$error.max)" tt="koulutus.edit.alkamis-kausi-ja-vuosi.required">Opintojen alkamiskausi ja alkamisvuosi vaaditaan</p>
-        </td>
+            </td>
+            <td>
+                 <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.alkuPvm.$error.required" tt="koulutus.edit.alkamisPvm.required">Opintojen alkamispäivä vaaditaan</p>
+            </td>
         </tr>
 
         <!-- väli -->

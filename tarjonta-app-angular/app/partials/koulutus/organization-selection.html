@@ -1,6 +1,11 @@
 <div id="luo-koulutus-dialogi">
     <div class="modal-header">
-        <h3>Muokkaa koulutuksen organisaatioita</h3>
+        <h3 ng-if="organizationSelectionType != 'JARJESTAJA'" tt="koulutus.popup.tarjoajienValintaTitle">
+            Muokkaa koulutuksen organisaatioita
+        </h3>
+        <h3 ng-if="organizationSelectionType == 'JARJESTAJA'" tt="koulutus.popup.jarjestajienValintaTitle">
+            Muokkaa opinnon järjestäjiä
+        </h3>
     </div>
 
     <div class="modal-body">
