@@ -154,6 +154,9 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 //search parameter object
                 komoOid: oid
             }).then(function(result) {
+                if (result.tulokset[0] === undefined) {
+                    return;
+                }
                 var obj = {
                     nimi: result.tulokset[0].tulokset[0].nimi,
                     oid: result.tulokset[0].tulokset[0].komoOid,

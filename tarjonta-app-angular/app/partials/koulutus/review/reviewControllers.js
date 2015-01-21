@@ -230,9 +230,13 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             controller: 'PoistaKoulutusCtrl',
             resolve: {
                 targetKomoto: function() {
+                    var koulutuskoodi;
+                    if ($scope.model.koulutus.koulutuskoodi) {
+                        koulutuskoodi = $scope.model.koulutus.koulutuskoodi.arvo;
+                    }
                     return {
                         oid: $scope.model.koulutus.oid,
-                        koulutuskoodi: $scope.model.koulutus.koulutuskoodi.arvo,
+                        koulutuskoodi: koulutuskoodi,
                         nimi: $scope.model.koulutus.koulutusohjelma.tekstis['kieli_' + $scope.model.koodistoLocale]
                     };
                 },
@@ -245,11 +249,7 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             }
         });
         poistaModalDialog.result.then(function() {
-            //not working:
-            // $route.reload();
-            //$location.path("/koulutus/" + $scope.model.koulutus.oid);
-            // force page reload, at least it works:
-            window.location.reload();
+            $route.reload();
         }, function() {});
     };
     $scope.addHakukohde = function() {

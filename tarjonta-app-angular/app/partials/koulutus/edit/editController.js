@@ -110,7 +110,7 @@ app.controller('BaseEditController', [
             }
         };
         $scope.canSaveAsLuonnos = function() {
-            return _.contains([
+            return $scope.jarjestaUusiKoulutus || _.contains([
                     'LUONNOS',
                     'KOPIOITU'
                 ], $scope.getModel().tila) && $scope.uiModel.isMutable;
@@ -119,7 +119,7 @@ app.controller('BaseEditController', [
             if ($scope.getModel().tila === 'POISTETTU') {
                 return false;
             }
-            return $scope.uiModel.isMutable;
+            return $scope.jarjestaUusiKoulutus || $scope.uiModel.isMutable;
         };
         $scope.goBack = function(event, form) {
             if ($scope.isDirty()) {
@@ -334,6 +334,10 @@ app.controller('BaseEditController', [
                 KoulutusRes.save(apiModelReadyForSave, function(saveResponse) {
                     var model = saveResponse.result;
                     if (saveResponse.status === 'OK') {
+                        if ($scope.jarjestaUusiKoulutus) {
+                            $scope.jarjestaUusiKoulutus = null;
+                            $scope.uiModel.isMutable = true;
+                        }
                         // Reset form to "pristine" ($dirty = false)
                         // WTF? where have all the "form.$setPristine()"s gone?
                         form.$dirty = false;
@@ -654,6 +658,7 @@ app.controller('BaseEditController', [
                     model.oid = null;
                     model.opetusJarjestajat = [];
                     model.opetusTarjoajat = [$routeParams.organisaatioOid];
+                    $scope.jarjestaUusiKoulutus = true;
                 }
                 else if (model.tarjoajanKoulutus) {
                     TarjontaService.getKoulutus({
