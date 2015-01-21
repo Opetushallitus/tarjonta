@@ -161,7 +161,6 @@ public class ConverterV1 {
             }
         }
 
-        hakuDTO.setOrganisaatioryhmat(hakuDao.findOrganisaatioryhmaOids(haku.getId()));
         hakuDTO.setOrganisaatioOids(haku.getOrganisationOids());
         hakuDTO.setTarjoajaOids(haku.getTarjoajaOids());
 

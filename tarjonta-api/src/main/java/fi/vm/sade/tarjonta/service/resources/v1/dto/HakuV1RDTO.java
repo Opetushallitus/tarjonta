@@ -101,7 +101,7 @@ public class HakuV1RDTO extends BaseV1RDTO {
     private Set<String> sisaltyvatHaut = new HashSet<String>();
 
     @ApiModelProperty(value = "Hakuun liittyvät organisaatioryhmät", required = false)
-    private List<String> organisaatioryhmat = new ArrayList<String>();
+    private List<String> organisaatioryhmat;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {

@@ -77,5 +77,5 @@ public interface HakuDAO extends JpaDAO<Haku, Long> {
 
     Set<String> findOrganisaatioOidsFromHakukohteetByHakuOid(String hakuOid);
 
-    List<String> findOrganisaatioryhmaOids(Long id);
+    List<String> findOrganisaatioryhmaOids(String hakuOid);
 }

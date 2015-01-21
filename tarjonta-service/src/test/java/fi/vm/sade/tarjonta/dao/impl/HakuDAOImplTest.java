@@ -277,7 +277,7 @@ public class HakuDAOImplTest extends TestData {
     @Test
     public void thatOrganisaatioryhmaOidsAreFound() {
         Haku haku = fixtures.createHakuWithOrganisaatioryhmat();
-        List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getId());
+        List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getOid());
         assertTrue(oids.size() == 2);
         assertTrue(oids.contains("1.2.3"));
         assertTrue(oids.contains("4.5.6"));
@@ -286,7 +286,7 @@ public class HakuDAOImplTest extends TestData {
     @Test
     public void thatEmptyOrganisaatioryhmaOidsIsReturned() {
         Haku haku = fixtures.createPersistedHaku();
-        List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getId());
+        List<String> oids = hakuDAO.findOrganisaatioryhmaOids(haku.getOid());
         assertTrue(oids.isEmpty());
     }
 

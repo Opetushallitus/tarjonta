@@ -299,14 +299,15 @@ public class HakuDAOImpl extends AbstractJpaDAOImpl<Haku, Long> implements HakuD
     }
 
     @Override
-    public List<String> findOrganisaatioryhmaOids(Long hakuId) {
+    public List<String> findOrganisaatioryhmaOids(String hakuOid) {
         QHakukohde qHakukohde = QHakukohde.hakukohde;
         QRyhmaliitos qRyhmaliitos = QRyhmaliitos.ryhmaliitos;
         QHaku qHaku = QHaku.haku;
 
         return from(qHaku, qHakukohde, qRyhmaliitos)
                 .where(qHakukohde.haku.eq(qHaku)
-                        .and(qHaku.id.eq(hakuId)))
+                        .and(qHaku.oid.eq(hakuOid))
+                        .and(qRyhmaliitos.hakukohde.eq(qHakukohde)))
                 .distinct()
                 .list(qRyhmaliitos.ryhmaOid);
     }
