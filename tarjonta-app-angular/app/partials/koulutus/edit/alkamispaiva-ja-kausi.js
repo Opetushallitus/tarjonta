@@ -29,34 +29,10 @@ app.directive('alkamispaivaJaKausi', [
                     'alkamisvuosi',
                 kausivuosi: angular.isDefined($scope.fieldNamePrefix) && $scope.fieldNamePrefix.length > 0 ?
                     $scope.fieldNamePrefix + '_kausivuosi' :
-                    'kausivuosi',
-                lukittu: pScope.model ?
-                    pScope.model.isMinmax :
-                    false
+                    'kausivuosi'
             };
-            // vuosikentän oletusrajat: piilottaa
             $scope.minYear = new Date().getFullYear() - 1;
             $scope.maxYear = $scope.minYear + 11;
-            /* Jos alkamispäivämääräkenttään ja kalenteriin halutaan samat oletusrajat kuin edellä asetetaan vuosikentälle,
-                   * korvaa edelliset rivit alla kommentoiduilla. Huom: tällöin yli vuoden vanhojen koulutusten muokkauksia ei voi tallentaa. */
-            /*
-              var min = new Date;
-              min.setFullYear(min.getFullYear() - 1, 0, 1, 0, 0, 0, 0);
-              var max = new Date();
-              max.setFullYear(max.getFullYear() + 11, 11, 31, 23, 59, 59, 0);
-              $scope.minYear = min.getFullYear();
-              $scope.maxYear = max.getFullYear();
-            pScope.setDefault(min, max);
-            */
-            // disabloidaan kausi- ja vuosikentät BaseEditControllerin restrictedin mukaan, korvataan vuosikentän minYear ja maxYear
-            $scope.$on('restricted', function(event, restricted) {
-                $scope.ctrl.lukittu = restricted;
-                if ($scope.ctrl.lukittu) {
-                    $scope.minYear = pScope.minYear;
-                    $scope.maxYear = pScope.maxYear;
-                }
-                pScope.model.isMinmax = restricted;
-            });
             $scope.$watch('ctrl.kausi', function(valNew, valOld) {
                 $scope.form[$scope.ctrl.kausivuosi] = valNew;
                 if (valNew && $scope.kausi) {
@@ -67,9 +43,7 @@ app.directive('alkamispaivaJaKausi', [
                 $scope.kausiUiModel.uri = $scope.kausiUri;
             });
             $scope.clearKausiSelection = function() {
-                if (!$scope.ctrl.lukittu) {
-                    $scope.kausiUri = '';
-                }
+                $scope.kausiUri = '';
             };
             $scope.onAddDate = function() {
                 $scope.alkamisPaivat.clickAddDate();

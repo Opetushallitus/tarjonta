@@ -12,9 +12,6 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                 $scope.form.$setValidity('tDateTime', true);
             }
         });
-        $scope.$on('dateRemoved', function(event) {
-            $scope.onModelChanged();
-        });
         $scope.prompts = {
             date: LocalisationService.t('tarjonta.kalenteri.prompt.pvm'),
             time: LocalisationService.t('tarjonta.kalenteri.prompt.aika')
@@ -234,27 +231,11 @@ app.directive('tDateTime', function($log, $modal, LocalisationService, dialogSer
                     $scope.date = '';
                     return;
                 }
-                if (minTime() && nd.getTime() < minTime()) {
-                    outOfBounds = true;
-                }
-                if (maxTime() && nd.getTime() > maxTime()) {
-                    outOfBounds = true;
-                }
                 if (!isNaN(nd.getTime())) {
                     omitUpdate = true;
-                    //    				var cd = applyConstraints(nd); // nd; //
-                    //    				violation = cd.getTime() == nd.getTime() ? null : nd;
-                    $scope.model = nd; // cd;
-                }
-            }
-            if ($scope.form && $scope.form.alkamisPvm) {
-                if (outOfBounds) {
-                    $scope.form.alkamisPvm.$error.outofminmax = true;
-                    $scope.form.$setValidity('outofminmax', false);
-                }
-                else {
-                    $scope.form.alkamisPvm.$error.outofminmax = false;
-                    $scope.form.$setValidity('outofminmax', true);
+                    var cd = applyConstraints(nd);
+                    violation = cd.getTime() == nd.getTime() ? null : nd;
+                    $scope.model = cd;
                 }
             }
             if ($scope.ngChange) {

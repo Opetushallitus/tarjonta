@@ -301,19 +301,6 @@ app.controller('BaseEditController', [
                 fnCustomCallbackAfterSave,
                 KoulutusConverterFactory.saveModelConverter(apiModel, $scope.uiModel, tyyppi)
             );
-            if ($scope.uiModel.isMutable && $scope.model.oid) {
-                var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes($scope.model.oid);
-                hakukohdePromise.then(function(hakukohteet) {
-                    if (hakukohteet.result && hakukohteet.result.length > 0) {
-                        $scope.setMinMax(true);
-                    }
-                    else {
-                        $scope.setMinMax(false);
-                    }
-                }, function() {
-                        $scope.setMinMax(false);
-                    });
-            }
         };
         $scope.saveByStatusAndApiObject = function(form, tyyppi, fnCustomCallbackAfterSave, apiModelReadyForSave) {
             $scope.controlFormMessages(form, $scope.uiModel, 'CLEAR');
@@ -443,20 +430,6 @@ app.controller('BaseEditController', [
                     defaultTarjoaja: AuthService.getUserDefaultOid()
                 }).then(function(data) {
                     uiModel.isMutable = data;
-                    if (uiModel.isMutable) {
-                        model.isNew = false;
-                        var hakukohdePromise = HakukohdeKoulutukses.getKoulutusHakukohdes(model.oid);
-                        hakukohdePromise.then(function(hakukohteet) {
-                            if (hakukohteet.result && hakukohteet.result.length > 0) {
-                                $scope.setMinMax(true);
-                            }
-                            else {
-                                $scope.setMinMax(false);
-                            }
-                        }, function() {
-                                $scope.setMinMax(false);
-                            });
-                    } // if (uiModel.isMutable)
                 }); // koulutus.canEdit.then
             }
             uiModel.tabs.lisatiedot = false;
@@ -972,86 +945,6 @@ app.controller('BaseEditController', [
                 controller: 'OrganizationSelectionController'
             });
         };
-        $scope.setMinMax = function(restricted) {
-            $scope.model.isMinmax = restricted;
-            $scope.restricted = restricted;
-            var vuosi;
-            if (restricted) {
-                // true, jos koulutukseen liittyy vähintään yksi hakukohde
-                // jos koulutukselle on määritelty vähintään yksi tarkka alkamisPvm
-                if ($scope.model.koulutuksenAlkamisPvms && $scope.model.koulutuksenAlkamisPvms.length > 0) {
-                    var alkamisPvm = new Date($scope.model.koulutuksenAlkamisPvms[0]);
-                    // jos alkamisPvm on nykyisten min- ja max-rajojen sisällä
-                    if (!$scope.outOfMinMax(alkamisPvm)) {
-                        vuosi = alkamisPvm.getFullYear();
-                        // asetetaan alkamispäivämääräkentälle ja kalenterille rajat
-                        if (alkamisPvm.getMonth() < 7) {
-                            $scope.min = new Date(vuosi, 0, 1, 0, 0, 0, 0);
-                            $scope.max = new Date(vuosi, 6, 31, 23, 59, 59, 0);
-                            $scope.model.koulutuksenAlkamiskausi.uri = 'kausi_k';
-                        }
-                        else {
-                            $scope.min = new Date(vuosi, 7, 1, 0, 0, 0, 0);
-                            $scope.max = new Date(vuosi, 11, 31, 23, 59, 59, 0);
-                            $scope.model.koulutuksenAlkamiskausi.uri = 'kausi_s';
-                        }
-                        // lasketaan vuosikentän rajat (asetetaan alkamispaiva-ja-kausi.js:ssä)
-                        $scope.minYear = $scope.min.getFullYear();
-                        $scope.maxYear = $scope.minYear;
-                    }
-                }
-                else {
-                    // jos koulutukselle on määritelty alkamiskausi ja -vuosi
-                    if ($scope.model.koulutuksenAlkamiskausi && $scope.model.koulutuksenAlkamiskausi.uri &&
-                        /^\+?(0|[1-9]\d*)$/.test($scope.model.koulutuksenAlkamisvuosi)) {
-                        vuosi = $scope.model.koulutuksenAlkamisvuosi;
-                        // asetetaan alkamispäivämääräkentälle ja kalenterille rajat
-                        if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf('_k') > -1) {
-                            $scope.min = new Date(vuosi, 0, 1, 0, 0, 0, 0);
-                            $scope.max = new Date(vuosi, 6, 31, 23, 59, 59, 0);
-                        }
-                        else if ($scope.model.koulutuksenAlkamiskausi.uri.indexOf('_s') > -1) {
-                            $scope.min = new Date(vuosi, 7, 1, 0, 0, 0, 0);
-                            $scope.max = new Date(vuosi, 11, 31, 23, 59, 59, 0);
-                        }
-                        else {
-                            return;
-                        }
-                        // lasketaan vuosikentän rajat (asetetaan alkamispaiva-ja-kausi.js:ssä)
-                        $scope.minYear = $scope.min.getFullYear();
-                        $scope.maxYear = $scope.minYear;
-                    }
-                    else {
-                    }
-                }
-            }
-            // if (restricted)
-            // lähetetään viesti, jolla disabloidaan tarvittaessa kausi-&vuosikentät oikean scopen kautta (ks. alkamispaiva-ja-kausi.js)
-            $scope.$broadcast('restricted', restricted);
-        };
-        $scope.outOfMinMax = function(alkamisPvm) {
-            if ($scope.min) {
-                var minTime = $scope.min.getTime();
-                if (alkamisPvm.getTime() < minTime) {
-                    return true;
-                }
-            }
-            if ($scope.max) {
-                var maxTime = $scope.max.getTime();
-                if (alkamisPvm.getTime() > maxTime) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        // tällä voidaan asettaa alkamispäivämääräkentälle ja kalenterille oletusrajat (ks. alkamispaiva-ja-kausi.js)
-        $scope.setDefault = function(minY, maxY) {
-            if (!$scope.restricted) {
-                $scope.min = minY;
-                $scope.max = maxY;
-            }
-        };
-
         $scope.getMonikielinenNimi = function(field) {
             return field.kieli_fi || field.kieli_sv || field.kieli_en;
         };
