@@ -229,6 +229,7 @@
 
                 <tab heading="{{t('tarjonta.hakutulos.jarjestettavatKoulutukset')}}{{getJarjestettavatResultCount()}}"
                      select="jarjestettavatSelected()"
+                     ng-show="jarjestettavatResults.tulokset.length > 0"
                      active="tabs.jarjestettavat.active">
                     <results-tree-table
                         columns="['kausi', 'koulutuslaji', 'tila']"

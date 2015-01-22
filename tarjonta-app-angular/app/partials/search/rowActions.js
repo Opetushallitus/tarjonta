@@ -137,6 +137,8 @@ angular.module('search.hakutulokset.rows', [])
                         },
                         title: LocalisationService.t('tarjonta.toiminnot.jarjesta')
                     });
+                    // Resetoi, koska tulee muuten JS error ja ei merkitystä julkaistavissa oleville koulutuksille
+                    tila = null;
                 }
             };
             if (actionsByPrefix[prefix]) {

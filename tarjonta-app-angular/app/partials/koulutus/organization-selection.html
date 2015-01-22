@@ -1,6 +1,11 @@
 <div id="luo-koulutus-dialogi">
     <div class="modal-header">
-        <h3>Muokkaa koulutuksen organisaatioita</h3>
+        <h3 ng-if="organizationSelectionType != 'JARJESTAJA'" tt="koulutus.popup.tarjoajienValintaTitle">
+            Muokkaa koulutuksen organisaatioita
+        </h3>
+        <h3 ng-if="organizationSelectionType == 'JARJESTAJA'" tt="koulutus.popup.jarjestajienValintaTitle">
+            Muokkaa opinnon järjestäjiä
+        </h3>
     </div>
 
     <div class="modal-body">
@@ -8,7 +13,7 @@
             <tr>
                 <td width="50%">
                     <input type="text" ng-model="organizationFilter"
-                           placeholder="Hae korkeakouluja" ng-change="searchOrganizations(organizationFilter)" />
+                           placeholder="Hae organisaatioita" ng-change="searchOrganizations(organizationFilter)" />
                     <div ng-if="lkorganisaatiot" class="treeview"
                          data-angular-treeview="true" data-tree-id="lkorganisaatio"
                          data-org-tree-model="lkorganisaatiot" data-node-id="oid"

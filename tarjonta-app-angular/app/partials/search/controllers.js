@@ -445,4 +445,9 @@ angular.module('app.search.controllers', [
         clearActiveTabs();
         $scope.tabs.jarjestettavat.active = true;
     };
+    $scope.$watch('jarjestettavatResults.tulokset.length', function(length) {
+        if (length === 0 && $scope.tabs.jarjestettavat.active) {
+            $scope.koulutuksetSelected();
+        }
+    });
 });

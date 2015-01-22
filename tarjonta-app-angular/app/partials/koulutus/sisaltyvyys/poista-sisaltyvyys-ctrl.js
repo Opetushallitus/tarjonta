@@ -28,7 +28,8 @@ app.controller('PoistaSisaltyvyysCtrl', [
     'sisaltyvyysColumnDefs',
     'TreeHandlers',
     '$log', function PoistaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers, $log) {
+                   $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers,
+                   $log) {
         /*
          * Select koulutus data objects.
          */
@@ -201,7 +202,7 @@ app.controller('PoistaSisaltyvyysCtrl', [
             });
             var removeMany = TarjontaService.resourceLink.removeMany({
                 parent: targetKomo.oid,
-                childs: oids
+                childs: oids.join(',')
             });
             removeMany.$promise.then(function(response) {
                 var su = new SisaltyvyysUtil();

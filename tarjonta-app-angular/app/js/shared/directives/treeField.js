@@ -154,6 +154,9 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
                 //search parameter object
                 komoOid: oid
             }).then(function(result) {
+                if (result.tulokset[0] === undefined) {
+                    return;
+                }
                 var obj = {
                     nimi: result.tulokset[0].tulokset[0].nimi,
                     oid: result.tulokset[0].tulokset[0].komoOid,
@@ -242,21 +245,26 @@ app.directive('treeField', function($log, TarjontaService, TreeFieldSearch) {
          * HANDLE SELECT DATA CHANGES
          * - the search process starts and ends here.
          */
+        function initTree() {
+            $scope.createTreeData();
+            for (var i = 0; i < $scope.oids.length; i++) {
+                $scope.searchSinglePathToRootByOid($scope.oids[i]);
+            }
+            $q.all($scope.tree.activePromises).then(function() {
+                angular.forEach($scope.tree.map.ROOT.childs, function(val, key) {
+                    $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val, true);
+                });
+                if (!angular.isUndefined($scope.fnLoadedHandler) && $scope.fnLoadedHandler !== null) {
+                    $scope.fnLoadedHandler($scope.tree.map);
+                }
+            }, true);
+        }
+        $scope.$on('sisaltyvyysChanges', function() {
+            initTree();
+        });
         $scope.$watch('oids', function(newValue, oldValue) {
             if (newValue.length > 0 && (newValue !== oldValue || angular.isUndefined($scope.tree))) {
-                $scope.createTreeData();
-                for (var i = 0; i < $scope.oids.length; i++) {
-                    $scope.searchSinglePathToRootByOid($scope.oids[i]);
-                }
-                $q.all($scope.tree.activePromises).then(function() {
-                    console.log('CREATE TREE');
-                    angular.forEach($scope.tree.map.ROOT.childs, function(val, key) {
-                        $scope.getCreateChildren($scope.tree.map, key, $scope.tree.treedata, val, true);
-                    });
-                    if (!angular.isUndefined($scope.fnLoadedHandler) && $scope.fnLoadedHandler !== null) {
-                        $scope.fnLoadedHandler($scope.tree.map);
-                    }
-                }, true);
+                initTree();
             }
         });
     }

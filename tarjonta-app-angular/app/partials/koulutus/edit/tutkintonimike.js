@@ -21,6 +21,7 @@ app.directive('tutkintonimike', [
                         angular.forEach($scope.model.meta, function(val, key) {
                             $scope.model.uris.push(key);
                         });
+                        $($element).parents('tr').removeClass('required');
                     }
                     else {
                         //multiple items
@@ -32,17 +33,23 @@ app.directive('tutkintonimike', [
                             });
                         });
                         $scope.ctrl.data = arr;
+
+                        if ($scope.required === true) {
+                            $($element).parents('tr').addClass('required');
+                        }
                     }
                 }
             });
         }
+
         return {
             restrict: 'E',
             replace: true,
             templateUrl: 'partials/koulutus/edit/tutkintonimike.html',
             controller: controller,
             scope: {
-                model: '='
+                model: '=',
+                required: '='
             }
         };
     }

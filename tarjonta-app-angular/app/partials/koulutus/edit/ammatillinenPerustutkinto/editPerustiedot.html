@@ -57,7 +57,9 @@
     <!-- tutkintonimike -->
     <tr>
         <th tt="koulutus.edit.tutkintonimike">Tutkintonimike</th>
-        <td><tutkintonimike model="uiModel.tutkintonimikes"></tutkintonimike></td>
+        <td><tutkintonimike
+            model="uiModel.tutkintonimikes"
+            required="true"></tutkintonimike></td>
         <td>
             <p class="error" ng-show="uiModel.showValidationErrors && koulutusForm.tutkintonimike.$error.required"
                tt="koulutus.edit.tutkintonimike.required">Tutkintonimike on pakollinen</p>

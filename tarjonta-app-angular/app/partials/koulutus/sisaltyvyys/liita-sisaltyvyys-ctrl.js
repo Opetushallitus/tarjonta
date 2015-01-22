@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  */
 var app = angular.module('app.koulutus.sisaltyvyys.ctrl', []);
-app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, LocalisationService) {
+app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, LocalisationService, $rootScope) {
     $log = $log.getInstance('SisaltyvyysUtil');
     return function() {
         var factoryScope = {};
@@ -31,7 +31,7 @@ app.factory('SisaltyvyysUtil', function($resource, $log, $q, Config, Localisatio
         factoryScope.handleResult = function(targetKomo, response, selectedRowData, modalInstance) {
             var arrErrors = [];
             if (response.status === 'OK') {
-                $log.debug('success', response);
+                $rootScope.$broadcast('sisaltyvyysChanges');
                 modalInstance.close();
             }
             else {
@@ -89,13 +89,14 @@ app.service('TreeHandlers', function() {
         }
     };
     singleton.removeItem = function(obj) {
-        for (var i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
+        var i;
+        for (i = 0; i < singleton.scope.model.selectedRowData.length; i++) {
             if (singleton.scope.model.selectedRowData[i].oid === obj.oid) {
                 singleton.scope.model.selectedRowData.splice(i, 1);
                 break;
             }
         }
-        for (var i = 0; i < singleton.scope.model.hakutulos.length; i++) {
+        for (i = 0; i < singleton.scope.model.hakutulos.length; i++) {
             if (singleton.scope.model.hakutulos[i].oid == obj.oid) {
                 singleton.scope.gridOptions.selectItem(i, false);
                 break;
@@ -135,7 +136,7 @@ app.service('sisaltyvyysColumnDefs', ['LocalisationService', function(Localisati
                 width: '30%'
             }];
         }
-    }
+    };
 }]);
 app.controller('LiitaSisaltyvyysCtrl', [
     '$scope',
@@ -152,7 +153,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
     'TreeHandlers',
     'AuthService',
     '$log', function LiitaSisaltyvyysCtrl($scope, config, koodisto, LocalisationService, TarjontaService, $q,
-                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers, AuthService, $log) {
+                  $modalInstance, targetKomo, organisaatio, SisaltyvyysUtil, sisaltyvyysColumnDefs, TreeHandlers,
+                  AuthService, $log) {
         /*
              * Select koulutus data objects.
              */
@@ -196,7 +198,8 @@ app.controller('LiitaSisaltyvyysCtrl', [
                 koulutustyyppi: ['koulutustyyppi_3'],
                 type: config.app['tarjonta.koulutuslajiModuulityypit'][targetKomo.koulutusLaji]
             },
-            html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html'
+            html: 'partials/koulutus/sisaltyvyys/liita-koulutuksia-select.html',
+            skipOids: [targetKomo.oid]
         };
         $scope.other = {
             tutkintotyypit: [
@@ -209,7 +212,7 @@ app.controller('LiitaSisaltyvyysCtrl', [
         };
         $scope.koodistoLocale = LocalisationService.getLocale();
         $scope.isOpinto = function() {
-            return targetKomo.koulutusLaji === "OPINTO";
+            return targetKomo.koulutusLaji === 'OPINTO';
         };
         var koodisPromise =
             koodisto.getAllKoodisWithKoodiUri(config.app['koodisto-uris.tutkintotyyppi'], $scope.koodistoLocale);
@@ -237,6 +240,16 @@ app.controller('LiitaSisaltyvyysCtrl', [
                         }
                     }
                 });
+            });
+            var deferred = $q.defer();
+            promises.push(deferred.promise);
+            TarjontaService.resourceLink.get({
+                oid: targetKomo.oid
+            }).$promise.then(function(res) {
+                _.each(res.result, function(resultOid) {
+                    $scope.model.skipOids.push(resultOid);
+                });
+                deferred.resolve();
             });
             $q.all(promises).then(function(koodisParam) {
                 $scope.searchKomos();
@@ -300,6 +313,9 @@ app.controller('LiitaSisaltyvyysCtrl', [
                             value.koulutuskoodi = koodi.koodiArvo;
                         });
                     }
+                });
+                arr = _.filter(arr, function(koulutus) {
+                    return !_.contains($scope.model.skipOids, koulutus.oid);
                 });
                 $scope.model.hakutulos = arr;
             });
