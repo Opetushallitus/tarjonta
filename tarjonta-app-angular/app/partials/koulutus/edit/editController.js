@@ -798,6 +798,9 @@ app.controller('BaseEditController', [
             });
         };
         $scope.callbackAfterSave = function(saveResponse) {
+            if (saveResponse.status !== 'OK') {
+                return;
+            }
             var resultModel = saveResponse.result;
             $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutuskoodi.uri,
                 ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
