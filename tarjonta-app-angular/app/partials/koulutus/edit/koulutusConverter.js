@@ -980,6 +980,10 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             RELATIONS: {
             },
             COMBO: {
+                koulutuksenAlkamiskausi: {
+                    nullable: true,
+                    koodisto: 'koodisto-uris.koulutuksenAlkamisvuosi'
+                }
             },
             MCOMBO: {
                 opetusmuodos: {koodisto: 'koodisto-uris.opetusmuotokk'},

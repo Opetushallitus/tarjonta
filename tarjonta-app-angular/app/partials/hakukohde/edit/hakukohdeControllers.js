@@ -203,7 +203,7 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             $scope.model.hakukohde.peruutusEhdotKuvaukset = {};  // korkeakouluopinto
         }
 
-        if ($scope.model.hakukohde.toteutusTyyppi === 'KORKEAKOULUTUS') {
+        if ($scope.CONFIGURATION.HAKUKOHDERYHMA.showHakukohderyhmat[$scope.model.hakukohde.toteutusTyyppi]) {
             // Mahdolliset Organisaatiopalvelun hakukohdetyhmät joissa hakukohde voi olla
             // [{ key: XXX, value: YYY}, ...]
             $scope.model.hakukohdeRyhmat = [];

@@ -110,7 +110,7 @@
                 {{model.koulutus.koulutuksenAlkamiskausi.meta[lang.koodi_uri].nimi}} {{model.koulutus.koulutuksenAlkamisvuosi}}
                 </span>
                 <span ng-switch-default>
-                    <p data-ng-repeat='pvm in  model.koulutus.koulutuksenAlkamisPvms'> {{ pvm | date:'dd.MM.yyyy' }}</p>
+                    <p ng-repeat="pvm in model.koulutus.koulutuksenAlkamisPvms | orderBy:'toString()'"> {{ pvm | date:'dd.MM.yyyy' }}</p>
                 </span>
             </span>
         </td>

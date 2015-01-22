@@ -21,8 +21,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
     private Double hinta;
     @ApiModelProperty(value = "Koulutuksen aiheet (sisältää koodisto koodi uri:a)")
     private KoodiUrisV1RDTO aihees;
-    @ApiModelProperty(value = "Koulutuksen alkamispvm, tallentuu koulutuksenAlkamisPvms kokoelmaan")
-    private Date koulutuksenAlkamisPvm;
     @ApiModelProperty(value = "Koulutuksen loppumispvm")
     private Date koulutuksenLoppumisPvm;
     @ApiModelProperty(value = "Opintojen laajuus opintopisteissä (vapaa teksti)")
@@ -98,23 +96,6 @@ public abstract class TutkintoonJohtamatonKoulutusV1RDTO extends KoulutusV1RDTO 
      */
     public void setPohjakoulutusvaatimukset(KoodiUrisV1RDTO pohjakoulutusvaatimukset) {
         this.pohjakoulutusvaatimukset = pohjakoulutusvaatimukset;
-    }
-
-    /**
-     * Yksittäinen koulutuksen alkamispvm.
-     * @return
-     */
-    public Date getKoulutuksenAlkamisPvm() {
-        if(this.getKoulutuksenAlkamisPvms().size() > 0)
-            return this.getKoulutuksenAlkamisPvms().iterator().next();
-        else
-            return null;
-    }
-
-    public void setKoulutuksenAlkamisPvm(Date alkamisPvm) {
-//        this.koulutuksenAlkamisPvm = alkamisPvm;
-        this.getKoulutuksenAlkamisPvms().clear();
-        this.getKoulutuksenAlkamisPvms().add(alkamisPvm);
     }
 
     /**

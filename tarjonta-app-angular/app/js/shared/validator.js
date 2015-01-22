@@ -269,7 +269,20 @@ angular.module('Validator', [])
             if (hakukohde.hakuaikaAlkuPvm || hakukohde.hakuaikaLoppuPvm) {
                 var alku = hakukohde.hakuaikaAlkuPvm;
                 var loppu = hakukohde.hakuaikaLoppuPvm;
-                if (!(alku && loppu)) {
+                var error = !(alku && loppu);
+
+                // Alla oleva tarkistus voisi varmaan olla kaikille toteutustyypeille?
+                if (model.hakukohde.toteutusTyyppi === 'KORKEAKOULUOPINTO') {
+                    var hakuaika = _.findWhere(model.hakuaikas, {hakuaikaId:hakukohde.hakuaikaId});
+                    if (hakuaika && hakuaika.alkuPvm && hakuaika.alkuPvm > alku) {
+                        error = true;
+                    }
+                    if (hakuaika && hakuaika.loppuPvm && hakuaika.loppuPvm < loppu) {
+                        error = true;
+                    }
+                }
+
+                if (error) {
                     errors.push({
                         errorMessageKey: 'hakukohde.edit.hakuaika.errors'
                     });
