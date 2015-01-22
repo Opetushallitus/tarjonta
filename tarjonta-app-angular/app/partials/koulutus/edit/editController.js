@@ -801,8 +801,10 @@ app.controller('BaseEditController', [
             var resultModel = saveResponse.result;
             $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutuskoodi.uri,
                 ENUMS.ENUM_KOMO_MODULE_TUTKINTO);
-            $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri,
-                ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+            if (resultModel.koulutusohjelma.uri) {
+                $scope.loadRelationKoodistoData($scope.model, $scope.uiModel, resultModel.koulutusohjelma.uri,
+                    ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA);
+            }
             $scope.getLisatietoKielet($scope.model, $scope.uiModel, true);
         };
         $scope.saveLuonnos = function() {
