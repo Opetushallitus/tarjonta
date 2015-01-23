@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.resources.v1.dto;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoodiV1RDTO;
+import fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi;
 
 import java.util.*;
 
@@ -70,12 +71,6 @@ public class HakuV1RDTO extends BaseV1RDTO {
     @ApiModelProperty(value = "Haun tunniste", required = true)
     private String haunTunniste;
 
-//	@ApiModelProperty(value = "Viimeisen päivittäjän tunniste", required=true)
-//    private String lastUpdatedByOid;
-//
-//	@ApiModelProperty(value = "Viimeisen päivityksen aikaleima", required=true)
-//    private Date lastUpdatedDate;
-
     @ApiModelProperty(value = "Haun monikielinen nimi", required = true)
     private Map<String, String> nimi = new HashMap<String, String>();
 
@@ -102,6 +97,9 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     @ApiModelProperty(value = "Hakuun liittyvät organisaatioryhmät", required = false)
     private List<String> organisaatioryhmat;
+
+    @ApiModelProperty(value = "Haun koulutusmoduulin tyyppi")
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
 
     public void addKoodiMeta(KoodiV1RDTO koodi) {
         if (koodi == null) {
@@ -303,5 +301,13 @@ public class HakuV1RDTO extends BaseV1RDTO {
 
     public void setOrganisaatioryhmat(List<String> organisaatioryhmat) {
         this.organisaatioryhmat = organisaatioryhmat;
+    }
+
+    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
 }

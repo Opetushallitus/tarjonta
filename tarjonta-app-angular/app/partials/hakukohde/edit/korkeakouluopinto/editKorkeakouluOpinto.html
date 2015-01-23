@@ -26,7 +26,6 @@
 
     <tabset>
         <tab heading="{{t('kk.hakukohde.perustiedot')}}">
-
         	<form name="editHakukohdeForm" novalidate>
                 <export-to-parent model="editHakukohdeForm" name="editHakukohdeForm" condition="isHakukohdeRootScope"></export-to-parent>
 
@@ -47,10 +46,38 @@
                     <tr class="required">
                         <th tt="kk.hakukohde.haut">Haut</th>
                         <td>
-                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required ng-model="model.hakukohde.hakuOid" data-ng-change="model.hakuChanged(haku)" data-ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus"/>
+                            <select name="hakuselect" class="wide" ng-disabled="model.isDeEnabled" required
+                                    ng-model="model.hakukohde.hakuOid" ng-change="model.hakuChanged(haku)"
+                                    ng-options="haku.oid as haku.lokalisoituNimi for haku in model.hakus">
+                                <option value="" tt="tarjonta.toiminnot.valitse">Valitse</option>
+                            </select>
                         </td>
                         <td>
                             <p class="error" ng-show="model.showError && editHakukohdeForm.hakuselect.$invalid" tt="hakukohde.edit.haku.missing">Haku on pakollinen tieto</p>
+                        </td>
+                    </tr>
+
+                    <tr class="required" ng-if="model.showHakuaikas">
+                        <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
+                        <td>
+                            <select class="wide" name="hakuaikaSelect" required ng-disabled="model.isDeEnabled"
+                                    ng-model="model.hakukohde.hakuaikaId"
+                                    ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
+                        </td>
+                        <td>
+                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$error.required"
+                               tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
+                        </td>
+                    </tr>
+
+                    <!-- ilmoittautumisaika -->
+                    <tr>
+                        <th tt="kk.hakukohde.ilmoittautumisaika">Ilmoittautumisen alkamis- ja loppumispvm</th>
+                        <td>
+                            <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaAlkuPvm"
+                                         tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
+                            <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaLoppuPvm"
+                                         tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
                         </td>
                     </tr>
 
@@ -82,32 +109,6 @@
                             <p class="error" ng-show="model.showError && model.aloituspaikatKuvauksetFailed" tt="hakukohde.edit.aloituspaikatKuvaukset.too.long">Kuvaus voi olla enintään 20 merkkiä pitkä.</p>
                         </td>
                     </tr>
-
-                    <!-- ilmoittautumisaika -->
-                    <tr class="required">
-                        <th tt="kk.hakukohde.ilmoittautumisaika">Ilmoittautumisen alkamis- ja loppumispvm</th>
-                        <td>
-                            <t-date-time type="long" name="alkuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaAlkuPvm" required
-                                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
-                            <t-date-time type="long" name="loppuPvm" timestamp="true" scope-model="model.hakukohde.hakuaikaLoppuPvm"
-                                tt-bounds="koulutus.edit.alkamispaivat.outofbounds"></t-date-time>
-                        </td>
-                        <td>
-                             <p class="error" ng-show="model.showError && editHakukohdeForm.alkuPvm.$error.required"
-                                tt="kk.hakukohde.alkuPvm.required">Ilmoittautumisen alkamispäivä vaaditaan</p>
-                        </td>
-                    </tr>
-
-                    <tr class="required" data-ng-show="model.showHakuaikas">
-                        <th tt="kk.hakukohde.hakuaikas">Hakuajat</th>
-                        <td>
-                            <select class="wide" name="hakuaikaSelect" ng-disabled="model.isDeEnabled" data-ng-required="model.showHakuaikas" ng-model="model.hakukohde.hakuaikaId"data-ng-options="hakuaika.hakuaikaId as hakuaika.formattedNimi for hakuaika in model.hakuaikas"/>
-                        </td>
-                        <td>
-                            <p class="error" ng-show="model.showError && editHakukohdeForm.hakuaikaSelect.$invalid" tt="hakukohde.edit.haku.aika.missing">Hakuaika puuttuu</p>
-                        </td>
-                    </tr>
-
 
                 </table>
 

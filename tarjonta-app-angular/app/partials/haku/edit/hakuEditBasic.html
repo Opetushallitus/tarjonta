@@ -73,6 +73,15 @@
         </td>
     </tr>
 
+    <tr class="required" ng-if="showKoulutusmoduuliTyyppi">
+        <th data-tt="haku.edit.koulutuksenTyyppi">Koulutuksen tyyppi</th>
+        <td>
+            <select name="koulutuksenTyyppi" class="wide" ng-model="model.hakux.result.koulutusmoduuliTyyppi"
+                    ng-options="koulutuksenTyyppi.key as koulutuksenTyyppi.label for koulutuksenTyyppi in
+                    koulutuksienTyypit | orderBy: 'nimi'" ng-required="showKoulutusmoduuliTyyppi" />
+        </td>
+    </tr>
+
     <tr class="required" ng-show="shouldSelectParentHaku()">
         <th data-tt='haku.edit.kuuluuHakuun'>Kuuluu hakuun</th>
         <td>

@@ -13,17 +13,14 @@
                 {{model.hakukohde.hakukohteenNimet[lang.koodi_uri]}}
             </td>
         </tr>
+
         <tr>
             <th tt="hakukohde.review.perustiedot.haku"/>
             <td colspan="2">
-                {{ model.hakuNimiInformation.nimi }}
-            </td>
-        </tr>
-
-        <tr>
-            <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
-            <td colspan="2">
-                <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
+                {{ model.hakuNimiInformation.nimi }} (
+                {{ model.hakuNimiInformation.hakuaikaNimi }} {{ model.hakuNimiInformation.alkuPvm | date:'dd.MM.yyyy HH:mm ' }} -
+                {{ model.hakuNimiInformation.loppuPvm | date:'dd.MM.yyyy HH:mm ' }}
+                )
             </td>
         </tr>
 
@@ -32,6 +29,13 @@
             <td colspan="2">
                 {{ model.hakukohde.hakuaikaAlkuPvm | date:'dd.MM.yyyy HH:mm'}} -
                 {{ model.hakukohde.hakuaikaLoppuPvm | date:'dd.MM.yyyy HH:mm'}}
+            </td>
+        </tr>
+
+        <tr>
+            <th tt="hakukohde.review.perustiedot.aloituspaikat"/>
+            <td colspan="2">
+                <mk-text model="model.hakukohde.aloituspaikatKuvaukset" display="rows"/>
             </td>
         </tr>
 

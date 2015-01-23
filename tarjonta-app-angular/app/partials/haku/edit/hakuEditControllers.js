@@ -41,9 +41,6 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             $log.info('filteruris : ', $scope.filteruris);
         }
     };
-    /**
-               * Display form validation errors on screen
-               */
     var reportFormValidationErrors = function(form) {
         $log.debug('reportFormValidationErrors - form:::::', form);
         $log.debug('form', form);
@@ -112,10 +109,8 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         $scope.doSaveHakuAndParameters(haku, 'VALMIS', true, form);
     };
     $scope.doSaveHakuAndParameters = function(haku, tila, reload, form) {
-        $log.info('doSaveHakuAndParameters() [haku, tila, reload, form]', haku, tila, reload, form);
         clearErrors();
         if (form.$invalid) {
-            $log.info('form not valid, not saving!');
             reportFormValidationErrors(form);
             return;
         }
@@ -125,10 +120,6 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             haku.tila = tila;
         }
         HakuV1.save(haku, function(result) {
-            $log.debug('doSaveHakuAndParameters() - haku save OK', result);
-            // Clear validation messages
-            $log.debug('validation messages:', $scope.model.validationmsgs);
-            $log.debug('$scope.hakuForm B:', $scope.hakuForm);
             if ($scope.model.validationmsgs && $scope.model.validationmsgs.length > 0) {
                 $scope.model.validationmsgs.splice(0, $scope.model.validationmsgs.length);
             }
@@ -136,27 +127,21 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             if (result.status == 'OK') {
                 $scope.model.showError = false;
                 $scope.model.showSuccess = true;
-                // Reset form to "pristine" ($dirty = false)
                 form.$dirty = false;
                 form.$pristine = true;
-                $log.info('->saveparameters');
                 $scope.saveParameters(result.result);
-                $log.info('saveparameters->');
                 $scope.model.hakux = result;
                 $location.path('/haku/' + result.result.oid + '/edit');
             }
             else {
-                // Failed to save Haku... show errors
                 $scope.model.showError = true;
                 $scope.model.showSuccess = false;
                 $scope.model.validationmsgs = result.errors;
             }
             $scope.modelInitialState = null;
-        }, function(error) {
-                // Mainly 50x errors
-                $log.info('doSaveHakuAndParameters() - FAILED', error);
-                $scope.model.showError = true;
-            });
+        }, function() {
+            $scope.model.showError = true;
+        });
     };
     $scope.goToReview = function(event, hakuForm) {
         var dirty = angular.isDefined(hakuForm.$dirty) ? hakuForm.$dirty : false;
@@ -446,6 +431,15 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             }
         });
     };
+    $scope.initKoulutuksienTyypit = function() {
+        $scope.koulutuksienTyypit = [];
+        $scope.koulutuksienTyypit.push({key: 'TUTKINTO',
+            label: LocalisationService.t('haku.edit.koulutuksenTyyppi.tutkinto')});
+        $scope.koulutuksienTyypit.push({key: 'OPINTOKOKONAISUUS',
+            label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintokokonaisuus')});
+        $scope.koulutuksienTyypit.push({key: 'OPINTOJAKSO',
+            label: LocalisationService.t('haku.edit.koulutuksenTyyppi.opintojakso')});
+    };
     $scope.init = function() {
         var model = {
             formControls: {},
@@ -487,6 +481,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             populateParentHakuCandidates();
         }
         $scope.setDirtyListener();
+        $scope.initKoulutuksienTyypit();
     };
     $scope.isLuonnosOrNew = function() {
         return $scope.isNewHaku() || $scope.model.hakux.result.tila === 'LUONNOS';
@@ -528,6 +523,15 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
             populateParentHakuCandidates();
         }
     };
+    var updateKoulutusmoduuliTyyppiField = function() {
+        if ($scope.model.hakux.result.kohdejoukkoUri &&
+            oph.removeKoodiVersion($scope.model.hakux.result.kohdejoukkoUri) === 'haunkohdejoukko_12') {
+            $scope.showKoulutusmoduuliTyyppi = true;
+        } else {
+            $scope.showKoulutusmoduuliTyyppi = false;
+            $scope.model.hakux.result.koulutusmoduuliTyyppi = undefined;
+        }
+    };
     $scope.$watch('model.hakux.result.hakutyyppiUri', function(nv, old) {
         if (nv !== old) {
             updateParentHakuFields();
@@ -537,6 +541,7 @@ app.controller('HakuEditController', function HakuEditController($q, $route, $sc
         if (nv !== old) {
             updateParentHakuFields();
         }
+        updateKoulutusmoduuliTyyppiField();
     });
     $scope.$watch('model.hakux.result.hakukausiUri', function(nv, old) {
         if (nv !== old) {

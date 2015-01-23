@@ -43,6 +43,9 @@ import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.KoulutusV1RDTO;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+
 import org.apache.commons.lang.time.DateUtils;
 
 /**
@@ -265,7 +268,9 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         dto.setTunniste(TUNNISTE);
         dto.setHinta(1.11);
         dto.setOpintojenMaksullisuus(Boolean.TRUE);
-        dto.setKoulutuksenAlkamisPvm(DATE.toDate());
+        HashSet<Date> alkamisPvms = new HashSet<Date>();
+        alkamisPvms.add(DATE.toDate());
+        dto.setKoulutuksenAlkamisPvms(alkamisPvms);
         dto.setKoulutuksenLoppumisPvm(DATE.toDate());
 
         koodiUrisMap(dto.getOpetusAikas(), URI_KIELI_FI, MAP_OPETUSAIKAS);
@@ -366,7 +371,6 @@ public class KoulutusResourceImplV1Test extends KoulutusBase {
         assertEquals(Boolean.TRUE, result.getOpintojenMaksullisuus());
         assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvms().iterator().next());
         assertEquals(VUOSI, result.getKoulutuksenAlkamisvuosi());
-        assertEquals((DateUtils.truncate(DATE.toDate(), Calendar.DATE)), result.getKoulutuksenAlkamisPvm());
         assertEquals(DATE.toDate(), result.getKoulutuksenLoppumisPvm());
 
         assertEqualMetaDto(MAP_OPETUSAIHEES, result.getAihees());

@@ -120,7 +120,8 @@ app.controller('HakukohdeParentController', [
             },
             HAKUKOHDERYHMA: {
                 showHakukohderyhmat: {
-                    'KORKEAKOULUTUS': true
+                    'KORKEAKOULUTUS': true,
+                    KORKEAKOULUOPINTO: true
                 }
             },
             YHTEYSTIEDOT: {
@@ -348,6 +349,7 @@ app.controller('HakukohdeParentController', [
                             angular.forEach(tulos.tulokset, function(toinenTulos) {
                                 $scope.koulutusKausiUri = toinenTulos.kausiUri;
                                 $scope.model.koulutusVuosi = toinenTulos.vuosi;
+                                $scope.model.koulutusmoduuliTyyppi = toinenTulos.koulutusmoduuliTyyppi;
                                 koulutusSet.add(toinenTulos.nimi);
                             });
                         }
@@ -507,6 +509,9 @@ app.controller('HakukohdeParentController', [
                     }
                     $scope.model.hakuaikaMin = hakuaika.alkuPvm;
                     $scope.model.hakuaikaMax = hakuaika.loppuPvm;
+                }
+                else if (toteutustyyppi === 'KORKEAKOULUOPINTO') {
+                    $scope.model.configurableHakuaika = true;
                 }
                 if (!$scope.model.configurableHakuaika) {
                     $scope.clearHakuajat();
@@ -1219,6 +1224,9 @@ app.controller('HakukohdeParentController', [
                     }
                 }
                 else {
+                    $scope.model.nimiValidationFailed = _.findWhere(errors, {
+                        errorMessageKey: 'hakukohde.edit.nimi.missing'
+                    }) !== undefined;
                     $scope.showError(errors);
                     $scope.$broadcast('addEmptyLitteet');
                     $scope.$broadcast('addEmptyValintakokeet');

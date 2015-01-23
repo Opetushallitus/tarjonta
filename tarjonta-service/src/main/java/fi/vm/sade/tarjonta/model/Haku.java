@@ -117,6 +117,10 @@ public class Haku extends TarjontaBaseEntity {
     @Column(name = "viimPaivittajaOid")
     private String lastUpdatedByOid;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "koulutusmoduuli_tyyppi")
+    private KoulutusmoduuliTyyppi koulutusmoduuliTyyppi;
+
     /**
      * KoulutusInformation service uses this to "know" how many hakukohdes can
      * be added to "muistilista" (application list?)
@@ -487,5 +491,13 @@ public class Haku extends TarjontaBaseEntity {
 
     public void setParentHaku(Haku parentHaku) {
         this.parentHaku = parentHaku;
+    }
+
+    public KoulutusmoduuliTyyppi getKoulutusmoduuliTyyppi() {
+        return koulutusmoduuliTyyppi;
+    }
+
+    public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
+        this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
 }

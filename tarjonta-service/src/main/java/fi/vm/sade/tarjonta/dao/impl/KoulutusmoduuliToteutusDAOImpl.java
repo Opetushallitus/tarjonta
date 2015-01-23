@@ -69,6 +69,7 @@ public class KoulutusmoduuliToteutusDAOImpl extends AbstractJpaDAOImpl<Koulutusm
                     + "WHERE komoto.koulutusmoduuli = komo "
                     + "AND komoto.pohjakoulutusvaatimusUri = :pkv "
                     + "AND komoto.tarjoaja = :tarjoaja "
+                    + "AND komoto.tila NOT IN ('POISTETTU', 'PERUTTU') "
                     + "AND komo.koulutusUri = :koulutusUri ";
 
             if (koulutusohjelma != null) {
