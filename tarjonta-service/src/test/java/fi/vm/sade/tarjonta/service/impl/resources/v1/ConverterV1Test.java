@@ -22,9 +22,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -238,10 +238,9 @@ public class ConverterV1Test {
 
     }
 
+    @Test
     public void thatSisaltyvatHautAreConvertedToDTO() {
-        Haku haku = new Haku();
-        haku.setTila(TarjontaTila.JULKAISTU);
-        haku.setHakukausiVuosi(2014);
+        Haku haku = createValidHaku();
 
         HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
 
@@ -258,10 +257,48 @@ public class ConverterV1Test {
     }
 
     @Test
-    public void thatParentHakuIsConvertedToDTO() {
+    public void thatHaunKoulutusmoduuliTyyppiIsConvertedToDTO() {
+        Haku haku = createValidHaku();
+
+        HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+        assertNull(hakuDTO.getKoulutusmoduuliTyyppi());
+
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS);
+
+        hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
+        assertEquals(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS, hakuDTO.getKoulutusmoduuliTyyppi());
+    }
+
+    @Test
+    public void thatHaunKoulutusmoduuliTyyppiIsConvertedToEntity() throws OIDCreationException {
+        HakuV1RDTO hakuDTO = new HakuV1RDTO();
+
+        Haku haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
+        assertNull(haku.getKoulutusmoduuliTyyppi());
+
+        hakuDTO.setKoulutusmoduuliTyyppi(fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.OPINTOJAKSO);
+
+        haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, new Haku());
+        assertEquals(KoulutusmoduuliTyyppi.OPINTOJAKSO, haku.getKoulutusmoduuliTyyppi());
+
+        haku = new Haku();
+        haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.OPINTOKOKONAISUUS);
+        hakuDTO.setKoulutusmoduuliTyyppi(null);
+
+        haku = converter.convertHakuV1DRDTOToHaku(hakuDTO, haku);
+        assertNull(haku.getKoulutusmoduuliTyyppi());
+    }
+
+    private Haku createValidHaku() {
         Haku haku = new Haku();
         haku.setTila(TarjontaTila.JULKAISTU);
         haku.setHakukausiVuosi(2014);
+        return haku;
+    }
+
+    @Test
+    public void thatParentHakuIsConvertedToDTO() {
+        Haku haku = createValidHaku();
 
         HakuV1RDTO hakuDTO = converter.fromHakuToHakuRDTO(haku, false);
 

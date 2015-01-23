@@ -349,6 +349,7 @@ app.controller('HakukohdeParentController', [
                             angular.forEach(tulos.tulokset, function(toinenTulos) {
                                 $scope.koulutusKausiUri = toinenTulos.kausiUri;
                                 $scope.model.koulutusVuosi = toinenTulos.vuosi;
+                                $scope.model.koulutusmoduuliTyyppi = toinenTulos.koulutusmoduuliTyyppi;
                                 koulutusSet.add(toinenTulos.nimi);
                             });
                         }

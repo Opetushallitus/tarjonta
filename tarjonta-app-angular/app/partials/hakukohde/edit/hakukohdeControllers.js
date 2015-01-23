@@ -108,6 +108,12 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
             return filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_20#1');
         }
     };
+    var filterHakusForKorkeakoulu = function(hakus) {
+        var filtered = filterHakusByKohdejoukkoAndOrgs(hakus, 'haunkohdejoukko_12#1');
+        return _.filter(filtered, function(haku) {
+            return $scope.model.koulutusmoduuliTyyppi === haku.koulutusmoduuliTyyppi;
+        });
+    };
     var hakuajanLoppuPvmInFuture = function(hakuaika) {
         return hakuaika.loppuPvm > new Date().getTime();
     };
@@ -169,6 +175,8 @@ app.controller('HakukohdeEditController', function($scope, $q, $log, Localisatio
         }
         else if (toteutusTyyppi === 'AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA') {
             return filterHakusForAmmatillinenPeruskoulutusErityisopetuksena;
+        } else if (toteutusTyyppi === 'KORKEAKOULUTUS') {
+            return filterHakusForKorkeakoulu;
         }
         return filterHakus;
     };

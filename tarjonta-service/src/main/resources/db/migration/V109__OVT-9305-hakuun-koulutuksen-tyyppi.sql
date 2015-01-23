@@ -1,0 +1,1 @@
+alter table haku add column koulutusmoduuli_tyyppi varchar(255) null;

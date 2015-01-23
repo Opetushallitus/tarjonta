@@ -176,6 +176,11 @@ public class ConverterV1 {
             hakuDTO.setParentHakuOid(haku.getParentHaku().getOid());
         }
 
+        if (haku.getKoulutusmoduuliTyyppi() != null) {
+            hakuDTO.setKoulutusmoduuliTyyppi(
+                    fi.vm.sade.tarjonta.service.types.KoulutusmoduuliTyyppi.fromValue(haku.getKoulutusmoduuliTyyppi().name()));
+        }
+
         return hakuDTO;
     }
 
@@ -261,6 +266,12 @@ public class ConverterV1 {
         haku.setUsePriority(hakuV1RDTO.isUsePriority());
         haku.setSijoittelu(hakuV1RDTO.isSijoittelu());
         haku.setJarjestelmanHakulomake(hakuV1RDTO.isJarjestelmanHakulomake());
+
+        if (hakuV1RDTO.getKoulutusmoduuliTyyppi() != null) {
+            haku.setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi.valueOf(hakuV1RDTO.getKoulutusmoduuliTyyppi().value()));
+        } else {
+            haku.setKoulutusmoduuliTyyppi(null);
+        }
 
         if (hakuV1RDTO.getParentHakuOid() != null) {
             haku.setParentHaku(hakuDao.findByOid(hakuV1RDTO.getParentHakuOid()));
@@ -1784,9 +1795,7 @@ public class ConverterV1 {
         ret.setKoulutuksenAlkamisPvmMax(ht.getKoulutuksenAlkamisPvmMax());
 
         ret.setTarjoajat(ht.getTarjoajat());
-
-//        LOG.info("convert(kpt -> kht), alkamisPvmMin: {})", ht.getKoulutuksenAlkamisPvmMin());
-//        LOG.info("convert(kpt -> kht), alkamisPvmMax: {})", ht.getKoulutuksenAlkamisPvmMax());
+        ret.setKoulutusmoduuliTyyppi(ht.getKoulutusmoduuliTyyppi());
         return ret;
     }
 

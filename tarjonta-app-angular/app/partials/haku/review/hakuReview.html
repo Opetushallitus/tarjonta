@@ -54,6 +54,13 @@
                 </td>
             </tr>
 
+            <tr ng-if="model.hakux.result.koulutusmoduuliTyyppi">
+                <th tt="haku.review.koulutuksenTyyppi">Koulutuksen tyyppi</th>
+                <td colspan="2">
+                    {{ t('haku.review.koulutuksenTyyppi.' + model.hakux.result.koulutusmoduuliTyyppi.toLowerCase()) }}
+                </td>
+            </tr>
+
             <tr ng-if="model.hakux.result.parentHakuOid">
                 <th tt="haku.review.haunTiedot.kuuluuHakuun">Kuuluu hakuun</th>
                 <td colspan="2">
@@ -89,8 +96,8 @@
                 <td colspan="2">
                     {{ model.hakux.result.sijoittelu ? t("yes") : t("no") }}
                 </td>
-            </tr>            
-            
+            </tr>
+
             <tr>
                 <th tt="haku.review.haunTiedot.hakulomake">Hakulomake</th>
                 <td colspan="2">
@@ -107,7 +114,7 @@
                         <span tt="haku.review.haunTiedot.hakulomake.oma">Käytetään omaa hakulomaketta: </span>
                         <a href="{{model.hakux.result.hakulomakeUri}}" target="_blank">{{ model.hakux.result.hakulomakeUri }}</a>
                     </div>
-                </td> 
+                </td>
             </tr>
 
             <tr>
@@ -119,8 +126,8 @@
                         </li>
                     </ul>
                 </td>
-            </tr>            
-            
+            </tr>
+
             <tr>
                 <th tt="haku.edit.organisaatiot.hakukohteet">Hakukohteita liittävät organisaatiot</th>
                 <td colspan="2">
@@ -130,7 +137,7 @@
                         </li>
                     </ul>
                 </td>
-            </tr>            
+            </tr>
 
         </tbody>
 
@@ -316,7 +323,7 @@
                             <th data-tt="haku.review.hakukohteet.hakutapa">Hakutapa</th>
                             <th data-tt="haku.review.hakukohteet.aloituspaikat">Aloituspaikat</th>
                         </tr>
-                        
+
                         <tr ng-repeat="hakukohde in model.hakukohteet">
                             <td><a href="/organisaatio-ui/html/index.html#/organisaatiot/{{hakukohde.organisaatioOid}}">{{hakukohde.organisaatioNimi}}</a></td>
                             <td><a href="#/hakukohde/{{hakukohde.oid}}">{{hakukohde.nimi}}</a></td>
@@ -327,7 +334,7 @@
                             <td>{{hakukohde.aloituspaikat}}</td>
                         </tr>
                     </table>
-                </td>                
+                </td>
             </tr>
         </tbody>
 
