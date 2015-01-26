@@ -69,6 +69,7 @@ public class KomotoDTO extends BaseRDTO {
     private String opintoalaUri;
     private String kandidaatinKoulutusUri;
     private String tutkintonimikeUri;
+    private List<String> tutkintonimikeUris;
 
     // Uudet koodistot (Vaadin-Angular muutostyön jälkeen)
     private List<String> _opetusmuotokk;
@@ -605,6 +606,14 @@ public class KomotoDTO extends BaseRDTO {
      */
     public void setTutkintonimikeUri(String tutkintonimikeUri) {
         this.tutkintonimikeUri = tutkintonimikeUri;
+    }
+
+    public List<String> getTutkintonimikeUris() {
+        return tutkintonimikeUris;
+    }
+
+    public void setTutkintonimikeUris(List<String> tutkintonimikeUris) {
+        this.tutkintonimikeUris = tutkintonimikeUris;
     }
 
     public void setKoulutuksenAlkamiskausi(String alkamiskausi) {
