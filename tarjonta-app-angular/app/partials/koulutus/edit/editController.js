@@ -790,7 +790,7 @@ app.controller('BaseEditController', [
                     }
                     // Resetoi vanha malli, jotta ei näytettäisi edellisen koulutus-dropdown
                     // valinnan dataa (koskee esim. tutkintonimikkeitä)
-                    else if (uiModel[key]) {
+                    else if (uiModel[key] && !$scope.model.oid) {
                         uiModel[key].meta = {};
                         uiModel[key].uris = [];
                     }
