@@ -1,0 +1,1 @@
+alter table koulutusmoduuli add column is_pseudo boolean default false not null;
