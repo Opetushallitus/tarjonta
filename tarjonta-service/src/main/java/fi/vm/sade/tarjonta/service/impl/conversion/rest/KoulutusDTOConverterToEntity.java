@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -868,6 +869,7 @@ public class KoulutusDTOConverterToEntity {
     /*
     * Handling the creation or update of the parent komoto (KI still needs parent komoto)
     */
+    @Transactional
     private void handleParentKomoto(KoulutusmoduuliToteutus komoto, Koulutusmoduuli moduuli) {
         Preconditions.checkNotNull(komoto, "Komoto cannot be null!");
 

@@ -117,6 +117,5 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         return t;
     }
     
-    
 
 }
