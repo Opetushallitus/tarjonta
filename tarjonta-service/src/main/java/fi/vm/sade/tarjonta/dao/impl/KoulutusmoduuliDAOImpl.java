@@ -273,7 +273,8 @@ public class KoulutusmoduuliDAOImpl extends AbstractJpaDAOImpl<Koulutusmoduuli, 
             return null;
         }
 
-        return parents.get(0).getYlamoduuli();
+        String oid = parents.get(0).getYlamoduuli().getOid();
+        return findByOid(oid);
     }
 
     @Override

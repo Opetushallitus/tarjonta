@@ -869,7 +869,6 @@ public class KoulutusDTOConverterToEntity {
     /*
     * Handling the creation or update of the parent komoto (KI still needs parent komoto)
     */
-    @Transactional
     private void handleParentKomoto(KoulutusmoduuliToteutus komoto, Koulutusmoduuli moduuli) {
         Preconditions.checkNotNull(komoto, "Komoto cannot be null!");
 
