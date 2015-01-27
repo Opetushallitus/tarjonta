@@ -313,7 +313,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (Hakukohde hakukohde : komoto.getHakukohdes()) {
             if (!hakukohde.getTila().equals(TarjontaTila.POISTETTU)) {
                 Haku haku = hakukohde.getHaku();
-                if (haku.getKoulutuksenAlkamiskausiUri() != null && haku.getKoulutuksenAlkamisVuosi() != null) {
+                if (!haku.isJatkuva() &&
+                        (haku.getKoulutuksenAlkamiskausiUri() != null && haku.getKoulutuksenAlkamisVuosi() != null)) {
                     targetKausi = haku.getKoulutuksenAlkamiskausiUri();
                     targetVuosi = haku.getKoulutuksenAlkamisVuosi();
                     break;
