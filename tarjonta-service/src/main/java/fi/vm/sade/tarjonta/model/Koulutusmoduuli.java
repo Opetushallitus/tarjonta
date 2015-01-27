@@ -37,6 +37,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
 import static fi.vm.sade.tarjonta.model.XSSUtil.filter;
 
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
 import fi.vm.sade.tarjonta.shared.types.ModuulityyppiEnum;
 import fi.vm.sade.tarjonta.service.types.KoulutusTyyppi;
 import fi.vm.sade.tarjonta.shared.types.KomoTeksti;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 
@@ -66,8 +68,6 @@ import javax.persistence.ElementCollection;
  * Koska kaikki koulutusrakenteen luodaan kayttamalla samaa Koulutusmoduuli
  * -luokkaa, kaytetaan {@link KoulutusmoduuliTyyppi}:ia kertomaa haluttu tyyppi.
  * </p>
- *
- *
  */
 @Entity
 @Table(name = Koulutusmoduuli.TABLE_NAME)
@@ -109,6 +109,19 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     @Enumerated(EnumType.STRING)
     @Column(name = "moduulityyppi")
     private KoulutusmoduuliTyyppi moduuliTyyppi;
+
+    /*
+     * Tutke 2 muutoksen myötä ammatillisen tutkinnon rakenne voi olla kahta eri tyyppiä
+     * 1. Tutkinto -> tutkinto-ohjelma -> koulutusmoduulitoteutus
+     * 2. Tutkinto -> koulutusmoduulitoteutus
+     * Jotta KI:n indeksointi ei menisi sekaisin, myös tyyppiä 2 olevat koulutusmoduulitoteutukset saavat
+     * linkin tutkinto-ohjelmaan, jolloin KI:n tietokantarakennetta ei tarvitse päivitää, sillä tarjonnan rajapinta
+     * palauttaa edelleen myös tutkinto-ohjelman tiedot. Rakenne saa siis muodon:
+     * Tutkinto -> tutkinto-ohjelma (pseudo) -> koulutusmoduulitoteutus
+     * Tämä toteutus ei oikeasti kuuluisi lainkaan tarjontaan, mutta KI:n indeksointilogiikkaa ei ehditä päivittää.
+     */
+    @Column(name = "is_pseudo")
+    private boolean isPseudo;
 
     /**
      * JPA konstruktori
@@ -176,7 +189,7 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     /**
      * Convenience method that instead of returning set of KoulutusSisaltyvyys,
      * returns only the children from those elements.
-     *
+     * <p/>
      * TODO: since this is only used in unit tests, move to test helper method
      *
      * @return
@@ -192,7 +205,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     *
      * @return
      */
     public Set<KoulutusmoduuliToteutus> getKoulutusmoduuliToteutusList() {
@@ -200,7 +212,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     *
      * @param toteutus
      * @return
      */
@@ -214,7 +225,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     *
      * @param toteutus
      * @return
      */
@@ -227,7 +237,6 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     }
 
     /**
-     *
      * @return
      */
     public Set<KoulutusSisaltyvyys> getSisaltyvyysList() {
@@ -294,8 +303,8 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
     /**
      * Tutkintonimike Koodisto uri:na.
      *
-     * @see #getTutkintonimikeUri()
      * @param koodistoUris
+     * @see #getTutkintonimikeUri()
      */
     public void setTutkintonimikes(Set<KoodistoUri> koodistoUris) {
         this.tutkintonimikes = koodistoUris;
@@ -394,5 +403,13 @@ public class Koulutusmoduuli extends BaseKoulutusmoduuli implements Serializable
         for (MonikielinenTeksti teksti : tekstit.values()) {
             filter(teksti);
         }
+    }
+
+    public boolean isPseudo() {
+        return isPseudo;
+    }
+
+    public void setPseudo(boolean isPseudo) {
+        this.isPseudo = isPseudo;
     }
 }

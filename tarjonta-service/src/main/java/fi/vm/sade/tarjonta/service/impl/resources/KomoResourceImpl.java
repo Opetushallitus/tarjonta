@@ -17,6 +17,7 @@ package fi.vm.sade.tarjonta.service.impl.resources;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
+import fi.vm.sade.tarjonta.model.KoulutusSisaltyvyys;
 import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
 import fi.vm.sade.tarjonta.service.OIDCreationException;
 import fi.vm.sade.tarjonta.service.OidService;
@@ -25,6 +26,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.KomoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.OidRDTO;
 import fi.vm.sade.tarjonta.shared.types.TarjontaOidType;
 import fi.vm.sade.tarjonta.shared.types.TarjontaTila;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.cxf.jaxrs.cors.CrossOriginResourceSharing;
@@ -75,6 +78,30 @@ public class KomoResourceImpl implements KomoResource {
         try {
 			LOG.debug("/komo/}{} -- getByOID()", oid);
 			Koulutusmoduuli komo = koulutusmoduuliDAO.findByOid(oid);
+
+            // Tutke 2 muutoksen myötä koulutuksia voi luoda suorana tutkinto-tason komoihin,
+            // mutta koska koulutusinformaatio ei tue tätä uutta rakennetta, pitää tarjonnassa luoda
+            // "virtuaalikomoja" vanhan rakenteen säilyttämiseksi. Näille virtuaalikomoille
+            // palautetaan kuitenkin niiden parent komon data (joka on tutkinto-tason komo)
+            if (komo.isPseudo()) {
+
+                Koulutusmoduuli tutkintoKomo = koulutusmoduuliDAO.findParentKomo(komo);
+
+                // Suurin osa datasta tulee tutkintoKomosta
+                KomoDTO result = conversionService.convert(tutkintoKomo, KomoDTO.class);
+
+                // Ylikirjoita osa kentistä pseudo komon arvoilla
+                result.setPseudo(true);
+                result.setModuuliTyyppi(komo.getModuuliTyyppi().name());
+                result.setOid(komo.getOid());
+                result.setAlaModuulit(null);
+                List<String> ylaModuulit = new ArrayList<String>();
+                ylaModuulit.add(tutkintoKomo.getOid());
+                result.setYlaModuulit(ylaModuulit);
+
+                return result;
+            }
+
 			KomoDTO result = conversionService.convert(komo, KomoDTO.class);
 			LOG.debug("  result={}", result);
 			return result;

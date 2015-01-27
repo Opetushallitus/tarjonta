@@ -133,6 +133,18 @@ public class KoulutusResourceImplV1CreateTest {
         assertThat(resultDTO.getErrors(), hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla")));
     }
 
+    @Test
+    public void thatAjankohtaIsValidWithHakukohdesWithJatkuvaHaku() {
+        when(koulutusmoduuliToteutusDAO.findByOid("1.2.3")).thenReturn(createKomotoWithHakukohdesWithJatkuvatHaku());
+        when(publicationDataService.isValidStatusChange(any(Tila.class))).thenReturn(true);
+
+        KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTOWithValidAjankohta();
+
+        ResultV1RDTO<KoulutusV1RDTO> resultDTO = koulutusResourceV1.postKoulutus(koulutusDTO);
+
+        assertThat(resultDTO.getErrors(), not(hasItem(getErrorDTOElementMatcher("koulutus.error.alkamispvm.ajankohtaerikuinhaulla"))));
+    }
+
     private KoulutusV1RDTO createExistingKoulutusDTOWithValidKausiAndYear() {
         KoulutusV1RDTO koulutusDTO = createExistingKoulutusDTO();
         koulutusDTO.setKoulutuksenAlkamisvuosi(2015);
@@ -195,6 +207,7 @@ public class KoulutusResourceImplV1CreateTest {
         Haku haku = new Haku();
         haku.setKoulutuksenAlkamiskausiUri("kausi_s#1");
         haku.setKoulutuksenAlkamisVuosi(2015);
+        haku.setHakutapaUri("hakutapa_02#1");
 
         Hakukohde hakukohde = new Hakukohde();
         hakukohde.setTila(TarjontaTila.LUONNOS);
@@ -209,6 +222,22 @@ public class KoulutusResourceImplV1CreateTest {
 
         Hakukohde hakukohde = new Hakukohde();
         Haku haku = new Haku();
+        haku.setHakutapaUri("hakutapa_02#1");
+        hakukohde.setHaku(haku);
+        hakukohde.setTila(TarjontaTila.LUONNOS);
+        komoto.addHakukohde(hakukohde);
+
+        return komoto;
+    }
+
+    private KoulutusmoduuliToteutus createKomotoWithHakukohdesWithJatkuvatHaku() {
+        KoulutusmoduuliToteutus komoto = createKomotoWithEmptyHakukohdes();
+
+        Hakukohde hakukohde = new Hakukohde();
+        Haku haku = new Haku();
+        haku.setHakutapaUri("hakutapa_03#1");
+        haku.setKoulutuksenAlkamisVuosi(2014);
+        haku.setKoulutuksenAlkamiskausiUri("");
         hakukohde.setHaku(haku);
         hakukohde.setTila(TarjontaTila.LUONNOS);
         komoto.addHakukohde(hakukohde);

@@ -37,6 +37,8 @@ import fi.vm.sade.tarjonta.publication.PublicationDataService;
 import fi.vm.sade.tarjonta.publication.Tila;
 import fi.vm.sade.tarjonta.publication.Tila.Tyyppi;
 import fi.vm.sade.tarjonta.publication.model.RestParam;
+import fi.vm.sade.tarjonta.service.OIDCreationException;
+import fi.vm.sade.tarjonta.service.OidService;
 import fi.vm.sade.tarjonta.service.auth.NotAuthorizedException;
 import fi.vm.sade.tarjonta.service.auth.PermissionChecker;
 import fi.vm.sade.tarjonta.service.business.ContextDataService;
@@ -77,10 +79,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import static fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.KoulutusValidator.validateMimeType;
@@ -99,6 +98,9 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
 
     @Autowired
     private KoulutusmoduuliDAO koulutusmoduuliDAO;
+
+    @Autowired
+    private OidService oidService;
 
     @Autowired
     private KoulutusSearchService koulutusSearchService;
@@ -269,6 +271,16 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
             if (dto.getKomoOid() != null) {
                 komo = this.koulutusmoduuliDAO.findByOid(dto.getKomoOid());
             }
+
+            // Kun luodaan uutta
+            if (dto.getOid() == null) {
+                Koulutusmoduuli virtualKomo = createOsaamisalaKomoIfNeeded(dto, komo);
+                if (virtualKomo != null) {
+                    komo = virtualKomo;
+                    dto.setKomoOid(komo.getOid());
+                }
+            }
+
             if (dto.getClass() == KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO.class) {
                 return postNayttotutkintona(dto.getClass(), (KoulutusAmmatillinenPerustutkintoNayttotutkintonaV1RDTO) dto, komo);
             } else if (dto.getClass() == AmmattitutkintoV1RDTO.class) {
@@ -301,7 +313,8 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         for (Hakukohde hakukohde : komoto.getHakukohdes()) {
             if (!hakukohde.getTila().equals(TarjontaTila.POISTETTU)) {
                 Haku haku = hakukohde.getHaku();
-                if (haku.getKoulutuksenAlkamiskausiUri() != null && haku.getKoulutuksenAlkamisVuosi() != null) {
+                if (!haku.isJatkuva() &&
+                        (haku.getKoulutuksenAlkamiskausiUri() != null && haku.getKoulutuksenAlkamisVuosi() != null)) {
                     targetKausi = haku.getKoulutuksenAlkamiskausiUri();
                     targetVuosi = haku.getKoulutuksenAlkamisVuosi();
                     break;
@@ -604,6 +617,55 @@ public class KoulutusResourceImplV1 implements KoulutusV1Resource {
         Preconditions.checkNotNull(newKomoto.getKoulutusmoduuli(), "KOMO conversion to database object failed : object :  %s.", ReflectionToStringBuilder.toString(dto));
 
         return koulutusmoduuliToteutusDAO.insert(newKomoto);
+    }
+
+    /**
+     * Tutke2 muutosten myötä tarjontaan on mahdollista tallentaa amm. pt. koulutuksia suoraan
+     * tutkinto-tason komoihin (aiemmin koulutusten komot olivat tutkinto-ohjelma tasoisia).
+     * Jotta koulutusinformaatio voisi jatkossakin indeksoida koulutuksia vanhan mallin mukaisesti,
+     * pitää tarjonnan luoda "virtuaalinen" komo...
+     * @param dto
+     */
+    private Koulutusmoduuli createOsaamisalaKomoIfNeeded(final KoulutusV1RDTO dto, Koulutusmoduuli komo) {
+        switch (dto.getToteutustyyppi()) {
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+            case AMMATILLINEN_PERUSTUTKINTO:
+                if (komo.getModuuliTyyppi().equals(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO)) {
+
+                    // Tarkista, jos virtuaalinen komo on jo luotu
+                    for(Koulutusmoduuli childKomo : komo.getAlamoduuliList()) {
+                        if (childKomo.isPseudo()) {
+                            return childKomo;
+                        }
+                    }
+
+                    // Luo virtuaalinen komo
+                    Koulutusmoduuli virtualKomo = new Koulutusmoduuli();
+                    try {
+                        virtualKomo.setOid(oidService.get(TarjontaOidType.KOMO));
+                    } catch (OIDCreationException ex) {
+                        LOG.error("OIDService failed!", ex);
+                    }
+                    virtualKomo.setKoulutusUri(komo.getKoulutusUri());
+                    virtualKomo.setTila(TarjontaTila.JULKAISTU);
+                    virtualKomo.setModuuliTyyppi(fi.vm.sade.tarjonta.model.KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA);
+                    virtualKomo.setKoulutustyyppiEnum(ModuulityyppiEnum.AMMATILLINEN_PERUSKOULUTUS);
+                    virtualKomo.setPseudo(true);
+
+                    koulutusmoduuliDAO.insert(virtualKomo);
+
+                    // Luo linkitys tutkinto komosta -> (virtuaaliseen) tutkinto-ohjelma komoon
+                    KoulutusSisaltyvyys sisaltyvyys = new KoulutusSisaltyvyys(
+                            komo, virtualKomo, KoulutusSisaltyvyys.ValintaTyyppi.SOME_OFF
+                    );
+                    koulutusSisaltyvyysDAO.insert(sisaltyvyys);
+
+                    return virtualKomo;
+                }
+                break;
+        }
+        return null;
     }
 
     private KoulutusmoduuliToteutus updateKoulutusKorkeakoulu(KoulutusmoduuliToteutus komoto, final KoulutusKorkeakouluV1RDTO dto) {

@@ -56,6 +56,7 @@ public class KomoDTO extends BaseRDTO {
     private Map<KomoTeksti, Map<String, String>> _tekstit;
     private String _koulutusKoodiUri;
     private String koulutustyyppi;
+    private boolean isPseudo;
 
     // ------------------------------------------------------------------------------
     // Getters and setters
@@ -314,5 +315,13 @@ public class KomoDTO extends BaseRDTO {
      */
     public void setKoulutustyyppi(String koulutustyyppi) {
         this.koulutustyyppi = koulutustyyppi;
+    }
+
+    public boolean isPseudo() {
+        return isPseudo;
+    }
+
+    public void setPseudo(boolean isPseudo) {
+        this.isPseudo = isPseudo;
     }
 }

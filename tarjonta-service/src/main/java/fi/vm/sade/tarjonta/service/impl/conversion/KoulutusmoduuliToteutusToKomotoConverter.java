@@ -18,17 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.tarjonta.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliDAO;
 import fi.vm.sade.tarjonta.dao.KoulutusmoduuliToteutusDAO;
-import fi.vm.sade.tarjonta.model.Kielivalikoima;
-import fi.vm.sade.tarjonta.model.Koulutusmoduuli;
-import fi.vm.sade.tarjonta.model.KoulutusmoduuliToteutus;
-import fi.vm.sade.tarjonta.model.TekstiKaannos;
-import fi.vm.sade.tarjonta.model.Yhteyshenkilo;
 import fi.vm.sade.tarjonta.service.resources.dto.KomotoDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.YhteyshenkiloRDTO;
 
@@ -89,6 +85,13 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         //OVT-7513 REAL KOODISTO FROM KOMOTO URIs (null if empty):
         if (s.getTutkintonimikes() != null && !s.getTutkintonimikes().isEmpty()) {
             t.setTutkintonimikeUri(s.getTutkintonimikes().iterator().next().getKoodiUri());
+
+            List<String> tutkintonimikeUris = new ArrayList<String>();
+            for (KoodistoUri uri : s.getTutkintonimikes()) {
+                tutkintonimikeUris.add(uri.getKoodiUri());
+            }
+
+            t.setTutkintonimikeUris(tutkintonimikeUris);
         }
 
         t.setOpintoalaUri(s.getOpintoalaUri());

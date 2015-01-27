@@ -500,4 +500,8 @@ public class Haku extends TarjontaBaseEntity {
     public void setKoulutusmoduuliTyyppi(KoulutusmoduuliTyyppi koulutusmoduuliTyyppi) {
         this.koulutusmoduuliTyyppi = koulutusmoduuliTyyppi;
     }
+
+    public boolean isJatkuva() {
+        return StringUtils.contains(getHakutapaUri(), "hakutapa_03");
+    }
 }

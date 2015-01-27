@@ -495,9 +495,14 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
                 }
                 result = $scope.model.koulutus.koulutusohjelma.meta[userLangUri].nimi;
             }
-            else {
-                result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
+
+            // Fallback
+            if (!result) {
+                try {
+                    result = $scope.model.koulutus.koulutuskoodi.meta[userLangUri].nimi;
+                } catch (e) {}
             }
+
             $scope.model.header.nimi = result;
         }
         return $scope.model.header.nimi;
