@@ -106,7 +106,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setEqfLuokitusUri(s.getEqfUri());
 
         String koulutusohjelmaOrOsaamisalaUri = null;
-        if (s.isSyksy2015OrLater()) {
+        boolean isParentKomoto = s.getAlkamisVuosi() == null;
+        if (!isParentKomoto && s.isSyksy2015OrLater()) {
             koulutusohjelmaOrOsaamisalaUri = s.getOsaamisalaUri() != null ?
                     s.getOsaamisalaUri() :
                     s.getKoulutusmoduuli().getOsaamisalaUri();
