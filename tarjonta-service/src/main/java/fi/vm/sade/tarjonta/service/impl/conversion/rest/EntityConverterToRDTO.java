@@ -423,6 +423,32 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
 
+        /**
+         * Tutke 2 muutos: KJOH-951
+         * - Päätettiin, että ei muuteta koodiarvoja tietokanta-ajona siihen sisältyvien riskien takia,
+         * vaan sen sijaan hoidetaan converterissa koodiarvojen käsittely. Koodiarvojen kovakoodaaminen
+         * tähän on tietysti ylläpidettävyyden kannalta huono ratkaisu, mutta tässä tilanteessa
+         * päädyttiin tällaiseen kompromissiin.
+         */
+        switch (komoto.getToteutustyyppi()) {
+            case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                if (komoto.isSyksy2015OrLater()
+                        && dto.getOpintojenLaajuusarvo() != null
+                        && dto.getOpintojenLaajuusyksikko() != null
+                        && dto.getOpintojenLaajuusarvo().getUri().equals("opintojenlaajuus_120")
+                        && dto.getOpintojenLaajuusyksikko().getUri().equals("opintojenlaajuusyksikko_1")) {
+                    dto.setOpintojenLaajuusarvo(
+                            commonConverter.convertToKoodiDTO("opintojenlaajuus_180", null, FieldNames.OPINTOJEN_LAAJUUSARVO, YES, param)
+                    );
+                    dto.setOpintojenLaajuusyksikko(
+                            commonConverter.convertToKoodiDTO("opintojenlaajuusyksikko_6", null, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, param)
+                    );
+                }
+                break;
+        }
+
         //
         // KJOH-778 multiple owners, API output
         //

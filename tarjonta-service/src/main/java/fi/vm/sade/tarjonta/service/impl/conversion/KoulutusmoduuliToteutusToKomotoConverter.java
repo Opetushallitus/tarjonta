@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import fi.vm.sade.tarjonta.model.*;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,19 +105,50 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setTutkintoUri(s.getTutkintoUri());
         t.setNqfLuokitusUri(s.getNqfUri());
         t.setEqfLuokitusUri(s.getEqfUri());
+        t.setKoulutusohjelmaUri(s.getKoulutusohjelmaUri());
 
-        String koulutusohjelmaOrOsaamisalaUri = null;
+        /**
+         * Tutke 2 muutos: KJOH-951
+         * - Päätettiin, että ei muuteta koodiarvoja tietokanta-ajona siihen sisältyvien riskien takia,
+         * vaan sen sijaan hoidetaan converterissa koodiarvojen käsittely. Koodiarvojen kovakoodaaminen
+         * tähän on tietysti ylläpidettävyyden kannalta huono ratkaisu, mutta tässä tilanteessa
+         * päädyttiin tällaiseen kompromissiin.
+         */
         boolean isParentKomoto = s.getAlkamisVuosi() == null;
         if (!isParentKomoto && s.isSyksy2015OrLater()) {
-            koulutusohjelmaOrOsaamisalaUri = s.getOsaamisalaUri() != null ?
-                    s.getOsaamisalaUri() :
-                    s.getKoulutusmoduuli().getOsaamisalaUri();
+
+            switch (s.getToteutustyyppi()) {
+                case AMMATILLINEN_PERUSTUTKINTO:
+                case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+                case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                    Koulutusmoduuli komo = s.getKoulutusmoduuli();
+                    Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
+                    if (parentKomo == null) {
+                        parentKomo = komo;
+                    }
+                    String laajuusarvoUri = s.getOpintojenLaajuusarvoUri() == null ?
+                            komo.getOpintojenLaajuusarvoUri() :
+                            s.getOpintojenLaajuusarvoUri();
+                    String laajuusyksikkoUri = s.getOpintojenLaajuusyksikkoUri() == null ?
+                            komo.getOpintojenLaajuusyksikkoUri() :
+                            s.getOpintojenLaajuusyksikkoUri();
+
+                    if (s.getKoodiUriWithoutVersion(laajuusarvoUri).equals("opintojenlaajuus_120")
+                            && s.getKoodiUriWithoutVersion(laajuusyksikkoUri).equals("opintojenlaajuusyksikko_1")) {
+                        t.setOpintojenLaajuusarvoUri("opintojenlaajuus_180#1");
+                        t.setLaajuusYksikkoUri("opintojenlaajuusyksikko_6#1");
+                    }
+
+                    break;
+            }
+
+            String koulutusohjelmaOrOsaamisalaUri = s.getOsaamisalaUri() != null ?
+                        s.getOsaamisalaUri() :
+                        s.getKoulutusmoduuli().getOsaamisalaUri();
+            if (koulutusohjelmaOrOsaamisalaUri != null) {
+                t.setKoulutusohjelmaUri(koulutusohjelmaOrOsaamisalaUri);
+            }
         }
-        // Fallback
-        if (koulutusohjelmaOrOsaamisalaUri == null) {
-            koulutusohjelmaOrOsaamisalaUri = s.getKoulutusohjelmaUri();
-        }
-        t.setKoulutusohjelmaUri(koulutusohjelmaOrOsaamisalaUri);
 
         // Vaadin-Angular muutostyön jäleiset uudet koodistot
         t.setOpetusmuotokk(convertKoodistoUrisToList(s.getOpetusmuotos()));

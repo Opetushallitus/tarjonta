@@ -1208,7 +1208,7 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
         return isSyksy2015 || isLater;
     }
 
-    private String getKoodiUriWithoutVersion(String koodiUri) {
+    public String getKoodiUriWithoutVersion(String koodiUri) {
         int hashPos = koodiUri.indexOf('#');
 
         if (hashPos == -1) {
