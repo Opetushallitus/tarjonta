@@ -104,7 +104,18 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         t.setTutkintoUri(s.getTutkintoUri());
         t.setNqfLuokitusUri(s.getNqfUri());
         t.setEqfLuokitusUri(s.getEqfUri());
-        t.setKoulutusohjelmaUri(s.getKoulutusohjelmaUri());
+
+        String koulutusohjelmaOrOsaamisalaUri = null;
+        if (s.isSyksy2015OrLater()) {
+            koulutusohjelmaOrOsaamisalaUri = s.getOsaamisalaUri() != null ?
+                    s.getOsaamisalaUri() :
+                    s.getKoulutusmoduuli().getOsaamisalaUri();
+        }
+        // Fallback
+        if (koulutusohjelmaOrOsaamisalaUri == null) {
+            koulutusohjelmaOrOsaamisalaUri = s.getKoulutusohjelmaUri();
+        }
+        t.setKoulutusohjelmaUri(koulutusohjelmaOrOsaamisalaUri);
 
         // Vaadin-Angular muutostyön jäleiset uudet koodistot
         t.setOpetusmuotokk(convertKoodistoUrisToList(s.getOpetusmuotos()));
