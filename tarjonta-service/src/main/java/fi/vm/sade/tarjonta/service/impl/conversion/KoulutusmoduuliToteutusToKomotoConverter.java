@@ -123,8 +123,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
                 case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
                     Koulutusmoduuli komo = s.getKoulutusmoduuli();
                     Koulutusmoduuli parentKomo = koulutusmoduuliDAO.findParentKomo(komo);
-                    if (parentKomo == null) {
-                        parentKomo = komo;
+                    if (parentKomo != null) {
+                        komo = parentKomo;
                     }
                     String laajuusarvoUri = s.getOpintojenLaajuusarvoUri() == null ?
                             komo.getOpintojenLaajuusarvoUri() :
@@ -133,7 +133,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
                             komo.getOpintojenLaajuusyksikkoUri() :
                             s.getOpintojenLaajuusyksikkoUri();
 
-                    if (s.getKoodiUriWithoutVersion(laajuusarvoUri).equals("opintojenlaajuus_120")
+                    if (laajuusarvoUri != null && laajuusyksikkoUri != null
+                            && s.getKoodiUriWithoutVersion(laajuusarvoUri).equals("opintojenlaajuus_120")
                             && s.getKoodiUriWithoutVersion(laajuusyksikkoUri).equals("opintojenlaajuusyksikko_1")) {
                         t.setOpintojenLaajuusarvoUri("opintojenlaajuus_180#1");
                         t.setLaajuusYksikkoUri("opintojenlaajuusyksikko_6#1");
