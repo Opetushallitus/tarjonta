@@ -90,7 +90,7 @@ public class KoulutusmoduuliToKomoConverter extends BaseRDTOConverter<Koulutusmo
         t.setModifiedBy(null);
         t.setModified(s.getUpdated());
         t.setVersion(s.getVersion() == null ? 0 : s.getVersion().intValue());
-
+        t.setPseudo(s.isPseudo());
         t.setKoulutusKoodiUri(s.getKoulutusUri());
 
         //
