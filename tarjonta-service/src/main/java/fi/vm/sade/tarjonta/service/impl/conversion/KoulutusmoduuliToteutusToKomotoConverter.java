@@ -15,9 +15,11 @@
 package fi.vm.sade.tarjonta.service.impl.conversion;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.tarjonta.model.*;
 import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
 import org.slf4j.Logger;
@@ -162,6 +164,8 @@ public class KoulutusmoduuliToteutusToKomotoConverter extends BaseRDTOConverter<
         if (komoto.getKoulutuksenAlkamisPvms() == null || komoto.getKoulutuksenAlkamisPvms().isEmpty()) {
             t.setKoulutuksenAlkamiskausi(komoto.getAlkamiskausiUri());
             t.setKoulutuksenAlkamisvuosi(komoto.getAlkamisVuosi());
+        } else {
+            t.setKoulutuksenAlkamisDates(new ArrayList<Date>(komoto.getKoulutuksenAlkamisPvms()));
         }
 
         convertTekstit(t.getTekstit(), komoto.getTekstit());

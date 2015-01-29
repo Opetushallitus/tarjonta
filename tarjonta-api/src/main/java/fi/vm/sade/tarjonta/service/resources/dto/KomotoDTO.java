@@ -34,6 +34,7 @@ public class KomotoDTO extends BaseRDTO {
     private static final long serialVersionUID = 1L;
 
     private Date _koulutuksenAlkamisDate;
+    private List<Date> koulutuksenAlkamisDates;
     private boolean _maksullisuus;
     private String _komoOid;
     private String _pohjakoulutusVaatimusUri;
@@ -632,4 +633,11 @@ public class KomotoDTO extends BaseRDTO {
         return koulutuksenAlkamisvuosi;
     }
 
+    public List<Date> getKoulutuksenAlkamisDates() {
+        return koulutuksenAlkamisDates;
+    }
+
+    public void setKoulutuksenAlkamisDates(List<Date> koulutuksenAlkamisDates) {
+        this.koulutuksenAlkamisDates = koulutuksenAlkamisDates;
+    }
 }
