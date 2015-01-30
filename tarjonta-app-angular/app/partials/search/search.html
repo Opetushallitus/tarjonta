@@ -90,9 +90,9 @@
 
         <div class="controls advancedSearch">
 
-            <a href="" ng-click="isopen = !isopen" class="toggle-link">
+            <a href="" ng-click="toggleAdvancedSearch()" class="toggle-link">
                 <i class="pull-left toggle" ng-class="{'icon-chevron-down': isopen, 'icon-chevron-right': !isopen}"></i>
-                <span ng-if="!isopen" ng-click="initAdditionalFields()">{{t('tarjonta.haku.nayta.lisaa')}}</span>
+                <span ng-if="!isopen">{{t('tarjonta.haku.nayta.lisaa')}}</span>
                 <span ng-if="isopen">{{t('tarjonta.haku.nayta.vahemman')}}</span>
             </a>
 
