@@ -402,5 +402,5 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
 
     // TODO: muuta kun tutkintoon johtamaton otetaan käyttöön
     // tällä hetkellä voi käyttää vain rekisterinpitäjän oikeuksilla
-    $scope.model.tutkintoonJohtamattomatEnabled = AuthService.isUserOph();
+    $scope.model.tutkintoonJohtamattomatEnabled = true;
 });
