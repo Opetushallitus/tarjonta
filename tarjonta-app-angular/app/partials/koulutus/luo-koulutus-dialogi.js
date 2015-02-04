@@ -2,7 +2,7 @@
 var app = angular.module('app.koulutus.ctrl');
 app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
                     SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService,
-                    KoulutusService) {
+                    KoulutusService, Config) {
     'use strict';
 
     $log = $log.getInstance('LuoKoulutusDialogiController');
@@ -402,7 +402,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         }
     };
 
-    // TODO: muuta kun tutkintoon johtamaton otetaan käyttöön
-    // tällä hetkellä voi käyttää vain rekisterinpitäjän oikeuksilla
-    $scope.model.tutkintoonJohtamattomatEnabled = true;
+    // tällä hetkellä tutkintoon johtamaton on käytössä tuotannossa ainostaan
+    // rekisterinpitäjän tunnuksilla
+    var isTuotanto = Config.env.tarjontaRestUrlPrefix.indexOf('https://virkailija.opintopolku.fi') !== -1;
+    $scope.model.tutkintoonJohtamattomatEnabled = AuthService.isUserOph() || !isTuotanto;
 });
