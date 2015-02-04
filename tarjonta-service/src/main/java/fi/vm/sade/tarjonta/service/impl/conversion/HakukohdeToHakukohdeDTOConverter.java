@@ -26,6 +26,8 @@ import fi.vm.sade.tarjonta.service.resources.dto.OsoiteRDTO;
 import fi.vm.sade.tarjonta.service.resources.dto.ValintakoeRDTO;
 import fi.vm.sade.tarjonta.shared.KoodistoURI;
 import fi.vm.sade.tarjonta.shared.TarjontaKoodistoHelper;
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,6 +214,10 @@ public class HakukohdeToHakukohdeDTOConverter extends BaseRDTOConverter<Hakukohd
             }
         }
         hakukohdeDTO.setOpetuskielet(new ArrayList<String>(opetuskielis));
+
+        List<String> organisaatioRyhmaOids = (List<String>) CollectionUtils.collect(hakukohde.getRyhmaliitokset(),
+                new BeanToPropertyValueTransformer("ryhmaOid"));
+        hakukohdeDTO.setOrganisaatioRyhmaOids(organisaatioRyhmaOids.toArray(new String[organisaatioRyhmaOids.size()]));
 
         return hakukohdeDTO;
     }

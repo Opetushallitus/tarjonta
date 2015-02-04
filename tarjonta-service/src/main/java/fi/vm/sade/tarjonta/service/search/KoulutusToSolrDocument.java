@@ -244,7 +244,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
                 case VAPAAN_SIVISTYSTYON_KOULUTUS:
                 case VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS:
-                    addKoulutusohjelmaTiedot(komotoDoc, koulutusmoduuliToteutus.getKoulutusmoduuli().getKoulutusohjelmaUri());
+                    addKoulutusohjelmaTiedot(komotoDoc, getKoulutusohjelmaOrOsaamisalaUri(koulutusmoduuliToteutus));
 
                     nimi = koulutusmoduuliToteutus.getNimi();
 
@@ -257,7 +257,7 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
 
                 default:
                     if (ToteutustyyppiEnum.AMMATILLINEN_PERUSTUTKINTO.equals(koulutusmoduuliToteutus.getToteutustyyppi())) {
-                        addKoulutusohjelmaTiedot(komotoDoc, koulutusmoduuliToteutus.getKoulutusmoduuli().getKoulutusohjelmaUri());
+                        addKoulutusohjelmaTiedot(komotoDoc, getKoulutusohjelmaOrOsaamisalaUri(koulutusmoduuliToteutus));
                     } else {
                         if (koulutusmoduuliToteutus.getOsaamisalaUri() != null) {
                             addKoulutusohjelmaTiedot(komotoDoc, koulutusmoduuliToteutus.getOsaamisalaUri());
@@ -268,6 +268,22 @@ public class KoulutusToSolrDocument implements Function<Long, List<SolrInputDocu
                     break;
             }
         }
+    }
+
+    private String getKoulutusohjelmaOrOsaamisalaUri(KoulutusmoduuliToteutus komoto) {
+        String koulutusohjelmaOrOsaamisalaUri = null;
+        if (komoto.isSyksy2015OrLater()) {
+            koulutusohjelmaOrOsaamisalaUri = komoto.getOsaamisalaUri() != null ?
+                    komoto.getOsaamisalaUri() :
+                    komoto.getKoulutusmoduuli().getOsaamisalaUri();
+        }
+        // Fallback
+        if (koulutusohjelmaOrOsaamisalaUri == null) {
+            koulutusohjelmaOrOsaamisalaUri = komoto.getKoulutusohjelmaUri() != null ?
+                    komoto.getKoulutusohjelmaUri() :
+                    komoto.getKoulutusmoduuli().getKoulutusohjelmaUri();
+        }
+        return koulutusohjelmaOrOsaamisalaUri;
     }
 
     private void addMonikielinenNimi(SolrInputDocument komotoDoc, MonikielinenTeksti nimi) {

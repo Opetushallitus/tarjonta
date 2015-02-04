@@ -463,6 +463,8 @@ public class KoulutusToSolrDocumentTest {
         koulutusmoduuliToteutus.setKoulutusUri("lukio");
         koulutusmoduuliToteutus.setPohjakoulutusvaatimusUri("peruskoulu");
         koulutusmoduuliToteutus.addKoulutuslaji("koulutuslaji_n");
+        koulutusmoduuliToteutus.setAlkamiskausiUri("kausi_k#1");
+        koulutusmoduuliToteutus.setAlkamisVuosi(2015);
 
         KoodistoUri opetusKieliFi = new KoodistoUri("kieli_fi");
         KoodistoUri opetusKieliSv = new KoodistoUri("kieli_sv");

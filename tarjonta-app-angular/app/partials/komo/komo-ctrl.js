@@ -1278,14 +1278,18 @@ angular.module('app.komo.ctrl', [
                         }
                     }
                     $q.all(promises).then(function(arrKomos) {
+                        var oidMap = {};
                         for (var wrapperIndex = 0; wrapperIndex < arrKomos.length; wrapperIndex++) {
                             for (var komoIndex = 0; komoIndex < arrKomos[wrapperIndex].length; komoIndex++) {
                                 var o = map[arrKomos[wrapperIndex][komoIndex].koulutus];
                                 if (o) {
-                                    TarjontaService.saveKomoTekstis(arrKomos[wrapperIndex][komoIndex].oid, o.tekstis);
+                                    oidMap[arrKomos[wrapperIndex][komoIndex].oid] = o.tekstis;
                                 }
                             }
                         }
+                        _.each(oidMap, function(tekstis, oid) {
+                            TarjontaService.saveKomoTekstis(oid, tekstis);
+                        });
                     });
                 }
             });
@@ -1356,6 +1360,7 @@ angular.module('app.komo.ctrl', [
                             }
                             if (headerRow.rowdata[c].trim() === keyPrefix + col.langs[langKeyIndex].key) {
                                 col.langs[langKeyIndex].index = c;
+                                break;
                             }
                         }
                     }
@@ -1364,6 +1369,7 @@ angular.module('app.komo.ctrl', [
                     for (c = 0; c < headerRow.rowdata.length; c++) {
                         if (headerRow.rowdata[c].trim() === keyPrefix) {
                             col.index = c;
+                            break;
                         }
                     }
                 }
@@ -1476,14 +1482,18 @@ angular.module('app.komo.ctrl', [
                         }
                     }
                     $q.all(promises).then(function(arrKomos) {
+                        var oidMap = {};
                         for (var wrapperIndex = 0; wrapperIndex < arrKomos.length; wrapperIndex++) {
                             for (var komoIndex = 0; komoIndex < arrKomos[wrapperIndex].length; komoIndex++) {
                                 var o = map[arrKomos[wrapperIndex][komoIndex].ohjelma];
                                 if (o) {
-                                    TarjontaService.saveKomoTekstis(arrKomos[wrapperIndex][komoIndex].oid, o.tekstis);
+                                    oidMap[arrKomos[wrapperIndex][komoIndex].oid] = o.tekstis;
                                 }
                             }
                         }
+                        _.each(oidMap, function(tekstis, oid) {
+                            TarjontaService.saveKomoTekstis(oid, tekstis);
+                        });
                     });
                 }
             });

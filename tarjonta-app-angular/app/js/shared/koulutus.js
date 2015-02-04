@@ -49,12 +49,14 @@ app.factory('KoulutusService', function($resource, Config, $location, $modal, Ta
         /**
          * Avaa korkeakouluopinnon luontilomake.
          */
-        luoKorkeakouluOpinto: function(koulutustyyppiKoodiUri, organisaatioOid, koulutusmoduuliTyyppi, $scope) {
+        luoKorkeakouluOpinto: function(koulutustyyppiKoodiUri, organisaatioOid, koulutusmoduuliTyyppi,
+                                       opetusTarjoajat) {
             $location.path('/koulutus/KORKEAKOULUOPINTO/'
                     + koulutustyyppiKoodiUri
                     + '/edit/'
                     + organisaatioOid);
             $location.search('koulutusmoduuliTyyppi', koulutusmoduuliTyyppi);
+            $location.search('opetusTarjoajat', _.pluck(opetusTarjoajat, 'oid').join(','));
         },
 
         jarjestaKoulutus: function(koulutusOid, organisaatioOid) {

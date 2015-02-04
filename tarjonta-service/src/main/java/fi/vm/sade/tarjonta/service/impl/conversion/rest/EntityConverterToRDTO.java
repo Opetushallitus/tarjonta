@@ -230,8 +230,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              * 2ASTE : AMMATILLINEN_PERUSTUTKINTO
              */
             KoulutusAmmatillinenPerustutkintoV1RDTO amisDto = (KoulutusAmmatillinenPerustutkintoV1RDTO) dto;
-            if (komo.getKoulutusohjelmaUri() != null || komoto.getKoulutusohjelmaUri() != null) {
-                amisDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+
+            NimiV1RDTO koulutusohjelmaOrOsaamisala = getKoulutusohjelmaOrOsaamisala(komo, komoto, param);
+            if (koulutusohjelmaOrOsaamisala != null) {
+                amisDto.setKoulutusohjelma(koulutusohjelmaOrOsaamisala);
             }
             amisDto.setTutkintonimikes(commonConverter.convertToKoodiUrisDTO(
                 getTutkintonimikes(komoto, komo),
@@ -278,7 +280,10 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
              *         - VAPAAN_SIVISTYSTYON_KOULUTUS
              */
             ValmistavaKoulutusV1RDTO valmDto = (ValmistavaKoulutusV1RDTO) dto;
-            valmDto.setKoulutusohjelma(commonConverter.convertToNimiDTO(komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, NO, param));
+            NimiV1RDTO koulutusohjelmaOrOsaamisala = getKoulutusohjelmaOrOsaamisala(komo, komoto, param);
+            if (koulutusohjelmaOrOsaamisala != null) {
+                valmDto.setKoulutusohjelma(koulutusohjelmaOrOsaamisala);
+            }
             // TODO: aiheuttaa nyt "org.apache.cxf.interceptor.Fault: Koodi uri with version string object cannot be null"
             // valmKuntDto.setTutkintonimike(commonConverter.convertToKoodiDTO(komo.getTutkintonimikeUri(), komoto.getTutkintonimikeUri(), FieldNames.TUTKINTONIMIKE, NO, param));
             valmDto.setPohjakoulutusvaatimus(commonConverter.convertToKoodiDTO(komoto.getPohjakoulutusvaatimusUri(), NO_OVERRIDE_URI, FieldNames.POHJALKOULUTUSVAATIMUS, NO, param));
@@ -418,6 +423,32 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         EntityUtils.copyYhteyshenkilos(komoto.getYhteyshenkilos(), dto.getYhteyshenkilos());
         dto.setVersion(komoto.getVersion());
 
+        /**
+         * Tutke 2 muutos: KJOH-951
+         * - Päätettiin, että ei muuteta koodiarvoja tietokanta-ajona siihen sisältyvien riskien takia,
+         * vaan sen sijaan hoidetaan converterissa koodiarvojen käsittely. Koodiarvojen kovakoodaaminen
+         * tähän on tietysti ylläpidettävyyden kannalta huono ratkaisu, mutta tässä tilanteessa
+         * päädyttiin tällaiseen kompromissiin.
+         */
+        switch (komoto.getToteutustyyppi()) {
+            case AMMATILLINEN_PERUSTUTKINTO:
+            case AMMATILLINEN_PERUSKOULUTUS_ERITYISOPETUKSENA:
+            case AMMATILLINEN_PERUSTUTKINTO_NAYTTOTUTKINTONA:
+                if (komoto.isSyksy2015OrLater()
+                        && dto.getOpintojenLaajuusarvo() != null
+                        && dto.getOpintojenLaajuusyksikko() != null
+                        && dto.getOpintojenLaajuusarvo().getUri().equals("opintojenlaajuus_120")
+                        && dto.getOpintojenLaajuusyksikko().getUri().equals("opintojenlaajuusyksikko_1")) {
+                    dto.setOpintojenLaajuusarvo(
+                            commonConverter.convertToKoodiDTO("opintojenlaajuus_180", null, FieldNames.OPINTOJEN_LAAJUUSARVO, YES, param)
+                    );
+                    dto.setOpintojenLaajuusyksikko(
+                            commonConverter.convertToKoodiDTO("opintojenlaajuusyksikko_6", null, FieldNames.OPINTOJEN_LAAJUUSYKSIKKO, YES, param)
+                    );
+                }
+                break;
+        }
+
         //
         // KJOH-778 multiple owners, API output
         //
@@ -440,6 +471,28 @@ public class EntityConverterToRDTO<TYPE extends KoulutusV1RDTO> {
         }
 
         return dto;
+    }
+
+    private NimiV1RDTO getKoulutusohjelmaOrOsaamisala(Koulutusmoduuli komo, KoulutusmoduuliToteutus komoto, RestParam param) {
+        NimiV1RDTO nimiV1RDTO = null;
+
+        if (komoto.isSyksy2015OrLater() && ( komo.getOsaamisalaUri() != null || komoto.getOsaamisalaUri() != null ) ) {
+            nimiV1RDTO = commonConverter.convertToNimiDTO(
+                komo.getOsaamisalaUri(), komoto.getOsaamisalaUri(), FieldNames.OSAAMISALA, YES, param
+            );
+            if (nimiV1RDTO != null && !nimiV1RDTO.getUri().isEmpty()) {
+                return nimiV1RDTO;
+            }
+        }
+
+        if (komo.getKoulutusohjelmaUri() != null || komoto.getKoulutusohjelmaUri() != null) {
+            nimiV1RDTO = commonConverter.convertToNimiDTO(
+                komo.getKoulutusohjelmaUri(), komoto.getKoulutusohjelmaUri(), FieldNames.KOULUTUSOHJELMA, YES, param
+            );
+            return nimiV1RDTO;
+        }
+
+        return null;
     }
 
     private Set<KoodistoUri> getTutkintonimikes(KoulutusmoduuliToteutus komoto, Koulutusmoduuli komo) {

@@ -547,6 +547,9 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
             edit: 'AMMATILLINEN_PERUSTUTKINTO',
             review: 'GENERIC'
         },
+        RELATIONS: {
+            tutkintonimikes: {}
+        },
         reviewFields: DEFAULT_REVIEW_FIELDS,
         params: {
             reviewOhjelmaLabel: 'koulutus.review.perustiedot.osaamisala',
@@ -1057,10 +1060,7 @@ app.factory('KoulutusConverterFactory', function(Koodisto, $log) {
                 pohjakoulutusvaatimus: {
                     module: 'TUTKINTO'
                 }
-            }),
-            RELATIONS: {
-                tutkintonimikes: {}
-            }
+            })
         }),
         /*******************************************/
         /* VALMENTAVA_JA_KUNTOUTTAVA_OPETUS_JA_OHJAUS INITIALIZATION PARAMETERS  */

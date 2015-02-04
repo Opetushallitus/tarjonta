@@ -535,6 +535,11 @@ app.controller('BaseReviewController', function BaseReviewController(PermissionS
             $scope.model.tarjoajanKoulutus = response.result;
         });
     }
+    if ($scope.model.koulutus.opinnonTyyppiUri) {
+        Koodisto.getKoodi('opinnontyyppi', $scope.model.koulutus.opinnonTyyppiUri).then(function(koodi) {
+            $scope.model.koulutus.opinnonTyyppiKoodiNimi = koodi.koodiNimi;
+        });
+    }
     $scope.getMonikielinenNimi = function(field) {
         return field.kieli_fi || field.kieli_sv || field.kieli_en;
     };

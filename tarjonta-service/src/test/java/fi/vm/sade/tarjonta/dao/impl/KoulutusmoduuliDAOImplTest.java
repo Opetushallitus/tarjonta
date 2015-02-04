@@ -243,13 +243,13 @@ public class KoulutusmoduuliDAOImplTest {
     public void searchModuleForImportProcess() {
         Koulutusmoduuli m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, "uri_koulutus", null, "uri_osaamisala_3", null);
         Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
-        Assert.assertEquals(OSAAMISALA_URI3, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(null, m.getKoulutusohjelmaUri());
         Assert.assertEquals(OSAAMISALA_URI3, m.getOsaamisalaUri());
         Assert.assertEquals(m.getLukiolinjaUri(), null);
 
         m = instance.findModule(KoulutusmoduuliTyyppi.TUTKINTO_OHJELMA, KOULUTUS_URI, null, OSAAMISALA_URI2, null);
         Assert.assertEquals(KOULUTUS_URI, m.getKoulutusUri());
-        Assert.assertEquals(OSAAMISALA_URI2, m.getKoulutusohjelmaUri());
+        Assert.assertEquals(null, m.getKoulutusohjelmaUri());
         Assert.assertEquals(OSAAMISALA_URI2, m.getOsaamisalaUri());
         Assert.assertEquals(null, m.getLukiolinjaUri());
 

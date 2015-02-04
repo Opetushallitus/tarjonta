@@ -872,7 +872,7 @@ app.controller('BaseEditController', [
                         moduuli: ENUMS.ENUM_KOMO_MODULE_TUTKINTO_OHJELMA
                     }, function(komos) {
                         $scope.uiModel.koulutusohjelmaModules = filterByKomos(koodistoResult, komos, function(komo) {
-                            return komo.ohjelmaUri || komo.osaamisalaUri;
+                            return komo.osaamisalaUri || komo.ohjelmaUri;
                         });
                         $scope.uiModel.koulutusohjelma = _.map(
                             $scope.uiModel.koulutusohjelmaModules, function(num) {

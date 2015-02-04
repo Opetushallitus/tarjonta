@@ -18,7 +18,10 @@ package fi.vm.sade.tarjonta.model;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Ordering;
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.tarjonta.publication.model.RestParam;
 import fi.vm.sade.tarjonta.service.business.impl.EntityUtils;
+import fi.vm.sade.tarjonta.service.impl.resources.v1.koulutus.validation.FieldNames;
+import fi.vm.sade.tarjonta.service.resources.v1.dto.koulutus.NimiV1RDTO;
 import fi.vm.sade.tarjonta.shared.types.KomotoTeksti;
 import fi.vm.sade.tarjonta.shared.types.ToteutustyyppiEnum;
 import org.apache.commons.lang.StringUtils;
@@ -1187,5 +1190,31 @@ public class KoulutusmoduuliToteutus extends BaseKoulutusmoduuli {
 
     public void setKoulutusRyhmaOids(Set<String> koulutusRyhmaOids) {
         this.koulutusRyhmaOids = koulutusRyhmaOids;
+    }
+
+
+
+    /**
+     * Syksyn 2015 koulutukset ja myöhemmät käyttävät osaamisala-koodistoa vanhan
+     * koulutusohjelma-koodiston sijasta
+     * @return boolean
+     */
+    public boolean isSyksy2015OrLater() {
+        String kausi = getKoodiUriWithoutVersion(this.getAlkamiskausiUri());
+
+        boolean isSyksy2015 = this.getAlkamisVuosi() == 2015 && kausi.equals("kausi_s");
+        boolean isLater = this.getAlkamisVuosi() > 2015;
+
+        return isSyksy2015 || isLater;
+    }
+
+    public String getKoodiUriWithoutVersion(String koodiUri) {
+        int hashPos = koodiUri.indexOf('#');
+
+        if (hashPos == -1) {
+            return koodiUri;
+        }
+
+        return koodiUri.substring(0, hashPos);
     }
 }

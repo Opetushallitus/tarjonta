@@ -2,7 +2,7 @@
 var app = angular.module('app.koulutus.ctrl');
 app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, Koodisto, $modal, OrganisaatioService,
                     SharedStateService, AuthService, $log, KoulutusConverterFactory, $timeout, LocalisationService,
-                    KoulutusService) {
+                    KoulutusService, Config) {
     'use strict';
 
     $log = $log.getInstance('LuoKoulutusDialogiController');
@@ -230,8 +230,12 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
             if (_.contains(['OPINTOKOKONAISUUS',
                             'OPINTOJAKSO'], $scope.model.koulutusmoduuliTyyppi)) {
                 $scope.luoKoulutusDialog.close();
-                KoulutusService.luoKorkeakouluOpinto($scope.model.koulutustyyppi.koodiUri,
-                    $scope.model.organisaatiot[0].oid, $scope.model.koulutusmoduuliTyyppi);
+                KoulutusService.luoKorkeakouluOpinto(
+                    $scope.model.koulutustyyppi.koodiUri,
+                    $scope.model.organisaatiot[0].oid,
+                    $scope.model.koulutusmoduuliTyyppi,
+                    $scope.model.organisaatiot
+                );
                 return;
             }
             var olt = OrganisaatioService.haeOppilaitostyypit($scope.model.organisaatiot[0].oid);
@@ -255,9 +259,7 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
                             $log.debug('org:', $scope.model.organisaatiot[0]);
                             $location.path('/koulutus/KORKEAKOULUTUS/' + $scope.model.koulutustyyppi.koodiUri +
                                 '/edit/' + $scope.model.organisaatiot[0].oid + '/' + selectedItem.koodiArvo);
-                            $location.search('opetusTarjoajat', _.map($scope.model.organisaatiot, function(org) {
-                                return org.oid;
-                            }).join(','));
+                            $location.search('opetusTarjoajat', _.pluck($scope.model.organisaatiot, 'oid').join(','));
                         }
                     }, function() {
                             $scope.tutkintoDialogModel.selected = null;
@@ -400,7 +402,8 @@ app.controller('LuoKoulutusDialogiController', function($location, $q, $scope, K
         }
     };
 
-    // TODO: muuta kun tutkintoon johtamaton otetaan käyttöön
-    // tällä hetkellä voi käyttää vain rekisterinpitäjän oikeuksilla
-    $scope.model.tutkintoonJohtamattomatEnabled = true;
+    // tällä hetkellä tutkintoon johtamaton on käytössä tuotannossa ainostaan
+    // rekisterinpitäjän tunnuksilla
+    var isTuotanto = Config.env.tarjontaRestUrlPrefix.indexOf('https://virkailija.opintopolku.fi') !== -1;
+    $scope.model.tutkintoonJohtamattomatEnabled = AuthService.isUserOph() || !isTuotanto;
 });

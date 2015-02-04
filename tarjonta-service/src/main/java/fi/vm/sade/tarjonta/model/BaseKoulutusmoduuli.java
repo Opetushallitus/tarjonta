@@ -343,12 +343,7 @@ public abstract class BaseKoulutusmoduuli extends TarjontaBaseEntity implements 
      * @return
      */
     public String getKoulutusohjelmaUri() {
-        if (koulutusohjelmaUri != null) {
-            return koulutusohjelmaUri;
-        }
-        else {
-            return osaamisalaUri;
-        }
+        return koulutusohjelmaUri;
     }
 
     public void setKoulutusohjelmaUri(String koulutusohjelmaUri) {

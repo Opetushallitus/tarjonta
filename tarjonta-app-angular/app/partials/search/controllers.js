@@ -130,6 +130,12 @@ angular.module('app.search.controllers', [
         }
     };
     initFormSelections();
+    $scope.toggleAdvancedSearch = function() {
+        $scope.isopen = !$scope.isopen;
+        if ($scope.isopen) {
+            $scope.initAdditionalFields();
+        }
+    };
     $scope.organisaatio = {};
     $scope.$watch('organisaatio.currentNode', function() {
         if ($scope.organisaatio && angular.isObject($scope.organisaatio.currentNode)) {
