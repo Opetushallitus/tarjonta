@@ -76,19 +76,10 @@
         </td>
     </tr>
 
-    <!-- teemat ja aiheet -->
     <tr>
-        <th tt="koulutus.review.perustiedot.teematJaAiheet">Teemat ja aiheet</th>
+        <th tt="koulutus.edit.opinnon-tyyppi">Opinnon tyyppi</th>
         <td colspan="2">
-            <span data-ng-repeat='aihe in model.koulutus.aihees.meta'>{{ aihe.meta[lang.koodi_uri].nimi }}{{ $last ? '' : ', ' }}</span>
-        </td>
-    </tr>
-
-    <!-- oppiaine -->
-    <tr>
-        <th tt="koulutus.review.perustiedot.oppiaine">Oppiaine</th>
-        <td colspan="2">
-            {{ model.koulutus.oppiaine }}
+            {{model.koulutus.opinnonTyyppiKoodiNimi}}
         </td>
     </tr>
 
@@ -166,6 +157,22 @@
             </span>
         </td>
     </tr>
+
+    <!-- teemat ja aiheet -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.teematJaAiheet">Teemat ja aiheet</th>
+        <td colspan="2">
+            <span data-ng-repeat='aihe in model.koulutus.aihees.meta'>{{ aihe.meta[lang.koodi_uri].nimi }}{{ $last ? '' : ', ' }}</span>
+        </td>
+    </tr>
+
+    <!-- oppiaine -->
+    <tr>
+        <th tt="koulutus.review.perustiedot.oppiaine">Oppiaine</th>
+        <td colspan="2">
+            {{ model.koulutus.oppiaine }}
+        </td>
+    </tr>o
 
     <!-- opettaja -->
     <tr>
